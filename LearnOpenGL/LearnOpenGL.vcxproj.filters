@@ -18,5 +18,8 @@
     <ClCompile Include="LearnOpenGL.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\glad\src\glad.c">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

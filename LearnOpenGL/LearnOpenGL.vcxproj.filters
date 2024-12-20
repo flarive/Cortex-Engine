@@ -16,6 +16,9 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{5c479abb-4f50-412f-a750-442144f5a045}</UniqueIdentifier>
     </Filter>
+    <Filter Include="textures">
+      <UniqueIdentifier>{67ed4e24-e0e8-45d4-8a08-68e1c644e1cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,6 +39,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="shaders\shader.vs">
       <Filter>shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="textures\container.jpg">
+      <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

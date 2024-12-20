@@ -1,12 +1,13 @@
 #version 330 core
 
 out vec4 FragColor;
-
+  
 in vec3 ourColor; // coming from vertex shader
+in vec2 TexCoord;
 
-uniform vec4 rotatingColor; // we set this variable in the OpenGL code.
+uniform sampler2D ourTexture;
 
 void main()
 {
-    FragColor = vec4(ourColor.x + rotatingColor.x, ourColor.y + rotatingColor.y, ourColor.z + rotatingColor.z, 1.0);
-};
+    FragColor = texture(ourTexture, TexCoord);
+}

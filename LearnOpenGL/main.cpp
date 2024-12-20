@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "shader_helper.h"
+#include "shader.h"
 
 #include <iostream>
 #include <chrono>
@@ -14,27 +14,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
-
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-// The fragment shader is all about calculating the color output of your pixels
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
-
-
-
+unsigned int SCR_WIDTH = 800;
+unsigned int SCR_HEIGHT = 600;
+const bool FULLSCREEN = false;
 
 
 
@@ -48,9 +30,20 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
+
+    GLFWmonitor* MyMonitor = glfwGetPrimaryMonitor(); // The primary monitor.. Later Occulus?..
+
+    const GLFWvidmode* mode = glfwGetVideoMode(MyMonitor);
+    if (FULLSCREEN)
+    {
+        SCR_WIDTH = mode->width;
+        SCR_HEIGHT = mode->height;
+    }
+
+
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL", FULLSCREEN ? MyMonitor : NULL, nullptr);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -75,7 +68,7 @@ int main()
     
     
     // ..:: Initialization code :: ..
-    unsigned int shaderProgram = shader_helper::load_shader(vertexShaderSource, fragmentShaderSource);
+    shader ourShader("shaders/shader.vs", "shaders/shader.fs");
 
     
     // create a Vertex Buffer Object
@@ -89,21 +82,30 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+    //float vertices[] = {
+    //     0.5f,  0.5f, 0.0f,  // top right
+    //     0.5f, -0.5f, 0.0f,  // bottom right
+    //    -0.5f, -0.5f, 0.0f,  // bottom left
+    //    -0.5f,  0.5f, 0.0f   // top left 
+    //};
+
+
     float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
+        // positions         // colors
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
     };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
+
+    //unsigned int indices[] = {  // note that we start from 0!
+    //    0, 1, 3,  // first Triangle
+    //    1, 2, 3   // second Triangle
+    //};
 
 
     glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
-	glGenBuffers(1, &EBO);  // 1 is the uniqueID of the EBO
+	//glGenBuffers(1, &EBO);  // 1 is the uniqueID of the EBO
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
 
@@ -114,19 +116,38 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// array of triangles to be able to draw more than a single triangle
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // tell OpenGL how it should interpret the vertex data
-    glVertexAttribPointer(
-        0, // layout (location = 0)
+    //glVertexAttribPointer(
+    //    0, // layout (location = 0)
+    //    3, // vec3
+    //    GL_FLOAT, // vector of floats
+    //    GL_FALSE, // normalized
+    //    3 * sizeof(float), // stride
+    //    (void*)0 // offset in buffer
+    //);
+    //glEnableVertexAttribArray(0);
+
+    // position attribute
+    glVertexAttribPointer(0, // layout (location = 0)
         3, // vec3
         GL_FLOAT, // vector of floats
         GL_FALSE, // normalized
-        3 * sizeof(float), // stride
-        (void*)0 // offset in buffer
-    );
+        6 * sizeof(float), // stride
+        (void*)0); // offset in buffer
     glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, // layout (location = 1)
+        3, // vec3
+        GL_FLOAT, // vector of floats
+        GL_FALSE, // normalized
+        6 * sizeof(float), // stride
+        (void*)(3 * sizeof(float))); // offset in buffer
+    glEnableVertexAttribArray(1);
+
+    
 
 
     // unbind vbo
@@ -135,7 +156,8 @@ int main()
     // unbing vao
     glBindVertexArray(0);
 
-
+    // uncomment this call to draw in wireframe polygons.
+   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -151,19 +173,24 @@ int main()
         // clear previous frame rendered
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE for wireframe
+        // be sure to activate the shader
+        ourShader.use();
 
-        
+        // update the uniform color
+        float timeValue = glfwGetTime();
+        float rotatingColor = sin(timeValue);
+        ourShader.set4Float("rotatingColor", rotatingColor, rotatingColor, rotatingColor, 1.0f);
+
+
+
         // draw single triagle
-        //glUseProgram(shaderProgram);
-        //glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
 
         // draw a rectangle made of two triangles
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
 
@@ -182,7 +209,7 @@ int main()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     //glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+    ourShader.clean();
 
 
     // glfw: terminate, clearing all previously allocated GLFW resources.

@@ -49,5 +49,8 @@
     <CopyFileToFolders Include="textures\container.jpg">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="textures\awesomeface.png">
+      <Filter>Fichiers de ressources</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

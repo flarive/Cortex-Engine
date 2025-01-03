@@ -5,10 +5,14 @@
 #include "stb_image.h"
 
 #include "shader.h"
+#include "file_system.h"
+#include "texture_helper.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+
+using namespace std;
 
 const int TARGET_FPS = 60;
 const int FRAME_DELAY = 1000 / TARGET_FPS; // in milliseconds
@@ -85,19 +89,18 @@ int main()
 	// create a Element Buffer Object in order to draw more than a single triangle
     unsigned int EBO = 0;
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
+    // Set up vertex data (positions, colors, texture coordinates)
+    // Rectangle centered on the screen made of 2 triangles
     float vertices[] = {
         // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.0f, 1.0f, // top left
+         0.5f,  0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f  // bottom left
     };
-
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
     };
 
 
@@ -117,30 +120,23 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // tell OpenGL how it should interpret the vertex data
-    //glVertexAttribPointer(
-    //    0, // layout (location = 0)
-    //    3, // vec3
-    //    GL_FLOAT, // vector of floats
-    //    GL_FALSE, // normalized
-    //    3 * sizeof(float), // stride
-    //    (void*)0 // offset in buffer
-    //);
-    //glEnableVertexAttribArray(0);
+
+    float stride = 8;
+
 
     // position attribute
     // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     
     // color attribute
     // layout (location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     // texture coord attribute
 	// layout (location = 2), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
     
@@ -149,30 +145,7 @@ int main()
 
     // load texture
     // -----------------------------------------------
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load and generate the texture
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-
-
+    unsigned int texture = texture_helper::load("container.jpg");
 
 
 
@@ -185,7 +158,7 @@ int main()
     glBindVertexArray(0);
 
     // uncomment this call to draw in wireframe polygons.
-   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -201,27 +174,12 @@ int main()
         // clear previous frame rendered
         glClear(GL_COLOR_BUFFER_BIT);
 
+
+        // bind Texture
+        glBindTexture(GL_TEXTURE_2D, texture);
+
         // be sure to activate the shader
         ourShader.use();
-
-        // update the uniform color
-        //float timeValue = glfwGetTime();
-        //float rotatingColor = sin(timeValue);
-        //ourShader.set4Float("rotatingColor", rotatingColor, rotatingColor, rotatingColor, 1.0f);
-
-
-
-        // draw single triagle
-        //glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
-
-
-        // draw a rectangle made of two triangles
-        //glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
-        glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

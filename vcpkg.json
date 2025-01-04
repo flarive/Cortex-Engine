@@ -1,7 +1,5 @@
 {
   "dependencies": [
-    "glfw3",
-	"stb",
-	"soil"
+    "glfw3"
   ]
 }

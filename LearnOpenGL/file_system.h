@@ -29,9 +29,6 @@ private:
 
         std::string logl_root = fullImagePath.generic_string();
 
-        //auto fullImageAbsPath = std::filesystem::absolute(fullImagePath);
-        
-        
         static char const* envRoot = getenv("LOGL_ROOT_PATH");
         static char const* givenRoot = (envRoot != nullptr ? envRoot : logl_root.c_str());
         static std::string root = (givenRoot != nullptr ? givenRoot : "");

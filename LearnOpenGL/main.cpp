@@ -1,9 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
-
 #include "shader.h"
 #include "texture_helper.h"
 
@@ -144,8 +141,8 @@ int main()
 
     // load texture
     // -----------------------------------------------
-    unsigned int texture1 = texture_helper::load("container.jpg", false, true);
-    unsigned int texture2 = texture_helper::load("awesomeface.png", true, false);
+    unsigned int texture1 = texture_helper::soil_load_texture("container.jpg", false, true);
+    unsigned int texture2 = texture_helper::soil_load_texture("awesomeface.png", true, false);
 
 
 
@@ -175,6 +172,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
 
+
         // bind Texture
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -187,6 +185,10 @@ int main()
         ourShader.use();
         glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0); // set it manually
         glUniform1i(glGetUniformLocation(ourShader.ID, "texture2"), 1); // set it manually
+
+
+
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

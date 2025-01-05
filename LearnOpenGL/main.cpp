@@ -4,6 +4,9 @@
 #include "shader.h"
 #include "texture_helper.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -157,6 +160,9 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
+
+    
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -183,8 +189,17 @@ int main()
 
         // be sure to activate the shader
         ourShader.use();
+
+
+
+        // set shader parameters
         glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0); // set it manually
         glUniform1i(glGetUniformLocation(ourShader.ID, "texture2"), 1); // set it manually
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
 
 
 

@@ -28,7 +28,7 @@ public:
 
 
         // load and generate the texture
-        int width, height, nrChannels;
+        int width, height;
         unsigned char* data = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, 0, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
         if (data)
         {

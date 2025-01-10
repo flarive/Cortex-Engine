@@ -43,10 +43,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="shaders\shader.fs">
+    <CopyFileToFolders Include="shaders\shader.frag">
       <Filter>shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="shaders\shader.vs">
+    <CopyFileToFolders Include="shaders\shader.vertex">
       <Filter>shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="textures\container.jpg">
@@ -55,5 +55,7 @@
     <CopyFileToFolders Include="textures\awesomeface.png">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="shaders\light_cube.vertex" />
+    <CopyFileToFolders Include="shaders\light_cube.frag" />
   </ItemGroup>
 </Project>

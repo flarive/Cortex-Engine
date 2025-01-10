@@ -7,6 +7,9 @@ in vec2 TexCoord; // coming from vertex shader
 uniform sampler2D texture1;
 uniform sampler2D texture2;
 
+uniform vec3 objectColor;
+uniform vec3 lightColor;
+
 void main()
 {
     //FragColor = texture(ourTexture, TexCoord);
@@ -22,5 +25,7 @@ void main()
     //FragColor = mix( vec4(rgba_texture1.r, rgba_texture1.g, rgba_texture1.b, rgba_texture1.a), vec4(rgba_texture2.r, rgba_texture2.g, rgba_texture2.b, rgba_texture2.a), mix_value);
 
     // linearly interpolate between both textures (80% container, 20% awesomeface)
-    FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+    // FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+
+    FragColor = vec4(lightColor * objectColor, 1.0);
 }

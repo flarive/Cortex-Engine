@@ -39,7 +39,8 @@ bool firstMouse = true;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
-
+// lighting
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -103,15 +104,14 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // load shaders
-    shader ourShader("shaders/shader.vs", "shaders/shader.fs");
+    shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene cube shader
+	shader lightCubeShader("light_cube.vertex", "light_cube.frag"); // light cube shader
 
     
     // create a Vertex Buffer Object
     unsigned int VBO = 0;
 
-    // create a Vertex Array Object
-    unsigned int VAO = 0;
-
+    
 
 
     // Set up vertex data for a 3d cube
@@ -174,14 +174,16 @@ int main()
     };
 
 
+    // cubes
+    // create a Vertex Array Object
+    unsigned int cubeVAO = 0;
 
-
-    glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
+    glGenVertexArrays(1, &cubeVAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
 
     
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    glBindVertexArray(cubeVAO);
 
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -190,7 +192,6 @@ int main()
 
 
     float stride = 5;
-
 
     // position attribute
     // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
@@ -205,6 +206,19 @@ int main()
     
 
 
+    // light
+    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+    unsigned int lightCubeVAO = 0;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
+    // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+
 
     // load texture
     // -----------------------------------------------
@@ -214,9 +228,9 @@ int main()
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
-    ourShader.use();
-    ourShader.setInt("texture1", 0);
-    ourShader.setInt("texture2", 1);
+    lightingShader.use();
+    lightingShader.setInt("texture1", 0);
+    lightingShader.setInt("texture2", 1);
 
 
 
@@ -234,7 +248,7 @@ int main()
      // pass projection matrix to shader (as projection matrix rarely changes there's no need to do this per frame)
     // -----------------------------------------------------------------------------------------------------------
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    ourShader.setMat4("projection", projection);
+    lightingShader.setMat4("projection", projection);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -267,20 +281,22 @@ int main()
         
 
         // activate shader
-        ourShader.use();
+        lightingShader.use();
+        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
 
 
         // pass projection matrix to shader (note that in this case it could change every frame)
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        ourShader.setMat4("projection", projection);
+        lightingShader.setMat4("projection", projection);
 
         // camera/view transformation
         glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("view", view);
+        lightingShader.setMat4("view", view);
 
-        // render boxes
-        glBindVertexArray(VAO);
+        // render the cubes
+        glBindVertexArray(cubeVAO);
         for (unsigned int i = 0; i < 10; i++)
         {
             // calculate the model matrix for each object and pass it to shader before drawing
@@ -288,10 +304,29 @@ int main()
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            ourShader.setMat4("model", model);
+            lightingShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+
+
+        // world transformation
+        glm::mat4 model = glm::mat4(1.0f);
+        lightCubeShader.setMat4("model", model);
+
+
+        // also draw the lamp object
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection", projection);
+        lightCubeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.8f)); // a smaller cube
+        lightCubeShader.setMat4("model", model);
+
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 
@@ -307,9 +342,11 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &cubeVAO);
+    glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &VBO);
-    ourShader.clean();
+    lightingShader.clean();
+	lightCubeShader.clean();
 
 
     // glfw: terminate, clearing all previously allocated GLFW resources.

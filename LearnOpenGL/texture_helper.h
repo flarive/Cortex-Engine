@@ -37,7 +37,7 @@ public:
         }
         else
         {
-            std::cout << "Failed to load image" << std::endl;
+            std::cerr << "Failed to load image" << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -73,7 +73,7 @@ public:
 
         if (texture <= 0)
         {
-            std::cout << "Failed to load texture" << std::endl;
+            std::cerr << "Failed to load texture" << std::endl;
             exit(EXIT_FAILURE);
         }
 

@@ -104,8 +104,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // load shaders
-    shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene cube shader
-	shader lightCubeShader("light_cube.vertex", "light_cube.frag"); // light cube shader
+    shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
+	shader lightCubeShader("shaders/light_cube.vertex", "shaders/light_cube.frag"); // light cube shader
 
     
     // create a Vertex Buffer Object
@@ -182,6 +182,7 @@ int main()
     glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
 
     
+
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(cubeVAO);
 
@@ -189,6 +190,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+ 
 
 
     float stride = 5;
@@ -215,7 +217,7 @@ int main()
     // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
 
@@ -300,30 +302,34 @@ int main()
         for (unsigned int i = 0; i < 10; i++)
         {
             // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-            model = glm::translate(model, cubePositions[i]);
+            glm::mat4 model2 = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+            model2 = glm::translate(model2, cubePositions[i]);
             float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            lightingShader.setMat4("model", model);
+            model2 = glm::rotate(model2, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            lightingShader.setMat4("model", model2);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-
+        
 
         // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
-        lightCubeShader.setMat4("model", model);
+        glm::mat4 model3 = glm::mat4(1.0f);
+        //lightCubeShader.setMat4("model", model3);
+
+        // render the cube
+        //glBindVertexArray(cubeVAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
         // also draw the lamp object
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.8f)); // a smaller cube
-        lightCubeShader.setMat4("model", model);
+        model3 = glm::mat4(1.0f);
+        model3 = glm::translate(model3, lightPos);
+        model3 = glm::scale(model3, glm::vec3(0.2f)); // a smaller cube
+        lightCubeShader.setMat4("model", model3);
 
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -342,7 +348,7 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &cubeVAO);
+    //glDeleteVertexArrays(1, &cubeVAO);
     glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &VBO);
     lightingShader.clean();

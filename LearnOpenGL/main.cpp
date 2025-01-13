@@ -114,7 +114,7 @@ int main()
     
 
 
-    // Set up vertex data for a 3d cube
+    // Set up vertex data for a 3d cube (position and uvs)
     float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -195,15 +195,19 @@ int main()
 
     float stride = 5;
 
-    // position attribute
+    // position attribute (XYZ)
     // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(0); // stride 0 to 2
 
-    // texture coord attribute
+    // texture coord attribute (RGB)
     // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1); // stride 3 to 4
+
+    // normal attribute (XYZ) (using vertex position)
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2); // stride 0 to 2
 
     
 
@@ -286,7 +290,7 @@ int main()
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-
+        lightingShader.setVec3("lightPos", lightPos);
 
 
         // pass projection matrix to shader (note that in this case it could change every frame)
@@ -297,16 +301,18 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         lightingShader.setMat4("view", view);
 
+
+
         // render the cubes
         glBindVertexArray(cubeVAO);
         for (unsigned int i = 0; i < 10; i++)
         {
             // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model2 = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-            model2 = glm::translate(model2, cubePositions[i]);
+            glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+            model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
-            model2 = glm::rotate(model2, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            lightingShader.setMat4("model", model2);
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            lightingShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -314,22 +320,19 @@ int main()
         
 
         // world transformation
-        glm::mat4 model3 = glm::mat4(1.0f);
-        //lightCubeShader.setMat4("model", model3);
-
-        // render the cube
-        //glBindVertexArray(cubeVAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        glm::mat4 model = glm::mat4(1.0f);
 
 
         // also draw the lamp object
         lightCubeShader.use();
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
-        model3 = glm::mat4(1.0f);
-        model3 = glm::translate(model3, lightPos);
-        model3 = glm::scale(model3, glm::vec3(0.2f)); // a smaller cube
-        lightCubeShader.setMat4("model", model3);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lightCubeShader.setMat4("model", model);
+
+
 
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);

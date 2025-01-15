@@ -292,10 +292,33 @@ int main()
 
         // activate shader
         lightingShader.use();
-        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        lightingShader.setVec3("lightPos", lightPos);
+        
         lightingShader.setVec3("viewPos", camera.Position);
+        
+        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        //lightingShader.setFloat("material.shininess", 32.0f);
+
+        lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+        lightingShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken diffuse light a bit
+
+        glm::vec3 lightColor;
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+		
+        
+        float shininess = sin(glfwGetTime() * 2.0f);
+
+        /*lightingShader.setVec3("light.ambient", ambientColor);
+        lightingShader.setVec3("light.diffuse", diffuseColor);*/
+        lightingShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("material.shininess", shininess);
 
 
         // pass projection matrix to shader (note that in this case it could change every frame)
@@ -305,6 +328,12 @@ int main()
         // camera/view transformation
         glm::mat4 view = camera.GetViewMatrix();
         lightingShader.setMat4("view", view);
+
+
+
+
+
+
 
 
 
@@ -337,6 +366,10 @@ int main()
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
         lightCubeShader.setMat4("model", model);
 
+
+
+
+  
 
 
         glBindVertexArray(lightCubeVAO);

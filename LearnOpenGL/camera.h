@@ -123,10 +123,10 @@ public:
     void ProcessMouseScroll(float yoffset)
     {
         Zoom -= (float)yoffset;
-        if (Zoom < 1.0f)
-            Zoom = 1.0f;
-        if (Zoom > 45.0f)
-            Zoom = 45.0f;
+        //if (Zoom < 1.0f)
+        //    Zoom = 1.0f;
+        //if (Zoom > 45.0f)
+        //    Zoom = 45.0f;
     }
 
 private:

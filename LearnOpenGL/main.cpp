@@ -41,7 +41,7 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(0.0f, -2.0f, 2.0f);
+glm::vec3 lightPos(0.0f, 1.0f, 2.0f);
 
 int main()
 {
@@ -235,8 +235,8 @@ int main()
 
     // load texture
     // -----------------------------------------------
-    unsigned int texture1 = texture_helper::soil_load_texture("container.jpg", false, true);
-    unsigned int texture2 = texture_helper::soil_load_texture("awesomeface.png", true, false);
+    unsigned int texture1 = texture_helper::soil_load_texture("container2.png", false, true);
+    unsigned int texture2 = texture_helper::soil_load_texture("container2_specular.png", true, false);
 
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
@@ -301,8 +301,9 @@ int main()
         lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
         //lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
         lightingShader.setInt("material.diffuse", 0); // texture 0
-        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        lightingShader.setFloat("material.shininess", 256.0f);
+        lightingShader.setInt("material.specular", 1); // texture 1
+        //lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
         glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);

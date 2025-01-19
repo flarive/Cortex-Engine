@@ -9,6 +9,8 @@ struct Material {
 }; 
 
 struct DirLight {
+    bool use;
+    
     vec3 direction;
 	
     vec3 ambient;
@@ -29,6 +31,9 @@ struct PointLight {
 };
 
 struct SpotLight {
+    
+    bool use;
+    
     vec3 position;
     vec3 direction;
     float cutOff;
@@ -49,8 +54,6 @@ in vec3 Normal; // coming from vertex shader
 in vec2 TexCoords; // coming from vertex shader
 
 uniform vec3 viewPos;
-
-
 
 
 uniform Material material;
@@ -80,13 +83,18 @@ void main()
     // per lamp. In the main() function we take all the calculated colors and sum them up for
     // this fragment's final color.
     // == =====================================================
+
+    vec3 result = vec3(0.0);
+
     // phase 1: directional lighting
-    vec3 result = CalcDirLight(dirLight, norm, viewDir);
+    if (dirLight.use)
+        result += CalcDirLight(dirLight, norm, viewDir);
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // phase 3: spot light
-    result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
+    if (spotLight.use)
+        result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
     FragColor = vec4(result, 1.0);
 }

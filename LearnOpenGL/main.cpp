@@ -3,6 +3,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "model.h"
 #include "texture_helper.h"
 #include "primitive.h"
 
@@ -39,6 +40,8 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
+
 
 
 int main()
@@ -103,8 +106,12 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // load shaders
-    shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
-	shader lightCubeShader("shaders/light_cube.vertex", "shaders/light_cube.frag"); // light cube shader
+    Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
+    Shader lightCubeShader("shaders/light_cube.vertex", "shaders/light_cube.frag"); // light cube shader
+
+    // load models
+// -----------
+    Model ourModel("models/backpack/backpack.obj");
 
     
     // create a Vertex Buffer Object

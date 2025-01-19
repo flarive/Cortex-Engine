@@ -19,6 +19,12 @@
     <Filter Include="textures">
       <UniqueIdentifier>{67ed4e24-e0e8-45d4-8a08-68e1c644e1cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{185ea1cd-a327-4a2e-a596-e2a34e69bd18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="models\backpack">
+      <UniqueIdentifier>{8dda2f67-36ea-469d-8af1-5dd93d0e6867}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -82,7 +88,7 @@
     <CopyFileToFolders Include="models\backpack\diffuse.jpg">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\normal.png">
+    <CopyFileToFolders Include="models\backpack\normal.jpg">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="models\backpack\roughness.jpg">
@@ -91,16 +97,23 @@
     <CopyFileToFolders Include="models\backpack\specular.jpg">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\backpack.mtl" />
-    <CopyFileToFolders Include="models\backpack\backpack.obj" />
-    <CopyFileToFolders Include="models\backpack\source_attribution.txt" />
     <CopyFileToFolders Include="textures\container2.png">
       <Filter>Fichiers de ressources</Filter>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="textures\container2_specular.png">
+    <CopyFileToFolders Include="textures\container2_specular.png">
       <Filter>Fichiers de ressources</Filter>
-    </Image>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="models\backpack\source_attribution.txt">
+      <Filter>models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="models\backpack\backpack.obj">
+      <Filter>models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="models\backpack\backpack.mtl">
+      <Filter>models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="models\backpack\normal.jpg">
+      <Filter>Fichiers de ressources</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

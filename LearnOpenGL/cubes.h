@@ -123,7 +123,6 @@ private:
         
 
         // load texture
-        // -----------------------------------------------
         diffuseMap = texture_helper::soil_load_texture("container2.png", false, true);
         specularMap = texture_helper::soil_load_texture("container2_specular.png", true, false);
 

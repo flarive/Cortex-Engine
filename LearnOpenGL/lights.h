@@ -2,6 +2,7 @@
 
 #include "shader.h"
 #include "primitive.h"
+#include "camera.h"
 
 class Lights
 {
@@ -11,8 +12,10 @@ public:
         setupLights();
     }
 
+    
+
     // draws the model, and thus all its meshes
-    void Draw(Shader& cubeShader, Shader& shader)
+    void Draw(Shader& cubeShader, Shader& shader, glm::mat4& _projection, glm::mat4& _view)
     {
         glm::vec3 pointLightPositions[] =
         {
@@ -30,7 +33,6 @@ public:
             by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
         */
 
-        //shader.use();
 
         // directional light
         //shader.setBool("dirLight.use", false);
@@ -85,17 +87,14 @@ public:
 
 
         // also draw the lamp object(s)
-        //cubeShader.use();
-        //shader.setMat4("projection", projection);
-        //shader.setMat4("view", view);
-
-        
-
+        cubeShader.use();
 
         // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 4; i++)
         {
+            cubeShader.setMat4("projection", _projection);
+            cubeShader.setMat4("view", _view);
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, pointLightPositions[i]);
             model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
@@ -106,6 +105,11 @@ public:
         glBindVertexArray(0);
     }
 
+    void clean()
+    {
+        glDeleteVertexArrays(1, &VAO);
+    }
+
 private:
 
     // render data 
@@ -113,23 +117,14 @@ private:
 
     const float* vertices = primitive::getCubeVertices();
 
+
     void setupLights()
     {
-
-        // light
-        // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-
         glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
         glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
 
-
-
         // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
         glBindVertexArray(VAO);
-
-
-
-
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
@@ -143,4 +138,3 @@ private:
         glEnableVertexAttribArray(0);
     }
 };
-

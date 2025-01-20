@@ -24,7 +24,7 @@ const float ZOOM        =  45.0f;
 
 
 // A fly/fps camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-class camera
+class Camera
 {
 public:
     // camera Attributes
@@ -44,7 +44,7 @@ public:
     bool Fps = false;
 
     // constructor with vectors
-    camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), bool fps = false, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
+    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), bool fps = false, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
         : Fps(fps), Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         Position = position;
@@ -54,7 +54,7 @@ public:
         updateCameraVectors();
     }
     // constructor with scalar values
-    camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, bool fps)
+    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, bool fps)
         : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM), Fps(fps)
     {
         Position = glm::vec3(posX, posY, posZ);

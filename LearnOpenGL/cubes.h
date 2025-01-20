@@ -14,24 +14,22 @@ public:
     // draws the model, and thus all its meshes
     void Draw(Shader& shader)
     {
-        shader.use();
-        //shader.setInt("texture1", 0);
-        //shader.setInt("texture2", 1);
-
-        //shader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-        ////shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        //shader.setInt("material.diffuse", 0); // texture 0
-        //shader.setInt("material.specular", 1); // texture 1
-        ////shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        //shader.setFloat("material.shininess", 32.0f);
-
-
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
         // bind specular map
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
+
+        shader.use();
+        shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
+        //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        shader.setInt("material.texture_diffuse1", 0); // texture 0
+        shader.setInt("material.texture_specular1", 1); // texture 1
+        //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setFloat("material.shininess", 32.0f);
+
+
 
         // move outside !!!!!!!!!!!!!!!!!!!!!
         glm::vec3 cubePositions[] =
@@ -48,7 +46,7 @@ public:
             glm::vec3(-1.3f,  1.0f, -1.5f)
         };
 
-
+        shader.use();
 
         // render the cubes
         glBindVertexArray(VAO);
@@ -88,19 +86,11 @@ private:
         glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
         glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
 
-        
-
         // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
         glBindVertexArray(VAO);
 
-
-        
-
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
-
-
-
 
         GLsizei stride = 8;
 
@@ -113,18 +103,17 @@ private:
         // normal attribute (XYZ)
         // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1); // stride 5 to 5
+        glEnableVertexAttribArray(1); // stride 3 to 5
 
         // texture coord attribute (RGB)
         // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2); // stride 3 to 4
+        glEnableVertexAttribArray(2); // stride 6 to 7
 
         
 
         // load texture
         diffuseMap = texture_helper::soil_load_texture("container2.png", false, true);
         specularMap = texture_helper::soil_load_texture("container2_specular.png", true, false);
-
     }
 };

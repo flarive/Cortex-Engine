@@ -110,7 +110,6 @@ int main()
 
     // load shaders
     Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
-    Shader lightCubeShader("shaders/light_cube.vertex", "shaders/light_cube.frag"); // light cube shader
 
     // load models
     Model ourModel1("models/backpack/backpack.obj");
@@ -126,31 +125,24 @@ int main()
 
     
     // create a Vertex Buffer Object
-    unsigned int VBO = 0;
+    //unsigned int VBO = 0;
 
     
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     lightingShader.use();
-    //lightingShader.setInt("texture1", 0);
-    //lightingShader.setInt("texture2", 1);
-
     lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-    //lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-    //lightingShader.setInt("material.diffuse", 0); // texture 0
-    //lightingShader.setInt("material.specular", 1); // texture 1
-    //lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     lightingShader.setFloat("material.shininess", 32.0f);
 
 
 
 
     // unbind vbo
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    //// unbing vao
-    glBindVertexArray(0);
+    ////// unbing vao
+    //glBindVertexArray(0);
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
@@ -160,6 +152,9 @@ int main()
     // -----------------------------------------------------------------------------------------------------------
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     lightingShader.setMat4("projection", projection);
+
+
+    float rotationAngle = 0.0f;
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -191,10 +186,10 @@ int main()
 
         
         // lights
-        ourLights.Draw(lightCubeShader, lightingShader, projection, view);
+        ourLights.Draw(lightingShader, projection, view);
 
 
-        // activate shader
+        // activate shader rendering shader
         lightingShader.use();
         lightingShader.setVec3("viewPos", cam.Position);
         lightingShader.setMat4("projection", projection);
@@ -216,9 +211,12 @@ int main()
         // render the loaded model
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0));	// it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, glm::radians(rotationAngle), glm::vec3(1.0f, 0.0f, 0.0f));
         lightingShader.setMat4("model", model);
         ourModel2.Draw(lightingShader);
 
+
+        rotationAngle += glfwGetTime() * 0.1f;
 
         // render test cubes
         //ourCubes.Draw(lightingShader);
@@ -244,7 +242,7 @@ int main()
     ourLights.clean();
 
     lightingShader.clean();
-	lightCubeShader.clean();
+
 
 
     // glfw: terminate, clearing all previously allocated GLFW resources.

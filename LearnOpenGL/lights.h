@@ -2,7 +2,6 @@
 
 #include "shader.h"
 #include "primitive.h"
-#include "camera.h"
 
 class Lights
 {
@@ -15,7 +14,7 @@ public:
     
 
     // draws the model, and thus all its meshes
-    void Draw(Shader& cubeShader, Shader& shader, glm::mat4& _projection, glm::mat4& _view)
+    void Draw(Shader& shader, glm::mat4& _projection, glm::mat4& _view)
     {
         glm::vec3 pointLightPositions[] =
         {
@@ -87,18 +86,18 @@ public:
 
 
         // also draw the lamp object(s)
-        cubeShader.use();
+        lightCubeShader.use();
 
         // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 4; i++)
         {
-            cubeShader.setMat4("projection", _projection);
-            cubeShader.setMat4("view", _view);
+            lightCubeShader.setMat4("projection", _projection);
+            lightCubeShader.setMat4("view", _view);
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, pointLightPositions[i]);
             model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-            cubeShader.setMat4("model", model);
+            lightCubeShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
@@ -117,6 +116,8 @@ private:
 
     const float* vertices = primitive::getCubeVertices();
 
+    Shader lightCubeShader;
+
 
     void setupLights()
     {
@@ -129,12 +130,11 @@ private:
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
 
-
-        // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
-        //glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
         GLsizei stride = 8;
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
+
+        // load light cube debug shader
+        lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
     }
 };

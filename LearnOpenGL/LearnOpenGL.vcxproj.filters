@@ -1,125 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{20b90ce4-7fcb-4731-b9a0-075f875de82d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="sources">
+      <UniqueIdentifier>{f18ab499-84e1-499f-8eff-9754361e0e52}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{5c479abb-4f50-412f-a750-442144f5a045}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="textures">
-      <UniqueIdentifier>{67ed4e24-e0e8-45d4-8a08-68e1c644e1cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="models">
-      <UniqueIdentifier>{185ea1cd-a327-4a2e-a596-e2a34e69bd18}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="models\backpack">
-      <UniqueIdentifier>{8dda2f67-36ea-469d-8af1-5dd93d0e6867}</UniqueIdentifier>
+    <Filter Include="app">
+      <UniqueIdentifier>{ecba4d98-6140-47d5-9357-072e6fca9424}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\glad\src\glad.c">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClCompile Include="imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_glfw.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_opengl3.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="app\main_old.cpp">
+      <Filter>app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="imconfig.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="file_system.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="imgui.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="texture_helper.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="backends\imgui_impl_glfw.h">
+      <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="primitive.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="backends\imgui_impl_opengl3.h">
+      <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="backends\imgui_impl_opengl3_loader.h">
+      <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="vertex.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="app\camera.h">
+      <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="app\cubes.h">
+      <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="app\file_system.h">
+      <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="cubes.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="app\lights.h">
+      <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="lights.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="app\mesh.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\model.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\primitive.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\shader.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\texture.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\texture_helper.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\vertex.h">
+      <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="shaders\shader.frag">
-      <Filter>shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="shaders\shader.vertex">
-      <Filter>shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="textures\container.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="textures\awesomeface.png">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="shaders\light_cube.vertex">
-      <Filter>shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="shaders\light_cube.frag">
-      <Filter>shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\ao.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\diffuse.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\normal.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\roughness.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\specular.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="textures\container2.png">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="textures\container2_specular.png">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\source_attribution.txt">
-      <Filter>models\backpack</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\backpack.obj">
-      <Filter>models\backpack</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\backpack.mtl">
-      <Filter>models\backpack</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="models\backpack\normal.jpg">
-      <Filter>Fichiers de ressources</Filter>
-    </CopyFileToFolders>
+    <None Include="misc\debuggers\imgui.natvis">
+      <Filter>imgui</Filter>
+    </None>
+    <None Include="misc\debuggers\imgui.natstepfilter">
+      <Filter>imgui</Filter>
+    </None>
   </ItemGroup>
 </Project>

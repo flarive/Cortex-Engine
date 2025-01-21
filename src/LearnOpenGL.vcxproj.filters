@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{20b90ce4-7fcb-4731-b9a0-075f875de82d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{f18ab499-84e1-499f-8eff-9754361e0e52}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="app">
+      <UniqueIdentifier>{ecba4d98-6140-47d5-9357-072e6fca9424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{3d58d9a1-323d-4b8f-8aa3-8186fca19015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures">
+      <UniqueIdentifier>{644a638f-930f-445c-a44b-62b351c3c5cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models">
+      <UniqueIdentifier>{82addb28-4746-4f34-a74e-cf40e0154ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{e61298e3-25fa-40e5-a660-acb1f29ba353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models\backpack">
+      <UniqueIdentifier>{693acc77-6906-443a-80fc-b8997b90c83a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models\cushion">
+      <UniqueIdentifier>{e373a3cd-4d59-4fc9-81a4-e54db351eae1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_glfw.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="backends\imgui_impl_opengl3.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="app\main_old.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\glad\src\glad.c">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_glfw.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_opengl3.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="backends\imgui_impl_opengl3_loader.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="app\camera.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\cubes.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\file_system.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\lights.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\mesh.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\model.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\primitive.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\shader.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\texture.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\texture_helper.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\vertex.h">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="misc\debuggers\imgui.natvis">
+      <Filter>imgui</Filter>
+    </None>
+    <None Include="misc\debuggers\imgui.natstepfilter">
+      <Filter>imgui</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\light_cube.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion.mtl">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\ao.jpg">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\backpack.obj">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\container.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\container2.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\container2_specular.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion.obj">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_albedo.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_normal.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_specular.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\diffuse.jpg">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\light_cube.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shader.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shader.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\normal.jpg">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\roughness.jpg">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\source_attribution.txt">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\backpack\specular.jpg">
+      <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+</Project>

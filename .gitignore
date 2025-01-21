@@ -33,6 +33,7 @@
 .vs
 x64
 
+tmp
 vcpkg
 vcpkg_installed
 

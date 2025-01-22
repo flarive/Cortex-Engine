@@ -182,7 +182,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="app\main_old.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
@@ -192,9 +191,11 @@
     <ClCompile Include="backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\libs\glad\src\glad.c" />
+    <ClCompile Include="themes\imgui_spectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\camera.h" />
+    <ClInclude Include="app\character.h" />
     <ClInclude Include="app\cubes.h" />
     <ClInclude Include="app\file_system.h" />
     <ClInclude Include="app\lights.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="backends\imgui_impl_glfw.h" />
     <ClInclude Include="backends\imgui_impl_opengl3.h" />
     <ClInclude Include="backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="themes\imgui_spectrum.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">
@@ -254,6 +256,16 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)shaders</DestinationFolders>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)shaders</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\text.frag">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)shaders</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\text.vertex">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)shaders</DestinationFolders>
     </CopyFileToFolders>
     <None Include="misc\debuggers\imgui.natstepfilter" />
     <None Include="misc\debuggers\imgui.natvis" />
@@ -354,6 +366,13 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models\backpack</DestinationFolders>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models\backpack</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\fonts\Antonio-Regular.ttf">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)fonts</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -24,10 +24,10 @@ private:
     static std::string const& getRoot()
     {
         std::filesystem::path dir(std::filesystem::current_path());
-        std::filesystem::path file("textures");
-        std::filesystem::path fullImagePath = dir / file;
+        //std::filesystem::path file("textures");
+        //std::filesystem::path fullImagePath = dir;
 
-        std::string logl_root = fullImagePath.generic_string();
+        std::string logl_root = dir.generic_string();
 
         static char const* envRoot = getenv("LOGL_ROOT_PATH");
         static char const* givenRoot = (envRoot != nullptr ? envRoot : logl_root.c_str());

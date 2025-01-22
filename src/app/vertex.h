@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <glm/glm.hpp>
-
 #define MAX_BONE_INFLUENCE 4
 
 struct Vertex {

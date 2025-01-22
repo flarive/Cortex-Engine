@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "themes/imgui_spectrum.h"
 #include <stdio.h>
 
 #include <glad/glad.h>
@@ -10,6 +11,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 #include "app/shader.h"
 #include "app/camera.h"
 #include "app/model.h"
@@ -17,13 +21,16 @@
 #include "app/primitive.h"
 #include "app/cubes.h"
 #include "app/lights.h"
+#include "app/character.h"
 
 
-
-
+#include <map>
 #include <iostream>
 #include <chrono>
 #include <thread>
+
+std::map<GLchar, Character> Characters;
+unsigned int VAO, VBO;
 
 
 const int TARGET_FPS = 60;
@@ -34,11 +41,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
+void renderUIWindow(bool show_window, float framerate);
+void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color);
+
 
 // settings
 unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
-const bool FULLSCREEN = true;
+const bool FULLSCREEN = false;
 
 // camera
 Camera cam(glm::vec3(0.0f, 0.0f, 3.0f), true);
@@ -116,15 +126,43 @@ int main(int, char**)
     }
 
 
+
+
+
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags)
+    {
+        style.WindowRounding = 0.0f;
+        style.ChildRounding = 5.0f;
+        style.TabRounding = 5.f;
+        style.FrameRounding = 5.f;
+        style.GrabRounding = 5.f;
+        style.PopupRounding = 5.f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+
+        style.ItemSpacing.y = 8.0; // vertical padding between widgets
+        style.FramePadding.x = 8.0; // better widget horizontal padding
+        style.FramePadding.y = 4.0; // better widget vertical padding
+    }
+
+
+
+    // Apply Adobe Spectrum theme
+    //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
+    ImGui::Spectrum::StyleColorsSpectrum();
+    ImGui::Spectrum::LoadFont(17.0);
+
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
+    ///ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
@@ -149,10 +187,7 @@ int main(int, char**)
     //IM_ASSERT(font != nullptr);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
+    bool show_window = true;
 
 
 
@@ -160,15 +195,21 @@ int main(int, char**)
 
 
     
-    // enable z buffer (depth test)
+    // enable z buffer (depth test) to have correct objects depth ordering
     glEnable(GL_DEPTH_TEST);
+
+    //glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // load shaders
     Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
+    Shader textShader("shaders/text.vertex", "shaders/text.frag");
+
 
     // load models
-    Model ourModel1("models/backpack/backpack.obj");
-    Model ourModel2("models/cushion/cushion.obj");
+    Model backpackModel("models/backpack/backpack.obj");
+    Model cushionModel("models/cushion/cushion.obj");
 
     // temp test
     Cubes ourCubes(9);
@@ -197,10 +238,99 @@ int main(int, char**)
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     lightingShader.setMat4("projection", projection);
 
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
+    textShader.use();
+    textShader.setMat4("projection", projection2);
 
-    float rotationAngle = 0.0f;
 
 
+    // FreeType
+    // --------
+    FT_Library ft;
+    // All functions return a value different than 0 whenever an error occurred
+    if (FT_Init_FreeType(&ft))
+    {
+        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+        return -1;
+    }
+
+    // find path to font
+    std::string font_name = file_system::getPath("fonts/Antonio-Regular.ttf");
+    if (font_name.empty())
+    {
+        std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;
+        return -1;
+    }
+
+    // load font as face
+    FT_Face face;
+    if (FT_New_Face(ft, font_name.c_str(), 0, &face)) {
+        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+        return -1;
+    }
+    else {
+        // set size to load glyphs as
+        FT_Set_Pixel_Sizes(face, 0, 48);
+
+        // disable byte-alignment restriction
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        // load first 128 characters of ASCII set
+        for (unsigned char c = 0; c < 128; c++)
+        {
+            // Load character glyph 
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+            {
+                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+                continue;
+            }
+            // generate texture
+            unsigned int texture;
+            glGenTextures(1, &texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RED,
+                face->glyph->bitmap.width,
+                face->glyph->bitmap.rows,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                face->glyph->bitmap.buffer
+            );
+            // set texture options
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            // now store character for later use
+            Character character = {
+                texture,
+                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                static_cast<unsigned int>(face->glyph->advance.x)
+            };
+            Characters.insert(std::pair<char, Character>(c, character));
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    // destroy FreeType once we're finished
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
+
+
+    // configure VAO/VBO for texture quads
+    // -----------------------------------
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
 
     // Main loop
@@ -223,9 +353,8 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+
+        renderUIWindow(show_window, io.Framerate);
 
 
 
@@ -247,7 +376,10 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+        RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
+        lightingShader.use();
         
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -265,33 +397,35 @@ int main(int, char**)
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
-
-
 
 
         // render the loaded model
-        //model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        //model = glm::scale(model, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
+        glm::mat4 model1 = glm::mat4(1.0f);
+        model1 = glm::translate(model1, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        //lightingShader.setMat4("model", model);
-        //ourModel1.Draw(lightingShader);
+        lightingShader.setMat4("model", model1);
+        cushionModel.Draw(lightingShader);
+
 
         // render the loaded model
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0));	// it's a bit too big for our scene, so scale it down
-        model = glm::rotate(model, glm::radians(rotationAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-        lightingShader.setMat4("model", model);
-        ourModel2.Draw(lightingShader);
+        glm::mat4 model2 = glm::mat4(1.0f);
+        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
+        //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        lightingShader.setMat4("model", model2);
+        backpackModel.Draw(lightingShader);
 
 
-        rotationAngle += glfwGetTime() * 0.1f;
+
+
+        //rotationAngle += glfwGetTime() * 0.1f;
 
         // render test cubes
         //ourCubes.Draw(lightingShader);
 
         
+
 
 
 
@@ -402,4 +536,60 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void renderUIWindow(bool show_window, float framerate)
+{
+    ImGui::SetNextWindowSize(ImVec2(480, 60), ImGuiCond_Always);
+
+    ImGui::Begin("Hello, world!", &show_window);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
+    ImGui::End();
+}
+
+// render line of text
+// -------------------
+void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color)
+{
+    // activate corresponding render state	
+    shader.use();
+    glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO);
+
+    // iterate through all characters
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Character ch = Characters[*c];
+
+        float xpos = x + ch.Bearing.x * scale;
+        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+        float w = ch.Size.x * scale;
+        float h = ch.Size.y * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+        // render glyph texture over quad
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        // update content of VBO memory
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }

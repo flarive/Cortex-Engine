@@ -29,6 +29,12 @@
     <Filter Include="resources\models\cushion">
       <UniqueIdentifier>{e373a3cd-4d59-4fc9-81a4-e54db351eae1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="themes">
+      <UniqueIdentifier>{4e942a50-e1ab-4d1f-a299-0d0a4b94fcc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\fonts">
+      <UniqueIdentifier>{f74f87d3-9a7a-4b37-a792-1ecd6f87a6d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,10 +61,10 @@
     <ClCompile Include="backends\imgui_impl_opengl3.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="app\main_old.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\glad\src\glad.c">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="themes\imgui_spectrum.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -114,6 +120,12 @@
     <ClInclude Include="app\vertex.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="themes\imgui_spectrum.h">
+      <Filter>themes</Filter>
+    </ClInclude>
+    <ClInclude Include="app\character.h">
+      <Filter>app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="misc\debuggers\imgui.natvis">
@@ -121,6 +133,9 @@
     </None>
     <None Include="misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
+    </None>
+    <None Include="..\resources\shaders\text.vertex">
+      <Filter>resources\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +201,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\backpack\specular.jpg">
       <Filter>resources\models\backpack</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\text.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\fonts\Antonio-Regular.ttf">
+      <Filter>resources\fonts</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

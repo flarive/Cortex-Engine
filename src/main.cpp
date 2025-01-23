@@ -175,8 +175,8 @@ int main(int, char**)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // load shaders
-    //Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
-    Shader lightingShader("shaders/depthbuffer.vertex", "depthbuffer/shader.frag"); // scene textured cube shader
+    Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
+    //Shader lightingShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // scene textured cube shader
 
     
 
@@ -279,7 +279,7 @@ int main(int, char**)
 
         // render the loaded model
         glm::mat4 model1 = glm::mat4(1.0f);
-        model1 = glm::translate(model1, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model1 = glm::translate(model1, glm::vec3(0.0f, 0.0f, 5.0f)); // translate it down so it's at the center of the scene
         model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         lightingShader.setMat4("model", model1);
@@ -288,7 +288,7 @@ int main(int, char**)
 
         // render the loaded model
         glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model2 = glm::translate(model2, glm::vec3(1.0f, 0.0f, -5.0f)); // translate it down so it's at the center of the scene
         model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
         //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         lightingShader.setMat4("model", model2);

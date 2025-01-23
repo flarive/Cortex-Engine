@@ -46,6 +46,17 @@ const float cubeVertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
+const float planeVertices[] = {
+    // positions          // normals         // texture coords
+    -0.5f,  0.0f,  -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.0f,  -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.0f,   0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f,  0.0f,   0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f,  0.0f,   0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.0f,  -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f
+};
+
+
 class primitive
 {
 public:
@@ -53,5 +64,10 @@ public:
     static const float* getCubeVertices()
     {
         return cubeVertices;
+    }
+
+    static const float* getPlaneVertices()
+    {
+        return planeVertices;
     }
 };

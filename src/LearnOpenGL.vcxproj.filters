@@ -38,6 +38,9 @@
     <Filter Include="app\ui">
       <UniqueIdentifier>{33f78ae4-7d59-4b53-be66-21f4e3c09528}</UniqueIdentifier>
     </Filter>
+    <Filter Include="app\primitives">
+      <UniqueIdentifier>{fcb262fc-d96a-4988-8d7c-6778cf09aee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -131,6 +134,12 @@
     </ClInclude>
     <ClInclude Include="app\ui\text.h">
       <Filter>app\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="app\primitives\cube.h">
+      <Filter>app\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="app\primitives\plane.h">
+      <Filter>app\primitives</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

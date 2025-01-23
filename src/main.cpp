@@ -18,14 +18,15 @@
 #include "app/lights.h"
 #include "app/ui/text.h"
 
-
+#include "app/primitives/cube.h"
+#include "app/primitives/plane.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
 
 
-#pragma warning(disable: 4100) // warning C4189: 'yoffset' : variable locale initialisée mais non référencée
+#pragma warning(disable: 4100) // warning C4189: 'yoffset': variable locale initialisÃ©e mais non rÃ©fÃ©rencÃ©e2
 
 const int TARGET_FPS = 60;
 const int FRAME_DELAY = 1000 / TARGET_FPS; // in milliseconds
@@ -35,8 +36,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-void renderUIWindow(bool show_window, float framerate);
+void renderUIWindow(bool show, float framerate);
 
+
+bool show_window = false;
+bool key_w_pressed = false;
 
 // settings
 unsigned int SCR_WIDTH = 800;
@@ -159,7 +163,7 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Our state
-    bool show_window = true;
+   
 
 
 
@@ -171,6 +175,8 @@ int main(int, char**)
     glEnable(GL_DEPTH_TEST);
 
     //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -186,10 +192,14 @@ int main(int, char**)
     Model cushionModel("models/cushion/cushion.obj");
 
     // temp test
-    Cubes ourCubes(9);
+    //Cubes ourCubes();
 
     // lights
     Lights ourLights;
+
+    Cubes ourCubes;
+    Cube ourCube;
+    Plane ourPlane;
 
 
     Text ourText;
@@ -206,11 +216,6 @@ int main(int, char**)
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
-
-     // pass projection matrix to shader (as projection matrix rarely changes there's no need to do this per frame)
-    // -----------------------------------------------------------------------------------------------------------
-    //glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    //lightingShader.setMat4("projection", projection);
 
 
     // Main loop
@@ -233,8 +238,8 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-
-        renderUIWindow(show_window, io.Framerate);
+        if (show_window)
+            renderUIWindow(show_window, io.Framerate);
 
 
 
@@ -278,29 +283,31 @@ int main(int, char**)
 
 
         // render the loaded model
-        glm::mat4 model1 = glm::mat4(1.0f);
-        model1 = glm::translate(model1, glm::vec3(0.0f, 0.0f, 5.0f)); // translate it down so it's at the center of the scene
-        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        lightingShader.setMat4("model", model1);
-        cushionModel.Draw(lightingShader);
+        //glm::mat4 model1 = glm::mat4(1.0f);
+        //model1 = glm::translate(model1, glm::vec3(3.9f, 0.0f, -8.0f)); // translate it down so it's at the center of the scene
+        //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
+        ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //lightingShader.setMat4("model", model1);
+        //cushionModel.Draw(lightingShader);
 
 
-        // render the loaded model
-        glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(1.0f, 0.0f, -5.0f)); // translate it down so it's at the center of the scene
-        model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-        //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        lightingShader.setMat4("model", model2);
-        backpackModel.Draw(lightingShader);
+        //// render the loaded model
+        //glm::mat4 model2 = glm::mat4(1.0f);
+        //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        //model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
+        ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        //lightingShader.setMat4("model", model2);
+        //backpackModel.Draw(lightingShader);
 
 
         // render test cubes
-        //ourCubes.Draw(lightingShader);
+        ourCube.Draw(lightingShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
         
 
+        ourPlane.Draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 10.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
+        //ourCubes.Draw(lightingShader);
 
 
 
@@ -366,6 +373,19 @@ void processInput(GLFWwindow* window)
         cam.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         cam.ProcessKeyboard(DOWN, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        if (!key_w_pressed) // Only toggle when the key is first pressed
+        {
+            show_window = !show_window;
+            key_w_pressed = true; // Mark the key as pressed
+        }
+    }
+    else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+    {
+        key_w_pressed = false; // Reset the state when the key is released
+    }
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -408,11 +428,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void renderUIWindow(bool show_window, float framerate)
+void renderUIWindow(bool show, float framerate)
 {
     ImGui::SetNextWindowSize(ImVec2(480, 60), ImGuiCond_Always);
 
-    ImGui::Begin("Hello, world!", &show_window);
+    ImGui::Begin("Hello, world!", &show);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
     ImGui::End();
 }

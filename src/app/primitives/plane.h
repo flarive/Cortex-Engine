@@ -1,19 +1,19 @@
 #pragma once
 
-#include "shader.h"
-#include "primitive.h"
-#include "texture_helper.h"
+#include "../shader.h"
+#include "../primitive.h"
+#include "../texture_helper.h"
 
-class Cubes
+class Plane
 {
 public:
-    Cubes()
+    Plane()
     {
-        setupCubes();
+        setupPlane();
     }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader& shader)
+    void Draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f))
     {
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
@@ -31,43 +31,25 @@ public:
         shader.setFloat("material.shininess", 32.0f);
 
 
-
-        // move outside !!!!!!!!!!!!!!!!!!!!!
-        glm::vec3 cubePositions[] =
-        {
-            glm::vec3(0.0f,  0.0f,  0.0f),
-            glm::vec3(2.0f,  5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f),
-            glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3(2.4f, -0.4f, -3.5f),
-            glm::vec3(-1.7f,  3.0f, -7.5f),
-            glm::vec3(1.3f, -2.0f, -2.5f),
-            glm::vec3(1.5f,  2.0f, -2.5f),
-            glm::vec3(1.5f,  0.2f, -1.5f),
-            glm::vec3(-1.3f,  1.0f, -1.5f)
-        };
-
         shader.use();
 
         // render the cubes
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setMat4("model", model);
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+        // calculate the model matrix for each object and pass it to shader before drawing
+        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        model = glm::translate(model, position);
+        if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+        model = glm::scale(model, glm::vec3(size.x, 0.1f, size.z));
+        shader.setMat4("model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindVertexArray(0);
     }
 
 private:
-    
+
     // render data 
     unsigned int VBO, VAO;
 
@@ -80,9 +62,9 @@ private:
 
 
 
-    
 
-    void setupCubes()
+
+    void setupPlane()
     {
         glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
         glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
@@ -111,10 +93,10 @@ private:
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2); // stride 6 to 7
 
-        
+
 
         // load texture
-        diffuseMap = texture_helper::soil_load_texture("textures/container2.png", true);
+        diffuseMap = texture_helper::soil_load_texture("textures/rusted_metal.jpg", true);
         specularMap = texture_helper::soil_load_texture("textures/container2_specular.png", false);
     }
 };

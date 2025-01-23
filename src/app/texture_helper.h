@@ -47,7 +47,7 @@ public:
     }
 
 
-    static unsigned int soil_load_texture(std::string filename, bool alpha = false, bool repeat = true)
+    static unsigned int soil_load_texture(std::string filename, bool repeat = true)
     {
         unsigned int texture;
         glGenTextures(1, &texture);

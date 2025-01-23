@@ -21,12 +21,12 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <map>
+//#include <map>
 #include <string>
 #include <vector>
 
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
+unsigned int TextureFromFile(const char* path, const std::string& directory);
 
 class Model
 {
@@ -209,7 +209,7 @@ private:
 };
 
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
+unsigned int TextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
@@ -221,7 +221,7 @@ unsigned int TextureFromFile(const char* path, const std::string& directory, boo
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
+        GLenum format = 0;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)

@@ -51,7 +51,8 @@ public:
         }
         catch (std::ifstream::failure& e)
         {
-            std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+            const char* error = e.what();
+            std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error << std::endl;
             exit(EXIT_FAILURE);
         }
 

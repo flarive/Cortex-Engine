@@ -2,6 +2,7 @@
 
 #include "shader.h"
 #include "primitive.h"
+#include "texture_helper.h"
 
 class Cubes
 {
@@ -113,7 +114,7 @@ private:
         
 
         // load texture
-        diffuseMap = texture_helper::soil_load_texture("textures/container2.png", false, true);
-        specularMap = texture_helper::soil_load_texture("textures/container2_specular.png", true, false);
+        diffuseMap = texture_helper::soil_load_texture("textures/container2.png", true);
+        specularMap = texture_helper::soil_load_texture("textures/container2_specular.png", false);
     }
 };

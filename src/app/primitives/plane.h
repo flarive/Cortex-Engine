@@ -40,7 +40,7 @@ public:
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, position);
         if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-        model = glm::scale(model, glm::vec3(size.x, 0.1f, size.z));
+        model = glm::scale(model, glm::vec3(size.x, 0.01f, size.z));
         shader.setMat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);

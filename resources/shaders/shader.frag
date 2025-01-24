@@ -66,7 +66,8 @@ uniform Material material;
 
 uniform DirLight dirLight;
 
-#define NR_POINT_LIGHTS 4  
+#define NR_POINT_LIGHTS 4
+
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 uniform SpotLight spotLight;
@@ -105,9 +106,14 @@ void main()
     // phase 1: directional lighting
     if (dirLight.use)
         result += CalcDirLight(dirLight, norm, viewDir);
+    
     // phase 2: point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
+    {
+        if (pointLights[i].use)
+            result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+    }
+    
     // phase 3: spot light
     if (spotLight.use)
         result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    

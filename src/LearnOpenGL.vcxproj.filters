@@ -41,6 +41,9 @@
     <Filter Include="app\primitives">
       <UniqueIdentifier>{fcb262fc-d96a-4988-8d7c-6778cf09aee7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="app\lights">
+      <UniqueIdentifier>{b6a655f7-2a49-4907-8047-dc4df3c67c90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -141,6 +144,12 @@
     <ClInclude Include="app\primitives\plane.h">
       <Filter>app\primitives</Filter>
     </ClInclude>
+    <ClInclude Include="app\lights\point_light.h">
+      <Filter>app\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="app\lights\directional_light.h">
+      <Filter>app\lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="misc\debuggers\imgui.natvis">
@@ -228,6 +237,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\depthbuffer.vertex">
       <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rusted_metal.jpg">
+      <Filter>resources\textures</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

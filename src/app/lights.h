@@ -18,7 +18,7 @@ public:
     {
         glm::vec3 pointLightPositions[] =
         {
-            glm::vec3(0.7f,  0.2f,  2.0f),
+            glm::vec3(0.0f,  0.5f,  -0.5f),
             glm::vec3(2.3f, -3.3f, -4.0f),
             glm::vec3(-4.0f,  2.0f, -12.0f),
             glm::vec3(0.0f,  0.0f, -3.0f)
@@ -34,11 +34,12 @@ public:
 
 
         // directional light
-        //shader.setBool("dirLight.use", false);
-        //shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        //shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        //shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        shader.setBool("dirLight.use", false);
+        shader.setVec3("dirLight.ambient", 0.55f, 0.55f, 0.55f);
+        shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
         // point light 1
+        shader.setBool("pointLights[0].use", true);
         shader.setVec3("pointLights[0].position", pointLightPositions[0]);
         shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
         shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
@@ -47,6 +48,7 @@ public:
         shader.setFloat("pointLights[0].linear", 0.09f);
         shader.setFloat("pointLights[0].quadratic", 0.032f);
         // point light 2
+        shader.setBool("pointLights[1].use", true);
         shader.setVec3("pointLights[1].position", pointLightPositions[1]);
         shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
         shader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
@@ -55,6 +57,7 @@ public:
         shader.setFloat("pointLights[1].linear", 0.09f);
         shader.setFloat("pointLights[1].quadratic", 0.032f);
         // point light 3
+        shader.setBool("pointLights[2].use", true);
         shader.setVec3("pointLights[2].position", pointLightPositions[2]);
         shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
         shader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
@@ -63,6 +66,7 @@ public:
         shader.setFloat("pointLights[2].linear", 0.09f);
         shader.setFloat("pointLights[2].quadratic", 0.032f);
         // point light 4
+        shader.setBool("pointLights[3].use", true);
         shader.setVec3("pointLights[3].position", pointLightPositions[3]);
         shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
         shader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
@@ -71,7 +75,7 @@ public:
         shader.setFloat("pointLights[3].linear", 0.09f);
         shader.setFloat("pointLights[3].quadratic", 0.032f);
         // spotLight
-        //shader.setBool("spotLight.use", false);
+        shader.setBool("spotLight.use", false);
         //shader.setVec3("spotLight.position", cam.Position);
         //shader.setVec3("spotLight.direction", cam.Front);
         //shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -90,7 +94,7 @@ public:
 
         // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 4; i++)
+        for (unsigned int i = 0; i < pointLightPositions->length(); i++)
         {
             lightCubeShader.setMat4("projection", _projection);
             lightCubeShader.setMat4("view", _view);

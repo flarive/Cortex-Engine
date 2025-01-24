@@ -16,6 +16,8 @@
 #include "app/model.h"
 #include "app/cubes.h"
 #include "app/lights.h"
+#include "app/lights/point_light.h"
+#include "app/lights/directional_light.h"
 #include "app/ui/text.h"
 
 #include "app/primitives/cube.h"
@@ -162,7 +164,7 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // Our state
+    
    
 
 
@@ -191,11 +193,12 @@ int main(int, char**)
     Model backpackModel("models/backpack/backpack.obj");
     Model cushionModel("models/cushion/cushion.obj");
 
-    // temp test
-    //Cubes ourCubes();
-
+    
     // lights
     Lights ourLights;
+
+    //PointLight myPointLight;
+    //DirectionalLight myDirectionalLight;
 
     Cubes ourCubes;
     Cube ourCube;
@@ -269,9 +272,12 @@ int main(int, char**)
         glm::mat4 view = cam.GetViewMatrix();
         
 
-        
+
         // lights
         ourLights.Draw(lightingShader, projection, view);
+        //myPointLight.Draw(lightingShader, projection, view, glm::vec3(0.0f, 1.0f, 2.0f));
+        //myDirectionalLight.Draw(lightingShader, projection, view, glm::vec3(0.0f, 0.0f, 3.0f));
+
 
 
         // activate shader rendering shader
@@ -279,6 +285,8 @@ int main(int, char**)
         lightingShader.setVec3("viewPos", cam.Position);
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
+
+
 
 
 
@@ -291,7 +299,7 @@ int main(int, char**)
         //cushionModel.Draw(lightingShader);
 
 
-        //// render the loaded model
+        // render the loaded model
         //glm::mat4 model2 = glm::mat4(1.0f);
         //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         //model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
@@ -301,9 +309,7 @@ int main(int, char**)
 
 
         // render test cubes
-        ourCube.Draw(lightingShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-        
+        ourCube.Draw(lightingShader, glm::vec3(0.0f, -0.2f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
         ourPlane.Draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 10.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -334,8 +340,8 @@ int main(int, char**)
     //glDeleteVertexArrays(1, &cubeVAO);
     //glDeleteVertexArrays(1, &lightCubeVAO);
     //glDeleteBuffers(1, &VBO);
-
-    ourLights.clean();
+    
+    //myPointLight.clean();
 
     lightingShader.clean();
 

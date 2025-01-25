@@ -68,13 +68,13 @@ uniform vec3 viewPos;
 
 uniform Material material;
 
-uniform DirLight dirLight;
 
-#define NR_POINT_LIGHTS 4
 
-uniform PointLight pointLights[NR_POINT_LIGHTS];
+#define NBR_MAX_LIGHTS 4
 
-uniform SpotLight spotLight;
+uniform PointLight pointLights[NBR_MAX_LIGHTS];
+uniform DirLight dirLight[NBR_MAX_LIGHTS];
+uniform SpotLight spotLight[NBR_MAX_LIGHTS];
 
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -118,20 +118,26 @@ void main()
     vec3 result = vec3(0.0);
 
     // phase 1: directional lighting
-    if (dirLight.use)
-        result += CalcDirLight(dirLight, norm, viewDir);
+    for (int i = 0; i < NBR_MAX_LIGHTS; i++)
+    {
+        if (dirLight[i].use)
+            result += CalcDirLight(dirLight[i], norm, viewDir);
+    }
     
     // phase 2: point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    for (int i = 0; i < NBR_MAX_LIGHTS; i++)
     {
         if (pointLights[i].use)
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     }
     
     // phase 3: spot light
-    if (spotLight.use)
-        result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
-    
+    for (int i = 0; i < NBR_MAX_LIGHTS; i++)
+    {
+        if (spotLight[i].use)
+            result += CalcSpotLight(spotLight[i], norm, FragPos, viewDir);
+    }
+
     FragColor = vec4(result, 1.0);
 }
 

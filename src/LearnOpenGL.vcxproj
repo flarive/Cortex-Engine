@@ -208,9 +208,9 @@
     <ClInclude Include="app\lights\spot_light.h" />
     <ClInclude Include="app\mesh.h" />
     <ClInclude Include="app\model.h" />
-    <ClInclude Include="app\primitive.h" />
     <ClInclude Include="app\primitives\cube.h" />
     <ClInclude Include="app\primitives\plane.h" />
+    <ClInclude Include="app\primitives\primitive.h" />
     <ClInclude Include="app\shader.h" />
     <ClInclude Include="app\texture.h" />
     <ClInclude Include="app\texture_helper.h" />

@@ -12,7 +12,11 @@ enum Camera_Movement {
     LEFT,
     RIGHT,
     UP,
-    DOWN
+    DOWN,
+    YAW_UP,
+    YAW_DOWN,
+    PITCH_UP,
+    PITCH_DOWN
 };
 
 // Default camera values
@@ -86,6 +90,19 @@ public:
             Position += Up * velocity;
         if (direction == DOWN)
             Position -= Up * velocity;
+
+        if (direction == YAW_UP)
+            Yaw += 20 * velocity;
+        if (direction == YAW_DOWN)
+            Yaw -= 20 * velocity;
+
+        if (direction == PITCH_UP)
+            Pitch += 20 * velocity;
+        if (direction == PITCH_DOWN)
+            Pitch -= 20 * velocity;
+
+        // Update camera vectors after changing yaw or pitch
+        updateCameraVectors();
 
         // for FPS camera
         if (Fps)

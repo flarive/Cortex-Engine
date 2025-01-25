@@ -1,10 +1,11 @@
 #pragma once
 
+#include "primitive.h"
+
 #include "../shader.h"
-#include "../primitive.h"
 #include "../texture_helper.h"
 
-class Cube
+class Cube : public Primitive
 {
 public:
     Cube()
@@ -13,7 +14,7 @@ public:
     }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f))
+    void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f))
     {
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
@@ -50,16 +51,6 @@ public:
     }
 
 private:
-    
-    // render data 
-    unsigned int VBO, VAO;
-
-    unsigned int diffuseMap = 0;
-    unsigned int specularMap = 0;
-    unsigned int normalMap = 0;
-
-
-    
 
     void setupCube()
     {

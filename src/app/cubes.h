@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shader.h"
-#include "primitive.h"
+#include "primitives/primitive.h"
 #include "texture_helper.h"
 
 class Cubes
@@ -75,11 +75,6 @@ private:
     unsigned int specularMap = 0;
 
 
-    // Set up vertex data for a 3d cube (position and uvs)
-    const float* vertices = primitive::getCubeVertices();
-
-
-
     
 
     void setupCubes()
@@ -91,7 +86,7 @@ private:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 
         GLsizei stride = 8;
 

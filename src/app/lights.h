@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shader.h"
-#include "primitive.h"
+#include "primitives/primitive.h"
 
 class Lights
 {
@@ -118,8 +118,6 @@ private:
     // render data 
     unsigned int VBO, VAO;
 
-    const float* vertices = primitive::getCubeVertices();
-
     Shader lightCubeShader;
 
 
@@ -132,7 +130,7 @@ private:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 
         GLsizei stride = 8;
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);

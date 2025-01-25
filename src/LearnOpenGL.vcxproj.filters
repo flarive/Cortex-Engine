@@ -47,6 +47,9 @@
     <Filter Include="app\lights\base">
       <UniqueIdentifier>{cc3d1065-f29e-42bc-adf7-be6dbdd79c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="app\primitives\base">
+      <UniqueIdentifier>{23920bf6-533c-4476-99a3-0f4ae57fbef8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -117,9 +120,6 @@
     <ClInclude Include="app\model.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\primitive.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="app\shader.h">
       <Filter>app</Filter>
     </ClInclude>
@@ -161,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="app\common_defines.h">
       <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\primitives\primitive.h">
+      <Filter>app\primitives\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

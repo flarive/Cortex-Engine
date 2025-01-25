@@ -20,37 +20,41 @@ public:
     // draws the model, and thus all its meshes
     void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target) override
     {
-        shader.setBool("spotLight.use", true);
+        std::string base = std::format("spotLight[{}]", m_index);
 
-        shader.setVec3("spotLight.position", position);
-        shader.setVec3("spotLight.direction", calculateSpotlightDirection(position, target));
-        shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-        shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        shader.setBool(std::format("{}.use", base), true);
 
-        shader.setFloat("spotLight.constant", 1.0f);
-        shader.setFloat("spotLight.linear", 0.09f);
-        shader.setFloat("spotLight.quadratic", 0.032f);
+        shader.setVec3(std::format("{}.position", base), position);
+        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+        shader.setVec3(std::format("{}.ambient", base), 0.0f, 0.0f, 0.0f);
+        shader.setVec3(std::format("{}.diffuse", base), 1.0f, 1.0f, 1.0f);
+        shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
 
-        shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-        shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+        shader.setFloat(std::format("{}.constant", base), 1.0f);
+        shader.setFloat(std::format("{}.linear", base), 0.09f);
+        shader.setFloat(std::format("{}.quadratic", base), 0.032f);
 
-        // also draw the lamp object(s)
-        lightCubeShader.use();
+        shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(12.5f)));
+        shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(15.0f)));
 
-        // we now draw as many light bulbs as we have point lights.
-        glBindVertexArray(VAO);
+        if (DISPLAY_DEBUG_LIGHT_CUBE)
+        {
+            // also draw the lamp object(s)
+            lightCubeShader.use();
 
-        lightCubeShader.setMat4("projection", projection);
-        lightCubeShader.setMat4("view", view);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
-        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
-        lightCubeShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        
+            // we now draw as many light bulbs as we have point lights.
+            glBindVertexArray(VAO);
 
-        glBindVertexArray(0);
+            lightCubeShader.setMat4("projection", projection);
+            lightCubeShader.setMat4("view", view);
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, position);
+            model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
+            lightCubeShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+
+            glBindVertexArray(0);
+        }
     }
 
     void clean() override
@@ -59,8 +63,6 @@ public:
     }
 
 private:
-
-    const float* vertices = primitive::getCubeVertices();
 
     void setupSpotLight()
     {
@@ -71,7 +73,7 @@ private:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 
         GLsizei stride = 8;
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
@@ -79,10 +81,5 @@ private:
 
         // load light cube debug shader
         lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
-    }
-
-    glm::vec3 calculateSpotlightDirection(const glm::vec3& position, const glm::vec3& target)
-    {
-        return glm::normalize(target - position);
     }
 };

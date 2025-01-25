@@ -101,7 +101,8 @@ int main(int, char**)
         glfwTerminate();
         return -1;
     }
- 
+
+    //glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_FALSE);
     
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -205,9 +206,9 @@ int main(int, char**)
     // lights
     //Lights ourLights;
 
-    PointLight myPointLight;
-    DirectionalLight myDirectionalLight;
-    SpotLight mySpotLight;
+    PointLight myPointLight(0);
+    DirectionalLight myDirectionalLight(0);
+    SpotLight mySpotLight(0);
 
     //Cubes ourCubes;
     Cube ourCube;
@@ -229,6 +230,7 @@ int main(int, char**)
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
 
+    float rotation = 0.0f;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -306,11 +308,13 @@ int main(int, char**)
         glm::mat4 model1 = glm::mat4(1.0f);
         model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
         model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        model1 = glm::rotate(model1, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
         lightingShader.setMat4("model", model1);
         cushionModel.Draw(lightingShader);
 
+        rotation += (float)glfwGetTime();
 
+   
         // render the loaded model
         //glm::mat4 model2 = glm::mat4(1.0f);
         //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
@@ -321,10 +325,10 @@ int main(int, char**)
 
 
         // render test cube
-        //ourCube.Draw(lightingShader, glm::vec3(0.0f, -0.24f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourCube.draw(lightingShader, glm::vec3(0.0f, -0.24f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test plane
-        ourPlane.Draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         //ourCubes.Draw(lightingShader);
 
@@ -382,18 +386,42 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cam.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cam.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+
+
+    // Detect Shift key state
+    bool shiftPressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+
+
+    if (shiftPressed && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        cam.ProcessKeyboard(YAW_DOWN, deltaTime); // Modify behavior as needed
+    else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         cam.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+
+
+    if (shiftPressed && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        cam.ProcessKeyboard(YAW_UP, deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         cam.ProcessKeyboard(RIGHT, deltaTime);
+
+
+    if (shiftPressed && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        cam.ProcessKeyboard(PITCH_UP, deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        cam.ProcessKeyboard(FORWARD, deltaTime);
+
+
+    if (shiftPressed && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        cam.ProcessKeyboard(PITCH_DOWN, deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        cam.ProcessKeyboard(BACKWARD, deltaTime);
+
+
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         cam.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         cam.ProcessKeyboard(DOWN, deltaTime);
+
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {

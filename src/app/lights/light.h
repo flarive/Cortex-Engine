@@ -2,9 +2,7 @@
 
 #include "../common_defines.h"
 #include "../shader.h"
-#include "../primitive.h"
-
-//#define LIGHT_CUBE_SIZE 0.02f;
+#include "../primitives./primitive.h"
 
 /// <summary>
 /// Abstract class for lights
@@ -19,10 +17,6 @@ public:
     virtual void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target = glm::vec3(0,0,0)) = 0;
     virtual void clean() = 0;
 
-
-private:
-    
-
  protected:
     // render data 
     unsigned int VBO = 0, VAO = 0;
@@ -32,4 +26,10 @@ private:
     Shader lightCubeShader;
 
     const float LIGHT_CUBE_SIZE = 0.02f;
+    const bool DISPLAY_DEBUG_LIGHT_CUBE = false;
+
+    glm::vec3 calculateLightDirection(const glm::vec3& position, const glm::vec3& target)
+    {
+        return glm::normalize(target - position);
+    }
 };

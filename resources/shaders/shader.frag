@@ -7,6 +7,10 @@ struct Material {
     sampler2D texture_specular1;
     sampler2D texture_normal1;
     float shininess;
+
+    bool has_diffuse_map;
+    bool has_specular_map;
+    bool has_normal_map;
 }; 
 
 struct DirLight {
@@ -80,18 +84,28 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-    // Sample the normal map
-    vec3 norm = texture(material.texture_normal1, TexCoords).rgb;
-    norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
+    vec3 norm;
+    if (material.has_normal_map)
+    {
+        // Sample the normal map
+        norm = texture(material.texture_normal1, TexCoords).rgb;
+        norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
 
-    // Transform normal from tangent space to world space
-    vec3 T = normalize(Tangent);
-    vec3 B = normalize(Bitangent);
-    vec3 N = normalize(Normal);
-    mat3 TBN = mat3(T, B, N);
-    norm = normalize(TBN * norm);
+        // Transform normal from tangent space to world space
+        vec3 T = normalize(Tangent);
+        vec3 B = normalize(Bitangent);
+        vec3 N = normalize(Normal);
+        mat3 TBN = mat3(T, B, N);
+        norm = normalize(TBN * norm);
+    }
+    else
+    {
+        norm = normalize(Normal); // Use the geometry normal as a fallback
+    }
 
     vec3 viewDir = normalize(viewPos - FragPos);
+
+        
 
     
     // == =====================================================

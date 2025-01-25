@@ -2,36 +2,38 @@
 
 #include "light.h"
 
-class PointLight : public Light
+class SpotLight : public Light
 {
 public:
-    PointLight() : Light(0)
+    SpotLight() : Light(0)
     {
-        setupPointLight();
+        setupSpotLight();
     }
 
-    PointLight(unsigned int index) : Light(index)
+    SpotLight(unsigned int index) : Light(index)
     {
-        setupPointLight();
+        setupSpotLight();
     }
 
     
 
     // draws the model, and thus all its meshes
-    void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target = glm::zero<glm::vec3>()) override
+    void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target) override
     {
-        UNREFERENCED_PARAMETER(target);
+        shader.setBool("spotLight.use", true);
 
-        shader.setBool("pointLights[0].use", true);
+        shader.setVec3("spotLight.position", position);
+        shader.setVec3("spotLight.direction", calculateSpotlightDirection(position, target));
+        shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 
-        shader.setVec3("pointLights[0].position", position);
-        shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        shader.setVec3("pointLights[0].diffuse", 1.0f, 1.0f, 1.0f);
-        shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        shader.setFloat("spotLight.constant", 1.0f);
+        shader.setFloat("spotLight.linear", 0.09f);
+        shader.setFloat("spotLight.quadratic", 0.032f);
 
-        shader.setFloat("pointLights[0].constant", 1.0f);
-        shader.setFloat("pointLights[0].linear", 0.09f);
-        shader.setFloat("pointLights[0].quadratic", 0.032f);
+        shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
         // also draw the lamp object(s)
         lightCubeShader.use();
@@ -60,7 +62,7 @@ private:
 
     const float* vertices = primitive::getCubeVertices();
 
-    void setupPointLight()
+    void setupSpotLight()
     {
         glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
         glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
@@ -77,5 +79,10 @@ private:
 
         // load light cube debug shader
         lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
+    }
+
+    glm::vec3 calculateSpotlightDirection(const glm::vec3& position, const glm::vec3& target)
+    {
+        return glm::normalize(target - position);
     }
 };

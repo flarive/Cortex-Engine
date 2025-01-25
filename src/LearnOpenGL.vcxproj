@@ -198,11 +198,14 @@
   <ItemGroup>
     <ClInclude Include="app\camera.h" />
     <ClInclude Include="app\character.h" />
+    <ClInclude Include="app\common_defines.h" />
     <ClInclude Include="app\cubes.h" />
     <ClInclude Include="app\file_system.h" />
     <ClInclude Include="app\lights.h" />
+    <ClInclude Include="app\lights\light.h" />
     <ClInclude Include="app\lights\directional_light.h" />
     <ClInclude Include="app\lights\point_light.h" />
+    <ClInclude Include="app\lights\spot_light.h" />
     <ClInclude Include="app\mesh.h" />
     <ClInclude Include="app\model.h" />
     <ClInclude Include="app\primitive.h" />

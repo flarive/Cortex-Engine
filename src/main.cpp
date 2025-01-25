@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "app/common_defines.h"
 
 #include "app/shader.h"
 #include "app/camera.h"
@@ -18,6 +19,7 @@
 #include "app/lights.h"
 #include "app/lights/point_light.h"
 #include "app/lights/directional_light.h"
+#include "app/lights/spot_light.h"
 #include "app/ui/text.h"
 
 #include "app/primitives/cube.h"
@@ -27,8 +29,10 @@
 #include <chrono>
 #include <thread>
 
+#pragma warning(disable: 4100) // warning C4189: 'yoffset': variable locale initialisée mais non référencée
 
-#pragma warning(disable: 4100) // warning C4189: 'yoffset': variable locale initialisée mais non référencée2
+
+
 
 const int TARGET_FPS = 60;
 const int FRAME_DELAY = 1000 / TARGET_FPS; // in milliseconds
@@ -182,6 +186,10 @@ int main(int, char**)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    // anti aliasing MSAA
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glEnable(GL_MULTISAMPLE);
+
     // load shaders
     Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
     //Shader lightingShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // scene textured cube shader
@@ -195,12 +203,13 @@ int main(int, char**)
 
     
     // lights
-    Lights ourLights;
+    //Lights ourLights;
 
-    //PointLight myPointLight;
-    //DirectionalLight myDirectionalLight;
+    PointLight myPointLight;
+    DirectionalLight myDirectionalLight;
+    SpotLight mySpotLight;
 
-    Cubes ourCubes;
+    //Cubes ourCubes;
     Cube ourCube;
     Plane ourPlane;
 
@@ -263,7 +272,8 @@ int main(int, char**)
         // clear previous frame rendered
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ourText.Draw("This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+
+
 
         lightingShader.use();
         
@@ -273,10 +283,12 @@ int main(int, char**)
         
 
 
-        // lights
-        ourLights.Draw(lightingShader, projection, view);
-        //myPointLight.Draw(lightingShader, projection, view, glm::vec3(0.0f, 1.0f, 2.0f));
-        //myDirectionalLight.Draw(lightingShader, projection, view, glm::vec3(0.0f, 0.0f, 3.0f));
+        // setup lights
+        //ourLights.Draw(lightingShader, projection, view);
+        myPointLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.3f, 2.0f));
+        //myDirectionalLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.3f, 2.0f));
+        //mySpotLight.draw(lightingShader, projection, view, cam.Position, cam.Front);
+        //mySpotLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 
@@ -291,12 +303,12 @@ int main(int, char**)
 
 
         // render the loaded model
-        //glm::mat4 model1 = glm::mat4(1.0f);
-        //model1 = glm::translate(model1, glm::vec3(3.9f, 0.0f, -8.0f)); // translate it down so it's at the center of the scene
-        //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        //lightingShader.setMat4("model", model1);
-        //cushionModel.Draw(lightingShader);
+        glm::mat4 model1 = glm::mat4(1.0f);
+        model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
+        model1 = glm::rotate(model1, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        lightingShader.setMat4("model", model1);
+        cushionModel.Draw(lightingShader);
 
 
         // render the loaded model
@@ -308,14 +320,17 @@ int main(int, char**)
         //backpackModel.Draw(lightingShader);
 
 
-        // render test cubes
-        ourCube.Draw(lightingShader, glm::vec3(0.0f, -0.2f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        // render test cube
+        //ourCube.Draw(lightingShader, glm::vec3(0.0f, -0.24f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        ourPlane.Draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 10.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        // render test plane
+        ourPlane.Draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         //ourCubes.Draw(lightingShader);
 
 
+        // render HUD / UI
+        ourText.Draw(std::format("{} FPS", (int)io.Framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 
 
         // Rendering
@@ -398,23 +413,23 @@ void processInput(GLFWwindow* window)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    //float xpos = static_cast<float>(xposIn);
-    //float ypos = static_cast<float>(yposIn);
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset = xpos - lastX;
-    //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //cam.ProcessMouseMovement(xoffset, yoffset);
+    cam.ProcessMouseMovement(xoffset, yoffset);
 }
 
 

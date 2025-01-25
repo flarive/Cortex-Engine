@@ -28,6 +28,7 @@ public:
         shader.setInt("material.texture_diffuse1", 0); // texture 0
         shader.setInt("material.texture_specular1", 1); // texture 1
         //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setBool("material.has_normal_map", normalMap > 0);
         shader.setFloat("material.shininess", 32.0f);
 
 
@@ -45,6 +46,7 @@ public:
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
         glBindVertexArray(0);
     }
 
@@ -55,12 +57,7 @@ private:
 
     unsigned int diffuseMap = 0;
     unsigned int specularMap = 0;
-
-
-    // Set up vertex data for a 3d cube (position and uvs)
-    const float* vertices = primitive::getCubeVertices();
-
-
+    unsigned int normalMap = 0;
 
 
 
@@ -73,7 +70,7 @@ private:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
 
         GLsizei stride = 8;
 
@@ -92,6 +89,21 @@ private:
         // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2); // stride 6 to 7
+
+
+        //GLsizei stride = 8 * sizeof(float);
+
+        //// Position attribute (XYZ)
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+        //glEnableVertexAttribArray(0);
+
+        //// Normal attribute (XYZ)
+        //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+        //glEnableVertexAttribArray(1);
+
+        //// Texture coord attribute (UV)
+        //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+        //glEnableVertexAttribArray(2);
 
 
 

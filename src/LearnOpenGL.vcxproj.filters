@@ -44,6 +44,9 @@
     <Filter Include="app\lights">
       <UniqueIdentifier>{b6a655f7-2a49-4907-8047-dc4df3c67c90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="app\lights\base">
+      <UniqueIdentifier>{cc3d1065-f29e-42bc-adf7-be6dbdd79c33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -149,6 +152,15 @@
     </ClInclude>
     <ClInclude Include="app\lights\directional_light.h">
       <Filter>app\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="app\lights\spot_light.h">
+      <Filter>app\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="app\lights\light.h">
+      <Filter>app\lights\base</Filter>
+    </ClInclude>
+    <ClInclude Include="app\common_defines.h">
+      <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

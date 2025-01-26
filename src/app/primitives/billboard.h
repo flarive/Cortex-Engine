@@ -1,20 +1,24 @@
 #pragma once
 
+#include "../common_defines.h"
+
 #include "primitive.h"
+
+
 
 #include "../shader.h"
 #include "../texture_helper.h"
 
-class Plane : public Primitive
+class Billboard : public Primitive
 {
 public:
-    Plane()
+    Billboard()
     {
-        setupPlane();
+        setupBillboard();
     }
 
     // draws the model, and thus all its meshes
-    void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f))
+    void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 90.0f, const glm::vec3& rotationAxis = glm::vec3(1.0f, 0.0f, 0.0f))
     {
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
@@ -33,27 +37,28 @@ public:
         shader.setFloat("material.shininess", 32.0f);
 
 
-        //shader.use();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        // render the cubes
+
+        // render the billboard
         glBindVertexArray(VAO);
 
         // calculate the model matrix for each object and pass it to shader before drawing
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, position);
         if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-        model = glm::scale(model, glm::vec3(size.x, 0.01f, size.z));
+        model = glm::scale(model, size);
         shader.setMat4("model", model);
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glBindVertexArray(0);
     }
 
 private:
 
-    void setupPlane()
+    void setupBillboard()
     {
         glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
         glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
@@ -62,7 +67,7 @@ private:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 
         GLsizei stride = 8;
 
@@ -83,24 +88,7 @@ private:
         glEnableVertexAttribArray(2); // stride 6 to 7
 
 
-        //GLsizei stride = 8 * sizeof(float);
-
-        //// Position attribute (XYZ)
-        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-        //glEnableVertexAttribArray(0);
-
-        //// Normal attribute (XYZ)
-        //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-        //glEnableVertexAttribArray(1);
-
-        //// Texture coord attribute (UV)
-        //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-        //glEnableVertexAttribArray(2);
-
-
-
         // load texture
-        diffuseMap = texture_helper::soil_load_texture("textures/rusted_metal.jpg", true);
-        specularMap = texture_helper::soil_load_texture("textures/container2_specular.png", false);
+        diffuseMap = texture_helper::soil_load_texture("textures/grass.png", false);
     }
 };

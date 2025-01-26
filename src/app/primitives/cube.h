@@ -33,7 +33,7 @@ public:
         shader.setFloat("material.shininess", 32.0f);
 
 
-        shader.use();
+        //shader.use();
 
         // render the cubes
         glBindVertexArray(VAO);

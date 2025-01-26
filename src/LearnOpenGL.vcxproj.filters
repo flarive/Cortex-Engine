@@ -165,6 +165,9 @@
     <ClInclude Include="app\primitives\primitive.h">
       <Filter>app\primitives\base</Filter>
     </ClInclude>
+    <ClInclude Include="app\primitives\billboard.h">
+      <Filter>app\primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="misc\debuggers\imgui.natvis">
@@ -254,6 +257,15 @@
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\blending_transparent_window.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\grass.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\grass2.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
   </ItemGroup>

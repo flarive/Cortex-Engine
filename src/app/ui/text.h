@@ -31,6 +31,9 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(m_VAO);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // iterate through all characters
         std::string::const_iterator c;
         for (c = text.begin(); c != text.end(); c++)

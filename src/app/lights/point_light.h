@@ -18,7 +18,7 @@ public:
     
 
     // draws the model, and thus all its meshes
-    void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target = glm::zero<glm::vec3>()) override
+    void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::zero<glm::vec3>()) override
     {
         UNREFERENCED_PARAMETER(target);
 
@@ -28,7 +28,7 @@ public:
 
         shader.setVec3(std::format("{}.position", base), position);
         shader.setVec3(std::format("{}.ambient", base), 0.05f, 0.05f, 0.05f);
-        shader.setVec3(std::format("{}.diffuse", base), 1.0f, 1.0f, 1.0f);
+        shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
         shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
         
         shader.setFloat(std::format("{}.constant", base), 1.0f);

@@ -138,7 +138,15 @@ void main()
             result += CalcSpotLight(spotLight[i], norm, FragPos, viewDir);
     }
 
-    FragColor = vec4(result, 1.0);
+    // Sample the alpha value from the diffuse texture
+    float alpha = texture(material.texture_diffuse1, TexCoords).a;
+
+    // Set the fragment color with the alpha channel
+    FragColor = vec4(result, alpha);
+
+    // Discard transparent fragments (optional)
+    if (alpha < 0.1)
+        discard;
 }
 
 

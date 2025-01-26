@@ -14,7 +14,7 @@ public:
     Light(unsigned int index) : m_index(index) {}
     virtual ~Light() = default;
 
-    virtual void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target = glm::vec3(0,0,0)) = 0;
+    virtual void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::vec3(0,0,0)) = 0;
     virtual void clean() = 0;
 
  protected:

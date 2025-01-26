@@ -3,13 +3,6 @@
 #include "imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h> // Will drag system OpenGL headers
-
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "app/common_defines.h"
 
 #include "app/shader.h"
@@ -24,6 +17,7 @@
 
 #include "app/primitives/cube.h"
 #include "app/primitives/plane.h"
+#include "app/primitives/billboard.h"
 
 #include <iostream>
 #include <chrono>
@@ -170,12 +164,6 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     
-   
-
-
-
-    // ..:: Initialization code :: ..
-
 
     
     // enable z buffer (depth test) to have correct objects depth ordering
@@ -184,8 +172,10 @@ int main(int, char**)
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
 
     // anti aliasing MSAA
     glfwWindowHint(GLFW_SAMPLES, 4);
@@ -207,13 +197,14 @@ int main(int, char**)
     //Lights ourLights;
 
     PointLight myPointLight(0);
-    DirectionalLight myDirectionalLight(0);
+    DirectionalLight myDirectionalLight1(0);
+    DirectionalLight myDirectionalLight2(1);
     SpotLight mySpotLight(0);
 
     //Cubes ourCubes;
     Cube ourCube;
     Plane ourPlane;
-
+    Billboard ourBillboard;
 
     Text ourText;
     
@@ -229,8 +220,6 @@ int main(int, char**)
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
-
-    float rotation = 0.0f;
 
     // Main loop
     while (!glfwWindowShouldClose(window))
@@ -272,7 +261,7 @@ int main(int, char**)
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // clear previous frame rendered
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
 
@@ -287,10 +276,11 @@ int main(int, char**)
 
         // setup lights
         //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.3f, 2.0f));
-        //myDirectionalLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.3f, 2.0f));
-        //mySpotLight.draw(lightingShader, projection, view, cam.Position, cam.Front);
-        //mySpotLight.draw(lightingShader, projection, view, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+        myDirectionalLight1.draw(lightingShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight2.draw(lightingShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
+        //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 
@@ -305,14 +295,12 @@ int main(int, char**)
 
 
         // render the loaded model
-        glm::mat4 model1 = glm::mat4(1.0f);
-        model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        lightingShader.setMat4("model", model1);
-        cushionModel.Draw(lightingShader);
-
-        rotation += (float)glfwGetTime();
+        //glm::mat4 model1 = glm::mat4(1.0f);
+        //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+        //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
+        //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        //lightingShader.setMat4("model", model1);
+        //cushionModel.Draw(lightingShader);
 
    
         // render the loaded model
@@ -325,7 +313,9 @@ int main(int, char**)
 
 
         // render test cube
-        //ourCube.draw(lightingShader, glm::vec3(0.0f, -0.24f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube.draw(lightingShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        ourBillboard.draw(lightingShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f));
 
         // render test plane
         ourPlane.draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -441,23 +431,23 @@ void processInput(GLFWwindow* window)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
+    //float xpos = static_cast<float>(xposIn);
+    //float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+    //if (firstMouse)
+    //{
+    //    lastX = xpos;
+    //    lastY = ypos;
+    //    firstMouse = false;
+    //}
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    //float xoffset = xpos - lastX;
+    //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
+    //lastX = xpos;
+    //lastY = ypos;
 
-    cam.ProcessMouseMovement(xoffset, yoffset);
+    //cam.ProcessMouseMovement(xoffset, yoffset);
 }
 
 

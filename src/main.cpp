@@ -169,8 +169,14 @@ int main(int, char**)
     // enable z buffer (depth test) to have correct objects depth ordering
     glEnable(GL_DEPTH_TEST);
 
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    // optim : do not display hidden faces
+    // consistent winding orders needed (counter-clockwise by default)
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+    
+
+
 
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

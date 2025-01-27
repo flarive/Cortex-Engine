@@ -23,8 +23,9 @@ protected:
 };
 
 
-
-// Set up vertex data for a 3d cube (position and uvs)
+/// <summary>
+/// Set up vertex data for a 3d cube (counter-countwise)
+/// </summary>
 const float cubeVertices[] = {
     // positions          // normals           // texture coords
 
@@ -73,28 +74,31 @@ const float cubeVertices[] = {
 };
 
 
-
+/// <summary>
+/// Set up vertex data for a 2d plane (counter-countwise)
+/// counter-countwise
+/// </summary>
 float planeVertices[] = {
     // positions            // normals         // texcoords
      25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-    -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
     -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+    -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
 
      25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-     25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
+     25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
+    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f
 };
 
-
+/// <summary>
+/// Set up vertex data for a 2d quad (counter-countwise)
+/// </summary>
 float quadVertices[] = {
     // positions            // normals         // texcoords
      1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-    -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
     -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+    -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
 
-     1.0f, -0.01f, 1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-    -1.0f, -0.01, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-     1.0f, -0.01, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f
+     1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+     1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+    -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f
 };
-
-

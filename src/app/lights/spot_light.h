@@ -7,14 +7,31 @@ class SpotLight : public Light
 public:
     SpotLight() : Light(0)
     {
-        setupSpotLight();
     }
 
     SpotLight(unsigned int index) : Light(index)
     {
-        setupSpotLight();
     }
 
+
+    void setup() override
+    {
+        glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
+        glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
+
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+
+        GLsizei stride = 8;
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        // load light cube debug shader
+        lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
+    }
     
 
     // draws the model, and thus all its meshes
@@ -60,26 +77,5 @@ public:
     void clean() override
     {
         glDeleteVertexArrays(1, &VAO);
-    }
-
-private:
-
-    void setupSpotLight()
-    {
-        glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
-        glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
-
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        glBindVertexArray(VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-        GLsizei stride = 8;
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        // load light cube debug shader
-        lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
     }
 };

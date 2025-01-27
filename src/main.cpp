@@ -37,6 +37,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 void renderUIWindow(bool show, float framerate);
+void drawScene(Shader& lightingShader, float framerate);
+
 
 
 bool show_window = false;
@@ -56,6 +58,19 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
+
+PointLight myPointLight(0);
+DirectionalLight myDirectionalLight1(0);
+DirectionalLight myDirectionalLight2(1);
+SpotLight mySpotLight(0);
+
+//Cubes ourCubes;
+Cube ourCube;
+Plane ourPlane;
+Billboard ourBillboard;
+
+Text ourText;
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -164,23 +179,15 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     
-
-    
+    // configure global opengl state
+    // -----------------------------
     // enable z buffer (depth test) to have correct objects depth ordering
     glEnable(GL_DEPTH_TEST);
-
     // optim : do not display hidden faces
     // consistent winding orders needed (counter-clockwise by default)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-    
-
-
-
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 
     // anti aliasing MSAA
@@ -188,31 +195,43 @@ int main(int, char**)
     glEnable(GL_MULTISAMPLE);
 
     // load shaders
-    Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // scene textured cube shader
-    //Shader lightingShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // scene textured cube shader
+    Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // phong illimuniation model and lightning shader
+    //Shader depthBufferShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
+    Shader screenShader("shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
 
     
+
+    
+    // screen quad VAO
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(screenQuadVertices), &screenQuadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 
 
     // load models
     Model backpackModel("models/backpack/backpack.obj");
     Model cushionModel("models/cushion/cushion.obj");
 
+
+    myPointLight.setup();
+    myDirectionalLight1.setup();
+    myDirectionalLight2.setup();
+    mySpotLight.setup();
     
-    // lights
-    //Lights ourLights;
+    ourCube.setup();
+    ourPlane.setup();
+    ourBillboard.setup();
 
-    PointLight myPointLight(0);
-    DirectionalLight myDirectionalLight1(0);
-    DirectionalLight myDirectionalLight2(1);
-    SpotLight mySpotLight(0);
+    ourText.setup();
 
-    //Cubes ourCubes;
-    Cube ourCube;
-    Plane ourPlane;
-    Billboard ourBillboard;
-
-    Text ourText;
     
 
 
@@ -221,6 +240,44 @@ int main(int, char**)
     lightingShader.use();
     lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
     lightingShader.setFloat("material.shininess", 32.0f);
+
+
+
+    // shader configuration
+    // --------------------
+    screenShader.use();
+    screenShader.setInt("screenTexture", 0);
+
+
+
+    // framebuffer configuration
+    // -------------------------
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    // create a color attachment texture
+    unsigned int textureColorbuffer;
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
 
 
     // uncomment this call to draw in wireframe polygons.
@@ -252,9 +309,7 @@ int main(int, char**)
 
 
 
-        // ..:: Render loop code :: ..
-
-        float currentFrame = (float)glfwGetTime();
+        float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
@@ -263,74 +318,40 @@ int main(int, char**)
         // input
         processInput(window);
 
-        // render a black background
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        // clear previous frame rendered
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-
-
-        lightingShader.use();
         
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = cam.GetViewMatrix();
-        
+        // prepare the framebuffer
+        // bind to framebuffer and draw scene as we normally would to color texture 
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
+
+        // make sure we clear the framebuffer's content
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        // setup lights
-        //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1.draw(lightingShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2.draw(lightingShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-
-
-        // activate shader rendering shader
-        lightingShader.use();
-        lightingShader.setVec3("viewPos", cam.Position);
-        lightingShader.setMat4("projection", projection);
-        lightingShader.setMat4("view", view);
+        // draw scene in framebuffer
+        drawScene(lightingShader, io.Framerate);
 
 
 
+        // draw framebuffer to screen
+        // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+        // clear all relevant buffers
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // set clear color (not really necessary actually, since we won't be able to see behind the quad anyways)
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        screenShader.use();
+        glBindVertexArray(quadVAO);
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
-        // render the loaded model
-        //glm::mat4 model1 = glm::mat4(1.0f);
-        //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-        //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        //lightingShader.setMat4("model", model1);
-        //cushionModel.Draw(lightingShader);
-
-   
-        // render the loaded model
-        //glm::mat4 model2 = glm::mat4(1.0f);
-        //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        //model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-        ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        //lightingShader.setMat4("model", model2);
-        //backpackModel.Draw(lightingShader);
 
 
-        // render test cube
-        ourCube.draw(lightingShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        ourBillboard.draw(lightingShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f));
-
-        // render test plane
-        ourPlane.draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-        //ourCubes.Draw(lightingShader);
-
-
-        // render HUD / UI
-        ourText.Draw(std::format("{} FPS", (int)io.Framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 
 
         // Rendering
@@ -348,15 +369,15 @@ int main(int, char**)
 
 
 
-    glBindVertexArray(0);
+    //glBindVertexArray(0);
+
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    //glDeleteVertexArrays(1, &cubeVAO);
-    //glDeleteVertexArrays(1, &lightCubeVAO);
-    //glDeleteBuffers(1, &VBO);
-    
-    //myPointLight.clean();
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
+    glDeleteRenderbuffers(1, &rbo);
+    glDeleteFramebuffers(1, &framebuffer);
 
     lightingShader.clean();
 
@@ -480,4 +501,67 @@ void renderUIWindow(bool show, float framerate)
     ImGui::Begin("Hello, world!", &show);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
     ImGui::End();
+}
+
+void drawScene(Shader& lightingShader, float framerate)
+{
+    lightingShader.use();
+
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = cam.GetViewMatrix();
+
+
+
+    // setup lights
+    //ourLights.Draw(lightingShader, projection, view);
+    myPointLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+    myDirectionalLight1.draw(lightingShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    myDirectionalLight2.draw(lightingShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
+    //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+
+    // activate shader rendering shader
+    lightingShader.use();
+    lightingShader.setVec3("viewPos", cam.Position);
+    lightingShader.setMat4("projection", projection);
+    lightingShader.setMat4("view", view);
+
+
+
+
+
+    // render the loaded model
+    //glm::mat4 model1 = glm::mat4(1.0f);
+    //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+    //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
+    //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    //lightingShader.setMat4("model", model1);
+    //cushionModel.Draw(lightingShader);
+
+
+    // render the loaded model
+    //glm::mat4 model2 = glm::mat4(1.0f);
+    //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    //model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
+    ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    //lightingShader.setMat4("model", model2);
+    //backpackModel.Draw(lightingShader);
+
+
+    // render test cube
+    ourCube.draw(lightingShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    ourBillboard.draw(lightingShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f));
+
+    // render test plane
+    ourPlane.draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+    //ourCubes.Draw(lightingShader);
+
+
+    // render HUD / UI
+    ourText.Draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }

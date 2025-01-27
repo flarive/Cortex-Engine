@@ -268,5 +268,11 @@
     <CopyFileToFolders Include="..\resources\textures\grass2.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

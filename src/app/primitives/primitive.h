@@ -12,6 +12,7 @@ public:
     Primitive() {}
     virtual ~Primitive() = default;
 
+    virtual void setup() = 0;
     virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
 
 protected:
@@ -101,4 +102,16 @@ float quadVertices[] = {
      1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
      1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
     -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f
+};
+
+
+float screenQuadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+
+    -1.0f,  1.0f,  0.0f, 1.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f,  1.0f, 1.0f
 };

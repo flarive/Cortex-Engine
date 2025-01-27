@@ -7,15 +7,30 @@ class PointLight : public Light
 public:
     PointLight() : Light(0)
     {
-        setupPointLight();
     }
 
     PointLight(unsigned int index) : Light(index)
     {
-        setupPointLight();
     }
 
-    
+    void setup() override
+    {
+        glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
+        glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
+
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+
+        GLsizei stride = 8;
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        // load light cube debug shader
+        lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
+    }
 
     // draws the model, and thus all its meshes
     void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::zero<glm::vec3>()) override
@@ -58,26 +73,5 @@ public:
     void clean() override
     {
         glDeleteVertexArrays(1, &VAO);
-    }
-
-private:
-
-    void setupPointLight()
-    {
-        glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
-        glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
-
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        glBindVertexArray(VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-        GLsizei stride = 8;
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        // load light cube debug shader
-        lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
     }
 };

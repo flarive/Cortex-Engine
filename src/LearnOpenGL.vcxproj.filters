@@ -168,6 +168,9 @@
     <ClInclude Include="app\primitives\billboard.h">
       <Filter>app\primitives</Filter>
     </ClInclude>
+    <ClInclude Include="app\primitives\skybox.h">
+      <Filter>app\primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="misc\debuggers\imgui.natvis">
@@ -175,6 +178,9 @@
     </None>
     <None Include="misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
+    </None>
+    <None Include="..\resources\shaders\skybox.frag">
+      <Filter>resources\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +278,15 @@
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\skybox.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\cubemap.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\cubemap.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>

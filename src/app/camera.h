@@ -75,7 +75,7 @@ public:
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true)
     {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
@@ -101,12 +101,21 @@ public:
         if (direction == PITCH_DOWN)
             Pitch -= 20 * velocity;
 
-        // Update camera vectors after changing yaw or pitch
-        updateCameraVectors();
+        // make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (constrainPitch)
+        {
+            if (Pitch > 89.0f)
+                Pitch = 89.0f;
+            if (Pitch < -89.0f)
+                Pitch = -89.0f;
+        }
 
         // for FPS camera
         if (Fps)
             Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
+
+        // update Front, Right and Up Vectors using the updated Euler angles
+        updateCameraVectors();
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.

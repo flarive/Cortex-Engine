@@ -18,6 +18,9 @@
 #include "app/primitives/cube.h"
 #include "app/primitives/plane.h"
 #include "app/primitives/billboard.h"
+#include "app/primitives/skybox.h"
+
+#include "app/texture_helper.h"
 
 #include <iostream>
 #include <chrono>
@@ -37,7 +40,10 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 void renderUIWindow(bool show, float framerate);
-void drawScene(Shader& lightingShader, float framerate);
+void drawScene(Shader& lightingShader);
+void drawUI(Shader& lightingShader, float framerate);
+void cleanScene();
+
 
 
 
@@ -71,6 +77,8 @@ Plane ourPlane;
 Billboard ourBillboard;
 
 Text ourText;
+
+Skybox ourSkybox;
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -199,7 +207,7 @@ int main(int, char**)
     //Shader depthBufferShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
     Shader screenShader("shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
 
-    
+
 
     
     // screen quad VAO
@@ -231,6 +239,8 @@ int main(int, char**)
     ourBillboard.setup();
 
     ourText.setup();
+
+    ourSkybox.setup();
 
     
 
@@ -331,8 +341,13 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        // draw scene in framebuffer
-        drawScene(lightingShader, io.Framerate);
+
+        // draw scene and UI in framebuffer
+        drawScene(lightingShader);
+        drawUI(lightingShader, io.Framerate);
+
+
+
 
 
 
@@ -369,22 +384,22 @@ int main(int, char**)
 
 
 
-    //glBindVertexArray(0);
+    glBindVertexArray(0);
 
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
+    // optional: de-allocate all resources once they've outlived their purpose
     glDeleteVertexArrays(1, &quadVAO);
     glDeleteBuffers(1, &quadVBO);
     glDeleteRenderbuffers(1, &rbo);
     glDeleteFramebuffers(1, &framebuffer);
 
     lightingShader.clean();
+    screenShader.clean();
+
+    cleanScene();
 
 
-
-
-    // Cleanup
+    // imGui Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -458,23 +473,23 @@ void processInput(GLFWwindow* window)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    //float xpos = static_cast<float>(xposIn);
-    //float ypos = static_cast<float>(yposIn);
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset = xpos - lastX;
-    //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //cam.ProcessMouseMovement(xoffset, yoffset);
+    cam.ProcessMouseMovement(xoffset, yoffset);
 }
 
 
@@ -503,14 +518,13 @@ void renderUIWindow(bool show, float framerate)
     ImGui::End();
 }
 
-void drawScene(Shader& lightingShader, float framerate)
+void drawScene(Shader& lightingShader)
 {
     lightingShader.use();
 
     // view/projection transformations
     glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 view = cam.GetViewMatrix();
-
 
 
     // setup lights
@@ -562,6 +576,22 @@ void drawScene(Shader& lightingShader, float framerate)
     //ourCubes.Draw(lightingShader);
 
 
+    ourSkybox.draw(projection, view);
+}
+
+void drawUI(Shader& lightingShader, float framerate)
+{
     // render HUD / UI
     ourText.Draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
+
+void cleanScene()
+{
+    ourSkybox.clean();
+
+    ourCube.clean();
+    ourPlane.clean();
+    ourBillboard.clean();
+}
+
+

@@ -179,9 +179,6 @@
     <None Include="misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
     </None>
-    <None Include="..\resources\shaders\skybox.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
@@ -271,9 +268,6 @@
     <CopyFileToFolders Include="..\resources\textures\grass.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\grass2.png">
-      <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
@@ -283,11 +277,12 @@
     <CopyFileToFolders Include="..\resources\shaders\skybox.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\cubemap.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\cubemap.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\skybox.frag" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\back.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\bottom.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\front.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\left.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\right.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\skybox\top.jpg" />
   </ItemGroup>
 </Project>

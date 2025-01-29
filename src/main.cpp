@@ -128,6 +128,8 @@ int main(int, char**)
     
     // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
     glfwSwapInterval(1);
+
+
     
     
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

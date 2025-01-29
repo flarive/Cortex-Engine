@@ -2,6 +2,8 @@
 
 #include "light.h"
 
+#include <format>
+
 class PointLight : public Light
 {
 public:

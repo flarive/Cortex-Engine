@@ -8,8 +8,7 @@
 #include "app/shader.h"
 #include "app/camera.h"
 #include "app/model.h"
-#include "app/cubes.h"
-#include "app/lights.h"
+
 #include "app/lights/point_light.h"
 #include "app/lights/directional_light.h"
 #include "app/lights/spot_light.h"
@@ -71,7 +70,7 @@ DirectionalLight myDirectionalLight1(0);
 DirectionalLight myDirectionalLight2(1);
 SpotLight mySpotLight(0);
 
-//Cubes ourCubes;
+
 Cube ourCube;
 Plane ourPlane;
 Billboard ourBillboard;

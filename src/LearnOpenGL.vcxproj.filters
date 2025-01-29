@@ -50,6 +50,9 @@
     <Filter Include="app\primitives\base">
       <UniqueIdentifier>{23920bf6-533c-4476-99a3-0f4ae57fbef8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\skybox">
+      <UniqueIdentifier>{37f2362d-4a07-46cc-a9aa-ff3bc91825bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -105,13 +108,7 @@
     <ClInclude Include="app\camera.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\cubes.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="app\file_system.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\lights.h">
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\mesh.h">
@@ -277,12 +274,26 @@
     <CopyFileToFolders Include="..\resources\shaders\skybox.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\skybox.frag" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\back.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\bottom.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\front.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\left.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\right.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\skybox\top.jpg" />
+    <CopyFileToFolders Include="..\resources\shaders\skybox.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\back.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\bottom.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\front.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\left.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\right.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\skybox\top.jpg">
+      <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -27,6 +27,8 @@ namespace engine
         unsigned int m_diffuseMap = 0;
         unsigned int m_specularMap = 0;
         unsigned int m_normalMap = 0;
+
+        unsigned int m_cubemapTexture = 0;
     };
 
 

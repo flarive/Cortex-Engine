@@ -6,7 +6,7 @@ engine::Text::Text()
 
 void engine::Text::setup()
 {
-    m_textShader = Shader("shaders/text.vertex", "shaders/text.frag");
+    m_textShader = Shader("text", "shaders/text.vertex", "shaders/text.frag");
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
     m_textShader.use();

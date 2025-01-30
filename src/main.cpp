@@ -24,8 +24,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 void renderUIWindow(bool show, float framerate);
-void drawScene(engine::Shader& lightingShader);
-void drawUI(engine::Shader& lightingShader, float framerate);
+void drawScene(engine::Shader& phongShader, engine::Shader& skyboxReflectShader);
+void drawUI(float framerate);
 void cleanScene();
 
 
@@ -63,6 +63,12 @@ engine::Billboard ourBillboard;
 engine::Text ourText;
 
 engine::Skybox ourSkybox;
+
+
+engine::Model backpackModel;
+engine::Model cushionModel;
+
+
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -189,11 +195,11 @@ int main(int, char**)
     glEnable(GL_MULTISAMPLE);
 
     // load shaders
-    engine::Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // phong illimuniation model and lightning shader
-    //Shader depthBufferShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
-    engine::Shader screenShader("shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
+    engine::Shader phongShader("phong", "shaders/phong.vertex", "shaders/phong.frag"); // phong illimuniation model and lightning shader
+    //Shader depthBufferShader("depthbuffer", "shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
+    engine::Shader screenShader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
 
-
+    engine::Shader skyboxReflectShader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
     
     // screen quad VAO
@@ -211,8 +217,8 @@ int main(int, char**)
 
 
     // load models
-    engine::Model backpackModel("models/backpack/backpack.obj");
-    engine::Model cushionModel("models/cushion/cushion.obj");
+    backpackModel = engine::Model("models/backpack/backpack.obj");
+    cushionModel = engine::Model("models/cushion/cushion.obj");
 
 
     myPointLight.setup();
@@ -233,9 +239,9 @@ int main(int, char**)
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
-    lightingShader.use();
-    lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-    lightingShader.setFloat("material.shininess", 32.0f);
+    phongShader.use();
+    phongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+    phongShader.setFloat("material.shininess", 32.0f);
 
 
 
@@ -243,8 +249,6 @@ int main(int, char**)
     // --------------------
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-
-
 
     // framebuffer configuration
     // -------------------------
@@ -329,8 +333,8 @@ int main(int, char**)
 
 
         // draw scene and UI in framebuffer
-        drawScene(lightingShader);
-        drawUI(lightingShader, io.Framerate);
+        drawScene(phongShader, skyboxReflectShader);
+        drawUI(io.Framerate);
 
 
 
@@ -379,8 +383,9 @@ int main(int, char**)
     glDeleteRenderbuffers(1, &rbo);
     glDeleteFramebuffers(1, &framebuffer);
 
-    lightingShader.clean();
+    phongShader.clean();
     screenShader.clean();
+    skyboxReflectShader.clean();
 
     cleanScene();
 
@@ -504,30 +509,33 @@ void renderUIWindow(bool show, float framerate)
     ImGui::End();
 }
 
-void drawScene(engine::Shader& lightingShader)
+void drawScene(engine::Shader& phongShader, engine::Shader& skyboxReflectShader)
 {
-    lightingShader.use();
+    phongShader.use();
+
 
     // view/projection transformations
     glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 view = cam.GetViewMatrix();
 
 
+
+
     // setup lights
     //ourLights.Draw(lightingShader, projection, view);
-    myPointLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-    myDirectionalLight1.draw(lightingShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    myDirectionalLight2.draw(lightingShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    myPointLight.draw(phongShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+    myDirectionalLight1.draw(phongShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    myDirectionalLight2.draw(phongShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
     //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 
 
-    // activate shader rendering shader
-    lightingShader.use();
-    lightingShader.setVec3("viewPos", cam.Position);
-    lightingShader.setMat4("projection", projection);
-    lightingShader.setMat4("view", view);
+    // activate phong shader
+    phongShader.use();
+    phongShader.setVec3("viewPos", cam.Position);
+    phongShader.setMat4("projection", projection);
+    phongShader.setMat4("view", view);
 
 
 
@@ -538,34 +546,41 @@ void drawScene(engine::Shader& lightingShader)
     //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
     //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
     //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    //lightingShader.setMat4("model", model1);
-    //cushionModel.Draw(lightingShader);
+    //phongShader.setMat4("model", model1);
+    //cushionModel.draw(phongShader);
 
+
+    // activate skybox reflection shader
+    skyboxReflectShader.use();
+    skyboxReflectShader.setMat4("view", view);
+    skyboxReflectShader.setMat4("projection", projection);
+    skyboxReflectShader.setVec3("cameraPos", cam.Position);
 
     // render the loaded model
-    //glm::mat4 model2 = glm::mat4(1.0f);
-    //model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-    //model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-    ////model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    //lightingShader.setMat4("model", model2);
-    //backpackModel.Draw(lightingShader);
+    glm::mat4 model2 = glm::mat4(1.0f);
+    model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
+    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    skyboxReflectShader.setMat4("model", model2);
+    backpackModel.draw(skyboxReflectShader);
+
+
+
 
 
     // render test cube
-    ourCube.draw(lightingShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    ourCube.draw(phongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    ourBillboard.draw(lightingShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f));
+    ourBillboard.draw(phongShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
     // render test plane
-    ourPlane.draw(lightingShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-    //ourCubes.Draw(lightingShader);
+    ourPlane.draw(phongShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
     ourSkybox.draw(projection, view);
 }
 
-void drawUI(engine::Shader& lightingShader, float framerate)
+void drawUI(float framerate)
 {
     // render HUD / UI
     ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));

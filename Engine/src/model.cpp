@@ -1,6 +1,11 @@
 #include "../include/model.h"
 
-//#include <stb_image.h>
+#include "SOIL2.h"
+
+// constructor, expects a filepath to a 3D model.
+engine::Model::Model()
+{
+}
 
 
 // constructor, expects a filepath to a 3D model.
@@ -10,7 +15,7 @@ engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamm
 }
 
 // draws the model, and thus all its meshes
-void engine::Model::Draw(Shader& shader)
+void engine::Model::draw(Shader& shader)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
@@ -180,8 +185,9 @@ static unsigned int engine::TextureFromFile(const char* path, const std::string&
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
-    /*int width, height, nrComponents;
-    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    bool alpha = false;
+    int width, height, nrComponents;
+    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
     if (data)
     {
         GLenum format = 0;
@@ -201,13 +207,14 @@ static unsigned int engine::TextureFromFile(const char* path, const std::string&
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        stbi_image_free(data);
+        SOIL_free_image_data(data);
     }
     else
     {
         std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }*/
+        SOIL_free_image_data(data);
+        exit(EXIT_FAILURE);
+    }
 
     return textureID;
 }

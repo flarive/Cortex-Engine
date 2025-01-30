@@ -8,7 +8,7 @@ engine::Skybox::Skybox()
 
 void engine::Skybox::setup()
 {
-    m_skyboxShader = Shader("shaders/skybox.vertex", "shaders/skybox.frag");
+    m_skyboxShader = Shader("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
 
 
     // skybox VAO

@@ -148,10 +148,10 @@
     <CopyFileToFolders Include="..\resources\shaders\light_cube.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\shader.frag">
+    <CopyFileToFolders Include="..\resources\shaders\phong.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\shader.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\phong.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\backpack\normal.jpg">
@@ -219,6 +219,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\skybox\top.jpg">
       <Filter>resources\textures\skybox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\cubemap.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\cubemap.frag">
+      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

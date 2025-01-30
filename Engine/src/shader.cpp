@@ -8,8 +8,10 @@ engine::Shader::Shader()
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
-engine::Shader::Shader(const char* vertexPath, const char* fragmentPath)
+engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
+    name = shaderName;
+    
     init(vertexPath, fragmentPath);
 }
 

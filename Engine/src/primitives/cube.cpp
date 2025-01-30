@@ -38,26 +38,56 @@ void engine::Cube::setup()
     // load texture
     m_diffuseMap = engine::Texture::soil_load_texture("textures/container2.png", true);
     m_specularMap = engine::Texture::soil_load_texture("textures/container2_specular.png", false);
+
+    std::vector<std::string> faces
+    {
+        "textures/skybox/right.jpg",
+        "textures/skybox/left.jpg",
+        "textures/skybox/top.jpg",
+        "textures/skybox/bottom.jpg",
+        "textures/skybox/front.jpg",
+        "textures/skybox/back.jpg"
+    };
+
+    m_cubemapTexture = engine::Texture::loadCubemap(faces);
 }
 
 // draws the model, and thus all its meshes
 void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
 {
-    // bind diffuse map
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
-    // bind specular map
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_specularMap);
-
     shader.use();
-    shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
-    //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-    shader.setInt("material.texture_diffuse1", 0); // texture 0
-    shader.setInt("material.texture_specular1", 1); // texture 1
-    shader.setBool("material.has_normal_map", m_normalMap > 0);
-    //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-    shader.setFloat("material.shininess", 32.0f);
+
+    if (shader.name == "cubemap")
+    {
+        // bind skybox map
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
+
+        shader.setInt("skyboxTexture", 0); // texture 0
+    }
+    else // phong shader
+    {
+        // bind diffuse map
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
+
+        // bind specular map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_specularMap);
+
+        // bind specular map
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, m_normalMap);
+
+        shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
+        //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        shader.setInt("material.texture_diffuse1", 0); // texture 0
+        shader.setInt("material.texture_specular1", 1); // texture 1
+        shader.setInt("material.texture_normal1", 2); // texture 2
+        shader.setBool("material.has_normal_map", m_normalMap > 0);
+        //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.setFloat("material.shininess", 32.0f);
+    }
 
     // render the cubes
     glBindVertexArray(m_VAO);

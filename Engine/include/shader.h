@@ -13,13 +13,14 @@ namespace engine
     {
     public:
         unsigned int ID;
+        std::string name;
 
         Shader();
 
 
         // constructor generates the shader on the fly
         // ------------------------------------------------------------------------
-        Shader(const char* vertexPath, const char* fragmentPath);
+        Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath);
 
         void init(const char* vertexPath, const char* fragmentPath);
 

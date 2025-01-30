@@ -1,5 +1,6 @@
 #include "../../include/primitives/plane.h"
 
+#include "../../include/texture.h"
 
 engine::Plane::Plane()
 {

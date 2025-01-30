@@ -35,21 +35,6 @@
     <Filter Include="resources\fonts">
       <UniqueIdentifier>{f74f87d3-9a7a-4b37-a792-1ecd6f87a6d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="app\ui">
-      <UniqueIdentifier>{33f78ae4-7d59-4b53-be66-21f4e3c09528}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="app\primitives">
-      <UniqueIdentifier>{fcb262fc-d96a-4988-8d7c-6778cf09aee7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="app\lights">
-      <UniqueIdentifier>{b6a655f7-2a49-4907-8047-dc4df3c67c90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="app\lights\base">
-      <UniqueIdentifier>{cc3d1065-f29e-42bc-adf7-be6dbdd79c33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="app\primitives\base">
-      <UniqueIdentifier>{23920bf6-533c-4476-99a3-0f4ae57fbef8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources\textures\skybox">
       <UniqueIdentifier>{37f2362d-4a07-46cc-a9aa-ff3bc91825bb}</UniqueIdentifier>
     </Filter>
@@ -105,68 +90,8 @@
     <ClInclude Include="backends\imgui_impl_opengl3_loader.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="app\camera.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\file_system.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\mesh.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\model.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\shader.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\texture.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\texture_helper.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\vertex.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="themes\imgui_spectrum.h">
       <Filter>themes</Filter>
-    </ClInclude>
-    <ClInclude Include="app\character.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\ui\text.h">
-      <Filter>app\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="app\primitives\cube.h">
-      <Filter>app\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="app\primitives\plane.h">
-      <Filter>app\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="app\lights\point_light.h">
-      <Filter>app\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="app\lights\directional_light.h">
-      <Filter>app\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="app\lights\spot_light.h">
-      <Filter>app\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="app\lights\light.h">
-      <Filter>app\lights\base</Filter>
-    </ClInclude>
-    <ClInclude Include="app\common_defines.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\primitives\primitive.h">
-      <Filter>app\primitives\base</Filter>
-    </ClInclude>
-    <ClInclude Include="app\primitives\billboard.h">
-      <Filter>app\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="app\primitives\skybox.h">
-      <Filter>app\primitives</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -129,7 +129,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)libs\soil2\release\soil2.lib;$(SolutionDir)tmp\engine\debug\engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)tmp\engine\debug\engine.lib;$(SolutionDir)libs\soil2\debug\soil2-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
@@ -196,26 +196,6 @@
     <ClCompile Include="themes\imgui_spectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="app\camera.h" />
-    <ClInclude Include="app\character.h" />
-    <ClInclude Include="app\common_defines.h" />
-    <ClInclude Include="app\file_system.h" />
-    <ClInclude Include="app\lights\light.h" />
-    <ClInclude Include="app\lights\directional_light.h" />
-    <ClInclude Include="app\lights\point_light.h" />
-    <ClInclude Include="app\lights\spot_light.h" />
-    <ClInclude Include="app\mesh.h" />
-    <ClInclude Include="app\model.h" />
-    <ClInclude Include="app\primitives\billboard.h" />
-    <ClInclude Include="app\primitives\cube.h" />
-    <ClInclude Include="app\primitives\plane.h" />
-    <ClInclude Include="app\primitives\primitive.h" />
-    <ClInclude Include="app\primitives\skybox.h" />
-    <ClInclude Include="app\shader.h" />
-    <ClInclude Include="app\texture.h" />
-    <ClInclude Include="app\texture_helper.h" />
-    <ClInclude Include="app\ui\text.h" />
-    <ClInclude Include="app\vertex.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />

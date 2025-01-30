@@ -143,5 +143,8 @@
     <ClInclude Include="include\ui\text.h">
       <Filter>Fichiers d%27en-tête\ui</Filter>
     </ClInclude>
+    <ClInclude Include="include\engine.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

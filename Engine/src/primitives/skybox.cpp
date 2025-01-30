@@ -1,5 +1,6 @@
 #include "../../include/primitives/skybox.h"
 
+#include "../../include/texture.h"
 
 engine::Skybox::Skybox()
 {

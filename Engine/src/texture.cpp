@@ -5,7 +5,6 @@
 #include "../include/file_system.h"
 
 #include "SOIL2.h"
-#include "stb_image.h"
 
 unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, bool repeat)
 {
@@ -91,7 +90,7 @@ unsigned int engine::Texture::loadCubemap(std::vector<std::string> faces)
     int width, height, nrChannels;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        unsigned char* data = stbi_load(file_system::getPath(faces[i]).c_str(), &width, &height, &nrChannels, 0);
+        /*unsigned char* data = stbi_load(file_system::getPath(faces[i]).c_str(), &width, &height, &nrChannels, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -103,6 +102,22 @@ unsigned int engine::Texture::loadCubemap(std::vector<std::string> faces)
         {
             std::cerr << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
             stbi_image_free(data);
+            exit(EXIT_FAILURE);
+        }*/
+
+        bool alpha = false;
+        unsigned char* data = SOIL_load_image(file_system::getPath(faces[i]).c_str(), &width, &height, 0, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+            );
+            SOIL_free_image_data(data);
+        }
+        else
+        {
+            std::cerr << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+            SOIL_free_image_data(data);
             exit(EXIT_FAILURE);
         }
     }

@@ -1,5 +1,7 @@
 #include "../include/model.h"
 
+//#include <stb_image.h>
+
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
@@ -170,7 +172,7 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
     return textures;
 }
     
-unsigned int engine::Model::TextureFromFile(const char* path, const std::string& directory)
+static unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
@@ -178,7 +180,7 @@ unsigned int engine::Model::TextureFromFile(const char* path, const std::string&
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
-    int width, height, nrComponents;
+    /*int width, height, nrComponents;
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
@@ -205,7 +207,7 @@ unsigned int engine::Model::TextureFromFile(const char* path, const std::string&
     {
         std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
-    }
+    }*/
 
     return textureID;
 }

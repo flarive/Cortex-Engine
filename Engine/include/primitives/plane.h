@@ -3,7 +3,6 @@
 #include "primitive.h"
 
 #include "../shader.h"
-#include "../texture.h"
 
 namespace engine
 {

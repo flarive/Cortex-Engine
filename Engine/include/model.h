@@ -4,16 +4,13 @@
 #include "mesh.h"
 #include "shader.h"
 
-#include <stb_image.h>
+
 #include <assimp/importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 
 
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -49,7 +46,7 @@ namespace engine
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
         std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-
-        unsigned int TextureFromFile(const char* path, const std::string& directory);
     };
+
+    static unsigned int TextureFromFile(const char* path, const std::string& directory);
 }

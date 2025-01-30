@@ -1,5 +1,6 @@
 #include "../../include/primitives/cube.h"
 
+#include "../../include/texture.h"
 
 engine::Cube::Cube()
 {

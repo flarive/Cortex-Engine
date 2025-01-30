@@ -176,6 +176,7 @@
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\character.h" />
     <ClInclude Include="include\common_defines.h" />
+    <ClInclude Include="include\engine.h" />
     <ClInclude Include="include\file_system.h" />
     <ClInclude Include="include\lights\directional_light.h" />
     <ClInclude Include="include\lights\light.h" />

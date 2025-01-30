@@ -3,27 +3,12 @@
 #include "imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
 
-#include "app/common_defines.h"
-
-#include "app/shader.h"
-#include "app/camera.h"
-#include "app/model.h"
-
-#include "app/lights/point_light.h"
-#include "app/lights/directional_light.h"
-#include "app/lights/spot_light.h"
-#include "app/ui/text.h"
-
-#include "app/primitives/cube.h"
-#include "app/primitives/plane.h"
-#include "app/primitives/billboard.h"
-#include "app/primitives/skybox.h"
-
-#include "app/texture_helper.h"
+#include "include/engine.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+
 
 #pragma warning(disable: 4100) // warning C4189: 'yoffset': variable locale initialisée mais non référencée
 
@@ -39,8 +24,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 void renderUIWindow(bool show, float framerate);
-void drawScene(Shader& lightingShader);
-void drawUI(Shader& lightingShader, float framerate);
+void drawScene(engine::Shader& lightingShader);
+void drawUI(engine::Shader& lightingShader, float framerate);
 void cleanScene();
 
 
@@ -55,7 +40,7 @@ unsigned int SCR_HEIGHT = 600;
 const bool FULLSCREEN = false;
 
 // camera
-Camera cam(glm::vec3(0.0f, 0.0f, 3.0f), true);
+engine::Camera cam(glm::vec3(0.0f, 0.0f, 3.0f), true);
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -65,19 +50,19 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 
-PointLight myPointLight(0);
-DirectionalLight myDirectionalLight1(0);
-DirectionalLight myDirectionalLight2(1);
-SpotLight mySpotLight(0);
+engine::PointLight myPointLight(0);
+engine::DirectionalLight myDirectionalLight1(0);
+engine::DirectionalLight myDirectionalLight2(1);
+engine::SpotLight mySpotLight(0);
 
 
-Cube ourCube;
-Plane ourPlane;
-Billboard ourBillboard;
+engine::Cube ourCube;
+engine::Plane ourPlane;
+engine::Billboard ourBillboard;
 
-Text ourText;
+engine::Text ourText;
 
-Skybox ourSkybox;
+engine::Skybox ourSkybox;
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -204,9 +189,9 @@ int main(int, char**)
     glEnable(GL_MULTISAMPLE);
 
     // load shaders
-    Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // phong illimuniation model and lightning shader
+    engine::Shader lightingShader("shaders/shader.vertex", "shaders/shader.frag"); // phong illimuniation model and lightning shader
     //Shader depthBufferShader("shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
-    Shader screenShader("shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
+    engine::Shader screenShader("shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
 
 
 
@@ -217,7 +202,7 @@ int main(int, char**)
     glGenBuffers(1, &quadVBO);
     glBindVertexArray(quadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(screenQuadVertices), &screenQuadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(engine::screenQuadVertices), &engine::screenQuadVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
@@ -226,8 +211,8 @@ int main(int, char**)
 
 
     // load models
-    Model backpackModel("models/backpack/backpack.obj");
-    Model cushionModel("models/cushion/cushion.obj");
+    engine::Model backpackModel("models/backpack/backpack.obj");
+    engine::Model cushionModel("models/cushion/cushion.obj");
 
 
     myPointLight.setup();
@@ -427,33 +412,33 @@ void processInput(GLFWwindow* window)
 
 
     if (shiftPressed && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        cam.ProcessKeyboard(YAW_DOWN, deltaTime); // Modify behavior as needed
+        cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime); // Modify behavior as needed
     else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        cam.ProcessKeyboard(LEFT, deltaTime);
+        cam.ProcessKeyboard(engine::LEFT, deltaTime);
 
 
     if (shiftPressed && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        cam.ProcessKeyboard(YAW_UP, deltaTime);
+        cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        cam.ProcessKeyboard(RIGHT, deltaTime);
+        cam.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
     if (shiftPressed && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cam.ProcessKeyboard(PITCH_UP, deltaTime);
+        cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        cam.ProcessKeyboard(FORWARD, deltaTime);
+        cam.ProcessKeyboard(engine::FORWARD, deltaTime);
 
 
     if (shiftPressed && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cam.ProcessKeyboard(PITCH_DOWN, deltaTime);
+        cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        cam.ProcessKeyboard(BACKWARD, deltaTime);
+        cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
 
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cam.ProcessKeyboard(UP, deltaTime);
+        cam.ProcessKeyboard(engine::UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        cam.ProcessKeyboard(DOWN, deltaTime);
+        cam.ProcessKeyboard(engine::DOWN, deltaTime);
 
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -519,7 +504,7 @@ void renderUIWindow(bool show, float framerate)
     ImGui::End();
 }
 
-void drawScene(Shader& lightingShader)
+void drawScene(engine::Shader& lightingShader)
 {
     lightingShader.use();
 
@@ -580,10 +565,10 @@ void drawScene(Shader& lightingShader)
     ourSkybox.draw(projection, view);
 }
 
-void drawUI(Shader& lightingShader, float framerate)
+void drawUI(engine::Shader& lightingShader, float framerate)
 {
     // render HUD / UI
-    ourText.Draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
 }
 
 void cleanScene()

@@ -1,9 +1,22 @@
-// Engine.cpp : Définit les fonctions de la bibliothèque statique.
-//
+#include "../Engine/include/engine.h"
 
-#define WIN32_LEAN_AND_MEAN             // Exclure les en-têtes Windows rarement utilisés
-
-// TODO: Il s'agit d'un exemple de fonction de bibliothèque
-void fnEngine()
+engine::Engine::Engine()
 {
 }
+
+bool engine::Engine::initEngine()
+{
+	return true;
+}
+
+void engine::Engine::mainLoop()
+{
+
+}
+
+bool engine::Engine::desinitEngine()
+{
+	return true;
+}
+
+

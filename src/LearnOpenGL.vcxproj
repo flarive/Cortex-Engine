@@ -196,12 +196,14 @@
     <ClCompile Include="themes\imgui_spectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />
     <ClInclude Include="backends\imgui_impl_glfw.h" />
     <ClInclude Include="backends\imgui_impl_opengl3.h" />
     <ClInclude Include="backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="myapp.h" />
     <ClInclude Include="themes\imgui_spectrum.h" />
   </ItemGroup>
   <ItemGroup>

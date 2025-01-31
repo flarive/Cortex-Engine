@@ -20,6 +20,25 @@
 #include "primitives/billboard.h"
 #include "primitives/skybox.h"
 
+namespace engine
+{
+
+	class Engine
+	{
+	public:
+		Engine();
+		virtual ~Engine() = default;
+
+		virtual bool initEngine();
+
+		virtual void mainLoop();
+
+		virtual void customMainLoop() = 0;
+
+		virtual bool desinitEngine();
+	};
+}
+
 
 
 

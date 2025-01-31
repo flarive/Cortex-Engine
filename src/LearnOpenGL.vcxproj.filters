@@ -96,9 +96,6 @@
     <ClInclude Include="myapp.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="app.h">
-      <Filter>sources</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="misc\debuggers\imgui.natvis">

@@ -1,19 +1,21 @@
 #pragma once
 
-#include "app.h"
+#include "include/app/app.h"
 #include "include/engine.h"
 
 
-class MyApp : public App
+class MyApp : public engine::App
 {
 public:
-    MyApp(std::string title) : App(title)
+    MyApp(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
+        : engine::App(_title, _width, _height, _fullscreen)
     {
         // my application specific state gets initialized here
 
-        lastX = SCR_WIDTH / 2.0f;
-        lastY = SCR_HEIGHT / 2.0f;
+        lastX = width / 2.0f;
+        lastY = height / 2.0f;
 
+        init();
     }
 
     void init() override
@@ -38,72 +40,49 @@ public:
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------
-    void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
+    void keyCallback(GLFWwindow* win)
     {
-        App::keyCallback(win, key, scancode, action, mods);
-        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-            // anotherClass.Draw();
-            std::cout << "space pressed!" << std::endl;
-        }
-
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-            glfwSetWindowShouldClose(win, true);
-
-
+        engine::App::key_callback(win);
 
         // Detect Shift key state
         bool shiftPressed = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
             glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
 
-        //if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime); // Modify behavior as needed
-        //else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::LEFT, deltaTime);
+        if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+        else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::LEFT, deltaTime);
 
 
-        //if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
-        //else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+        if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+        else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
-        //if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
-        //else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+        if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+        else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
 
 
-        //if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
-        //else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+        if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+        else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
 
 
-        //if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::UP, deltaTime);
-        //if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
-        //    //cam.ProcessKeyboard(engine::DOWN, deltaTime);
-
-
-        //if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
-        //{
-        //    if (!key_w_pressed) // Only toggle when the key is first pressed
-        //    {
-        //        show_window = !show_window;
-        //        key_w_pressed = true; // Mark the key as pressed
-        //    }
-        //}
-        //else if (glfwGetKey(win, GLFW_KEY_W) == GLFW_RELEASE)
-        //{
-        //    key_w_pressed = false; // Reset the state when the key is released
-        //}
+        if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::UP, deltaTime);
+        if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
+            cam.ProcessKeyboard(engine::DOWN, deltaTime);
     }
 
 
     void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
     {
-        App::mouse_callback(win, xposIn, yposIn);
+        engine::App::mouse_callback(win, xposIn, yposIn);
 
         float xpos = static_cast<float>(xposIn);
         float ypos = static_cast<float>(yposIn);
@@ -126,24 +105,31 @@ public:
 
     void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
     {
-        App::scroll_callback(win, xoffset, yoffset);
+        engine::App::scroll_callback(win, xoffset, yoffset);
 
         cam.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
+    void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
+    {
+        engine::App::framebuffer_size_callback(win, newWidth, newHeight);
+    }
+
+
     void update() override
     {
-        // player.Update();
-        // anotherClass.Draw();
-
         // draw scene and UI in framebuffer
         drawScene();
-        drawUI(88.0f);// io.Framerate);
+        drawUI();
     }
 
     void clean() override
     {
         // clean up any resources
+        ourSkybox.clean();
+        ourCube.clean();
+        ourPlane.clean();
+        ourBillboard.clean();
     }
 
 private:
@@ -153,11 +139,11 @@ private:
     float lastY = 0.0f;
 
     // settings
-    unsigned int SCR_WIDTH = 800;
-    unsigned int SCR_HEIGHT = 600;
-    const bool FULLSCREEN = false;
+    //unsigned int SCR_WIDTH = 800;
+    //unsigned int SCR_HEIGHT = 600;
+    //const bool FULLSCREEN = false;
 
-    bool key_w_pressed = false;
+
 
     // camera
     engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
@@ -189,7 +175,7 @@ private:
     
     
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
         glm::mat4 view = cam.GetViewMatrix();
     
     
@@ -254,7 +240,7 @@ private:
         ourSkybox.draw(projection, view);
     }
     
-    void drawUI(float framerate)
+    void drawUI()
     {
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
@@ -268,10 +254,4 @@ private:
         ourPlane.clean();
         ourBillboard.clean();
     }
-
 };
-
-App* getApplication()
-{
-    return new MyApp("MyApp");
-}

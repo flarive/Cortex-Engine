@@ -31,6 +31,9 @@
     <Filter Include="Fichiers sources\ui">
       <UniqueIdentifier>{3b17e2d4-9eb5-4858-8265-ae35caac07b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\app">
+      <UniqueIdentifier>{468690f9-ff4e-432b-98f8-3131a396cb2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="include\engine.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\app\app.h">
+      <Filter>Fichiers d%27en-tête\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

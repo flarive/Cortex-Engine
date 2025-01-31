@@ -173,6 +173,7 @@
     <ClCompile Include="src\ui\text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\app\app.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\character.h" />
     <ClInclude Include="include\common_defines.h" />

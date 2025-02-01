@@ -42,11 +42,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="myapp.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
@@ -68,7 +63,7 @@
     <CopyFileToFolders Include="..\resources\textures\container.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\container2.png">
+    <CopyFileToFolders Include="..\resources\textures\container2_diffuse.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\container2_specular.png">
@@ -125,7 +120,7 @@
     <CopyFileToFolders Include="..\resources\shaders\depthbuffer.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\rusted_metal.jpg">
+    <CopyFileToFolders Include="..\resources\textures\rusted_metal_diffuse.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\blending_transparent_window.png">
@@ -170,5 +165,28 @@
     <CopyFileToFolders Include="..\resources\shaders\cubemap.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\blinn-phong.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\blinn-phong.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rusted_metal_specular.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\wood_diffuse.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\wood_specular.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="app\myapp1.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myapp2.h">
+      <Filter>app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

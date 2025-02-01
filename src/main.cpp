@@ -1,6 +1,6 @@
-#include "include\app\app.h"
-#include "myapp.h"
-
+#include "core/include/app/app.h"
+#include "app/myapp1.h"
+#include "app/myapp2.h"
 
 
 engine::App* app;
@@ -14,7 +14,7 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 // Main code
 int main(int, char**)
 {
-    app = new MyApp("MyApp", 640, 480, false);
+    app = new MyApp2("MyApp1", 640, 480, false);
     if (app)
     {
         glfwSetFramebufferSizeCallback(app->window, framebufferSizeCallback);
@@ -42,7 +42,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
     UNREFERENCED_PARAMETER(action);
     UNREFERENCED_PARAMETER(mods);
 
-    MyApp* myApp = (MyApp*)app;
+    MyApp2* myApp = (MyApp2*)app;
     myApp->keyCallback(window);
 }
 
@@ -50,7 +50,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 // -------------------------------------------------------
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    MyApp* myApp = (MyApp*)app;
+    MyApp2* myApp = (MyApp2*)app;
     myApp->mouse_callback(window, xposIn, yposIn);
 }
 
@@ -58,7 +58,7 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 // ----------------------------------------------------------------------
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    MyApp* myApp = (MyApp*)app;
+    MyApp2* myApp = (MyApp2*)app;
     myApp->scroll_callback(window, xoffset, yoffset);
 }
 
@@ -66,7 +66,7 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 // ---------------------------------------------------------------------------------------------
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    MyApp* myApp = (MyApp*)app;
+    MyApp2* myApp = (MyApp2*)app;
     myApp->framebuffer_size_callback(window, width, height);
 }
 

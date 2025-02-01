@@ -13,24 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Fichiers d%27en-tête\lights">
-      <UniqueIdentifier>{b2e1660b-5875-4b60-8e4c-5c23fa7d90da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\primitives">
-      <UniqueIdentifier>{7d3fc6a0-dd0a-4eea-9f8a-e617f6fb6731}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\ui">
-      <UniqueIdentifier>{5641c59b-5982-4a09-8fbf-008e20f139b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\lights">
-      <UniqueIdentifier>{61eea3d3-e02e-4e7c-916a-bde92ea91de2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\primitives">
-      <UniqueIdentifier>{149b72d8-4b97-4139-b40e-369d7d992127}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers sources\ui">
-      <UniqueIdentifier>{3b17e2d4-9eb5-4858-8265-ae35caac07b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Fichiers d%27en-tête\app">
       <UniqueIdentifier>{468690f9-ff4e-432b-98f8-3131a396cb2e}</UniqueIdentifier>
     </Filter>
@@ -43,58 +25,70 @@
     <Filter Include="Fichiers sources\imgui\backends">
       <UniqueIdentifier>{d8e6ca52-93e0-4b5c-972a-cc407c25978a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core">
+      <UniqueIdentifier>{58c5afac-04f4-4aab-9f85-aa2a4acdb608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\primitives">
+      <UniqueIdentifier>{149b72d8-4b97-4139-b40e-369d7d992127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\ui">
+      <UniqueIdentifier>{3b17e2d4-9eb5-4858-8265-ae35caac07b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\lights">
+      <UniqueIdentifier>{61eea3d3-e02e-4e7c-916a-bde92ea91de2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core">
+      <UniqueIdentifier>{14df7ed5-a09b-4aad-9d3e-a8fc147d802e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\lights">
+      <UniqueIdentifier>{b2e1660b-5875-4b60-8e4c-5c23fa7d90da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\primitives">
+      <UniqueIdentifier>{7d3fc6a0-dd0a-4eea-9f8a-e617f6fb6731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\ui">
+      <UniqueIdentifier>{5641c59b-5982-4a09-8fbf-008e20f139b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\primitives\base">
+      <UniqueIdentifier>{b84c1ba5-f927-4b85-b704-adb2fe29bcff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\primitives\base">
+      <UniqueIdentifier>{185f5053-a5d6-4501-a1b8-3a6d4fd2fc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\lights\base">
+      <UniqueIdentifier>{b6382f13-f607-492a-a3fe-1e3887bb862e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\lights\base">
+      <UniqueIdentifier>{75bf1ded-9355-46b6-9a87-b992427b954a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Engine.cpp">
+    <ClCompile Include="core\engine.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\file_system.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\lights\directional_light.cpp">
+      <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
-    <ClCompile Include="src\shader.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\lights\point_light.cpp">
+      <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
-    <ClCompile Include="src\texture.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\lights\spot_light.cpp">
+      <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
-    <ClCompile Include="src\mesh.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\primitives\billboard.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\model.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\primitives\cube.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="core\src\primitives\plane.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\lights\directional_light.cpp">
-      <Filter>Fichiers sources\lights</Filter>
+    <ClCompile Include="core\src\primitives\skybox.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\lights\light.cpp">
-      <Filter>Fichiers sources\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lights\point_light.cpp">
-      <Filter>Fichiers sources\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lights\spot_light.cpp">
-      <Filter>Fichiers sources\lights</Filter>
-    </ClCompile>
-    <ClCompile Include="src\primitives\billboard.cpp">
-      <Filter>Fichiers sources\primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="src\primitives\cube.cpp">
-      <Filter>Fichiers sources\primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="src\primitives\plane.cpp">
-      <Filter>Fichiers sources\primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="src\primitives\primitive.cpp">
-      <Filter>Fichiers sources\primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="src\primitives\skybox.cpp">
-      <Filter>Fichiers sources\primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\text.cpp">
-      <Filter>Fichiers sources\ui</Filter>
+    <ClCompile Include="core\src\ui\text.cpp">
+      <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\imgui\imgui.cpp">
       <Filter>Fichiers sources\imgui</Filter>
@@ -120,69 +114,60 @@
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>Fichiers sources\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\camera.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\file_system.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\mesh.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\model.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\shader.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\texture.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\primitives\primitive.cpp">
+      <Filter>Fichiers sources\core\primitives\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\lights\light.cpp">
+      <Filter>Fichiers sources\core\lights\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\vertex.h">
+    <ClInclude Include="core\include\lights\spot_light.h">
+      <Filter>Fichiers d%27en-tête\core\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\lights\point_light.h">
+      <Filter>Fichiers d%27en-tête\core\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\lights\directional_light.h">
+      <Filter>Fichiers d%27en-tête\core\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\billboard.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\cube.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\plane.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\skybox.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ui\text.h">
+      <Filter>Fichiers d%27en-tête\core\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\engine.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\character.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\common_defines.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\file_system.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\shader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mesh.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\model.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\camera.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lights\light.h">
-      <Filter>Fichiers d%27en-tête\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lights\spot_light.h">
-      <Filter>Fichiers d%27en-tête\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lights\point_light.h">
-      <Filter>Fichiers d%27en-tête\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="include\lights\directional_light.h">
-      <Filter>Fichiers d%27en-tête\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="include\primitives\billboard.h">
-      <Filter>Fichiers d%27en-tête\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="include\primitives\cube.h">
-      <Filter>Fichiers d%27en-tête\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="include\primitives\plane.h">
-      <Filter>Fichiers d%27en-tête\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="include\primitives\primitive.h">
-      <Filter>Fichiers d%27en-tête\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="include\primitives\skybox.h">
-      <Filter>Fichiers d%27en-tête\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui\text.h">
-      <Filter>Fichiers d%27en-tête\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\engine.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="include\app\app.h">
+    <ClInclude Include="core\include\app\app.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\imconfig.h">
@@ -205,6 +190,39 @@
     </ClInclude>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h">
       <Filter>Fichiers sources\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\camera.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\character.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\common_defines.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\file_system.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\mesh.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\model.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\shader.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\texture.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\vertex.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\primitive.h">
+      <Filter>Fichiers d%27en-tête\core\primitives\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\lights\light.h">
+      <Filter>Fichiers d%27en-tête\core\lights\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

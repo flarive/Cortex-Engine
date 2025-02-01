@@ -18,6 +18,7 @@ namespace engine
         GLFWwindow* window;
 
         engine::Shader phongShader;
+        engine::Shader blinnPhongShader;
         engine::Shader screenShader;
         engine::Shader skyboxReflectShader;
 
@@ -191,9 +192,19 @@ namespace engine
 
 
             // load shaders
-            phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag"); // phong illimuniation model and lightning shader
+
+            // phong illimuniation model and lightning shader
+            phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag"); 
+
+            // phong illimuniation model and lightning shader
+            blinnPhongShader = engine::Shader("phong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag"); 
+
             //Shader depthBufferShader("depthbuffer", "shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
-            screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag"); // framebuffer to screen shader
+
+            // framebuffer to screen shader
+            screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+
+            // skybox reflection shader
             skyboxReflectShader = engine::Shader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
             // screen quad VAO

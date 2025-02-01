@@ -15,6 +15,7 @@ namespace engine
 
         static unsigned int soil_load_image(std::string filename, bool alpha = false, bool repeat = true);
         static unsigned int soil_load_texture(std::string filename, bool repeat = true);
+        static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(std::vector<std::string> faces);
     };
 }

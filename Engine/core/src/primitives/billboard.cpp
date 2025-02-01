@@ -1,12 +1,35 @@
-#include "../../include/primitives/plane.h"
+#include "../../include/primitives/billboard.h"
 
 #include "../../include/texture.h"
 
-engine::Plane::Plane()
+
+engine::Billboard::Billboard()
 {
 }
 
-void engine::Plane::setup()
+void engine::Billboard::setup(const glm::uvec3& color)
+{
+    setup();
+    
+    m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
+}
+
+void engine::Billboard::setup(const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+{
+    setup();
+    
+    // load textures
+    if (!std::empty(diffuseTexPath))
+        m_diffuseMap = engine::Texture::soil_load_texture(diffuseTexPath, false);
+
+    if (!std::empty(specularTexPath))
+        m_specularMap = engine::Texture::soil_load_texture(specularTexPath, false);
+
+    if (!std::empty(diffuseTexPath))
+        m_normalMap = engine::Texture::soil_load_texture(normalTexPath, false);
+}
+
+void engine::Billboard::setup()
 {
     glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
@@ -15,7 +38,7 @@ void engine::Plane::setup()
     glBindVertexArray(m_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 
     GLsizei stride = 8;
 
@@ -34,42 +57,50 @@ void engine::Plane::setup()
     // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2); // stride 6 to 7
-
-    // load texture
-    m_diffuseMap = engine::Texture::soil_load_texture("textures/rusted_metal.jpg", true);
-    m_specularMap = engine::Texture::soil_load_texture("textures/container2_specular.png", false);
 }
 
 // draws the model, and thus all its meshes
-void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
+void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
 {
     // bind diffuse map
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
+
     // bind specular map
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_specularMap);
+
+    // bind normal map
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
     shader.use();
     shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
     //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
     shader.setInt("material.texture_diffuse1", 0); // texture 0
     shader.setInt("material.texture_specular1", 1); // texture 1
+    shader.setInt("material.texture_normal1", 2); // texture 2
     //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     shader.setBool("material.has_normal_map", m_normalMap > 0);
     shader.setFloat("material.shininess", 32.0f);
+    shader.setInt("blinn", false);
 
-    // render the cubes
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    // render the billboard
     glBindVertexArray(m_VAO);
 
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
     if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-    model = glm::scale(model, glm::vec3(size.x, 0.01f, size.z));
+    model = glm::scale(model, size);
     shader.setMat4("model", model);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glBindVertexArray(0);
 }

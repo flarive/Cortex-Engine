@@ -6,6 +6,40 @@ engine::Cube::Cube()
 {
 }
 
+void engine::Cube::setup(const glm::uvec3& color)
+{
+    setup();
+    
+    m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
+}
+
+void engine::Cube::setup(const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+{
+    setup();
+
+    // load textures
+    if (!std::empty(diffuseTexPath))
+        m_diffuseMap = engine::Texture::soil_load_texture(diffuseTexPath, false);
+
+    if (!std::empty(specularTexPath))
+        m_specularMap = engine::Texture::soil_load_texture(specularTexPath, false);
+
+    if (!std::empty(normalTexPath))
+        m_normalMap = engine::Texture::soil_load_texture(normalTexPath, false);
+
+    std::vector<std::string> faces
+    {
+        "textures/skybox/right.jpg",
+        "textures/skybox/left.jpg",
+        "textures/skybox/top.jpg",
+        "textures/skybox/bottom.jpg",
+        "textures/skybox/front.jpg",
+        "textures/skybox/back.jpg"
+    };
+
+    m_cubemapTexture = engine::Texture::loadCubemap(faces);
+}
+
 void engine::Cube::setup()
 {
     glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
@@ -33,23 +67,6 @@ void engine::Cube::setup()
     // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2); // stride 6 to 7
-
-
-    // load texture
-    m_diffuseMap = engine::Texture::soil_load_texture("textures/container2.png", true);
-    m_specularMap = engine::Texture::soil_load_texture("textures/container2_specular.png", false);
-
-    std::vector<std::string> faces
-    {
-        "textures/skybox/right.jpg",
-        "textures/skybox/left.jpg",
-        "textures/skybox/top.jpg",
-        "textures/skybox/bottom.jpg",
-        "textures/skybox/front.jpg",
-        "textures/skybox/back.jpg"
-    };
-
-    m_cubemapTexture = engine::Texture::loadCubemap(faces);
 }
 
 // draws the model, and thus all its meshes
@@ -75,7 +92,7 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_specularMap);
 
-        // bind specular map
+        // bind normal map
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
@@ -87,7 +104,9 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
         shader.setBool("material.has_normal_map", m_normalMap > 0);
         //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
         shader.setFloat("material.shininess", 32.0f);
+        shader.setInt("blinn", false);
     }
+
 
     // render the cubes
     glBindVertexArray(m_VAO);

@@ -125,7 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\include;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -143,7 +143,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\include;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -154,6 +154,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\libs\imgui\imgui.cpp" />
+    <ClCompile Include="..\libs\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\libs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\file_system.cpp" />
@@ -173,6 +181,13 @@
     <ClCompile Include="src\ui\text.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\libs\imgui\imconfig.h" />
+    <ClInclude Include="..\libs\imgui\imgui.h" />
+    <ClInclude Include="..\libs\imgui\imgui_internal.h" />
+    <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
     <ClInclude Include="include\app\app.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\character.h" />

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{20b90ce4-7fcb-4731-b9a0-075f875de82d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sources">
       <UniqueIdentifier>{f18ab499-84e1-499f-8eff-9754361e0e52}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -29,9 +26,6 @@
     <Filter Include="resources\models\cushion">
       <UniqueIdentifier>{e373a3cd-4d59-4fc9-81a4-e54db351eae1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="themes">
-      <UniqueIdentifier>{4e942a50-e1ab-4d1f-a299-0d0a4b94fcc1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources\fonts">
       <UniqueIdentifier>{f74f87d3-9a7a-4b37-a792-1ecd6f87a6d9}</UniqueIdentifier>
     </Filter>
@@ -43,67 +37,14 @@
     <ClCompile Include="main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="imgui.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_tables.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="backends\imgui_impl_glfw.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="backends\imgui_impl_opengl3.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\glad\src\glad.c">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="themes\imgui_spectrum.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imconfig.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="backends\imgui_impl_glfw.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="backends\imgui_impl_opengl3.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="backends\imgui_impl_opengl3_loader.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="themes\imgui_spectrum.h">
-      <Filter>themes</Filter>
-    </ClInclude>
     <ClInclude Include="myapp.h">
       <Filter>sources</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="misc\debuggers\imgui.natvis">
-      <Filter>imgui</Filter>
-    </None>
-    <None Include="misc\debuggers\imgui.natstepfilter">
-      <Filter>imgui</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">

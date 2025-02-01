@@ -2,6 +2,12 @@
 
 #include "common_defines.h"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "themes/imgui_spectrum.h"
+
+
 #include "vertex.h"
 #include "texture.h"
 #include "shader.h"

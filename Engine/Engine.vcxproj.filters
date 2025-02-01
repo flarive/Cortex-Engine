@@ -34,6 +34,15 @@
     <Filter Include="Fichiers d%27en-tête\app">
       <UniqueIdentifier>{468690f9-ff4e-432b-98f8-3131a396cb2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\imgui">
+      <UniqueIdentifier>{1e7fc9bc-62f6-4fca-a75d-664919f22755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\imgui\themes">
+      <UniqueIdentifier>{828d769d-c76b-4258-ae85-3118b0a03376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\imgui\backends">
+      <UniqueIdentifier>{d8e6ca52-93e0-4b5c-972a-cc407c25978a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -86,6 +95,30 @@
     </ClCompile>
     <ClCompile Include="src\ui\text.cpp">
       <Filter>Fichiers sources\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_demo.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_draw.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_tables.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_widgets.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp">
+      <Filter>Fichiers sources\imgui\themes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Fichiers sources\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Fichiers sources\imgui\backends</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +184,27 @@
     </ClInclude>
     <ClInclude Include="include\app\app.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imconfig.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_internal.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h">
+      <Filter>Fichiers sources\imgui\themes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Fichiers sources\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Fichiers sources\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h">
+      <Filter>Fichiers sources\imgui\backends</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

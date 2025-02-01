@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>backends;$(MSBuildStartupDirectory)\libs\glad\include;$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -165,7 +165,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>backends;$(MSBuildStartupDirectory)\libs\glad\include;$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -184,26 +184,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imgui.cpp" />
-    <ClCompile Include="imgui_demo.cpp" />
-    <ClCompile Include="imgui_draw.cpp" />
-    <ClCompile Include="imgui_tables.cpp" />
-    <ClCompile Include="imgui_widgets.cpp" />
-    <ClCompile Include="backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\libs\glad\src\glad.c" />
-    <ClCompile Include="themes\imgui_spectrum.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imconfig.h" />
-    <ClInclude Include="imgui.h" />
-    <ClInclude Include="imgui_internal.h" />
-    <ClInclude Include="backends\imgui_impl_glfw.h" />
-    <ClInclude Include="backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="backends\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="myapp.h" />
-    <ClInclude Include="themes\imgui_spectrum.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">
@@ -316,8 +301,6 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)shaders</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)shaders</DestinationFolders>
     </CopyFileToFolders>
-    <None Include="misc\debuggers\imgui.natstepfilter" />
-    <None Include="misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\ao.jpg">

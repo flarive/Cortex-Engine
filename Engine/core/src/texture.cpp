@@ -49,21 +49,6 @@ unsigned int engine::Texture::soil_load_texture(std::string filename, bool repea
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    if (repeat)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
-
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     texture = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
     (
         file_system::getPath(filename).c_str(),
@@ -72,11 +57,22 @@ unsigned int engine::Texture::soil_load_texture(std::string filename, bool repea
         SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y
     );
 
-    if (texture <= 0)
+    if (texture == 0)
     {
         std::cerr << "Failed to load texture" << std::endl;
         exit(EXIT_FAILURE);
     }
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Apply repeat or clamp wrapping mode
+    GLint wrapMode = repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+
+    // Set texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return texture;
 }

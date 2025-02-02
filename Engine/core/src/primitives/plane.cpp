@@ -34,8 +34,10 @@ void engine::Plane::setup()
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(m_VAO);
 
+    float* planeVertices = GetScaledPlaneVertices(3.0f);
+
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), planeVertices, GL_STATIC_DRAW);
 
     GLsizei stride = 8;
 
@@ -54,6 +56,9 @@ void engine::Plane::setup()
     // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2); // stride 6 to 7
+
+
+    delete[] planeVertices;
 }
 
 // draws the model, and thus all its meshes
@@ -81,6 +86,8 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     shader.setBool("material.has_normal_map", m_normalMap > 0);
     shader.setFloat("material.shininess", 32.0f);
     shader.setInt("blinn", false);
+    shader.setFloat("uvScale", 2.0f);
+    
 
     // render the cubes
     glBindVertexArray(m_VAO);
@@ -92,7 +99,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     model = glm::scale(model, glm::vec3(size.x, 0.01f, size.z));
     shader.setMat4("model", model);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glBindVertexArray(0);
 }

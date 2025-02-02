@@ -24,6 +24,24 @@ namespace engine
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean();
 
+
+        float* GetScaledPlaneVertices(float uvScale)
+        {
+            float* quadVertices = new float[48] {
+                // positions            // normals         // texcoords
+                 1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
+                -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale,
+                -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+
+                 1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
+                 1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f, uvScale, uvScale,
+                -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale
+            };
+
+            return quadVertices; // Caller must delete[] this
+        }
+
+
     private:
         virtual void setup() = 0;
 
@@ -94,16 +112,16 @@ namespace engine
     /// Set up vertex data for a 2d plane (counter-countwise)
     /// counter-countwise
     /// </summary>
-    inline float planeVertices[] = {
-        // positions            // normals         // texcoords
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-        -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+    //inline float planeVertices[] = {
+    //    // positions            // normals         // texcoords
+    //     25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+    //    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+    //    -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
 
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-         25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f
-    };
+    //     25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+    //     25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
+    //    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f
+    //};
 
     /// <summary>
     /// Set up vertex data for a 2d quad (counter-countwise)
@@ -175,4 +193,6 @@ namespace engine
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+
+
 }

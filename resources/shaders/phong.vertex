@@ -12,6 +12,9 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 
+uniform float uvScale; // Pass this from your program
+
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -30,5 +33,6 @@ void main()
 
     Bitangent = aBitangents;
 
-    TexCoords = aTexCoords;
+    //TexCoords = aTexCoords;
+    TexCoords = aTexCoords * uvScale; // Apply the scaling
 }

@@ -1,6 +1,7 @@
 #include "../../include/primitives/plane.h"
 
 #include "../../include/texture.h"
+#include "../../include/materials/material.h"
 
 engine::Plane::Plane()
 {
@@ -11,19 +12,19 @@ void engine::Plane::setup(const glm::uvec3& color)
     m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
 }
 
-void engine::Plane::setup(const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+void engine::Plane::setup(const engine::Material& material)
 {
     setup();
 
     // load textures
-    if (!std::empty(diffuseTexPath))
-        m_diffuseMap = engine::Texture::soil_load_texture(diffuseTexPath, true);
+    if (material.hasDiffuseMap())
+        m_diffuseMap = engine::Texture::soil_load_texture(material.getDiffuseTexPath(), true);
 
-    if (!std::empty(specularTexPath))
-        m_specularMap = engine::Texture::soil_load_texture(specularTexPath, true);
+    if (material.hasSpecularMap())
+        m_specularMap = engine::Texture::soil_load_texture(material.getSpecularTexPath(), true);
 
-    if (!std::empty(normalTexPath))
-        m_normalMap = engine::Texture::soil_load_texture(normalTexPath, true);
+    if (material.hasNormalMap())
+        m_normalMap = engine::Texture::soil_load_texture(material.getNormalTexPath(), true);
 }
 
 void engine::Plane::setup()

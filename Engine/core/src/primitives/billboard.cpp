@@ -1,6 +1,7 @@
 #include "../../include/primitives/billboard.h"
 
 #include "../../include/texture.h"
+#include "../../include/materials/material.h"
 
 
 engine::Billboard::Billboard()
@@ -14,19 +15,19 @@ void engine::Billboard::setup(const glm::uvec3& color)
     m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
 }
 
-void engine::Billboard::setup(const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+void engine::Billboard::setup(const engine::Material& material)
 {
     setup();
-    
+
     // load textures
-    if (!std::empty(diffuseTexPath))
-        m_diffuseMap = engine::Texture::soil_load_texture(diffuseTexPath, false);
+    if (material.hasDiffuseMap())
+        m_diffuseMap = engine::Texture::soil_load_texture(material.getDiffuseTexPath(), true);
 
-    if (!std::empty(specularTexPath))
-        m_specularMap = engine::Texture::soil_load_texture(specularTexPath, false);
+    if (material.hasSpecularMap())
+        m_specularMap = engine::Texture::soil_load_texture(material.getSpecularTexPath(), true);
 
-    if (!std::empty(diffuseTexPath))
-        m_normalMap = engine::Texture::soil_load_texture(normalTexPath, false);
+    if (material.hasNormalMap())
+        m_normalMap = engine::Texture::soil_load_texture(material.getNormalTexPath(), true);
 }
 
 void engine::Billboard::setup()

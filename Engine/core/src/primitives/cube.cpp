@@ -1,6 +1,7 @@
 #include "../../include/primitives/cube.h"
 
 #include "../../include/texture.h"
+#include "../../include/materials/material.h"
 
 engine::Cube::Cube()
 {
@@ -13,31 +14,34 @@ void engine::Cube::setup(const glm::uvec3& color)
     m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
 }
 
-void engine::Cube::setup(const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath)
+void engine::Cube::setup(const engine::Material& material)
 {
     setup();
 
     // load textures
-    if (!std::empty(diffuseTexPath))
-        m_diffuseMap = engine::Texture::soil_load_texture(diffuseTexPath, false);
+    if (material.hasDiffuseMap())
+        m_diffuseMap = engine::Texture::soil_load_texture(material.getDiffuseTexPath(), true);
 
-    if (!std::empty(specularTexPath))
-        m_specularMap = engine::Texture::soil_load_texture(specularTexPath, false);
+    if (material.hasSpecularMap())
+        m_specularMap = engine::Texture::soil_load_texture(material.getSpecularTexPath(), true);
 
-    if (!std::empty(normalTexPath))
-        m_normalMap = engine::Texture::soil_load_texture(normalTexPath, false);
+    if (material.hasNormalMap())
+        m_normalMap = engine::Texture::soil_load_texture(material.getNormalTexPath(), true);
 
-    std::vector<std::string> faces
+    if (material.hasCubeMap())
     {
-        "textures/skybox/right.jpg",
-        "textures/skybox/left.jpg",
-        "textures/skybox/top.jpg",
-        "textures/skybox/bottom.jpg",
-        "textures/skybox/front.jpg",
-        "textures/skybox/back.jpg"
-    };
-
-    m_cubemapTexture = engine::Texture::loadCubemap(faces);
+        std::vector<std::string> faces
+        {
+            "textures/skybox/right.jpg",
+            "textures/skybox/left.jpg",
+            "textures/skybox/top.jpg",
+            "textures/skybox/bottom.jpg",
+            "textures/skybox/front.jpg",
+            "textures/skybox/back.jpg"
+        };
+            
+        m_cubemapTexture = engine::Texture::loadCubemap(faces);
+    }
 }
 
 void engine::Cube::setup()

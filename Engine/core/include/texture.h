@@ -12,6 +12,7 @@ namespace engine
         unsigned int id;
         std::string type;
         std::string path;
+		color color;
 
         static unsigned int soil_load_image(std::string filename, bool alpha = false, bool repeat = true);
         static unsigned int soil_load_texture(std::string filename, bool repeat = true);

@@ -29,9 +29,10 @@ public:
         myDirectionalLight2.setup();
         mySpotLight.setup();
 
-        ourCube.setup("textures/container2_diffuse.png", "textures/container2_specular.png");
-        ourPlane.setup("textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg");
-        ourBillboard.setup("textures/grass.png");
+
+        ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourPlane.setup(engine::Material(engine::color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
+        ourBillboard.setup(engine::Material(engine::color(0.1f), "textures/grass.png"));
 
         ourText.setup();
 

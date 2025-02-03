@@ -61,6 +61,12 @@
     <Filter Include="Fichiers d%27en-tête\core\lights\base">
       <UniqueIdentifier>{75bf1ded-9355-46b6-9a87-b992427b954a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\materials">
+      <UniqueIdentifier>{8b69df9f-52d1-42e4-b283-4a5ee5c46146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\materials">
+      <UniqueIdentifier>{b385f2fb-b34a-4804-8308-34924c524357}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp">
@@ -137,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="core\src\lights\light.cpp">
       <Filter>Fichiers sources\core\lights\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\materials\material.cpp">
+      <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="core\include\lights\light.h">
       <Filter>Fichiers d%27en-tête\core\lights\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\materials\material.h">
+      <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

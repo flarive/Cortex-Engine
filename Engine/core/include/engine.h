@@ -9,11 +9,15 @@
 
 
 #include "vertex.h"
-#include "texture.h"
 #include "shader.h"
+#include "materials/material.h"
+#include "texture.h"
 #include "model.h"
 
 #include "camera.h"
+
+
+
 
 #include "lights/point_light.h"
 #include "lights/directional_light.h"

@@ -22,5 +22,7 @@
 #define UNREFERENCED_PARAMETER(P) (void)(P)
 #endif
 
-
-
+namespace engine
+{
+	using color = glm::vec4;
+}

@@ -147,6 +147,9 @@
     <ClCompile Include="core\src\materials\material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\UvMapping.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -235,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\UvMapping.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

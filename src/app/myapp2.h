@@ -25,8 +25,11 @@ public:
         myDirectionalLight2.setup();
         mySpotLight.setup();
 
-        ourCube.setup("textures/container2_diffuse.png", "textures/container2_specular.png");
-        ourPlane.setup("textures/wood_diffuse.png", "textures/wood_specular.png");
+        ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+
+
+
+        ourPlane.setup(engine::Material(engine::color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup();
     }
@@ -75,6 +78,10 @@ public:
 
     void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
     {
+        UNREFERENCED_PARAMETER(win);
+        UNREFERENCED_PARAMETER(xposIn);
+        UNREFERENCED_PARAMETER(xposIn);
+
         //engine::App::mouse_callback(win, xposIn, yposIn);
 
         //float xpos = static_cast<float>(xposIn);

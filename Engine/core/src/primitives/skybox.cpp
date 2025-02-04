@@ -6,7 +6,7 @@ engine::Skybox::Skybox()
 {
 }
 
-void engine::Skybox::setup()
+void engine::Skybox::setup(std::vector<std::string> faces)
 {
     m_skyboxShader = Shader("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
 
@@ -26,17 +26,6 @@ void engine::Skybox::setup()
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
-    std::vector<std::string> faces
-    {
-        "textures/skybox/right.jpg",
-        "textures/skybox/left.jpg",
-        "textures/skybox/top.jpg",
-        "textures/skybox/bottom.jpg",
-        "textures/skybox/front.jpg",
-        "textures/skybox/back.jpg"
-    };
-
     m_cubemapTexture = engine::Texture::loadCubemap(faces);
 
 

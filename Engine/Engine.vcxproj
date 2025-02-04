@@ -180,6 +180,7 @@
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
     <ClCompile Include="core\src\ui\text.cpp" />
+    <ClCompile Include="core\src\UvMapping.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\ui\text.h" />
+    <ClInclude Include="core\include\UvMapping.h" />
     <ClInclude Include="core\include\vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

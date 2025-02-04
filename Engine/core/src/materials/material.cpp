@@ -13,3 +13,8 @@ engine::Material::Material(const engine::color& ambientColor, const std::string&
 	: m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_shininess(shininess)
 {
 }
+
+void engine::Material::setCubeMapTexs(std::vector<std::string> faces)
+{
+	m_cubemapTextures = faces;
+}

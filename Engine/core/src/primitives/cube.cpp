@@ -1,6 +1,7 @@
 #include "../../include/primitives/cube.h"
 
 #include "../../include/texture.h"
+#include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
 engine::Cube::Cube()
@@ -14,9 +15,18 @@ void engine::Cube::setup(const glm::uvec3& color)
     m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
 }
 
+
 void engine::Cube::setup(const engine::Material& material)
 {
+    const UvMapping uv{};
+    setup(material, uv);
+}
+
+void engine::Cube::setup(const engine::Material& material, const UvMapping& uv)
+{
     setup();
+
+    m_uvScale = uv.getUvScale();
 
     // load textures
     if (material.hasDiffuseMap())
@@ -29,19 +39,7 @@ void engine::Cube::setup(const engine::Material& material)
         m_normalMap = engine::Texture::soil_load_texture(material.getNormalTexPath(), true);
 
     if (material.hasCubeMap())
-    {
-        std::vector<std::string> faces
-        {
-            "textures/skybox/right.jpg",
-            "textures/skybox/left.jpg",
-            "textures/skybox/top.jpg",
-            "textures/skybox/bottom.jpg",
-            "textures/skybox/front.jpg",
-            "textures/skybox/back.jpg"
-        };
-            
-        m_cubemapTexture = engine::Texture::loadCubemap(faces);
-    }
+        m_cubemapTexture = engine::Texture::loadCubemap(material.getCubeMapTexs());
 }
 
 void engine::Cube::setup()

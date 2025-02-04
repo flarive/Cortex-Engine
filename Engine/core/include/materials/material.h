@@ -31,6 +31,8 @@ namespace engine
 		std::string getNormalTexPath() const { return m_normalTexPath; }
 		std::vector<std::string> getCubeMapTexs() const { return m_cubemapTextures; }
 
+        void setCubeMapTexs(std::vector<std::string> faces);
+
 		float getShininess() const { return m_shininess; }
 
 

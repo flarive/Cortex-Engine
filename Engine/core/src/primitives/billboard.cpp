@@ -1,6 +1,7 @@
 #include "../../include/primitives/billboard.h"
 
 #include "../../include/texture.h"
+#include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
 
@@ -17,7 +18,15 @@ void engine::Billboard::setup(const glm::uvec3& color)
 
 void engine::Billboard::setup(const engine::Material& material)
 {
+    const UvMapping uv{};
+    setup(material, uv);
+}
+
+void engine::Billboard::setup(const engine::Material& material, const UvMapping& uv)
+{
     setup();
+
+    m_uvScale = uv.getUvScale();
 
     // load textures
     if (material.hasDiffuseMap())
@@ -38,8 +47,10 @@ void engine::Billboard::setup()
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(m_VAO);
 
+    float* quadVertices = GetScaledQuadVertices(1.0f);
+
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), quadVertices, GL_STATIC_DRAW);
 
     GLsizei stride = 8;
 

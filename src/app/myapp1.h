@@ -29,14 +29,26 @@ public:
         myDirectionalLight2.setup();
         mySpotLight.setup();
 
+        std::vector<std::string> faces
+        {
+            "textures/skybox/right.jpg",
+            "textures/skybox/left.jpg",
+            "textures/skybox/top.jpg",
+            "textures/skybox/bottom.jpg",
+            "textures/skybox/front.jpg",
+            "textures/skybox/back.jpg"
+        };
 
-        ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        auto zzz = engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png");
+        zzz.setCubeMapTexs(faces);
+
+        ourCube.setup(zzz);
         ourPlane.setup(engine::Material(engine::color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
         ourBillboard.setup(engine::Material(engine::color(0.1f), "textures/grass.png"));
 
         ourText.setup();
 
-        ourSkybox.setup();
+        ourSkybox.setup(faces);
     }
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

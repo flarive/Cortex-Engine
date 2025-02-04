@@ -1,6 +1,7 @@
 #include "../../include/primitives/plane.h"
 
 #include "../../include/texture.h"
+#include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
 engine::Plane::Plane()
@@ -14,6 +15,14 @@ void engine::Plane::setup(const glm::uvec3& color)
 
 void engine::Plane::setup(const engine::Material& material)
 {
+    const UvMapping uv{};
+    setup(material, uv);
+}
+
+void engine::Plane::setup(const engine::Material& material, const UvMapping& uv)
+{
+    m_uvScale = uv.getUvScale();
+    
     setup();
 
     // load textures
@@ -35,7 +44,7 @@ void engine::Plane::setup()
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(m_VAO);
 
-    float* planeVertices = GetScaledPlaneVertices(3.0f);
+    float* planeVertices = GetScaledPlaneVertices(m_uvScale);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), planeVertices, GL_STATIC_DRAW);

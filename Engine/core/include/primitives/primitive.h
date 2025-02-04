@@ -2,6 +2,8 @@
 
 #include "../common_defines.h"
 #include "../shader.h"
+#include "../texture.h"
+#include "../uvmapping.h"
 #include "../materials/material.h"
 
 namespace engine
@@ -19,6 +21,8 @@ namespace engine
 
         virtual void setup(const Material& material) = 0;
 
+        virtual void setup(const Material& material, const UvMapping& uv) = 0;
+
         virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose
@@ -27,7 +31,7 @@ namespace engine
 
         float* GetScaledPlaneVertices(float uvScale)
         {
-            float* quadVertices = new float[48] {
+            float* planeVertices = new float[48] {
                 // positions            // normals         // texcoords
                  1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
                 -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale,
@@ -36,6 +40,22 @@ namespace engine
                  1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
                  1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f, uvScale, uvScale,
                 -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale
+            };
+
+            return planeVertices; // Caller must delete[] this
+        }
+
+        float* GetScaledQuadVertices(float uvScale)
+        {
+            float* quadVertices = new float[48] {
+            // positions            // normals         // texcoords
+            1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  uvScale, 0.0f,
+            -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale,
+            -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+
+             1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
+             1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f, uvScale, uvScale,
+            -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale
             };
 
             return quadVertices; // Caller must delete[] this
@@ -54,6 +74,8 @@ namespace engine
         unsigned int m_normalMap = 0;
 
         unsigned int m_cubemapTexture = 0;
+
+        float m_uvScale = 0.5f;
     };
 
 
@@ -107,35 +129,19 @@ namespace engine
         -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left
     };
 
-
-    /// <summary>
-    /// Set up vertex data for a 2d plane (counter-countwise)
-    /// counter-countwise
-    /// </summary>
-    //inline float planeVertices[] = {
-    //    // positions            // normals         // texcoords
-    //     25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-    //    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-    //    -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-
-    //     25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-    //     25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f,
-    //    -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f
-    //};
-
     /// <summary>
     /// Set up vertex data for a 2d quad (counter-countwise)
     /// </summary>
-    inline float quadVertices[] = {
-        // positions            // normals         // texcoords
-         1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-        -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
-        -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+    //inline float quadVertices[] = {
+    //    // positions            // normals         // texcoords
+    //     1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+    //    -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f,
+    //    -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
 
-         1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-         1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
-        -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f
-    };
+    //     1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+    //     1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  1.0f, 1.0f,
+    //    -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 1.0f
+    //};
 
 
     inline float screenQuadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.

@@ -11,7 +11,7 @@ namespace engine
     public:
         Skybox();
 
-        void setup();
+        void setup(std::vector<std::string> faces);
 
         // draws the model, and thus all its meshes
         void draw(const glm::mat4& projection, const glm::mat4& view);

@@ -22,6 +22,10 @@ namespace engine
         engine::Shader screenShader;
         engine::Shader skyboxReflectShader;
 
+        engine::Shader simpleDepthShader;
+        engine::Shader debugDepthQuad;
+
+
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
         {
@@ -197,20 +201,24 @@ namespace engine
             // load shaders
 
             // phong illimuniation model and lightning shader
-            phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag"); 
+            phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag");
 
             // phong illimuniation model and lightning shader
-            blinnPhongShader = engine::Shader("phong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag"); 
+            blinnPhongShader = engine::Shader("phong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
 
             //Shader depthBufferShader("depthbuffer", "shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
 
-            // framebuffer to screen shader
+            // color framebuffer to screen shader
             screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
 
             // skybox reflection shader
             skyboxReflectShader = engine::Shader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
+            simpleDepthShader = engine::Shader("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+            debugDepthQuad = engine::Shader("debugDepthQuad", "shaders/debug_quad.vertex", "shaders/debug_quad_depth.frag");
+
             // screen quad VAO
+            // ---------------
             glGenVertexArrays(1, &quadVAO);
             glGenBuffers(1, &quadVBO);
             glBindVertexArray(quadVAO);
@@ -234,11 +242,39 @@ namespace engine
             screenShader.use();
             screenShader.setInt("screenTexture", 0);
 
-            // framebuffer configuration
-            // -------------------------
 
-            glGenFramebuffers(1, &framebuffer);
-            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+            // Depth map framebuffer configuration (shadow map)
+            // -----------------------------------
+            //glGenFramebuffers(1, &depthMapFramebuffer);
+            //// create depth texture
+            //glGenTextures(1, &textureDepthMapBuffer);
+            //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            //// attach depth texture as FBO's depth buffer
+            //glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
+            //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureDepthMapBuffer, 0);
+            //glDrawBuffer(GL_NONE);
+            //glReadBuffer(GL_NONE);
+            //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+            //// shader configuration
+            //// --------------------
+            //debugDepthQuad.use();
+            //debugDepthQuad.setInt("depthMap", 0);
+
+
+
+
+            // color framebuffer configuration
+            // -------------------------
+            glGenFramebuffers(1, &colorFramebuffer);
+            glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
             // create a color attachment texture
             glGenTextures(1, &textureColorbuffer);
             glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
@@ -260,6 +296,8 @@ namespace engine
 
             // uncomment this call to draw in wireframe polygons.
             //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
+
+
         }
 
 
@@ -267,7 +305,7 @@ namespace engine
         virtual void init() = 0;
 
         // must be overridden in derived class
-        virtual void update() = 0;
+        virtual void update(Shader& shader) = 0;
 
         // must be overridden in derived class
         virtual void clean() = 0;
@@ -309,9 +347,50 @@ namespace engine
                 // input
                 //processInput(window);
 
-                // prepare the framebuffer
+                //glm::vec3 lightPos = glm::vec3(1.0f, 2.0f, 2.0f);
+
+
+
+                // 1. render depth of scene to texture (from light's perspective)
+                // --------------------------------------------------------------
+                //glm::mat4 lightProjection, lightView;
+                //glm::mat4 lightSpaceMatrix;
+                //float near_plane = 1.0f, far_plane = 7.5f;
+                //lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+                //lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+                //lightSpaceMatrix = lightProjection * lightView;
+                //// render scene from light's point of view
+                //simpleDepthShader.use();
+                //simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+                //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+                //glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
+                //glClear(GL_DEPTH_BUFFER_BIT);
+                //update(simpleDepthShader);
+                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                //// reset viewport
+                //glViewport(0, 0, width, height);
+                //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                //// render Depth map to quad for visual debugging
+                //// ---------------------------------------------
+                //debugDepthQuad.use();
+                //debugDepthQuad.setFloat("near_plane", near_plane);
+                //debugDepthQuad.setFloat("far_plane", far_plane);
+                //glActiveTexture(GL_TEXTURE0);
+                //glBindTexture(GL_TEXTURE_2D, depthMapFramebuffer);
+                //renderQuad();
+
+
+
+
+
+
+
+                // prepare the color framebuffer
                 // bind to framebuffer and draw scene as we normally would to color texture 
-                glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+                glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
                 glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
                 // make sure we clear the framebuffer's content
@@ -321,10 +400,8 @@ namespace engine
 
 
 
-
-
                 // update function gets called here
-                update();
+                update(blinnPhongShader);
 
 
 
@@ -367,9 +444,10 @@ namespace engine
             glDeleteVertexArrays(1, &quadVAO);
             glDeleteBuffers(1, &quadVBO);
             glDeleteRenderbuffers(1, &rbo);
-            glDeleteFramebuffers(1, &framebuffer);
+            glDeleteFramebuffers(1, &colorFramebuffer);
 
             phongShader.clean();
+            blinnPhongShader.clean();
             screenShader.clean();
             skyboxReflectShader.clean();
 
@@ -399,17 +477,18 @@ namespace engine
 
 
 
+        const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
+        unsigned int depthMapFramebuffer = 0;
+        unsigned int colorFramebuffer = 0;
 
-
-        unsigned int framebuffer = 0;
 
         unsigned int quadVAO = 0, quadVBO = 0;
         unsigned int rbo = 0;
 
 
 
-
+        unsigned int textureDepthMapBuffer;
         unsigned int textureColorbuffer = 0;
 
 
@@ -428,6 +507,13 @@ namespace engine
             ImGui::End();
         }
 
+        //void renderQuad()
+        //{
+        //    glBindVertexArray(quadVAO);
+        //    glDrawArrays(GL_TRIANGLES, 0, 6);
+        //    glBindVertexArray(0);
+        //}
+
 
     protected:
         float framerate = 0.0f;
@@ -444,3 +530,5 @@ namespace engine
 
     };
 }
+
+

@@ -20,15 +20,9 @@ public:
 
     void init() override
     {
-
         myPointLight.setup();
 
-
-
-
         ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
-
-
 
         ourPlane.setup(engine::Material(engine::color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
@@ -117,10 +111,10 @@ public:
     }
 
 
-    void update() override
+    void update(engine::Shader& shader) override
     {
         // draw scene and UI in framebuffer
-        drawScene();
+        drawScene(shader);
         drawUI();
     }
 
@@ -150,9 +144,9 @@ private:
 
     engine::Text ourText;
 
+    unsigned int depthMapFBO;
 
-
-    void drawScene()
+    void drawScene(const engine::Shader& shader)
     {
         blinnPhongShader.use();
     
@@ -162,7 +156,7 @@ private:
         glm::mat4 view = cam.GetViewMatrix();
 
         // setup lights
-        myPointLight.draw(phongShader, projection, view, 3.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight.draw(phongShader, projection, view, 2.0f, glm::vec3(0.0f, 0.0f, 2.0f));
 
     
     
@@ -183,7 +177,7 @@ private:
     
     
         // render test cube
-        //ourCube.draw(blinnPhongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube.draw(blinnPhongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     
 
         // render test plane

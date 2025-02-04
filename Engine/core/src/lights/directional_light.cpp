@@ -35,6 +35,8 @@ void engine::DirectionalLight::draw(const Shader& shader, const glm::mat4& proje
 {
     UNREFERENCED_PARAMETER(target);
 
+    m_lightPosition = position;
+
     std::string base = std::format("dirLight[{}]", m_index);
 
     // directional light

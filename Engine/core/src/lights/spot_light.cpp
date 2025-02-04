@@ -33,6 +33,8 @@ void engine::SpotLight::setup()
 // draws the model, and thus all its meshes
 void engine::SpotLight::draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
 {
+    m_lightPosition = position;
+    
     std::string base = std::format("spotLight[{}]", m_index);
 
     shader.setBool(std::format("{}.use", base), true);

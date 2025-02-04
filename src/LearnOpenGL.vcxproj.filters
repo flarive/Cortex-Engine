@@ -180,6 +180,13 @@
     <CopyFileToFolders Include="..\resources\textures\wood_specular.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug_quad.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug_quad.frag" />
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -188,5 +195,10 @@
     <ClInclude Include="app\myapp2.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\shadow_mapping_depth.vertex">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

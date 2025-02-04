@@ -129,10 +129,10 @@ public:
     }
 
 
-    void update() override
+    void update(engine::Shader& shader) override
     {
         // draw scene and UI in framebuffer
-        drawScene();
+        drawScene(shader);
         drawUI();
     }
 
@@ -175,7 +175,7 @@ private:
 
 
 
-    void drawScene()
+    void drawScene(engine::Shader& shader)
     {
         phongShader.use();
     

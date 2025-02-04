@@ -33,6 +33,10 @@ void engine::PointLight::draw(const Shader& shader, const glm::mat4& projection,
 {
     UNREFERENCED_PARAMETER(target);
 
+
+    m_lightPosition = position;
+
+
     std::string base = std::format("pointLights[{}]", m_index);
 
     shader.setBool(std::format("{}.use", base), true);

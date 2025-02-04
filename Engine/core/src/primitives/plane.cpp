@@ -94,8 +94,6 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     shader.setInt("material.texture_normal1", 2); // texture 2
     //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     shader.setBool("material.has_normal_map", m_normalMap > 0);
-    shader.setFloat("material.shininess", 32.0f);
-    shader.setInt("blinn", false);
     shader.setFloat("uvScale", 2.0f);
     
 

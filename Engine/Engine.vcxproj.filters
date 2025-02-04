@@ -147,7 +147,7 @@
     <ClCompile Include="core\src\materials\material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\UvMapping.cpp">
+    <ClCompile Include="core\src\uvmapping.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
   </ItemGroup>

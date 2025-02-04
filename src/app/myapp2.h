@@ -20,10 +20,11 @@ public:
 
     void init() override
     {
+
         myPointLight.setup();
-        myDirectionalLight1.setup();
-        myDirectionalLight2.setup();
-        mySpotLight.setup();
+
+
+
 
         ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
@@ -141,9 +142,7 @@ private:
 
 
     engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight1{ 0 };
-    engine::DirectionalLight myDirectionalLight2{ 1 };
-    engine::SpotLight mySpotLight{ 0 };
+
 
 
     engine::Cube ourCube;
@@ -155,31 +154,25 @@ private:
 
     void drawScene()
     {
-        phongShader.use();
+        blinnPhongShader.use();
     
     
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
         glm::mat4 view = cam.GetViewMatrix();
-    
-    
-    
-    
+
         // setup lights
-        //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(phongShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1.draw(phongShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2.draw(phongShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight.draw(phongShader, projection, view, 3.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+
     
     
     
         // activate phong shader
-        phongShader.use();
-        phongShader.setVec3("viewPos", cam.Position);
-        phongShader.setMat4("projection", projection);
-        phongShader.setMat4("view", view);
+        blinnPhongShader.use();
+        blinnPhongShader.setVec3("viewPos", cam.Position);
+        blinnPhongShader.setMat4("projection", projection);
+        blinnPhongShader.setMat4("view", view);
+        blinnPhongShader.setInt("blinn", true);
     
     
     
@@ -190,11 +183,11 @@ private:
     
     
         // render test cube
-        ourCube.draw(phongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourCube.draw(blinnPhongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     
 
         // render test plane
-        ourPlane.draw(phongShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(blinnPhongShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
     }
     
@@ -206,9 +199,7 @@ private:
     
     void cleanScene()
     {
-
         ourCube.clean();
         ourPlane.clean();
-
     }
 };

@@ -106,7 +106,6 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
         shader.setBool("material.has_normal_map", m_normalMap > 0);
         //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
         shader.setFloat("material.shininess", 32.0f);
-        shader.setInt("blinn", false);
         shader.setFloat("uvScale", 1.0f);
     }
 

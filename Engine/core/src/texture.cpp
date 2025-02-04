@@ -6,7 +6,7 @@
 
 #include "SOIL2.h"
 
-unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, bool repeat)
+unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, bool repeat, bool gammaCorrection)
 {
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -24,11 +24,28 @@ unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, 
 
 
     // load and generate the texture
-    int width, height;
-    unsigned char* data = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, 0, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+    int width, height, nrComponents;
+    unsigned char* data = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, &nrComponents, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+        GLenum internalFormat{};
+        GLenum dataFormat{};
+        if (nrComponents == 1)
+        {
+            internalFormat = dataFormat = GL_RED;
+        }
+        else if (nrComponents == 3)
+        {
+            internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+            dataFormat = GL_RGB;
+        }
+        else if (nrComponents == 4)
+        {
+            internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+            dataFormat = GL_RGBA;
+        }
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -43,7 +60,7 @@ unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, 
 }
 
 
-unsigned int engine::Texture::soil_load_texture(std::string filename, bool repeat)
+unsigned int engine::Texture::soil_load_texture(std::string filename, bool repeat, bool gammaCorrection)
 {
     unsigned int texture;
     glGenTextures(1, &texture);

@@ -190,6 +190,9 @@ namespace engine
             glfwWindowHint(GLFW_SAMPLES, 4);
             glEnable(GL_MULTISAMPLE);
 
+            // gamma correction
+            //glEnable(GL_FRAMEBUFFER_SRGB);
+
 
             // load shaders
 

@@ -347,8 +347,7 @@ namespace engine
                 // input
                 //processInput(window);
 
-                glm::vec3 lightPos = glm::vec3(1.0f, 2.0f, 2.0f);
-
+                glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
 
 
                 // 1. render depth of scene to texture (from light's perspective)
@@ -366,6 +365,8 @@ namespace engine
                 glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
                 glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
                 glClear(GL_DEPTH_BUFFER_BIT);
+                //glActiveTexture(GL_TEXTURE0);
+                //glBindTexture(GL_TEXTURE_2D, woodTexture);
                 update(simpleDepthShader);
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -373,14 +374,82 @@ namespace engine
                 glViewport(0, 0, width, height);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+                // 2. render scene as normal using the generated depth/shadow map  
+                // --------------------------------------------------------------
+                blinnPhongShader.use();
+                //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+                //glm::mat4 view = camera.GetViewMatrix();
+                //blinnPhongShader.setMat4("projection", projection);
+                //blinnPhongShader.setMat4("view", view);
+                // set light uniforms
+                //blinnPhongShader.setVec3("viewPos", camera.Position);
+                blinnPhongShader.setVec3("lightPos", lightPos);
+                blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+                //glActiveTexture(GL_TEXTURE0);
+                //glBindTexture(GL_TEXTURE_2D, woodTexture);
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+
+
+                blinnPhongShader.setInt("material.shadowMap", 3); // texture 3
+
+                update(blinnPhongShader);
+
                 // render Depth map to quad for visual debugging
                 // ---------------------------------------------
                 debugDepthQuad.use();
                 debugDepthQuad.setFloat("near_plane", near_plane);
                 debugDepthQuad.setFloat("far_plane", far_plane);
                 glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, depthMapFramebuffer);
-                renderQuad();
+                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+                //debugDepthQuad.setInt("depthMap", 0); // texture 0
+                //renderQuad();
+
+
+
+
+
+                // 1. render depth of scene to texture (from light's perspective)
+                // --------------------------------------------------------------
+                //glm::mat4 lightProjection, lightView;
+                //glm::mat4 lightSpaceMatrix;
+                //float near_plane = 1.0f, far_plane = 7.5f;
+                //lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+                //lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+                //lightSpaceMatrix = lightProjection * lightView;
+                //// render scene from light's point of view
+                //simpleDepthShader.use();
+                //simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+                //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+                //glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
+                //glClear(GL_DEPTH_BUFFER_BIT);
+                //update(simpleDepthShader);
+                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                //// reset viewport
+                //glViewport(0, 0, width, height);
+                //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                //// render Depth map to quad for visual debugging
+                //// ---------------------------------------------
+                //debugDepthQuad.use();
+                //debugDepthQuad.setFloat("near_plane", near_plane);
+                //debugDepthQuad.setFloat("far_plane", far_plane);
+                //glActiveTexture(GL_TEXTURE0);
+                //glBindTexture(GL_TEXTURE_2D, depthMapFramebuffer);
+                //renderQuad();
+
+
+
+
+
+
+
+
+
+
+
 
 
 

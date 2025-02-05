@@ -163,6 +163,7 @@ private:
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         shader.setInt("blinn", true);
+
     
     
         // render test cube

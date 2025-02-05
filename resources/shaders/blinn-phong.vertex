@@ -6,29 +6,29 @@ layout (location = 2) in vec2 aTexCoords; // the uv variable has attribute posit
 layout (location = 3) in vec3 aTangents; // the tangent variable has attribute position 3
 layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
 
-out vec3 FragPos;
-out vec2 TexCoords;
-out vec3 Normal;
-out vec3 Tangent;
-out vec3 Bitangent;
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec3 Tangent;
+    vec3 Bitangent;
+    vec4 FragPosLightSpace;
+} vs_out;
+
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 lightSpaceMatrix;
 
 void main()
 {
-    // note that we read the multiplication from right to left
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.Tangent = aTangents;
+    vs_out.Bitangent = aBitangents;
+    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
+
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    
-    Normal = aNormal;
-    //Normal = mat3(transpose(inverse(model))) * aNormal;
-
-    Tangent = aTangents;
-
-    Bitangent = aBitangents;
-
-    TexCoords = aTexCoords;
 }

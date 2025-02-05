@@ -186,8 +186,10 @@
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vertex" />
     <CopyFileToFolders Include="..\resources\shaders\debug_quad_depth.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>

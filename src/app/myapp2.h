@@ -115,7 +115,7 @@ public:
     {
         // draw scene and UI in framebuffer
         drawScene(shader);
-        drawUI();
+        //drawUI();
     }
 
     void clean() override
@@ -144,45 +144,32 @@ private:
 
     engine::Text ourText;
 
-    unsigned int depthMapFBO;
+    
 
-    void drawScene(const engine::Shader& shader)
+    void drawScene(engine::Shader& shader)
     {
-        blinnPhongShader.use();
-    
-    
+        shader.use();
+   
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
         glm::mat4 view = cam.GetViewMatrix();
 
         // setup lights
-        myPointLight.draw(phongShader, projection, view, 2.0f, glm::vec3(0.0f, 0.0f, 2.0f));
-
-    
-    
+        myPointLight.draw(shader, projection, view, 2.0f, glm::vec3(0.0f, 0.0f, 2.0f));
     
         // activate phong shader
-        blinnPhongShader.use();
-        blinnPhongShader.setVec3("viewPos", cam.Position);
-        blinnPhongShader.setMat4("projection", projection);
-        blinnPhongShader.setMat4("view", view);
-        blinnPhongShader.setInt("blinn", true);
-    
-    
-    
-    
-
-    
-    
+        shader.use();
+        shader.setVec3("viewPos", cam.Position);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
+        shader.setInt("blinn", true);
     
     
         // render test cube
-        ourCube.draw(blinnPhongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    
+        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test plane
-        ourPlane.draw(blinnPhongShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
     
     void drawUI()

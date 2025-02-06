@@ -26,6 +26,9 @@ namespace engine
         engine::Shader debugDepthQuad;
 
 
+        glm::vec3 lightPos;// = glm::vec3(-2.0f, 4.0f, -1.0f);
+
+
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
         {
@@ -347,8 +350,11 @@ namespace engine
                 // input
                 //processInput(window);
 
-                glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
-
+                
+                // render
+                // ------
+                glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // 1. render depth of scene to texture (from light's perspective)
                 // --------------------------------------------------------------
@@ -387,13 +393,14 @@ namespace engine
                 blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
                 //glActiveTexture(GL_TEXTURE0);
                 //glBindTexture(GL_TEXTURE_2D, woodTexture);
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-
-
-                blinnPhongShader.setInt("material.shadowMap", 3); // texture 3
+                
+                
 
                 update(blinnPhongShader);
+
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+                blinnPhongShader.setInt("material.shadowMap", 3); // texture 3
 
                 // render Depth map to quad for visual debugging
                 // ---------------------------------------------
@@ -402,8 +409,6 @@ namespace engine
                 debugDepthQuad.setFloat("far_plane", far_plane);
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-                //debugDepthQuad.setInt("depthMap", 0); // texture 0
-                //renderQuad();
 
 
 

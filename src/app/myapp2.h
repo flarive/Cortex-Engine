@@ -15,6 +15,8 @@ public:
         lastX = width / 2.0f;
         lastY = height / 2.0f;
 
+        this->lightPos = glm::vec3(-2.0f, 2.0f, 1.0f);
+
         init();
     }
 
@@ -22,7 +24,8 @@ public:
     {
         myPointLight.setup();
 
-        ourCube.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourCube1.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourCube2.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
         ourPlane.setup(engine::Material(engine::color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
@@ -121,7 +124,8 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourCube.clean();
+        ourCube1.clean();
+        ourCube2.clean();
         ourPlane.clean();
     }
 
@@ -139,7 +143,8 @@ private:
 
 
 
-    engine::Cube ourCube;
+    engine::Cube ourCube1;
+    engine::Cube ourCube2;
     engine::Plane ourPlane;
 
     engine::Text ourText;
@@ -155,7 +160,7 @@ private:
         glm::mat4 view = cam.GetViewMatrix();
 
         // setup lights
-        myPointLight.draw(shader, projection, view, 2.0f, glm::vec3(0.0f, 0.0f, 2.0f));
+        myPointLight.draw(shader, projection, view, 2.0f, this->lightPos);
     
         // activate phong shader
         shader.use();
@@ -167,7 +172,8 @@ private:
     
     
         // render test cube
-        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube2.draw(shader, glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -181,7 +187,8 @@ private:
     
     void cleanScene()
     {
-        ourCube.clean();
+        ourCube1.clean();
+        ourCube2.clean();
         ourPlane.clean();
     }
 };

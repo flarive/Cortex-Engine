@@ -12,10 +12,10 @@ namespace engine
         unsigned int id;
         std::string type;
         std::string path;
-		color color;
+		Color color;
 
-        static unsigned int soil_load_image(std::string filename, bool alpha = false, bool repeat = true, bool gammaCorrection = false);
-        static unsigned int soil_load_texture(std::string filename, bool repeat = true, bool gammaCorrection = false);
+        static unsigned int loadImage(std::string filename, bool alpha = false, bool repeat = true, bool gammaCorrection = false);
+        static unsigned int loadTexture(std::string filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(std::vector<std::string> faces);
     };

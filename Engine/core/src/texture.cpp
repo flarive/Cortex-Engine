@@ -6,7 +6,7 @@
 
 #include "SOIL2.h"
 
-unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::loadImage(std::string filename, bool alpha, bool repeat, bool gammaCorrection)
 {
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -60,7 +60,7 @@ unsigned int engine::Texture::soil_load_image(std::string filename, bool alpha, 
 }
 
 
-unsigned int engine::Texture::soil_load_texture(std::string filename, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::loadTexture(std::string filename, bool repeat, bool gammaCorrection)
 {
     unsigned int texture;
     glGenTextures(1, &texture);

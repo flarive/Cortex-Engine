@@ -24,5 +24,5 @@
 
 namespace engine
 {
-	using color = glm::vec4;
+	using Color = glm::vec4;
 }

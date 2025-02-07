@@ -16,15 +16,15 @@ namespace engine
 
         Material();
 
-        Material(const engine::color& ambientColor, const engine::color& diffuseColor, float shininess = 32.0f);
+        Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 32.0f);
 
-        Material(const engine::color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", float shininess = 32.0f);
+        Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", float shininess = 32.0f);
 
 
         virtual ~Material() = default;
 
-		engine::color getAmbientColor() const { return m_ambientColor; }
-		engine::color getDiffuseColor() const { return m_diffuseColor; }
+		engine::Color getAmbientColor() const { return m_ambientColor; }
+		engine::Color getDiffuseColor() const { return m_diffuseColor; }
 
 		std::string getDiffuseTexPath() const { return m_diffuseTexPath; }
 		std::string getSpecularTexPath() const { return m_specularTexPath; }
@@ -45,8 +45,8 @@ namespace engine
         
 
     private:
-		engine::color m_ambientColor = engine::color(0.0f);
-        engine::color m_diffuseColor = engine::color(0.5f);
+		engine::Color m_ambientColor = engine::Color(0.0f);
+        engine::Color m_diffuseColor = engine::Color(0.5f);
 		
         std::string m_diffuseTexPath;
         std::string m_specularTexPath;

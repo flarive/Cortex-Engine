@@ -24,10 +24,10 @@ public:
     {
         myPointLight.setup();
 
-        ourCube1.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
-        ourCube2.setup(engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourCube2.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
-        ourPlane.setup(engine::Material(engine::color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
+        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup();
     }
@@ -118,7 +118,11 @@ public:
     {
         // draw scene and UI in framebuffer
         drawScene(shader);
-        //drawUI();
+    }
+
+    void updateUI(engine::Shader& shader) override
+    {
+        drawUI();
     }
 
     void clean() override
@@ -149,6 +153,7 @@ private:
 
     engine::Text ourText;
 
+    float rotation = 0.0f;
     
 
     void drawScene(engine::Shader& shader)
@@ -160,7 +165,7 @@ private:
         glm::mat4 view = cam.GetViewMatrix();
 
         // setup lights
-        myPointLight.draw(shader, projection, view, 2.0f, this->lightPos);
+        myPointLight.draw(shader, projection, view, 3.0f, this->lightPos);
     
         // activate phong shader
         shader.use();
@@ -173,7 +178,9 @@ private:
     
         // render test cube
         ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        ourCube2.draw(shader, glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube2.draw(shader, glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), rotation, glm::vec3(1.0f, 1.0f, 0.0f));
+
+        rotation += deltaTime * 10.0f;
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -183,12 +190,5 @@ private:
     {
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-    }
-    
-    void cleanScene()
-    {
-        ourCube1.clean();
-        ourCube2.clean();
-        ourPlane.clean();
     }
 };

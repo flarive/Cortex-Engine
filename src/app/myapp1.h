@@ -39,12 +39,12 @@ public:
             "textures/skybox/back.jpg"
         };
 
-        auto zzz = engine::Material(engine::color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png");
+        auto zzz = engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png");
         zzz.setCubeMapTexs(faces);
 
         ourCube.setup(zzz);
-        ourPlane.setup(engine::Material(engine::color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
-        ourBillboard.setup(engine::Material(engine::color(0.1f), "textures/grass.png"));
+        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
+        ourBillboard.setup(engine::Material(engine::Color(0.1f), "textures/grass.png"));
 
         ourText.setup();
 
@@ -133,6 +133,10 @@ public:
     {
         // draw scene and UI in framebuffer
         drawScene(shader);
+    }
+
+    void updateUI(engine::Shader& shader) override
+    {
         drawUI();
     }
 
@@ -250,14 +254,5 @@ private:
     {
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-    }
-    
-    void cleanScene()
-    {
-        ourSkybox.clean();
-    
-        ourCube.clean();
-        ourPlane.clean();
-        ourBillboard.clean();
     }
 };

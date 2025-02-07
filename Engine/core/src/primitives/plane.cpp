@@ -27,13 +27,13 @@ void engine::Plane::setup(const engine::Material& material, const UvMapping& uv)
 
     // load textures
     if (material.hasDiffuseMap())
-        m_diffuseMap = engine::Texture::soil_load_texture(material.getDiffuseTexPath(), true);
+        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true);
 
     if (material.hasSpecularMap())
-        m_specularMap = engine::Texture::soil_load_texture(material.getSpecularTexPath(), true);
+        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true);
 
     if (material.hasNormalMap())
-        m_normalMap = engine::Texture::soil_load_texture(material.getNormalTexPath(), true);
+        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true);
 }
 
 void engine::Plane::setup()

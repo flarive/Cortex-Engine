@@ -26,111 +26,27 @@ namespace engine
         engine::Shader debugDepthQuad;
 
 
-        glm::vec3 lightPos;// = glm::vec3(-2.0f, 4.0f, -1.0f);
+        
 
 
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
         {
-            setup();
+            //setup();
+
+            initGLFW();
+
+            glsl_version = initOpenGL();
+
+            initWindow();
         }
 
-        void key_callback(GLFWwindow* win)
-        {
-            // basic window handling
-            if (glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            {
-                std::cout << "exiting..." << std::endl;
-                glfwSetWindowShouldClose(window, GL_TRUE);
-            }
-
-            if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
-            {
-                if (!key_w_pressed) // Only toggle when the key is first pressed
-                {
-                    show_window = !show_window;
-                    key_w_pressed = true; // Mark the key as pressed
-                }
-            }
-            else if (glfwGetKey(win, GLFW_KEY_W) == GLFW_RELEASE)
-            {
-                key_w_pressed = false; // Reset the state when the key is released
-            }
-        }
-
-        // glfw: whenever the mouse moves, this callback is called
-        // -------------------------------------------------------
-        void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
-        {
-            UNREFERENCED_PARAMETER(win);
-            UNREFERENCED_PARAMETER(xposIn);
-            UNREFERENCED_PARAMETER(yposIn);
-        }
-
-        // glfw: whenever the mouse scroll wheel scrolls, this callback is called
-        // ----------------------------------------------------------------------
-        void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
-        {
-            UNREFERENCED_PARAMETER(win);
-            UNREFERENCED_PARAMETER(xoffset);
-            UNREFERENCED_PARAMETER(yoffset);
-        }
-
-        // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-        // ---------------------------------------------------------------------------------------------
-        static void framebuffer_size_callback(GLFWwindow* win, int width, int height)
-        {
-            UNREFERENCED_PARAMETER(win);
-
-            // make sure the viewport matches the new window dimensions; note that width and 
-            // height will be significantly larger than specified on retina displays.
-            glViewport(0, 0, width, height);
-        }
+        
 
         void setup()
         {
             // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
-            glfwSetErrorCallback(glfw_error_callback);
-            if (!glfwInit())
-            {
-                //return 1;
-                std::cerr << "GLFW init failed" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-
-            // GL 3.3 + GLSL 130
-            const char* glsl_version = "#version 130";
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-            //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-
-
-            GLFWmonitor* MyMonitor = glfwGetPrimaryMonitor(); // The primary monitor
-
-            const GLFWvidmode* mode = glfwGetVideoMode(MyMonitor);
-            if (fullscreen)
-            {
-                width = mode->width;
-                height = mode->height;
-            }
-
-            // Create window with graphics context
-            window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? MyMonitor : NULL, nullptr);
-            if (window == NULL)
-            {
-                std::cerr << "Failed to create GLFW window" << std::endl;
-                glfwTerminate();
-                exit(EXIT_FAILURE);
-            }
-
-
             glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
-
-            glfwMakeContextCurrent(window);
-            //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-            //glfwSetCursorPosCallback(window, mouse_callback);
-            //glfwSetScrollCallback(window, scroll_callback);
 
             // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
             glfwSwapInterval(1);
@@ -138,49 +54,9 @@ namespace engine
             // tell GLFW to capture our mouse
             //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+            initGLAD();
 
-            // glad: load all OpenGL function pointers
-            // ---------------------------------------
-            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-            {
-                std::cerr << "Failed to initialize GLAD" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-
-
-            // Setup Dear ImGui context
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO();
-
-            // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-            ImGuiStyle& style = ImGui::GetStyle();
-            if (io.ConfigFlags)
-            {
-                style.WindowRounding = 0.0f;
-                style.ChildRounding = 5.0f;
-                style.TabRounding = 5.f;
-                style.FrameRounding = 5.f;
-                style.GrabRounding = 5.f;
-                style.PopupRounding = 5.f;
-                style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-
-                style.ItemSpacing.y = 8.0; // vertical padding between widgets
-                style.FramePadding.x = 8.0; // better widget horizontal padding
-                style.FramePadding.y = 4.0; // better widget vertical padding
-            }
-
-            // Apply Adobe Spectrum theme
-            //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
-            ImGui::Spectrum::StyleColorsSpectrum();
-            ImGui::Spectrum::LoadFont(17.0);
-
-
-            // Setup Platform/Renderer backends
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init(glsl_version);
-
-
+            initImGUI();
 
             // configure global opengl state
             // -----------------------------
@@ -203,13 +79,13 @@ namespace engine
 
             // load shaders
 
-            // phong illimuniation model and lightning shader
+            // phong illumination model and lightning shader
             phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag");
 
-            // phong illimuniation model and lightning shader
+            // blinn phong illumination model and lightning shader
             blinnPhongShader = engine::Shader("phong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
 
-            //Shader depthBufferShader("depthbuffer", "shaders/depthbuffer.vertex", "shaders/depthbuffer.frag"); // depth buffer debugging shader
+            //Shader depthBufferShader("debug_depth_buffer", "shaders/debug_depth_buffer.vertex", "shaders/debug_depth_buffer.frag"); // depth buffer debugging shader
 
             // color framebuffer to screen shader
             screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
@@ -301,10 +177,7 @@ namespace engine
 
             // uncomment this call to draw in wireframe polygons.
             //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
-
-
         }
-
 
         // must be overridden in derived class
         virtual void init() = 0;
@@ -341,21 +214,17 @@ namespace engine
 
                 framerate = ImGui::GetIO().Framerate;
 
-
                 if (show_window)
                     renderUIWindow(show_window);
-
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
                 lastFrame = currentFrame;
 
+                
+
                 auto start_time = std::chrono::high_resolution_clock::now();
 
-                // input
-                //processInput(window);
-
-                
                 // render
                 // ------
                 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -367,7 +236,7 @@ namespace engine
                 glm::mat4 lightSpaceMatrix;
                 float near_plane = 1.0f, far_plane = 7.5f;
                 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-                lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+                lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
                 lightSpaceMatrix = lightProjection * lightView;
                 // render scene from light's point of view
                 simpleDepthShader.use();
@@ -376,9 +245,8 @@ namespace engine
                 glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
                 glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
                 glClear(GL_DEPTH_BUFFER_BIT);
-                //glActiveTexture(GL_TEXTURE0);
-                //glBindTexture(GL_TEXTURE_2D, woodTexture);
                 update(simpleDepthShader);
+
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
                 // reset viewport
@@ -394,18 +262,14 @@ namespace engine
                 //blinnPhongShader.setMat4("view", view);
                 // set light uniforms
                 //blinnPhongShader.setVec3("viewPos", camera.Position);
-                blinnPhongShader.setVec3("lightPos", lightPos);
+                blinnPhongShader.setVec3("lightPos", m_lightPosition);
                 blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-                //glActiveTexture(GL_TEXTURE0);
-                //glBindTexture(GL_TEXTURE_2D, woodTexture);
-                
-                
 
                 update(blinnPhongShader);
 
                 glActiveTexture(GL_TEXTURE3);
                 glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-                blinnPhongShader.setInt("material.shadowMap", 3); // texture 3
+                blinnPhongShader.setInt("material.texture_shadowMap", 3); // texture 3
 
                 // render Depth map to quad for visual debugging
                 // ---------------------------------------------
@@ -510,6 +374,7 @@ namespace engine
                 glViewport(0, 0, display_w, display_h);
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
                 glfwSwapBuffers(window);
 
                 auto end_time = std::chrono::high_resolution_clock::now();
@@ -517,7 +382,6 @@ namespace engine
             }
 
             glBindVertexArray(0);
-
 
             // optional: de-allocate all resources once they've outlived their purpose
             glDeleteVertexArrays(1, &quadVAO);
@@ -543,7 +407,104 @@ namespace engine
             glfwTerminate();
         }
 
+        void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods)
+        {
+            // basic window handling
+            switch (key) {
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(win, GL_TRUE); break;
+            case GLFW_KEY_ENTER:
+                if (action == GLFW_RELEASE) toggleFullscreen(win); break;
+            }
 
+            if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
+            {
+                if (!key_w_pressed) // Only toggle when the key is first pressed
+                {
+                    show_window = !show_window;
+                    key_w_pressed = true; // Mark the key as pressed
+                }
+            }
+            else if (glfwGetKey(win, GLFW_KEY_W) == GLFW_RELEASE)
+            {
+                key_w_pressed = false; // Reset the state when the key is released
+                
+            }
+        }
+
+        // glfw: whenever the mouse moves, this callback is called
+        // -------------------------------------------------------
+        void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
+        {
+            UNREFERENCED_PARAMETER(win);
+            UNREFERENCED_PARAMETER(xposIn);
+            UNREFERENCED_PARAMETER(yposIn);
+        }
+
+        // glfw: whenever the mouse scroll wheel scrolls, this callback is called
+        // ----------------------------------------------------------------------
+        void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
+        {
+            UNREFERENCED_PARAMETER(win);
+            UNREFERENCED_PARAMETER(xoffset);
+            UNREFERENCED_PARAMETER(yoffset);
+        }
+
+
+        // glfw: whenever the window size changed (by OS or user resize) this callback function executes
+        // ---------------------------------------------------------------------------------------------
+        void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
+        {
+            UNREFERENCED_PARAMETER(win);
+
+
+            // make sure the viewport matches the new window dimensions; note that width and 
+            // height will be significantly larger than specified on retina displays.
+            glViewport(0, 0, newWidth, newHeight);
+
+            //std::cout << "framebuffer_size_callback " << newWidth << "/" << newHeight << std::endl;
+
+            //float targetAspect = 4.0f / 3.0f;
+            //float windowAspect = (float)width / (float)height;
+
+            //int viewWidth, viewHeight;
+            //int xOffset = 0, yOffset = 0;
+
+            //if (windowAspect > targetAspect) {
+            //    // Window is wider than target aspect ratio
+            //    viewHeight = height;
+            //    viewWidth = (int)(height * targetAspect);
+            //    xOffset = (width - viewWidth) / 2;
+            //}
+            //else {
+            //    // Window is taller than target aspect ratio
+            //    viewWidth = width;
+            //    viewHeight = (int)(width / targetAspect);
+            //    yOffset = (height - viewHeight) / 2;
+            //}
+
+            //glViewport(xOffset, yOffset, viewWidth, viewHeight);
+        }
+
+        void setLightPosition(glm::vec3 pos)
+        {
+            m_lightPosition = pos;
+        }
+
+        void setLightTarget(glm::vec3 pos)
+        {
+            m_lightTarget = pos;
+        }
+
+        glm::vec3 getLightPosition()
+        {
+            return m_lightPosition;
+        }
+
+        glm::vec3 getLightTarget()
+        {
+            return m_lightTarget;
+        }
 
     private:
         const int TARGET_FPS = 60;
@@ -551,6 +512,7 @@ namespace engine
 
 
         bool key_w_pressed = false;
+
 
         bool show_window = false;
 
@@ -567,14 +529,20 @@ namespace engine
 
 
 
-        unsigned int textureDepthMapBuffer;
+        unsigned int textureDepthMapBuffer = 0;
         unsigned int textureColorbuffer = 0;
 
+        glm::vec3 m_lightPosition;
+        glm::vec3 m_lightTarget;
+
+        
+        GLFWmonitor* MyMonitor;
 
 
         static void glfw_error_callback(int error, const char* description)
         {
             fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+            exit(EXIT_FAILURE);
         }
 
         void renderUIWindow(bool show)
@@ -593,6 +561,139 @@ namespace engine
             glBindVertexArray(0);
         }
 
+        void initGLFW()
+        {
+            glfwSetErrorCallback(glfw_error_callback);
+            if (!glfwInit())
+            {
+                std::cerr << "GLFW init failed" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        const char* initOpenGL()
+        {
+            // GL 3.3 + GLSL 130
+            const char* glsl_version = "#version 130";
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
+            //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+
+            return glsl_version;
+        }
+
+        void initWindow()
+        {
+            MyMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+
+
+
+            const GLFWvidmode* mode = glfwGetVideoMode(MyMonitor);
+            if (fullscreen)
+            {
+                width = mode->width;
+                height = mode->height;
+            }
+            
+            // Create window with graphics context
+            // fullscreen ? MyMonitor : NULL
+            window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? MyMonitor : NULL, nullptr);
+            if (window == NULL)
+            {
+                std::cerr << "Failed to create GLFW window" << std::endl;
+                glfwTerminate();
+                exit(EXIT_FAILURE);
+            }
+
+            glfwMakeContextCurrent(window);
+        }
+
+        void initGLAD()
+        {
+            // glad: load all OpenGL function pointers
+            // ---------------------------------------
+            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+            {
+                std::cerr << "Failed to initialize GLAD" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        void initImGUI()
+        {
+            // Setup Dear ImGui context
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImGuiIO& io = ImGui::GetIO();
+
+            // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+            ImGuiStyle& style = ImGui::GetStyle();
+            if (io.ConfigFlags)
+            {
+                style.WindowRounding = 0.0f;
+                style.ChildRounding = 5.0f;
+                style.TabRounding = 5.f;
+                style.FrameRounding = 5.f;
+                style.GrabRounding = 5.f;
+                style.PopupRounding = 5.f;
+                style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+
+                style.ItemSpacing.y = 8.0; // vertical padding between widgets
+                style.FramePadding.x = 8.0; // better widget horizontal padding
+                style.FramePadding.y = 4.0; // better widget vertical padding
+            }
+
+            // Apply Adobe Spectrum theme
+            //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
+            ImGui::Spectrum::StyleColorsSpectrum();
+            ImGui::Spectrum::LoadFont(17.0);
+
+
+            // Setup Platform/Renderer backends
+            ImGui_ImplGlfw_InitForOpenGL(window, true);
+            ImGui_ImplOpenGL3_Init(glsl_version);
+        }
+
+
+        // Toggle Fullscreen
+        void toggleFullscreen(GLFWwindow* win)
+        {
+            static bool isFullscreen = false;
+
+            // remember window original position and size
+            static int windowPosX, windowPosY;
+            static int windowWidth, windowHeight;
+
+            //std::cout << "toggleFullscreen " << isFullscreen << " !" << std::endl;
+
+            if (!isFullscreen) {
+                
+                // Save window position and size
+                glfwGetWindowPos(win, &windowPosX, &windowPosY);
+                glfwGetWindowSize(win, &windowWidth, &windowHeight);
+
+                // Get primary monitor
+                GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+                // Switch to fullscreen
+                glfwSetWindowMonitor(win, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+
+                glfwGetWindowSize(win, &width, &height);
+            }
+            else {
+                // Restore windowed mode
+                glfwSetWindowMonitor(win, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
+
+                glfwGetWindowSize(win, &width, &height);
+            }
+            
+            isFullscreen = !isFullscreen;
+        }
+
+        
+
 
     protected:
         float framerate = 0.0f;
@@ -603,11 +704,14 @@ namespace engine
 
         // settings
         std::string title;
-        unsigned int width = 0;
-        unsigned int height = 0;
-        const bool fullscreen = false;
+        int width = 0; // windowed width
+        int height = 0; // windowed height
+        bool fullscreen = false;
+
+        //static bool isFullscreen = false;
+        //int windowPosX = 0, windowPosY = 0;
+
+        const char* glsl_version = nullptr;
 
     };
 }
-
-

@@ -46,87 +46,87 @@ public:
         ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
         ourBillboard.setup(engine::Material(engine::Color(0.1f), "textures/grass.png"));
 
-        ourText.setup();
+        ourText.setup(width, height);
 
         ourSkybox.setup(faces);
     }
 
-    // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-    // ---------------------------------------------------------------------------------------------------------
-    void keyCallback(GLFWwindow* win)
-    {
-        engine::App::key_callback(win);
+    //// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+    //// ---------------------------------------------------------------------------------------------------------
+    //void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
+    //{
+    //    engine::App::key_callback(key, scancode, action, mods);
 
-        // Detect Shift key state
-        bool shiftPressed = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-            glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-
-
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::LEFT, deltaTime);
+    //    // Detect Shift key state
+    //    bool shiftPressed = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+    //        glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
 
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+    //    else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::LEFT, deltaTime);
 
 
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+    //    else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+    //    else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::FORWARD, deltaTime);
 
 
-        if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::UP, deltaTime);
-        if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
-            cam.ProcessKeyboard(engine::DOWN, deltaTime);
-    }
+    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+    //    else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
 
 
-    void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
-    {
-        engine::App::mouse_callback(win, xposIn, yposIn);
+    //    if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::UP, deltaTime);
+    //    if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
+    //        cam.ProcessKeyboard(engine::DOWN, deltaTime);
+    //}
 
-        float xpos = static_cast<float>(xposIn);
-        float ypos = static_cast<float>(yposIn);
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+    //void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
+    //{
+    //    engine::App::mouse_callback(win, xposIn, yposIn);
 
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    //    float xpos = static_cast<float>(xposIn);
+    //    float ypos = static_cast<float>(yposIn);
 
-        lastX = xpos;
-        lastY = ypos;
+    //    if (firstMouse)
+    //    {
+    //        lastX = xpos;
+    //        lastY = ypos;
+    //        firstMouse = false;
+    //    }
 
-        cam.ProcessMouseMovement(xoffset, yoffset);
-    }
+    //    float xoffset = xpos - lastX;
+    //    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
-    {
-        engine::App::scroll_callback(win, xoffset, yoffset);
+    //    lastX = xpos;
+    //    lastY = ypos;
 
-        cam.ProcessMouseScroll(static_cast<float>(yoffset));
-    }
+    //    cam.ProcessMouseMovement(xoffset, yoffset);
+    //}
 
-    void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
-    {
-        engine::App::framebuffer_size_callback(win, newWidth, newHeight);
-    }
+    //void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
+    //{
+    //    engine::App::scroll_callback(win, xoffset, yoffset);
+
+    //    cam.ProcessMouseScroll(static_cast<float>(yoffset));
+    //}
+
+    //void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
+    //{
+    //    engine::App::framebuffer_size_callback(win, newWidth, newHeight);
+    //}
 
 
     void update(engine::Shader& shader) override
@@ -137,6 +137,8 @@ public:
 
     void updateUI(engine::Shader& shader) override
     {
+        UNREFERENCED_PARAMETER(shader);
+
         drawUI();
     }
 
@@ -181,7 +183,7 @@ private:
 
     void drawScene(engine::Shader& shader)
     {
-        phongShader.use();
+        shader.use();
     
     
         // view/projection transformations
@@ -193,19 +195,19 @@ private:
     
         // setup lights
         //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(phongShader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1.draw(phongShader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2.draw(phongShader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight.draw(shader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+        myDirectionalLight1.draw(shader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight2.draw(shader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
         //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
     
     
         // activate phong shader
-        phongShader.use();
-        phongShader.setVec3("viewPos", cam.Position);
-        phongShader.setMat4("projection", projection);
-        phongShader.setMat4("view", view);
+        shader.use();
+        shader.setVec3("viewPos", cam.Position);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
     
     
     
@@ -216,8 +218,8 @@ private:
         //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
         //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        //phongShader.setMat4("model", model1);
-        //cushionModel.draw(phongShader);
+        //shader.setMat4("model", model1);
+        //cushionModel.draw(shader);
     
     
         // activate skybox reflection shader
@@ -239,12 +241,12 @@ private:
     
     
         // render test cube
-        ourCube.draw(phongShader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     
-        ourBillboard.draw(phongShader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
         // render test plane
-        ourPlane.draw(phongShader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
     
         ourSkybox.draw(projection, view);

@@ -3,7 +3,6 @@
 #include "core/include/app/app.h"
 #include "core/include/engine.h"
 
-
 class MyApp2 : public engine::App
 {
 public:
@@ -15,61 +14,68 @@ public:
         lastX = width / 2.0f;
         lastY = height / 2.0f;
 
-        this->lightPos = glm::vec3(-2.0f, 2.0f, 1.0f);
-
-        init();
+        //init();
     }
 
     void init() override
     {
-        myPointLight.setup();
+        setup();
+
+        setLightPosition(glm::vec3(-2.0f, 1.0f, 1.0f));
+        setLightTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+
+        //myPointLight.setup();
+        //myDirectionalLight.setup();
+        mySpotLight.setup();
+        mySpotLight.setCutOff(12.0f);
+        mySpotLight.setOuterCutOff(30.f);
 
         ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
         ourCube2.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
         ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        ourText.setup();
+        ourText.setup(width, height);
     }
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------
-    void keyCallback(GLFWwindow* win)
+    void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
     {
-        engine::App::key_callback(win);
+        engine::App::key_callback(win, key, scancode, action, mods);
 
         // Detect Shift key state
-        bool shiftPressed = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-            glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+        bool shiftPressed = (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) || (key == GLFW_KEY_RIGHT_SHIFT && action == GLFW_PRESS);
 
 
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+        if (shiftPressed && key == GLFW_KEY_LEFT && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
+        else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::LEFT, deltaTime);
 
-
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if (shiftPressed && key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+
+        if (shiftPressed && key == GLFW_KEY_UP && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
+        else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::FORWARD, deltaTime);
 
-
-        if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+        if (shiftPressed && key == GLFW_KEY_DOWN && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
-        else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
+        else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
 
 
-        if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
+
+
+        if (key == GLFW_KEY_A && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::UP, deltaTime);
-        if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
+        if (key == GLFW_KEY_Q && action == GLFW_PRESS)
             cam.ProcessKeyboard(engine::DOWN, deltaTime);
     }
 
@@ -78,7 +84,7 @@ public:
     {
         UNREFERENCED_PARAMETER(win);
         UNREFERENCED_PARAMETER(xposIn);
-        UNREFERENCED_PARAMETER(xposIn);
+        UNREFERENCED_PARAMETER(yposIn);
 
         //engine::App::mouse_callback(win, xposIn, yposIn);
 
@@ -111,8 +117,9 @@ public:
     void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
     {
         engine::App::framebuffer_size_callback(win, newWidth, newHeight);
-    }
 
+        ourText.setup(newWidth, newHeight);
+    }
 
     void update(engine::Shader& shader) override
     {
@@ -122,6 +129,8 @@ public:
 
     void updateUI(engine::Shader& shader) override
     {
+        UNREFERENCED_PARAMETER(shader);
+
         drawUI();
     }
 
@@ -144,7 +153,8 @@ private:
 
 
     engine::PointLight myPointLight{ 0 };
-
+    engine::DirectionalLight myDirectionalLight{ 0 };
+    engine::SpotLight mySpotLight{ 0 };
 
 
     engine::Cube ourCube1;
@@ -154,19 +164,21 @@ private:
     engine::Text ourText;
 
     float rotation = 0.0f;
-    
+
 
     void drawScene(engine::Shader& shader)
     {
         shader.use();
-   
+
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
         glm::mat4 view = cam.GetViewMatrix();
 
         // setup lights
-        myPointLight.draw(shader, projection, view, 3.0f, this->lightPos);
-    
+        //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
+        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
+        mySpotLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
+
         // activate phong shader
         shader.use();
         shader.setVec3("viewPos", cam.Position);
@@ -174,18 +186,18 @@ private:
         shader.setMat4("view", view);
         shader.setInt("blinn", true);
 
-    
-    
+
+
         // render test cube
         ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        ourCube2.draw(shader, glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), rotation, glm::vec3(1.0f, 1.0f, 0.0f));
+        ourCube2.draw(shader, glm::vec3(-1.5f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), rotation, glm::vec3(1.0f, 1.0f, 0.0f));
 
         rotation += deltaTime * 10.0f;
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
-    
+
     void drawUI()
     {
         // render HUD / UI

@@ -49,8 +49,8 @@ void engine::SpotLight::draw(const Shader& shader, const glm::mat4& projection, 
     shader.setFloat(std::format("{}.linear", base), 0.09f);
     shader.setFloat(std::format("{}.quadratic", base), 0.032f);
 
-    shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(12.5f)));
-    shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(15.0f)));
+    shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(m_cutoff)));
+    shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(m_outerCutoff)));
 
     if (DISPLAY_DEBUG_LIGHT_CUBE)
     {
@@ -70,6 +70,17 @@ void engine::SpotLight::draw(const Shader& shader, const glm::mat4& projection, 
 
         glBindVertexArray(0);
     }
+}
+
+
+void engine::SpotLight::setCutOff(float cutoff)
+{
+    m_cutoff = cutoff;
+}
+
+void engine::SpotLight::setOuterCutOff(float outerCutoff)
+{
+    m_outerCutoff = outerCutoff;
 }
 
 void engine::SpotLight::clean()

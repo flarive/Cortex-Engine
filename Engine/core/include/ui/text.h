@@ -19,7 +19,7 @@ namespace engine
         Text();
 
 
-        void setup();
+        void setup(int width, int height);
 
 
         // draws the model, and thus all its meshes
@@ -32,11 +32,8 @@ namespace engine
 
         // render data 
         std::map<GLchar, Character> m_characters;
-        unsigned int m_VAO, m_VBO;
+        unsigned int m_VAO = 0, m_VBO = 0;
 
         Shader m_textShader;
-
-        unsigned int SCR_WIDTH = 800;
-        unsigned int SCR_HEIGHT = 600;
     };
 }

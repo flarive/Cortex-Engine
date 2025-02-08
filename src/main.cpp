@@ -11,6 +11,8 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 
+
+
 // Main code
 int main(int, char**)
 {
@@ -21,6 +23,8 @@ int main(int, char**)
         glfwSetKeyCallback(app->window, keyCallback);
         glfwSetCursorPosCallback(app->window, mouseCallback);
         glfwSetScrollCallback(app->window, scrollCallback);
+
+        app->init();
 
         // start game loop
         app->gameLoop();
@@ -43,7 +47,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
     UNREFERENCED_PARAMETER(mods);
 
     MyApp2* myApp = (MyApp2*)app;
-    myApp->keyCallback(window);
+    myApp->keyCallback(window, key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called

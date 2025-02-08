@@ -114,10 +114,10 @@
     <CopyFileToFolders Include="..\resources\shaders\text.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\depthbuffer.frag">
+    <CopyFileToFolders Include="..\resources\shaders\debug_depth_buffer.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\depthbuffer.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug_depth_buffer.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal_diffuse.jpg">

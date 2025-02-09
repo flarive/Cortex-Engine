@@ -51,83 +51,76 @@ public:
         ourSkybox.setup(faces);
     }
 
-    //// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-    //// ---------------------------------------------------------------------------------------------------------
-    //void keyCallback(GLFWwindow* win, int key, int scancode, int action, int mods)
-    //{
-    //    engine::App::key_callback(key, scancode, action, mods);
 
-    //    // Detect Shift key state
-    //    bool shiftPressed = glfwGetKey(win, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-    //        glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+    // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+    // ---------------------------------------------------------------------------------------------------------
+    void key_callback(int key, int scancode, int action, int mods)
+    {
+        engine::App::key_callback(key, scancode, action, mods);
 
+        // Detect Shift key state
+        bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
-    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
-    //    else if (glfwGetKey(win, GLFW_KEY_LEFT) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::LEFT, deltaTime);
+        if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+        else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::LEFT, deltaTime);
 
-
-    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
-    //    else if (glfwGetKey(win, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+        if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+        else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
-    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
-    //    else if (glfwGetKey(win, GLFW_KEY_UP) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+
+        if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+        else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+
+        if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+        else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+    }
 
 
-    //    if (shiftPressed && glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
-    //    else if (glfwGetKey(win, GLFW_KEY_DOWN) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+    void mouse_callback(double xposIn, double yposIn)
+    {
+        engine::App::mouse_callback(xposIn, yposIn);
 
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
 
-    //    if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::UP, deltaTime);
-    //    if (glfwGetKey(win, GLFW_KEY_Q) == GLFW_PRESS)
-    //        cam.ProcessKeyboard(engine::DOWN, deltaTime);
-    //}
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    //void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
-    //{
-    //    engine::App::mouse_callback(win, xposIn, yposIn);
+        lastX = xpos;
+        lastY = ypos;
 
-    //    float xpos = static_cast<float>(xposIn);
-    //    float ypos = static_cast<float>(yposIn);
+        cam.ProcessMouseMovement(xoffset, yoffset);
+    }
 
-    //    if (firstMouse)
-    //    {
-    //        lastX = xpos;
-    //        lastY = ypos;
-    //        firstMouse = false;
-    //    }
+    void scroll_callback(double xoffset, double yoffset)
+    {
+        engine::App::scroll_callback(xoffset, yoffset);
 
-    //    float xoffset = xpos - lastX;
-    //    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        cam.ProcessMouseScroll(static_cast<float>(yoffset));
+    }
 
-    //    lastX = xpos;
-    //    lastY = ypos;
+    void framebuffer_size_callback(int newWidth, int newHeight)
+    {
+        engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-    //    cam.ProcessMouseMovement(xoffset, yoffset);
-    //}
-
-    //void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
-    //{
-    //    engine::App::scroll_callback(win, xoffset, yoffset);
-
-    //    cam.ProcessMouseScroll(static_cast<float>(yoffset));
-    //}
-
-    //void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
-    //{
-    //    engine::App::framebuffer_size_callback(win, newWidth, newHeight);
-    //}
-
+        ourText.setup(newWidth, newHeight);
+    }
 
     void update(engine::Shader& shader) override
     {

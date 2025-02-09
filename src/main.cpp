@@ -2,6 +2,8 @@
 #include "app/myapp1.h"
 #include "app/myapp2.h"
 
+using MyApp = MyApp2;
+
 
 engine::App* app;
 
@@ -16,15 +18,13 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 // Main code
 int main(int, char**)
 {
-    app = new MyApp2("MyApp", 640, 480, false);
+    app = new MyApp("MyApp", 640, 480, false);
     if (app)
     {
         glfwSetFramebufferSizeCallback(app->window, framebufferSizeCallback);
         glfwSetKeyCallback(app->window, keyCallback);
         glfwSetCursorPosCallback(app->window, mouseCallback);
         glfwSetScrollCallback(app->window, scrollCallback);
-
-        app->init();
 
         // start game loop
         app->gameLoop();
@@ -41,37 +41,38 @@ int main(int, char**)
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    UNREFERENCED_PARAMETER(key);
-    UNREFERENCED_PARAMETER(scancode);
-    UNREFERENCED_PARAMETER(action);
-    UNREFERENCED_PARAMETER(mods);
+    UNREFERENCED_PARAMETER(window);
 
-    MyApp2* myApp = (MyApp2*)app;
-    myApp->keyCallback(window, key, scancode, action, mods);
+    MyApp* myApp = (MyApp*)app;
+    myApp->key_callback(key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    MyApp2* myApp = (MyApp2*)app;
-    myApp->mouse_callback(window, xposIn, yposIn);
+    UNREFERENCED_PARAMETER(window);
+
+    MyApp* myApp = (MyApp*)app;
+    myApp->mouse_callback(xposIn, yposIn);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    MyApp2* myApp = (MyApp2*)app;
-    myApp->scroll_callback(window, xoffset, yoffset);
+    UNREFERENCED_PARAMETER(window);
+
+    MyApp* myApp = (MyApp*)app;
+    myApp->scroll_callback(xoffset, yoffset);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    MyApp2* myApp = (MyApp2*)app;
-    myApp->framebuffer_size_callback(window, width, height);
+    UNREFERENCED_PARAMETER(window);
+
+    MyApp* myApp = (MyApp*)app;
+    myApp->framebuffer_size_callback(width, height);
 }
-
-

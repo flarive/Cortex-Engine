@@ -32,19 +32,19 @@ namespace engine
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
         {
-            //setup();
-
-            initGLFW();
-
-            glsl_version = initOpenGL();
-
-            initWindow();
+            setup();
         }
 
         
 
         void setup()
         {
+            initGLFW();
+
+            const char* glsl_version = initOpenGL();
+
+            initWindow();
+            
             // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
             glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
@@ -56,7 +56,7 @@ namespace engine
 
             initGLAD();
 
-            initImGUI();
+            initImGUI(glsl_version);
 
             // configure global opengl state
             // -----------------------------
@@ -407,17 +407,20 @@ namespace engine
             glfwTerminate();
         }
 
-        void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods)
+        void key_callback(int key, int scancode, int action, int mods)
         {
+            UNREFERENCED_PARAMETER(scancode);
+            UNREFERENCED_PARAMETER(mods);
+            
             // basic window handling
             switch (key) {
             case GLFW_KEY_ESCAPE:
-                glfwSetWindowShouldClose(win, GL_TRUE); break;
+                glfwSetWindowShouldClose(window, GL_TRUE); break;
             case GLFW_KEY_ENTER:
-                if (action == GLFW_RELEASE) toggleFullscreen(win); break;
+                if (action == GLFW_RELEASE) toggleFullscreen(); break;
             }
 
-            if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             {
                 if (!key_w_pressed) // Only toggle when the key is first pressed
                 {
@@ -425,27 +428,24 @@ namespace engine
                     key_w_pressed = true; // Mark the key as pressed
                 }
             }
-            else if (glfwGetKey(win, GLFW_KEY_W) == GLFW_RELEASE)
+            else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
             {
                 key_w_pressed = false; // Reset the state when the key is released
-                
             }
         }
 
         // glfw: whenever the mouse moves, this callback is called
         // -------------------------------------------------------
-        void mouse_callback(GLFWwindow* win, double xposIn, double yposIn)
+        void mouse_callback(double xposIn, double yposIn)
         {
-            UNREFERENCED_PARAMETER(win);
             UNREFERENCED_PARAMETER(xposIn);
             UNREFERENCED_PARAMETER(yposIn);
         }
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called
         // ----------------------------------------------------------------------
-        void scroll_callback(GLFWwindow* win, double xoffset, double yoffset)
+        void scroll_callback(double xoffset, double yoffset)
         {
-            UNREFERENCED_PARAMETER(win);
             UNREFERENCED_PARAMETER(xoffset);
             UNREFERENCED_PARAMETER(yoffset);
         }
@@ -453,11 +453,8 @@ namespace engine
 
         // glfw: whenever the window size changed (by OS or user resize) this callback function executes
         // ---------------------------------------------------------------------------------------------
-        void framebuffer_size_callback(GLFWwindow* win, int newWidth, int newHeight)
+        void framebuffer_size_callback(int newWidth, int newHeight)
         {
-            UNREFERENCED_PARAMETER(win);
-
-
             // make sure the viewport matches the new window dimensions; note that width and 
             // height will be significantly larger than specified on retina displays.
             glViewport(0, 0, newWidth, newHeight);
@@ -536,7 +533,7 @@ namespace engine
         glm::vec3 m_lightTarget;
 
         
-        GLFWmonitor* MyMonitor;
+        
 
 
         static void glfw_error_callback(int error, const char* description)
@@ -585,11 +582,9 @@ namespace engine
 
         void initWindow()
         {
-            MyMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+            GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
 
-
-
-            const GLFWvidmode* mode = glfwGetVideoMode(MyMonitor);
+            const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
             if (fullscreen)
             {
                 width = mode->width;
@@ -597,8 +592,7 @@ namespace engine
             }
             
             // Create window with graphics context
-            // fullscreen ? MyMonitor : NULL
-            window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? MyMonitor : NULL, nullptr);
+            window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? myMonitor : NULL, nullptr);
             if (window == NULL)
             {
                 std::cerr << "Failed to create GLFW window" << std::endl;
@@ -620,7 +614,7 @@ namespace engine
             }
         }
 
-        void initImGUI()
+        void initImGUI(const char* glsl_version)
         {
             // Setup Dear ImGui context
             IMGUI_CHECKVERSION();
@@ -657,7 +651,7 @@ namespace engine
 
 
         // Toggle Fullscreen
-        void toggleFullscreen(GLFWwindow* win)
+        void toggleFullscreen()
         {
             static bool isFullscreen = false;
 
@@ -667,26 +661,27 @@ namespace engine
 
             //std::cout << "toggleFullscreen " << isFullscreen << " !" << std::endl;
 
-            if (!isFullscreen) {
-                
+            if (!isFullscreen)
+            {
                 // Save window position and size
-                glfwGetWindowPos(win, &windowPosX, &windowPosY);
-                glfwGetWindowSize(win, &windowWidth, &windowHeight);
+                glfwGetWindowPos(window, &windowPosX, &windowPosY);
+                glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
                 // Get primary monitor
                 GLFWmonitor* monitor = glfwGetPrimaryMonitor();
                 const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
                 // Switch to fullscreen
-                glfwSetWindowMonitor(win, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 
-                glfwGetWindowSize(win, &width, &height);
+                glfwGetWindowSize(window, &width, &height);
             }
-            else {
+            else
+            {
                 // Restore windowed mode
-                glfwSetWindowMonitor(win, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
+                glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
 
-                glfwGetWindowSize(win, &width, &height);
+                glfwGetWindowSize(window, &width, &height);
             }
             
             isFullscreen = !isFullscreen;
@@ -707,11 +702,5 @@ namespace engine
         int width = 0; // windowed width
         int height = 0; // windowed height
         bool fullscreen = false;
-
-        //static bool isFullscreen = false;
-        //int windowPosX = 0, windowPosY = 0;
-
-        const char* glsl_version = nullptr;
-
     };
 }

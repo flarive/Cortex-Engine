@@ -2,6 +2,7 @@
 #include "app/myapp1.h"
 #include "app/myapp2.h"
 
+// make it easier to switch between apps
 using MyApp = MyApp2;
 
 
@@ -12,10 +13,7 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
-
-
-
-// Main code
+// Startup method
 int main(int, char**)
 {
     app = new MyApp("MyApp", 640, 480, false);
@@ -38,7 +36,8 @@ int main(int, char**)
     return 0;
 }
 
-
+// glfw: whenever a keyboard key is pressed, this callback is called
+// -------------------------------------------------------
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     UNREFERENCED_PARAMETER(window);

@@ -30,13 +30,13 @@ void engine::Cube::setup(const engine::Material& material, const UvMapping& uv)
 
     // load textures
     if (material.hasDiffuseMap())
-        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true);
+        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true, false);
 
     if (material.hasSpecularMap())
-        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true);
+        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true, false);
 
     if (material.hasNormalMap())
-        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true);
+        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true, false);
 
     if (material.hasCubeMap())
         m_cubemapTexture = engine::Texture::loadCubemap(material.getCubeMapTexs());

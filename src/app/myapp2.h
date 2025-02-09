@@ -28,7 +28,7 @@ public:
         mySpotLight.setCutOff(12.0f);
         mySpotLight.setOuterCutOff(30.f);
 
-        ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));// , "textures/container2_normal.png"));
         ourCube2.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
         ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));

@@ -56,6 +56,8 @@ unsigned int engine::Texture::loadImage(std::string filename, bool alpha, bool r
 
     SOIL_free_image_data(data);
 
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind
+
     return texture;
 }
 
@@ -91,6 +93,33 @@ unsigned int engine::Texture::loadTexture(std::string filename, bool repeat, boo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    // Apply gamma correction if enabled
+    if (gammaCorrection)
+    {
+        // Retrieve texture parameters to determine format
+        int width, height, format;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+
+        // Determine sRGB equivalent
+        GLenum srgbFormat = (format == GL_RGBA || format == GL_RGBA8) ? GL_SRGB_ALPHA : GL_SRGB;
+
+        // Re-upload texture data with sRGB internal format
+        unsigned char* imageData = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, 0, SOIL_LOAD_AUTO);
+        if (imageData) {
+            glTexImage2D(GL_TEXTURE_2D, 0, srgbFormat, width, height, 0, (format == GL_RGBA ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, imageData);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            SOIL_free_image_data(imageData);
+        }
+        else {
+            std::cerr << "Failed to reload image for gamma correction." << std::endl;
+        }
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind
+
     return texture;
 }
 
@@ -113,6 +142,8 @@ unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned 
     // Set wrapping mode (clamp to edge since it’s a single pixel)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind
 
     return texture;
 }

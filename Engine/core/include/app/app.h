@@ -2,7 +2,6 @@
 
 #include "../engine.h"
 
-
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -41,11 +40,9 @@ namespace engine
             // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
             glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
-            // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
-            glfwSwapInterval(1);
+            enableVerticalSync(true);
 
-            // tell GLFW to capture our mouse
-            //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            enableMouseCapture(true);
 
             initGLAD();
 
@@ -53,23 +50,12 @@ namespace engine
 
             // configure global opengl state
             // -----------------------------
-            // enable z buffer (depth test) to have correct objects depth ordering
-            glEnable(GL_DEPTH_TEST);
-            // optim : do not display hidden faces
-            // consistent winding orders needed (counter-clockwise by default)
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
-            glFrontFace(GL_CCW);
+            enableDepthTest(true);
+            enableFaceCulling(true);
+            enableAntiAliasing(true);
+            enableGammaCorrection(true);
 
 
-            // anti aliasing MSAA
-            glfwWindowHint(GLFW_SAMPLES, 4);
-            glEnable(GL_MULTISAMPLE);
-
-            // gamma correction
-            //glEnable(GL_FRAMEBUFFER_SRGB);
-
-            // load shaders
             loadShaders();
 
 
@@ -106,7 +92,7 @@ namespace engine
             initColorFramebuffer();
 
             // uncomment this call to draw in wireframe polygons.
-            //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
         }
 
         // must be overridden in derived class
@@ -161,7 +147,7 @@ namespace engine
                 glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
                 // make sure we clear the framebuffer's content
-                glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // update user stuffs
@@ -302,7 +288,7 @@ namespace engine
 
 
 
-        const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+        const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 
         unsigned int depthMapFramebuffer = 0;
         unsigned int colorFramebuffer = 0;
@@ -429,15 +415,73 @@ namespace engine
             ImGui_ImplOpenGL3_Init(glsl_version);
         }
 
+        void enableVerticalSync(bool enable)
+        {
+            // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
+            glfwSwapInterval(enable ? 1 : 0);
+        }
+
+        void enableMouseCapture(bool enable)
+        {
+            // tell GLFW to capture our mouse
+            if (!enable)
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+
+        void enableDepthTest(bool enable)
+        {
+            // enable z buffer (depth test) to have correct objects depth ordering
+            if (enable)
+                glEnable(GL_DEPTH_TEST);
+            else
+                glDisable(GL_DEPTH_TEST);
+        }
+
+        void enableFaceCulling(bool enable)
+        {
+            if (enable)
+            {
+                // optim : do not display hidden faces
+                // consistent winding orders needed (counter-clockwise by default)
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_BACK);
+                glFrontFace(GL_CCW);
+            }
+            else
+            {
+                glDisable(GL_CULL_FACE);
+            }
+        }
+
+        void enableAntiAliasing(bool enable)
+        {
+            if (enable)
+            {
+                // MSAA anti aliasing
+                glfwWindowHint(GLFW_SAMPLES, 4);
+                glEnable(GL_MULTISAMPLE);
+            }
+        }
+
+        void enableGammaCorrection(bool enable)
+        {
+            // gamma correction (default 2.2 gamma correction)
+            if (enable)
+                glEnable(GL_FRAMEBUFFER_SRGB);
+            else
+                glDisable(GL_FRAMEBUFFER_SRGB);
+        }
+
         void initDepthMapFramebuffer()
         {
+            // create depth framebuffer
             glGenFramebuffers(1, &depthMapFramebuffer);
             // create depth texture
             glGenTextures(1, &textureDepthMapBuffer);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -461,7 +505,8 @@ namespace engine
             // --------------------------------------------------------------
             glm::mat4 lightProjection, lightView;
             glm::mat4 lightSpaceMatrix;
-            float near_plane = 1.0f, far_plane = 7.5f;
+            float near_plane = 0.1f;  // Previously 1.0f
+            float far_plane = 20.0f;  // Previously 7.5f
             lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
             lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
             lightSpaceMatrix = lightProjection * lightView;
@@ -472,7 +517,13 @@ namespace engine
             glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
             glClear(GL_DEPTH_BUFFER_BIT);
+
+
+            glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
+            glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
             update(simpleDepthShader);
+            glDisable(GL_POLYGON_OFFSET_FILL);
+           
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -486,6 +537,7 @@ namespace engine
             blinnPhongShader.setVec3("lightPos", m_lightPosition);
             blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+            // update user stuffs
             update(blinnPhongShader);
 
             glActiveTexture(GL_TEXTURE3);
@@ -503,6 +555,7 @@ namespace engine
 
         void initColorFramebuffer()
         {
+            // create framebuffer
             glGenFramebuffers(1, &colorFramebuffer);
             glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
             // create a color attachment texture
@@ -587,6 +640,10 @@ namespace engine
                 glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
                 glfwGetWindowSize(window, &width, &height);
             }
+
+            // reinit framebuffers because width and height changed
+            initDepthMapFramebuffer();
+            initColorFramebuffer();
             
             isFullscreen = !isFullscreen;
         }

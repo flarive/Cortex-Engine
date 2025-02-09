@@ -192,6 +192,9 @@
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\container2_normal.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">

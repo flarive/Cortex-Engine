@@ -83,8 +83,27 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 
+const vec2 poissonDisk[16] = vec2[](
+    vec2(-0.94201624, -0.39906216),
+    vec2(0.94558609, -0.76890725),
+    vec2(-0.094184101, -0.92938870),
+    vec2(0.34495938, 0.29387760),
+    vec2(-0.91588581, 0.45771432),
+    vec2(-0.81544232, -0.87912464),
+    vec2(-0.38277543, 0.27676845),
+    vec2(0.97484398, 0.75648379),
+    vec2(0.44323325, -0.97511554),
+    vec2(0.53742981, -0.47373420),
+    vec2(-0.26496911, -0.41893023),
+    vec2(0.79197514, 0.19090188),
+    vec2(-0.24188840, 0.99706507),
+    vec2(-0.81409955, 0.91437590),
+    vec2(0.19984126, 0.78641367),
+    vec2(0.14383161, -0.14100790)
+);
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightPos)
+
+float ShadowCalculationFaster(vec4 fragPosLightSpace, vec3 lightPos)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -97,7 +116,8 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightPos)
     // calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightDir = normalize(lightPos - fs_in.FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    //float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
+    float bias = clamp(0.0005 * tan(acos(dot(normal, lightDir))), 0.0001, 0.01);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF (shadow anti aliasing))
@@ -112,11 +132,45 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 lightPos)
         }    
     }
     shadow /= 9.0;
-    
+
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
         
+    return shadow;
+}
+
+
+float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float currentDepth = projCoords.z;
+    float shadow = 0.0;
+    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
+
+    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    float diskRadius = 6.0 * texelSize.x; // Tweak diskRadius to control softness
+
+    // Combine Poisson disk with 3x3 PCF sampling
+    for (int i = 0; i < 16; ++i)
+    {
+        for (int x = -1; x <= 1; ++x)
+        {
+            for (int y = -1; y <= 1; ++y)
+            {
+                vec2 offset = poissonDisk[i] * diskRadius + vec2(x, y) * texelSize;
+                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+            }
+        }
+    }
+    shadow /= (16.0 * 9.0); // Average over all samples
+
+    if (projCoords.z > 1.0)
+        shadow = 0.0;
+
     return shadow;
 }
 
@@ -217,7 +271,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, fs_in.TexCoords));
 
     // Shadow Calculation (no light position needed)
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace, lightDir);                      
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir);                      
 
     // Final lighting with shadow applied
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
@@ -262,7 +316,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     specular *= attenuation;
 
     // calculate shadow
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace, light.position);                      
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);                      
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
     return lighting;
 }
@@ -309,7 +363,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     specular *= attenuation * intensity;
 
     // Shadow calculation (using the light's position for shadow mapping)
-    float shadow = ShadowCalculation(fs_in.FragPosLightSpace, light.position);                      
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);                      
 
     // Final lighting with shadow applied
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));

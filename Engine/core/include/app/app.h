@@ -17,7 +17,6 @@ namespace engine
     public:
         GLFWwindow* window;
 
-        engine::Shader phongShader;
         engine::Shader blinnPhongShader;
         engine::Shader screenShader;
         engine::Shader skyboxReflectShader;
@@ -25,17 +24,11 @@ namespace engine
         engine::Shader simpleDepthShader;
         engine::Shader debugDepthQuad;
 
-
-        
-
-
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
         {
             setup();
         }
-
-        
 
         void setup()
         {
@@ -76,28 +69,11 @@ namespace engine
             // gamma correction
             //glEnable(GL_FRAMEBUFFER_SRGB);
 
-
             // load shaders
+            loadShaders();
 
-            // phong illumination model and lightning shader
-            phongShader = engine::Shader("phong", "shaders/phong.vertex", "shaders/phong.frag");
 
-            // blinn phong illumination model and lightning shader
-            blinnPhongShader = engine::Shader("phong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
-
-            //Shader depthBufferShader("debug_depth_buffer", "shaders/debug_depth_buffer.vertex", "shaders/debug_depth_buffer.frag"); // depth buffer debugging shader
-
-            // color framebuffer to screen shader
-            screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
-
-            // skybox reflection shader
-            skyboxReflectShader = engine::Shader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
-
-            simpleDepthShader = engine::Shader("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
-            debugDepthQuad = engine::Shader("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
-
-            // screen quad VAO
-            // ---------------
+            // prepare screen quad VAO that will render the main framebuffer
             glGenVertexArrays(1, &quadVAO);
             glGenBuffers(1, &quadVBO);
             glBindVertexArray(quadVAO);
@@ -111,9 +87,9 @@ namespace engine
 
             // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
             // -------------------------------------------------------------------------------------------
-            phongShader.use();
-            phongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-            phongShader.setFloat("material.shininess", 32.0f);
+            blinnPhongShader.use();
+            blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+            blinnPhongShader.setFloat("material.shininess", 32.0f);
 
 
             // shader configuration
@@ -121,59 +97,13 @@ namespace engine
             screenShader.use();
             screenShader.setInt("screenTexture", 0);
 
-
-
-            // Depth map framebuffer configuration (shadow map)
+            // Depth map framebuffer configuration (for shadow map)
             // -----------------------------------
-            glGenFramebuffers(1, &depthMapFramebuffer);
-            // create depth texture
-            glGenTextures(1, &textureDepthMapBuffer);
-            glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-            // attach depth texture as FBO's depth buffer
-            glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureDepthMapBuffer, 0);
-            glDrawBuffer(GL_NONE);
-            glReadBuffer(GL_NONE);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-            // shader configuration
-            // --------------------
-            debugDepthQuad.use();
-            debugDepthQuad.setInt("depthMap", 0);
-
-
-
+            initDepthMapFramebuffer();
 
             // color framebuffer configuration
             // -------------------------
-            //glGenFramebuffers(1, &colorFramebuffer);
-            //glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-            //// create a color attachment texture
-            //glGenTextures(1, &textureColorbuffer);
-            //glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-            //// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-            //glGenRenderbuffers(1, &rbo);
-            //glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-            //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
-            //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-            //// now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-            //if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            //{
-            //    std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-            //}
-            //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            initColorFramebuffer();
 
             // uncomment this call to draw in wireframe polygons.
             //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
@@ -225,149 +155,28 @@ namespace engine
 
                 auto start_time = std::chrono::high_resolution_clock::now();
 
-                // render
-                // ------
+
+                // bind to color framebuffer and draw scene as we normally would to color texture 
+                glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+                glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
+
+                // make sure we clear the framebuffer's content
                 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                // 1. render depth of scene to texture (from light's perspective)
-                // --------------------------------------------------------------
-                glm::mat4 lightProjection, lightView;
-                glm::mat4 lightSpaceMatrix;
-                float near_plane = 1.0f, far_plane = 7.5f;
-                lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-                lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-                lightSpaceMatrix = lightProjection * lightView;
-                // render scene from light's point of view
-                simpleDepthShader.use();
-                simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-                glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-                glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
-                glClear(GL_DEPTH_BUFFER_BIT);
-                update(simpleDepthShader);
-
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-                // reset viewport
-                glViewport(0, 0, width, height);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                // 2. render scene as normal using the generated depth/shadow map  
-                // --------------------------------------------------------------
-                blinnPhongShader.use();
-                //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-                //glm::mat4 view = camera.GetViewMatrix();
-                //blinnPhongShader.setMat4("projection", projection);
-                //blinnPhongShader.setMat4("view", view);
-                // set light uniforms
-                //blinnPhongShader.setVec3("viewPos", camera.Position);
-                blinnPhongShader.setVec3("lightPos", m_lightPosition);
-                blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
+                // update user stuffs
                 update(blinnPhongShader);
 
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-                blinnPhongShader.setInt("material.texture_shadowMap", 3); // texture 3
+                // compute light shadows using a depth map framebuffer
+                computeDepthMapFramebuffer();
 
-                // render Depth map to quad for visual debugging
-                // ---------------------------------------------
-                debugDepthQuad.use();
-                debugDepthQuad.setFloat("near_plane", near_plane);
-                debugDepthQuad.setFloat("far_plane", far_plane);
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+                // render to framebuffer
+                computeColorFramebuffer();
 
-
-
-
-
-                // 1. render depth of scene to texture (from light's perspective)
-                // --------------------------------------------------------------
-                //glm::mat4 lightProjection, lightView;
-                //glm::mat4 lightSpaceMatrix;
-                //float near_plane = 1.0f, far_plane = 7.5f;
-                //lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-                //lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-                //lightSpaceMatrix = lightProjection * lightView;
-                //// render scene from light's point of view
-                //simpleDepthShader.use();
-                //simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-                //glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-                //glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
-                //glClear(GL_DEPTH_BUFFER_BIT);
-                //update(simpleDepthShader);
-                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-                //// reset viewport
-                //glViewport(0, 0, width, height);
-                //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                //// render Depth map to quad for visual debugging
-                //// ---------------------------------------------
-                //debugDepthQuad.use();
-                //debugDepthQuad.setFloat("near_plane", near_plane);
-                //debugDepthQuad.setFloat("far_plane", far_plane);
-                //glActiveTexture(GL_TEXTURE0);
-                //glBindTexture(GL_TEXTURE_2D, depthMapFramebuffer);
-                //renderQuad();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                // prepare the color framebuffer
-                // bind to framebuffer and draw scene as we normally would to color texture 
-                //glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-                //glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
-
-                //// make sure we clear the framebuffer's content
-                //glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-                //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-
-
-                //// update function gets called here
-                //update(blinnPhongShader);
-
-
-
-
-                //// draw framebuffer to screen
-                //// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
-                //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-                //glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-                //// clear all relevant buffers
-                //glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // set clear color (not really necessary actually, since we won't be able to see behind the quad anyways)
-                //glClear(GL_COLOR_BUFFER_BIT);
-
-                //screenShader.use();
-                //glBindVertexArray(quadVAO);
-                //glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
-                //glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
-
+                // display UI/HUD above the scene and outside the framebuffer
                 updateUI(blinnPhongShader);
 
-
-                // Rendering
+                // ImGUI rendering
                 ImGui::Render();
                 int display_w, display_h;
                 glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -388,12 +197,13 @@ namespace engine
             glDeleteBuffers(1, &quadVBO);
             glDeleteRenderbuffers(1, &rbo);
             glDeleteFramebuffers(1, &colorFramebuffer);
+            glDeleteFramebuffers(1, &depthMapFramebuffer);
 
-            phongShader.clean();
             blinnPhongShader.clean();
             screenShader.clean();
             skyboxReflectShader.clean();
 
+            // clean user stuffs
             clean();
 
 
@@ -458,29 +268,6 @@ namespace engine
             // make sure the viewport matches the new window dimensions; note that width and 
             // height will be significantly larger than specified on retina displays.
             glViewport(0, 0, newWidth, newHeight);
-
-            //std::cout << "framebuffer_size_callback " << newWidth << "/" << newHeight << std::endl;
-
-            //float targetAspect = 4.0f / 3.0f;
-            //float windowAspect = (float)width / (float)height;
-
-            //int viewWidth, viewHeight;
-            //int xOffset = 0, yOffset = 0;
-
-            //if (windowAspect > targetAspect) {
-            //    // Window is wider than target aspect ratio
-            //    viewHeight = height;
-            //    viewWidth = (int)(height * targetAspect);
-            //    xOffset = (width - viewWidth) / 2;
-            //}
-            //else {
-            //    // Window is taller than target aspect ratio
-            //    viewWidth = width;
-            //    viewHeight = (int)(width / targetAspect);
-            //    yOffset = (height - viewHeight) / 2;
-            //}
-
-            //glViewport(xOffset, yOffset, viewWidth, viewHeight);
         }
 
         void setLightPosition(glm::vec3 pos)
@@ -549,13 +336,6 @@ namespace engine
             ImGui::Begin("Hello, world!", &show);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
             ImGui::End();
-        }
-
-        void renderQuad()
-        {
-            glBindVertexArray(quadVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            glBindVertexArray(0);
         }
 
         void initGLFW()
@@ -649,6 +429,134 @@ namespace engine
             ImGui_ImplOpenGL3_Init(glsl_version);
         }
 
+        void initDepthMapFramebuffer()
+        {
+            glGenFramebuffers(1, &depthMapFramebuffer);
+            // create depth texture
+            glGenTextures(1, &textureDepthMapBuffer);
+            glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            // attach depth texture as FBO's depth buffer
+            glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureDepthMapBuffer, 0);
+            glDrawBuffer(GL_NONE);
+            glReadBuffer(GL_NONE);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // shader configuration
+            // --------------------
+            debugDepthQuad.use();
+            debugDepthQuad.setInt("depthMap", 0);
+        }
+
+        void computeDepthMapFramebuffer()
+        {
+            // 1. render depth of scene to texture (from light's perspective)
+            // --------------------------------------------------------------
+            glm::mat4 lightProjection, lightView;
+            glm::mat4 lightSpaceMatrix;
+            float near_plane = 1.0f, far_plane = 7.5f;
+            lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+            lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+            lightSpaceMatrix = lightProjection * lightView;
+            // render scene from light's point of view
+            simpleDepthShader.use();
+            simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+            glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+            glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            update(simpleDepthShader);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // reset viewport
+            glViewport(0, 0, width, height);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // 2. render scene as normal using the previously generated depth/shadow map  
+            // -------------------------------------------------------------------------
+            blinnPhongShader.use();
+            blinnPhongShader.setVec3("lightPos", m_lightPosition);
+            blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+            update(blinnPhongShader);
+
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+            blinnPhongShader.setInt("material.texture_shadowMap", 3); // texture 3
+
+            // 3. render Depth map to quad
+            // ---------------------------
+            debugDepthQuad.use();
+            debugDepthQuad.setFloat("near_plane", near_plane);
+            debugDepthQuad.setFloat("far_plane", far_plane);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+        }
+
+        void initColorFramebuffer()
+        {
+            glGenFramebuffers(1, &colorFramebuffer);
+            glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+            // create a color attachment texture
+            glGenTextures(1, &textureColorbuffer);
+            glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+            // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+            glGenRenderbuffers(1, &rbo);
+            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+            // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            {
+                std::cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        void computeColorFramebuffer()
+        {
+            // draw color framebuffer to screen
+            // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+            // clear all relevant buffers
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // set clear color (not really necessary actually, since we won't be able to see behind the quad anyways)
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            screenShader.use();
+            glBindVertexArray(quadVAO);
+            glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+        void loadShaders()
+        {
+            // blinn phong illumination model and lightning shader
+            blinnPhongShader = engine::Shader("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
+
+            //Shader depthBufferShader("debug_depth_buffer", "shaders/debug_depth_buffer.vertex", "shaders/debug_depth_buffer.frag"); // depth buffer debugging shader
+
+            // color framebuffer to screen shader
+            screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+
+            // skybox reflection shader
+            skyboxReflectShader = engine::Shader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
+
+            simpleDepthShader = engine::Shader("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+            debugDepthQuad = engine::Shader("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
+        }
 
         // Toggle Fullscreen
         void toggleFullscreen()
@@ -658,8 +566,6 @@ namespace engine
             // remember window original position and size
             static int windowPosX, windowPosY;
             static int windowWidth, windowHeight;
-
-            //std::cout << "toggleFullscreen " << isFullscreen << " !" << std::endl;
 
             if (!isFullscreen)
             {
@@ -673,14 +579,12 @@ namespace engine
 
                 // Switch to fullscreen
                 glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-
                 glfwGetWindowSize(window, &width, &height);
             }
             else
             {
                 // Restore windowed mode
                 glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
-
                 glfwGetWindowSize(window, &width, &height);
             }
             
@@ -704,3 +608,4 @@ namespace engine
         bool fullscreen = false;
     };
 }
+

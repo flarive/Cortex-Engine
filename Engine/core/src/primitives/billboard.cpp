@@ -87,7 +87,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
     shader.use();
-    shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
+    shader.setVec3("material.ambient_color", 0.0f, 0.0f, 0.0f);
     //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
     shader.setInt("material.texture_diffuse1", 0); // texture 0
     shader.setInt("material.texture_specular1", 1); // texture 1

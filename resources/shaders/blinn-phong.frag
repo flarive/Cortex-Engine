@@ -3,6 +3,7 @@
 out vec4 FragColor;
 
 struct Material {
+    vec3 ambient_color;
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
     sampler2D texture_normal1;
@@ -347,13 +348,20 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     
-    // Spotlight intensity based on angle between light direction and fragment
-    float theta = dot(lightDir, normalize(-light.direction)); 
-    float epsilon = light.cutOff - light.outerCutOff; // Smooth edge
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    
+    float theta = dot(lightDir, normalize(-light.direction));
+
+    // Spotlight intensity based on angle between light direction and fragment (sharp cutoff)
+    //float epsilon = light.cutOff - light.outerCutOff; // Smooth edge
+    //float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+
+    // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
+    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse1, fs_in.TexCoords));
+    //vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse1, fs_in.TexCoords));
+    float ambientStrength = 0.5;
+    vec3 ambient = light.ambient * mix(material.ambient_color, vec3(texture(material.texture_diffuse1, fs_in.TexCoords)), ambientStrength);
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse1, fs_in.TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, fs_in.TexCoords));
 

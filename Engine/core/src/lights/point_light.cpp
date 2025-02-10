@@ -9,8 +9,10 @@ engine::PointLight::PointLight(unsigned int index) : Light(index)
 {
 }
 
-void engine::PointLight::setup()
+void engine::PointLight::setup(const Color& ambient)
 {
+    m_ambientColor = ambient;
+    
     glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
 
@@ -42,7 +44,7 @@ void engine::PointLight::draw(const Shader& shader, const glm::mat4& projection,
     shader.setBool(std::format("{}.use", base), true);
 
     shader.setVec3(std::format("{}.position", base), position);
-    shader.setVec3(std::format("{}.ambient", base), 0.05f, 0.05f, 0.05f);
+    shader.setVec3(std::format("{}.ambient", base), m_ambientColor);
     shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
     shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
 

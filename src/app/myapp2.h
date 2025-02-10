@@ -19,17 +19,19 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(-2.0f, 1.0f, 1.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+        setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
+        setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
 
         //myPointLight.setup();
         //myDirectionalLight.setup();
-        mySpotLight.setup();
-        mySpotLight.setCutOff(12.0f);
-        mySpotLight.setOuterCutOff(30.f);
+        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
+        mySpotLight.setCutOff(8.0f);
+        mySpotLight.setOuterCutOff(20.f);
+
+        cushionModel = engine::Model("models/cushion/cushion.obj");
 
         ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));// , "textures/container2_normal.png"));
-        ourCube2.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        //ourCube2.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
         ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
@@ -66,6 +68,7 @@ public:
             cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+
     }
 
 
@@ -126,7 +129,7 @@ public:
     {
         // clean up any resources
         ourCube1.clean();
-        ourCube2.clean();
+        //ourCube2.clean();
         ourPlane.clean();
     }
 
@@ -144,9 +147,10 @@ private:
     engine::DirectionalLight myDirectionalLight{ 0 };
     engine::SpotLight mySpotLight{ 0 };
 
+    engine::Model cushionModel;
 
     engine::Cube ourCube1;
-    engine::Cube ourCube2;
+    //engine::Cube ourCube2;
     engine::Plane ourPlane;
 
     engine::Text ourText;
@@ -175,10 +179,19 @@ private:
         shader.setInt("blinn", true);
 
 
+        // render the loaded model
+        glm::mat4 model1 = glm::mat4(1.0f);
+        model1 = glm::translate(model1, glm::vec3(0.0f, -0.15f, 0.0f)); // translate it down so it's at the center of the scene
+        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
+        model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        shader.setMat4("model", model1);
+        cushionModel.draw(shader);
+
+
 
         // render test cube
-        ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        ourCube2.draw(shader, glm::vec3(-1.5f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), rotation, glm::vec3(1.0f, 1.0f, 0.0f));
+        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourCube2.draw(shader, glm::vec3(-1.5f, 0.0f, -1.0f), glm::vec3(0.15f, 0.15f, 0.15f), rotation, glm::vec3(1.0f, 1.0f, 0.0f));
 
         rotation += deltaTime * 10.0f;
 

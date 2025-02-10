@@ -16,7 +16,7 @@ namespace engine
         Light(unsigned int index);
         virtual ~Light() = default;
 
-        virtual void setup() = 0;
+        virtual void setup(const Color& ambient) = 0;
         virtual void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::vec3(0, 0, 0)) = 0;
         virtual void clean() = 0;
         
@@ -29,6 +29,8 @@ namespace engine
         unsigned int m_index = 0;
 
         Shader lightCubeShader;
+
+        Color m_ambientColor{};
 
         glm::vec3 m_lightPosition{};
 

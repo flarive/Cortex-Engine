@@ -25,6 +25,8 @@ void engine::Plane::setup(const engine::Material& material, const UvMapping& uv)
     
     setup();
 
+    m_ambientColor = material.getAmbientColor();
+
     // load textures
     if (material.hasDiffuseMap())
         m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true, false);
@@ -87,7 +89,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
     shader.use();
-    shader.setVec3("material.ambient", 1.0f, 1.0f, 1.0f);
+    shader.setVec3("material.ambient_color", 0.01f, 0.01f, 0.01f);
     //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
     shader.setInt("material.texture_diffuse1", 0); // texture 0
     shader.setInt("material.texture_specular1", 1); // texture 1

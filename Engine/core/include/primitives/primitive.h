@@ -67,15 +67,17 @@ namespace engine
 
 
     protected:
-        unsigned int m_VBO = 0, m_VAO = 0;
+        unsigned int m_VBO{}, m_VAO{};
 
-        unsigned int m_diffuseMap = 0;
-        unsigned int m_specularMap = 0;
-        unsigned int m_normalMap = 0;
+        unsigned int m_diffuseMap{};
+        unsigned int m_specularMap{};
+        unsigned int m_normalMap{};
 
-        unsigned int m_cubemapTexture = 0;
+        Color m_ambientColor{};
 
-        float m_uvScale = 0.5f;
+        unsigned int m_cubemapTexture{};
+
+        float m_uvScale{ 0.5f };
     };
 
 

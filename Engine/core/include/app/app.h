@@ -53,7 +53,7 @@ namespace engine
             enableDepthTest(true);
             enableFaceCulling(true);
             enableAntiAliasing(true);
-            enableGammaCorrection(true);
+            //enableGammaCorrection(true);
 
 
             loadShaders();

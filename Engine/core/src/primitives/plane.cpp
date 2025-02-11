@@ -4,10 +4,6 @@
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
-engine::Plane::Plane()
-{
-}
-
 void engine::Plane::setup(const glm::uvec3& color)
 {
     m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);

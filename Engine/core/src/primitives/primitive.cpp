@@ -1,9 +1,5 @@
 #include "../../include/primitives/primitive.h"
 
-engine::Primitive::Primitive()
-{
-}
-
 void engine::Primitive::clean()
 {
     glDeleteVertexArrays(1, &m_VAO);

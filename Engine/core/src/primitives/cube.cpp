@@ -4,10 +4,6 @@
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
-engine::Cube::Cube()
-{
-}
-
 void engine::Cube::setup(const glm::uvec3& color)
 {
     setup();

@@ -13,6 +13,21 @@ namespace engine
     /// </summary>
     class App
     {
+    protected:
+        float framerate = 0.0f;
+
+        // timing
+        float deltaTime = 0.0f;	// time between current frame and last frame
+        float lastFrame = 0.0f;
+
+        // settings
+        std::string title;
+        int width = 0; // windowed width
+        int height = 0; // windowed height
+        bool fullscreen = false;
+
+
+
     public:
         GLFWwindow* window;
 
@@ -647,22 +662,5 @@ namespace engine
             
             isFullscreen = !isFullscreen;
         }
-
-        
-
-
-    protected:
-        float framerate = 0.0f;
-
-        // timing
-        float deltaTime = 0.0f;	// time between current frame and last frame
-        float lastFrame = 0.0f;
-
-        // settings
-        std::string title;
-        int width = 0; // windowed width
-        int height = 0; // windowed height
-        bool fullscreen = false;
     };
 }
-

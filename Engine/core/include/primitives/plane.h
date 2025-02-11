@@ -1,16 +1,16 @@
 #pragma once
 
-#include "primitive.h"
-
 #include "../shader.h"
 #include "../materials/material.h"
+#include "../primitives/primitive.h"
 
 namespace engine
 {
     class Plane : public Primitive
     {
     public:
-        Plane();
+        Plane() = default;
+		~Plane() = default;
 
         void setup(const glm::uvec3& color) override;
 

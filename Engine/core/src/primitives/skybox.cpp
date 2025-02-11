@@ -1,14 +1,11 @@
 #include "../../include/primitives/skybox.h"
 
 #include "../../include/texture.h"
-
-engine::Skybox::Skybox()
-{
-}
+#include "../../include/primitives/primitive.h"
 
 void engine::Skybox::setup(std::vector<std::string> faces)
 {
-    m_skyboxShader = Shader("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
+    
 
 
     // skybox VAO

@@ -8,7 +8,7 @@
 
 unsigned int engine::Texture::loadImage(std::string filename, bool alpha, bool repeat, bool gammaCorrection)
 {
-    unsigned int texture;
+    unsigned int texture{};
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -24,7 +24,7 @@ unsigned int engine::Texture::loadImage(std::string filename, bool alpha, bool r
 
 
     // load and generate the texture
-    int width, height, nrComponents;
+    int width{}, height{}, nrComponents{};
     unsigned char* data = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, &nrComponents, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
     if (data)
     {
@@ -61,10 +61,9 @@ unsigned int engine::Texture::loadImage(std::string filename, bool alpha, bool r
     return texture;
 }
 
-
 unsigned int engine::Texture::loadTexture(std::string filename, bool repeat, bool gammaCorrection)
 {
-    unsigned int texture;
+    unsigned int texture{};
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -125,7 +124,7 @@ unsigned int engine::Texture::loadTexture(std::string filename, bool repeat, boo
 
 unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    unsigned int texture;
+    unsigned int texture{};
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -151,14 +150,14 @@ unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned 
 
 unsigned int engine::Texture::loadCubemap(std::vector<std::string> faces)
 {
-    unsigned int textureID;
+    unsigned int textureID{};
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     int width, height, nrChannels;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        bool alpha = false;
+        bool alpha{ false };
         unsigned char* data = SOIL_load_image(file_system::getPath(faces[i]).c_str(), &width, &height, &nrChannels, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
         if (data)
         {

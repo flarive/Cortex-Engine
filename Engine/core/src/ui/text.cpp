@@ -1,12 +1,10 @@
 #include "../../include/ui/text.h"
 
-engine::Text::Text()
-{
-}
+#include "../../include/file_system.h"
 
 void engine::Text::setup(int width, int height)
 {
-    m_textShader = Shader("text", "shaders/text.vertex", "shaders/text.frag");
+    //m_textShader = Shader("text", "shaders/text.vertex", "shaders/text.frag");
 
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
@@ -152,5 +150,3 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
-
-

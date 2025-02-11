@@ -4,11 +4,6 @@
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
-
-engine::Billboard::Billboard()
-{
-}
-
 void engine::Billboard::setup(const glm::uvec3& color)
 {
     setup();

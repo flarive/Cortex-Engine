@@ -6,7 +6,7 @@
 using MyApp = MyApp2;
 
 
-engine::App* app;
+engine::App* app{};
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);

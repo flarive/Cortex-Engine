@@ -12,11 +12,6 @@ namespace engine
     class Mesh
     {
     public:
-        // mesh Data
-        std::vector<Vertex>       vertices;
-        std::vector<unsigned int> indices;
-        std::vector<Texture>      textures;
-        unsigned int VAO;
 
         // constructor
         Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
@@ -26,7 +21,14 @@ namespace engine
        
     private:
         // render data 
-        unsigned int VBO, EBO;
+        unsigned int VBO{}, EBO{};
+
+        // mesh Data
+        std::vector<Vertex>       vertices{};
+        std::vector<unsigned int> indices{};
+        std::vector<Texture>      textures{};
+        unsigned int VAO{};
+
 
         // initializes all the buffer objects/arrays
         void setupMesh();

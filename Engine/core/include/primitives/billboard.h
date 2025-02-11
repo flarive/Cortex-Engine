@@ -2,17 +2,17 @@
 
 #include "../common_defines.h"
 
-#include "primitive.h"
-
 #include "../shader.h"
 #include "../materials/material.h"
+#include "../primitives/primitive.h"
 
 namespace engine
 {
     class Billboard : public Primitive
     {
     public:
-        Billboard();
+        Billboard() = default;
+        ~Billboard() = default;
 
         void setup(const glm::uvec3& color) override;
 

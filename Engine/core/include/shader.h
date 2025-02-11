@@ -3,19 +3,18 @@
 #include "common_defines.h"
 
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+
 
 namespace engine
 {
     class Shader
     {
     public:
-        unsigned int ID;
-        std::string name;
+		unsigned int ID{};
+        std::string name{};
 
-        Shader();
+        Shader() = default;
+        ~Shader() = default;
 
 
         // constructor generates the shader on the fly

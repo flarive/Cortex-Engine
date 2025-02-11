@@ -179,18 +179,18 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
     
 static unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {
-    std::string filename = std::string(path);
+    std::string filename{ std::string(path) };
     filename = directory + '/' + filename;
 
-    unsigned int textureID;
+    unsigned int textureID{};
     glGenTextures(1, &textureID);
 
-    bool alpha = false;
-    int width, height, nrComponents;
+    bool alpha{ false };
+    int width{}, height{}, nrComponents{};
     unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
     if (data)
     {
-        GLenum format = 0;
+        GLenum format{ 0 };
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)

@@ -1,27 +1,25 @@
 #include "../include/shader.h"
 
-#include "../include/common_defines.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
-engine::Shader::Shader()
-{
-}
+#include "../include/common_defines.h"
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
-engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath)
+engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath) : name(shaderName)
 {
-    name = shaderName;
-    
     init(vertexPath, fragmentPath);
 }
 
 void engine::Shader::init(const char* vertexPath, const char* fragmentPath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
-    std::string vertexCode;
-    std::string fragmentCode;
-    std::ifstream vShaderFile;
-    std::ifstream fShaderFile;
+    std::string vertexCode{};
+    std::string fragmentCode{};
+    std::ifstream vShaderFile{};
+    std::ifstream fShaderFile{};
     // ensure ifstream objects can throw exceptions:
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);

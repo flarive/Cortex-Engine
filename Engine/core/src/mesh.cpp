@@ -16,9 +16,9 @@ engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indic
 void engine::Mesh::Draw(Shader& shader)
 {
     // bind appropriate textures
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
-    unsigned int normalNr = 1;
+    unsigned int diffuseNr{ 1 };
+    unsigned int specularNr{ 1 };
+    unsigned int normalNr{ 1 };
     //for (unsigned int i = 0; i < textures.size(); i++)
     for (unsigned int i = 0; i < 3; i++) // texture 3 must be shadow map !!!!!!!!!!
     {

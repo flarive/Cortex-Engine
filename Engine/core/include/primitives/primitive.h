@@ -2,7 +2,6 @@
 
 #include "../common_defines.h"
 #include "../shader.h"
-#include "../texture.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
 
@@ -13,14 +12,25 @@ namespace engine
     /// </summary>
     class Primitive
     {
+    protected:
+        unsigned int m_VBO{}, m_VAO{};
+
+        unsigned int m_diffuseMap{};
+        unsigned int m_specularMap{};
+        unsigned int m_normalMap{};
+
+        Color m_ambientColor{};
+
+        unsigned int m_cubemapTexture{};
+
+        float m_uvScale{ 0.5f };
+
     public:
-        Primitive();
+        Primitive() = default;
         virtual ~Primitive() = default;
 
         virtual void setup(const glm::uvec3& color) = 0;
-
         virtual void setup(const Material& material) = 0;
-
         virtual void setup(const Material& material, const UvMapping& uv) = 0;
 
         virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
@@ -64,20 +74,6 @@ namespace engine
 
     private:
         virtual void setup() = 0;
-
-
-    protected:
-        unsigned int m_VBO{}, m_VAO{};
-
-        unsigned int m_diffuseMap{};
-        unsigned int m_specularMap{};
-        unsigned int m_normalMap{};
-
-        Color m_ambientColor{};
-
-        unsigned int m_cubemapTexture{};
-
-        float m_uvScale{ 0.5f };
     };
 
 
@@ -201,6 +197,4 @@ namespace engine
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
-
-
 }

@@ -12,16 +12,25 @@ namespace engine
     /// </summary>
     class Material
     {
+    private:
+        engine::Color m_ambientColor{ engine::Color(0.0f) };
+        engine::Color m_diffuseColor{ engine::Color(0.5f) };
+
+        std::string m_diffuseTexPath{};
+        std::string m_specularTexPath{};
+        std::string m_normalTexPath{};
+
+        // 6 textures for the cubemap
+        std::vector<std::string> m_cubemapTextures{};
+
+        float m_shininess{};
+
     public:
-
-        Material();
-
+        Material() = default;
         Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 32.0f);
-
         Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", float shininess = 32.0f);
 
-
-        virtual ~Material() = default;
+        ~Material() = default;
 
 		engine::Color getAmbientColor() const { return m_ambientColor; }
 		engine::Color getDiffuseColor() const { return m_diffuseColor; }
@@ -41,20 +50,5 @@ namespace engine
 		bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
 		bool hasNormalMap() const { return !std::empty(m_normalTexPath); }
 		bool hasCubeMap() const { return m_cubemapTextures.size() > 0; }
-
-        
-
-    private:
-		engine::Color m_ambientColor = engine::Color(0.0f);
-        engine::Color m_diffuseColor = engine::Color(0.5f);
-		
-        std::string m_diffuseTexPath;
-        std::string m_specularTexPath;
-        std::string m_normalTexPath;
-
-		// 6 textures for the cubemap
-        std::vector<std::string> m_cubemapTextures;
-
-        float m_shininess = 0.0f;
     };
 }

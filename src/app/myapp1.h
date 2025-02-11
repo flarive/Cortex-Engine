@@ -6,6 +6,34 @@
 
 class MyApp1 : public engine::App
 {
+private:
+    bool firstMouse{ true };
+
+    float lastX{ 0.0f };
+    float lastY{ 0.0f };
+
+    // camera
+    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+
+    engine::Model backpackModel{};
+    engine::Model cushionModel{};
+
+
+    engine::PointLight myPointLight{ 0 };
+    engine::DirectionalLight myDirectionalLight1{ 0 };
+    engine::DirectionalLight myDirectionalLight2{ 1 };
+    engine::SpotLight mySpotLight{ 0 };
+
+
+    engine::Cube ourCube{};
+    engine::Plane ourPlane{};
+    engine::Billboard ourBillboard{};
+
+    engine::Text ourText{};
+
+    engine::Skybox ourSkybox{};
+
+
 public:
     MyApp1(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen)
@@ -39,7 +67,7 @@ public:
             "textures/skybox/back.jpg"
         };
 
-        auto zzz = engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png");
+        auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
         zzz.setCubeMapTexs(faces);
 
         ourCube.setup(zzz);
@@ -59,7 +87,7 @@ public:
         engine::App::key_callback(key, scancode, action, mods);
 
         // Detect Shift key state
-        bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+        bool shiftPressed =  (mods & GLFW_MOD_SHIFT);
 
         if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
@@ -70,8 +98,6 @@ public:
             cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::RIGHT, deltaTime);
-
-
 
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
@@ -89,8 +115,8 @@ public:
     {
         engine::App::mouse_callback(xposIn, yposIn);
 
-        float xpos = static_cast<float>(xposIn);
-        float ypos = static_cast<float>(yposIn);
+        float xpos{ static_cast<float>(xposIn) };
+        float ypos{ static_cast<float>(yposIn) };
 
         if (firstMouse)
         {
@@ -99,8 +125,8 @@ public:
             firstMouse = false;
         }
 
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float xoffset{ xpos - lastX };
+        float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
         lastX = xpos;
         lastY = ypos;
@@ -145,43 +171,14 @@ public:
     }
 
 private:
-    bool firstMouse = true;
-
-    float lastX = 0.0f;
-    float lastY = 0.0f;
-
-    // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
-
-    engine::Model backpackModel;
-    engine::Model cushionModel;
-
-
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight1{ 0 };
-    engine::DirectionalLight myDirectionalLight2{ 1 };
-    engine::SpotLight mySpotLight{ 0 };
-
-
-    engine::Cube ourCube;
-    engine::Plane ourPlane;
-    engine::Billboard ourBillboard;
-
-    engine::Text ourText;
-
-    engine::Skybox ourSkybox;
-
-
-
-
     void drawScene(engine::Shader& shader)
     {
         shader.use();
     
     
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-        glm::mat4 view = cam.GetViewMatrix();
+        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ cam.GetViewMatrix() };
     
     
     
@@ -207,7 +204,7 @@ private:
     
     
         // render the loaded model
-        //glm::mat4 model1 = glm::mat4(1.0f);
+        //glm::mat4 model1 { glm::mat4(1.0f) };
         //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
         //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -222,7 +219,7 @@ private:
         skyboxReflectShader.setVec3("cameraPos", cam.Position);
     
         // render the loaded model
-        glm::mat4 model2 = glm::mat4(1.0f);
+        glm::mat4 model2{ glm::mat4(1.0f) };
         model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
         //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));

@@ -5,6 +5,31 @@
 
 class MyApp2 : public engine::App
 {
+private:
+    bool firstMouse{ true };
+
+    float lastX{ 0.0f };
+    float lastY{ 0.0f };
+
+    // camera
+    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+
+
+    engine::PointLight myPointLight{ 0 };
+    engine::DirectionalLight myDirectionalLight{ 0 };
+    engine::SpotLight mySpotLight{ 0 };
+
+    engine::Model cushionModel{};
+
+    engine::Cube ourCube1{};
+    //engine::Cube ourCube2{};
+    engine::Plane ourPlane{};
+
+    engine::Text ourText{};
+
+    float rotation{};
+
+
 public:
     MyApp2(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen)
@@ -134,37 +159,13 @@ public:
     }
 
 private:
-    bool firstMouse = true;
-
-    float lastX = 0.0f;
-    float lastY = 0.0f;
-
-    // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
-
-
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight{ 0 };
-    engine::SpotLight mySpotLight{ 0 };
-
-    engine::Model cushionModel;
-
-    engine::Cube ourCube1;
-    //engine::Cube ourCube2;
-    engine::Plane ourPlane;
-
-    engine::Text ourText;
-
-    float rotation = 0.0f;
-
-
     void drawScene(engine::Shader& shader)
     {
         shader.use();
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-        glm::mat4 view = cam.GetViewMatrix();
+        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ cam.GetViewMatrix() };
 
         // setup lights
         //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
@@ -180,7 +181,7 @@ private:
 
 
         // render the loaded model
-        glm::mat4 model1 = glm::mat4(1.0f);
+        glm::mat4 model1{ glm::mat4(1.0f) };
         model1 = glm::translate(model1, glm::vec3(0.0f, -0.15f, 0.0f)); // translate it down so it's at the center of the scene
         model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));

@@ -11,7 +11,6 @@ bool engine::Engine::initEngine()
 
 void engine::Engine::mainLoop()
 {
-
 }
 
 bool engine::Engine::desinitEngine()

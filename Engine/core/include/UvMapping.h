@@ -5,10 +5,9 @@ namespace engine
     class UvMapping
     {
     public:
-        UvMapping();
+        UvMapping() = default;
         UvMapping(float uvScale);
         virtual ~UvMapping() = default;
-
 
         float getUvScale() const { return m_uvScale; }
 

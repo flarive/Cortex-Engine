@@ -1,16 +1,16 @@
 #pragma once
 
-#include "primitive.h"
-
 #include "../shader.h"
 #include "../materials/material.h"
+#include "../primitives/primitive.h"
 
 namespace engine
 {
     class Cube : public Primitive
     {
     public:
-        Cube();
+        Cube() = default;
+        ~Cube() = default;
 
         void setup(const glm::uvec3& color) override;
 

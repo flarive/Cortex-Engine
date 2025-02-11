@@ -24,18 +24,18 @@ namespace engine
 
     protected:
         // render data 
-        unsigned int VBO = 0, VAO = 0;
+        unsigned int VBO{}, VAO{};
 
-        unsigned int m_index = 0;
+        unsigned int m_index{};
 
-        Shader lightCubeShader;
+        Shader lightCubeShader{};
 
         Color m_ambientColor{};
 
         glm::vec3 m_lightPosition{};
 
-        const float LIGHT_CUBE_SIZE = 0.02f;
-        const bool DISPLAY_DEBUG_LIGHT_CUBE = true;
+        const float LIGHT_CUBE_SIZE{ 0.02f };
+        const bool DISPLAY_DEBUG_LIGHT_CUBE{ true };
 
         glm::vec3 calculateLightDirection(const glm::vec3& position, const glm::vec3& target);
     };

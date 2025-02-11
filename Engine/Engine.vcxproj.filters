@@ -150,6 +150,9 @@
     <ClCompile Include="core\src\uvmapping.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\primitives\sphere.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="core\include\UvMapping.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\sphere.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

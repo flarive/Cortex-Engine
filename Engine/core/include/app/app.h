@@ -13,30 +13,64 @@ namespace engine
     /// </summary>
     class App
     {
+    private:
+        const int TARGET_FPS{ 60 };
+        const int FRAME_DELAY{ 1000 / TARGET_FPS }; // in milliseconds
+
+
+        bool key_w_pressed { false };
+
+
+        bool show_window{ false };
+
+
+
+        const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
+
+        unsigned int depthMapFramebuffer{};
+        unsigned int colorFramebuffer{};
+
+
+        unsigned int quadVAO{}, quadVBO{};
+        unsigned int rbo{};
+
+
+
+        unsigned int textureDepthMapBuffer{};
+        unsigned int textureColorbuffer{};
+
+        glm::vec3 m_lightPosition{};
+        glm::vec3 m_lightTarget{};
+
+        engine::Shader blinnPhongShader{};
+        engine::Shader pbrShader{};
+
+        engine::Shader screenShader{};
+        engine::Shader simpleDepthShader{};
+        engine::Shader debugDepthQuad{};
+    
     protected:
-        float framerate = 0.0f;
+        float framerate{};
 
         // timing
-        float deltaTime = 0.0f;	// time between current frame and last frame
-        float lastFrame = 0.0f;
+        float deltaTime{}; // time between current frame and last frame
+        float lastFrame{};
 
         // settings
-        std::string title;
-        int width = 0; // windowed width
-        int height = 0; // windowed height
-        bool fullscreen = false;
+        std::string title{};
+        int width{}; // windowed width
+        int height{}; // windowed height
+        bool fullscreen{};
 
 
 
     public:
-        GLFWwindow* window;
+        GLFWwindow* window{};
 
-        engine::Shader blinnPhongShader;
-        engine::Shader screenShader;
-        engine::Shader skyboxReflectShader;
 
-        engine::Shader simpleDepthShader;
-        engine::Shader debugDepthQuad;
+        engine::Shader skyboxReflectShader{};
+
+
 
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
@@ -93,6 +127,11 @@ namespace engine
             blinnPhongShader.setFloat("material.shininess", 32.0f);
 
 
+            pbrShader.use();
+            pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
+            pbrShader.setFloat("ao", 1.0f);
+
+
             // shader configuration
             // --------------------
             screenShader.use();
@@ -117,7 +156,7 @@ namespace engine
         virtual void update(Shader& shader) = 0;
 
         // must be overridden in derived class
-        virtual void updateUI(Shader& shader) = 0;
+        virtual void updateUI() = 0;
 
         // must be overridden in derived class
         virtual void clean() = 0;
@@ -166,7 +205,8 @@ namespace engine
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // update user stuffs
-                update(blinnPhongShader);
+                //update(blinnPhongShader);
+                update(pbrShader);
 
                 // compute light shadows using a depth map framebuffer
                 computeDepthMapFramebuffer();
@@ -175,7 +215,7 @@ namespace engine
                 computeColorFramebuffer();
 
                 // display UI/HUD above the scene and outside the framebuffer
-                updateUI(blinnPhongShader);
+                updateUI();
 
                 // ImGUI rendering
                 ImGui::Render();
@@ -292,33 +332,7 @@ namespace engine
         }
 
     private:
-        const int TARGET_FPS = 60;
-        const int FRAME_DELAY = 1000 / TARGET_FPS; // in milliseconds
-
-
-        bool key_w_pressed = false;
-
-
-        bool show_window = false;
-
-
-
-        const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
-
-        unsigned int depthMapFramebuffer = 0;
-        unsigned int colorFramebuffer = 0;
-
-
-        unsigned int quadVAO = 0, quadVBO = 0;
-        unsigned int rbo = 0;
-
-
-
-        unsigned int textureDepthMapBuffer = 0;
-        unsigned int textureColorbuffer = 0;
-
-        glm::vec3 m_lightPosition;
-        glm::vec3 m_lightTarget;
+        
 
         
         
@@ -347,6 +361,8 @@ namespace engine
                 std::cerr << "GLFW init failed" << std::endl;
                 exit(EXIT_FAILURE);
             }
+
+            glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
         }
 
         const char* initOpenGL()
@@ -553,7 +569,8 @@ namespace engine
             blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs
-            update(blinnPhongShader);
+            //update(blinnPhongShader);
+            update(pbrShader);
 
             glActiveTexture(GL_TEXTURE3);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
@@ -612,18 +629,20 @@ namespace engine
         void loadShaders()
         {
             // blinn phong illumination model and lightning shader
-            blinnPhongShader = engine::Shader("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
+            blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
+
+            pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
 
             //Shader depthBufferShader("debug_depth_buffer", "shaders/debug_depth_buffer.vertex", "shaders/debug_depth_buffer.frag"); // depth buffer debugging shader
 
             // color framebuffer to screen shader
-            screenShader = engine::Shader("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+            screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
 
             // skybox reflection shader
-            skyboxReflectShader = engine::Shader("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
+            skyboxReflectShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
-            simpleDepthShader = engine::Shader("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
-            debugDepthQuad = engine::Shader("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
+            simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+            debugDepthQuad.init("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
         }
 
         // Toggle Fullscreen

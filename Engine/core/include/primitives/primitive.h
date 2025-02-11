@@ -13,7 +13,7 @@ namespace engine
     class Primitive
     {
     protected:
-        unsigned int m_VBO{}, m_VAO{};
+        unsigned int m_VBO{}, m_VAO{}, m_EBO{};
 
         unsigned int m_diffuseMap{};
         unsigned int m_specularMap{};

@@ -3,7 +3,7 @@
 #include "core/include/app/app.h"
 #include "core/include/engine.h"
 
-class MyApp2 : public engine::App
+class MyApp3 : public engine::App
 {
 private:
     bool firstMouse{ true };
@@ -12,26 +12,37 @@ private:
     float lastY{ 0.0f };
 
     // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 10.0f), false };
 
 
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight{ 0 };
-    engine::SpotLight mySpotLight{ 0 };
 
-    engine::Model cushionModel{};
 
-    //engine::Cube ourCube1{};
-    //engine::Sphere ourSphere1{};
-    engine::Plane ourPlane{};
+    engine::Sphere ourSphere{};
 
     engine::Text ourText{};
 
-    float rotation{};
+
+    // lights
+    // ------
+    glm::vec3 lightPositions[4] = {
+        glm::vec3(-10.0f,  10.0f, 10.0f),
+        glm::vec3(10.0f,  10.0f, 10.0f),
+        glm::vec3(-10.0f, -10.0f, 10.0f),
+        glm::vec3(10.0f, -10.0f, 10.0f),
+    };
+    glm::vec3 lightColors[4] = {
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f)
+    };
+    int nrRows = 7;
+    int nrColumns = 7;
+    float spacing = 2.5;
 
 
 public:
-    MyApp2(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
+    MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen)
     {
         // my application specific state gets initialized here
@@ -44,22 +55,7 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
-
-        //myPointLight.setup();
-        //myDirectionalLight.setup();
-        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(20.f);
-
-        cushionModel = engine::Model("models/cushion/cushion.obj");
-
-        //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
-
-        //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
-
-        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
+        ourSphere.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
         ourText.setup(width, height);
     }
@@ -152,9 +148,7 @@ public:
     void clean() override
     {
         // clean up any resources
-        //ourCube1.clean();
-        //ourSphere1.clean();
-        ourPlane.clean();
+        ourSphere.clean();
     }
 
 private:
@@ -166,37 +160,42 @@ private:
         glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ cam.GetViewMatrix() };
 
-        // setup lights
-        //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
-        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        mySpotLight.draw(shader, projection, view, 2.0f, getLightPosition(), getLightTarget());
 
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", cam.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-        shader.setInt("blinn", true);
-
-
-        // render the loaded model
-        glm::mat4 model1{ glm::mat4(1.0f) };
-        model1 = glm::translate(model1, glm::vec3(0.0f, -0.15f, 0.0f)); // translate it down so it's at the center of the scene
-        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        shader.setMat4("model", model1);
-        cushionModel.draw(shader);
+        shader.setVec3("camPos", cam.Position);
 
 
 
-        // render test cube
-        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        //ourSphere1.draw(blinnPhongShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+        // render rows*column number of spheres with varying metallic/roughness values scaled by rows and columns respectively
+        glm::mat4 model = glm::mat4(1.0f);
+        for (int row = 0; row < nrRows; ++row)
+        {
+            shader.setFloat("metallic", (float)row / (float)nrRows);
+            for (int col = 0; col < nrColumns; ++col)
+            {
+                // we clamp the roughness to 0.05 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off on direct lighting.
+                shader.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
 
-        rotation += deltaTime * 10.0f;
+                glm::vec3 newPos = glm::vec3((col - (nrColumns / 2)) * spacing, (row - (nrRows / 2)) * spacing, 0.0f);
+                ourSphere.draw(shader, newPos, glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+            }
+        }
 
-        // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        // render light source (simply re-render sphere at light positions)
+        // this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+        // keeps the codeprint small.
+        for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+        {
+            glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+            newPos = lightPositions[i];
+            shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+            shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+
+            ourSphere.draw(shader, newPos, glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
+        }
     }
 
     void drawUI()

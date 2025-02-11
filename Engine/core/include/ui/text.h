@@ -17,7 +17,7 @@ namespace engine
     private:
         std::map<GLchar, Character> m_characters{};
         unsigned int m_VAO{}, m_VBO{};
-        Shader m_textShader{ "text", "shaders/text.vertex", "shaders/text.frag" };
+        Shader m_textShader{};
 
     public:
         Text() = default;

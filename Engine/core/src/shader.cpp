@@ -8,12 +8,12 @@
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
-engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath) : name(shaderName)
-{
-    init(vertexPath, fragmentPath);
-}
+//engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath) : name(shaderName)
+//{
+//    init(vertexPath, fragmentPath);
+//}
 
-void engine::Shader::init(const char* vertexPath, const char* fragmentPath)
+void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};

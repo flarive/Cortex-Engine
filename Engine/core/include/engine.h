@@ -26,8 +26,10 @@
 
 #include "primitives/primitive.h"
 #include "primitives/cube.h"
+#include "primitives/sphere.h"
 #include "primitives/plane.h"
 #include "primitives/billboard.h"
+
 #include "primitives/skybox.h"
 
 namespace engine

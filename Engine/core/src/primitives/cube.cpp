@@ -106,7 +106,7 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
     }
 
 
-    // render the cubes
+    // render the cube
     glBindVertexArray(m_VAO);
 
     // calculate the model matrix for each object and pass it to shader before drawing

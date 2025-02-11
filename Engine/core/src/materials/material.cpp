@@ -1,9 +1,5 @@
 #include "../../include/materials/material.h"
 
-engine::Material::Material()
-{
-}
-
 engine::Material::Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess)
 	: m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_shininess(shininess)
 {

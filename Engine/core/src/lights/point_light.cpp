@@ -27,7 +27,7 @@ void engine::PointLight::setup(const Color& ambient)
     glEnableVertexAttribArray(0);
 
     // load light cube debug shader
-    lightCubeShader.init("shaders/light_cube.vertex", "shaders/light_cube.frag");
+    lightCubeShader.init("light_cube", "shaders/light_cube.vertex", "shaders/light_cube.frag");
 }
 
 // draws the model, and thus all its meshes

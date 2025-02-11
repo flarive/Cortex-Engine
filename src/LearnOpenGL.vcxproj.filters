@@ -195,6 +195,21 @@
     <CopyFileToFolders Include="..\resources\textures\container2_normal.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rustediron2_basecolor.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rustediron2_metallic.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rustediron2_normal.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rustediron2_roughness.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\pbr.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -203,5 +218,13 @@
     <ClInclude Include="app\myapp2.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="app\myapp3.h">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\pbr.vertex">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

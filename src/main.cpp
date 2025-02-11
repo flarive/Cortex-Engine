@@ -1,9 +1,10 @@
 #include "core/include/app/app.h"
 #include "app/myapp1.h"
 #include "app/myapp2.h"
+#include "app/myapp3.h"
 
 // make it easier to switch between apps
-using MyApp = MyApp2;
+using MyApp = MyApp3;
 
 
 engine::App* app{};

@@ -11,7 +11,7 @@ namespace engine
     private:
         unsigned int m_cubemapTexture{};
         unsigned int m_skyboxVAO{}, m_skyboxVBO{};
-        Shader m_skyboxShader{ Shader("skybox", "shaders/skybox.vertex", "shaders/skybox.frag") };
+        Shader m_skyboxShader{};
 
     public:
         Skybox() = default;

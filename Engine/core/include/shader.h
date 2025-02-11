@@ -19,9 +19,9 @@ namespace engine
 
         // constructor generates the shader on the fly
         // ------------------------------------------------------------------------
-        Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath);
+        //Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath);
 
-        void init(const char* vertexPath, const char* fragmentPath);
+        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
 
         // activate the shader
         void use();

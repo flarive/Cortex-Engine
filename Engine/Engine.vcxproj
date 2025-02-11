@@ -177,6 +177,7 @@
     <ClCompile Include="core\src\primitives\plane.cpp" />
     <ClCompile Include="core\src\primitives\primitive.cpp" />
     <ClCompile Include="core\src\primitives\skybox.cpp" />
+    <ClCompile Include="core\src\primitives\sphere.cpp" />
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
     <ClCompile Include="core\src\ui\text.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="core\include\primitives\plane.h" />
     <ClInclude Include="core\include\primitives\primitive.h" />
     <ClInclude Include="core\include\primitives\skybox.h" />
+    <ClInclude Include="core\include\primitives\sphere.h" />
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\ui\text.h" />

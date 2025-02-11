@@ -154,10 +154,8 @@ public:
         drawScene(shader);
     }
 
-    void updateUI(engine::Shader& shader) override
+    void updateUI() override
     {
-        UNREFERENCED_PARAMETER(shader);
-
         drawUI();
     }
 

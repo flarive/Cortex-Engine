@@ -154,25 +154,25 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    //int width{}, height{}, nrChannels{};
-    //for (unsigned int i = 0; i < faces.size(); i++)
-    //{
-    //    const std::string& fff{ faces[i] };
-    //    
-    //    bool alpha{ false };
-    //    unsigned char* data = SOIL_load_image(file_system::getPath(fff).c_str(), &width, &height, &nrChannels, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
-    //    if (data)
-    //    {
-    //        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    //        SOIL_free_image_data(data);
-    //    }
-    //    else
-    //    {
-    //        std::cerr << "Cubemap tex failed to load at path: " << fff << std::endl;
-    //        SOIL_free_image_data(data);
-    //        exit(EXIT_FAILURE);
-    //    }
-    //}
+    int width{}, height{}, nrChannels{};
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+        const std::string& fff{ faces[i] };
+        
+        bool alpha{ false };
+        unsigned char* data = SOIL_load_image(file_system::getPath(fff).c_str(), &width, &height, &nrChannels, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            SOIL_free_image_data(data);
+        }
+        else
+        {
+            std::cerr << "Cubemap tex failed to load at path: " << fff << std::endl;
+            SOIL_free_image_data(data);
+            exit(EXIT_FAILURE);
+        }
+    }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

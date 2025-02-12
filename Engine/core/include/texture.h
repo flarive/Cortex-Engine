@@ -13,7 +13,10 @@ namespace engine
         unsigned int id{};
         std::string type{};
         std::string path{};
-		Color color{};
+        Color color{};
+
+		Texture() = default;
+		~Texture() = default;
 
         static unsigned int loadImage(const std::string& filename, bool alpha = false, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);

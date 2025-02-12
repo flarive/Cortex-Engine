@@ -41,23 +41,23 @@ void engine::Sphere::setup()
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
 
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec2> uv;
-    std::vector<glm::vec3> normals;
-    std::vector<unsigned int> indices;
+    std::vector<glm::vec3> positions{};
+    std::vector<glm::vec2> uv{};
+    std::vector<glm::vec3> normals{};
+    std::vector<unsigned int> indices{};
 
-    const unsigned int X_SEGMENTS = 64;
-    const unsigned int Y_SEGMENTS = 64;
-    const float PI = 3.14159265359f;
+    const unsigned int X_SEGMENTS{ 64 };
+    const unsigned int Y_SEGMENTS{ 64 };
+    const float PI{ 3.14159265359f };
     for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
     {
         for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
         {
-            float xSegment = (float)x / (float)X_SEGMENTS;
-            float ySegment = (float)y / (float)Y_SEGMENTS;
-            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-            float yPos = std::cos(ySegment * PI);
-            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            float xSegment{ (float)x / (float)X_SEGMENTS };
+            float ySegment{ (float)y / (float)Y_SEGMENTS };
+            float xPos{ std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI) };
+            float yPos{ std::cos(ySegment * PI) };
+            float zPos{ std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI) };
 
             positions.push_back(glm::vec3(xPos, yPos, zPos));
             uv.push_back(glm::vec2(xSegment, ySegment));
@@ -65,7 +65,7 @@ void engine::Sphere::setup()
         }
     }
 
-    bool oddRow = false;
+    bool oddRow{ false };
     for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
     {
         if (!oddRow) // even rows: y == 0, y == 2; and so on
@@ -88,7 +88,7 @@ void engine::Sphere::setup()
     }
     indexCount = static_cast<unsigned int>(indices.size());
 
-    std::vector<float> data;
+    std::vector<float> data{};
     for (unsigned int i = 0; i < positions.size(); ++i)
     {
         data.push_back(positions[i].x);
@@ -112,7 +112,7 @@ void engine::Sphere::setup()
     glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-    unsigned int stride = (3 + 2 + 3) * sizeof(float);
+    unsigned int stride{ (3 + 2 + 3) * sizeof(float) };
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
     glEnableVertexAttribArray(1);
@@ -145,12 +145,6 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
     //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
     shader.setBool("material.has_normal_map", m_normalMap > 0);
     shader.setFloat("uvScale", 2.0f);
-
-    
-
-
-    
-
 
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model{ glm::mat4(1.0f) }; // make sure to initialize matrix to identity matrix first

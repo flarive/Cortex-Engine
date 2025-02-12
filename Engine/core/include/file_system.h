@@ -4,9 +4,11 @@
 #include <cstdlib>
 #include <filesystem>
 
+#include "misc/noncopyable.h"
+
 namespace engine
 {
-    class file_system
+    class file_system : private NonCopyable
     {
     private:
         using Builder = std::string(*)(const std::string& path);

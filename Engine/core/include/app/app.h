@@ -2,6 +2,8 @@
 
 #include "../engine.h"
 
+#include "../misc/noncopyable.h"
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -11,7 +13,7 @@ namespace engine
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
-    class App
+    class App : private NonCopyable
     {
     private:
         const int TARGET_FPS{ 60 };

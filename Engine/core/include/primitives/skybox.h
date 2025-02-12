@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../misc/noncopyable.h"
 #include "../shader.h"
 
 #include <vector>
 
 namespace engine
 {
-    class Skybox
+    class Skybox : private NonCopyable
     {
     private:
         unsigned int m_cubemapTexture{};

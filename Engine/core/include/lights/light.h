@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../misc/noncopyable.h"
 #include "../common_defines.h"
 #include "../shader.h"
 #include "../primitives/primitive.h"
@@ -9,7 +10,8 @@ namespace engine
     /// <summary>
     /// Abstract class for lights
     /// </summary>
-    class Light
+    class Light : private NonCopyable
+
     {
     public:
         Light();

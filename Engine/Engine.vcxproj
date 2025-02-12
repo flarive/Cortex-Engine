@@ -162,7 +162,6 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
-    <ClCompile Include="core\engine.cpp" />
     <ClCompile Include="core\src\camera.cpp" />
     <ClCompile Include="core\src\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
@@ -203,6 +202,7 @@
     <ClInclude Include="core\include\lights\spot_light.h" />
     <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\mesh.h" />
+    <ClInclude Include="core\include\misc\noncopyable.h" />
     <ClInclude Include="core\include\model.h" />
     <ClInclude Include="core\include\primitives\billboard.h" />
     <ClInclude Include="core\include\primitives\cube.h" />
@@ -213,7 +213,7 @@
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\ui\text.h" />
-    <ClInclude Include="core\include\UvMapping.h" />
+    <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

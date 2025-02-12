@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "../misc/noncopyable.h"
 #include "../common_defines.h"
 
 namespace engine
@@ -10,7 +11,7 @@ namespace engine
     /// <summary>
     /// Abstract class for materials
     /// </summary>
-    class Material
+    class Material : private NonCopyable
     {
     private:
         engine::Color m_ambientColor{ engine::Color(0.0f) };

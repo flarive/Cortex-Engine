@@ -69,9 +69,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\engine.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\lights\directional_light.cpp">
       <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
@@ -242,11 +239,14 @@
     <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\UvMapping.h">
+    <ClInclude Include="core\include\uvmapping.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="core\include\primitives\sphere.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\misc\noncopyable.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

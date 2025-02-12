@@ -7,6 +7,8 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
 
+#include "misc/noncopyable.h"
+
 
 #include "vertex.h"
 #include "shader.h"
@@ -31,27 +33,3 @@
 #include "primitives/billboard.h"
 
 #include "primitives/skybox.h"
-
-namespace engine
-{
-
-	class Engine
-	{
-	public:
-		Engine();
-		virtual ~Engine() = default;
-
-		virtual bool initEngine();
-
-		virtual void mainLoop();
-
-		virtual void customMainLoop() = 0;
-
-		virtual bool desinitEngine();
-	};
-}
-
-
-
-
-

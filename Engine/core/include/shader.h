@@ -1,5 +1,6 @@
 #pragma once
 
+#include "misc/noncopyable.h"
 #include "common_defines.h"
 
 #include <string>
@@ -7,7 +8,7 @@
 
 namespace engine
 {
-    class Shader
+    class Shader : private NonCopyable
     {
     public:
 		unsigned int ID{};
@@ -15,11 +16,6 @@ namespace engine
 
         Shader() = default;
         ~Shader() = default;
-
-
-        // constructor generates the shader on the fly
-        // ------------------------------------------------------------------------
-        //Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath);
 
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
 

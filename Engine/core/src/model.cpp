@@ -3,12 +3,6 @@
 #include "SOIL2.h"
 
 // constructor, expects a filepath to a 3D model.
-engine::Model::Model()
-{
-}
-
-
-// constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
@@ -63,15 +57,15 @@ void engine::Model::processNode(aiNode* node, const aiScene* scene)
 engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
-    std::vector<engine::Vertex> vertices;
-    std::vector<unsigned int> indices;
-    std::vector<engine::Texture> textures;
+    std::vector<engine::Vertex> vertices{};
+    std::vector<unsigned int> indices{};
+    std::vector<engine::Texture> textures{};
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        engine::Vertex vertex;
-        glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        engine::Vertex vertex{};
+        glm::vec3 vector{}; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
         // positions
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../misc/noncopyable.h"
 #include "../common_defines.h"
 #include "../shader.h"
 #include "../uvmapping.h"
@@ -10,7 +11,7 @@ namespace engine
     /// <summary>
     /// Abstract class for primitives
     /// </summary>
-    class Primitive
+    class Primitive : private NonCopyable
     {
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};

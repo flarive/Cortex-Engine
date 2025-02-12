@@ -1,8 +1,10 @@
 #pragma once
 
+#include "misc/noncopyable.h"
 #include "texture.h"
 #include "mesh.h"
 #include "shader.h"
+
 
 
 #include <assimp/importer.hpp>
@@ -16,16 +18,16 @@
 
 namespace engine
 {
-    class Model
+	class Model// : private NonCopyable
     {
     public:
         // model data 
-        std::vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-        std::vector<Mesh> meshes;
-        std::string directory;
-        bool gammaCorrection;
+        std::vector<Texture> textures_loaded{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+        std::vector<Mesh> meshes{};
+        std::string directory{};
+        bool gammaCorrection{};
 
-        Model();
+        Model() = default;
 
         // constructor, expects a filepath to a 3D model.
         Model(std::string const& path, bool gamma = false);

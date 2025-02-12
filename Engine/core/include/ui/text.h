@@ -3,6 +3,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "../misc/noncopyable.h"
 #include "../common_defines.h"
 
 #include <map>
@@ -12,7 +13,7 @@
 
 namespace engine
 {
-    class Text
+    class Text : private NonCopyable
     {
     private:
         std::map<GLchar, Character> m_characters{};

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "misc/noncopyable.h"
+
 namespace engine
 {
-    class UvMapping
+	class UvMapping : private NonCopyable
     {
     public:
         UvMapping() = default;

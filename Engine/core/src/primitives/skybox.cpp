@@ -3,7 +3,7 @@
 #include "../../include/texture.h"
 #include "../../include/primitives/primitive.h"
 
-void engine::Skybox::setup(std::vector<std::string> faces)
+void engine::Skybox::setup(const std::vector<std::string>& faces)
 {
     m_skyboxShader.init("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
 

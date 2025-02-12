@@ -28,6 +28,7 @@ namespace engine
         bool gammaCorrection{};
 
         Model() = default;
+		~Model() = default;
 
         // constructor, expects a filepath to a 3D model.
         Model(std::string const& path, bool gamma = false);
@@ -44,12 +45,12 @@ namespace engine
         void processNode(aiNode* node, const aiScene* scene);
 
 
-        Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+        const Mesh& processMesh(aiMesh* mesh, const aiScene* scene);
 
 
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
-        std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+        const std::vector<Texture>& loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
     };
 
     static unsigned int TextureFromFile(const char* path, const std::string& directory);

@@ -1,5 +1,7 @@
 #include "../include/model.h"
 
+#include <format>
+
 #include "SOIL2.h"
 
 // constructor, expects a filepath to a 3D model.
@@ -13,7 +15,7 @@ void engine::Model::draw(Shader& shader)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        meshes[i].Draw(shader);
+        meshes[i].draw(shader);
     }
 }
 
@@ -54,7 +56,7 @@ void engine::Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
+const engine::Mesh& engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<engine::Vertex> vertices{};
@@ -82,7 +84,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            glm::vec2 vec;
+            glm::vec2 vec{};
             // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
             // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
             vec.x = mesh->mTextureCoords[0][i].x;
@@ -100,7 +102,9 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.Bitangent = vector;
         }
         else
+        {
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+        }
 
         vertices.push_back(vertex);
     }
@@ -131,24 +135,24 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
-    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    //std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-    return Mesh(vertices, indices, textures);
+    return Mesh{ vertices, indices, textures };
 }
 
 // checks all material textures of a given type and loads the textures if they're not loaded yet.
 // the required info is returned as a Texture struct.
-std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+const std::vector<engine::Texture>& engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
-    std::vector<engine::Texture> textures;
+    std::vector<engine::Texture> textures{};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
-        aiString str;
+        aiString str{};
         mat->GetTexture(type, i, &str);
         // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        bool skip = false;
+        bool skip{ false };
         for (unsigned int j = 0; j < textures_loaded.size(); j++)
         {
             if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
@@ -160,7 +164,7 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
         }
         if (!skip)
         {   // if texture hasn't been loaded already, load it
-            engine::Texture texture;
+            engine::Texture texture{};
             texture.id = TextureFromFile(str.C_Str(), this->directory);
             texture.type = typeName;
             texture.path = str.C_Str();
@@ -173,8 +177,7 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
     
 static unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {
-    std::string filename{ std::string(path) };
-    filename = directory + '/' + filename;
+    std::string filename{ std::format("{}/{}", directory, path)};
 
     unsigned int textureID{};
     glGenTextures(1, &textureID);

@@ -33,15 +33,15 @@ namespace engine
 
         ~Material() = default;
 
-		engine::Color getAmbientColor() const { return m_ambientColor; }
-		engine::Color getDiffuseColor() const { return m_diffuseColor; }
+		const engine::Color& getAmbientColor() const { return m_ambientColor; }
+        const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
 
-		std::string getDiffuseTexPath() const { return m_diffuseTexPath; }
-		std::string getSpecularTexPath() const { return m_specularTexPath; }
-		std::string getNormalTexPath() const { return m_normalTexPath; }
-		std::vector<std::string> getCubeMapTexs() const { return m_cubemapTextures; }
+		const std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
+        const std::string& getSpecularTexPath() const { return m_specularTexPath; }
+        const std::string& getNormalTexPath() const { return m_normalTexPath; }
+		const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
-        void setCubeMapTexs(std::vector<std::string> faces);
+        void setCubeMapTexs(const std::vector<std::string>& faces);
 
 		float getShininess() const { return m_shininess; }
 

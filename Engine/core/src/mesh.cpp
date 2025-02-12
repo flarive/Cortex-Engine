@@ -2,18 +2,15 @@
 
 
 // constructor
-engine::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+    : vertices(vertices), indices(indices), textures(textures)
 {
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
-
     // now that we have all the required data, set the vertex buffers and its attribute pointers.
     setupMesh();
 }
 
 // render the mesh
-void engine::Mesh::Draw(Shader& shader)
+void engine::Mesh::draw(Shader& shader)
 {
     // bind appropriate textures
     unsigned int diffuseNr{ 1 };
@@ -24,8 +21,8 @@ void engine::Mesh::Draw(Shader& shader)
     {
         glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
         // retrieve texture number (the N in diffuse_textureN)
-        std::string number;
-        std::string name = textures[i].type;
+        std::string number{};
+        std::string name{ textures[i].type };
         if (name == "texture_diffuse")
         {
             number = std::to_string(diffuseNr++);

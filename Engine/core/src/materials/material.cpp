@@ -10,7 +10,7 @@ engine::Material::Material(const engine::Color& ambientColor, const std::string&
 {
 }
 
-void engine::Material::setCubeMapTexs(std::vector<std::string> faces)
+void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)
 {
 	m_cubemapTextures = faces;
 }

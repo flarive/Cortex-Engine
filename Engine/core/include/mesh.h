@@ -15,21 +15,19 @@ namespace engine
     {
     private:
         // render data 
-        unsigned int VBO{}, EBO{};
+        unsigned int VBO{}, EBO{}, VAO{};
 
         // mesh Data
         std::vector<Vertex>       vertices{};
         std::vector<unsigned int> indices{};
         std::vector<Texture>      textures{};
-
-        unsigned int VAO{};
-
     public:
         // constructor
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures);
+		~Mesh() = default;
 
         // render the mesh
-        void Draw(Shader& shader);
+        void draw(Shader& shader);
        
     private:
         // initializes all the buffer objects/arrays

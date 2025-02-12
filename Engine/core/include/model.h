@@ -45,12 +45,12 @@ namespace engine
         void processNode(aiNode* node, const aiScene* scene);
 
 
-        const Mesh& processMesh(aiMesh* mesh, const aiScene* scene);
+        Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
 
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
-        const std::vector<Texture>& loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+        std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
     };
 
     static unsigned int TextureFromFile(const char* path, const std::string& directory);

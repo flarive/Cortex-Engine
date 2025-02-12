@@ -148,10 +148,10 @@ public:
         ourText.setup(newWidth, newHeight);
     }
 
-    void update(engine::Shader& shader) override
+    void update(engine::Shader& shader1, engine::Shader& shader2) override
     {
         // draw scene and UI in framebuffer
-        drawScene(shader);
+        drawScene(shader1, shader2);
     }
 
     void updateUI() override
@@ -169,9 +169,9 @@ public:
     }
 
 private:
-    void drawScene(engine::Shader& shader)
+    void drawScene(engine::Shader& shader1, engine::Shader& shader2)
     {
-        shader.use();
+        shader1.use();
     
     
         // view/projection transformations
@@ -183,19 +183,19 @@ private:
     
         // setup lights
         //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(shader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1.draw(shader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2.draw(shader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight.draw(shader1, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+        myDirectionalLight1.draw(shader1, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight2.draw(shader1, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
         //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
     
     
         // activate phong shader
-        shader.use();
-        shader.setVec3("viewPos", cam.Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
+        shader1.use();
+        shader1.setVec3("viewPos", cam.Position);
+        shader1.setMat4("projection", projection);
+        shader1.setMat4("view", view);
     
     
     
@@ -229,12 +229,12 @@ private:
     
     
         // render test cube
-        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        ourCube.draw(shader1, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     
-        ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourBillboard.draw(shader1, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader1, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
     
         ourSkybox.draw(projection, view);

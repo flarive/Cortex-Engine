@@ -34,7 +34,9 @@ void engine::Cube::setup(const engine::Material& material, const UvMapping& uv)
     if (material.hasNormalMap())
         m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true, false);
 
-    if (material.hasCubeMap())
+
+
+    if (material.isCubeMap())
         m_cubemapTexture = engine::Texture::loadCubemap(material.getCubeMapTexs());
 }
 
@@ -80,7 +82,7 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
 
         shader.setInt("skyboxTexture", 0); // texture 0
     }
-    else // phong shader
+    else if (shader.name == "blinnphong") // blinn phong shader
     {
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);

@@ -12,33 +12,21 @@ private:
     float lastY{ 0.0f };
 
     // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 10.0f), false };
+    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), false };
 
 
 
-
+    engine::Plane ourPlane{};
     engine::Sphere ourSphere{};
+
+
 
     engine::Text ourText{};
 
 
-    // lights
-    // ------
-    glm::vec3 lightPositions[4] = {
-        glm::vec3(-10.0f,  10.0f, 10.0f),
-        glm::vec3(10.0f,  10.0f, 10.0f),
-        glm::vec3(-10.0f, -10.0f, 10.0f),
-        glm::vec3(10.0f, -10.0f, 10.0f),
-    };
-    glm::vec3 lightColors[4] = {
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f)
-    };
-    int nrRows = 7;
-    int nrColumns = 7;
-    float spacing = 2.5;
+    engine::SpotLight mySpotLight{ 0 };
+
+    float rotation{};
 
 
 public:
@@ -55,7 +43,28 @@ public:
 
     void init() override
     {
-        ourSphere.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
+        setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
+        setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
+
+        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
+        mySpotLight.setCutOff(8.0f);
+        mySpotLight.setOuterCutOff(20.f);
+
+        // load PBR material textures
+        // --------------------------
+        ourSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/rusted_iron/albedo.jpg",
+            "",
+            "textures/pbr/rusted_iron/normal.jpg",
+            "textures/pbr/rusted_iron/metallic.jpg",
+            "textures/pbr/rusted_iron/roughness.jpg",
+            "textures/pbr/rusted_iron/ao.jpg"));
+
+
+
+        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
+
+
 
         ourText.setup(width, height);
     }
@@ -90,7 +99,6 @@ public:
             cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
-
     }
 
 
@@ -134,10 +142,10 @@ public:
         ourText.setup(newWidth, newHeight);
     }
 
-    void update(engine::Shader& shader) override
+    void update(engine::Shader& shader1, engine::Shader& shader2) override
     {
         // draw scene and UI in framebuffer
-        drawScene(shader);
+        drawScene(shader1, shader2);
     }
 
     void updateUI() override
@@ -149,53 +157,46 @@ public:
     {
         // clean up any resources
         ourSphere.clean();
+        ourPlane.clean();
     }
 
 private:
-    void drawScene(engine::Shader& shader)
+    void drawScene(engine::Shader& shader1, engine::Shader& shader2)
     {
-        shader.use();
-
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ cam.GetViewMatrix() };
 
 
-        // activate phong shader
-        shader.use();
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-        shader.setVec3("camPos", cam.Position);
+        
+
+        // activate pbr shader
+        shader2.use();
+        shader2.setMat4("projection", projection);
+        shader2.setMat4("view", view);
+        shader2.setVec3("camPos", cam.Position);
+        shader2.setVec3("lightPositions[0]", glm::vec3(0.0f, 0.0f, 10.0f));
+        shader2.setVec3("lightColors[0]", glm::vec3(255.0f, 255.0f, 255.0f));
+
+        // render test sphere
+        ourSphere.draw(shader2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        
+
+        rotation += deltaTime * 10.0f;
+
+        
+        shader1.use();
+        shader1.setVec3("viewPos", cam.Position);
+        shader1.setMat4("projection", projection);
+        shader1.setMat4("view", view);
+        shader1.setInt("blinn", true);
 
 
+        // render light
+        mySpotLight.draw(shader1, projection, view, 2.0f, getLightPosition(), getLightTarget());
 
-        // render rows*column number of spheres with varying metallic/roughness values scaled by rows and columns respectively
-        glm::mat4 model = glm::mat4(1.0f);
-        for (int row = 0; row < nrRows; ++row)
-        {
-            shader.setFloat("metallic", (float)row / (float)nrRows);
-            for (int col = 0; col < nrColumns; ++col)
-            {
-                // we clamp the roughness to 0.05 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off on direct lighting.
-                shader.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
-
-                glm::vec3 newPos = glm::vec3((col - (nrColumns / 2)) * spacing, (row - (nrRows / 2)) * spacing, 0.0f);
-                ourSphere.draw(shader, newPos, glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-            }
-        }
-
-        // render light source (simply re-render sphere at light positions)
-        // this looks a bit off as we use the same shader, but it'll make their positions obvious and 
-        // keeps the codeprint small.
-        for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-        {
-            glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-            newPos = lightPositions[i];
-            shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-            shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
-
-            ourSphere.draw(shader, newPos, glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-        }
+        // render test plane
+        ourPlane.draw(shader1, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

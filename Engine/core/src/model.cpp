@@ -56,7 +56,7 @@ void engine::Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-const engine::Mesh& engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
+engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<engine::Vertex> vertices{};
@@ -144,7 +144,7 @@ const engine::Mesh& engine::Model::processMesh(aiMesh* mesh, const aiScene* scen
 
 // checks all material textures of a given type and loads the textures if they're not loaded yet.
 // the required info is returned as a Texture struct.
-const std::vector<engine::Texture>& engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
+std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
     std::vector<engine::Texture> textures{};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)

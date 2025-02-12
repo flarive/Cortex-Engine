@@ -15,6 +15,9 @@
 
 void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
+    name = shaderName;
+    
+    
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
     std::string fragmentCode{};

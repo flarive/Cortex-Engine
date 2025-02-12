@@ -16,6 +16,7 @@ void engine::Mesh::draw(Shader& shader)
     unsigned int diffuseNr{ 1 };
     unsigned int specularNr{ 1 };
     unsigned int normalNr{ 1 };
+
     //for (unsigned int i = 0; i < textures.size(); i++)
     for (unsigned int i = 0; i < 3; i++) // texture 3 must be shadow map !!!!!!!!!!
     {
@@ -26,10 +27,12 @@ void engine::Mesh::draw(Shader& shader)
         if (name == "texture_diffuse")
         {
             number = std::to_string(diffuseNr++);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_diffuse_map"), true);
         }
         else if (name == "texture_specular")
         {
             number = std::to_string(specularNr++); // transfer unsigned int to string
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_specular_map"), true);
         }
         else if (name == "texture_normal")
         {

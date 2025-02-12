@@ -32,6 +32,12 @@
     <Filter Include="resources\textures\skybox">
       <UniqueIdentifier>{37f2362d-4a07-46cc-a9aa-ff3bc91825bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr">
+      <UniqueIdentifier>{25aaffe1-32e0-4a36-9354-a33568bfa73b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\rusted_iron">
+      <UniqueIdentifier>{c701a582-e114-43f9-b7fe-899c55904b3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -195,19 +201,25 @@
     <CopyFileToFolders Include="..\resources\textures\container2_normal.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\rustediron2_basecolor.jpg">
-      <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\rustediron2_metallic.jpg">
-      <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\rustediron2_normal.jpg">
-      <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\rustediron2_roughness.jpg">
-      <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\pbr.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\albedo.jpg">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\metallic.jpg">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\normal.jpg">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\roughness.jpg">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ao.jpg">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\pbr.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
@@ -221,10 +233,5 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\pbr.vertex">
-      <Filter>resources\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

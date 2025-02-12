@@ -19,6 +19,9 @@ namespace engine
         unsigned int m_diffuseMap{};
         unsigned int m_specularMap{};
         unsigned int m_normalMap{};
+        unsigned int m_metallicMap{};
+        unsigned int m_roughnessMap{};
+        unsigned int m_aoMap{};
 
         Color m_ambientColor{};
 

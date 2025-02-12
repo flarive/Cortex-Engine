@@ -44,8 +44,7 @@ namespace engine
         glm::vec3 m_lightPosition{};
         glm::vec3 m_lightTarget{};
 
-        engine::Shader blinnPhongShader{};
-        engine::Shader pbrShader{};
+        
 
         engine::Shader screenShader{};
         engine::Shader simpleDepthShader{};
@@ -69,7 +68,8 @@ namespace engine
     public:
         GLFWwindow* window{};
 
-
+        engine::Shader blinnPhongShader{};
+        engine::Shader pbrShader{};
         engine::Shader skyboxReflectShader{};
 
 
@@ -155,7 +155,7 @@ namespace engine
         virtual void init() = 0;
 
         // must be overridden in derived class
-        virtual void update(Shader& shader) = 0;
+        virtual void update(Shader& shader1, Shader& shader2) = 0;
 
         // must be overridden in derived class
         virtual void updateUI() = 0;
@@ -207,8 +207,8 @@ namespace engine
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // update user stuffs
-                //update(blinnPhongShader);
-                update(pbrShader);
+                update(blinnPhongShader, pbrShader);
+                //update(pbrShader);
 
                 // compute light shadows using a depth map framebuffer
                 computeDepthMapFramebuffer();
@@ -554,7 +554,7 @@ namespace engine
 
             glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
             glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-            update(simpleDepthShader);
+            update(simpleDepthShader, simpleDepthShader);
             glDisable(GL_POLYGON_OFFSET_FILL);
            
 
@@ -571,12 +571,12 @@ namespace engine
             blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs
-            //update(blinnPhongShader);
-            update(pbrShader);
+            update(blinnPhongShader, pbrShader);
+            //update(pbrShader);
 
-            glActiveTexture(GL_TEXTURE3);
+            glActiveTexture(GL_TEXTURE6);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-            blinnPhongShader.setInt("material.texture_shadowMap", 3); // texture 3
+            blinnPhongShader.setInt("material.texture_shadowMap", 6); // texture 6
 
             // 3. render Depth map to quad
             // ---------------------------

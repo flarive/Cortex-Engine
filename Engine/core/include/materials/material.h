@@ -20,6 +20,9 @@ namespace engine
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};
         std::string m_normalTexPath{};
+        std::string m_metallicTexPath{};
+        std::string m_roughnessTexPath{};
+        std::string m_aoTexPath{};
 
         // 6 textures for the cubemap
         std::vector<std::string> m_cubemapTextures{};
@@ -29,7 +32,8 @@ namespace engine
     public:
         Material() = default;
         Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 32.0f);
-        Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", float shininess = 32.0f);
+
+        Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", float shininess = 32.0f);
 
         ~Material() = default;
 
@@ -39,6 +43,11 @@ namespace engine
 		const std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
         const std::string& getSpecularTexPath() const { return m_specularTexPath; }
         const std::string& getNormalTexPath() const { return m_normalTexPath; }
+        const std::string& getMetallicTexPath() const { return m_metallicTexPath; }
+        const std::string& getRoughnessTexPath() const { return m_roughnessTexPath; }
+        const std::string& getAoTexPath() const { return m_aoTexPath; }
+
+
 		const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
         void setCubeMapTexs(const std::vector<std::string>& faces);
@@ -50,6 +59,11 @@ namespace engine
 		bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
 		bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
 		bool hasNormalMap() const { return !std::empty(m_normalTexPath); }
-		bool hasCubeMap() const { return m_cubemapTextures.size() > 0; }
+        bool hasMetallicMap() const { return !std::empty(m_metallicTexPath); }
+        bool hasRoughnessMap() const { return !std::empty(m_roughnessTexPath); }
+        bool hasAoMap() const { return !std::empty(m_aoTexPath); }
+
+
+		bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
     };
 }

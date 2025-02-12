@@ -138,10 +138,10 @@ public:
         ourText.setup(newWidth, newHeight);
     }
 
-    void update(engine::Shader& shader) override
+    void update(engine::Shader& shader1, engine::Shader& shader2) override
     {
         // draw scene and UI in framebuffer
-        drawScene(shader);
+        drawScene(shader1, shader2);
     }
 
     void updateUI() override
@@ -158,25 +158,27 @@ public:
     }
 
 private:
-    void drawScene(engine::Shader& shader)
+    void drawScene(engine::Shader& shader1, engine::Shader& shader2)
     {
-        shader.use();
-
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ cam.GetViewMatrix() };
 
+
         // setup lights
         //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        mySpotLight.draw(shader, projection, view, 2.0f, getLightPosition(), getLightTarget());
+        mySpotLight.draw(shader1, projection, view, 2.0f, getLightPosition(), getLightTarget());
+        
 
         // activate phong shader
-        shader.use();
-        shader.setVec3("viewPos", cam.Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-        shader.setInt("blinn", true);
+        shader1.use();
+        shader1.setVec3("viewPos", cam.Position);
+        shader1.setMat4("projection", projection);
+        shader1.setMat4("view", view);
+        shader1.setInt("blinn", true);
+
+        
 
 
         // render the loaded model
@@ -184,8 +186,8 @@ private:
         model1 = glm::translate(model1, glm::vec3(0.0f, -0.15f, 0.0f)); // translate it down so it's at the center of the scene
         model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
         model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        shader.setMat4("model", model1);
-        cushionModel.draw(shader);
+        shader1.setMat4("model", model1);
+        cushionModel.draw(shader1);
 
 
 
@@ -196,7 +198,7 @@ private:
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader1, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

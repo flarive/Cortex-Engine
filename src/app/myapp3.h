@@ -17,7 +17,11 @@ private:
 
 
     engine::Plane ourPlane{};
-    engine::Sphere ourSphere{};
+    engine::Sphere rustedIronSphere{};
+    engine::Sphere goldSphere{};
+    engine::Sphere grassSphere{};
+    engine::Sphere plasticSphere{};
+    engine::Sphere wallSphere{};
 
 
 
@@ -25,6 +29,24 @@ private:
 
 
     engine::SpotLight mySpotLight{ 0 };
+
+
+    // lights
+    // ------
+    glm::vec3 lightPositions[4] = {
+        glm::vec3(-10.0f,  10.0f, 10.0f),
+        glm::vec3(10.0f,  10.0f, 10.0f),
+        glm::vec3(-10.0f, -10.0f, 10.0f),
+        glm::vec3(10.0f, -10.0f, 10.0f),
+    };
+    glm::vec3 lightColors[4] = {
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f),
+        glm::vec3(300.0f, 300.0f, 300.0f)
+    };
+
+    unsigned int hdrTexture{};
 
     float rotation{};
 
@@ -52,13 +74,47 @@ public:
 
         // load PBR material textures
         // --------------------------
-        ourSphere.setup(engine::Material(engine::Color(0.1f),
-            "textures/pbr/rusted_iron/albedo.jpg",
+        rustedIronSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/rusted_iron/albedo.png",
             "",
-            "textures/pbr/rusted_iron/normal.jpg",
-            "textures/pbr/rusted_iron/metallic.jpg",
-            "textures/pbr/rusted_iron/roughness.jpg",
-            "textures/pbr/rusted_iron/ao.jpg"));
+            "textures/pbr/rusted_iron/normal.png",
+            "textures/pbr/rusted_iron/metallic.png",
+            "textures/pbr/rusted_iron/roughness.png",
+            "textures/pbr/rusted_iron/ao.png"));
+
+        goldSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/gold/albedo.png",
+            "",
+            "textures/pbr/gold/normal.png",
+            "textures/pbr/gold/metallic.png",
+            "textures/pbr/gold/roughness.png",
+            "textures/pbr/gold/ao.png"));
+
+        grassSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/grass/albedo.png",
+            "",
+            "textures/pbr/grass/normal.png",
+            "textures/pbr/grass/metallic.png",
+            "textures/pbr/grass/roughness.png",
+            "textures/pbr/grass/ao.png"));
+
+        plasticSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/plastic/albedo.png",
+            "",
+            "textures/pbr/plastic/normal.png",
+            "textures/pbr/plastic/metallic.png",
+            "textures/pbr/plastic/roughness.png",
+            "textures/pbr/plastic/ao.png"));
+
+        wallSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/wall/albedo.png",
+            "",
+            "textures/pbr/wall/normal.png",
+            "textures/pbr/wall/metallic.png",
+            "textures/pbr/wall/roughness.png",
+            "textures/pbr/wall/ao.png"));
+
+        hdrTexture = engine::Texture::loadImage("textures/hdr/newport_loft.hdr");
 
 
 
@@ -156,7 +212,11 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourSphere.clean();
+        rustedIronSphere.clean();
+        goldSphere.clean();
+        grassSphere.clean();
+        plasticSphere.clean();
+        wallSphere.clean();
         ourPlane.clean();
     }
 
@@ -167,9 +227,6 @@ private:
         glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ cam.GetViewMatrix() };
 
-
-        
-
         // activate pbr shader
         shader2.use();
         shader2.setMat4("projection", projection);
@@ -178,8 +235,15 @@ private:
         shader2.setVec3("lightPositions[0]", glm::vec3(0.0f, 0.0f, 10.0f));
         shader2.setVec3("lightColors[0]", glm::vec3(255.0f, 255.0f, 255.0f));
 
+        backgroundShader.use();
+        backgroundShader.setMat4("projection", projection);
+
         // render test sphere
-        ourSphere.draw(shader2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        rustedIronSphere.draw(shader2, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        goldSphere.draw(shader2, glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        grassSphere.draw(shader2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        plasticSphere.draw(shader2, glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        wallSphere.draw(shader2, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         
 
         rotation += deltaTime * 10.0f;
@@ -197,6 +261,15 @@ private:
 
         // render test plane
         ourPlane.draw(shader1, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // render skybox (render as last to prevent overdraw)
+        backgroundShader.use();
+
+        backgroundShader.setMat4("view", view);
+        glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
     }
 
     void drawUI()

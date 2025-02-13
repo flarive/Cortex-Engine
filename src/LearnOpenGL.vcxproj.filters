@@ -38,6 +38,24 @@
     <Filter Include="resources\textures\pbr\rusted_iron">
       <UniqueIdentifier>{c701a582-e114-43f9-b7fe-899c55904b3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\bronze">
+      <UniqueIdentifier>{14b8aaa2-b2ce-49c5-9200-040841183267}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\grass">
+      <UniqueIdentifier>{1579fa09-c209-4ce4-ad75-b9637056ea11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\plastic">
+      <UniqueIdentifier>{36303312-f24a-432d-8384-a6fe8728ca51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\wall">
+      <UniqueIdentifier>{85eda4c5-807b-4e4a-9288-5fd4b92cdb46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\gold">
+      <UniqueIdentifier>{949669e2-7ea9-4b35-aac9-6504f9a77ee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\hdr">
+      <UniqueIdentifier>{fd0344e0-9aa9-4974-b472-e3d0a15ac31e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -204,22 +222,82 @@
     <CopyFileToFolders Include="..\resources\shaders\pbr.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\albedo.jpg">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\metallic.jpg">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\normal.jpg">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\roughness.jpg">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ao.jpg">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\pbr.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\background.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\albedo.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\albedo.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\ao.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\height.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\metallic.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\normal.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\bronze\roughness.png">
+      <Filter>resources\textures\pbr\bronze</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\grass\albedo.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastic\albedo.png">
+      <Filter>resources\textures\pbr\plastic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastic\ao.png">
+      <Filter>resources\textures\pbr\plastic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastic\metallic.png">
+      <Filter>resources\textures\pbr\plastic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastic\normal.png">
+      <Filter>resources\textures\pbr\plastic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastic\roughness.png">
+      <Filter>resources\textures\pbr\plastic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\wall\albedo.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\gold\albedo.png">
+      <Filter>resources\textures\pbr\gold</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\gold\ao.png">
+      <Filter>resources\textures\pbr\gold</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\gold\metallic.png">
+      <Filter>resources\textures\pbr\gold</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\gold\normal.png">
+      <Filter>resources\textures\pbr\gold</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\gold\roughness.png">
+      <Filter>resources\textures\pbr\gold</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\hdr\newport_loft.hdr">
+      <Filter>resources\textures\hdr</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\brdf.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\prefilter.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\irradiance_convolution.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\cubemap2.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
@@ -233,5 +311,51 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\background.vertex">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\brdf.vertex">
+      <Filter>resources\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\pbr\rusted_iron\ao.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\rusted_iron\metallic.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\rusted_iron\normal.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\rusted_iron\roughness.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\grass\ao.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\grass\metallic.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\grass\normal.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\grass\roughness.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\wall\ao.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\wall\metallic.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\wall\normal.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\wall\roughness.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </Image>
   </ItemGroup>
 </Project>

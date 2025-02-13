@@ -71,6 +71,7 @@ namespace engine
         engine::Shader blinnPhongShader{};
         engine::Shader pbrShader{};
         engine::Shader skyboxReflectShader{};
+        engine::Shader backgroundShader{};
 
 
 
@@ -102,6 +103,13 @@ namespace engine
             // configure global opengl state
             // -----------------------------
             enableDepthTest(true);
+
+            // set depth function to less than AND equal for skybox depth trick.
+            glDepthFunc(GL_LEQUAL);
+            // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+            glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+
             enableFaceCulling(true);
             enableAntiAliasing(true);
             //enableGammaCorrection(true);
@@ -132,6 +140,10 @@ namespace engine
             pbrShader.use();
             pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
             pbrShader.setFloat("ao", 1.0f);
+
+
+            backgroundShader.use();
+            backgroundShader.setInt("environmentMap", 0);
 
 
             // shader configuration
@@ -645,6 +657,8 @@ namespace engine
 
             simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
             debugDepthQuad.init("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
+
+            backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
         }
 
         // Toggle Fullscreen

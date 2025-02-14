@@ -4,7 +4,9 @@
 
 #include "../include/file_system.h"
 
+
 #include "SOIL2.h"
+
 
 unsigned int engine::Texture::loadImage(const std::string& filename, bool alpha, bool repeat, bool gammaCorrection)
 {
@@ -21,7 +23,6 @@ unsigned int engine::Texture::loadImage(const std::string& filename, bool alpha,
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 
     // load and generate the texture
     int width{}, height{}, nrComponents{};
@@ -63,11 +64,11 @@ unsigned int engine::Texture::loadImage(const std::string& filename, bool alpha,
 
 unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
 {
-    unsigned int texture{};
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    //unsigned int texture{};
+    //glGenTextures(1, &texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
 
-    texture = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
+    unsigned int texture = SOIL_load_OGL_texture // load an image file directly as a new OpenGL texture
     (
         file_system::getPath(filename).c_str(),
         SOIL_LOAD_AUTO,
@@ -81,7 +82,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
         exit(EXIT_FAILURE);
     }
 
-    glBindTexture(GL_TEXTURE_2D, texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
 
     // Apply repeat or clamp wrapping mode
     GLint wrapMode = repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
@@ -90,34 +91,34 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 
     // Set texture filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     // Apply gamma correction if enabled
-    if (gammaCorrection)
-    {
-        // Retrieve texture parameters to determine format
-        int width, height, format;
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+    //if (gammaCorrection)
+    //{
+    //    // Retrieve texture parameters to determine format
+    //    int width, height, format;
+    //    glBindTexture(GL_TEXTURE_2D, texture);
+    //    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    //    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    //    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
 
-        // Determine sRGB equivalent
-        GLenum srgbFormat = (format == GL_RGBA || format == GL_RGBA8) ? GL_SRGB_ALPHA : GL_SRGB;
+    //    // Determine sRGB equivalent
+    //    GLenum srgbFormat = (format == GL_RGBA || format == GL_RGBA8) ? GL_SRGB_ALPHA : GL_SRGB;
 
-        // Re-upload texture data with sRGB internal format
-        unsigned char* imageData = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, 0, SOIL_LOAD_AUTO);
-        if (imageData) {
-            glTexImage2D(GL_TEXTURE_2D, 0, srgbFormat, width, height, 0, (format == GL_RGBA ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, imageData);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            SOIL_free_image_data(imageData);
-        }
-        else {
-            std::cerr << "Failed to reload image for gamma correction." << std::endl;
-        }
-    }
+    //    // Re-upload texture data with sRGB internal format
+    //    unsigned char* imageData = SOIL_load_image(file_system::getPath(filename).c_str(), &width, &height, 0, SOIL_LOAD_AUTO);
+    //    if (imageData) {
+    //        glTexImage2D(GL_TEXTURE_2D, 0, srgbFormat, width, height, 0, (format == GL_RGBA ? GL_RGBA : GL_RGB), GL_UNSIGNED_BYTE, imageData);
+    //        glGenerateMipmap(GL_TEXTURE_2D);
+    //        SOIL_free_image_data(imageData);
+    //    }
+    //    else {
+    //        std::cerr << "Failed to reload image for gamma correction." << std::endl;
+    //    }
+    //}
 
-    glBindTexture(GL_TEXTURE_2D, 0); // Unbind
+    //glBindTexture(GL_TEXTURE_2D, 0); // Unbind
 
     return texture;
 }
@@ -180,4 +181,41 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
+}
+
+unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
+{
+    //unsigned int texture{};
+    //glGenTextures(1, &texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
+
+    unsigned int texture = SOIL_load_OGL_HDR_texture
+    (
+        file_system::getPath(filename).c_str(),
+        SOIL_HDR_RGBE,
+        SOIL_LOAD_AUTO,
+        SOIL_CREATE_NEW_ID,
+        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y
+    );
+
+    if (texture == 0)
+    {
+        std::cerr << "Failed to load HDR texture" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    //glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Apply repeat or clamp wrapping mode
+    GLint wrapMode = repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+
+    // Set texture filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    //glBindTexture(GL_TEXTURE_2D, 0); // Unbind
+
+    return texture;
 }

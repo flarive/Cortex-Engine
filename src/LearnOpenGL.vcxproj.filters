@@ -300,6 +300,51 @@
     <CopyFileToFolders Include="..\resources\shaders\cubemap2.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\equirectangular_to_cubemap.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\background.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\brdf.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\grass\ao.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ao.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\grass\metallic.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\wall\metallic.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\grass\normal.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\wall\normal.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\normal.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\wall\roughness.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\roughness.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\grass\roughness.png">
+      <Filter>resources\textures\pbr\grass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\wall\ao.png">
+      <Filter>resources\textures\pbr\wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\metallic.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -311,51 +356,5 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\background.vertex">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="..\resources\shaders\brdf.vertex">
-      <Filter>resources\shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\rusted_iron\ao.png">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\rusted_iron\metallic.png">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\rusted_iron\normal.png">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\rusted_iron\roughness.png">
-      <Filter>resources\textures\pbr\rusted_iron</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\grass\ao.png">
-      <Filter>resources\textures\pbr\grass</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\grass\metallic.png">
-      <Filter>resources\textures\pbr\grass</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\grass\normal.png">
-      <Filter>resources\textures\pbr\grass</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\grass\roughness.png">
-      <Filter>resources\textures\pbr\grass</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\wall\ao.png">
-      <Filter>resources\textures\pbr\wall</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\wall\metallic.png">
-      <Filter>resources\textures\pbr\wall</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\wall\normal.png">
-      <Filter>resources\textures\pbr\wall</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\wall\roughness.png">
-      <Filter>resources\textures\pbr\wall</Filter>
-    </Image>
   </ItemGroup>
 </Project>

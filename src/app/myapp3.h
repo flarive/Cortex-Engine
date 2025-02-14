@@ -114,7 +114,7 @@ public:
             "textures/pbr/wall/roughness.png",
             "textures/pbr/wall/ao.png"));
 
-        hdrTexture = engine::Texture::loadImage("textures/hdr/newport_loft.hdr");
+        hdrTexture = engine::Texture::loadHDRImage("textures/hdr/newport_loft.hdr");
 
 
 

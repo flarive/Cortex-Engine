@@ -49,6 +49,12 @@ namespace engine
         engine::Shader screenShader{};
         engine::Shader simpleDepthShader{};
         engine::Shader debugDepthQuad{};
+
+        // PBR
+        engine::Shader equirectangularToCubemapShader{};
+        engine::Shader irradianceShader{};
+		engine::Shader prefilterShader{};
+        engine::Shader brdfShader{};
     
     protected:
         float framerate{};
@@ -103,13 +109,6 @@ namespace engine
             // configure global opengl state
             // -----------------------------
             enableDepthTest(true);
-
-            // set depth function to less than AND equal for skybox depth trick.
-            glDepthFunc(GL_LEQUAL);
-            // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-            glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-
             enableFaceCulling(true);
             enableAntiAliasing(true);
             //enableGammaCorrection(true);
@@ -659,6 +658,12 @@ namespace engine
             debugDepthQuad.init("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
 
             backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
+
+			// PBR
+            equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/background.frag");
+            irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
+            prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
+            brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
         }
 
         // Toggle Fullscreen

@@ -33,4 +33,3 @@
 #include "primitives/billboard.h"
 
 #include "primitives/skybox.h"
-#include "primitives/cubemap.h"

@@ -150,9 +150,6 @@
     <ClCompile Include="core\src\primitives\sphere.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\primitives\cubemap.cpp">
-      <Filter>Fichiers sources\core\primitives</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -250,9 +247,6 @@
     </ClInclude>
     <ClInclude Include="core\include\misc\noncopyable.h">
       <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\primitives\cubemap.h">
-      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

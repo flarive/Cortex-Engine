@@ -173,7 +173,6 @@
     <ClCompile Include="core\src\model.cpp" />
     <ClCompile Include="core\src\primitives\billboard.cpp" />
     <ClCompile Include="core\src\primitives\cube.cpp" />
-    <ClCompile Include="core\src\primitives\cubemap.cpp" />
     <ClCompile Include="core\src\primitives\plane.cpp" />
     <ClCompile Include="core\src\primitives\primitive.cpp" />
     <ClCompile Include="core\src\primitives\skybox.cpp" />
@@ -207,7 +206,6 @@
     <ClInclude Include="core\include\model.h" />
     <ClInclude Include="core\include\primitives\billboard.h" />
     <ClInclude Include="core\include\primitives\cube.h" />
-    <ClInclude Include="core\include\primitives\cubemap.h" />
     <ClInclude Include="core\include\primitives\plane.h" />
     <ClInclude Include="core\include\primitives\primitive.h" />
     <ClInclude Include="core\include\primitives\skybox.h" />

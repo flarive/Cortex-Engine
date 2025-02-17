@@ -27,7 +27,7 @@ private:
 
     engine::Text ourText{};
 
-    engine::Skybox ourSkybox{};
+    //engine::Skybox ourSkybox{};
 
     engine::SpotLight mySpotLight{ 0 };
 
@@ -157,17 +157,17 @@ public:
 
         ourText.setup(width, height);
 
-        std::vector<std::string> faces
-        {
-            "textures/skybox/right.jpg",
-            "textures/skybox/left.jpg",
-            "textures/skybox/top.jpg",
-            "textures/skybox/bottom.jpg",
-            "textures/skybox/front.jpg",
-            "textures/skybox/back.jpg"
-        };
+        //std::vector<std::string> faces
+        //{
+        //    "textures/skybox/right.jpg",
+        //    "textures/skybox/left.jpg",
+        //    "textures/skybox/top.jpg",
+        //    "textures/skybox/bottom.jpg",
+        //    "textures/skybox/front.jpg",
+        //    "textures/skybox/back.jpg"
+        //};
 
-        ourSkybox.setup(faces);
+        //ourSkybox.setup(faces);
 
 
         // view/projection transformations
@@ -369,11 +369,11 @@ private:
 
         // render scene, supplying the convoluted irradiance map to the final shader.
         // ------------------------------------------------------------------------------------------
-        shader2.use();
+        //shader2.use();
         glm::mat4 model = glm::mat4(1.0f);
-        shader2.setMat4("view", view);
-        shader2.setVec3("camPos", cam.Position);
-        shader2.setMat4("projection", projection);
+        //shader2.setMat4("view", view);
+        //shader2.setVec3("camPos", cam.Position);
+        //shader2.setMat4("projection", projection);
 
         // bind pre-computed IBL data
         glActiveTexture(GL_TEXTURE0);
@@ -491,7 +491,7 @@ private:
             renderSphere();
         }
 
-        ourSkybox.draw(projection, view);
+        //ourSkybox.draw(projection, view);
 
         // render skybox (render as last to prevent overdraw)
         //backgroundShader.use();

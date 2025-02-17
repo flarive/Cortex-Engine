@@ -3,10 +3,13 @@
 #include "../engine.h"
 
 #include "../misc/noncopyable.h"
+#include "../file_system.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+
+#include "stb_image.h"
 
 namespace engine
 {
@@ -65,6 +68,63 @@ namespace engine
         int height{}; // windowed height
         bool fullscreen{};
 
+        // camera
+        engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), false };
+
+        int SCR_WIDTH = 800;
+        int SCR_HEIGHT = 600;
+
+        // rusted iron
+        //unsigned int ironAlbedoMap{};
+        //unsigned int ironNormalMap{};
+        //unsigned int ironMetallicMap{};
+        //unsigned int ironRoughnessMap{};
+        //unsigned int ironAOMap{};
+
+        //// gold
+        //unsigned int goldAlbedoMap{};
+        //unsigned int goldNormalMap{};
+        //unsigned int goldMetallicMap{};
+        //unsigned int goldRoughnessMap{};
+        //unsigned int goldAOMap{};
+
+        //// grass
+        //unsigned int grassAlbedoMap{};
+        //unsigned int grassNormalMap{};
+        //unsigned int grassMetallicMap{};
+        //unsigned int grassRoughnessMap{};
+        //unsigned int grassAOMap{};
+
+        //// plastic
+        //unsigned int plasticAlbedoMap{};
+        //unsigned int plasticNormalMap{};
+        //unsigned int plasticMetallicMap{};
+        //unsigned int plasticRoughnessMap{};
+        //unsigned int plasticAOMap{};
+
+        //// wall
+        //unsigned int wallAlbedoMap{};
+        //unsigned int wallNormalMap{};
+        //unsigned int wallMetallicMap{};
+        //unsigned int wallRoughnessMap{};
+        //unsigned int wallAOMap{};
+
+        // lights
+        // ------
+        glm::vec3 lightPositions[4] = {
+            glm::vec3(-10.0f,  10.0f, 10.0f),
+            glm::vec3(10.0f,  10.0f, 10.0f),
+            glm::vec3(-10.0f, -10.0f, 10.0f),
+            glm::vec3(10.0f, -10.0f, 10.0f),
+        };
+        glm::vec3 lightColors[4] = {
+            glm::vec3(300.0f, 300.0f, 300.0f),
+            glm::vec3(300.0f, 300.0f, 300.0f),
+            glm::vec3(300.0f, 300.0f, 300.0f),
+            glm::vec3(300.0f, 300.0f, 300.0f)
+        };
+
+
 
     public:
         GLFWwindow* window{};
@@ -84,7 +144,7 @@ namespace engine
         unsigned int irradianceMap;
         unsigned int prefilterMap;
         unsigned int brdfLUTTexture;
-        unsigned int hdrTexture{};
+        //unsigned int hdrTexture{};
         unsigned int envCubemap{};
 
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
@@ -178,21 +238,21 @@ namespace engine
 
             initImGUI(glsl_version);
 
+
             // configure global opengl state
             // -----------------------------
             enableDepthTest(true);
-
             // set depth function to less than AND equal for skybox depth trick.
             glDepthFunc(GL_LEQUAL);
             // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
             glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-
-            enableFaceCulling(true);
+            //enableFaceCulling(true);
             enableAntiAliasing(true);
             //enableGammaCorrection(true);
 
-
+            // build and compile shaders
+            // -------------------------
             loadShaders();
 
             pbrShader.use();
@@ -205,47 +265,8 @@ namespace engine
             pbrShader.setInt("roughnessMap", 6);
             pbrShader.setInt("aoMap", 7);
 
-
-            // prepare screen quad VAO that will render the main framebuffer
-            glGenVertexArrays(1, &quadVAO);
-            glGenBuffers(1, &quadVBO);
-            glBindVertexArray(quadVAO);
-            glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(engine::screenQuadVertices), &engine::screenQuadVertices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-
-            // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-            // -------------------------------------------------------------------------------------------
-            //blinnPhongShader.use();
-            //blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-            //blinnPhongShader.setFloat("material.shininess", 32.0f);
-
-
-            pbrShader.use();
-            pbrShader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
-            pbrShader.setFloat("ao", 1.0f);
-
-
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
-
-
-            // shader configuration
-            // --------------------
-            screenShader.use();
-            screenShader.setInt("screenTexture", 0);
-
-            // Depth map framebuffer configuration (for shadow map)
-            // -----------------------------------
-            initDepthMapFramebuffer();
-
-            // color framebuffer configuration
-            // -------------------------
-            initColorFramebuffer();
 
             // pbr: setup framebuffer
             // ----------------------
@@ -259,15 +280,13 @@ namespace engine
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
-
             // pbr: load the HDR environment map
             // ---------------------------------
-            hdrTexture = engine::Texture::loadHDRImage("textures/hdr/newport_loft.hdr");
-
-
+            unsigned int hdrTexture = engine::Texture::loadHDRImage("textures/hdr/newport_loft.hdr");
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
+            //unsigned int envCubemap;
             glGenTextures(1, &envCubemap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -319,6 +338,7 @@ namespace engine
 
             // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
             // --------------------------------------------------------------------------------
+            //unsigned int irradianceMap;
             glGenTextures(1, &irradianceMap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -357,6 +377,7 @@ namespace engine
 
             // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
             // --------------------------------------------------------------------------------
+            //unsigned int prefilterMap;
             glGenTextures(1, &prefilterMap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -405,6 +426,7 @@ namespace engine
 
             // pbr: generate a 2D LUT from the BRDF equations used.
             // ----------------------------------------------------
+            //unsigned int brdfLUTTexture;
             glGenTextures(1, &brdfLUTTexture);
 
             // pre-allocate enough memory for the LUT texture.
@@ -430,11 +452,18 @@ namespace engine
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
+            // initialize static shader uniforms before rendering
+            // --------------------------------------------------
+            glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+            pbrShader.use();
+            pbrShader.setMat4("projection", projection);
+            backgroundShader.use();
+            backgroundShader.setMat4("projection", projection);
 
-
-
-            // uncomment this call to draw in wireframe polygons.
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
+            // then before rendering, configure the viewport to the original framebuffer's screen dimensions
+            int scrWidth, scrHeight;
+            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            glViewport(0, 0, scrWidth, scrHeight);
         }
 
         // must be overridden in derived class
@@ -554,33 +583,35 @@ namespace engine
 
         void loop2()
         {
-            // bind to color framebuffer and draw scene as we normally would to color texture 
-            glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-            glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
-
-            // make sure we clear the framebuffer's content
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
+            // render
+            // ------
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // render scene, supplying the convoluted irradiance map to the final shader.
+            // ------------------------------------------------------------------------------------------
+            pbrShader.use();
+            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 view = cam.GetViewMatrix();
+            pbrShader.setMat4("view", view);
+            pbrShader.setVec3("camPos", cam.Position);
+
 
             // update user stuffs
             update(blinnPhongShader, pbrShader);
 
-            // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer();
-
-            // render to framebuffer
-            computeColorFramebuffer();
-
-            // display UI/HUD above the scene and outside the framebuffer
-            //updateUI();
 
             // render skybox (render as last to prevent overdraw)
             backgroundShader.use();
-
-            //backgroundShader.setMat4("view", view);
+            backgroundShader.setMat4("view", view);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+            //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
+            //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
             renderCube();
+
+            // display UI/HUD above the scene and outside the framebuffer
+            updateUI();
         }
 
         void key_callback(int key, int scancode, int action, int mods)
@@ -969,13 +1000,15 @@ namespace engine
             simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
             debugDepthQuad.init("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
 
-            backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
+            
 
 			// PBR
-            equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/background.frag");
+            equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
             irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
             prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
             brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
+
+            backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
         }
 
         // Toggle Fullscreen
@@ -1013,6 +1046,103 @@ namespace engine
             initColorFramebuffer();
             
             isFullscreen = !isFullscreen;
+        }
+
+        // renders (and builds at first invocation) a sphere
+// -------------------------------------------------
+        unsigned int sphereVAO = 0;
+        GLsizei indexCount;
+        void renderSphere()
+        {
+            if (sphereVAO == 0)
+            {
+                glGenVertexArrays(1, &sphereVAO);
+
+                unsigned int vbo, ebo;
+                glGenBuffers(1, &vbo);
+                glGenBuffers(1, &ebo);
+
+                std::vector<glm::vec3> positions;
+                std::vector<glm::vec2> uv;
+                std::vector<glm::vec3> normals;
+                std::vector<unsigned int> indices;
+
+                const unsigned int X_SEGMENTS = 64;
+                const unsigned int Y_SEGMENTS = 64;
+                const float PI = 3.14159265359f;
+                for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+                {
+                    for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+                    {
+                        float xSegment = (float)x / (float)X_SEGMENTS;
+                        float ySegment = (float)y / (float)Y_SEGMENTS;
+                        float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+                        float yPos = std::cos(ySegment * PI);
+                        float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+
+                        positions.push_back(glm::vec3(xPos, yPos, zPos));
+                        uv.push_back(glm::vec2(xSegment, ySegment));
+                        normals.push_back(glm::vec3(xPos, yPos, zPos));
+                    }
+                }
+
+                bool oddRow = false;
+                for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+                {
+                    if (!oddRow) // even rows: y == 0, y == 2; and so on
+                    {
+                        for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+                        {
+                            indices.push_back(y * (X_SEGMENTS + 1) + x);
+                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+                        }
+                    }
+                    else
+                    {
+                        for (int x = X_SEGMENTS; x >= 0; --x)
+                        {
+                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+                            indices.push_back(y * (X_SEGMENTS + 1) + x);
+                        }
+                    }
+                    oddRow = !oddRow;
+                }
+                indexCount = static_cast<GLsizei>(indices.size());
+
+                std::vector<float> data;
+                for (unsigned int i = 0; i < positions.size(); ++i)
+                {
+                    data.push_back(positions[i].x);
+                    data.push_back(positions[i].y);
+                    data.push_back(positions[i].z);
+                    if (normals.size() > 0)
+                    {
+                        data.push_back(normals[i].x);
+                        data.push_back(normals[i].y);
+                        data.push_back(normals[i].z);
+                    }
+                    if (uv.size() > 0)
+                    {
+                        data.push_back(uv[i].x);
+                        data.push_back(uv[i].y);
+                    }
+                }
+                glBindVertexArray(sphereVAO);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+                unsigned int stride = (3 + 2 + 3) * sizeof(float);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+                glEnableVertexAttribArray(2);
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+            }
+
+            glBindVertexArray(sphereVAO);
+            glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
         }
 
 

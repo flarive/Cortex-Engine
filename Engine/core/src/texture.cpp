@@ -245,8 +245,9 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
     // pbr: load the HDR environment map
     // ---------------------------------
     stbi_set_flip_vertically_on_load(true);
-    int width{}, height{}, nrComponents{};
-    float* data = stbi_loadf(file_system::getPath(filename).c_str(), &width, &height, &nrComponents, 0);
+    int width, height, nrComponents;
+    std::string mmmmmmmmm = file_system::getPath(filename);
+    float* data = stbi_loadf(mmmmmmmmm.c_str(), &width, &height, &nrComponents, 0);
     unsigned int hdrTexture{};
     if (data)
     {
@@ -263,7 +264,8 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
     }
     else
     {
-        std::cout << "Failed to load HDR image." << std::endl;
+        std::cerr << "Failed to load HDR image." << std::endl;
+        exit(EXIT_FAILURE);
     }
 
     return hdrTexture;

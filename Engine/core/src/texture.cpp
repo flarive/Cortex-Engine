@@ -6,6 +6,7 @@
 
 
 #define STBI_FAILURE_USERMSG //generate user friendly error messages
+#define STB_IMAGE_IMPLEMENTATION // for HDR support
 #include "stb_image.h"
 
 unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)

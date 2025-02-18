@@ -9,9 +9,6 @@
 #include <chrono>
 #include <thread>
 
-#define STBI_FAILURE_USERMSG //generate user friendly error messages
-#include "stb_image.h"
-
 namespace engine
 {
     enum class RenderMethod
@@ -108,10 +105,10 @@ namespace engine
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, RenderMethod _method = RenderMethod::PBR)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen), method(_method)
         {
-            if (_method == RenderMethod::BlinnPhong)
+            if (_method == RenderMethod::PBR)
+                setupPBR(); 
+            else
                 setup_BlinnPhong();
-
-            setupPBR();
         }
 
         void setup_BlinnPhong()
@@ -217,7 +214,6 @@ namespace engine
             loadShaders();
 
             pbrShader.use();
-            
             pbrShader.setInt("albedoMap", 0);
             pbrShader.setInt("normalMap", 1);
             pbrShader.setInt("metallicMap", 2);
@@ -252,7 +248,6 @@ namespace engine
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
-            //unsigned int envCubemap;
             glGenTextures(1, &envCubemap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -304,7 +299,6 @@ namespace engine
 
             // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
             // --------------------------------------------------------------------------------
-            //unsigned int irradianceMap;
             glGenTextures(1, &irradianceMap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -343,7 +337,6 @@ namespace engine
 
             // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
             // --------------------------------------------------------------------------------
-            //unsigned int prefilterMap;
             glGenTextures(1, &prefilterMap);
             glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
             for (unsigned int i = 0; i < 6; ++i)
@@ -392,7 +385,6 @@ namespace engine
 
             // pbr: generate a 2D LUT from the BRDF equations used.
             // ----------------------------------------------------
-            //unsigned int brdfLUTTexture;
             glGenTextures(1, &brdfLUTTexture);
 
             // pre-allocate enough memory for the LUT texture.
@@ -437,7 +429,7 @@ namespace engine
         virtual void init() = 0;
 
         // must be overridden in derived class
-        virtual void update(Shader& shader1, Shader& shader2) = 0;
+        virtual void update(Shader& shader) = 0;
 
         // must be overridden in derived class
         virtual void updateUI() = 0;
@@ -540,7 +532,7 @@ namespace engine
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // update user stuffs
-            update(blinnPhongShader, pbrShader);
+            update(blinnPhongShader);
 
             // compute light shadows using a depth map framebuffer
             computeDepthMapFramebuffer();
@@ -568,8 +560,13 @@ namespace engine
             pbrShader.setVec3("camPos", camera.Position);
 
 
+
+
             // update user stuffs
-            update(blinnPhongShader, pbrShader);
+            update(pbrShader);
+
+
+
 
 
             // render skybox (render as last to prevent overdraw)
@@ -652,16 +649,6 @@ namespace engine
             m_lightTarget = pos;
         }
 
-        //void setCamera(Camera& camera)
-        //{
-        //    m_camera = camera;
-        //}
-
-        //const Camera& getCamera() const
-        //{
-        //    return m_camera;
-        //}
-
         glm::vec3 getLightPosition()
         {
             return m_lightPosition;
@@ -671,6 +658,211 @@ namespace engine
         {
             return m_lightTarget;
         }
+
+        // renderCube() renders a 1x1 3D cube in NDC.
+        // -------------------------------------------------
+        unsigned int cubeVAO = 0;
+        unsigned int cubeVBO = 0;
+        void renderCube()
+        {
+            // initialize (if necessary)
+            if (cubeVAO == 0)
+            {
+                float vertices[] = {
+                    // back face
+                    -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+                     1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+                     1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+                     1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+                    -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+                    -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+                    // front face
+                    -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+                     1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+                     1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+                     1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+                    -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+                    -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+                    // left face
+                    -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+                    -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+                    -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+                    -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+                    -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+                    -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+                    // right face
+                     1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+                     1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+                     1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+                     1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+                     1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+                     1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+                     // bottom face
+                     -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+                      1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+                      1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+                      1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+                     -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+                     -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+                     // top face
+                     -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+                      1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+                      1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+                      1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+                     -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+                     -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+                };
+                glGenVertexArrays(1, &cubeVAO);
+                glGenBuffers(1, &cubeVBO);
+                // fill buffer
+                glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+                // link vertex attributes
+                glBindVertexArray(cubeVAO);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+                glEnableVertexAttribArray(2);
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glBindVertexArray(0);
+            }
+            // render Cube
+            glBindVertexArray(cubeVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
+        }
+
+        // renderQuad() renders a 1x1 XY quad in NDC
+        // -----------------------------------------
+        void renderQuad()
+        {
+            if (quadVAO == 0)
+            {
+                float quadVertices[] = {
+                    // positions        // texture Coords
+                    -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+                    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                     1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+                     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+                };
+                // setup plane VAO
+                glGenVertexArrays(1, &quadVAO);
+                glGenBuffers(1, &quadVBO);
+                glBindVertexArray(quadVAO);
+                glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+            }
+            glBindVertexArray(quadVAO);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            glBindVertexArray(0);
+        }
+
+
+        // renders (and builds at first invocation) a sphere
+        // -------------------------------------------------
+        unsigned int sphereVAO = 0;
+        GLsizei indexCount;
+        void renderSphere()
+        {
+            if (sphereVAO == 0)
+            {
+                glGenVertexArrays(1, &sphereVAO);
+
+                unsigned int vbo, ebo;
+                glGenBuffers(1, &vbo);
+                glGenBuffers(1, &ebo);
+
+                std::vector<glm::vec3> positions;
+                std::vector<glm::vec2> uv;
+                std::vector<glm::vec3> normals;
+                std::vector<unsigned int> indices;
+
+                const unsigned int X_SEGMENTS = 64;
+                const unsigned int Y_SEGMENTS = 64;
+                const float PI = 3.14159265359f;
+                for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+                {
+                    for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+                    {
+                        float xSegment = (float)x / (float)X_SEGMENTS;
+                        float ySegment = (float)y / (float)Y_SEGMENTS;
+                        float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+                        float yPos = std::cos(ySegment * PI);
+                        float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+
+                        positions.push_back(glm::vec3(xPos, yPos, zPos));
+                        uv.push_back(glm::vec2(xSegment, ySegment));
+                        normals.push_back(glm::vec3(xPos, yPos, zPos));
+                    }
+                }
+
+                bool oddRow = false;
+                for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+                {
+                    if (!oddRow) // even rows: y == 0, y == 2; and so on
+                    {
+                        for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+                        {
+                            indices.push_back(y * (X_SEGMENTS + 1) + x);
+                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+                        }
+                    }
+                    else
+                    {
+                        for (int x = X_SEGMENTS; x >= 0; --x)
+                        {
+                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+                            indices.push_back(y * (X_SEGMENTS + 1) + x);
+                        }
+                    }
+                    oddRow = !oddRow;
+                }
+                indexCount = static_cast<GLsizei>(indices.size());
+
+                std::vector<float> data;
+                for (unsigned int i = 0; i < positions.size(); ++i)
+                {
+                    data.push_back(positions[i].x);
+                    data.push_back(positions[i].y);
+                    data.push_back(positions[i].z);
+                    if (normals.size() > 0)
+                    {
+                        data.push_back(normals[i].x);
+                        data.push_back(normals[i].y);
+                        data.push_back(normals[i].z);
+                    }
+                    if (uv.size() > 0)
+                    {
+                        data.push_back(uv[i].x);
+                        data.push_back(uv[i].y);
+                    }
+                }
+                glBindVertexArray(sphereVAO);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+                unsigned int stride = (3 + 2 + 3) * sizeof(float);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+                glEnableVertexAttribArray(2);
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+            }
+
+            glBindVertexArray(sphereVAO);
+            glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+        }
+
+
+
 
     private:
         static void glfw_error_callback(int error, const char* description)
@@ -887,7 +1079,7 @@ namespace engine
 
             glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
             glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-            update(simpleDepthShader, simpleDepthShader);
+            update(simpleDepthShader);
             glDisable(GL_POLYGON_OFFSET_FILL);
            
 
@@ -904,7 +1096,7 @@ namespace engine
             blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs
-            update(blinnPhongShader, pbrShader);
+            update(blinnPhongShader);
             //update(pbrShader);
 
             glActiveTexture(GL_TEXTURE6);
@@ -1027,206 +1219,9 @@ namespace engine
             isFullscreen = !isFullscreen;
         }
 
-        // renders (and builds at first invocation) a sphere
-        // -------------------------------------------------
-        unsigned int sphereVAO = 0;
-        GLsizei indexCount;
-        void renderSphere()
-        {
-            if (sphereVAO == 0)
-            {
-                glGenVertexArrays(1, &sphereVAO);
-
-                unsigned int vbo, ebo;
-                glGenBuffers(1, &vbo);
-                glGenBuffers(1, &ebo);
-
-                std::vector<glm::vec3> positions;
-                std::vector<glm::vec2> uv;
-                std::vector<glm::vec3> normals;
-                std::vector<unsigned int> indices;
-
-                const unsigned int X_SEGMENTS = 64;
-                const unsigned int Y_SEGMENTS = 64;
-                const float PI = 3.14159265359f;
-                for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-                {
-                    for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-                    {
-                        float xSegment = (float)x / (float)X_SEGMENTS;
-                        float ySegment = (float)y / (float)Y_SEGMENTS;
-                        float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-                        float yPos = std::cos(ySegment * PI);
-                        float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-
-                        positions.push_back(glm::vec3(xPos, yPos, zPos));
-                        uv.push_back(glm::vec2(xSegment, ySegment));
-                        normals.push_back(glm::vec3(xPos, yPos, zPos));
-                    }
-                }
-
-                bool oddRow = false;
-                for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
-                {
-                    if (!oddRow) // even rows: y == 0, y == 2; and so on
-                    {
-                        for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-                        {
-                            indices.push_back(y * (X_SEGMENTS + 1) + x);
-                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                        }
-                    }
-                    else
-                    {
-                        for (int x = X_SEGMENTS; x >= 0; --x)
-                        {
-                            indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                            indices.push_back(y * (X_SEGMENTS + 1) + x);
-                        }
-                    }
-                    oddRow = !oddRow;
-                }
-                indexCount = static_cast<GLsizei>(indices.size());
-
-                std::vector<float> data;
-                for (unsigned int i = 0; i < positions.size(); ++i)
-                {
-                    data.push_back(positions[i].x);
-                    data.push_back(positions[i].y);
-                    data.push_back(positions[i].z);
-                    if (normals.size() > 0)
-                    {
-                        data.push_back(normals[i].x);
-                        data.push_back(normals[i].y);
-                        data.push_back(normals[i].z);
-                    }
-                    if (uv.size() > 0)
-                    {
-                        data.push_back(uv[i].x);
-                        data.push_back(uv[i].y);
-                    }
-                }
-                glBindVertexArray(sphereVAO);
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-                unsigned int stride = (3 + 2 + 3) * sizeof(float);
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-                glEnableVertexAttribArray(2);
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-            }
-
-            glBindVertexArray(sphereVAO);
-            glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-        }
+        
 
 
-        // renderCube() renders a 1x1 3D cube in NDC.
-        // -------------------------------------------------
-        unsigned int cubeVAO = 0;
-        unsigned int cubeVBO = 0;
-        void renderCube()
-        {
-            // initialize (if necessary)
-            if (cubeVAO == 0)
-            {
-                float vertices[] = {
-                    // back face
-                    -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-                     1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-                     1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-                     1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-                    -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-                    -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-                    // front face
-                    -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-                     1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-                     1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-                     1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-                    -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-                    -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-                    // left face
-                    -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-                    -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-                    -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-                    -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-                    -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-                    -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-                    // right face
-                     1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-                     1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-                     1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-                     1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-                     1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-                     1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-                     // bottom face
-                     -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-                      1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-                      1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-                      1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-                     -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-                     -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-                     // top face
-                     -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-                      1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-                      1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-                      1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-                     -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-                     -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-                };
-                glGenVertexArrays(1, &cubeVAO);
-                glGenBuffers(1, &cubeVBO);
-                // fill buffer
-                glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-                // link vertex attributes
-                glBindVertexArray(cubeVAO);
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-                glEnableVertexAttribArray(2);
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                glBindVertexArray(0);
-            }
-            // render Cube
-            glBindVertexArray(cubeVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-            glBindVertexArray(0);
-        }
-
-        // renderQuad() renders a 1x1 XY quad in NDC
-        // -----------------------------------------
-        void renderQuad()
-        {
-            if (quadVAO == 0)
-            {
-                float quadVertices[] = {
-                    // positions        // texture Coords
-                    -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-                    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-                     1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-                     1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-                };
-                // setup plane VAO
-                glGenVertexArrays(1, &quadVAO);
-                glGenBuffers(1, &quadVBO);
-                glBindVertexArray(quadVAO);
-                glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-            }
-            glBindVertexArray(quadVAO);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glBindVertexArray(0);
-        }
+        
     };
 }

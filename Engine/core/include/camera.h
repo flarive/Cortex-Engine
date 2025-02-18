@@ -28,7 +28,7 @@ namespace engine
 
 
     // A fly/fps camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-	class Camera// : private NonCopyable
+	class Camera : private NonCopyable
     {
     public:
         // camera Attributes

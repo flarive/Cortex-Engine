@@ -230,6 +230,9 @@ namespace engine
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
 
+
+            int vsize = 1024;
+
             // pbr: setup framebuffer
             // ----------------------
             unsigned int captureFBO;
@@ -239,12 +242,12 @@ namespace engine
 
             glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
             glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, vsize, vsize);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
             // pbr: load the HDR environment map
             // ---------------------------------
-            unsigned int hdrTexture = engine::Texture::loadHDRImage(file_system::getPath("textures/hdr/newport_loft.hdr"));
+            unsigned int hdrTexture = engine::Texture::loadHDRImage(file_system::getPath("textures/hdr/photo_studio_loft_hall_2k.hdr"));
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
@@ -252,7 +255,7 @@ namespace engine
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             for (unsigned int i = 0; i < 6; ++i)
             {
-                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, vsize, vsize, 0, GL_RGB, GL_FLOAT, nullptr);
             }
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -281,7 +284,7 @@ namespace engine
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, hdrTexture);
 
-            glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+            glViewport(0, 0, vsize, vsize); // don't forget to configure the viewport to the capture dimensions.
             glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
             for (unsigned int i = 0; i < 6; ++i)
             {
@@ -389,7 +392,7 @@ namespace engine
 
             // pre-allocate enough memory for the LUT texture.
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, vsize, vsize, 0, GL_RG, GL_FLOAT, 0);
             // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -399,10 +402,10 @@ namespace engine
             // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
             glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
             glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, vsize, vsize);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
-            glViewport(0, 0, 512, 512);
+            glViewport(0, 0, vsize, vsize);
             brdfShader.use();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderQuad();
@@ -546,13 +549,9 @@ namespace engine
 
         void loop_PBR()
         {
-            // render
-            // ------
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // render scene, supplying the convoluted irradiance map to the final shader.
-            // ------------------------------------------------------------------------------------------
             pbrShader.use();
             glm::mat4 model = glm::mat4(1.0f);
             glm::mat4 view = camera.GetViewMatrix();
@@ -560,14 +559,17 @@ namespace engine
             pbrShader.setVec3("camPos", camera.Position);
 
 
+            // bind pre-computed IBL data
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            glActiveTexture(GL_TEXTURE6);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 
             // update user stuffs
             update(pbrShader);
-
-
-
-
 
             // render skybox (render as last to prevent overdraw)
             backgroundShader.use();

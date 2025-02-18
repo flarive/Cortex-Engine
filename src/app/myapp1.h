@@ -71,7 +71,7 @@ public:
         zzz.setCubeMapTexs(faces);
 
         ourCube.setup(zzz);
-        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
+        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", ""));// , "textures/rusted_metal_specular.jpg"));
         ourBillboard.setup(engine::Material(engine::Color(0.1f), "textures/grass.png"));
 
         ourText.setup(width, height);

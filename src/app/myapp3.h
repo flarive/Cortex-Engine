@@ -233,16 +233,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        // bind pre-computed IBL data
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-
-
-
         // render test sphere
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         goldSphere.draw(shader, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -251,6 +241,7 @@ private:
         wallSphere.draw(shader, glm::vec3(3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
+        rotation += deltaTime * 10.0f;
 
 
         // render light source (simply re-render sphere at light positions)

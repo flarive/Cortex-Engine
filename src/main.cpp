@@ -17,7 +17,7 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 // Startup method
 int main(int, char**)
 {
-    app = new MyApp("MyApp", 800, 600, false);
+    app = new MyApp("MyApp", 1280, 720, false);
     if (app)
     {
         glfwSetFramebufferSizeCallback(app->window, framebufferSizeCallback);

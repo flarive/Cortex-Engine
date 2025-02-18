@@ -14,6 +14,8 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
     unsigned int textureID{};
     glGenTextures(1, &textureID);
 
+    stbi_set_flip_vertically_on_load(true);
+
     int width{}, height{}, nrComponents{};
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
@@ -75,42 +77,42 @@ unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned 
 
 unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
 {
-    unsigned int textureID{};
-    /*glGenTextures(1, &textureID);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    int width{}, height{}, nrChannels{};
+    stbi_set_flip_vertically_on_load(false);
+
+    int width, height, nrComponents;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        const std::string& fff{ faces[i] };
         
-        bool alpha{ false };
-        unsigned char* data = SOIL_load_image(file_system::getPath(fff).c_str(), &width, &height, &nrChannels, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            SOIL_free_image_data(data);
+            stbi_image_free(data);
         }
         else
         {
-            std::cerr << "Cubemap tex failed to load at path: " << fff << std::endl;
-            SOIL_free_image_data(data);
-            exit(EXIT_FAILURE);
+            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            stbi_image_free(data);
         }
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);*/
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
 }
 
 unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
 {
-    stbi_set_flip_vertically_on_load(true);
     int width{}, height{}, nrComponents{};
+
+    stbi_set_flip_vertically_on_load(true);
 
     float* data = stbi_loadf(filename.c_str(), &width, &height, &nrComponents, 0);
     unsigned int hdrTexture{};

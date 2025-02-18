@@ -1,8 +1,10 @@
 #include "../include/model.h"
 
+#include "../include/texture.h"
+
 #include <format>
 
-//#include "SOIL2.h"
+#include "stb_image.h"
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
@@ -175,19 +177,19 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
     return textures;
 }
     
-static unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
+unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {
-    std::string filename{ std::format("{}/{}", directory, path)};
+    std::string filename = std::string(path);
+    filename = directory + '/' + filename;
 
-    unsigned int textureID{};
-    /*glGenTextures(1, &textureID);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
-    bool alpha{ false };
-    int width{}, height{}, nrComponents{};
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, alpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
+    int width, height, nrComponents;
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format{ 0 };
+        GLenum format{};
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
@@ -204,14 +206,14 @@ static unsigned int engine::TextureFromFile(const char* path, const std::string&
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        SOIL_free_image_data(data);
+        stbi_image_free(data);
     }
     else
     {
         std::cout << "Texture failed to load at path: " << path << std::endl;
-        SOIL_free_image_data(data);
+        stbi_image_free(data);
         exit(EXIT_FAILURE);
-    }*/
+    }
 
     return textureID;
 }

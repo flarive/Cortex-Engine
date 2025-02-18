@@ -155,29 +155,31 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, m_aoMap);
 
-        // bind irradiance map
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
+        // bind pre-computed IBL data
 
-        // bind prefilter map
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
+        //// bind irradiance map
+        //glActiveTexture(GL_TEXTURE5);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, m_irradianceMap);
 
-        // bind BRDF lut
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, m_BRDF_LUT);
+        //// bind prefilter map
+        //glActiveTexture(GL_TEXTURE6);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, m_prefilterMap);
+
+        //// bind BRDF lut
+        //glActiveTexture(GL_TEXTURE7);
+        //glBindTexture(GL_TEXTURE_2D, m_BRDF_LUT);
 
         
 
-        shader.use();
-        shader.setInt("albedoMap", 0);
-        shader.setInt("normalMap", 1);
-        shader.setInt("metallicMap", 2);
-        shader.setInt("roughnessMap", 3);
-        shader.setInt("aoMap", 4);
-        shader.setInt("irradianceMap", 5);
-        shader.setInt("prefilterMap", 6);
-        shader.setInt("brdfLUT", 7);
+        //shader.use();
+        //shader.setInt("albedoMap", 0);
+        //shader.setInt("normalMap", 1);
+        //shader.setInt("metallicMap", 2);
+        //shader.setInt("roughnessMap", 3);
+        //shader.setInt("aoMap", 4);
+        //shader.setInt("irradianceMap", 5);
+        //shader.setInt("prefilterMap", 6);
+        //shader.setInt("brdfLUT", 7);
     }
     else if (shader.name == "blinnphong") // blinn phong shader
     {

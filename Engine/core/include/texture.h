@@ -18,7 +18,6 @@ namespace engine
 		Texture() = default;
 		~Texture() = default;
 
-        static unsigned int loadImage(const std::string& filename, bool alpha = false, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(const std::vector<std::string>& faces);

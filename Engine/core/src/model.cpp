@@ -2,7 +2,7 @@
 
 #include <format>
 
-#include "SOIL2.h"
+//#include "SOIL2.h"
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
@@ -180,7 +180,7 @@ static unsigned int engine::TextureFromFile(const char* path, const std::string&
     std::string filename{ std::format("{}/{}", directory, path)};
 
     unsigned int textureID{};
-    glGenTextures(1, &textureID);
+    /*glGenTextures(1, &textureID);
 
     bool alpha{ false };
     int width{}, height{}, nrComponents{};
@@ -211,7 +211,7 @@ static unsigned int engine::TextureFromFile(const char* path, const std::string&
         std::cout << "Texture failed to load at path: " << path << std::endl;
         SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     return textureID;
 }

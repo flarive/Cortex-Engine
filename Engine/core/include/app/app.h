@@ -9,10 +9,17 @@
 #include <chrono>
 #include <thread>
 
+#define STBI_FAILURE_USERMSG //generate user friendly error messages
 #include "stb_image.h"
 
 namespace engine
 {
+    enum class RenderMethod
+    {
+        BlinnPhong = 0, // legacy
+        PBR = 1
+    };
+    
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
@@ -49,9 +56,11 @@ namespace engine
 
         
 
-        engine::Shader screenShader{};
-        engine::Shader simpleDepthShader{};
-        engine::Shader debugDepthQuad{};
+        Shader screenShader{};
+        Shader simpleDepthShader{};
+        Shader debugDepthQuad{};
+
+        
 
 
     
@@ -67,93 +76,45 @@ namespace engine
         int width{}; // windowed width
         int height{}; // windowed height
         bool fullscreen{};
-
-        // camera
-        engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), false };
-
-        int SCR_WIDTH = 800;
-        int SCR_HEIGHT = 600;
-
-        // rusted iron
-        //unsigned int ironAlbedoMap{};
-        //unsigned int ironNormalMap{};
-        //unsigned int ironMetallicMap{};
-        //unsigned int ironRoughnessMap{};
-        //unsigned int ironAOMap{};
-
-        //// gold
-        //unsigned int goldAlbedoMap{};
-        //unsigned int goldNormalMap{};
-        //unsigned int goldMetallicMap{};
-        //unsigned int goldRoughnessMap{};
-        //unsigned int goldAOMap{};
-
-        //// grass
-        //unsigned int grassAlbedoMap{};
-        //unsigned int grassNormalMap{};
-        //unsigned int grassMetallicMap{};
-        //unsigned int grassRoughnessMap{};
-        //unsigned int grassAOMap{};
-
-        //// plastic
-        //unsigned int plasticAlbedoMap{};
-        //unsigned int plasticNormalMap{};
-        //unsigned int plasticMetallicMap{};
-        //unsigned int plasticRoughnessMap{};
-        //unsigned int plasticAOMap{};
-
-        //// wall
-        //unsigned int wallAlbedoMap{};
-        //unsigned int wallNormalMap{};
-        //unsigned int wallMetallicMap{};
-        //unsigned int wallRoughnessMap{};
-        //unsigned int wallAOMap{};
-
-        // lights
-        // ------
-        glm::vec3 lightPositions[4] = {
-            glm::vec3(-10.0f,  10.0f, 10.0f),
-            glm::vec3(10.0f,  10.0f, 10.0f),
-            glm::vec3(-10.0f, -10.0f, 10.0f),
-            glm::vec3(10.0f, -10.0f, 10.0f),
-        };
-        glm::vec3 lightColors[4] = {
-            glm::vec3(300.0f, 300.0f, 300.0f),
-            glm::vec3(300.0f, 300.0f, 300.0f),
-            glm::vec3(300.0f, 300.0f, 300.0f),
-            glm::vec3(300.0f, 300.0f, 300.0f)
-        };
-
+        RenderMethod method;
 
 
     public:
         GLFWwindow* window{};
 
-        engine::Shader blinnPhongShader{};
-        engine::Shader pbrShader{};
-        engine::Shader skyboxReflectShader{};
-        engine::Shader backgroundShader{};
+        // default camera
+        engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+
+        Shader blinnPhongShader{};
+        Shader pbrShader{};
+        Shader skyboxReflectShader{};
+        Shader backgroundShader{};
 
         // PBR
-        engine::Shader equirectangularToCubemapShader{};
-        engine::Shader irradianceShader{};
-        engine::Shader prefilterShader{};
-        engine::Shader brdfShader{};
+        Shader equirectangularToCubemapShader{};
+        Shader irradianceShader{};
+        Shader prefilterShader{};
+        Shader brdfShader{};
 
 
         unsigned int irradianceMap;
         unsigned int prefilterMap;
         unsigned int brdfLUTTexture;
-        //unsigned int hdrTexture{};
         unsigned int envCubemap{};
 
-        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen)
-            : title(_title), width(_width), height(_height), fullscreen(_fullscreen)
+
+        
+
+        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, RenderMethod _method = RenderMethod::PBR)
+            : title(_title), width(_width), height(_height), fullscreen(_fullscreen), method(_method)
         {
-            setup2();
+            if (_method == RenderMethod::BlinnPhong)
+                setup_BlinnPhong();
+
+            setupPBR();
         }
 
-        void setup1()
+        void setup_BlinnPhong()
         {
             initGLFW();
 
@@ -219,7 +180,7 @@ namespace engine
         }
 
 
-        void setup2()
+        void setupPBR()
         {
             initGLFW();
 
@@ -256,14 +217,19 @@ namespace engine
             loadShaders();
 
             pbrShader.use();
-            pbrShader.setInt("irradianceMap", 0);
-            pbrShader.setInt("prefilterMap", 1);
-            pbrShader.setInt("brdfLUT", 2);
-            pbrShader.setInt("albedoMap", 3);
-            pbrShader.setInt("normalMap", 4);
-            pbrShader.setInt("metallicMap", 5);
-            pbrShader.setInt("roughnessMap", 6);
-            pbrShader.setInt("aoMap", 7);
+            
+            pbrShader.setInt("albedoMap", 0);
+            pbrShader.setInt("normalMap", 1);
+            pbrShader.setInt("metallicMap", 2);
+            pbrShader.setInt("roughnessMap", 3);
+            pbrShader.setInt("aoMap", 4);
+
+            pbrShader.setInt("irradianceMap", 5);
+            pbrShader.setInt("prefilterMap", 6);
+            pbrShader.setInt("brdfLUT", 7);
+
+
+
 
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
@@ -282,7 +248,7 @@ namespace engine
 
             // pbr: load the HDR environment map
             // ---------------------------------
-            unsigned int hdrTexture = engine::Texture::loadHDRImage("textures/hdr/newport_loft.hdr");
+            unsigned int hdrTexture = engine::Texture::loadHDRImage(file_system::getPath("textures/hdr/newport_loft.hdr"));
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
@@ -452,9 +418,10 @@ namespace engine
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
+
             // initialize static shader uniforms before rendering
             // --------------------------------------------------
-            glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
             pbrShader.use();
             pbrShader.setMat4("projection", projection);
             backgroundShader.use();
@@ -513,7 +480,11 @@ namespace engine
                 auto start_time = std::chrono::high_resolution_clock::now();
 
 
-                loop2();
+
+                if (method == RenderMethod::PBR)
+                    loop_PBR();
+                else
+                    loop_BlinnPhong();
 
 
 
@@ -558,7 +529,7 @@ namespace engine
             glfwTerminate();
         }
 
-        void loop1()
+        void loop_BlinnPhong()
         {
             // bind to color framebuffer and draw scene as we normally would to color texture 
             glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -581,7 +552,7 @@ namespace engine
             updateUI();
         }
 
-        void loop2()
+        void loop_PBR()
         {
             // render
             // ------
@@ -592,9 +563,9 @@ namespace engine
             // ------------------------------------------------------------------------------------------
             pbrShader.use();
             glm::mat4 model = glm::mat4(1.0f);
-            glm::mat4 view = cam.GetViewMatrix();
+            glm::mat4 view = camera.GetViewMatrix();
             pbrShader.setMat4("view", view);
-            pbrShader.setVec3("camPos", cam.Position);
+            pbrShader.setVec3("camPos", camera.Position);
 
 
             // update user stuffs
@@ -609,6 +580,10 @@ namespace engine
             //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
             //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
             renderCube();
+
+            // render BRDF map to screen
+            //brdfShader.use();
+            //renderQuad();
 
             // display UI/HUD above the scene and outside the framebuffer
             updateUI();
@@ -677,6 +652,16 @@ namespace engine
             m_lightTarget = pos;
         }
 
+        //void setCamera(Camera& camera)
+        //{
+        //    m_camera = camera;
+        //}
+
+        //const Camera& getCamera() const
+        //{
+        //    return m_camera;
+        //}
+
         glm::vec3 getLightPosition()
         {
             return m_lightPosition;
@@ -688,12 +673,6 @@ namespace engine
         }
 
     private:
-        
-
-        
-        
-
-
         static void glfw_error_callback(int error, const char* description)
         {
             fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -1049,7 +1028,7 @@ namespace engine
         }
 
         // renders (and builds at first invocation) a sphere
-// -------------------------------------------------
+        // -------------------------------------------------
         unsigned int sphereVAO = 0;
         GLsizei indexCount;
         void renderSphere()

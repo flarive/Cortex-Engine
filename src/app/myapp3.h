@@ -11,12 +11,7 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), false };
 
-
-
-    engine::Plane ourPlane{};
     engine::Sphere rustedIronSphere{};
     engine::Sphere goldSphere{};
     engine::Sphere grassSphere{};
@@ -27,45 +22,44 @@ private:
 
     engine::Text ourText{};
 
-    //engine::Skybox ourSkybox{};
 
     engine::SpotLight mySpotLight{ 0 };
 
     
     // rusted iron
-    unsigned int ironAlbedoMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/albedo.png");
-    unsigned int ironNormalMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/normal.png");
-    unsigned int ironMetallicMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/metallic.png");
-    unsigned int ironRoughnessMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/roughness.png");
-    unsigned int ironAOMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/ao.png");
+    //unsigned int ironAlbedoMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/albedo.png");
+    //unsigned int ironNormalMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/normal.png");
+    //unsigned int ironMetallicMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/metallic.png");
+    //unsigned int ironRoughnessMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/roughness.png");
+    //unsigned int ironAOMap = engine::Texture::loadTexture("textures/pbr/rusted_iron/ao.png");
 
-    // gold
-    unsigned int goldAlbedoMap = engine::Texture::loadTexture("textures/pbr/gold/albedo.png");
-    unsigned int goldNormalMap = engine::Texture::loadTexture("textures/pbr/gold/normal.png");
-    unsigned int goldMetallicMap = engine::Texture::loadTexture("textures/pbr/gold/metallic.png");
-    unsigned int goldRoughnessMap = engine::Texture::loadTexture("textures/pbr/gold/roughness.png");
-    unsigned int goldAOMap = engine::Texture::loadTexture("textures/pbr/gold/ao.png");
+    //// gold
+    //unsigned int goldAlbedoMap = engine::Texture::loadTexture("textures/pbr/gold/albedo.png");
+    //unsigned int goldNormalMap = engine::Texture::loadTexture("textures/pbr/gold/normal.png");
+    //unsigned int goldMetallicMap = engine::Texture::loadTexture("textures/pbr/gold/metallic.png");
+    //unsigned int goldRoughnessMap = engine::Texture::loadTexture("textures/pbr/gold/roughness.png");
+    //unsigned int goldAOMap = engine::Texture::loadTexture("textures/pbr/gold/ao.png");
 
-    // grass
-    unsigned int grassAlbedoMap = engine::Texture::loadTexture("textures/pbr/grass/albedo.png");
-    unsigned int grassNormalMap = engine::Texture::loadTexture("textures/pbr/grass/normal.png");
-    unsigned int grassMetallicMap = engine::Texture::loadTexture("textures/pbr/grass/metallic.png");
-    unsigned int grassRoughnessMap = engine::Texture::loadTexture("textures/pbr/grass/roughness.png");
-    unsigned int grassAOMap = engine::Texture::loadTexture("textures/pbr/grass/ao.png");
+    //// grass
+    //unsigned int grassAlbedoMap = engine::Texture::loadTexture("textures/pbr/grass/albedo.png");
+    //unsigned int grassNormalMap = engine::Texture::loadTexture("textures/pbr/grass/normal.png");
+    //unsigned int grassMetallicMap = engine::Texture::loadTexture("textures/pbr/grass/metallic.png");
+    //unsigned int grassRoughnessMap = engine::Texture::loadTexture("textures/pbr/grass/roughness.png");
+    //unsigned int grassAOMap = engine::Texture::loadTexture("textures/pbr/grass/ao.png");
 
-    // plastic
-    unsigned int plasticAlbedoMap = engine::Texture::loadTexture("textures/pbr/plastic/albedo.png");
-    unsigned int plasticNormalMap = engine::Texture::loadTexture("textures/pbr/plastic/normal.png");
-    unsigned int plasticMetallicMap = engine::Texture::loadTexture("textures/pbr/plastic/metallic.png");
-    unsigned int plasticRoughnessMap = engine::Texture::loadTexture("textures/pbr/plastic/roughness.png");
-    unsigned int plasticAOMap = engine::Texture::loadTexture("textures/pbr/plastic/ao.png");
+    //// plastic
+    //unsigned int plasticAlbedoMap = engine::Texture::loadTexture("textures/pbr/plastic/albedo.png");
+    //unsigned int plasticNormalMap = engine::Texture::loadTexture("textures/pbr/plastic/normal.png");
+    //unsigned int plasticMetallicMap = engine::Texture::loadTexture("textures/pbr/plastic/metallic.png");
+    //unsigned int plasticRoughnessMap = engine::Texture::loadTexture("textures/pbr/plastic/roughness.png");
+    //unsigned int plasticAOMap = engine::Texture::loadTexture("textures/pbr/plastic/ao.png");
 
-    // wall
-    unsigned int wallAlbedoMap = engine::Texture::loadTexture("textures/pbr/wall/albedo.png");
-    unsigned int wallNormalMap = engine::Texture::loadTexture("textures/pbr/wall/normal.png");
-    unsigned int wallMetallicMap = engine::Texture::loadTexture("textures/pbr/wall/metallic.png");
-    unsigned int wallRoughnessMap = engine::Texture::loadTexture("textures/pbr/wall/roughness.png");
-    unsigned int wallAOMap = engine::Texture::loadTexture("textures/pbr/wall/ao.png");
+    //// wall
+    //unsigned int wallAlbedoMap = engine::Texture::loadTexture("textures/pbr/wall/albedo.png");
+    //unsigned int wallNormalMap = engine::Texture::loadTexture("textures/pbr/wall/normal.png");
+    //unsigned int wallMetallicMap = engine::Texture::loadTexture("textures/pbr/wall/metallic.png");
+    //unsigned int wallRoughnessMap = engine::Texture::loadTexture("textures/pbr/wall/roughness.png");
+    //unsigned int wallAOMap = engine::Texture::loadTexture("textures/pbr/wall/ao.png");
 
 
 
@@ -106,15 +100,19 @@ public:
         setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
         setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
 
+        // override default camera properties
+        camera.Position = glm::vec3(0.0f, 0.0f, 2.0f);
+        camera.Fps = false;
+
         mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         mySpotLight.setCutOff(8.0f);
         mySpotLight.setOuterCutOff(20.f);
 
-        //ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
+        
 
         // load PBR material textures
         // --------------------------
-        /*rustedIronSphere.setup(engine::Material(engine::Color(0.1f),
+        rustedIronSphere.setup(engine::Material(engine::Color(0.1f),
             "textures/pbr/rusted_iron/albedo.png",
             "",
             "textures/pbr/rusted_iron/normal.png",
@@ -152,27 +150,16 @@ public:
             "textures/pbr/wall/normal.png",
             "textures/pbr/wall/metallic.png",
             "textures/pbr/wall/roughness.png",
-            "textures/pbr/wall/ao.png"));*/
+            "textures/pbr/wall/ao.png"));
 
 
         ourText.setup(width, height);
 
-        //std::vector<std::string> faces
-        //{
-        //    "textures/skybox/right.jpg",
-        //    "textures/skybox/left.jpg",
-        //    "textures/skybox/top.jpg",
-        //    "textures/skybox/bottom.jpg",
-        //    "textures/skybox/front.jpg",
-        //    "textures/skybox/back.jpg"
-        //};
-
-        //ourSkybox.setup(faces);
 
 
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
-        glm::mat4 view{ cam.GetViewMatrix() };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ camera.GetViewMatrix() };
 
         // initialize static shader uniforms before rendering
         // --------------------------------------------------
@@ -183,8 +170,6 @@ public:
         int scrWidth, scrHeight;
         glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
         glViewport(0, 0, scrWidth, scrHeight);
-
-
     }
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -197,60 +182,60 @@ public:
         bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
         if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
         else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::LEFT, deltaTime);
+            camera.ProcessKeyboard(engine::LEFT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+            camera.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
 
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
         else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+            camera.ProcessKeyboard(engine::FORWARD, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+            camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
     }
 
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        UNREFERENCED_PARAMETER(xposIn);
-        UNREFERENCED_PARAMETER(yposIn);
+        //UNREFERENCED_PARAMETER(xposIn);
+        //UNREFERENCED_PARAMETER(yposIn);
 
-        //engine::App::mouse_callback(xposIn, yposIn);
+        engine::App::mouse_callback(xposIn, yposIn);
 
-        //float xpos = static_cast<float>(xposIn);
-        //float ypos = static_cast<float>(yposIn);
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
 
-        //if (firstMouse)
-        //{
-        //    lastX = xpos;
-        //    lastY = ypos;
-        //    firstMouse = false;
-        //}
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-        //float xoffset = xpos - lastX;
-        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        //lastX = xpos;
-        //lastY = ypos;
+        lastX = xpos;
+        lastY = ypos;
 
-        //cam.ProcessMouseMovement(xoffset, yoffset);
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        cam.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -279,7 +264,7 @@ public:
         grassSphere.clean();
         plasticSphere.clean();
         wallSphere.clean();
-        ourPlane.clean();
+        //ourPlane.clean();
     }
 
 private:
@@ -300,13 +285,8 @@ private:
         //backgroundShader.use();
         //backgroundShader.setMat4("projection", projection);
 
-        //// render test sphere
-        ////rustedIronSphere.draw(shader2, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        ////goldSphere.draw(shader2, glm::vec3(-0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        ////grassSphere.draw(shader2, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        ////plasticSphere.draw(shader2, glm::vec3(0.5f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        ////wallSphere.draw(shader2, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.2f, 0.2f, 0.2f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        //
+
+        
 
         //rotation += deltaTime * 10.0f;
 
@@ -359,8 +339,8 @@ private:
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
-        glm::mat4 view{ cam.GetViewMatrix() };
+        //glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        //glm::mat4 view{ cam.GetViewMatrix() };
 
 
 
@@ -369,109 +349,119 @@ private:
 
         // render scene, supplying the convoluted irradiance map to the final shader.
         // ------------------------------------------------------------------------------------------
-        //shader2.use();
         glm::mat4 model = glm::mat4(1.0f);
-        //shader2.setMat4("view", view);
-        //shader2.setVec3("camPos", cam.Position);
-        //shader2.setMat4("projection", projection);
+
 
         // bind pre-computed IBL data
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE5);
         glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE6);
         glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-        glActiveTexture(GL_TEXTURE2);
+        glActiveTexture(GL_TEXTURE7);
         glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-        // rusted iron
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, ironAlbedoMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, ironNormalMap);
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, ironMetallicMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, ironRoughnessMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, ironAOMap);
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-5.0, 0.0, 2.0));
-        shader2.setMat4("model", model);
-        shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-        renderSphere();
 
-        // gold
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, goldAlbedoMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, goldNormalMap);
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, goldMetallicMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, goldRoughnessMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, goldAOMap);
+        // render test sphere
+        rustedIronSphere.draw(shader2, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        goldSphere.draw(shader2, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        grassSphere.draw(shader2, glm::vec3(-1.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        plasticSphere.draw(shader2, glm::vec3(1.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        wallSphere.draw(shader2, glm::vec3(3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-3.0, 0.0, 2.0));
-        shader2.setMat4("model", model);
-        shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-        renderSphere();
 
-        // grass
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, grassAlbedoMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, grassNormalMap);
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, grassMetallicMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, grassRoughnessMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, grassAOMap);
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-1.0, 0.0, 2.0));
-        shader2.setMat4("model", model);
-        shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-        renderSphere();
 
-        // plastic
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, plasticAlbedoMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, plasticNormalMap);
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, plasticMetallicMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, plasticRoughnessMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, plasticAOMap);
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(1.0, 0.0, 2.0));
-        shader2.setMat4("model", model);
-        shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-        renderSphere();
+        //// rusted iron
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, ironAlbedoMap);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, ironNormalMap);
+        //glActiveTexture(GL_TEXTURE2);
+        //glBindTexture(GL_TEXTURE_2D, ironMetallicMap);
+        //glActiveTexture(GL_TEXTURE3);
+        //glBindTexture(GL_TEXTURE_2D, ironRoughnessMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, ironAOMap);
 
-        // wall
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, wallAlbedoMap);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, wallNormalMap);
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, wallMetallicMap);
-        glActiveTexture(GL_TEXTURE6);
-        glBindTexture(GL_TEXTURE_2D, wallRoughnessMap);
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_2D, wallAOMap);
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(-5.0, 0.0, 2.0));
+        //shader2.setMat4("model", model);
+        //shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+        //renderSphere();
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(3.0, 0.0, 2.0));
-        shader2.setMat4("model", model);
-        shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-        renderSphere();
+        //// gold
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, goldAlbedoMap);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, goldNormalMap);
+        //glActiveTexture(GL_TEXTURE2);
+        //glBindTexture(GL_TEXTURE_2D, goldMetallicMap);
+        //glActiveTexture(GL_TEXTURE3);
+        //glBindTexture(GL_TEXTURE_2D, goldRoughnessMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, goldAOMap);
+
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(-3.0, 0.0, 2.0));
+        //shader2.setMat4("model", model);
+        //shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+        //renderSphere();
+
+        //// grass
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, grassAlbedoMap);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, grassNormalMap);
+        //glActiveTexture(GL_TEXTURE2);
+        //glBindTexture(GL_TEXTURE_2D, grassMetallicMap);
+        //glActiveTexture(GL_TEXTURE3);
+        //glBindTexture(GL_TEXTURE_2D, grassRoughnessMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, grassAOMap);
+
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(-1.0, 0.0, 2.0));
+        //shader2.setMat4("model", model);
+        //shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+        //renderSphere();
+
+        //// plastic
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, plasticAlbedoMap);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, plasticNormalMap);
+        //glActiveTexture(GL_TEXTURE2);
+        //glBindTexture(GL_TEXTURE_2D, plasticMetallicMap);
+        //glActiveTexture(GL_TEXTURE3);
+        //glBindTexture(GL_TEXTURE_2D, plasticRoughnessMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, plasticAOMap);
+
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(1.0, 0.0, 2.0));
+        //shader2.setMat4("model", model);
+        //shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+        //renderSphere();
+
+        //// wall
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, wallAlbedoMap);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, wallNormalMap);
+        //glActiveTexture(GL_TEXTURE2);
+        //glBindTexture(GL_TEXTURE_2D, wallMetallicMap);
+        //glActiveTexture(GL_TEXTURE3);
+        //glBindTexture(GL_TEXTURE_2D, wallRoughnessMap);
+        //glActiveTexture(GL_TEXTURE4);
+        //glBindTexture(GL_TEXTURE_2D, wallAOMap);
+
+        //model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(3.0, 0.0, 2.0));
+        //shader2.setMat4("model", model);
+        //shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+        //renderSphere();
 
         // render light source (simply re-render sphere at light positions)
         // this looks a bit off as we use the same shader, but it'll make their positions obvious and 
@@ -490,22 +480,6 @@ private:
             shader2.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
             renderSphere();
         }
-
-        //ourSkybox.draw(projection, view);
-
-        // render skybox (render as last to prevent overdraw)
-        //backgroundShader.use();
-        //backgroundShader.setMat4("view", view);
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-        ////glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
-        ////glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-        //renderCube();
-
-        // render BRDF map to screen
-        //brdfShader.use();
-        //renderQuad();
-
     }
 
     void drawUI()

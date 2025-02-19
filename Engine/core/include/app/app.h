@@ -40,7 +40,7 @@ namespace engine
         unsigned int colorFramebuffer{};
 
 
-        unsigned int quadVAO{}, quadVBO{};
+        //unsigned int quadVAO{}, quadVBO{};
         unsigned int rbo{}; // renderbuffer object
 
 
@@ -141,18 +141,6 @@ namespace engine
             loadShaders();
 
 
-            // prepare screen quad VAO that will render the main framebuffer
-            glGenVertexArrays(1, &quadVAO);
-            glGenBuffers(1, &quadVBO);
-            glBindVertexArray(quadVAO);
-            glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(engine::screenQuadVertices), &engine::screenQuadVertices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-
             // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
             // -------------------------------------------------------------------------------------------
             blinnPhongShader.use();
@@ -213,6 +201,19 @@ namespace engine
             // -------------------------
             loadShaders();
 
+
+            // prepare screen quad VAO that will render the main framebuffer
+            //glGenVertexArrays(1, &quadVAO);
+            //glGenBuffers(1, &quadVBO);
+            //glBindVertexArray(quadVAO);
+            //glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+            //glBufferData(GL_ARRAY_BUFFER, sizeof(engine::screenQuadVertices), &engine::screenQuadVertices, GL_STATIC_DRAW);
+            //glEnableVertexAttribArray(0);
+            //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+            //glEnableVertexAttribArray(1);
+            //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
             pbrShader.use();
             pbrShader.setInt("albedoMap", 0);
             pbrShader.setInt("normalMap", 1);
@@ -231,7 +232,22 @@ namespace engine
             backgroundShader.setInt("environmentMap", 0);
 
 
-            int vsize = 1024;
+            // shader configuration
+            // --------------------
+            screenShader.use();
+            screenShader.setInt("screenTexture", 0);
+
+            // Depth map framebuffer configuration (for shadow map)
+            // -----------------------------------
+            //initDepthMapFramebuffer();
+
+            // color framebuffer configuration
+            // -------------------------
+            initColorFramebuffer();
+
+
+
+            int vsize = 512;
 
             // pbr: setup framebuffer
             // ----------------------
@@ -500,8 +516,8 @@ namespace engine
             glBindVertexArray(0);
 
             // optional: de-allocate all resources once they've outlived their purpose
-            glDeleteVertexArrays(1, &quadVAO);
-            glDeleteBuffers(1, &quadVBO);
+            //glDeleteVertexArrays(1, &quadVAO);
+            //glDeleteBuffers(1, &quadVBO);
             glDeleteRenderbuffers(1, &rbo);
             glDeleteFramebuffers(1, &colorFramebuffer);
             glDeleteFramebuffers(1, &depthMapFramebuffer);
@@ -549,14 +565,27 @@ namespace engine
 
         void loop_PBR()
         {
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            // bind to color framebuffer and draw scene as we normally would to color texture 
+            glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+            glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
+            
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+
+
 
             pbrShader.use();
             glm::mat4 model = glm::mat4(1.0f);
             glm::mat4 view = camera.GetViewMatrix();
+            pbrShader.setMat4("projection", projection);
             pbrShader.setMat4("view", view);
             pbrShader.setVec3("camPos", camera.Position);
+
+
+            
 
 
             // bind pre-computed IBL data
@@ -574,6 +603,7 @@ namespace engine
             // render skybox (render as last to prevent overdraw)
             backgroundShader.use();
             backgroundShader.setMat4("view", view);
+            backgroundShader.setMat4("projection", projection);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
@@ -583,6 +613,12 @@ namespace engine
             // render BRDF map to screen
             //brdfShader.use();
             //renderQuad();
+
+            // compute light shadows using a depth map framebuffer
+            //computeDepthMapFramebuffer();
+
+            // render to framebuffer
+            computeColorFramebuffer();
 
             // display UI/HUD above the scene and outside the framebuffer
             updateUI();
@@ -738,6 +774,8 @@ namespace engine
 
         // renderQuad() renders a 1x1 XY quad in NDC
         // -----------------------------------------
+        unsigned int quadVAO = 0;
+        unsigned int quadVBO;
         void renderQuad()
         {
             if (quadVAO == 0)
@@ -1150,9 +1188,11 @@ namespace engine
             glClear(GL_COLOR_BUFFER_BIT);
 
             screenShader.use();
-            glBindVertexArray(quadVAO);
+            
+            //glBindVertexArray(quadVAO);
             glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
             glDrawArrays(GL_TRIANGLES, 0, 6);
+            renderQuad();
         }
 
         void loadShaders()
@@ -1162,7 +1202,7 @@ namespace engine
 
             pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
 
-            //Shader depthBufferShader("debug_depth_buffer", "shaders/debug_depth_buffer.vertex", "shaders/debug_depth_buffer.frag"); // depth buffer debugging shader
+            //Shader depthBufferShader("debug_depth_buffer", "shaders/debug/debug_depth_buffer.vertex", "shaders/debug/debug_depth_buffer.frag"); // depth buffer debugging shader
 
             // color framebuffer to screen shader
             screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
@@ -1171,7 +1211,7 @@ namespace engine
             skyboxReflectShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
             simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
-            debugDepthQuad.init("debugDepthQuad", "shaders/debug_quad_depth.vertex", "shaders/debug_quad_depth.frag");
+            debugDepthQuad.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
 
             
 

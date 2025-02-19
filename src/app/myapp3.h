@@ -17,14 +17,14 @@ private:
     engine::Sphere grassSphere{};
     engine::Sphere plasticSphere{};
     engine::Sphere wallSphere{};
+    engine::Sphere bronzeSphere{};
 
-
+    engine::Plane ourPlane{};
 
     engine::Text ourText{};
 
 
-    engine::SpotLight mySpotLight{ 0 };
-
+    engine::Shader lightCubeShader{};
 
     // lights
     // ------
@@ -66,12 +66,12 @@ public:
         // override default camera properties
         camera.Position = glm::vec3(0.0f, 0.0f, 2.0f);
         camera.Fps = false;
+        camera.Zoom = 75.0f;
 
-        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(20.f);
+        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        
+
+        lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
         // load PBR material textures
         // --------------------------
@@ -115,24 +115,16 @@ public:
             "textures/pbr/wall/roughness.png",
             "textures/pbr/wall/ao.png"));
 
+        bronzeSphere.setup(engine::Material(engine::Color(0.1f),
+            "textures/pbr/bronze/albedo.png",
+            "",
+            "textures/pbr/bronze/normal.png",
+            "textures/pbr/bronze/metallic.png",
+            "textures/pbr/bronze/roughness.png",
+            "textures/pbr/bronze/ao.png"));
+
 
         ourText.setup(width, height);
-
-
-
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
-        glm::mat4 view{ camera.GetViewMatrix() };
-
-        // initialize static shader uniforms before rendering
-        // --------------------------------------------------
-        backgroundShader.use();
-        backgroundShader.setMat4("projection", projection);
-
-        // then before rendering, configure the viewport to the original framebuffer's screen dimensions
-        int scrWidth, scrHeight;
-        glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
-        glViewport(0, 0, scrWidth, scrHeight);
     }
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -227,31 +219,43 @@ public:
         grassSphere.clean();
         plasticSphere.clean();
         wallSphere.clean();
-        //ourPlane.clean();
+        bronzeSphere.clean();
+        ourPlane.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
+
+        ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
         // render test sphere
-        rustedIronSphere.draw(shader, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        goldSphere.draw(shader, glm::vec3(-3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        grassSphere.draw(shader, glm::vec3(-1.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        plasticSphere.draw(shader, glm::vec3(1.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        wallSphere.draw(shader, glm::vec3(3.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        goldSphere.draw(shader, glm::vec3(-3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        grassSphere.draw(shader, glm::vec3(-1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        plasticSphere.draw(shader, glm::vec3(1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        wallSphere.draw(shader, glm::vec3(3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        bronzeSphere.draw(shader, glm::vec3(5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
         rotation += deltaTime * 10.0f;
 
 
-        // render light source (simply re-render sphere at light positions)
-        // this looks a bit off as we use the same shader, but it'll make their positions obvious and 
-        // keeps the codeprint small.
+        // view/projection transformations
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ camera.GetViewMatrix() };
+
+        // add some custom light sources
+        //render light source (simply re-render sphere at light positions)
+        //this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+        //keeps the codeprint small.
         glm::mat4 model = glm::mat4(1.0f);
         for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
         {
-            glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-            newPos = lightPositions[i];
+            glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 10.0, 0.0);
+            //newPos = lightPositions[i];
+
+            shader.use();
             shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
             shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 
@@ -260,8 +264,19 @@ private:
             model = glm::scale(model, glm::vec3(0.5f));
             shader.setMat4("model", model);
             shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+
+
+            // also draw the lamp object(s)
+            lightCubeShader.use();
+            lightCubeShader.setMat4("projection", projection);
+            lightCubeShader.setMat4("view", view);
+            lightCubeShader.setMat4("model", model);
+
+
             App::renderSphere();
         }
+
+        
     }
 
     void drawUI()

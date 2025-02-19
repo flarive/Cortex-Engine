@@ -46,7 +46,7 @@ namespace engine
         virtual void clean();
 
 
-        float* GetScaledPlaneVertices(float uvScale)
+        float* getScaledPlaneVertices(float uvScale)
         {
             float* planeVertices = new float[48] {
                 // positions            // normals         // texcoords

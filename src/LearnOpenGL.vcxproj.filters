@@ -56,6 +56,9 @@
     <Filter Include="resources\textures\hdr">
       <UniqueIdentifier>{fd0344e0-9aa9-4974-b472-e3d0a15ac31e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\shaders\debug">
+      <UniqueIdentifier>{2a920df4-6f56-401d-aa64-88bb4ec81485}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,9 +71,6 @@
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
       <Filter>resources\textures</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\light_cube.frag">
-      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\cushion\cushion.mtl">
       <Filter>resources\models\cushion</Filter>
@@ -107,9 +107,6 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\backpack\diffuse.jpg">
       <Filter>resources\models\backpack</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\light_cube.vertex">
-      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\phong.frag">
       <Filter>resources\shaders</Filter>
@@ -347,6 +344,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\hdr\photo_studio_loft_hall_2k.hdr">
       <Filter>resources\textures\hdr</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.vertex">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.frag">
+      <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

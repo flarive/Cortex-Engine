@@ -11,7 +11,7 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-
+    engine::Model redSciFiMetalSphere{};
     engine::Sphere rustedIronSphere{};
     engine::Sphere goldSphere{};
     engine::Sphere grassSphere{};
@@ -73,8 +73,20 @@ public:
 
         lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
+
+        redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
+
         // load PBR material textures
         // --------------------------
+        //redSciFiMetalSphere.setup(engine::Material(engine::Color(0.1f),
+        //    "textures/pbr/red_scifi_metal/albedo.png",
+        //    "",
+        //    "textures/pbr/red_scifi_metal/normal.png",
+        //    "textures/pbr/red_scifi_metal/metallic.png",
+        //    "textures/pbr/red_scifi_metal/roughness.png",
+        //    "textures/pbr/red_scifi_metal/ao.png",
+        //    "textures/pbr/red_scifi_metal/height.png"), engine::UvMapping(3.0f));
+
         rustedIronSphere.setup(engine::Material(engine::Color(0.1f),
             "textures/pbr/rusted_iron/albedo.png",
             "",
@@ -226,10 +238,18 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
+        shader.use();
+        
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        // render the loaded model
+        glm::mat4 model2{ glm::mat4(1.0f) };
+        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model2 = glm::scale(model2, glm::vec3(10.0f, 10.0f, 10.0f));	// it's a bit too big for our scene, so scale it down
+        model2 = glm::rotate(model2, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        redSciFiMetalSphere.draw(shader);
 
         // render test sphere
+        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         goldSphere.draw(shader, glm::vec3(-3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         grassSphere.draw(shader, glm::vec3(-1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -239,6 +259,9 @@ private:
 
 
         rotation += deltaTime * 10.0f;
+
+
+        ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
         // view/projection transformations
@@ -253,7 +276,7 @@ private:
         for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
         {
             glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 10.0, 0.0);
-            //newPos = lightPositions[i];
+            newPos = lightPositions[i];
 
             shader.use();
             shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);

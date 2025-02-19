@@ -22,6 +22,7 @@ namespace engine
         unsigned int m_metallicMap{};
         unsigned int m_roughnessMap{};
         unsigned int m_aoMap{};
+        unsigned int m_heightMap{};
         unsigned int m_irradianceMap{};
         unsigned int m_prefilterMap{};
         unsigned int m_BRDF_LUT{};

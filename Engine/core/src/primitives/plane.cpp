@@ -93,6 +93,10 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
         // bind ambient occlusion map
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, m_aoMap);
+
+        // bind height map
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, m_heightMap);
     }
     else if (shader.name == "blinnphong") // blinn phong shader
     {

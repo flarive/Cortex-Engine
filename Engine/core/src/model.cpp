@@ -136,9 +136,18 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // 3. normal maps
     std::vector<engine::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-    // 4. height maps
-    //std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-    //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    // 4. metallic maps
+    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(material, aiTextureType_METALNESS, "texture_metalness");
+    textures.insert(textures.end(), metallicMaps.begin(), metallicMaps.end());
+    // 5. roughness maps
+    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness");
+    textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+    // 6. ambient occlusion maps
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, "texture_ao");
+    textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
+    // 7. height maps
+    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
+    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ vertices, indices, textures };

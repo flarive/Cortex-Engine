@@ -202,30 +202,20 @@ namespace engine
             loadShaders();
 
 
-            // prepare screen quad VAO that will render the main framebuffer
-            //glGenVertexArrays(1, &quadVAO);
-            //glGenBuffers(1, &quadVBO);
-            //glBindVertexArray(quadVAO);
-            //glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-            //glBufferData(GL_ARRAY_BUFFER, sizeof(engine::screenQuadVertices), &engine::screenQuadVertices, GL_STATIC_DRAW);
-            //glEnableVertexAttribArray(0);
-            //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-            //glEnableVertexAttribArray(1);
-            //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-
             pbrShader.use();
             pbrShader.setInt("albedoMap", 0);
             pbrShader.setInt("normalMap", 1);
             pbrShader.setInt("metallicMap", 2);
             pbrShader.setInt("roughnessMap", 3);
             pbrShader.setInt("aoMap", 4);
+            pbrShader.setInt("heightMap", 5);
+            
 
-            pbrShader.setInt("irradianceMap", 5);
-            pbrShader.setInt("prefilterMap", 6);
-            pbrShader.setInt("brdfLUT", 7);
+            pbrShader.setInt("irradianceMap", 6);
+            pbrShader.setInt("prefilterMap", 7);
+            pbrShader.setInt("brdfLUT", 8);
 
-
+            pbrShader.setFloat("heightScale", 0.2f);
 
 
             backgroundShader.use();
@@ -589,11 +579,11 @@ namespace engine
 
 
             // bind pre-computed IBL data
-            glActiveTexture(GL_TEXTURE5);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             glActiveTexture(GL_TEXTURE6);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+            glActiveTexture(GL_TEXTURE8);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 

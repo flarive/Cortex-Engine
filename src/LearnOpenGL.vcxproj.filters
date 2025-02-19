@@ -59,6 +59,12 @@
     <Filter Include="resources\shaders\debug">
       <UniqueIdentifier>{2a920df4-6f56-401d-aa64-88bb4ec81485}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\red_scifi_metal">
+      <UniqueIdentifier>{a259998a-0f2c-4f3e-b013-64b216644f9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models\sphere">
+      <UniqueIdentifier>{e4fb3143-2d7e-4c23-82b0-40b5e5a277a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -135,12 +141,6 @@
     <CopyFileToFolders Include="..\resources\shaders\text.vertex">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug_depth_buffer.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug_depth_buffer.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal_diffuse.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
@@ -201,13 +201,7 @@
     <CopyFileToFolders Include="..\resources\textures\wood_specular.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug_quad_depth.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug_quad_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vertex">
@@ -351,6 +345,24 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\red-scifi-metal\albedo.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_depth_buffer.frag">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_depth_buffer.vertex">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.frag">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.vertex">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\albedo.png">
+      <Filter>resources\models\sphere</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -362,5 +374,47 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\pbr\red-scifi-metal\ao.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\red-scifi-metal\height.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\red-scifi-metal\metallic.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\red-scifi-metal\normal.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\red-scifi-metal\roughness.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\ao.png">
+      <Filter>resources\models\sphere</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\height.png">
+      <Filter>resources\models\sphere</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\metallic.png">
+      <Filter>resources\models\sphere</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\normal.png">
+      <Filter>resources\models\sphere</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\roughness.png">
+      <Filter>resources\models\sphere</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\models\sphere\smooth_sphere_80.mtl">
+      <Filter>resources\models\sphere</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\resources\models\sphere\smooth_sphere_80.obj">
+      <Filter>resources\models\sphere</Filter>
+    </Object>
   </ItemGroup>
 </Project>

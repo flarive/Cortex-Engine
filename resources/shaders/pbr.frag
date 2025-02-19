@@ -11,6 +11,8 @@ uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
+uniform sampler2D heightMap;
+uniform float heightScale;
 
 // IBL
 uniform samplerCube irradianceMap;
@@ -91,18 +93,49 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }   
 // ----------------------------------------------------------------------------
+vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
+    const float minLayers = 8.0;
+    const float maxLayers = 32.0;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+    vec2 deltaTexCoords = viewDir.xy * heightScale / numLayers;
+    vec2 currentTexCoords = texCoords;
+
+    float heightFromTexture = texture(heightMap, currentTexCoords).r;
+
+    while (currentLayerDepth < heightFromTexture) {
+        currentTexCoords -= deltaTexCoords;
+        heightFromTexture = texture(heightMap, currentTexCoords).r;
+        currentLayerDepth += layerDepth;
+    }
+
+    return currentTexCoords;
+}
+// ----------------------------------------------------------------------------
 void main()
 {		
     // material properties
+//    vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+//    float metallic = texture(metallicMap, TexCoords).r;
+//    float roughness = texture(roughnessMap, TexCoords).r;
+//    float ao = texture(aoMap, TexCoords).r;
+       
+    // input lighting data
+    vec3 N = getNormalFromMap();
+    vec3 V = normalize(camPos - WorldPos); // View direction
+    vec3 R = reflect(-V, N); 
+
+    // Modify TexCoords using Parallax Mapping
+    vec2 modifiedTexCoords = parallaxMapping(TexCoords, V);
+
+    modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
+
     vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
     float metallic = texture(metallicMap, TexCoords).r;
     float roughness = texture(roughnessMap, TexCoords).r;
     float ao = texture(aoMap, TexCoords).r;
-       
-    // input lighting data
-    vec3 N = getNormalFromMap();
-    vec3 V = normalize(camPos - WorldPos);
-    vec3 R = reflect(-V, N); 
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

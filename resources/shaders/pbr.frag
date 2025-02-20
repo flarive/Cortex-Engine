@@ -6,18 +6,41 @@ in vec3 WorldPos;
 in vec3 Normal;
 
 // material parameters
-uniform sampler2D albedoMap;
-uniform sampler2D normalMap;
-uniform sampler2D metallicMap;
-uniform sampler2D roughnessMap;
-uniform sampler2D aoMap;
-uniform sampler2D heightMap;
-uniform float heightScale;
+struct Material {
+    sampler2D texture_diffuse1;
+    //sampler2D texture_specular1;
+    sampler2D texture_normal1;
+    sampler2D texture_metallic1;
+    sampler2D texture_roughness1;
+    sampler2D texture_ao1;
+    sampler2D texture_height1;
+    float heightScale;
 
-// IBL
-uniform samplerCube irradianceMap;
-uniform samplerCube prefilterMap;
-uniform sampler2D brdfLUT;
+    // IBL
+    samplerCube texture_irradiance1;
+    samplerCube texture_prefilter1;
+    sampler2D texture_brdfLUT1;
+
+    bool has_diffuse_map;
+    bool has_specular_map;
+    bool has_normal_map;
+}; 
+
+
+uniform Material material;
+
+//uniform sampler2D albedoMap;
+//uniform sampler2D normalMap;
+//uniform sampler2D metallicMap;
+//uniform sampler2D roughnessMap;
+//uniform sampler2D aoMap;
+//uniform sampler2D heightMap;
+//uniform float heightScale;
+//
+//// IBL
+//uniform samplerCube irradianceMap;
+//uniform samplerCube prefilterMap;
+//uniform sampler2D brdfLUT;
 
 // lights
 uniform vec3 lightPositions[4];
@@ -33,7 +56,7 @@ const float PI = 3.14159265359;
 // technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(material.texture_normal1, TexCoords).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
@@ -100,14 +123,14 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
 
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;
-    vec2 deltaTexCoords = viewDir.xy * heightScale / numLayers;
+    vec2 deltaTexCoords = viewDir.xy * material.heightScale / numLayers;
     vec2 currentTexCoords = texCoords;
 
-    float heightFromTexture = texture(heightMap, currentTexCoords).r;
+    float heightFromTexture = texture(material.texture_height1, currentTexCoords).r;
 
     while (currentLayerDepth < heightFromTexture) {
         currentTexCoords -= deltaTexCoords;
-        heightFromTexture = texture(heightMap, currentTexCoords).r;
+        heightFromTexture = texture(material.texture_height1, currentTexCoords).r;
         currentLayerDepth += layerDepth;
     }
 
@@ -132,10 +155,10 @@ void main()
 
     modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
-    vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-    float metallic = texture(metallicMap, TexCoords).r;
-    float roughness = texture(roughnessMap, TexCoords).r;
-    float ao = texture(aoMap, TexCoords).r;
+    vec3 albedo = pow(texture(material.texture_diffuse1, TexCoords).rgb, vec3(2.2));
+    float metallic = texture(material.texture_metallic1, TexCoords).r;
+    float roughness = texture(material.texture_roughness1, TexCoords).r;
+    float ao = texture(material.texture_ao1, TexCoords).r;
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -187,13 +210,13 @@ void main()
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
     
-    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 irradiance = texture(material.texture_irradiance1, N).rgb;
     vec3 diffuse      = irradiance * albedo;
     
     // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
     const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 prefilteredColor = textureLod(material.texture_prefilter1, R,  roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(material.texture_brdfLUT1, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
     vec3 ambient = (kD * diffuse + specular) * ao;

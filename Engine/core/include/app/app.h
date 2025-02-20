@@ -203,19 +203,20 @@ namespace engine
 
 
             pbrShader.use();
-            pbrShader.setInt("albedoMap", 0);
-            pbrShader.setInt("normalMap", 1);
-            pbrShader.setInt("metallicMap", 2);
-            pbrShader.setInt("roughnessMap", 3);
-            pbrShader.setInt("aoMap", 4);
-            pbrShader.setInt("heightMap", 5);
+            pbrShader.setInt("material.texture_diffuse1", 0);
+            //pbrShader.setInt("material.texture_specular1", 1);
+            pbrShader.setInt("material.texture_normal1", 1);
+            pbrShader.setInt("material.texture_metallic1", 2);
+            pbrShader.setInt("material.texture_roughness1", 3);
+            pbrShader.setInt("material.texture_ao1", 4);
+            pbrShader.setInt("material.texture_height1", 5);
             
 
-            pbrShader.setInt("irradianceMap", 6);
-            pbrShader.setInt("prefilterMap", 7);
-            pbrShader.setInt("brdfLUT", 8);
+            pbrShader.setInt("material.texture_irradiance1", 6);
+            pbrShader.setInt("material.texture_prefilter1", 7);
+            pbrShader.setInt("material.texture_brdfLUT1", 8);
 
-            pbrShader.setFloat("heightScale", 0.2f);
+            pbrShader.setFloat("material.heightScale", 0.2f);
 
 
             backgroundShader.use();

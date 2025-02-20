@@ -125,7 +125,7 @@ public:
             "textures/pbr/wall/normal.png",
             "textures/pbr/wall/metallic.png",
             "textures/pbr/wall/roughness.png",
-            "textures/pbr/wall/ao.png"));
+            "textures/pbr/wall/ao.png"), engine::UvMapping(1.0f));
 
         bronzeSphere.setup(engine::Material(engine::Color(0.1f),
             "textures/pbr/bronze/albedo.png",
@@ -241,15 +241,8 @@ private:
         shader.use();
         
 
-        // render the loaded model
-        glm::mat4 model2{ glm::mat4(1.0f) };
-        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model2 = glm::scale(model2, glm::vec3(10.0f, 10.0f, 10.0f));	// it's a bit too big for our scene, so scale it down
-        model2 = glm::rotate(model2, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        redSciFiMetalSphere.draw(shader);
-
         // render test sphere
-        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         goldSphere.draw(shader, glm::vec3(-3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         grassSphere.draw(shader, glm::vec3(-1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));

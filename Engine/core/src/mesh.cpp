@@ -10,18 +10,16 @@ engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsign
 }
 
 // render the mesh
-void engine::Mesh::draw(Shader& shader)
+void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
 {
-    // bind appropriate textures
+    // Bind appropriate textures
     unsigned int diffuseNr{ 1 };
     unsigned int specularNr{ 1 };
     unsigned int normalNr{ 1 };
 
-    //for (unsigned int i = 0; i < textures.size(); i++)
-    for (unsigned int i = 0; i < 3; i++) // texture 3 must be shadow map !!!!!!!!!!
+    for (unsigned int i = 0; i < textures.size(); i++) // Texture 3 must be shadow map
     {
-        glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
+        glActiveTexture(GL_TEXTURE0 + i);
         std::string number{};
         std::string name{ textures[i].type };
         if (name == "texture_diffuse")
@@ -31,29 +29,58 @@ void engine::Mesh::draw(Shader& shader)
         }
         else if (name == "texture_specular")
         {
-            number = std::to_string(specularNr++); // transfer unsigned int to string
+            number = std::to_string(specularNr++);
             glUniform1i(glGetUniformLocation(shader.ID, "material.has_specular_map"), true);
         }
         else if (name == "texture_normal")
         {
-            number = std::to_string(normalNr++); // transfer unsigned int to string
+            number = std::to_string(normalNr++);
             glUniform1i(glGetUniformLocation(shader.ID, "material.has_normal_map"), true);
         }
+        else if (name == "texture_metalness")
+        {
+            number = std::to_string(normalNr++);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_metalness_map"), true);
+        }
+        else if (name == "texture_roughness")
+        {
+            number = std::to_string(normalNr++);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_roughness_map"), true);
+        }
+        else if (name == "texture_ao")
+        {
+            number = std::to_string(normalNr++);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_ao_map"), true);
+        }
+        else if (name == "texture_height")
+        {
+            number = std::to_string(normalNr++);
+            glUniform1i(glGetUniformLocation(shader.ID, "material.has_height_map"), true);
+        }
 
-        // now set the sampler to the correct texture unit
+
         glUniform1i(glGetUniformLocation(shader.ID, ("material." + name + number).c_str()), i);
-        // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
-    // draw mesh
+    // Draw mesh
     glBindVertexArray(VAO);
+
+    // calculate the model matrix for each object and pass it to shader before drawing
+    glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    model = glm::translate(model, position);
+    if (angle != 0) model = glm::rotate(model, glm::radians(angle), rotation);
+    model = glm::scale(model, scale);
+    shader.setMat4("model", model);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+
+
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);
 }
+
 
 void engine::Mesh::setupMesh()
 {

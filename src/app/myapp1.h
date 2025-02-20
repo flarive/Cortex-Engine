@@ -217,12 +217,7 @@ private:
         skyboxReflectShader.setVec3("cameraPos", cam.Position);
     
         // render the loaded model
-        glm::mat4 model2{ glm::mat4(1.0f) };
-        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model2 = glm::scale(model2, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-        //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        skyboxReflectShader.setMat4("model", model2);
-        backpackModel.draw(skyboxReflectShader);
+        backpackModel.draw(skyboxReflectShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
     
     
     

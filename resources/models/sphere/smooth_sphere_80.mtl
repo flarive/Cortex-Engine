@@ -1,5 +1,5 @@
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
-# File Created: 28.07.2024 19:55:53
+# File Created: 20.02.2025 21:40:04
 
 newmtl default
 	Ns 10.0000
@@ -14,4 +14,5 @@ newmtl default
 	Ke 0.0000 0.0000 0.0000
 	map_Ka albedo.png
 	map_Kd albedo.png
-	map_Bump normal.png
+	map_bump normal.png
+	bump normal.png

@@ -182,12 +182,7 @@ private:
 
 
         // render the loaded model
-        glm::mat4 model1{ glm::mat4(1.0f) };
-        model1 = glm::translate(model1, glm::vec3(0.0f, -0.15f, 0.0f)); // translate it down so it's at the center of the scene
-        model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        model1 = glm::rotate(model1, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        shader.setMat4("model", model1);
-        cushionModel.draw(shader);
+        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
 

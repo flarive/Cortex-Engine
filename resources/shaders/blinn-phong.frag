@@ -3,18 +3,19 @@
 out vec4 FragColor;
 
 struct Material {
+    
+    sampler2D texture_diffuse1; // 0
+    sampler2D texture_specular1; // 1
+    sampler2D texture_normal1; // 2
+    sampler2D texture_metallic1; // 3
+    sampler2D texture_roughness1; // 4
+    sampler2D texture_ao1; // 5
+    sampler2D texture_height1; // 6
+    sampler2D texture_shadowMap; // 10
+
     vec3 ambient_color;
-    sampler2D texture_diffuse1;
-    sampler2D texture_specular1;
-    sampler2D texture_normal1;
-    sampler2D texture_metallic1;
-    sampler2D texture_roughness1;
-    sampler2D texture_ambientocclusion1;
-    sampler2D texture_shadowMap;
     float shininess;
 
-    bool has_diffuse_map;
-    bool has_specular_map;
     bool has_normal_map;
 }; 
 

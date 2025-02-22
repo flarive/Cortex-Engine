@@ -12,7 +12,9 @@ newmtl default
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka albedo.png
-	map_Kd albedo.png
-	map_bump normal.png
-	bump normal.png
+	map_Ka cliff\albedo.jpg
+	map_Kd cliff\albedo.jpg
+	#map_Kn cliff\normal.jpg
+	#map_Pm cliff\metallic.jpg
+	#map_Pr cliff\roughness.jpg
+	#bump cliff\height.jpg

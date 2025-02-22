@@ -52,8 +52,6 @@ void engine::PointLight::draw(const Shader& shader, const glm::mat4& projection,
     shader.setFloat(std::format("{}.linear", base), 0.09f);
     shader.setFloat(std::format("{}.quadratic", base), 0.032f);
 
-    //shader.setInt(std::format("{}.shadowMap", base), 3);
-
 
     if (DISPLAY_DEBUG_LIGHT_CUBE)
     {

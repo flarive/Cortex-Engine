@@ -110,6 +110,9 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
         vertices.push_back(vertex);
     }
+
+
+
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
@@ -146,8 +149,8 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, "texture_ao");
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
-    //std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
-    //textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
+    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ vertices, indices, textures };

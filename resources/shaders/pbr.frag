@@ -8,7 +8,7 @@ in vec3 Normal;
 // material parameters
 struct Material {
     sampler2D texture_diffuse1;
-    //sampler2D texture_specular1;
+    sampler2D texture_specular1;
     sampler2D texture_normal1;
     sampler2D texture_metallic1;
     sampler2D texture_roughness1;
@@ -20,27 +20,10 @@ struct Material {
     samplerCube texture_irradiance1;
     samplerCube texture_prefilter1;
     sampler2D texture_brdfLUT1;
-
-    bool has_diffuse_map;
-    bool has_specular_map;
-    bool has_normal_map;
 }; 
 
 
 uniform Material material;
-
-//uniform sampler2D albedoMap;
-//uniform sampler2D normalMap;
-//uniform sampler2D metallicMap;
-//uniform sampler2D roughnessMap;
-//uniform sampler2D aoMap;
-//uniform sampler2D heightMap;
-//uniform float heightScale;
-//
-//// IBL
-//uniform samplerCube irradianceMap;
-//uniform samplerCube prefilterMap;
-//uniform sampler2D brdfLUT;
 
 // lights
 uniform vec3 lightPositions[4];
@@ -139,12 +122,6 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
 // ----------------------------------------------------------------------------
 void main()
 {		
-    // material properties
-//    vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-//    float metallic = texture(metallicMap, TexCoords).r;
-//    float roughness = texture(roughnessMap, TexCoords).r;
-//    float ao = texture(aoMap, TexCoords).r;
-       
     // input lighting data
     vec3 N = getNormalFromMap();
     vec3 V = normalize(camPos - WorldPos); // View direction
@@ -152,9 +129,9 @@ void main()
 
     // Modify TexCoords using Parallax Mapping
     vec2 modifiedTexCoords = parallaxMapping(TexCoords, V);
-
     modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
+    // material properties
     vec3 albedo = pow(texture(material.texture_diffuse1, TexCoords).rgb, vec3(2.2));
     float metallic = texture(material.texture_metallic1, TexCoords).r;
     float roughness = texture(material.texture_roughness1, TexCoords).r;

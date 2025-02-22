@@ -82,9 +82,9 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
 
         shader.setInt("skyboxTexture", 0); // texture 0
     }
-    else if (shader.name == "blinnphong") // blinn phong shader
+    else
     {
-        // bind diffuse map
+        /// bind diffuse (albedo) map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
 
@@ -96,15 +96,34 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
-        shader.setVec3("material.ambient_color", 0.0f, 0.0f, 0.0f);
-        //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        shader.setInt("material.texture_diffuse1", 0); // texture 0
-        shader.setInt("material.texture_specular1", 1); // texture 1
-        shader.setInt("material.texture_normal1", 2); // texture 2
-        shader.setBool("material.has_normal_map", m_normalMap > 0);
-        //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        shader.setFloat("material.shininess", 32.0f);
-        shader.setFloat("uvScale", 1.0f);
+        // bind metallic map
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, m_metallicMap);
+
+        // bind roughness map
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, m_roughnessMap);
+
+        // bind ambient occlusion map
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, m_aoMap);
+
+        // bind height map
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, m_heightMap);
+
+        if (shader.name == "blinnphong") // blinn phong shader
+        {
+            shader.setVec3("material.ambient_color", 0.0f, 0.0f, 0.0f);
+            //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+            shader.setInt("material.texture_diffuse1", 0); // texture 0
+            shader.setInt("material.texture_specular1", 1); // texture 1
+            shader.setInt("material.texture_normal1", 2); // texture 2
+            shader.setBool("material.has_normal_map", m_normalMap > 0);
+            //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+            shader.setFloat("material.shininess", 32.0f);
+            shader.setFloat("uvScale", 1.0f);
+        }
     }
 
 

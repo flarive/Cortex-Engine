@@ -65,6 +65,12 @@
     <Filter Include="resources\models\sphere">
       <UniqueIdentifier>{e4fb3143-2d7e-4c23-82b0-40b5e5a277a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\sphere\red-scifi-model">
+      <UniqueIdentifier>{e9d5d28d-f870-4cb5-84a2-cbc601897043}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\models\sphere\cliff">
+      <UniqueIdentifier>{b5e925db-dd51-4a6d-8f0a-5e3931850c87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -360,7 +366,33 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.vertex">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\sphere\albedo.png">
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\albedo.png">
+      <Filter>resources\models\sphere\red-scifi-model</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\cliff\albedo.jpg">
+      <Filter>resources\models\sphere\cliff</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\cliff\ao.jpg">
+      <Filter>resources\models\sphere\cliff</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\cliff\height.jpg">
+      <Filter>resources\models\sphere\cliff</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\cliff\normal.jpg">
+      <Filter>resources\models\sphere\cliff</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\cliff\roughness.jpg">
+      <Filter>resources\models\sphere\cliff</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\ao.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\height.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\metallic.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\normal.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\roughness.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\smooth_sphere_80.mtl">
+      <Filter>resources\models\sphere</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\smooth_sphere_80.obj">
       <Filter>resources\models\sphere</Filter>
     </CopyFileToFolders>
   </ItemGroup>
@@ -374,47 +406,5 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\red-scifi-metal\ao.png">
-      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\red-scifi-metal\height.png">
-      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\red-scifi-metal\metallic.png">
-      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\red-scifi-metal\normal.png">
-      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\red-scifi-metal\roughness.png">
-      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\ao.png">
-      <Filter>resources\models\sphere</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\height.png">
-      <Filter>resources\models\sphere</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\metallic.png">
-      <Filter>resources\models\sphere</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\normal.png">
-      <Filter>resources\models\sphere</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\roughness.png">
-      <Filter>resources\models\sphere</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\models\sphere\smooth_sphere_80.mtl">
-      <Filter>resources\models\sphere</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="..\resources\models\sphere\smooth_sphere_80.obj">
-      <Filter>resources\models\sphere</Filter>
-    </Object>
   </ItemGroup>
 </Project>

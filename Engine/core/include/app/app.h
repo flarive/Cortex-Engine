@@ -204,19 +204,21 @@ namespace engine
 
             pbrShader.use();
             pbrShader.setInt("material.texture_diffuse1", 0);
-            //pbrShader.setInt("material.texture_specular1", 1);
-            pbrShader.setInt("material.texture_normal1", 1);
-            pbrShader.setInt("material.texture_metallic1", 2);
-            pbrShader.setInt("material.texture_roughness1", 3);
-            pbrShader.setInt("material.texture_ao1", 4);
-            pbrShader.setInt("material.texture_height1", 5);
+            pbrShader.setInt("material.texture_specular1", 1); // not used by PBR
+            pbrShader.setInt("material.texture_normal1", 2);
+            pbrShader.setInt("material.texture_metallic1", 3);
+            pbrShader.setInt("material.texture_roughness1", 4);
+            pbrShader.setInt("material.texture_ao1", 5);
+            pbrShader.setInt("material.texture_height1", 6);
             
 
-            pbrShader.setInt("material.texture_irradiance1", 6);
-            pbrShader.setInt("material.texture_prefilter1", 7);
-            pbrShader.setInt("material.texture_brdfLUT1", 8);
+            pbrShader.setInt("material.texture_irradiance1", 7);
+            pbrShader.setInt("material.texture_prefilter1", 8);
+            pbrShader.setInt("material.texture_brdfLUT1", 9);
 
             pbrShader.setFloat("material.heightScale", 0.2f);
+
+            
 
 
             backgroundShader.use();
@@ -580,11 +582,11 @@ namespace engine
 
 
             // bind pre-computed IBL data
-            glActiveTexture(GL_TEXTURE6);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             glActiveTexture(GL_TEXTURE7);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             glActiveTexture(GL_TEXTURE8);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+            glActiveTexture(GL_TEXTURE9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 
@@ -1130,9 +1132,9 @@ namespace engine
             update(blinnPhongShader);
             //update(pbrShader);
 
-            glActiveTexture(GL_TEXTURE6);
+            glActiveTexture(GL_TEXTURE10);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-            blinnPhongShader.setInt("material.texture_shadowMap", 6); // texture 6
+            blinnPhongShader.setInt("material.texture_shadowMap", 10); // texture 6
 
             // 3. render Depth map to quad
             // ---------------------------

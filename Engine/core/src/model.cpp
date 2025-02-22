@@ -121,6 +121,8 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
         for (unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
+
+
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
     // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
@@ -152,8 +154,12 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+    // Create Material
+    engine::Material2 meshMaterial(textures);
+
     // return a mesh object created from the extracted mesh data
-    return Mesh{ vertices, indices, textures };
+    //return Mesh{ vertices, indices, textures };
+    return Mesh{ vertices, indices, meshMaterial };
 }
 
 // checks all material textures of a given type and loads the textures if they're not loaded yet.

@@ -22,6 +22,8 @@ namespace engine
     private:
         void setup() override;
 
+        void loadTextures(const engine::Material& material);
+
         unsigned int indexCount{};
     };
 }

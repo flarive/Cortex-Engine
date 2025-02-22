@@ -4,6 +4,10 @@ out vec4 FragColor;
 in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
+in vec3 Tangent;
+in vec3 Bitangent;
+
+
 
 // material parameters
 struct Material {
@@ -20,6 +24,14 @@ struct Material {
     samplerCube texture_irradiance1;
     samplerCube texture_prefilter1;
     sampler2D texture_brdfLUT1;
+
+    bool has_texture_diffuse_map;
+    bool has_texture_specular_map;
+    bool has_texture_normal_map;
+    bool has_texture_metalness_map;
+    bool has_texture_roughness_map;
+    bool has_texture_ao_map;
+    bool has_texture_height_map;
 }; 
 
 
@@ -128,8 +140,8 @@ void main()
     vec3 R = reflect(-V, N); 
 
     // Modify TexCoords using Parallax Mapping
-    vec2 modifiedTexCoords = parallaxMapping(TexCoords, V);
-    modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
+    //vec2 modifiedTexCoords = parallaxMapping(TexCoords, V);
+    //modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
     // material properties
     vec3 albedo = pow(texture(material.texture_diffuse1, TexCoords).rgb, vec3(2.2));

@@ -104,7 +104,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     shader.setInt("material.texture_specular1", 1); // texture 1
     shader.setInt("material.texture_normal1", 2); // texture 2
     //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-    shader.setBool("material.has_normal_map", m_normalMap > 0);
+    shader.setBool("material.has_texture_normal_map", m_normalMap != 0);
     shader.setFloat("material.shininess", 32.0f);
     shader.setFloat("uvScale", 1.0f);
 

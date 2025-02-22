@@ -6,6 +6,7 @@
 #include "misc/noncopyable.h"
 
 #include "vertex.h"
+#include "materials/material2.h"
 #include "texture.h"
 #include "shader.h"
 
@@ -20,10 +21,14 @@ namespace engine
         // mesh Data
         std::vector<Vertex>       vertices{};
         std::vector<unsigned int> indices{};
-        std::vector<Texture>      textures{};
+        //std::vector<Texture>      textures{};
+
+        Material2 material;  // Use a Material instead of a texture list
+
     public:
         // constructor
-        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures);
+        //Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures);
+        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Material2& material);
 		~Mesh() = default;
 
         // render the mesh

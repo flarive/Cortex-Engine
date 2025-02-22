@@ -5,6 +5,7 @@
 #include "../shader.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
+#include "../materials/material2.h"
 
 namespace engine
 {
@@ -16,16 +17,18 @@ namespace engine
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};
 
-        unsigned int m_diffuseMap{};
-        unsigned int m_specularMap{};
-        unsigned int m_normalMap{};
-        unsigned int m_metallicMap{};
-        unsigned int m_roughnessMap{};
-        unsigned int m_aoMap{};
-        unsigned int m_heightMap{};
-        unsigned int m_irradianceMap{};
-        unsigned int m_prefilterMap{};
-        unsigned int m_BRDF_LUT{};
+        unsigned int m_diffuseMap{0};
+        unsigned int m_specularMap{0};
+        unsigned int m_normalMap{0};
+        unsigned int m_metallicMap{0};
+        unsigned int m_roughnessMap{0};
+        unsigned int m_aoMap{0};
+        unsigned int m_heightMap{0};
+        unsigned int m_irradianceMap{0};
+        unsigned int m_prefilterMap{0};
+        unsigned int m_BRDF_LUT{0()};
+
+        std::shared_ptr<engine::Material2> m_material;
 
         Color m_ambientColor{};
 

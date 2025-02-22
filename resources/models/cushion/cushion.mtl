@@ -15,4 +15,4 @@ newmtl Material
 	map_Ka cushion_albedo.jpg
 	map_Kd cushion_albedo.jpg
 	map_Ks cushion_specular.jpg
-	map_Bump cushion_normal.jpg
+	map_Kn cushion_normal.jpg

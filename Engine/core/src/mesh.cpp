@@ -2,77 +2,82 @@
 
 
 // constructor
-engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
-    : vertices(vertices), indices(indices), textures(textures)
-{
-    // now that we have all the required data, set the vertex buffers and its attribute pointers.
+//engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+//    : vertices(vertices), indices(indices), textures(textures)
+//{
+//    // now that we have all the required data, set the vertex buffers and its attribute pointers.
+//    setupMesh();
+//}
+
+engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Material2& material)
+    : vertices(vertices), indices(indices), material(material) {
     setupMesh();
 }
+
 
 // render the mesh
 void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
 {
+    material.bind(shader); // Bind material textures
+    
     // Bind appropriate textures
-    unsigned int diffuseNr{ 1 };
-    unsigned int specularNr{ 1 };
-    unsigned int normalNr{ 1 };
-    unsigned int metallicNr{ 1 };
-    unsigned int roughnessNr{ 1 };
-    unsigned int aoNr{ 1 };
-    unsigned int heightNr{ 1 };
-
-    for (unsigned int i = 0; i < textures.size(); i++) // Texture 6 must be shadow map
-    {
-        //glActiveTexture(GL_TEXTURE0 + i);
-        std::string number{};
-        std::string name{ textures[i].type };
-
-        //std::cout << "oooo " << textures[i].type << " dddd " << i << std::endl;
-
-        if (name == "texture_diffuse") // map_Kd
-        {
-            number = std::to_string(diffuseNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_diffuse_map"), true);
-        }
-        else if (name == "texture_specular") // map_Ks
-        {
-            number = std::to_string(specularNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_specular_map"), true);
-        }
-        else if (name == "texture_normal") // map_Kn
-        {
-            number = std::to_string(normalNr++);
-            glUniform1i(glGetUniformLocation(shader.ID, "material.has_normal_map"), true);
-        }
-        else if (name == "texture_metalness") // map_Pm
-        {
-            number = std::to_string(metallicNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_metalness_map"), true);
-        }
-        else if (name == "texture_roughness") // map_Pr
-        {
-            number = std::to_string(roughnessNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_roughness_map"), true);
-        }
-        else if (name == "texture_ao")
-        {
-            number = std::to_string(aoNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_ao_map"), true);
-        }
-        else if (name == "texture_height") // bump
-        {
-            number = std::to_string(heightNr++);
-            //glUniform1i(glGetUniformLocation(shader.ID, "material.has_height_map"), true);
-        }
-
-        //std::cout << "pppp " << ("material." + name + number).c_str() << " " << index << " " << textures[i].id << std::endl;
+    //unsigned int diffuseNr{ 1 };
+    //unsigned int specularNr{ 1 };
+    //unsigned int normalNr{ 1 };
+    //unsigned int metallicNr{ 1 };
+    //unsigned int roughnessNr{ 1 };
+    //unsigned int aoNr{ 1 };
+    //unsigned int heightNr{ 1 };
 
 
-        glUniform1i(glGetUniformLocation(shader.ID, ("material." + name + number).c_str()), i);
+    //int aaa = textures.size();
 
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
+    //for (unsigned int i = 0; i < textures.size(); i++) // Texture 10 must be shadow map
+    //{
+    //    std::string number{};
+    //    std::string name{ textures[i].type };
+
+    //    if (name == "texture_diffuse") // map_Kd
+    //    {
+    //        number = std::to_string(diffuseNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_diffuse_map"), true);
+    //    }
+    //    else if (name == "texture_specular") // map_Ks
+    //    {
+    //        number = std::to_string(specularNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_specular_map"), true);
+    //    }
+    //    else if (name == "texture_normal") // map_Kn
+    //    {
+    //        number = std::to_string(normalNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_normal_map"), true);
+    //    }
+    //    else if (name == "texture_metalness") // map_Pm
+    //    {
+    //        number = std::to_string(metallicNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_metalness_map"), true);
+    //    }
+    //    else if (name == "texture_roughness") // map_Pr
+    //    {
+    //        number = std::to_string(roughnessNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_roughness_map"), true);
+    //    }
+    //    else if (name == "texture_ao")
+    //    {
+    //        number = std::to_string(aoNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_ao_map"), true);
+    //    }
+    //    else if (name == "texture_height") // bump
+    //    {
+    //        number = std::to_string(heightNr++);
+    //        glUniform1i(glGetUniformLocation(shader.ID, "material.has_height_map"), true);
+    //    }
+
+    //    glUniform1i(glGetUniformLocation(shader.ID, ("material." + name + number).c_str()), i);
+
+    //    glActiveTexture(GL_TEXTURE0 + i);
+    //    glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    //}
 
     // Draw mesh
     glBindVertexArray(VAO);
@@ -85,11 +90,14 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
-
+    // draw mesh
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    glActiveTexture(GL_TEXTURE0);
+    // always good practice to set everything back to defaults once configured.
+    //glActiveTexture(GL_TEXTURE0);
+
+    material.unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
 

@@ -16,7 +16,13 @@ struct Material {
     vec3 ambient_color;
     float shininess;
 
-    bool has_normal_map;
+    bool has_texture_diffuse_map;
+    bool has_texture_specular_map;
+    bool has_texture_normal_map;
+    bool has_texture_metalness_map;
+    bool has_texture_roughness_map;
+    bool has_texture_ao_map;
+    bool has_texture_height_map;
 }; 
 
 struct DirLight {
@@ -183,7 +189,7 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
 void main()
 {
     vec3 norm;
-    if (material.has_normal_map)
+    if (material.has_texture_normal_map)
     {
         // Sample the normal map texture
         norm = texture(material.texture_normal1, fs_in.TexCoords).rgb;

@@ -120,12 +120,6 @@
     <CopyFileToFolders Include="..\resources\models\backpack\diffuse.jpg">
       <Filter>resources\models\backpack</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\phong.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\phong.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\backpack\normal.jpg">
       <Filter>resources\models\backpack</Filter>
     </CopyFileToFolders>

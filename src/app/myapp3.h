@@ -238,9 +238,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        shader.use();
-        
-
         // render test sphere
         redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -254,7 +251,7 @@ private:
         rotation += deltaTime * 10.0f;
 
 
-        //ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
         // view/projection transformations

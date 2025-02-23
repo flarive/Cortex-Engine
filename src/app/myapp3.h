@@ -11,6 +11,10 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
+    engine::PointLight myPointLight{ 0 };
+    engine::DirectionalLight myDirectionalLight{ 0 };
+    engine::SpotLight mySpotLight{ 0 };
+
     engine::Model redSciFiMetalSphere{};
     engine::Sphere rustedIronSphere{};
     engine::Sphere goldSphere{};
@@ -29,8 +33,8 @@ private:
     // lights
     // ------
     glm::vec3 lightPositions[4] = {
-        glm::vec3(-10.0f,  10.0f, 10.0f),
-        glm::vec3(10.0f,  10.0f, 10.0f),
+        glm::vec3(-10.0f, 10.0f, 10.0f),
+        glm::vec3(10.0f, 10.0f, 10.0f),
         glm::vec3(-10.0f, -10.0f, 10.0f),
         glm::vec3(10.0f, -10.0f, 10.0f),
     };
@@ -63,8 +67,14 @@ public:
         setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
         setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
 
+        //myPointLight.setup();
+        //myDirectionalLight.setup();
+        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
+        mySpotLight.setCutOff(8.0f);
+        mySpotLight.setOuterCutOff(20.f);
+
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, 0.0f, 2.0f);
+        camera.Position = glm::vec3(0.0f, -5.0f, 2.0f);
         camera.Fps = false;
         camera.Zoom = 75.0f;
 
@@ -245,12 +255,19 @@ private:
         rotation += deltaTime * 10.0f;
 
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -10.50f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
+
+        // setup lights
+        //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
+        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
+        //mySpotLight.draw(shader, projection, view, 2.0f, getLightPosition(), getLightTarget());
+
+
 
         // add some custom light sources
         //render light source (simply re-render sphere at light positions)

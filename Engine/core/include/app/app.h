@@ -232,7 +232,7 @@ namespace engine
 
             // Depth map framebuffer configuration (for shadow map)
             // -----------------------------------
-            //initDepthMapFramebuffer();
+            initDepthMapFramebuffer();
 
             // color framebuffer configuration
             // -------------------------
@@ -547,7 +547,7 @@ namespace engine
             update(blinnPhongShader);
 
             // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer();
+            computeDepthMapFramebuffer(blinnPhongShader);
 
             // render to framebuffer
             computeColorFramebuffer();
@@ -608,7 +608,7 @@ namespace engine
             //renderQuad();
 
             // compute light shadows using a depth map framebuffer
-            //computeDepthMapFramebuffer();
+            computeDepthMapFramebuffer(pbrShader);
 
             // render to framebuffer
             computeColorFramebuffer();
@@ -1090,7 +1090,7 @@ namespace engine
             debugDepthQuad.setInt("depthMap", 0);
         }
 
-        void computeDepthMapFramebuffer()
+        void computeDepthMapFramebuffer(Shader& shader)
         {
             // 1. render depth of scene to texture (from light's perspective)
             // --------------------------------------------------------------
@@ -1124,16 +1124,16 @@ namespace engine
 
             // 2. render scene as normal using the previously generated depth/shadow map  
             // -------------------------------------------------------------------------
-            blinnPhongShader.use();
-            blinnPhongShader.setVec3("lightPos", m_lightPosition);
-            blinnPhongShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+            shader.use();
+            shader.setVec3("lightPos", m_lightPosition); // ?????????????????
+            shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs
-            update(blinnPhongShader);
+            update(shader);
 
             glActiveTexture(GL_TEXTURE10);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-            blinnPhongShader.setInt("material.texture_shadowMap", 10);
+            shader.setInt("material.texture_shadowMap", 10);
 
             // 3. render Depth map to quad
             // ---------------------------

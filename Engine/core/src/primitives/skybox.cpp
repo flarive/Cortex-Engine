@@ -39,6 +39,8 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     glm::mat4 view_fixed = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
     m_skyboxShader.setMat4("view", view_fixed);
     m_skyboxShader.setMat4("projection", projection);
+
+
     // skybox cube
     glBindVertexArray(m_skyboxVAO);
     glActiveTexture(GL_TEXTURE0);

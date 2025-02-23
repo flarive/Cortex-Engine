@@ -3,7 +3,6 @@
 out vec4 FragColor;
 
 struct Material {
-    
     sampler2D texture_diffuse1; // 0
     sampler2D texture_specular1; // 1
     sampler2D texture_normal1; // 2
@@ -189,9 +188,6 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
 void main()
 {
     vec3 norm;
-    
-//    vec2 aaa = textureSize(material.texture_normal1, 0);
-//    if (aaa.x > 0)
     if (material.has_texture_normal_map)
     {
         // Sample the normal map texture
@@ -285,8 +281,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular1, fs_in.TexCoords));
 
     // Shadow Calculation (no light position needed)
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir);                      
-
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir);
+    
     // Final lighting with shadow applied
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 

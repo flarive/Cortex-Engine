@@ -1,23 +1,25 @@
 #version 330 core
 
 out vec4 FragColor;
+
 in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
 in vec3 Tangent;
 in vec3 Bitangent;
-
+in vec4 FragPosLightSpace;
 
 
 // material parameters
 struct Material {
-    sampler2D texture_diffuse1;
-    sampler2D texture_specular1;
-    sampler2D texture_normal1;
-    sampler2D texture_metallic1;
-    sampler2D texture_roughness1;
-    sampler2D texture_ao1;
-    sampler2D texture_height1;
+    sampler2D texture_diffuse1; // 0
+    sampler2D texture_specular1; // 1
+    sampler2D texture_normal1; // 2
+    sampler2D texture_metallic1; // 3
+    sampler2D texture_roughness1; // 4
+    sampler2D texture_ao1; // 5
+    sampler2D texture_height1; // 6
+    sampler2D texture_shadowMap; // 10
     float heightScale;
 
     // IBL
@@ -42,6 +44,7 @@ uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
 
 uniform vec3 camPos;
+uniform mat4 lightSpaceMatrix;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -131,6 +134,30 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
 
     return currentTexCoords;
 }
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    if (fragPosLightSpace.w == 0.0) {
+        return 0.0; // Or output some debug color
+    }
+    
+    // Transform to normalized device coordinates
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5; // Transform to [0,1] range
+    
+    // Get the closest depth from the shadow map
+    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;  
+    float currentDepth = projCoords.z;
+
+    // Bias to prevent shadow acne
+    float bias = max(0.05 * (1.0 - dot(Normal, vec3(0,0,-1))), 0.005); 
+
+    // Check for shadow
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+}
+
 // ----------------------------------------------------------------------------
 void main()
 {		
@@ -165,6 +192,8 @@ void main()
         float attenuation = 1.0 / (distance * distance);
         vec3 radiance = lightColors[i] * attenuation;
 
+        float shadow = ShadowCalculation(FragPosLightSpace); // Compute shadow factor
+
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
         float G   = GeometrySmith(N, V, L, roughness);    
@@ -189,7 +218,8 @@ void main()
         float NdotL = max(dot(N, L), 0.0);        
 
         // add to outgoing radiance Lo
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        //Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        Lo += (1.0 - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;  
     }   
     
     // ambient lighting (we now use IBL as the ambient term)

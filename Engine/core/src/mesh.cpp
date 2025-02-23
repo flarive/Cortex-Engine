@@ -1,7 +1,10 @@
 #include "../include/mesh.h"
 
-engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const Material2& material)
-    : vertices(vertices), indices(indices), material(material) {
+#include <memory>
+
+engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::shared_ptr<Material>& material)
+    : vertices(vertices), indices(indices), m_material(material)
+{
     setupMesh();
 }
 
@@ -9,7 +12,7 @@ engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsign
 // render the mesh
 void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
 {
-    material.bind(shader, true); // Bind material textures
+    m_material->bind(shader, true); // Bind material textures
 
     // Draw mesh
     glBindVertexArray(VAO);
@@ -26,7 +29,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    material.unbind(); // Unbind textures to prevent OpenGL state retention
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
 

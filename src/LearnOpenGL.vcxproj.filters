@@ -378,16 +378,26 @@
     <CopyFileToFolders Include="..\resources\models\sphere\cliff\roughness.jpg">
       <Filter>resources\models\sphere\cliff</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\ao.png" />
-    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\height.png" />
-    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\metallic.png" />
-    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\normal.png" />
-    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\roughness.png" />
     <CopyFileToFolders Include="..\resources\models\sphere\smooth_sphere_80.mtl">
       <Filter>resources\models\sphere</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\sphere\smooth_sphere_80.obj">
       <Filter>resources\models\sphere</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\ao.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\height.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\metallic.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\normal.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\roughness.png">
+      <Filter>resources\textures\pbr\red_scifi_metal</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

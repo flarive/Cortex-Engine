@@ -168,7 +168,7 @@
     <ClCompile Include="core\src\lights\light.cpp" />
     <ClCompile Include="core\src\lights\point_light.cpp" />
     <ClCompile Include="core\src\lights\spot_light.cpp" />
-    <ClCompile Include="core\src\materials\material2.cpp" />
+    <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\mesh.cpp" />
     <ClCompile Include="core\src\model.cpp" />
     <ClCompile Include="core\src\primitives\billboard.cpp" />
@@ -200,7 +200,7 @@
     <ClInclude Include="core\include\lights\light.h" />
     <ClInclude Include="core\include\lights\point_light.h" />
     <ClInclude Include="core\include\lights\spot_light.h" />
-    <ClInclude Include="core\include\materials\material2.h" />
+    <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\mesh.h" />
     <ClInclude Include="core\include\misc\noncopyable.h" />
     <ClInclude Include="core\include\model.h" />

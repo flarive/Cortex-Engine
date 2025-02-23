@@ -10,7 +10,7 @@
 
 namespace engine
 {
-    class Material2
+    class Material : public NonCopyable
     {
     protected:
         
@@ -31,11 +31,11 @@ namespace engine
     public:
         std::vector<Texture> textures{}; // Store textures
 
-        Material2(const std::vector<Texture>& textures);
+        Material(const std::vector<Texture>& textures);
 
-        Material2(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 0.0f);
+        Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 0.0f);
 
-        Material2(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
+        Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
 
 
         void loadTextures();

@@ -4,7 +4,7 @@
 #include "../common_defines.h"
 #include "../shader.h"
 #include "../uvmapping.h"
-#include "../materials/material2.h"
+#include "../materials/material.h"
 
 namespace engine
 {
@@ -16,18 +16,7 @@ namespace engine
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};
 
-        std::shared_ptr<engine::Material2> m_material;
-
-        //unsigned int m_diffuseMap{};
-        //unsigned int m_specularMap{};
-        //unsigned int m_normalMap{};
-        //unsigned int m_metallicMap{};
-        //unsigned int m_roughnessMap{};
-        //unsigned int m_aoMap{};
-        //unsigned int m_heightMap{};
-        //unsigned int m_irradianceMap{};
-        //unsigned int m_prefilterMap{};
-        //unsigned int m_BRDF_LUT{};
+        std::shared_ptr<Material> m_material{};
 
         Color m_ambientColor{};
 
@@ -39,8 +28,8 @@ namespace engine
         Primitive() = default;
         virtual ~Primitive() = default;
 
-        virtual void setup(const std::shared_ptr<Material2>& material) = 0;
-        virtual void setup(const std::shared_ptr<Material2>& material, const UvMapping& uv) = 0;
+        virtual void setup(const std::shared_ptr<Material>& material) = 0;
+        virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
         virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
 

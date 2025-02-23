@@ -147,7 +147,7 @@
     <ClCompile Include="core\src\primitives\sphere.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\materials\material2.cpp">
+    <ClCompile Include="core\src\materials\material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,7 +245,7 @@
     <ClInclude Include="core\include\misc\noncopyable.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\materials\material2.h">
+    <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
   </ItemGroup>

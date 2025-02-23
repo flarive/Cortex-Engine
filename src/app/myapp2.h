@@ -57,13 +57,13 @@ public:
 
         //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
-        ourCube1.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        ourCube1.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/container2_diffuse.png",
             "textures/container2_specular.png"));
 
         //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
-        ourPlane.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 

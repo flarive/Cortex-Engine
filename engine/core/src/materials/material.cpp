@@ -1,25 +1,24 @@
-#include "../../include/materials/material2.h"
+#include "../../include/materials/material.h"
 
 #include <iostream>
 
-engine::Material2::Material2(const std::vector<Texture>& textures)
+engine::Material::Material(const std::vector<Texture>& textures)
     : textures(textures)
 {
 }
 
-
-engine::Material2::Material2(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess)
+engine::Material::Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess)
     : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_shininess(shininess)
 {
 }
 
-engine::Material2::Material2(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
+engine::Material::Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
     : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_metallicTexPath(metallicTexPath), m_roughnessTexPath(roughnessTexPath), m_aoTexPath(aoTexPath), m_heightTexPath(heightTexPath), m_shininess(shininess)
 {
 }
 
 
-void engine::Material2::bind(Shader& shader, bool test) const
+void engine::Material::bind(Shader& shader, bool test) const
 {
     unsigned int textureUnit = 0;
 
@@ -39,19 +38,22 @@ void engine::Material2::bind(Shader& shader, bool test) const
     glActiveTexture(GL_TEXTURE0); // Reset active texture
 }
 
-void engine::Material2::unbind() const
+void engine::Material::unbind() const
 {
     for (size_t i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
     glActiveTexture(GL_TEXTURE0); // Reset to default
 }
 
 
-void engine::Material2::loadTextures()
+void engine::Material::loadTextures()
 {
+    textures.clear();  // Prevent duplicates
+    
     unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(getDiffuseTexPath(), true, false) : 0;
     textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
 
@@ -74,7 +76,7 @@ void engine::Material2::loadTextures()
     textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
 }
 
-void engine::Material2::setCubeMapTexs(const std::vector<std::string>& faces)
+void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)
 {
     m_cubemapTextures = faces;
 }

@@ -68,7 +68,7 @@ public:
         camera.Fps = false;
         camera.Zoom = 75.0f;
 
-        ourPlane.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
@@ -80,7 +80,7 @@ public:
         redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
 
 
-        rustedIronSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        rustedIronSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/rusted_iron/albedo.png",
             "",
             "textures/pbr/rusted_iron/normal.png",
@@ -88,7 +88,7 @@ public:
             "textures/pbr/rusted_iron/roughness.png",
             "textures/pbr/rusted_iron/ao.png"));
 
-        goldSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        goldSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/gold/albedo.png",
             "",
             "textures/pbr/gold/normal.png",
@@ -96,7 +96,7 @@ public:
             "textures/pbr/gold/roughness.png",
             "textures/pbr/gold/ao.png"));
 
-        grassSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        grassSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/grass/albedo.png",
             "",
             "textures/pbr/grass/normal.png",
@@ -104,7 +104,7 @@ public:
             "textures/pbr/grass/roughness.png",
             "textures/pbr/grass/ao.png"));
 
-        plasticSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        plasticSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/plastic/albedo.png",
             "",
             "textures/pbr/plastic/normal.png",
@@ -113,7 +113,7 @@ public:
             "textures/pbr/plastic/ao.png", "", 1.0f));
 
 
-        wallSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        wallSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/wall/albedo.png",
             "",
             "textures/pbr/wall/normal.png",
@@ -121,7 +121,7 @@ public:
             "textures/pbr/wall/roughness.png",
             "textures/pbr/wall/ao.png"), engine::UvMapping(1.0f));
 
-        bronzeSphere.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+        bronzeSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/bronze/albedo.png",
             "",
             "textures/pbr/bronze/normal.png",

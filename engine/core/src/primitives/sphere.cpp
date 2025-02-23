@@ -5,7 +5,7 @@
 
 
 
-void engine::Sphere::setup(const std::shared_ptr<engine::Material2>& material)
+void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material; // Store material reference
 
@@ -13,7 +13,7 @@ void engine::Sphere::setup(const std::shared_ptr<engine::Material2>& material)
     setup(material, uv);
 }
 
-void engine::Sphere::setup(const std::shared_ptr<engine::Material2>& material, const UvMapping& uv)
+void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
     m_material = material;
     m_uvScale = uv.getUvScale();
@@ -148,20 +148,11 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
-    // Render Sphere
+    // Render sphere
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+
     glBindVertexArray(0);
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
-
-//void engine::Sphere::clean()
-//{
-//    glDeleteVertexArrays(1, &m_VAO);
-//    glDeleteBuffers(1, &m_VBO);
-//
-//    m_VAO = 0;
-//    m_VBO = 0;
-//    m_EBO = 0;
-//}

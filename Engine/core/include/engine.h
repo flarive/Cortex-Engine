@@ -12,7 +12,7 @@
 
 #include "vertex.h"
 #include "shader.h"
-#include "materials/material2.h"
+#include "materials/material.h"
 #include "texture.h"
 #include "model.h"
 

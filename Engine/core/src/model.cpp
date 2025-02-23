@@ -148,14 +148,14 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness");
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, "texture_ao");
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, "texture_ao"); // not working !!!!!!
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
     std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // Create Material
-    engine::Material2 meshMaterial(textures);
+    engine::Material2 meshMaterial{ textures };
 
     // return a mesh object created from the extracted mesh data
     //return Mesh{ vertices, indices, textures };

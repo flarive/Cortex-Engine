@@ -2,36 +2,55 @@
 
 #include "../../include/texture.h"
 #include "../../include/uvmapping.h"
-#include "../../include/materials/material.h"
 
-void engine::Billboard::setup(const glm::uvec3& color)
-{
-    setup();
-    
-    m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
-}
 
-void engine::Billboard::setup(const engine::Material& material)
+//void engine::Billboard::setup(const glm::uvec3& color)
+//{
+//    setup();
+//    
+//    m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
+//}
+//
+//void engine::Billboard::setup(const engine::Material& material)
+//{
+//    const UvMapping uv{};
+//    setup(material, uv);
+//}
+//
+//void engine::Billboard::setup(const engine::Material& material, const UvMapping& uv)
+//{
+//    setup();
+//
+//    m_uvScale = uv.getUvScale();
+//
+//    // load textures
+//    if (material.hasDiffuseMap())
+//        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true, false);
+//
+//    if (material.hasSpecularMap())
+//        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true, false);
+//
+//    if (material.hasNormalMap())
+//        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true, false);
+//}
+
+void engine::Billboard::setup(const std::shared_ptr<engine::Material2>& material)
 {
+    m_material = material; // Store material reference
+
     const UvMapping uv{};
     setup(material, uv);
 }
 
-void engine::Billboard::setup(const engine::Material& material, const UvMapping& uv)
+void engine::Billboard::setup(const std::shared_ptr<engine::Material2>& material, const UvMapping& uv)
 {
-    setup();
-
+    m_material = material;
     m_uvScale = uv.getUvScale();
 
-    // load textures
-    if (material.hasDiffuseMap())
-        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true, false);
+    setup(); // Geometry setup
 
-    if (material.hasSpecularMap())
-        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true, false);
-
-    if (material.hasNormalMap())
-        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true, false);
+    if (material)
+        material->loadTextures(); // Let material handle texture loading
 }
 
 void engine::Billboard::setup()
@@ -42,7 +61,7 @@ void engine::Billboard::setup()
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(m_VAO);
 
-    float* quadVertices = GetScaledQuadVertices(1.0f);
+    float* quadVertices = engine::Primitive::GetScaledQuadVertices(1.0f);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), quadVertices, GL_STATIC_DRAW);
@@ -70,50 +89,75 @@ void engine::Billboard::setup()
 void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
 {
     // bind diffuse (albedo) map
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, m_diffuseMap);
 
-    // bind specular map
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, m_specularMap);
+    //// bind specular map
+    //glActiveTexture(GL_TEXTURE1);
+    //glBindTexture(GL_TEXTURE_2D, m_specularMap);
 
-    // bind normal map
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, m_normalMap);
+    //// bind normal map
+    //glActiveTexture(GL_TEXTURE2);
+    //glBindTexture(GL_TEXTURE_2D, m_normalMap);
 
-    // bind metallic map
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, m_metallicMap);
+    //// bind metallic map
+    //glActiveTexture(GL_TEXTURE3);
+    //glBindTexture(GL_TEXTURE_2D, m_metallicMap);
 
-    // bind roughness map
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, m_roughnessMap);
+    //// bind roughness map
+    //glActiveTexture(GL_TEXTURE4);
+    //glBindTexture(GL_TEXTURE_2D, m_roughnessMap);
 
-    // bind ambient occlusion map
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, m_aoMap);
+    //// bind ambient occlusion map
+    //glActiveTexture(GL_TEXTURE5);
+    //glBindTexture(GL_TEXTURE_2D, m_aoMap);
 
-    // bind height map
-    glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_2D, m_heightMap);
+    //// bind height map
+    //glActiveTexture(GL_TEXTURE6);
+    //glBindTexture(GL_TEXTURE_2D, m_heightMap);
+
+    //shader.use();
+    //shader.setVec3("material.ambient_color", 0.0f, 0.0f, 0.0f);
+    ////shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+    //shader.setInt("material.texture_diffuse1", 0); // texture 0
+    //shader.setInt("material.texture_specular1", 1); // texture 1
+    //shader.setInt("material.texture_normal1", 2); // texture 2
+    ////shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+    //shader.setBool("material.has_texture_normal_map", m_normalMap != 0);
+    //shader.setFloat("material.shininess", 32.0f);
+    //shader.setFloat("uvScale", 1.0f);
+
+
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    //// render the billboard
+    //glBindVertexArray(m_VAO);
+
+    //// calculate the model matrix for each object and pass it to shader before drawing
+    //glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    //model = glm::translate(model, position);
+    //if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+    //model = glm::scale(model, size);
+    //shader.setMat4("model", model);
+
+    //glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    //glBindVertexArray(0);
 
     shader.use();
-    shader.setVec3("material.ambient_color", 0.0f, 0.0f, 0.0f);
-    //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-    shader.setInt("material.texture_diffuse1", 0); // texture 0
-    shader.setInt("material.texture_specular1", 1); // texture 1
-    shader.setInt("material.texture_normal1", 2); // texture 2
-    //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-    shader.setBool("material.has_texture_normal_map", m_normalMap != 0);
-    shader.setFloat("material.shininess", 32.0f);
-    shader.setFloat("uvScale", 1.0f);
 
+    if (m_material)
+    {
+        m_material->bind(shader, false);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setFloat("uvScale", m_uvScale);
+    }
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-
-    // render the billboard
     glBindVertexArray(m_VAO);
 
     // calculate the model matrix for each object and pass it to shader before drawing
@@ -123,7 +167,21 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     model = glm::scale(model, size);
     shader.setMat4("model", model);
 
+    // Render billboard
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glBindVertexArray(0);
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+}
+
+void engine::Billboard::clean()
+{
+    glDeleteVertexArrays(1, &m_VAO);
+    glDeleteBuffers(1, &m_VBO);
+
+    m_VAO = 0;
+    m_VBO = 0;
+    m_EBO = 0;
 }

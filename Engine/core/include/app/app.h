@@ -1130,11 +1130,10 @@ namespace engine
 
             // update user stuffs
             update(blinnPhongShader);
-            //update(pbrShader);
 
             glActiveTexture(GL_TEXTURE10);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-            blinnPhongShader.setInt("material.texture_shadowMap", 10); // texture 6
+            blinnPhongShader.setInt("material.texture_shadowMap", 10);
 
             // 3. render Depth map to quad
             // ---------------------------

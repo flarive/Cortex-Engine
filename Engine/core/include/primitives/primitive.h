@@ -4,7 +4,6 @@
 #include "../common_defines.h"
 #include "../shader.h"
 #include "../uvmapping.h"
-#include "../materials/material.h"
 #include "../materials/material2.h"
 
 namespace engine
@@ -17,18 +16,18 @@ namespace engine
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};
 
-        unsigned int m_diffuseMap{0};
-        unsigned int m_specularMap{0};
-        unsigned int m_normalMap{0};
-        unsigned int m_metallicMap{0};
-        unsigned int m_roughnessMap{0};
-        unsigned int m_aoMap{0};
-        unsigned int m_heightMap{0};
-        unsigned int m_irradianceMap{0};
-        unsigned int m_prefilterMap{0};
-        unsigned int m_BRDF_LUT{0()};
-
         std::shared_ptr<engine::Material2> m_material;
+
+        //unsigned int m_diffuseMap{};
+        //unsigned int m_specularMap{};
+        //unsigned int m_normalMap{};
+        //unsigned int m_metallicMap{};
+        //unsigned int m_roughnessMap{};
+        //unsigned int m_aoMap{};
+        //unsigned int m_heightMap{};
+        //unsigned int m_irradianceMap{};
+        //unsigned int m_prefilterMap{};
+        //unsigned int m_BRDF_LUT{};
 
         Color m_ambientColor{};
 
@@ -40,9 +39,8 @@ namespace engine
         Primitive() = default;
         virtual ~Primitive() = default;
 
-        virtual void setup(const glm::uvec3& color) = 0;
-        virtual void setup(const Material& material) = 0;
-        virtual void setup(const Material& material, const UvMapping& uv) = 0;
+        virtual void setup(const std::shared_ptr<Material2>& material) = 0;
+        virtual void setup(const std::shared_ptr<Material2>& material, const UvMapping& uv) = 0;
 
         virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
 
@@ -50,7 +48,7 @@ namespace engine
         virtual void clean();
 
 
-        float* getScaledPlaneVertices(float uvScale)
+        static float* getScaledPlaneVertices(float uvScale)
         {
             float* planeVertices = new float[48] {
                 // positions            // normals         // texcoords
@@ -66,7 +64,7 @@ namespace engine
             return planeVertices; // Caller must delete[] this
         }
 
-        float* GetScaledQuadVertices(float uvScale)
+        static float* GetScaledQuadVertices(float uvScale)
         {
             float* quadVertices = new float[48] {
             // positions            // normals         // texcoords

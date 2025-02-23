@@ -189,6 +189,9 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
 void main()
 {
     vec3 norm;
+    
+//    vec2 aaa = textureSize(material.texture_normal1, 0);
+//    if (aaa.x > 0)
     if (material.has_texture_normal_map)
     {
         // Sample the normal map texture

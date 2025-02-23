@@ -16,6 +16,9 @@ namespace engine
         Color color{};
 
 		Texture() = default;
+        Texture(unsigned int id, const std::string& type, const std::string& path);
+
+
 		~Texture() = default;
 
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);

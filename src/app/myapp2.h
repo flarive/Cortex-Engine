@@ -21,8 +21,8 @@ private:
 
     engine::Model cushionModel{};
 
-    //engine::Cube ourCube1{};
-    //engine::Sphere ourSphere1{};
+    engine::Cube ourCube1{};
+
     engine::Plane ourPlane{};
 
     engine::Text ourText{};
@@ -57,9 +57,15 @@ public:
 
         //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
+        ourCube1.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+            "textures/container2_diffuse.png",
+            "textures/container2_specular.png"));
+
         //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
-        ourPlane.setup(engine::Material(engine::Color(0.1f), "textures/wood_diffuse.png", "textures/wood_specular.png"), engine::UvMapping(2.0f));
+        ourPlane.setup(std::make_shared<engine::Material2>(engine::Color(0.1f),
+            "textures/wood_diffuse.png",
+            "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup(width, height);
     }
@@ -152,7 +158,7 @@ public:
     void clean() override
     {
         // clean up any resources
-        //ourCube1.clean();
+        ourCube1.clean();
         //ourSphere1.clean();
         ourPlane.clean();
     }
@@ -187,7 +193,7 @@ private:
 
 
         // render test cube
-        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         //ourSphere1.draw(blinnPhongShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
 
         rotation += deltaTime * 10.0f;

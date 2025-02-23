@@ -141,9 +141,6 @@
     <ClCompile Include="core\src\lights\light.cpp">
       <Filter>Fichiers sources\core\lights\base</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\materials\material.cpp">
-      <Filter>Fichiers sources\core\materials</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\uvmapping.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
@@ -238,9 +235,6 @@
     </ClInclude>
     <ClInclude Include="core\include\lights\light.h">
       <Filter>Fichiers d%27en-tête\core\lights\base</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\materials\material.h">
-      <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
     <ClInclude Include="core\include\uvmapping.h">
       <Filter>Fichiers d%27en-tête</Filter>

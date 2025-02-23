@@ -9,6 +9,14 @@
 #define STB_IMAGE_IMPLEMENTATION // for HDR support
 #include "stb_image.h"
 
+
+
+engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
+    : id(id), type(type), path(path)
+{
+
+}
+
 unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
 {
     unsigned int textureID{};

@@ -16,5 +16,5 @@ newmtl default
 	map_Kd cliff\albedo.jpg
 	map_Kn cliff\normal.jpg
 	#map_Pm cliff\metallic.jpg
-	#map_Pr cliff\roughness.jpg
-	#bump cliff\height.jpg
+	map_Pr cliff\roughness.jpg
+	bump cliff\height.jpg

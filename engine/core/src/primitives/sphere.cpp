@@ -1,27 +1,27 @@
 #include "../../include/primitives/sphere.h"
 
 #include "../../include/texture.h"
-#include "../../include/uvmapping.h"
-#include "../../include/materials/material.h"
 
-void engine::Sphere::setup(const glm::uvec3& color)
+
+
+
+void engine::Sphere::setup(const std::shared_ptr<engine::Material2>& material)
 {
-    m_diffuseMap = engine::Texture::createSolidColorTexture(color.r, color.g, color.b, 255);
-    setup();
+    m_material = material; // Store material reference
+
+    const UvMapping uv{};
+    setup(material, uv);
 }
 
-void engine::Sphere::setup(const engine::Material& material)
+void engine::Sphere::setup(const std::shared_ptr<engine::Material2>& material, const UvMapping& uv)
 {
-    setup(material, UvMapping{});
-}
-
-void engine::Sphere::setup(const engine::Material& material, const UvMapping& uv)
-{
+    m_material = material;
     m_uvScale = uv.getUvScale();
-    m_ambientColor = material.getAmbientColor();
 
-    loadTextures(material);
-    setup();
+    setup(); // Geometry setup
+
+    if (material)
+        material->loadTextures(); // Let material handle texture loading
 }
 
 void engine::Sphere::setup()
@@ -129,72 +129,39 @@ void engine::Sphere::setup()
     glBindVertexArray(0);
 }
 
-void engine::Sphere::loadTextures(const engine::Material& material)
-{
-    if (material.hasDiffuseMap())
-        m_diffuseMap = engine::Texture::loadTexture(material.getDiffuseTexPath(), true, false);
-    if (material.hasSpecularMap())
-        m_specularMap = engine::Texture::loadTexture(material.getSpecularTexPath(), true, false);
-    if (material.hasNormalMap())
-        m_normalMap = engine::Texture::loadTexture(material.getNormalTexPath(), true, false);
-    if (material.hasMetallicMap())
-        m_metallicMap = engine::Texture::loadTexture(material.getMetallicTexPath(), true, false);
-    if (material.hasRoughnessMap())
-        m_roughnessMap = engine::Texture::loadTexture(material.getRoughnessTexPath(), true, false);
-    if (material.hasAoMap())
-        m_aoMap = engine::Texture::loadTexture(material.getAoTexPath(), true, false);
-    if (material.hasHeightMap())
-        m_heightMap = engine::Texture::loadTexture(material.getHeightTexPath(), true, false);
-}
-
-
-// draws the model, and thus all its meshes
 void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
 {
     shader.use();
 
-    std::vector<unsigned int> textures = {
-    m_diffuseMap, m_specularMap, m_normalMap,
-    m_metallicMap, m_roughnessMap, m_aoMap, m_heightMap
-    };
-
-    for (unsigned int i = 0; i < textures.size(); ++i)
+    if (m_material)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
-    }
-    
-
-    if (shader.name == "pbr")
-    {
-        
-    }
-    else if (shader.name == "blinnphong") // blinn phong shader
-    {
-        shader.use();
-        shader.setVec3("material.ambient_color", 0.01f, 0.01f, 0.01f);
-        //shader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
-        shader.setInt("material.texture_diffuse1", 0); // texture 0
-        shader.setInt("material.texture_specular1", 1); // texture 1
-        shader.setInt("material.texture_normal1", 2); // texture 2
-        //shader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-        shader.setBool("material.has_texture_normal_map", m_normalMap != 0);
+        m_material->bind(shader, false);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("uvScale", m_uvScale);
     }
-    
-    
 
-    // calculate the model matrix for each object and pass it to shader before drawing
-    glm::mat4 model{ glm::mat4(1.0f) }; // make sure to initialize matrix to identity matrix first
+    // Model Matrix
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
-    // render the sphere
+    // Render Sphere
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-
     glBindVertexArray(0);
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
+
+//void engine::Sphere::clean()
+//{
+//    glDeleteVertexArrays(1, &m_VAO);
+//    glDeleteBuffers(1, &m_VBO);
+//
+//    m_VAO = 0;
+//    m_VBO = 0;
+//    m_EBO = 0;
+//}

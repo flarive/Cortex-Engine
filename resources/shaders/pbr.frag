@@ -2,13 +2,22 @@
 
 out vec4 FragColor;
 
-in vec2 TexCoords;
-in vec3 WorldPos;
-in vec3 Normal;
-in vec3 Tangent;
-in vec3 Bitangent;
-in vec4 FragPosLightSpace;
+//in vec2 TexCoords;
+//in vec3 WorldPos;
+//in vec3 Normal;
+//in vec3 Tangent;
+//in vec3 Bitangent;
+//in vec4 FragPosLightSpace;
 
+// coming from vertex shader
+in VS_OUT {
+    vec2 TexCoords;
+    vec3 WorldPos;
+    vec3 Normal;
+    vec3 Tangent;
+    vec3 Bitangent;
+    vec4 FragPosLightSpace;
+} fs_in;
 
 // material parameters
 struct Material {
@@ -34,7 +43,48 @@ struct Material {
     bool has_texture_roughness_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
-}; 
+};
+
+struct DirLight {
+    bool use;
+    
+    vec3 direction;
+	
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct PointLight {
+    bool use;
+
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;
+	
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+struct SpotLight {
+    bool use;
+    
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;       
+};
 
 
 uniform Material material;
@@ -54,14 +104,14 @@ const float PI = 3.14159265359;
 // technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(material.texture_normal1, TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(material.texture_normal1, fs_in.TexCoords).xyz * 2.0 - 1.0;
 
-    vec3 Q1  = dFdx(WorldPos);
-    vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec3 Q1  = dFdx(fs_in.WorldPos);
+    vec3 Q2  = dFdy(fs_in.WorldPos);
+    vec2 st1 = dFdx(fs_in.TexCoords);
+    vec2 st2 = dFdy(fs_in.TexCoords);
 
-    vec3 N   = normalize(Normal);
+    vec3 N   = normalize(fs_in.Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
@@ -150,7 +200,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float currentDepth = projCoords.z;
 
     // Bias to prevent shadow acne
-    float bias = max(0.05 * (1.0 - dot(Normal, vec3(0,0,-1))), 0.005); 
+    float bias = max(0.05 * (1.0 - dot(fs_in.Normal, vec3(0,0,-1))), 0.005); 
 
     // Check for shadow
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
@@ -163,7 +213,7 @@ void main()
 {		
     // input lighting data
     vec3 N = getNormalFromMap();
-    vec3 V = normalize(camPos - WorldPos); // View direction
+    vec3 V = normalize(camPos - fs_in.WorldPos); // View direction
     vec3 R = reflect(-V, N); 
 
     // Modify TexCoords using Parallax Mapping
@@ -171,10 +221,10 @@ void main()
     //modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
     // material properties
-    vec3 albedo = pow(texture(material.texture_diffuse1, TexCoords).rgb, vec3(2.2));
-    float metallic = texture(material.texture_metallic1, TexCoords).r;
-    float roughness = texture(material.texture_roughness1, TexCoords).r;
-    float ao = texture(material.texture_ao1, TexCoords).r;
+    vec3 albedo = pow(texture(material.texture_diffuse1, fs_in.TexCoords).rgb, vec3(2.2));
+    float metallic = texture(material.texture_metallic1, fs_in.TexCoords).r;
+    float roughness = texture(material.texture_roughness1, fs_in.TexCoords).r;
+    float ao = texture(material.texture_ao1, fs_in.TexCoords).r;
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -186,13 +236,13 @@ void main()
     for(int i = 0; i < 4; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(lightPositions[i] - WorldPos);
+        vec3 L = normalize(lightPositions[i] - fs_in.WorldPos);
         vec3 H = normalize(V + L);
-        float distance = length(lightPositions[i] - WorldPos);
+        float distance = length(lightPositions[i] - fs_in.WorldPos);
         float attenuation = 1.0 / (distance * distance);
         vec3 radiance = lightColors[i] * attenuation;
 
-        float shadow = ShadowCalculation(FragPosLightSpace); // Compute shadow factor
+        float shadow = ShadowCalculation(fs_in.FragPosLightSpace); // Compute shadow factor
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);   
@@ -218,9 +268,9 @@ void main()
         float NdotL = max(dot(N, L), 0.0);        
 
         // add to outgoing radiance Lo
-        //Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-        Lo += (1.0 - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;  
-    }   
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        //Lo += (1.0 - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;  
+    }
     
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);

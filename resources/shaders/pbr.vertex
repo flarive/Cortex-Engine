@@ -6,13 +6,21 @@ layout (location = 2) in vec2 aTexCoords; // the uv variable has attribute posit
 layout (location = 3) in vec3 aTangents; // the tangent variable has attribute position 3
 layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
 
+out VS_OUT {
+    vec2 TexCoords;
+    vec3 WorldPos;
+    vec3 Normal;
+    vec3 Tangent;
+    vec3 Bitangent;
+    vec4 FragPosLightSpace;
+} vs_out;
 
-out vec2 TexCoords;
-out vec3 WorldPos;
-out vec3 Normal;
-out vec3 Tangent;
-out vec3 Bitangent;
-out vec4 FragPosLightSpace;
+//out vec2 TexCoords;
+//out vec3 WorldPos;
+//out vec3 Normal;
+//out vec3 Tangent;
+//out vec3 Bitangent;
+//out vec4 FragPosLightSpace;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -22,12 +30,12 @@ uniform mat4 lightSpaceMatrix;
 
 void main()
 {
-    TexCoords = aTexCoords;
-    WorldPos = vec3(model * vec4(aPos, 1.0));
-    Normal = normalMatrix * aNormal;
-    Tangent = aTangents;
-    Bitangent = aBitangents;
-    FragPosLightSpace = lightSpaceMatrix * vec4(WorldPos, 1.0);
+    vs_out.TexCoords = aTexCoords;
+    vs_out.WorldPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.Normal = normalMatrix * aNormal;
+    vs_out.Tangent = aTangents;
+    vs_out.Bitangent = aBitangents;
+    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.WorldPos, 1.0);
 
-    gl_Position =  projection * view * vec4(WorldPos, 1.0);
+    gl_Position =  projection * view * vec4(vs_out.WorldPos, 1.0);
 }

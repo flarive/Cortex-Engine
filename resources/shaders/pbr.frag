@@ -129,7 +129,7 @@ uniform vec3 viewPos;
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
 
 
 // ----------------------------------------------------------------------------
@@ -257,7 +257,7 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.WorldPos))), 0.0001);
 
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
-    float diskRadius = 2.0 * texelSize.x; // Tweak diskRadius to control softness
+    float diskRadius = 20.0 * texelSize.x; // Tweak diskRadius to control softness
 
     // Combine Poisson disk with 3x3 PCF sampling
     for (int i = 0; i < 16; ++i)
@@ -346,7 +346,7 @@ void main()
     for (int i = 0; i < spotLights.length(); i++)
     {
         if (spotLights[i].use)
-            Lo += calculateSpotLight(spotLights[i], N, V, albedo, metallic, roughness);
+            Lo += CalcSpotLight(spotLights[i], N, V, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < pointLights.length(); i++)
@@ -393,12 +393,12 @@ void main()
     FragColor = vec4(color , 1.0);
 
     // debug shadows
-    // float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, spotLight[0].position);
-    // FragColor = vec4(vec3(shadow), 1.0); // Debugging shadow output
+//    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, spotLights[0].position);
+//    FragColor = vec4(vec3(shadow), 1.0); // Debugging shadow output
 }
 
 // Calculates the color when using a spot light.
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
     vec3 L = normalize(light.position - fs_in.WorldPos);
     float theta = dot(L, normalize(-light.direction));

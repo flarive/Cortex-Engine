@@ -53,7 +53,7 @@ public:
         camera.MovementSpeed = 10.0f;
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, -5.0f, 2.0f);
+        camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
         camera.Fps = false;
         camera.Zoom = 75.0f;
 
@@ -68,6 +68,10 @@ public:
             "textures/pbr/planks/metallic.jpg",
             "textures/pbr/planks/roughness.jpg",
             ""), engine::UvMapping(1.0f));
+
+        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //    "textures/wood_diffuse.png",
+        //    "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup(width, height);
     }
@@ -194,7 +198,7 @@ private:
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

@@ -161,7 +161,7 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
 
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
-    float diskRadius = 6.0 * texelSize.x; // Tweak diskRadius to control softness
+    float diskRadius = 1.0 * texelSize.x; // Tweak diskRadius to control softness
 
     // Combine Poisson disk with 3x3 PCF sampling
     for (int i = 0; i < 16; ++i)

@@ -601,7 +601,7 @@ namespace engine
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
             //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-            renderCube();
+            //renderCube();
 
             // render BRDF map to screen
             //brdfShader.use();
@@ -1098,7 +1098,7 @@ namespace engine
             glm::mat4 lightSpaceMatrix;
             float near_plane = 0.1f;  // Previously 1.0f
             float far_plane = 100.0f;  // Previously 7.5f
-            lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+            lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
             lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
             lightSpaceMatrix = lightProjection * lightView;
             // render scene from light's point of view

@@ -39,7 +39,7 @@ void engine::DirectionalLight::draw(const Shader& shader, const glm::mat4& proje
 
     m_lightPosition = position;
 
-    std::string base = std::format("dirLight[{}]", m_index);
+    std::string base = std::format("dirLights[{}]", m_index);
 
     // directional light
     shader.setBool(std::format("{}.use", base), true);

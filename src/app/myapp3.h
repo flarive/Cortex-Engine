@@ -45,7 +45,7 @@ private:
         glm::vec3(300.0f, 300.0f, 300.0f)
     };
 
-    unsigned int hdrTexture{};
+    //unsigned int hdrTexture{};
 
     float rotation{};
 
@@ -64,19 +64,20 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
+        setLightPosition(glm::vec3(0.0f, 5.0f, 10.0f));
+        setLightTarget(glm::vec3(0.0f, 0.0f, 10.0f));
 
-        //myPointLight.setup();
-        //myDirectionalLight.setup();
+        myPointLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
+        myDirectionalLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(20.f);
+        mySpotLight.setOuterCutOff(24.f);
 
         // override default camera properties
         camera.Position = glm::vec3(0.0f, -5.0f, 2.0f);
         camera.Fps = false;
         camera.Zoom = 75.0f;
+        camera.MovementSpeed = 10.0f;
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/wood_diffuse.png",
@@ -263,9 +264,9 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // setup lights
-        //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
+        myPointLight.draw(shader, projection, view, 20.0f, getLightPosition());
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        //mySpotLight.draw(shader, projection, view, 2.0f, getLightPosition(), getLightTarget());
+        //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 
 
 
@@ -273,32 +274,32 @@ private:
         //render light source (simply re-render sphere at light positions)
         //this looks a bit off as we use the same shader, but it'll make their positions obvious and 
         //keeps the codeprint small.
-        glm::mat4 model = glm::mat4(1.0f);
-        for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-        {
-            glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 10.0, 0.0);
-            newPos = lightPositions[i];
+        //glm::mat4 model = glm::mat4(1.0f);
+        //for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+        //{
+        //    glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 10.0, 0.0);
+        //    newPos = lightPositions[i];
 
-            shader.use();
-            shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-            shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+        //    shader.use();
+        //    shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
+        //    shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
 
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, newPos);
-            model = glm::scale(model, glm::vec3(0.5f));
-            shader.setMat4("model", model);
-            shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-
-
-            // also draw the lamp object(s)
-            lightCubeShader.use();
-            lightCubeShader.setMat4("projection", projection);
-            lightCubeShader.setMat4("view", view);
-            lightCubeShader.setMat4("model", model);
+        //    model = glm::mat4(1.0f);
+        //    model = glm::translate(model, newPos);
+        //    model = glm::scale(model, glm::vec3(0.5f));
+        //    shader.setMat4("model", model);
+        //    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
 
-            App::renderSphere();
-        }
+        //    // also draw the lamp object(s)
+        //    //lightCubeShader.use();
+        //    //lightCubeShader.setMat4("projection", projection);
+        //    //lightCubeShader.setMat4("view", view);
+        //    //lightCubeShader.setMat4("model", model);
+
+
+        //    //App::renderSphere();
+        //}
 
         
     }

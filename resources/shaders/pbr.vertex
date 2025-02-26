@@ -15,13 +15,6 @@ out VS_OUT {
     vec4 FragPosLightSpace;
 } vs_out;
 
-//out vec2 TexCoords;
-//out vec3 WorldPos;
-//out vec3 Normal;
-//out vec3 Tangent;
-//out vec3 Bitangent;
-//out vec4 FragPosLightSpace;
-
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;

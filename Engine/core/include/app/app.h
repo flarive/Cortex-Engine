@@ -1097,7 +1097,7 @@ namespace engine
             glm::mat4 lightProjection, lightView;
             glm::mat4 lightSpaceMatrix;
             float near_plane = 0.1f;  // Previously 1.0f
-            float far_plane = 20.0f;  // Previously 7.5f
+            float far_plane = 100.0f;  // Previously 7.5f
             lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
             lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
             lightSpaceMatrix = lightProjection * lightView;
@@ -1142,6 +1142,9 @@ namespace engine
             debugDepthQuad.setFloat("far_plane", far_plane);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+
+            // test depth map (also comment computeColorFramebuffer);
+            //renderQuad();
         }
 
         void initColorFramebuffer()

@@ -2,13 +2,6 @@
 
 out vec4 FragColor;
 
-//in vec2 TexCoords;
-//in vec3 WorldPos;
-//in vec3 Normal;
-//in vec3 Tangent;
-//in vec3 Bitangent;
-//in vec4 FragPosLightSpace;
-
 // coming from vertex shader
 in VS_OUT {
     vec2 TexCoords;
@@ -17,6 +10,7 @@ in VS_OUT {
     vec3 Tangent;
     vec3 Bitangent;
     vec4 FragPosLightSpace;
+
 } fs_in;
 
 // material parameters
@@ -90,13 +84,54 @@ struct SpotLight {
 uniform Material material;
 
 // lights
-uniform vec3 lightPositions[4];
-uniform vec3 lightColors[4];
+//uniform vec3 lightPositions[4];
+//uniform vec3 lightColors[4];
+
+#define NBR_MAX_LIGHTS 1
+
+uniform PointLight pointLights[NBR_MAX_LIGHTS];
+uniform DirLight dirLights[NBR_MAX_LIGHTS];
+uniform SpotLight spotLights[NBR_MAX_LIGHTS];
+
+
 
 uniform vec3 camPos;
 uniform mat4 lightSpaceMatrix;
 
 const float PI = 3.14159265359;
+
+
+
+const vec2 poissonDisk[16] = vec2[](
+    vec2(-0.94201624, -0.39906216),
+    vec2(0.94558609, -0.76890725),
+    vec2(-0.094184101, -0.92938870),
+    vec2(0.34495938, 0.29387760),
+    vec2(-0.91588581, 0.45771432),
+    vec2(-0.81544232, -0.87912464),
+    vec2(-0.38277543, 0.27676845),
+    vec2(0.97484398, 0.75648379),
+    vec2(0.44323325, -0.97511554),
+    vec2(0.53742981, -0.47373420),
+    vec2(-0.26496911, -0.41893023),
+    vec2(0.79197514, 0.19090188),
+    vec2(-0.24188840, 0.99706507),
+    vec2(-0.81409955, 0.91437590),
+    vec2(0.19984126, 0.78641367),
+    vec2(0.14383161, -0.14100790)
+);
+
+
+
+uniform vec3 viewPos;
+
+
+// function prototypes
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+
+
 // ----------------------------------------------------------------------------
 // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
 // Don't worry if you don't get what's going on; you generally want to do normal 
@@ -208,6 +243,43 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     return shadow;
 }
 
+float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
+{
+    if (fragPosLightSpace.w == 0.0) {
+        return 0.0; // Or output some debug color
+    }
+
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float currentDepth = projCoords.z;
+    float shadow = 0.0;
+    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.WorldPos))), 0.0001);
+
+    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    float diskRadius = 2.0 * texelSize.x; // Tweak diskRadius to control softness
+
+    // Combine Poisson disk with 3x3 PCF sampling
+    for (int i = 0; i < 16; ++i)
+    {
+        for (int x = -1; x <= 1; ++x)
+        {
+            for (int y = -1; y <= 1; ++y)
+            {
+                vec2 offset = poissonDisk[i] * diskRadius + vec2(x, y) * texelSize;
+                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+            }
+        }
+    }
+    shadow /= (16.0 * 9.0); // Average over all samples
+
+    if (projCoords.z > 1.0)
+        shadow = 0.0;
+
+    return shadow;
+}
+
 // ----------------------------------------------------------------------------
 void main()
 {		
@@ -233,45 +305,63 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i) 
+    //for(int i = 0; i < 4; ++i)
+    //    for (int i = 0; i < spotLights.length(); i++)
+    //    {
+    //        // calculate per-light radiance
+    //        vec3 L = normalize(spotLights[i].position - fs_in.WorldPos);
+    //        vec3 H = normalize(V + L);
+    //        float distance = length(spotLights[i].position - fs_in.WorldPos);
+    //        float attenuation = 1.0 / (distance * distance);
+    //        vec3 radiance = vec3(300.0, 300.0, 300.0) * attenuation;
+    //    
+    //        // Cook-Torrance BRDF
+    //        float NDF = DistributionGGX(N, H, roughness);   
+    //        float G   = GeometrySmith(N, V, L, roughness);    
+    //        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
+    //            
+    //        vec3 numerator    = NDF * G * F;
+    //        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+    //        vec3 specular = numerator / denominator;
+    //            
+    //        // kS is equal to Fresnel
+    //        vec3 kS = F;
+    //        // for energy conservation, the diffuse and specular light can't
+    //        // be above 1.0 (unless the surface emits light); to preserve this
+    //        // relationship the diffuse component (kD) should equal 1.0 - kS.
+    //        vec3 kD = vec3(1.0) - kS;
+    //        // multiply kD by the inverse metalness such that only non-metals 
+    //        // have diffuse lighting, or a linear blend if partly metal (pure metals
+    //        // have no diffuse light).
+    //        kD *= 1.0 - metallic;	                
+    //                
+    //        // scale light by NdotL
+    //        float NdotL = max(dot(N, L), 0.0);        
+    //    
+    //        // add to outgoing radiance Lo
+    //        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    //    }
+
+
+    for (int i = 0; i < spotLights.length(); i++)
     {
-        // calculate per-light radiance
-        vec3 L = normalize(lightPositions[i] - fs_in.WorldPos);
-        vec3 H = normalize(V + L);
-        float distance = length(lightPositions[i] - fs_in.WorldPos);
-        float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = lightColors[i] * attenuation;
-
-        float shadow = ShadowCalculation(fs_in.FragPosLightSpace); // Compute shadow factor
-
-        // Cook-Torrance BRDF
-        float NDF = DistributionGGX(N, H, roughness);   
-        float G   = GeometrySmith(N, V, L, roughness);    
-        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
-        
-        vec3 numerator    = NDF * G * F;
-        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
-        vec3 specular = numerator / denominator;
-        
-         // kS is equal to Fresnel
-        vec3 kS = F;
-        // for energy conservation, the diffuse and specular light can't
-        // be above 1.0 (unless the surface emits light); to preserve this
-        // relationship the diffuse component (kD) should equal 1.0 - kS.
-        vec3 kD = vec3(1.0) - kS;
-        // multiply kD by the inverse metalness such that only non-metals 
-        // have diffuse lighting, or a linear blend if partly metal (pure metals
-        // have no diffuse light).
-        kD *= 1.0 - metallic;	                
-            
-        // scale light by NdotL
-        float NdotL = max(dot(N, L), 0.0);        
-
-        // add to outgoing radiance Lo
-        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-        //Lo += (1.0 - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;  
+        if (spotLights[i].use)
+            Lo += calculateSpotLight(spotLights[i], N, V, albedo, metallic, roughness);
     }
-    
+
+    for (int i = 0; i < pointLights.length(); i++)
+    {
+        if (pointLights[i].use)
+            Lo += CalcPointLight(pointLights[i], N, fs_in.WorldPos, V, albedo);
+    }
+
+    for (int i = 0; i < dirLights.length(); i++)
+    {
+        if (dirLights[i].use)
+            Lo += CalcDirLight(dirLights[i], N, fs_in.WorldPos, V, vec3(1.0));
+    }
+
+
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     
@@ -289,6 +379,8 @@ void main()
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
     vec3 ambient = (kD * diffuse + specular) * ao;
+
+
     
     vec3 color = ambient + Lo;
 
@@ -299,4 +391,104 @@ void main()
     color = pow(color, vec3(1.0/2.2)); 
 
     FragColor = vec4(color , 1.0);
+
+    // debug shadows
+    // float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, spotLight[0].position);
+    // FragColor = vec4(vec3(shadow), 1.0); // Debugging shadow output
 }
+
+// Calculates the color when using a spot light.
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness)
+{
+    vec3 L = normalize(light.position - fs_in.WorldPos);
+    float theta = dot(L, normalize(-light.direction));
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    
+    if (theta < light.outerCutOff)
+        return vec3(0.0);
+    
+    vec3 H = normalize(viewDir + L);
+    float NdotL = max(dot(normal, L), 0.0);
+    
+    float distance = length(light.position - fs_in.WorldPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    vec3 radiance = light.diffuse * attenuation * intensity;
+
+    // Compute shadow factor
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+
+    // Apply shadow factor to the light intensity
+    radiance *= (1.0 - shadow);  
+    
+    vec3 F0 = mix(vec3(0.04), albedo, metallic);
+    vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+    float NDF = DistributionGGX(normal, H, roughness);
+    float G = GeometrySmith(normal, viewDir, L, roughness);
+    vec3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001;
+    vec3 specular = numerator / denominator;
+    
+    vec3 kS = F;
+    vec3 kD = (1.0 - kS) * (1.0 - metallic);
+
+ 
+    return (kD * albedo / PI + specular) * radiance * NdotL;
+}
+
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+{
+    vec3 L = normalize(light.position - fragPos);
+    vec3 H = normalize(viewDir + L);
+    
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    vec3 radiance = light.diffuse * attenuation;
+
+    // Shadow calculation
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+    radiance *= (1.0 - shadow);
+
+    float NdotL = max(dot(normal, L), 0.0);
+
+    vec3 F0 = mix(vec3(0.04), color, 1.0);  
+    vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+    float NDF = DistributionGGX(normal, H, 1.0);
+    float G = GeometrySmith(normal, viewDir, L, 1.0);
+    vec3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001;
+    vec3 specular = numerator / denominator;
+
+    vec3 kS = F;
+    vec3 kD = (1.0 - kS);
+
+    return (kD * color / PI + specular) * radiance * NdotL;
+}
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+{
+    vec3 L = normalize(-light.direction);
+    vec3 H = normalize(viewDir + L);
+    
+    float NdotL = max(dot(normal, L), 0.0);
+
+    vec3 radiance = light.diffuse;
+
+    // Shadow calculation
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.direction); // ?????
+    radiance *= (1.0 - shadow);  
+
+    vec3 F0 = mix(vec3(0.04), color, 1.0);  
+    vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+    float NDF = DistributionGGX(normal, H, 1.0);
+    float G = GeometrySmith(normal, viewDir, L, 1.0);
+    vec3 numerator = NDF * G * F;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001;
+    vec3 specular = numerator / denominator;
+
+    vec3 kS = F;
+    vec3 kD = (1.0 - kS);
+
+    return (kD * color / PI + specular) * radiance * NdotL;
+}
+

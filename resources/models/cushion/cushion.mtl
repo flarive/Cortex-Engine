@@ -16,3 +16,7 @@ newmtl Material
 	map_Kd cushion_albedo.jpg
 	map_Ks cushion_specular.jpg
 	map_Kn cushion_normal.jpg
+	map_Pm cushion_metalness.jpg
+	map_Pr cushion_smoothness.jpg
+	bump cushion_smoothness.jpg
+

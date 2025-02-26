@@ -85,8 +85,8 @@ uniform Material material;
 #define NBR_MAX_LIGHTS 4
 
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
-uniform DirLight dirLight[NBR_MAX_LIGHTS];
-uniform SpotLight spotLight[NBR_MAX_LIGHTS];
+uniform DirLight dirLights[NBR_MAX_LIGHTS];
+uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
@@ -223,8 +223,8 @@ void main()
     // phase 1: directional lighting
     for (int i = 0; i < NBR_MAX_LIGHTS; i++)
     {
-        if (dirLight[i].use)
-            result += CalcDirLight(dirLight[i], norm, fs_in.FragPos, viewDir, color);
+        if (dirLights[i].use)
+            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir, color);
     }
     
     // phase 2: point lights
@@ -237,8 +237,8 @@ void main()
     // phase 3: spot light
     for (int i = 0; i < NBR_MAX_LIGHTS; i++)
     {
-        if (spotLight[i].use)
-            result += CalcSpotLight(spotLight[i], norm, fs_in.FragPos, viewDir, color);
+        if (spotLights[i].use)
+            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir, color);
     }
 
     // Sample the alpha value from the diffuse texture

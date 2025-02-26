@@ -71,6 +71,9 @@
     <Filter Include="resources\models\sphere\cliff">
       <UniqueIdentifier>{b5e925db-dd51-4a6d-8f0a-5e3931850c87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\planks">
+      <UniqueIdentifier>{f67fa246-ca44-4802-bd13-e3998af1ca59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -399,6 +402,15 @@
     <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\roughness.png">
       <Filter>resources\textures\pbr\red_scifi_metal</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\albedo.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\metallic.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_smoothness.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -410,5 +422,28 @@
     <ClInclude Include="app\myapp3.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="app\myapp4.h">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\pbr\planks\ao.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\planks\displace.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\planks\normal.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\planks\roughness.jpg">
+      <Filter>resources\textures\pbr\planks</Filter>
+    </Image>
+    <Image Include="..\resources\models\cushion\cushion_ambient_occlusion.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </Image>
+    <Image Include="..\resources\models\cushion\cushion_metalness.jpg">
+      <Filter>resources\models\cushion</Filter>
+    </Image>
   </ItemGroup>
 </Project>

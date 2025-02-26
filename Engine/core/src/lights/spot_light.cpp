@@ -38,7 +38,7 @@ void engine::SpotLight::draw(const Shader& shader, const glm::mat4& projection, 
 {
     m_lightPosition = position;
     
-    std::string base = std::format("spotLight[{}]", m_index);
+    std::string base = std::format("spotLights[{}]", m_index);
 
     shader.setBool(std::format("{}.use", base), true);
 

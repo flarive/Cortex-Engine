@@ -203,18 +203,18 @@ namespace engine
 
 
             pbrShader.use();
-            pbrShader.setInt("material.texture_diffuse1", 0);
-            pbrShader.setInt("material.texture_specular1", 1); // not used by PBR
-            pbrShader.setInt("material.texture_normal1", 2);
-            pbrShader.setInt("material.texture_metallic1", 3);
-            pbrShader.setInt("material.texture_roughness1", 4);
-            pbrShader.setInt("material.texture_ao1", 5);
-            pbrShader.setInt("material.texture_height1", 6);
+            pbrShader.setInt("material.texture_diffuse", 0);
+            pbrShader.setInt("material.texture_specular", 1); // not used by PBR
+            pbrShader.setInt("material.texture_normal", 2);
+            pbrShader.setInt("material.texture_metallic", 3);
+            pbrShader.setInt("material.texture_roughness", 4);
+            pbrShader.setInt("material.texture_ao", 5);
+            pbrShader.setInt("material.texture_height", 6);
             
 
-            pbrShader.setInt("material.texture_irradiance1", 7);
-            pbrShader.setInt("material.texture_prefilter1", 8);
-            pbrShader.setInt("material.texture_brdfLUT1", 9);
+            pbrShader.setInt("material.texture_irradiance", 7);
+            pbrShader.setInt("material.texture_prefilter", 8);
+            pbrShader.setInt("material.texture_brdfLUT", 9);
 
             pbrShader.setFloat("material.heightScale", 0.2f);
 
@@ -1099,7 +1099,7 @@ namespace engine
             float near_plane = 0.1f;  // Previously 1.0f
             float far_plane = 100.0f;  // Previously 7.5f
             lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-            lightView = glm::lookAt(m_lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+            lightView = glm::lookAt(m_lightPosition, m_lightTarget, glm::vec3(0.0, 1.0, 0.0));
             lightSpaceMatrix = lightProjection * lightView;
             // render scene from light's point of view
             simpleDepthShader.use();

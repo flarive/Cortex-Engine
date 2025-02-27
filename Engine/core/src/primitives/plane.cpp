@@ -34,25 +34,34 @@ void engine::Plane::setup()
     float* planeVertices = engine::Primitive::getScaledPlaneVertices(m_uvScale);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), planeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 84 * sizeof(float), planeVertices, GL_STATIC_DRAW);
 
-    GLsizei stride = 8;
+    GLsizei stride = 14 * sizeof(float); // 14 floats per vertex, each float is 4 bytes
 
     // position attribute (XYZ)
     // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
     glEnableVertexAttribArray(0); // stride 0 to 2
-
 
     // normal attribute (XYZ)
     // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1); // stride 3 to 5
 
     // texture coord attribute (RGB)
-    // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
+    // layout(location = 2), vec2, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2); // stride 6 to 7
+
+    // Tangent attribute (XYZ)
+    // layout(location = 3), vec3, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+
+    // Bitangent attribute (XYZ)
+    // layout(location = 4), vec3, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11 * sizeof(float)));
+    glEnableVertexAttribArray(4);
 
 
     delete[] planeVertices;
@@ -65,7 +74,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
 
     if (m_material)
     {
-        m_material->bind(shader, false);
+        m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("uvScale", m_uvScale);
     }

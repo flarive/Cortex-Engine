@@ -18,7 +18,7 @@ engine::Material::Material(const engine::Color& ambientColor, const std::string&
 }
 
 
-void engine::Material::bind(Shader& shader, bool test) const
+void engine::Material::bind(Shader& shader) const
 {
     unsigned int textureUnit = 0;
 
@@ -28,8 +28,7 @@ void engine::Material::bind(Shader& shader, bool test) const
         glBindTexture(GL_TEXTURE_2D, texture.id);
 
         // Pass the texture unit to the shader
-        shader.setInt("material." + texture.type + "1", textureUnit);
-
+        shader.setInt("material." + texture.type, textureUnit);
         shader.setBool("material.has_" + texture.type + "_map", texture.id > 0);
 
         textureUnit++;

@@ -40,7 +40,7 @@ namespace engine
 
         void loadTextures();
 
-        void bind(Shader& shader, bool test) const;
+        void bind(Shader& shader) const;
         void unbind() const;
 
         bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }

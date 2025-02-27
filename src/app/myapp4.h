@@ -43,7 +43,7 @@ public:
     void init() override
     {
         setLightPosition(glm::vec3(0.0f, 5.0f, -2.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, -2.0f));
+        setLightTarget(glm::vec3(0.0f, 0.0f, -5.0f));
 
         myPointLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         myDirectionalLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
@@ -55,7 +55,7 @@ public:
         // override default camera properties
         camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
         camera.Fps = false;
-        camera.Zoom = 75.0f;
+        camera.Zoom = 25.0f;
 
 
         cushionModel = engine::Model("models/cushion/cushion.obj");
@@ -67,6 +67,7 @@ public:
             "textures/pbr/planks/normal.jpg",
             "textures/pbr/planks/metallic.jpg",
             "textures/pbr/planks/roughness.jpg",
+            "", // textures/pbr/planks/ao.jpg
             ""), engine::UvMapping(1.0f));
 
         //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
@@ -178,9 +179,9 @@ private:
 
 
         // setup lights
-        myPointLight.draw(shader, projection, view, 20.0f, getLightPosition());
+        //myPointLight.draw(shader, projection, view, 20.0f, getLightPosition());
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
+        mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 
 
 
@@ -192,13 +193,13 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -8.8f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -8.75f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

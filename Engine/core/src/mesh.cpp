@@ -12,7 +12,7 @@ engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsign
 // render the mesh
 void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
 {
-    m_material->bind(shader, true); // Bind material textures
+    m_material->bind(shader); // Bind material textures
 
     // Draw mesh
     glBindVertexArray(VAO);

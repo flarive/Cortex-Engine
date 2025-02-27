@@ -15,20 +15,20 @@ in VS_OUT {
 
 // material parameters
 struct Material {
-    sampler2D texture_diffuse1; // 0
-    sampler2D texture_specular1; // 1
-    sampler2D texture_normal1; // 2
-    sampler2D texture_metallic1; // 3
-    sampler2D texture_roughness1; // 4
-    sampler2D texture_ao1; // 5
-    sampler2D texture_height1; // 6
+    sampler2D texture_diffuse; // 0
+    sampler2D texture_specular; // 1
+    sampler2D texture_normal; // 2
+    sampler2D texture_metallic; // 3
+    sampler2D texture_roughness; // 4
+    sampler2D texture_ao; // 5
+    sampler2D texture_height; // 6
     sampler2D texture_shadowMap; // 10
     float heightScale;
 
     // IBL
-    samplerCube texture_irradiance1;
-    samplerCube texture_prefilter1;
-    sampler2D texture_brdfLUT1;
+    samplerCube texture_irradiance;
+    samplerCube texture_prefilter;
+    sampler2D texture_brdfLUT;
 
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
@@ -139,7 +139,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
 // technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(material.texture_normal1, fs_in.TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(fs_in.WorldPos);
     vec3 Q2  = dFdy(fs_in.WorldPos);
@@ -209,41 +209,18 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
     vec2 deltaTexCoords = viewDir.xy * material.heightScale / numLayers;
     vec2 currentTexCoords = texCoords;
 
-    float heightFromTexture = texture(material.texture_height1, currentTexCoords).r;
+    float heightFromTexture = texture(material.texture_height, currentTexCoords).r;
 
     while (currentLayerDepth < heightFromTexture) {
         currentTexCoords -= deltaTexCoords;
-        heightFromTexture = texture(material.texture_height1, currentTexCoords).r;
+        heightFromTexture = texture(material.texture_height, currentTexCoords).r;
         currentLayerDepth += layerDepth;
     }
 
     return currentTexCoords;
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace)
-{
-    if (fragPosLightSpace.w == 0.0) {
-        return 0.0; // Or output some debug color
-    }
-    
-    // Transform to normalized device coordinates
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords = projCoords * 0.5 + 0.5; // Transform to [0,1] range
-    
-    // Get the closest depth from the shadow map
-    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;  
-    float currentDepth = projCoords.z;
-
-    // Bias to prevent shadow acne
-    float bias = max(0.05 * (1.0 - dot(fs_in.Normal, vec3(0,0,-1))), 0.005); 
-
-    // Check for shadow
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-
-    return shadow;
-}
-
-float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
 {
     if (fragPosLightSpace.w == 0.0) {
         return 0.0; // Or output some debug color
@@ -293,10 +270,11 @@ void main()
     //modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
     // material properties
-    vec3 albedo = pow(texture(material.texture_diffuse1, fs_in.TexCoords).rgb, vec3(2.2));
-    float metallic = texture(material.texture_metallic1, fs_in.TexCoords).r;
-    float roughness = texture(material.texture_roughness1, fs_in.TexCoords).r;
-    float ao = texture(material.texture_ao1, fs_in.TexCoords).r;
+    vec3 albedo = pow(texture(material.texture_diffuse, fs_in.TexCoords).rgb, vec3(2.2));
+    float metallic = texture(material.texture_metallic, fs_in.TexCoords).r;
+    float roughness = texture(material.texture_roughness, fs_in.TexCoords).r;
+    float ao = texture(material.texture_ao, fs_in.TexCoords).r;
+
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -369,13 +347,13 @@ void main()
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
     
-    vec3 irradiance = texture(material.texture_irradiance1, N).rgb;
-    vec3 diffuse      = irradiance * albedo;
+    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
+    vec3 diffuse = irradiance * albedo;
     
     // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
     const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(material.texture_prefilter1, R,  roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT1, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 prefilteredColor = textureLod(material.texture_prefilter, R,  roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
     vec3 ambient = (kD * diffuse + specular) * ao;
@@ -392,6 +370,8 @@ void main()
 
     FragColor = vec4(color , 1.0);
 
+    //FragColor = vec4(vec3(ao), 1.0);
+
     // debug shadows
 //    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, spotLights[0].position);
 //    FragColor = vec4(vec3(shadow), 1.0); // Debugging shadow output
@@ -403,8 +383,10 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 L = normalize(light.position - fs_in.WorldPos);
     float theta = dot(L, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-    
+
+    // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
+    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
+
     if (theta < light.outerCutOff)
         return vec3(0.0);
     
@@ -416,7 +398,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * attenuation * intensity;
 
     // Compute shadow factor
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.position);
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow);  
@@ -432,7 +414,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 kS = F;
     vec3 kD = (1.0 - kS) * (1.0 - metallic);
 
- 
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
@@ -446,7 +427,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     vec3 radiance = light.diffuse * attenuation;
 
     // Shadow calculation
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.position);
     radiance *= (1.0 - shadow);
 
     float NdotL = max(dot(normal, L), 0.0);
@@ -475,7 +456,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     vec3 radiance = light.diffuse;
 
     // Shadow calculation
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.direction); // ?????
+    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);
     radiance *= (1.0 - shadow);  
 
     vec3 F0 = mix(vec3(0.04), color, 1.0);  

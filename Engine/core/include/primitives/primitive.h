@@ -39,19 +39,20 @@ namespace engine
 
         static float* getScaledPlaneVertices(float uvScale)
         {
-            float* planeVertices = new float[48] {
-                // positions            // normals         // texcoords
-                 1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
-                -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale,
-                -1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f,
+            float* planeVertices = new float[84] {
+            // Positions          // Normals       // TexCoords      // Tangents       // Bitangents
+            1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, uvScale, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, -0.01f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, uvScale, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
-                 1.0f, -0.01f,  1.0f,  0.0f, 1.0f, 0.0f, uvScale, 0.0f,
-                 1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f, uvScale, uvScale,
-                -1.0f, -0.01f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, uvScale
+                1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, uvScale, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                1.0f, -0.01f, -1.0f, 0.0f, 1.0f, 0.0f, uvScale, uvScale, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, -0.01f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, uvScale, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
             };
 
             return planeVertices; // Caller must delete[] this
         }
+
 
         static float* GetScaledQuadVertices(float uvScale)
         {

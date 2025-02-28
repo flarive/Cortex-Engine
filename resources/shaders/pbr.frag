@@ -265,6 +265,8 @@ void main()
     vec3 V = normalize(camPos - fs_in.WorldPos); // View direction
     vec3 R = reflect(-V, N); 
 
+
+
     // Modify TexCoords using Parallax Mapping
     //vec2 modifiedTexCoords = parallaxMapping(TexCoords, V);
     //modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
@@ -275,52 +277,20 @@ void main()
     float roughness = texture(material.texture_roughness, fs_in.TexCoords).r;
     float ao = texture(material.texture_ao, fs_in.TexCoords).r;
 
+    //vec3 albedo = vec3(0.5); // A neutral gray color
+    //float metallic = 0.0;    // Non-metallic
+    //float roughness = 0.5;   // Moderate roughness
+    //float ao = 0.0;          // Full ambient occlusion
+
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
+
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    //for(int i = 0; i < 4; ++i)
-    //    for (int i = 0; i < spotLights.length(); i++)
-    //    {
-    //        // calculate per-light radiance
-    //        vec3 L = normalize(spotLights[i].position - fs_in.WorldPos);
-    //        vec3 H = normalize(V + L);
-    //        float distance = length(spotLights[i].position - fs_in.WorldPos);
-    //        float attenuation = 1.0 / (distance * distance);
-    //        vec3 radiance = vec3(300.0, 300.0, 300.0) * attenuation;
-    //    
-    //        // Cook-Torrance BRDF
-    //        float NDF = DistributionGGX(N, H, roughness);   
-    //        float G   = GeometrySmith(N, V, L, roughness);    
-    //        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
-    //            
-    //        vec3 numerator    = NDF * G * F;
-    //        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
-    //        vec3 specular = numerator / denominator;
-    //            
-    //        // kS is equal to Fresnel
-    //        vec3 kS = F;
-    //        // for energy conservation, the diffuse and specular light can't
-    //        // be above 1.0 (unless the surface emits light); to preserve this
-    //        // relationship the diffuse component (kD) should equal 1.0 - kS.
-    //        vec3 kD = vec3(1.0) - kS;
-    //        // multiply kD by the inverse metalness such that only non-metals 
-    //        // have diffuse lighting, or a linear blend if partly metal (pure metals
-    //        // have no diffuse light).
-    //        kD *= 1.0 - metallic;	                
-    //                
-    //        // scale light by NdotL
-    //        float NdotL = max(dot(N, L), 0.0);        
-    //    
-    //        // add to outgoing radiance Lo
-    //        Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    //    }
-
-
     for (int i = 0; i < spotLights.length(); i++)
     {
         if (spotLights[i].use)
@@ -343,8 +313,15 @@ void main()
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     
+    // kS is equal to Fresnel
     vec3 kS = F;
+    // for energy conservation, the diffuse and specular light can't
+    // be above 1.0 (unless the surface emits light); to preserve this
+    // relationship the diffuse component (kD) should equal 1.0 - kS.
     vec3 kD = 1.0 - kS;
+    // multiply kD by the inverse metalness such that only non-metals 
+    // have diffuse lighting, or a linear blend if partly metal (pure metals
+    // have no diffuse light).
     kD *= 1.0 - metallic;	  
     
     vec3 irradiance = texture(material.texture_irradiance, N).rgb;
@@ -356,10 +333,14 @@ void main()
     vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-    vec3 ambient = (kD * diffuse + specular) * ao;
-
-
     
+    // ambient lighting (note that the next IBL tutorial will replace this ambient lighting with environment lighting)
+    vec3 ambient = vec3(0.03) * albedo * ao;
+    
+    // ambient lighting (we now use IBL as the ambient term)
+    //vec3 ambient = (kD * diffuse + specular) * ao;
+
+    // add light and shadow contribution
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
@@ -370,6 +351,7 @@ void main()
 
     FragColor = vec4(color , 1.0);
 
+    // debug ao map
     //FragColor = vec4(vec3(ao), 1.0);
 
     // debug shadows
@@ -404,11 +386,14 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     radiance *= (1.0 - shadow);  
     
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
-    vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
+    // Cook-Torrance BRDF
     float NDF = DistributionGGX(normal, H, roughness);
     float G = GeometrySmith(normal, viewDir, L, roughness);
+    vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
     vec3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
     vec3 specular = numerator / denominator;
     
     vec3 kS = F;

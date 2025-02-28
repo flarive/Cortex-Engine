@@ -203,13 +203,13 @@ namespace engine
 
 
             pbrShader.use();
-            pbrShader.setInt("material.texture_diffuse", 0);
-            pbrShader.setInt("material.texture_specular", 1); // not used by PBR
-            pbrShader.setInt("material.texture_normal", 2);
-            pbrShader.setInt("material.texture_metallic", 3);
-            pbrShader.setInt("material.texture_roughness", 4);
-            pbrShader.setInt("material.texture_ao", 5);
-            pbrShader.setInt("material.texture_height", 6);
+            //pbrShader.setInt("material.texture_diffuse", 0);
+            //pbrShader.setInt("material.texture_specular", 1); // not used by PBR
+            //pbrShader.setInt("material.texture_normal", 2);
+            //pbrShader.setInt("material.texture_metallic", 3);
+            //pbrShader.setInt("material.texture_roughness", 4);
+            //pbrShader.setInt("material.texture_ao", 5);
+            //pbrShader.setInt("material.texture_height", 6);
             
 
             pbrShader.setInt("material.texture_irradiance", 7);

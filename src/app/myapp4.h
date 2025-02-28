@@ -67,8 +67,8 @@ public:
             "textures/pbr/planks/normal.jpg",
             "textures/pbr/planks/metallic.jpg",
             "textures/pbr/planks/roughness.jpg",
-            "", // textures/pbr/planks/ao.jpg
-            ""), engine::UvMapping(1.0f));
+            "textures/pbr/planks/ao.jpg",
+            "textures/pbr/planks/displace.jpg"), engine::UvMapping(1.0f));
 
         //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
         //    "textures/wood_diffuse.png",

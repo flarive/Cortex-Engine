@@ -11,9 +11,11 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight{ 0 };
-    engine::SpotLight mySpotLight{ 0 };
+    std::shared_ptr<engine::PointLight> myPointLight1;
+    std::shared_ptr<engine::PointLight> myPointLight2;
+    std::shared_ptr<engine::PointLight> myPointLight3;
+    std::shared_ptr<engine::PointLight> myPointLight4;
+
 
     engine::Model redSciFiMetalSphere{};
     engine::Sphere rustedIronSphere{};
@@ -32,27 +34,33 @@ private:
 
     // lights
     // ------
-    glm::vec3 lightPositions[4] = {
-        glm::vec3(-10.0f, 10.0f, 10.0f),
-        glm::vec3(10.0f, 10.0f, 10.0f),
-        glm::vec3(-10.0f, -10.0f, 10.0f),
-        glm::vec3(10.0f, -10.0f, 10.0f),
-    };
-    glm::vec3 lightColors[4] = {
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f),
-        glm::vec3(300.0f, 300.0f, 300.0f)
-    };
-
-    //unsigned int hdrTexture{};
+    //glm::vec3 lightPositions[4] = {
+    //    glm::vec3(-10.0f, 10.0f, 10.0f),
+    //    glm::vec3(10.0f, 10.0f, 10.0f),
+    //    glm::vec3(-10.0f, -10.0f, 10.0f),
+    //    glm::vec3(10.0f, -10.0f, 10.0f),
+    //};
+    //glm::vec3 lightColors[4] = {
+    //    glm::vec3(300.0f, 300.0f, 300.0f),
+    //    glm::vec3(300.0f, 300.0f, 300.0f),
+    //    glm::vec3(300.0f, 300.0f, 300.0f),
+    //    glm::vec3(300.0f, 300.0f, 300.0f)
+    //};
 
     float rotation{};
 
 
 public:
     MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{ engine::RenderMethod::PBR })
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
+            {
+                engine::RenderMethod::PBR,
+                false,
+                "textures/hdr/newport_loft.hdr",
+                1.5f,
+                1.0f,
+                1.0f
+            })
     {
         // my application specific state gets initialized here
 
@@ -64,14 +72,26 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(0.0f, 5.0f, 10.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, 10.0f));
+        myPointLight1 = std::make_shared<engine::PointLight>(0);
+        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f));
 
-        myPointLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        myDirectionalLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(24.f);
+        myPointLight2 = std::make_shared<engine::PointLight>(1);
+        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+
+        myPointLight3 = std::make_shared<engine::PointLight>(2);
+        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+
+        myPointLight4 = std::make_shared<engine::PointLight>(3);
+        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
+
+
+
+
+        lights.emplace_back(myPointLight1);
+        lights.emplace_back(myPointLight2);
+        lights.emplace_back(myPointLight3);
+        lights.emplace_back(myPointLight4);
+
 
         // override default camera properties
         camera.Position = glm::vec3(0.0f, -5.0f, 2.0f);
@@ -264,7 +284,7 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // setup lights
-        myPointLight.draw(shader, projection, view, 20.0f, getLightPosition());
+        myPointLight1->draw(shader, projection, view, 20.0f, myPointLight1->getPosition(), myPointLight1->getTarget()); // ????????????
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 

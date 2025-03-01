@@ -12,7 +12,7 @@ newmtl Material
 	Kd 0.8000 0.8000 0.8000
 	Ks 0.0490 0.0490 0.0490
 	Ke 0.0000 0.0000 0.0000
-	map_Ka cushion_albedo.jpg
+	#map_Ka cushion_albedo.jpg
 	map_Kd cushion_albedo.jpg
 	map_Ks cushion_specular.jpg
 	map_Kn cushion_normal.jpg

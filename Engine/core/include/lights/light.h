@@ -18,11 +18,12 @@ namespace engine
         Light(unsigned int index);
         virtual ~Light() = default;
 
-        virtual void setup(const Color& ambient) = 0;
+        virtual void setup(const Color& ambient, const glm::vec3& position, const glm::vec3& target) = 0;
         virtual void draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::vec3(0, 0, 0)) = 0;
         virtual void clean() = 0;
         
         virtual glm::vec3 getPosition() { return m_lightPosition; }
+        virtual glm::vec3 getTarget() { return m_lightTarget; }
 
     protected:
         // render data 
@@ -35,6 +36,7 @@ namespace engine
         Color m_ambientColor{};
 
         glm::vec3 m_lightPosition{};
+        glm::vec3 m_lightTarget{};
 
         const float LIGHT_CUBE_SIZE{ 0.02f };
         const bool DISPLAY_DEBUG_LIGHT_CUBE{ true };

@@ -13,9 +13,9 @@ private:
 
 
 
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight{ 0 };
-    engine::SpotLight mySpotLight{ 0 };
+
+    std::shared_ptr<engine::SpotLight> mySpotLight;
+
 
     engine::Model cushionModel{};
 
@@ -25,10 +25,20 @@ private:
 
     float rotation{};
 
+    
+
 
 public:
     MyApp4(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{engine::RenderMethod::PBR, false, "textures/hdr/newport_loft.hdr", 1.5f, 1.0f, 1.0f})
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
+            {
+                engine::RenderMethod::PBR,
+                false,
+                "textures/hdr/newport_loft.hdr",
+                1.5f,
+                1.0f,
+                1.0f
+            })
     {
         // my application specific state gets initialized here
 
@@ -40,20 +50,19 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(0.0f, 5.0f, -2.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight = std::make_shared<engine::SpotLight>(0);
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setCutOff(12.5f);
+        mySpotLight->setOuterCutOff(17.5f);
 
-        myPointLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        myDirectionalLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(12.5f);
-        mySpotLight.setOuterCutOff(17.5f);
-        camera.MovementSpeed = 10.0f;
+        lights.emplace_back(mySpotLight);
+        
 
         // override default camera properties
         camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
         camera.Fps = false;
         camera.Zoom = 25.0f;
+        camera.MovementSpeed = 10.0f;
 
 
         cushionModel = engine::Model("models/cushion/cushion.obj");
@@ -66,7 +75,7 @@ public:
             "textures/pbr/planks/metallic.jpg",
             "textures/pbr/planks/roughness.jpg",
             "textures/pbr/planks/ao.jpg",
-            "textures/pbr/planks/displace.jpg"), engine::UvMapping(1.0f));
+            ""), engine::UvMapping(1.0f));
 
         ourText.setup(width, height);
     }
@@ -172,9 +181,7 @@ private:
 
 
         // setup lights
-        //myPointLight.draw(shader, projection, view, 20.0f, getLightPosition());
-        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
+        mySpotLight->draw(shader, projection, view, 20.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
 
 
 
@@ -192,7 +199,7 @@ private:
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()
@@ -200,4 +207,6 @@ private:
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
     }
+
+
 };

@@ -7,6 +7,11 @@ engine::Material::Material(const std::vector<Texture>& textures)
 {
 }
 
+engine::Material::Material(const engine::Color& ambientColor)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(""), m_specularTexPath(""), m_normalTexPath(""), m_metallicTexPath(""), m_roughnessTexPath(""), m_aoTexPath(""), m_heightTexPath(""), m_shininess(0.0f)
+{
+}
+
 engine::Material::Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess)
     : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_shininess(shininess)
 {

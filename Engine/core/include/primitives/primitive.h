@@ -22,7 +22,7 @@ namespace engine
 
         unsigned int m_cubemapTexture{};
 
-        float m_uvScale{ 0.5f };
+        float m_uvScale{ 1.0f };
 
     public:
         Primitive() = default;

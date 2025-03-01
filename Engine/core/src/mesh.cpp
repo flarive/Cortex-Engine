@@ -24,6 +24,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     model = glm::scale(model, scale);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     // draw mesh
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);

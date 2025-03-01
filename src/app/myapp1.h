@@ -12,17 +12,16 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
     engine::Model backpackModel{};
     engine::Model cushionModel{};
 
 
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight1{ 0 };
-    engine::DirectionalLight myDirectionalLight2{ 1 };
-    engine::SpotLight mySpotLight{ 0 };
+
+
+    std::shared_ptr<engine::PointLight> myPointLight;
+    std::shared_ptr<engine::DirectionalLight> myDirectionalLight1;
+    std::shared_ptr<engine::DirectionalLight> myDirectionalLight2;
 
 
     engine::Cube ourCube{};
@@ -33,10 +32,12 @@ private:
 
     engine::Skybox ourSkybox{};
 
-
 public:
     MyApp1(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{ engine::RenderMethod::PBR })
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
+            {
+                engine::RenderMethod::BlinnPhong
+            })
     {
         // my application specific state gets initialized here
 
@@ -52,10 +53,28 @@ public:
         backpackModel = engine::Model("models/backpack/backpack.obj");
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
-        myPointLight.setup();
-        myDirectionalLight1.setup();
-        myDirectionalLight2.setup();
-        mySpotLight.setup();
+
+        myPointLight = std::make_shared<engine::PointLight>(0);
+        myPointLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 0.3f, 2.0f));
+
+        myDirectionalLight1 = std::make_shared<engine::DirectionalLight>(0);
+        myDirectionalLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+        myDirectionalLight2 = std::make_shared<engine::DirectionalLight>(1);
+        myDirectionalLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+
+
+        lights.emplace_back(myPointLight);
+        lights.emplace_back(myDirectionalLight1);
+        lights.emplace_back(myDirectionalLight2);
+
+
+        // override default camera properties
+        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
+        camera.Fps = true;
+        camera.Zoom = 25.0f;
+        camera.MovementSpeed = 10.0f;
 
         std::vector<std::string> faces
         {
@@ -101,24 +120,24 @@ public:
         bool shiftPressed =  (mods & GLFW_MOD_SHIFT);
 
         if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
         else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::LEFT, deltaTime);
+            camera.ProcessKeyboard(engine::LEFT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+            camera.ProcessKeyboard(engine::RIGHT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
         else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+            camera.ProcessKeyboard(engine::FORWARD, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
+            camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
     }
 
 
@@ -142,14 +161,14 @@ public:
         lastX = xpos;
         lastY = ypos;
 
-        cam.ProcessMouseMovement(xoffset, yoffset);
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        cam.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -186,25 +205,23 @@ private:
     
     
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
-        glm::mat4 view{ cam.GetViewMatrix() };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ camera.GetViewMatrix() };
     
     
     
     
         // setup lights
-        //ourLights.Draw(lightingShader, projection, view);
-        myPointLight.draw(shader, projection, view, 1.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1.draw(shader, projection, view, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2.draw(shader, projection, view, 0.2f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, cam.Position, cam.Front);
-        //mySpotLight.draw(lightingShader, projection, view, 1.0f, glm::vec3(0.0f, 0.5f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myPointLight->draw(shader, projection, view, 1.0f, myPointLight->getPosition());
+        myDirectionalLight1->draw(shader, projection, view, 1.0f, myDirectionalLight1->getPosition(), myDirectionalLight1->getTarget());
+        myDirectionalLight2->draw(shader, projection, view, 1.0f, myDirectionalLight2->getPosition(), myDirectionalLight2->getTarget());
+
     
     
     
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", cam.Position);
+        shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
     
@@ -225,7 +242,7 @@ private:
         skyboxReflectShader.use();
         skyboxReflectShader.setMat4("view", view);
         skyboxReflectShader.setMat4("projection", projection);
-        skyboxReflectShader.setVec3("cameraPos", cam.Position);
+        skyboxReflectShader.setVec3("cameraPos", camera.Position);
     
         // render the loaded model
         backpackModel.draw(skyboxReflectShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
@@ -240,7 +257,7 @@ private:
         ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     
     
         ourSkybox.draw(projection, view);

@@ -9,7 +9,7 @@ engine::PointLight::PointLight(unsigned int index) : Light(index)
 {
 }
 
-void engine::PointLight::setup(const Color& ambient)
+void engine::PointLight::setup(const Color& ambient, const glm::vec3& position, const glm::vec3& target)
 {
     m_ambientColor = ambient;
     
@@ -37,6 +37,7 @@ void engine::PointLight::draw(const Shader& shader, const glm::mat4& projection,
 
 
     m_lightPosition = position;
+    m_lightTarget = target;
 
 
     std::string base = std::format("pointLights[{}]", m_index);

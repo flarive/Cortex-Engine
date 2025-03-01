@@ -11,13 +11,10 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    // camera
-    engine::Camera cam{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+    std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
-    engine::PointLight myPointLight{ 0 };
-    engine::DirectionalLight myDirectionalLight{ 0 };
-    engine::SpotLight mySpotLight{ 0 };
+
 
     engine::Model cushionModel{};
 
@@ -32,7 +29,10 @@ private:
 
 public:
     MyApp2(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{ engine::RenderMethod::BlinnPhong })
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
+            {
+                engine::RenderMethod::BlinnPhong
+            })
     {
         // my application specific state gets initialized here
 
@@ -44,14 +44,18 @@ public:
 
     void init() override
     {
-        setLightPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-        setLightTarget(glm::vec3(0.0f, 0.0f, 1.0f));
+        mySpotLight = std::make_shared<engine::SpotLight>(0);
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        mySpotLight->setCutOff(8.0f);
+        mySpotLight->setOuterCutOff(20.f);
 
-        //myPointLight.setup();
-        //myDirectionalLight.setup();
-        mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(20.f);
+        lights.emplace_back(mySpotLight);
+
+        // override default camera properties
+        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
+        camera.Fps = true;
+        camera.Zoom = 25.0f;
+        camera.MovementSpeed = 10.0f;
 
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
@@ -80,27 +84,26 @@ public:
         bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
         if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
         else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::LEFT, deltaTime);
+            camera.ProcessKeyboard(engine::LEFT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::YAW_UP, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::RIGHT, deltaTime);
+            camera.ProcessKeyboard(engine::RIGHT, deltaTime);
 
 
 
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
         else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::FORWARD, deltaTime);
+            camera.ProcessKeyboard(engine::FORWARD, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+            camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            cam.ProcessKeyboard(engine::BACKWARD, deltaTime);
-
+            camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
     }
 
 
@@ -134,7 +137,7 @@ public:
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        cam.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -167,19 +170,17 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(cam.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
-        glm::mat4 view{ cam.GetViewMatrix() };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 view{ camera.GetViewMatrix() };
 
 
         // setup lights
-        //myPointLight.draw(shader, projection, view, 3.0f, getLightPosition());
-        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
-        mySpotLight.draw(shader, projection, view, 2.0f, getLightPosition(), getLightTarget());
+        mySpotLight->draw(shader, projection, view, 2.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????????
         
 
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", cam.Position);
+        shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         shader.setInt("blinn", true);
@@ -199,7 +200,7 @@ private:
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

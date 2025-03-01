@@ -11,7 +11,7 @@ engine::DirectionalLight::DirectionalLight(unsigned int index) : Light(index)
 {
 }
 
-void engine::DirectionalLight::setup(const Color& ambient)
+void engine::DirectionalLight::setup(const Color& ambient, const glm::vec3& position, const glm::vec3& target)
 {
     m_ambientColor = ambient;
     
@@ -38,6 +38,7 @@ void engine::DirectionalLight::draw(const Shader& shader, const glm::mat4& proje
     UNREFERENCED_PARAMETER(target);
 
     m_lightPosition = position;
+    m_lightTarget = target;
 
     std::string base = std::format("dirLights[{}]", m_index);
 

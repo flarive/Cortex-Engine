@@ -14,6 +14,6 @@ namespace engine
         float getUvScale() const { return m_uvScale; }
 
     private:
-        float m_uvScale = 0.5f;
+        float m_uvScale = 1.0f;
     };
 }

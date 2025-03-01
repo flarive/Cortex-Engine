@@ -14,7 +14,7 @@ namespace engine
     enum class RenderMethod
     {
         BlinnPhong = 0, // legacy
-        PBR = 1
+        PBR = 1 // mainstream
     };
 
     struct AppSettings
@@ -60,10 +60,10 @@ namespace engine
         unsigned int textureDepthMapBuffer{};
         unsigned int textureColorbuffer{};
 
-        glm::vec3 m_lightPosition{};
-        glm::vec3 m_lightTarget{};
+        //glm::vec3 m_lightPosition{};
+        //glm::vec3 m_lightTarget{};
 
-        
+        //
 
         Shader screenShader{};
         Shader simpleDepthShader{};
@@ -93,6 +93,8 @@ namespace engine
 
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
+
+        std::vector<std::shared_ptr<engine::Light>> lights{};
 
         Shader blinnPhongShader{};
         Shader pbrShader{};
@@ -235,6 +237,9 @@ namespace engine
             pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
             pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
             pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+
+            pbrShader.setFloat("material.normalMapIntensity", 50.0f);
+            
 
             
 
@@ -692,25 +697,25 @@ namespace engine
             glViewport(0, 0, newWidth, newHeight);
         }
 
-        void setLightPosition(glm::vec3 pos)
-        {
-            m_lightPosition = pos;
-        }
+        //void setLightPosition(glm::vec3 pos)
+        //{
+        //    m_lightPosition = pos;
+        //}
 
-        void setLightTarget(glm::vec3 pos)
-        {
-            m_lightTarget = pos;
-        }
+        //void setLightTarget(glm::vec3 pos)
+        //{
+        //    m_lightTarget = pos;
+        //}
 
-        glm::vec3 getLightPosition()
-        {
-            return m_lightPosition;
-        }
+        //glm::vec3 getLightPosition()
+        //{
+        //    return m_lightPosition;
+        //}
 
-        glm::vec3 getLightTarget()
-        {
-            return m_lightTarget;
-        }
+        //glm::vec3 getLightTarget()
+        //{
+        //    return m_lightTarget;
+        //}
 
         // renderCube() renders a 1x1 3D cube in NDC.
         // -------------------------------------------------
@@ -1114,6 +1119,15 @@ namespace engine
 
         void computeDepthMapFramebuffer(Shader& shader)
         {
+            glm::vec3 light_position{};
+            glm::vec3 light_target{};
+            
+            if (lights.size() > 0)
+            {
+                light_position = lights[0]->getPosition();
+                light_target = lights[0]->getTarget();
+            }
+
             // 1. render depth of scene to texture (from light's perspective)
             // --------------------------------------------------------------
             glm::mat4 lightProjection, lightView;
@@ -1121,7 +1135,7 @@ namespace engine
             float near_plane = 0.1f;  // Previously 1.0f
             float far_plane = 100.0f;  // Previously 7.5f
             lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-            lightView = glm::lookAt(m_lightPosition, m_lightTarget, glm::vec3(0.0, 1.0, 0.0));
+            lightView = glm::lookAt(light_position, light_target, glm::vec3(0.0, 1.0, 0.0));
             lightSpaceMatrix = lightProjection * lightView;
             // render scene from light's point of view
             simpleDepthShader.use();
@@ -1147,7 +1161,7 @@ namespace engine
             // 2. render scene as normal using the previously generated depth/shadow map  
             // -------------------------------------------------------------------------
             shader.use();
-            shader.setVec3("lightPos", m_lightPosition); // ?????????????????
+            //shader.setVec3("lightPos", light_position); // ?????????????????
             shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs

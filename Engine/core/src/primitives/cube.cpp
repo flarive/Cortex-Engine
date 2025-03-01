@@ -71,6 +71,7 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("uvScale", m_uvScale);
+        shader.setBool("hasTangents", false);
     }
 
     

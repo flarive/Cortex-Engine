@@ -52,7 +52,7 @@ private:
 
 public:
     MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::RenderMethod::PBR)
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{ engine::RenderMethod::PBR })
     {
         // my application specific state gets initialized here
 
@@ -256,7 +256,7 @@ private:
         rotation += deltaTime * 10.0f;
 
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        //ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 
         // view/projection transformations

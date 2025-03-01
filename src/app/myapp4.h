@@ -19,8 +19,6 @@ private:
 
     engine::Model cushionModel{};
 
-    engine::Cube ourCube1{};
-
     engine::Plane ourPlane{};
 
     engine::Text ourText{};
@@ -30,7 +28,7 @@ private:
 
 public:
     MyApp4(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::RenderMethod::PBR)
+        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings{engine::RenderMethod::PBR, false, "textures/hdr/newport_loft.hdr", 1.5f, 1.0f, 1.0f})
     {
         // my application specific state gets initialized here
 
@@ -48,8 +46,8 @@ public:
         myPointLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         myDirectionalLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
         mySpotLight.setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f });
-        mySpotLight.setCutOff(8.0f);
-        mySpotLight.setOuterCutOff(24.f);
+        mySpotLight.setCutOff(12.5f);
+        mySpotLight.setOuterCutOff(17.5f);
         camera.MovementSpeed = 10.0f;
 
         // override default camera properties
@@ -69,10 +67,6 @@ public:
             "textures/pbr/planks/roughness.jpg",
             "textures/pbr/planks/ao.jpg",
             "textures/pbr/planks/displace.jpg"), engine::UvMapping(1.0f));
-
-        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-        //    "textures/wood_diffuse.png",
-        //    "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup(width, height);
     }
@@ -165,9 +159,8 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourCube1.clean();
-        //ourSphere1.clean();
         ourPlane.clean();
+        cushionModel.clean();
     }
 
 private:
@@ -193,7 +186,7 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -8.75f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f, -10.0f), glm::vec3(1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
         rotation += deltaTime * 10.0f;

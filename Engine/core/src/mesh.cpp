@@ -75,3 +75,18 @@ void engine::Mesh::setupMesh()
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
     glBindVertexArray(0);
 }
+
+void engine::Mesh::clean()
+{
+    // mesh Data
+    vertices.clear();
+    indices.clear();
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+
+    VAO = 0;
+    VBO = 0;
+    EBO = 0;
+}

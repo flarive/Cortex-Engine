@@ -24,6 +24,10 @@ struct Material {
     sampler2D texture_height; // 6
     sampler2D texture_shadowMap; // 10
     float heightScale;
+    float shadowIntensity; // Adjust to make shadows darker
+
+    float iblDiffuseIntensity;  // New uniform for diffuse IBL intensity
+    float iblSpecularIntensity; // New uniform for specular IBL intensity
 
     // IBL
     samplerCube texture_irradiance;
@@ -84,9 +88,6 @@ struct SpotLight {
 uniform Material material;
 
 // lights
-//uniform vec3 lightPositions[4];
-//uniform vec3 lightColors[4];
-
 #define NBR_MAX_LIGHTS 1
 
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
@@ -220,39 +221,28 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
     return currentTexCoords;
 }
 
-float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
 {
-    if (fragPosLightSpace.w == 0.0) {
-        return 0.0; // Or output some debug color
-    }
-
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
-
+    
+    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
+    
+    //float bias = max(0.002 * (1.0 - dot(fs_in.Normal, lightDir)), 0.0005);
+    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.WorldPos))), 0.0001);
     float shadow = 0.0;
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.WorldPos))), 0.0001);
-
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
-    float diskRadius = 20.0 * texelSize.x; // Tweak diskRadius to control softness
-
-    // Combine Poisson disk with 3x3 PCF sampling
-    for (int i = 0; i < 16; ++i)
-    {
-        for (int x = -1; x <= 1; ++x)
-        {
-            for (int y = -1; y <= 1; ++y)
-            {
-                vec2 offset = poissonDisk[i] * diskRadius + vec2(x, y) * texelSize;
-                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
-                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
-            }
+    
+    for (int x = -1; x <= 1; ++x) {
+        for (int y = -1; y <= 1; ++y) {
+            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += (currentDepth - bias > pcfDepth) ? 1.0 : 0.0;
         }
     }
-    shadow /= (16.0 * 9.0); // Average over all samples
-
-    if (projCoords.z > 1.0)
-        shadow = 0.0;
+    shadow /= 9.0;
+    
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
 
     return shadow;
 }
@@ -324,21 +314,31 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;	  
     
-    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
-    vec3 diffuse = irradiance * albedo;
-    
-    // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-    const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(material.texture_prefilter, R,  roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+//    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
+//    vec3 diffuse = irradiance * albedo;
+//    
+//    // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+//    const float MAX_REFLECTION_LOD = 4.0;
+//    vec3 prefilteredColor = textureLod(material.texture_prefilter, R,  roughness * MAX_REFLECTION_LOD).rgb;    
+//    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+//    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+//    
+//    // ambient lighting (we now use IBL as the ambient term)
+//    vec3 ambient = (kD * diffuse + specular) * ao;
 
-    
-    // ambient lighting (note that the next IBL tutorial will replace this ambient lighting with environment lighting)
-    vec3 ambient = vec3(0.03) * albedo * ao;
-    
-    // ambient lighting (we now use IBL as the ambient term)
-    //vec3 ambient = (kD * diffuse + specular) * ao;
+
+    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
+    vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
+
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
+    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
+
+    vec3 ambient = (kD * diffuse + specular) * ao;
+
+
+
 
     // add light and shadow contribution
     vec3 color = ambient + Lo;
@@ -380,10 +380,10 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * attenuation * intensity;
 
     // Compute shadow factor
-    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.position);
+    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);
 
     // Apply shadow factor to the light intensity
-    radiance *= (1.0 - shadow);  
+    radiance *= (1.0 - shadow * material.shadowIntensity);  
     
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
 

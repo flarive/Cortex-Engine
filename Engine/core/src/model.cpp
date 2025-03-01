@@ -235,3 +235,14 @@ unsigned int engine::TextureFromFile(const char* path, const std::string& direct
 
     return textureID;
 }
+
+void engine::Model::clean()
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        meshes[i].clean();
+    }
+
+    textures_loaded.clear();
+    meshes.clear();
+}

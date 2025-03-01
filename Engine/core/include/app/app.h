@@ -16,6 +16,18 @@ namespace engine
         BlinnPhong = 0, // legacy
         PBR = 1
     };
+
+    struct AppSettings
+    {
+        RenderMethod method{};
+        
+        bool hideHDRSkybox = false;
+        std::string filePathHDRSkybox{};
+
+        float shadowIntensity = 1.5f;
+        float iblDiffuseIntensity = 1.0f;
+        float iblSpecularIntensity = 1.0f;
+    };
     
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
@@ -58,7 +70,7 @@ namespace engine
         Shader debugDepthQuad{};
 
         
-
+        
 
     
     protected:
@@ -73,8 +85,8 @@ namespace engine
         int width{}; // windowed width
         int height{}; // windowed height
         bool fullscreen{};
-        RenderMethod method;
-
+        
+        AppSettings settings;
 
     public:
         GLFWwindow* window{};
@@ -93,6 +105,8 @@ namespace engine
         Shader prefilterShader{};
         Shader brdfShader{};
 
+ 
+
 
         unsigned int irradianceMap;
         unsigned int prefilterMap;
@@ -102,10 +116,10 @@ namespace engine
 
         
 
-        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, RenderMethod _method = RenderMethod::PBR)
-            : title(_title), width(_width), height(_height), fullscreen(_fullscreen), method(_method)
+        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
+            : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
         {
-            if (_method == RenderMethod::PBR)
+            if (settings.method == RenderMethod::PBR)
                 setupPBR(); 
             else
                 setup_BlinnPhong();
@@ -218,6 +232,12 @@ namespace engine
 
             pbrShader.setFloat("material.heightScale", 0.2f);
 
+            pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+            pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+            pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+
+            
+
             
 
 
@@ -256,7 +276,7 @@ namespace engine
 
             // pbr: load the HDR environment map
             // ---------------------------------
-            unsigned int hdrTexture = engine::Texture::loadHDRImage(file_system::getPath("textures/hdr/photo_studio_loft_hall_2k.hdr"));
+            unsigned int hdrTexture = !settings.filePathHDRSkybox.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.filePathHDRSkybox)) : 0;
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
@@ -485,7 +505,7 @@ namespace engine
 
 
 
-                if (method == RenderMethod::PBR)
+                if (settings.method == RenderMethod::PBR)
                     loop_PBR();
                 else
                     loop_BlinnPhong();
@@ -601,7 +621,9 @@ namespace engine
             glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
             //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
             //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-            //renderCube();
+            
+            if (!settings.hideHDRSkybox)
+                renderCube();
 
             // render BRDF map to screen
             //brdfShader.use();

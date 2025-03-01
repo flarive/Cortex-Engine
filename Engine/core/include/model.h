@@ -36,6 +36,8 @@ namespace engine
         // draws the model, and thus all its meshes
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), float angle = 0.0f, glm::vec3 scale = glm::vec3(1.0f));
 
+        void clean();
+
 
     private:
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -51,6 +53,8 @@ namespace engine
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
         std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+
+        
     };
 
     static unsigned int TextureFromFile(const char* path, const std::string& directory);

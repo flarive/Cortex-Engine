@@ -411,6 +411,15 @@
     <CopyFileToFolders Include="..\resources\models\cushion\cushion_smoothness.jpg">
       <Filter>resources\models\cushion</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\ao.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\displace.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\normal.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\planks\roughness.jpg" />
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_ambient_occlusion.jpg" />
+    <CopyFileToFolders Include="..\resources\models\cushion\cushion_metalness.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\hdr\satara_night_4k.hdr">
+      <Filter>resources\textures\hdr</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -425,25 +434,5 @@
     <ClInclude Include="app\myapp4.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\planks\ao.jpg">
-      <Filter>resources\textures\pbr\planks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\planks\displace.jpg">
-      <Filter>resources\textures\pbr\planks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\planks\normal.jpg">
-      <Filter>resources\textures\pbr\planks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\planks\roughness.jpg">
-      <Filter>resources\textures\pbr\planks</Filter>
-    </Image>
-    <Image Include="..\resources\models\cushion\cushion_ambient_occlusion.jpg">
-      <Filter>resources\models\cushion</Filter>
-    </Image>
-    <Image Include="..\resources\models\cushion\cushion_metalness.jpg">
-      <Filter>resources\models\cushion</Filter>
-    </Image>
   </ItemGroup>
 </Project>

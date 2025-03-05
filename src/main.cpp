@@ -5,7 +5,7 @@
 #include "app/myapp4.h"
 
 // make it easier to switch between apps
-using MyApp = MyApp4;
+using MyApp = MyApp3;
 
 
 engine::App* app{};

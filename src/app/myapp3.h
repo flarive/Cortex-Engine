@@ -285,6 +285,9 @@ private:
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 20.0f, myPointLight1->getPosition(), myPointLight1->getTarget()); // ????????????
+        myPointLight2->draw(shader, projection, view, 20.0f, myPointLight2->getPosition(), myPointLight2->getTarget()); // ????????????
+        myPointLight3->draw(shader, projection, view, 20.0f, myPointLight3->getPosition(), myPointLight3->getTarget()); // ????????????
+        myPointLight4->draw(shader, projection, view, 20.0f, myPointLight4->getPosition(), myPointLight4->getTarget()); // ????????????
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 

@@ -52,7 +52,7 @@ namespace engine
         unsigned int colorFramebuffer{};
 
 
-        //unsigned int quadVAO{}, quadVBO{};
+
         unsigned int rbo{}; // renderbuffer object
 
 
@@ -60,10 +60,6 @@ namespace engine
         unsigned int textureDepthMapBuffer{};
         unsigned int textureColorbuffer{};
 
-        //glm::vec3 m_lightPosition{};
-        //glm::vec3 m_lightTarget{};
-
-        //
 
         Shader screenShader{};
         Shader simpleDepthShader{};
@@ -226,7 +222,6 @@ namespace engine
             //pbrShader.setInt("material.texture_roughness", 4);
             //pbrShader.setInt("material.texture_ao", 5);
             //pbrShader.setInt("material.texture_height", 6);
-            
 
             pbrShader.setInt("material.texture_irradiance", 7);
             pbrShader.setInt("material.texture_prefilter", 8);
@@ -264,8 +259,13 @@ namespace engine
             initColorFramebuffer();
 
 
+            //int vsize = 2048;
+            int scrWidth, scrHeight;
+            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            float qualityFactor = 2.0f; // 200% of the screen resolution
+            int vsize = static_cast<int>(std::max(scrWidth, scrHeight) * qualityFactor);
 
-            int vsize = 512;
+            
 
             // pbr: setup framebuffer
             // ----------------------
@@ -296,6 +296,7 @@ namespace engine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // enable pre-filter mipmap sampling (combatting visible dots artifact)
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
             // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
             // ----------------------------------------------------------------------------------------------
@@ -457,8 +458,8 @@ namespace engine
             backgroundShader.setMat4("projection", projection);
 
             // then before rendering, configure the viewport to the original framebuffer's screen dimensions
-            int scrWidth, scrHeight;
-            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            //int scrWidth, scrHeight;
+            //glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
             glViewport(0, 0, scrWidth, scrHeight);
         }
 
@@ -572,7 +573,7 @@ namespace engine
             update(blinnPhongShader);
 
             // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer(blinnPhongShader);
+            computeDepthMapFramebuffer(blinnPhongShader, lights[0]);
 
             // render to framebuffer
             computeColorFramebuffer();
@@ -635,7 +636,7 @@ namespace engine
             //renderQuad();
 
             // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer(pbrShader);
+            computeDepthMapFramebuffer(pbrShader, lights[0]);
 
             // render to framebuffer
             computeColorFramebuffer();
@@ -1117,16 +1118,10 @@ namespace engine
             debugDepthQuad.setInt("depthMap", 0);
         }
 
-        void computeDepthMapFramebuffer(Shader& shader)
+        void computeDepthMapFramebuffer(Shader& shader, std::shared_ptr<Light> light)
         {
-            glm::vec3 light_position{};
-            glm::vec3 light_target{};
-            
-            if (lights.size() > 0)
-            {
-                light_position = lights[0]->getPosition();
-                light_target = lights[0]->getTarget();
-            }
+            glm::vec3 light_position = light->getPosition();
+            glm::vec3 light_target = light->getTarget();
 
             // 1. render depth of scene to texture (from light's perspective)
             // --------------------------------------------------------------

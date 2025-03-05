@@ -116,32 +116,66 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
     return textureID;
 }
 
+//unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
+//{
+//    int width{}, height{}, nrComponents{};
+//
+//    stbi_set_flip_vertically_on_load(true);
+//
+//    float* data = stbi_loadf(filename.c_str(), &width, &height, &nrComponents, 0);
+//    unsigned int hdrTexture{};
+//    if (data)
+//    {
+//        glGenTextures(1, &hdrTexture);
+//        glBindTexture(GL_TEXTURE_2D, hdrTexture);
+//        glTexImage2D(GL_TEXTURE_2D, 0, alpha ? GL_RGBA16F : GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); // note how we specify the texture's data value to be float
+//
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//        stbi_image_free(data);
+//    }
+//    else
+//    {
+//        std::cerr << "Failed to load HDR image." << stbi_failure_reason() << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    return hdrTexture;
+//}
+
 unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
 {
     int width{}, height{}, nrComponents{};
-
     stbi_set_flip_vertically_on_load(true);
 
     float* data = stbi_loadf(filename.c_str(), &width, &height, &nrComponents, 0);
-    unsigned int hdrTexture{};
-    if (data)
+    if (!data)
     {
-        glGenTextures(1, &hdrTexture);
-        glBindTexture(GL_TEXTURE_2D, hdrTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); // note how we specify the texture's data value to be float
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
+        std::cerr << "Failed to load HDR image: " << filename << " - " << stbi_failure_reason() << std::endl;
+        return 0; // Return invalid texture ID instead of exiting.
     }
-    else
-    {
-        std::cerr << "Failed to load HDR image." << stbi_failure_reason() << std::endl;
-        exit(EXIT_FAILURE);
-    }
+
+    GLenum internalFormat = (alpha && nrComponents == 4) ? GL_RGBA32F : GL_RGB32F;
+    GLenum format = (alpha && nrComponents == 4) ? GL_RGBA : GL_RGB;
+
+    unsigned int hdrTexture;
+    glGenTextures(1, &hdrTexture);
+    glBindTexture(GL_TEXTURE_2D, hdrTexture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_FLOAT, data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // Trilinear filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glGenerateMipmap(GL_TEXTURE_2D); // Improves quality at different distances
+
+    stbi_image_free(data);
 
     return hdrTexture;
 }
+

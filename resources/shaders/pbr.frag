@@ -437,11 +437,13 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
 {
+    // calculate per-light radiance
     vec3 L = normalize(light.position - fragPos);
     vec3 H = normalize(viewDir + L);
     
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    //float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float attenuation = 1.0 / (distance * distance);
     vec3 radiance = light.diffuse * attenuation;
 
     // Shadow calculation

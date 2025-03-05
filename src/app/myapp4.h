@@ -34,7 +34,7 @@ public:
             {
                 engine::RenderMethod::PBR,
                 false,
-                "textures/hdr/newport_loft.hdr",
+                "textures/hdr/blue_photo_studio_4k.hdr",
                 1.5f,
                 1.0f,
                 1.0f

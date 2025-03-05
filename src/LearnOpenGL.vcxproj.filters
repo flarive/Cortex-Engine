@@ -438,6 +438,9 @@
     <CopyFileToFolders Include="..\resources\textures\uv_mapper.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\hdr\blue_photo_studio_4k.hdr">
+      <Filter>resources\textures\hdr</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">

@@ -2,7 +2,7 @@
 
 #include "../include/common_defines.h"
 
-#include "../include/file_system.h"
+#include "../include/tools/file_system.h"
 
 
 #define STBI_FAILURE_USERMSG //generate user friendly error messages

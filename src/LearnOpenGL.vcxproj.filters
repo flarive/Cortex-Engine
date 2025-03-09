@@ -74,6 +74,9 @@
     <Filter Include="resources\textures\pbr\planks">
       <UniqueIdentifier>{f67fa246-ca44-4802-bd13-e3998af1ca59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\sphere\rounded-metal-cubes">
+      <UniqueIdentifier>{25cb4ec6-eb89-40bf-844a-657a534f5fcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -444,6 +447,9 @@
     <CopyFileToFolders Include="..\resources\textures\hdr\blue_photo_studio_2k.hdr">
       <Filter>resources\textures\hdr</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\albedo.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -458,5 +464,22 @@
     <ClInclude Include="app\myapp4.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\models\sphere\rounded-metal-cubes\ao.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\rounded-metal-cubes\height.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\rounded-metal-cubes\metallic.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\rounded-metal-cubes\normal.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </Image>
+    <Image Include="..\resources\models\sphere\rounded-metal-cubes\roughness.png">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </Image>
   </ItemGroup>
 </Project>

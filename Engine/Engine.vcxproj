@@ -163,7 +163,7 @@
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
     <ClCompile Include="core\src\camera.cpp" />
-    <ClCompile Include="core\src\file_system.cpp" />
+    <ClCompile Include="core\src\tools\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
     <ClCompile Include="core\src\lights\point_light.cpp" />
@@ -179,7 +179,7 @@
     <ClCompile Include="core\src\primitives\sphere.cpp" />
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
-    <ClCompile Include="core\src\tools\SystemMonitor.cpp" />
+    <ClCompile Include="core\src\tools\system_monitor.cpp" />
     <ClCompile Include="core\src\ui\text.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
   </ItemGroup>
@@ -196,7 +196,7 @@
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
     <ClInclude Include="core\include\engine.h" />
-    <ClInclude Include="core\include\file_system.h" />
+    <ClInclude Include="core\include\tools\file_system.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />
     <ClInclude Include="core\include\lights\point_light.h" />
@@ -213,7 +213,7 @@
     <ClInclude Include="core\include\primitives\sphere.h" />
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
-    <ClInclude Include="core\include\tools\SystemMonitor.h" />
+    <ClInclude Include="core\include\tools\system_monitor.h" />
     <ClInclude Include="core\include\ui\text.h" />
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />

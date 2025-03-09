@@ -126,9 +126,6 @@
     <ClCompile Include="core\src\camera.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\file_system.cpp">
-      <Filter>Fichiers sources\core</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\mesh.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
@@ -156,7 +153,10 @@
     <ClCompile Include="core\src\materials\material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\tools\SystemMonitor.cpp">
+    <ClCompile Include="core\src\tools\system_monitor.cpp">
+      <Filter>Fichiers sources\core\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\tools\file_system.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
   </ItemGroup>
@@ -221,9 +221,6 @@
     <ClInclude Include="core\include\common_defines.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\file_system.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\mesh.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
@@ -257,7 +254,10 @@
     <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\tools\SystemMonitor.h">
+    <ClInclude Include="core\include\tools\system_monitor.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\tools\file_system.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
   </ItemGroup>

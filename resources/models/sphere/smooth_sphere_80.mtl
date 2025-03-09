@@ -12,9 +12,9 @@ newmtl default
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka cliff\albedo.jpg
-	map_Kd cliff\albedo.jpg
-	map_Kn cliff\normal.jpg
-	#map_Pm cliff\metallic.jpg
-	map_Pr cliff\roughness.jpg
-	bump cliff\height.jpg
+	map_Ka rounded-metal-cubes\albedo.png
+	map_Kd rounded-metal-cubes\albedo.png
+	map_Kn rounded-metal-cubes\normal.png
+	map_Pm rounded-metal-cubes\metallic.png
+	map_Pr rounded-metal-cubes\roughness.png
+	bump rounded-metal-cubes\height.png

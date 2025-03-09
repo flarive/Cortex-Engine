@@ -89,7 +89,11 @@ struct SpotLight {
 uniform Material material;
 
 // lights
-#define NBR_MAX_LIGHTS 1
+#define NBR_MAX_LIGHTS 10
+
+uniform int pointLightsCount;
+uniform int dirLightsCount;
+uniform int spotLightsCount;
 
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
 uniform DirLight dirLights[NBR_MAX_LIGHTS];
@@ -130,7 +134,7 @@ uniform vec3 viewPos;
 
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
 
 
@@ -311,22 +315,21 @@ void main()
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
-
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for (int i = 0; i < spotLights.length(); i++)
+    for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
             Lo += CalcSpotLight(spotLights[i], N, V, albedo, metallic, roughness);
     }
 
-    for (int i = 0; i < pointLights.length(); i++)
+    for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], N, fs_in.WorldPos, V, albedo);
+            Lo += CalcPointLight(pointLights[i], N, fs_in.WorldPos, V, albedo, metallic, roughness);
     }
 
-    for (int i = 0; i < dirLights.length(); i++)
+    for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
             Lo += CalcDirLight(dirLights[i], N, fs_in.WorldPos, V, vec3(1.0));
@@ -347,19 +350,6 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;	  
     
-//    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
-//    vec3 diffuse = irradiance * albedo;
-//    
-//    // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-//    const float MAX_REFLECTION_LOD = 4.0;
-//    vec3 prefilteredColor = textureLod(material.texture_prefilter, R,  roughness * MAX_REFLECTION_LOD).rgb;    
-//    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-//    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
-//    
-//    // ambient lighting (we now use IBL as the ambient term)
-//    vec3 ambient = (kD * diffuse + specular) * ao;
-
-
     vec3 irradiance = texture(material.texture_irradiance, N).rgb;
     vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
 
@@ -435,36 +425,33 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
-    // calculate per-light radiance
     vec3 L = normalize(light.position - fragPos);
-    vec3 H = normalize(viewDir + L);
-    
     float distance = length(light.position - fragPos);
-    //float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    float attenuation = 1.0 / (distance * distance);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 radiance = light.diffuse * attenuation;
 
-    // Shadow calculation
-    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.position);
-    radiance *= (1.0 - shadow);
-
-    float NdotL = max(dot(normal, L), 0.0);
-
-    vec3 F0 = mix(vec3(0.04), color, 1.0);  
+    // Cook-Torrance BRDF
+    vec3 H = normalize(viewDir + L);
+    float NDF = DistributionGGX(normal, H, roughness);
+    float G = GeometrySmith(normal, viewDir, L, roughness);
+    vec3 F0 = mix(vec3(0.04), albedo, metallic);
     vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
-    float NDF = DistributionGGX(normal, H, 1.0);
-    float G = GeometrySmith(normal, viewDir, L, 1.0);
+
+
     vec3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(NdotL, 0.0) + 0.0001;
+    float denominator = 4.0 * max(dot(normal, viewDir), 0.0) * max(dot(normal, L), 0.0) + 0.0001;
     vec3 specular = numerator / denominator;
 
     vec3 kS = F;
-    vec3 kD = (1.0 - kS);
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
 
-    return (kD * color / PI + specular) * radiance * NdotL;
+    float NdotL = max(dot(normal, L), 0.0);
+    return (kD * albedo / PI + specular) * radiance * NdotL;
 }
+
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
 {

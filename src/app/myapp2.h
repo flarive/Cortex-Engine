@@ -72,7 +72,10 @@ public:
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup(width, height);
+
+        after_init();
     }
+
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------

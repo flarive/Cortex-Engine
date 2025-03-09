@@ -67,6 +67,12 @@
     <Filter Include="Fichiers sources\core\materials">
       <UniqueIdentifier>{b385f2fb-b34a-4804-8308-34924c524357}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\tools">
+      <UniqueIdentifier>{7cc1c678-1407-4f5f-8791-7386ec26d59d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\tools">
+      <UniqueIdentifier>{8f3b65f4-9b1d-436d-8d7f-63667b8849d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -149,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="core\src\materials\material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\tools\SystemMonitor.cpp">
+      <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\tools\SystemMonitor.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

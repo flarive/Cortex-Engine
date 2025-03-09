@@ -33,7 +33,7 @@ void engine::DirectionalLight::setup(const Color& ambient, const glm::vec3& posi
 }
 
 // draws the model, and thus all its meshes
-void engine::DirectionalLight::draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
+void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
 {
     UNREFERENCED_PARAMETER(target);
 

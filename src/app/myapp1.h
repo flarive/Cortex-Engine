@@ -107,6 +107,8 @@ public:
         ourText.setup(width, height);
 
         ourSkybox.setup(faces);
+
+        after_init();
     }
 
 

@@ -32,21 +32,6 @@ private:
 
     engine::Shader lightCubeShader{};
 
-    // lights
-    // ------
-    //glm::vec3 lightPositions[4] = {
-    //    glm::vec3(-10.0f, 10.0f, 10.0f),
-    //    glm::vec3(10.0f, 10.0f, 10.0f),
-    //    glm::vec3(-10.0f, -10.0f, 10.0f),
-    //    glm::vec3(10.0f, -10.0f, 10.0f),
-    //};
-    //glm::vec3 lightColors[4] = {
-    //    glm::vec3(300.0f, 300.0f, 300.0f),
-    //    glm::vec3(300.0f, 300.0f, 300.0f),
-    //    glm::vec3(300.0f, 300.0f, 300.0f),
-    //    glm::vec3(300.0f, 300.0f, 300.0f)
-    //};
-
     float rotation{};
 
 
@@ -162,7 +147,10 @@ public:
 
 
         ourText.setup(width, height);
+
+        after_init();
     }
+
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------

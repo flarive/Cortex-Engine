@@ -34,17 +34,20 @@ void engine::PointLight::setup(const Color& ambient, const glm::vec3& position, 
 }
 
 // draws the model, and thus all its meshes
-void engine::PointLight::draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
+void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
 {
     UNREFERENCED_PARAMETER(target);
-
 
     //m_lightPosition = position;
     //m_lightTarget = target;
 
 
+
+
+
     std::string base = std::format("pointLights[{}]", m_index);
 
+    shader.use();
     shader.setBool(std::format("{}.use", base), true);
 
     shader.setVec3(std::format("{}.position", base), m_lightPosition);

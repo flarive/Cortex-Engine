@@ -34,7 +34,7 @@ public:
             {
                 engine::RenderMethod::PBR,
                 false,
-                "textures/hdr/blue_photo_studio_4k.hdr",
+                "textures/hdr/blue_photo_studio_2k.hdr",
                 1.5f,
                 1.0f,
                 1.0f
@@ -78,7 +78,11 @@ public:
             ""), engine::UvMapping(1.0f));
 
         ourText.setup(width, height);
+
+        after_init();
     }
+
+
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------

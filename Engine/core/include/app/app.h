@@ -4,6 +4,7 @@
 
 #include "../misc/noncopyable.h"
 #include "../file_system.h"
+#include "../tools/SystemMonitor.h"
 
 #include <iostream>
 #include <chrono>
@@ -66,7 +67,7 @@ namespace engine
         Shader debugDepthQuad{};
 
         
-        
+        SystemMonitor sysMonitor{};
 
     
     protected:
@@ -118,7 +119,7 @@ namespace engine
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
         {
             if (settings.method == RenderMethod::PBR)
-                setupPBR(); 
+                setupPBR();
             else
                 setup_BlinnPhong();
         }
@@ -213,16 +214,28 @@ namespace engine
             // -------------------------
             loadShaders();
 
+            //// Counters
+            //int spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
+
+            //// Count each type using dynamic_pointer_cast
+            //for (const auto& light : lights) {
+            //    if (std::dynamic_pointer_cast<SpotLight>(light)) {
+            //        ++spotLightCount;
+            //    }
+            //    else if (std::dynamic_pointer_cast<DirectionalLight>(light)) {
+            //        ++dirLightCount;
+            //    }
+            //    else if (std::dynamic_pointer_cast<PointLight>(light)) {
+            //        ++pointLightCount;
+            //    }
+            //}
+
+            //pbrShader.use();
+            //pbrShader.setInt("pointLightsCount", spotLightCount);
+            //pbrShader.setInt("dirLightsCount", dirLightCount);
+            //pbrShader.setInt("spotLightsCount", pointLightCount);
 
             pbrShader.use();
-            //pbrShader.setInt("material.texture_diffuse", 0);
-            //pbrShader.setInt("material.texture_specular", 1); // not used by PBR
-            //pbrShader.setInt("material.texture_normal", 2);
-            //pbrShader.setInt("material.texture_metallic", 3);
-            //pbrShader.setInt("material.texture_roughness", 4);
-            //pbrShader.setInt("material.texture_ao", 5);
-            //pbrShader.setInt("material.texture_height", 6);
-
             pbrShader.setInt("material.texture_irradiance", 7);
             pbrShader.setInt("material.texture_prefilter", 8);
             pbrShader.setInt("material.texture_brdfLUT", 9);
@@ -259,11 +272,11 @@ namespace engine
             initColorFramebuffer();
 
 
-            //int vsize = 2048;
-            int scrWidth, scrHeight;
-            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
-            float qualityFactor = 2.0f; // 200% of the screen resolution
-            int vsize = static_cast<int>(std::max(scrWidth, scrHeight) * qualityFactor);
+            int vsize = 512;
+            //int scrWidth, scrHeight;
+            //glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            //float qualityFactor = 2.0f; // 200% of the screen resolution
+            //int vsize = static_cast<int>(std::max(scrWidth, scrHeight) * qualityFactor);
 
             
 
@@ -458,13 +471,37 @@ namespace engine
             backgroundShader.setMat4("projection", projection);
 
             // then before rendering, configure the viewport to the original framebuffer's screen dimensions
-            //int scrWidth, scrHeight;
-            //glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            int scrWidth, scrHeight;
+            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
             glViewport(0, 0, scrWidth, scrHeight);
         }
 
         // must be overridden in derived class
         virtual void init() = 0;
+
+        void after_init()
+        {
+            // Counters
+            int spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
+
+            // Count each type using dynamic_pointer_cast
+            for (const auto& light : lights) {
+                if (std::dynamic_pointer_cast<SpotLight>(light)) {
+                    ++spotLightCount;
+                }
+                else if (std::dynamic_pointer_cast<DirectionalLight>(light)) {
+                    ++dirLightCount;
+                }
+                else if (std::dynamic_pointer_cast<PointLight>(light)) {
+                    ++pointLightCount;
+                }
+            }
+
+            pbrShader.use();
+            pbrShader.setInt("pointLightsCount", pointLightCount);
+            pbrShader.setInt("dirLightsCount", dirLightCount);
+            pbrShader.setInt("spotLightsCount", spotLightCount);
+        }
 
         // must be overridden in derived class
         virtual void update(Shader& shader) = 0;
@@ -615,6 +652,8 @@ namespace engine
             glActiveTexture(GL_TEXTURE9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
+            //pbrShader.use();
+            //pbrShader.setInt("pointLightsCount", lights.size());
 
             // update user stuffs
             update(pbrShader);
@@ -934,9 +973,16 @@ namespace engine
 
         void renderUIWindow(bool show)
         {
-            ImGui::SetNextWindowSize(ImVec2(480, 60), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
 
             ImGui::Begin("Hello, world!", &show);
+
+            ImGui::Text("CPU Usage: %.2f%%", sysMonitor.GetCPUUsage());
+            ImGui::Text("Memory Usage: %.2f Mo", sysMonitor.GetMemoryUsage());
+            ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
+            ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
+            ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
             ImGui::End();
         }

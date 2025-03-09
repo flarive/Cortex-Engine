@@ -4,11 +4,27 @@
 #include "app/myapp3.h"
 #include "app/myapp4.h"
 
+
 // make it easier to switch between apps
-using MyApp = MyApp3;
+using MyApp = MyApp4;
 
 
 engine::App* app{};
+
+
+// Auto select Nvidia or AMD GPU instead of builtin intel GPU
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    __declspec(dllexport) uint32_t NvOptimusEnablement = 1;
+    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);

@@ -36,7 +36,7 @@ void engine::SpotLight::setup(const Color& ambient, const glm::vec3& position, c
 
 
 // draws the model, and thus all its meshes
-void engine::SpotLight::draw(const Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
+void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
 {
     m_lightPosition = position;
     m_lightTarget = target;

@@ -76,9 +76,9 @@ namespace engine
     };
 
 
-    /// <summary>
-    /// Set up vertex data for a 3d cube (counter-countwise)
-    /// </summary>
+     //<summary>
+     //Set up vertex data for a 3d cube (counter-countwise)
+     //</summary>
     inline const float cubeVertices[] = {
         // positions          // normals           // texture coords
 

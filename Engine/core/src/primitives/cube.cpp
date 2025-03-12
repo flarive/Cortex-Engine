@@ -4,90 +4,185 @@
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
-void engine::Cube::setup(const std::shared_ptr<Material>& material)
-{
-    m_material = material; // Store material reference
+#include <vector>
+#include <glm/glm.hpp>
 
-    const UvMapping uv{};
-    setup(material, uv);
-}
+namespace engine {
 
-void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
-{
-    m_material = material;
-    m_uvScale = uv.getUvScale();
+    struct Vertex {
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec2 texCoords;
+        glm::vec3 tangent;
+        glm::vec3 bitangent;
+    };
 
-    setup(); // Geometry setup
-
-    if (material)
-        material->loadTextures(); // Let material handle texture loading
-}
-
-void engine::Cube::setup()
-{
-    glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
-    glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
-
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(m_VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-    GLsizei stride = 8;
-
-    // position attribute (XYZ)
-    // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0); // stride 0 to 2
-
-    // normal attribute (XYZ)
-    // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1); // stride 3 to 5
-
-    // texture coord attribute (RGB)
-    // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2); // stride 6 to 7
-}
-
-// draws the model, and thus all its meshes
-void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
-{
-    shader.use();
-
-    if (shader.name == "cubemap")
+    inline std::vector<Vertex> generateCubeVertices()
     {
-        // bind skybox map
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
+        std::vector<Vertex> vertices = {
+            // Back face
+            {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
+            {{ 1.0f,  1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
+            {{ 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
 
-        shader.setInt("skyboxTexture", 0); // texture 0
+            {{ 1.0f,  1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
+            {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
+            {{-1.0f,  1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}},
+
+            // Front face
+            {{-1.0f, -1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+            {{ 1.0f, -1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+            {{ 1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+
+            {{ 1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+            {{-1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+            {{-1.0f, -1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+
+            // Left face
+            {{-1.0f,  1.0f,  1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+            {{-1.0f,  1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+            {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+
+            {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+            {{-1.0f, -1.0f,  1.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+            {{-1.0f,  1.0f,  1.0f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+
+            // Right face
+            {{1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+            {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+            {{1.0f,  1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+
+            {{1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+            {{1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+            {{1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+
+            // Bottom face
+            {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
+            {{1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
+            {{1.0f, -1.0f,  1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+
+            {{1.0f, -1.0f,  1.0f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+            {{-1.0f, -1.0f,  1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+            {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}},
+
+            // Top face
+            {{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+            {{1.0f,  1.0f , 1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+            {{1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+
+            {{1.0f,  1.0f,  1.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+            {{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+            {{-1.0f,  1.0f,  1.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}
+        };
+
+
+        // Compute tangents and bitangents
+        for (size_t i = 0; i < vertices.size(); i += 3) {
+            glm::vec3 edge1 = vertices[i + 1].position - vertices[i].position;
+            glm::vec3 edge2 = vertices[i + 2].position - vertices[i].position;
+            glm::vec2 deltaUV1 = vertices[i + 1].texCoords - vertices[i].texCoords;
+            glm::vec2 deltaUV2 = vertices[i + 2].texCoords - vertices[i].texCoords;
+
+            float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+            glm::vec3 tangent;
+            tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+            tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+            tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+            tangent = glm::normalize(tangent);
+
+            glm::vec3 bitangent;
+            bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+            bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+            bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+            bitangent = glm::normalize(bitangent);
+
+            vertices[i].tangent = tangent;
+            vertices[i + 1].tangent = tangent;
+            vertices[i + 2].tangent = tangent;
+
+            vertices[i].bitangent = bitangent;
+            vertices[i + 1].bitangent = bitangent;
+            vertices[i + 2].bitangent = bitangent;
+        }
+
+        return vertices;
     }
 
-    if (m_material)
+    void engine::Cube::setup(const std::shared_ptr<Material>& material)
     {
-        m_material->bind(shader);
-        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        shader.setFloat("uvScale", m_uvScale);
-        shader.setBool("hasTangents", false);
+        m_material = material; // Store material reference
+
+        const UvMapping uv{};
+        setup(material, uv);
     }
 
-    
+    void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
+    {
+        m_material = material;
+        m_uvScale = uv.getUvScale();
 
-    // calculate the model matrix for each object and pass it to shader before drawing
-    glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-    model = glm::translate(model, position);
-    if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
-    model = glm::scale(model, size);
-    shader.setMat4("model", model);
+        setup(); // Geometry setup
 
-    // Render cube
-    glBindVertexArray(m_VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+        if (material)
+            material->loadTextures(); // Let material handle texture loading
+    }
 
-    glBindVertexArray(0);
+    void Cube::setup() 
+    {
+        std::vector<Vertex> vertices = generateCubeVertices();
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        glGenVertexArrays(1, &m_VAO);
+        glGenBuffers(1, &m_VBO);
+
+        glBindVertexArray(m_VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+
+        // Position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+        glEnableVertexAttribArray(0);
+
+        // Normal attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+        glEnableVertexAttribArray(1);
+
+        // Texture coordinate attribute
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+        glEnableVertexAttribArray(2);
+
+        // Tangent attribute
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+        glEnableVertexAttribArray(3);
+
+        // Bitangent attribute
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
+        glEnableVertexAttribArray(4);
+
+        glBindVertexArray(0);
+    }
+
+    void Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis) {
+        shader.use();
+
+        if (m_material) {
+            m_material->bind(shader);
+            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            shader.setFloat("uvScale", m_uvScale);
+            shader.setBool("hasTangents", true);
+        }
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, position);
+        if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+        model = glm::scale(model, size);
+        shader.setMat4("model", model);
+
+        glBindVertexArray(m_VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        m_material->unbind();
+    }
 }
+

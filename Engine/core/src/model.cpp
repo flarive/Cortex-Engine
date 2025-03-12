@@ -148,7 +148,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness");
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, "texture_ao"); // not working !!!!!!
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_ao"); // using emissive because mtl doesn't support ao !!!!!!
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
     std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");

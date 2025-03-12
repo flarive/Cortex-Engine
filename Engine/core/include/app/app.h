@@ -240,13 +240,13 @@ namespace engine
             pbrShader.setInt("material.texture_prefilter", 8);
             pbrShader.setInt("material.texture_brdfLUT", 9);
 
-            pbrShader.setFloat("material.heightScale", 0.2f);
+            //pbrShader.setFloat("material.heightScale", 10.0f);
 
             pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
             pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
             pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
-            pbrShader.setFloat("material.normalMapIntensity", 50.0f);
+            pbrShader.setFloat("material.normalMapIntensity", 1.0f);
             
 
             

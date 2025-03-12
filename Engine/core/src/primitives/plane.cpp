@@ -25,47 +25,6 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
 
 void engine::Plane::setup()
 {
-    //glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
-    //glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
-
-    //// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    //glBindVertexArray(m_VAO);
-
-    //float* planeVertices = engine::Primitive::getScaledPlaneVertices(m_uvScale);
-
-    //glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    //glBufferData(GL_ARRAY_BUFFER, 84 * sizeof(float), planeVertices, GL_STATIC_DRAW);
-
-    //GLsizei stride = 14 * sizeof(float); // 14 floats per vertex, each float is 4 bytes
-
-    //// position attribute (XYZ)
-    //// layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-    //glEnableVertexAttribArray(0); // stride 0 to 2
-
-    //// normal attribute (XYZ)
-    //// layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-    //glEnableVertexAttribArray(1); // stride 3 to 5
-
-    //// texture coord attribute (RGB)
-    //// layout(location = 2), vec2, vector of floats, normalized, stride, offset in buffer
-    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-    //glEnableVertexAttribArray(2); // stride 6 to 7
-
-    //// Tangent attribute (XYZ)
-    //// layout(location = 3), vec3, vector of floats, normalized, stride, offset in buffer
-    //glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8 * sizeof(float)));
-    //glEnableVertexAttribArray(3);
-
-    //// Bitangent attribute (XYZ)
-    //// layout(location = 4), vec3, vector of floats, normalized, stride, offset in buffer
-    //glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11 * sizeof(float)));
-    //glEnableVertexAttribArray(4);
-
-
-    //delete[] planeVertices;
-
     // positions
     glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
     glm::vec3 pos2(-1.0f, -1.0f, 0.0f);

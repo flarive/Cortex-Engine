@@ -25,6 +25,9 @@ private:
     engine::Sphere wallSphere{};
     engine::Sphere bronzeSphere{};
 
+    engine::Model cushionModel{};
+    engine::Cube ourCube{};
+
     engine::Plane ourPlane{};
 
     engine::Text ourText{};
@@ -33,6 +36,8 @@ private:
     engine::Shader lightCubeShader{};
 
     float rotation{};
+
+    float heightScale{};
 
 
 public:
@@ -85,15 +90,30 @@ public:
         camera.MovementSpeed = 10.0f;
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/wood_diffuse.png",
-            "textures/wood_specular.png"), engine::UvMapping(2.0f));
+            "models/sphere/rounded-metal-cubes/albedo.png",
+            "",
+            "",
+            "models/sphere/rounded-metal-cubes/metallic.png",
+            "models/sphere/rounded-metal-cubes/roughness.png",
+            "models/sphere/rounded-metal-cubes/ao.png"), engine::UvMapping(2.0f));
 
 
 
         lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
+        cushionModel = engine::Model("models/cushion/cushion.obj");
 
-        redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
+        ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "models/sphere/rounded-metal-cubes/albedo.png",
+            "",
+            "models/sphere/rounded-metal-cubes/normal.png",
+            "models/sphere/rounded-metal-cubes/metallic.png",
+            "models/sphere/rounded-metal-cubes/roughness.png",
+            "models/sphere/rounded-metal-cubes/ao.png"), engine::UvMapping(2.0f));
+
+
+
+        //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
 
 
         rustedIronSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
@@ -182,6 +202,21 @@ public:
             camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
+
+        if (key == GLFW_KEY_Q && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
+            if (heightScale > 0.0f)
+                heightScale -= 0.0005f;
+            else
+                heightScale = 0.0f;
+        }
+        else if (key == GLFW_KEY_E && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
+            if (heightScale < 1.0f)
+                heightScale += 0.0005f;
+            else
+                heightScale = 1.0f;
+        }
     }
 
 
@@ -246,13 +281,18 @@ public:
         wallSphere.clean();
         bronzeSphere.clean();
         ourPlane.clean();
+        cushionModel.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
+
+        shader.use();
+        pbrShader.setFloat("material.heightScale", heightScale);
+
         // render test sphere
-        redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         goldSphere.draw(shader, glm::vec3(-3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         grassSphere.draw(shader, glm::vec3(-1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -264,7 +304,14 @@ private:
         rotation += deltaTime * 10.0f;
 
 
-        //ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // render the loaded model
+        //cushionModel.draw(shader, glm::vec3(0.0f, -4.0f, 0.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // render test cube
+        ourCube.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+
 
 
         // view/projection transformations
@@ -278,41 +325,6 @@ private:
         myPointLight4->draw(shader, projection, view, 20.0f, myPointLight4->getPosition(), myPointLight4->getTarget()); // ????????????
         //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
-
-
-
-        // add some custom light sources
-        //render light source (simply re-render sphere at light positions)
-        //this looks a bit off as we use the same shader, but it'll make their positions obvious and 
-        //keeps the codeprint small.
-        //glm::mat4 model = glm::mat4(1.0f);
-        //for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-        //{
-        //    glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 10.0, 0.0);
-        //    newPos = lightPositions[i];
-
-        //    shader.use();
-        //    shader.setVec3("lightPositions[" + std::to_string(i) + "]", newPos);
-        //    shader.setVec3("lightColors[" + std::to_string(i) + "]", lightColors[i]);
-
-        //    model = glm::mat4(1.0f);
-        //    model = glm::translate(model, newPos);
-        //    model = glm::scale(model, glm::vec3(0.5f));
-        //    shader.setMat4("model", model);
-        //    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-
-
-        //    // also draw the lamp object(s)
-        //    //lightCubeShader.use();
-        //    //lightCubeShader.setMat4("projection", projection);
-        //    //lightCubeShader.setMat4("view", view);
-        //    //lightCubeShader.setMat4("model", model);
-
-
-        //    //App::renderSphere();
-        //}
-
-        
     }
 
     void drawUI()

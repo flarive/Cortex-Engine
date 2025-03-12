@@ -14,7 +14,6 @@
 engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
     : id(id), type(type), path(path)
 {
-
 }
 
 unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
@@ -42,6 +41,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -115,36 +115,6 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
 
     return textureID;
 }
-
-//unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
-//{
-//    int width{}, height{}, nrComponents{};
-//
-//    stbi_set_flip_vertically_on_load(true);
-//
-//    float* data = stbi_loadf(filename.c_str(), &width, &height, &nrComponents, 0);
-//    unsigned int hdrTexture{};
-//    if (data)
-//    {
-//        glGenTextures(1, &hdrTexture);
-//        glBindTexture(GL_TEXTURE_2D, hdrTexture);
-//        glTexImage2D(GL_TEXTURE_2D, 0, alpha ? GL_RGBA16F : GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); // note how we specify the texture's data value to be float
-//
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//        stbi_image_free(data);
-//    }
-//    else
-//    {
-//        std::cerr << "Failed to load HDR image." << stbi_failure_reason() << std::endl;
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    return hdrTexture;
-//}
 
 unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
 {

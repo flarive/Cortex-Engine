@@ -104,6 +104,8 @@ uniform bool hasTangents; // does the primitive to render has tangents and bitan
 uniform vec3 camPos;
 uniform mat4 lightSpaceMatrix;
 
+uniform float uvScale;
+
 const float PI = 3.14159265359;
 
 
@@ -143,23 +145,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
 // Don't worry if you don't get what's going on; you generally want to do normal 
 // mapping the usual way for performance anyways; I do plan make a note of this 
 // technique somewhere later in the normal mapping tutorial.
-//vec3 getNormalFromMapOld()
-//{
-//    vec3 tangentNormal = texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0;
-//
-//    vec3 Q1  = dFdx(fs_in.WorldPos);
-//    vec3 Q2  = dFdy(fs_in.WorldPos);
-//    vec2 st1 = dFdx(fs_in.TexCoords);
-//    vec2 st2 = dFdy(fs_in.TexCoords);
-//
-//    vec3 N   = normalize(fs_in.Normal);
-//    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-//    vec3 B  = -normalize(cross(N, T));
-//    mat3 TBN = mat3(T, B, N);
-//
-//    return normalize(TBN * tangentNormal);
-//}
-
 vec3 getNormalFromMap()
 {
     // Sample the normal map and convert the range from [0, 1] to [-1, 1]
@@ -237,26 +222,34 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }   
 // ----------------------------------------------------------------------------
-vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
-    const float minLayers = 8.0;
-    const float maxLayers = 32.0;
-    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(material.texture_height, texCoords).r;    
+    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
+    return texCoords - p;    
+} 
 
-    float layerDepth = 1.0 / numLayers;
-    float currentLayerDepth = 0.0;
-    vec2 deltaTexCoords = viewDir.xy * material.heightScale / numLayers;
-    vec2 currentTexCoords = texCoords;
-
-    float heightFromTexture = texture(material.texture_height, currentTexCoords).r;
-
-    while (currentLayerDepth < heightFromTexture) {
-        currentTexCoords -= deltaTexCoords;
-        heightFromTexture = texture(material.texture_height, currentTexCoords).r;
-        currentLayerDepth += layerDepth;
-    }
-
-    return currentTexCoords;
-}
+//
+//vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
+//    const float minLayers = 8.0;
+//    const float maxLayers = 32.0;
+//    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
+//
+//    float layerDepth = 1.0 / numLayers;
+//    float currentLayerDepth = 0.0;
+//    vec2 deltaTexCoords = viewDir.xy * material.heightScale / numLayers;
+//    vec2 currentTexCoords = texCoords;
+//
+//    float heightFromTexture = texture(material.texture_height, currentTexCoords).r;
+//
+//    while (currentLayerDepth < heightFromTexture) {
+//        currentTexCoords -= deltaTexCoords;
+//        heightFromTexture = texture(material.texture_height, currentTexCoords).r;
+//        currentLayerDepth += layerDepth;
+//    }
+//
+//    return currentTexCoords;
+//}
 
 float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
 {
@@ -292,22 +285,22 @@ void main()
     vec3 V = normalize(camPos - fs_in.WorldPos); // View direction
     vec3 R = reflect(-V, N); 
 
-
-
     // Modify TexCoords using Parallax Mapping
-    vec2 modifiedTexCoords = parallaxMapping(fs_in.TexCoords, V);
+    vec2 modifiedTexCoords = parallaxMapping(fs_in.TexCoords * uvScale, V);
     modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, fs_in.TexCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
-    float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, fs_in.TexCoords).r : 0.0; // Non-metallic;
-    float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, fs_in.TexCoords).r : 0.5; // Moderate roughness
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, fs_in.TexCoords).r : 0.0; // Full ambient occlusion
+    vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, modifiedTexCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
+    float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, modifiedTexCoords).r : 0.0; // Non-metallic;
+    float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, modifiedTexCoords).r : 0.5; // Moderate roughness
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, modifiedTexCoords).r : 0.0; // Full ambient occlusion
 
 //    vec3 albedo = vec3(0.5); // A neutral gray color
 //    float metallic = 0.0;    // Non-metallic
 //    float roughness = 0.5;   // Moderate roughness
 //    float ao = 0.0;          // Full ambient occlusion
+
+
 
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -373,6 +366,8 @@ void main()
     color = pow(color, vec3(1.0/2.2)); 
 
     FragColor = vec4(color , 1.0);
+
+
 
     // debug ao map
     //FragColor = vec4(vec3(ao), 1.0);

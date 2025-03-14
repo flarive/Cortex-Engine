@@ -5,11 +5,15 @@ out vec4 FragColor;
 // coming from vertex shader
 in VS_OUT {
     vec2 TexCoords;
-    vec3 WorldPos;
+    vec3 FragPos;
     vec3 Normal;
     vec3 Tangent;
     vec3 Bitangent;
     vec4 FragPosLightSpace;
+
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
 
 } fs_in;
 
@@ -101,10 +105,10 @@ uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 
-uniform vec3 camPos;
+uniform vec3 viewPos;
 uniform mat4 lightSpaceMatrix;
 
-uniform float uvScale;
+//uniform float uvScale;
 
 const float PI = 3.14159265359;
 
@@ -130,10 +134,6 @@ const vec2 poissonDisk[16] = vec2[](
 );
 
 
-
-uniform vec3 viewPos;
-
-
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
@@ -149,6 +149,7 @@ vec3 getNormalFromMap()
 {
     // Sample the normal map and convert the range from [0, 1] to [-1, 1]
     vec3 tangentNormal = texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0;
+    //tangentNormal.z = -tangentNormal.z;  // Flip Z-axis if normals look inverted
 
     // Scale the normal map values by the normal map intensity
     tangentNormal = mix(vec3(0.0), tangentNormal, material.normalMapIntensity);
@@ -161,8 +162,8 @@ vec3 getNormalFromMap()
         T = normalize(fs_in.Tangent);
         B = normalize(fs_in.Bitangent);
     } else { // Otherwise, compute them using screen-space derivatives
-        vec3 Q1  = dFdx(fs_in.WorldPos);
-        vec3 Q2  = dFdy(fs_in.WorldPos);
+        vec3 Q1  = dFdx(fs_in.FragPos);
+        vec3 Q2  = dFdy(fs_in.FragPos);
         vec2 st1 = dFdx(fs_in.TexCoords);
         vec2 st2 = dFdy(fs_in.TexCoords);
         T  = normalize(Q1*st2.t - Q2*st1.t);
@@ -224,9 +225,13 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 // ----------------------------------------------------------------------------
 vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
-    float height =  texture(material.texture_height, texCoords).r;    
-    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
-    return texCoords - p;    
+//    float height =  texture(material.texture_height, texCoords).r;    
+//    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
+//    return texCoords - p;    
+
+    float height =  texture(material.texture_height, texCoords).r;
+    //return texCoords - viewDir.xy * (height * material.heightScale);
+    return texCoords + viewDir.xy * (height * material.heightScale);
 } 
 
 //
@@ -260,7 +265,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
     float currentDepth = projCoords.z;
     
     //float bias = max(0.002 * (1.0 - dot(fs_in.Normal, lightDir)), 0.0005);
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.WorldPos))), 0.0001);
+    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.FragPos))), 0.0001);
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
     
@@ -282,25 +287,26 @@ void main()
 {		
     // input lighting data
     vec3 N = getNormalFromMap();
-    vec3 V = normalize(camPos - fs_in.WorldPos); // View direction
-    vec3 R = reflect(-V, N); 
+    vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
+    vec3 R = reflect(-V, N);
+
+    vec2 texCoords = fs_in.TexCoords;
+
+    // offset texture coordinates with Parallax Mapping
+    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 
     // Modify TexCoords using Parallax Mapping
-    vec2 modifiedTexCoords = parallaxMapping(fs_in.TexCoords * uvScale, V);
-    modifiedTexCoords = clamp(modifiedTexCoords, vec2(0.0), vec2(1.0));
+    //texCoords = parallaxMapping(texCoords, V);
+    texCoords = parallaxMapping(fs_in.TexCoords, viewDir);
+     if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+        discard;
+
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, modifiedTexCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
-    float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, modifiedTexCoords).r : 0.0; // Non-metallic;
-    float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, modifiedTexCoords).r : 0.5; // Moderate roughness
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, modifiedTexCoords).r : 0.0; // Full ambient occlusion
-
-//    vec3 albedo = vec3(0.5); // A neutral gray color
-//    float metallic = 0.0;    // Non-metallic
-//    float roughness = 0.5;   // Moderate roughness
-//    float ao = 0.0;          // Full ambient occlusion
-
-
+    vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, texCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
+    float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
+    float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
 
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -319,13 +325,13 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], N, fs_in.WorldPos, V, albedo, metallic, roughness);
+            Lo += CalcPointLight(pointLights[i], N, fs_in.FragPos, V, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            Lo += CalcDirLight(dirLights[i], N, fs_in.WorldPos, V, vec3(1.0));
+            Lo += CalcDirLight(dirLights[i], N, fs_in.FragPos, V, vec3(1.0));
     }
 
 
@@ -380,7 +386,7 @@ void main()
 // Calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
-    vec3 L = normalize(light.position - fs_in.WorldPos);
+    vec3 L = normalize(light.position - fs_in.FragPos);
     float theta = dot(L, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
 
@@ -393,7 +399,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 H = normalize(viewDir + L);
     float NdotL = max(dot(normal, L), 0.0);
     
-    float distance = length(light.position - fs_in.WorldPos);
+    float distance = length(light.position - fs_in.FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 radiance = light.diffuse * attenuation * intensity;
 

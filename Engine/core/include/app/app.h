@@ -214,39 +214,18 @@ namespace engine
             // -------------------------
             loadShaders();
 
-            //// Counters
-            //int spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
-
-            //// Count each type using dynamic_pointer_cast
-            //for (const auto& light : lights) {
-            //    if (std::dynamic_pointer_cast<SpotLight>(light)) {
-            //        ++spotLightCount;
-            //    }
-            //    else if (std::dynamic_pointer_cast<DirectionalLight>(light)) {
-            //        ++dirLightCount;
-            //    }
-            //    else if (std::dynamic_pointer_cast<PointLight>(light)) {
-            //        ++pointLightCount;
-            //    }
-            //}
-
-            //pbrShader.use();
-            //pbrShader.setInt("pointLightsCount", spotLightCount);
-            //pbrShader.setInt("dirLightsCount", dirLightCount);
-            //pbrShader.setInt("spotLightsCount", pointLightCount);
-
             pbrShader.use();
             pbrShader.setInt("material.texture_irradiance", 7);
             pbrShader.setInt("material.texture_prefilter", 8);
             pbrShader.setInt("material.texture_brdfLUT", 9);
 
-            //pbrShader.setFloat("material.heightScale", 10.0f);
+            //pbrShader.setFloat("material.heightScale", 1.0f);
 
             pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
             pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
             pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
-            pbrShader.setFloat("material.normalMapIntensity", 1.0f);
+            pbrShader.setFloat("material.normalMapIntensity", 0.05f);
             
 
             
@@ -638,7 +617,10 @@ namespace engine
             glm::mat4 view = camera.GetViewMatrix();
             pbrShader.setMat4("projection", projection);
             pbrShader.setMat4("view", view);
-            pbrShader.setVec3("camPos", camera.Position);
+            pbrShader.setVec3("viewPos", camera.Position);
+
+
+            pbrShader.setVec3("lightPos", lights[0]->getPosition());
 
 
             
@@ -652,8 +634,6 @@ namespace engine
             glActiveTexture(GL_TEXTURE9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-            //pbrShader.use();
-            //pbrShader.setInt("pointLightsCount", lights.size());
 
             // update user stuffs
             update(pbrShader);

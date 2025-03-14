@@ -63,7 +63,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        shader.setFloat("uvScale", m_uvScale);
+        //shader.setFloat("uvScale", m_uvScale);
     }
 
     glEnable(GL_BLEND);

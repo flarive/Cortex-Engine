@@ -30,6 +30,7 @@ private:
 
     engine::Plane ourPlane{};
 
+
     engine::Text ourText{};
 
 
@@ -37,7 +38,7 @@ private:
 
     float rotation{};
 
-    float heightScale{};
+    float heightScale{0.0f};
 
 
 public:
@@ -92,10 +93,12 @@ public:
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/rounded-metal-cubes/albedo.png",
             "",
-            "",
+            "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
             "models/sphere/rounded-metal-cubes/roughness.png",
-            "models/sphere/rounded-metal-cubes/ao.png"), engine::UvMapping(2.0f));
+            "models/sphere/rounded-metal-cubes/ao.png",
+            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
+
 
 
 
@@ -287,7 +290,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-
         shader.use();
         pbrShader.setFloat("material.heightScale", heightScale);
 

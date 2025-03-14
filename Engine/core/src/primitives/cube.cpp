@@ -168,7 +168,7 @@ namespace engine {
         if (m_material) {
             m_material->bind(shader);
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-            shader.setFloat("uvScale", m_uvScale);
+            //shader.setFloat("uvScale", m_uvScale);
             shader.setBool("hasTangents", true);
         }
 

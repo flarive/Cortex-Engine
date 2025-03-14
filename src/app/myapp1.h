@@ -50,7 +50,7 @@ public:
     void init() override
     {
         // load models
-        backpackModel = engine::Model("models/backpack/backpack.obj");
+        //backpackModel = engine::Model("models/backpack/backpack.obj");
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
 
@@ -98,7 +98,7 @@ public:
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/rusted_metal_diffuse.jpg",
-            "textures/rusted_metal_specular.jpg"), engine::UvMapping(2.0f));
+            "textures/rusted_metal_specular.jpg"), engine::UvMapping(4.0f));
 
         
 
@@ -247,7 +247,7 @@ private:
         skyboxReflectShader.setVec3("cameraPos", camera.Position);
     
         // render the loaded model
-        backpackModel.draw(skyboxReflectShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
+        //backpackModel.draw(skyboxReflectShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
     
     
     

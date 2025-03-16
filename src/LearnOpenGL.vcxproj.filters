@@ -450,6 +450,25 @@
     <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\albedo.png">
       <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ao.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\height.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\metallic.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\normal.png" />
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\roughness.png" />
+    <CopyFileToFolders Include="..\resources\textures\bricks2.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\bricks2_disp.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\bricks2_normal.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\height.png">
+      <Filter>resources\textures\pbr\rusted_iron</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -464,22 +483,5 @@
     <ClInclude Include="app\myapp4.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\models\sphere\rounded-metal-cubes\ao.png">
-      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\rounded-metal-cubes\height.png">
-      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\rounded-metal-cubes\metallic.png">
-      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\rounded-metal-cubes\normal.png">
-      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
-    </Image>
-    <Image Include="..\resources\models\sphere\rounded-metal-cubes\roughness.png">
-      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
-    </Image>
   </ItemGroup>
 </Project>

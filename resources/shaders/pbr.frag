@@ -151,8 +151,9 @@ vec3 getNormalFromMap()
     vec3 tangentNormal = texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0;
     //tangentNormal.z = -tangentNormal.z;  // Flip Z-axis if normals look inverted
 
-    // Scale the normal map values by the normal map intensity
-    tangentNormal = mix(vec3(0.0), tangentNormal, material.normalMapIntensity);
+    // Blend towards (0,0,1) instead of (0,0,0)
+    tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
+
 
     // Compute the TBN matrix using either precomputed tangents or derivatives
     vec3 N = normalize(fs_in.Normal);
@@ -227,11 +228,10 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
 //    float height =  texture(material.texture_height, texCoords).r;    
 //    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
-//    return texCoords - p;    
+//    return texCoords - p;
 
-    float height =  texture(material.texture_height, texCoords).r;
-    //return texCoords - viewDir.xy * (height * material.heightScale);
-    return texCoords + viewDir.xy * (height * material.heightScale);
+    float height =  texture(material.texture_height, texCoords).r;     
+    return texCoords - viewDir.xy * (height * material.heightScale); 
 } 
 
 //

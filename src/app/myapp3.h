@@ -16,8 +16,10 @@ private:
     std::shared_ptr<engine::PointLight> myPointLight3;
     std::shared_ptr<engine::PointLight> myPointLight4;
 
+    std::shared_ptr<engine::DirectionalLight> myDirectionalLight;
 
-    engine::Model redSciFiMetalSphere{};
+
+    engine::Sphere redSciFiMetalSphere{};
     engine::Sphere rustedIronSphere{};
     engine::Sphere goldSphere{};
     engine::Sphere grassSphere{};
@@ -39,6 +41,7 @@ private:
     float rotation{};
 
     float heightScale{0.0f};
+    float normalScale{0.1f};
 
 
 public:
@@ -64,7 +67,7 @@ public:
     void init() override
     {
         myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f));
+        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
 
         myPointLight2 = std::make_shared<engine::PointLight>(1);
         myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
@@ -76,12 +79,16 @@ public:
         myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
 
 
+        myDirectionalLight = std::make_shared<engine::DirectionalLight>(0);
+        myDirectionalLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
 
 
         lights.emplace_back(myPointLight1);
         lights.emplace_back(myPointLight2);
         lights.emplace_back(myPointLight3);
         lights.emplace_back(myPointLight4);
+        lights.emplace_back(myDirectionalLight);
+        
 
 
         // override default camera properties
@@ -91,13 +98,13 @@ public:
         camera.MovementSpeed = 10.0f;
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "models/sphere/rounded-metal-cubes/albedo.png",
+            "models/sphere/cliff/albedo.jpg",
             "",
-            "models/sphere/rounded-metal-cubes/normal.png",
-            "models/sphere/rounded-metal-cubes/metallic.png",
-            "models/sphere/rounded-metal-cubes/roughness.png",
-            "models/sphere/rounded-metal-cubes/ao.png",
-            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
+            "models/sphere/cliff/normal.jpg",
+            "models/sphere/cliff/metallic.jpg",
+            "models/sphere/cliff/roughness.jpg",
+            "models/sphere/cliff/ao.jpg",
+            "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
 
 
 
@@ -112,11 +119,21 @@ public:
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
             "models/sphere/rounded-metal-cubes/roughness.png",
-            "models/sphere/rounded-metal-cubes/ao.png"), engine::UvMapping(2.0f));
+            "models/sphere/rounded-metal-cubes/ao.png",
+            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
 
 
 
         //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
+
+        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "models/sphere/rounded-metal-cubes/albedo.png",
+            "",
+            "models/sphere/rounded-metal-cubes/normal.png",
+            "models/sphere/rounded-metal-cubes/metallic.png",
+            "models/sphere/rounded-metal-cubes/roughness.png",
+            "models/sphere/rounded-metal-cubes/ao.png",
+            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
 
 
         rustedIronSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
@@ -125,7 +142,8 @@ public:
             "textures/pbr/rusted_iron/normal.png",
             "textures/pbr/rusted_iron/metallic.png",
             "textures/pbr/rusted_iron/roughness.png",
-            "textures/pbr/rusted_iron/ao.png"));
+            "textures/pbr/rusted_iron/ao.png",
+            "textures/pbr/rusted_iron/height.png"));
 
         goldSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/gold/albedo.png",
@@ -209,16 +227,32 @@ public:
         if (key == GLFW_KEY_Q && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
             if (heightScale > 0.0f)
-                heightScale -= 0.0005f;
+                heightScale -= 0.01f;
             else
                 heightScale = 0.0f;
         }
         else if (key == GLFW_KEY_E && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
             if (heightScale < 1.0f)
-                heightScale += 0.0005f;
+                heightScale += 0.01f;
             else
                 heightScale = 1.0f;
+        }
+
+
+        if (key == GLFW_KEY_H && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
+            if (normalScale > 0.0f)
+                normalScale -= 0.01f;
+            else
+                normalScale = 0.0f;
+        }
+        else if (key == GLFW_KEY_J && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
+            if (normalScale < 1.0f)
+                normalScale += 0.01f;
+            else
+                normalScale = 1.0f;
         }
     }
 
@@ -291,10 +325,13 @@ private:
     void drawScene(engine::Shader& shader)
     {
         shader.use();
-        pbrShader.setFloat("material.heightScale", heightScale);
+        shader.setFloat("material.heightScale", heightScale);
+        shader.setFloat("material.normalMapIntensity", normalScale);
+
+        std::cout << normalScale << " - " << heightScale << std::endl;
 
         // render test sphere
-        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         goldSphere.draw(shader, glm::vec3(-3.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         grassSphere.draw(shader, glm::vec3(-1.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -303,10 +340,10 @@ private:
         bronzeSphere.draw(shader, glm::vec3(5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
-        rotation += deltaTime * 10.0f;
+        
 
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(10.0f, -10.0f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // render the loaded model
         //cushionModel.draw(shader, glm::vec3(0.0f, -4.0f, 0.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -314,6 +351,9 @@ private:
         // render test cube
         ourCube.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
+
+
+        rotation += deltaTime * 10.0f;
 
 
         // view/projection transformations
@@ -325,7 +365,7 @@ private:
         myPointLight2->draw(shader, projection, view, 20.0f, myPointLight2->getPosition(), myPointLight2->getTarget()); // ????????????
         myPointLight3->draw(shader, projection, view, 20.0f, myPointLight3->getPosition(), myPointLight3->getTarget()); // ????????????
         myPointLight4->draw(shader, projection, view, 20.0f, myPointLight4->getPosition(), myPointLight4->getTarget()); // ????????????
-        //myDirectionalLight.draw(shader, projection, view, 1.0f, getLightPosition(), getLightTarget());
+        myDirectionalLight->draw(shader, projection, view, 1.0f, myDirectionalLight->getPosition(), myDirectionalLight->getTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
     }
 

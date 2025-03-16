@@ -225,7 +225,7 @@ namespace engine
             pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
             pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
-            pbrShader.setFloat("material.normalMapIntensity", 0.05f);
+            //pbrShader.setFloat("material.normalMapIntensity", 0.05f);
             
 
             
@@ -1182,7 +1182,7 @@ namespace engine
             // 2. render scene as normal using the previously generated depth/shadow map  
             // -------------------------------------------------------------------------
             shader.use();
-            //shader.setVec3("lightPos", light_position); // ?????????????????
+            shader.setVec3("lightPos", light_position); // ?????????????????
             shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
             // update user stuffs

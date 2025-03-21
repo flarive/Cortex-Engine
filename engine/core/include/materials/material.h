@@ -41,6 +41,8 @@ namespace engine
 
 
         void loadTextures();
+        static unsigned int loadTextureAsync(const std::string& path, bool generateMipmaps = true, bool repeat = false, bool sRGB = false, bool gammaCorrection = false);
+
 
         void bind(Shader& shader) const;
         void unbind() const;

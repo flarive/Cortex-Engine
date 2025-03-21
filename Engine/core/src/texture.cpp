@@ -1,4 +1,4 @@
-#include "../include/texture.h"
+﻿#include "../include/texture.h"
 
 #include "../include/common_defines.h"
 
@@ -11,48 +11,198 @@
 
 
 
+
+#include <iostream>
+#include <functional>
+
+namespace engine {
+    namespace TextureManager {
+        std::unordered_map<std::string, std::future<std::tuple<unsigned char*, int, int, int>>> textureCache;
+        std::queue<std::function<void()>> textureUploadQueue;
+        std::mutex textureCacheMutex;
+        std::mutex textureQueueMutex;
+
+        std::unordered_map<std::string, unsigned int> textureIDCache;
+
+        void loadTextureAsync(const std::string& filename, bool repeat) {
+            std::lock_guard<std::mutex> lock(textureCacheMutex);
+            textureCache[filename] = std::async(std::launch::async, engine::Texture::loadTextureAsync, filename, repeat);
+        }
+    }
+}
+
+
+
 engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
     : id(id), type(type), path(path)
 {
 }
 
-unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
-{
-    unsigned int textureID{};
-    glGenTextures(1, &textureID);
+//unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
+//{
+//    unsigned int textureID{};
+//    glGenTextures(1, &textureID);
+//
+//    stbi_set_flip_vertically_on_load(true);
+//
+//    int width{}, height{}, nrComponents{};
+//    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+//    if (data)
+//    {
+//        GLenum format{};
+//        if (nrComponents == 1)
+//            format = GL_RED;
+//        else if (nrComponents == 3)
+//            format = GL_RGB;
+//        else if (nrComponents == 4)
+//            format = GL_RGBA;
+//
+//        glBindTexture(GL_TEXTURE_2D, textureID);
+//        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//        glGenerateMipmap(GL_TEXTURE_2D);
+//
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+//
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//        stbi_image_free(data);
+//    }
+//    else
+//    {
+//        std::cout << "Texture failed to load at path: " << filename << std::endl;
+//        stbi_image_free(data);
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    return textureID;
+//}
 
+
+// ????????????????????????
+std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsync(const std::string& filename, bool repeat)
+{
     stbi_set_flip_vertically_on_load(true);
 
     int width{}, height{}, nrComponents{};
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format{};
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
+    
+    if (!data) {
+        std::cerr << "Texture failed to load at path: " << filename << std::endl;
+        return { nullptr, 0, 0, 0 };
     }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << filename << std::endl;
-        stbi_image_free(data);
-        exit(EXIT_FAILURE);
+
+    return { data, width, height, nrComponents };
+}
+
+// **Asynchronous Texture Loading**
+unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
+{
+    if (filename.empty()) return 0;
+
+    std::lock_guard<std::mutex> lock(engine::Texture textureCacheMutex);
+
+    // Check if the texture is already being loaded asynchronously
+    if (engine::TextureManager::textureCache.find(filename) != engine::TextureManager::textureCache.end()) {
+        return 0; // Already loading
     }
+
+    // Ensure the future is correctly assigned
+    engine::TextureManager::textureCache[filename] = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
+        stbi_set_flip_vertically_on_load(true);
+
+        int width{}, height{}, nrComponents{};
+        unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+        if (!data) {
+            std::cerr << "Texture failed to load at path: " << filename << std::endl;
+            return { nullptr, 0, 0, 0 };
+        }
+        return { data, width, height, nrComponents };
+        });
+
+    return 0;  // Temporary ID, real ID is set later
+}
+
+// **Step 2: Process Texture Creation on Main Thread**
+void engine::Texture::processLoadedTextures()
+{
+    std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
+    while (!engine::TextureManager::textureUploadQueue.empty()) {
+        engine::TextureManager::textureUploadQueue.front()(); // Execute OpenGL task
+        engine::TextureManager::textureUploadQueue.pop();
+    }
+}
+
+// **Helper: Enqueue Texture Creation to Run on Main Thread**
+unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool repeat)
+{
+    std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
+
+    // 1️⃣ Check if the texture was loaded asynchronously
+    auto it = engine::TextureManager::textureCache.find(filename);
+    if (it == engine::TextureManager::textureCache.end()) {
+        std::cerr << "Warning: Texture future for " << filename << " not found!" << std::endl;
+        return 0;  // Exit if the texture is not found in cache
+    }
+
+    // 2️⃣ Ensure the future is valid before calling `.get()`
+    if (!it->second.valid()) {
+        std::cerr << "Warning: Texture future for " << filename << " is invalid!" << std::endl;
+        return 0;  // Future is invalid, exit early
+    }
+
+    // 3️⃣ Retrieve texture data (blocking call)
+    auto [data, width, height, nrComponents] = it->second.get();
+    if (!data || width == 0 || height == 0 || nrComponents == 0) {
+        std::cerr << "Error: Texture " << filename << " failed to load or is empty!" << std::endl;
+        return 0;  // Prevent further processing
+    }
+
+
+
+    // Queue OpenGL Calls for Execution in `processLoadedTextures()`
+    {
+        std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
+
+        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, repeat]()
+        {
+            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, repeat);
+
+            engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
+
+
+            
+
+            stbi_image_free(data);  // Free after OpenGL upload
+
+            return textureID;
+        });
+    }
+
+    return 0;
+}
+
+
+
+
+// **Helper: Creates OpenGL Texture (Always Called on Main Thread)**
+unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool repeat)
+{
+    if (!data) return 0;
+
+    GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
+
+    unsigned int textureID{};
+    glGenTextures(1, &textureID);  // ✅ Runs on main thread!
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     return textureID;
 }
@@ -73,7 +223,7 @@ unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Set wrapping mode (clamp to edge since it�s a single pixel)
+    // Set wrapping mode (clamp to edge since it’s a single pixel)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

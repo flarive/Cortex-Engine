@@ -114,7 +114,7 @@ public:
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
         ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "models/sphere/rounded-metal-cubes/albedo.png",
+            "models/sphere/rounded-metal-cubes/normal.png",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
@@ -328,7 +328,11 @@ private:
         shader.setFloat("material.heightScale", heightScale);
         shader.setFloat("material.normalMapIntensity", normalScale);
 
-        std::cout << normalScale << " - " << heightScale << std::endl;
+        //std::cout << normalScale << " - " << heightScale << std::endl;
+
+
+
+        engine::Texture::processLoadedTextures();
 
         // render test sphere
         redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));

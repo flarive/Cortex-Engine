@@ -26,22 +26,24 @@ namespace engine
         std::string m_heightTexPath{};
 
 
+        float m_heightIntensity{};
+        float m_normalIntensity{ 0.5f };
+
+
         float m_shininess{};
     
     public:
         std::vector<Texture> textures{}; // Store textures
 
         Material(const std::vector<Texture>& textures);
-
         Material(const engine::Color& ambientColor);
-
         Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 0.0f);
-
         Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
 
 
         void loadTextures();
-        static unsigned int loadTextureAsync(const std::string& path, bool generateMipmaps = true, bool repeat = false, bool sRGB = false, bool gammaCorrection = false);
+        void loadTexturesAsync();
+        static void loadTextureAsync(const std::string& path, bool generateMipmaps = true, bool repeat = false, bool sRGB = false, bool gammaCorrection = false);
 
 
         void bind(Shader& shader) const;
@@ -73,6 +75,15 @@ namespace engine
         const std::string& getAoTexPath() const { return m_aoTexPath; }
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
 
+
+        const float getNormalIntensity() const { return m_normalIntensity; }
+        const float getHeightIntensity() const { return m_heightIntensity; }
+        const float getShininessIntensity() const { return m_shininess; }
+        
+
+        void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
+        void setHeightIntensity(float height) { m_heightIntensity = height; }
+        void setShininessIntensity(float intensity) { m_shininess = intensity; }
 
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 

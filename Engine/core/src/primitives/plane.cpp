@@ -20,7 +20,7 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
     setup(); // Geometry setup
 
     if (material)
-        material->loadTextures(); // Let material handle texture loading
+        material->loadTexturesAsync(); // Let material handle texture loading
 }
 
 void engine::Plane::setup()
@@ -114,8 +114,14 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        //shader.setFloat("uvScale", m_uvScale);
         shader.setBool("hasTangents", true);
+
+        auto material = getMaterial();
+        if (material)
+        {
+            shader.setFloat("material.heightScale", material->getHeightIntensity());
+            shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
+        }
     }
 
     // calculate the model matrix for each object and pass it to shader before drawing

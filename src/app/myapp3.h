@@ -28,7 +28,7 @@ private:
     engine::Sphere bronzeSphere{};
 
     engine::Model cushionModel{};
-    engine::Cube ourCube{};
+    //engine::Cube ourCube{};
 
     engine::Plane ourPlane{};
 
@@ -40,8 +40,8 @@ private:
 
     float rotation{};
 
-    float heightScale{0.0f};
-    float normalScale{0.1f};
+    //float heightScale{0.0f};
+    //float normalScale{0.5f};
 
 
 public:
@@ -113,14 +113,14 @@ public:
 
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
-        ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "models/sphere/rounded-metal-cubes/normal.png",
-            "",
-            "models/sphere/rounded-metal-cubes/normal.png",
-            "models/sphere/rounded-metal-cubes/metallic.png",
-            "models/sphere/rounded-metal-cubes/roughness.png",
-            "models/sphere/rounded-metal-cubes/ao.png",
-            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
+        //ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //    "models/sphere/rounded-metal-cubes/albedo.png",
+        //    "",
+        //    "models/sphere/rounded-metal-cubes/normal.png",
+        //    "models/sphere/rounded-metal-cubes/metallic.png",
+        //    "models/sphere/rounded-metal-cubes/roughness.png",
+        //    "models/sphere/rounded-metal-cubes/ao.png",
+        //    "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
 
 
 
@@ -134,6 +134,13 @@ public:
             "models/sphere/rounded-metal-cubes/roughness.png",
             "models/sphere/rounded-metal-cubes/ao.png",
             "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
+
+        auto mat = redSciFiMetalSphere.getMaterial();
+        if (mat)
+        {
+            mat->setNormalIntensity(1.0f);
+            mat->setHeightIntensity(1.0f);
+        }
 
 
         rustedIronSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
@@ -224,7 +231,7 @@ public:
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
 
-        if (key == GLFW_KEY_Q && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        /*if (key == GLFW_KEY_Q && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
             if (heightScale > 0.0f)
                 heightScale -= 0.01f;
@@ -253,7 +260,7 @@ public:
                 normalScale += 0.01f;
             else
                 normalScale = 1.0f;
-        }
+        }*/
     }
 
 
@@ -325,14 +332,14 @@ private:
     void drawScene(engine::Shader& shader)
     {
         shader.use();
-        shader.setFloat("material.heightScale", heightScale);
-        shader.setFloat("material.normalMapIntensity", normalScale);
+        //shader.setFloat("material.heightScale", heightScale);
+        //shader.setFloat("material.normalMapIntensity", normalScale);
 
         //std::cout << normalScale << " - " << heightScale << std::endl;
 
 
 
-        engine::Texture::processLoadedTextures();
+        //engine::Texture::processLoadedTextures();
 
         // render test sphere
         redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -347,13 +354,13 @@ private:
         
 
 
-        ourPlane.draw(shader, glm::vec3(10.0f, -10.0f, -10.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(10.0f, -10.0f, -15.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // render the loaded model
         //cushionModel.draw(shader, glm::vec3(0.0f, -4.0f, 0.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test cube
-        ourCube.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourCube.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
 

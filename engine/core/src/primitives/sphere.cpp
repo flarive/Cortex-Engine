@@ -14,7 +14,7 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMa
     m_uvScale = uv.getUvScale();
     setup();
     if (material)
-        material->loadTextures();
+        material->loadTexturesAsync();
 }
 
 void engine::Sphere::setup()
@@ -139,6 +139,13 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setBool("hasTangents", true);
+
+        auto material = getMaterial();
+        if (material)
+        {
+            shader.setFloat("material.heightScale", material->getHeightIntensity());
+            shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
+        }
     }
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);

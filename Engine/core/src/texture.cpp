@@ -21,13 +21,7 @@ namespace engine {
         std::queue<std::function<void()>> textureUploadQueue;
         std::mutex textureCacheMutex;
         std::mutex textureQueueMutex;
-
         std::unordered_map<std::string, unsigned int> textureIDCache;
-
-        void loadTextureAsync(const std::string& filename, bool repeat) {
-            std::lock_guard<std::mutex> lock(textureCacheMutex);
-            textureCache[filename] = std::async(std::launch::async, engine::Texture::loadTextureAsync, filename, repeat);
-        }
     }
 }
 
@@ -38,50 +32,56 @@ engine::Texture::Texture(unsigned int id, const std::string& type, const std::st
 {
 }
 
-//unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
-//{
-//    unsigned int textureID{};
-//    glGenTextures(1, &textureID);
-//
-//    stbi_set_flip_vertically_on_load(true);
-//
-//    int width{}, height{}, nrComponents{};
-//    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-//    if (data)
-//    {
-//        GLenum format{};
-//        if (nrComponents == 1)
-//            format = GL_RED;
-//        else if (nrComponents == 3)
-//            format = GL_RGB;
-//        else if (nrComponents == 4)
-//            format = GL_RGBA;
-//
-//        glBindTexture(GL_TEXTURE_2D, textureID);
-//        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-//        glGenerateMipmap(GL_TEXTURE_2D);
-//
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-//
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//        stbi_image_free(data);
-//    }
-//    else
-//    {
-//        std::cout << "Texture failed to load at path: " << filename << std::endl;
-//        stbi_image_free(data);
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    return textureID;
-//}
+/// <summary>
+/// Synchronous version
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="repeat"></param>
+/// <param name="gammaCorrection"></param>
+/// <returns></returns>
+unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
+{
+    unsigned int textureID{};
+    glGenTextures(1, &textureID);
+
+    stbi_set_flip_vertically_on_load(true);
+
+    int width{}, height{}, nrComponents{};
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format{};
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << filename << std::endl;
+        stbi_image_free(data);
+        exit(EXIT_FAILURE);
+    }
+
+    return textureID;
+}
 
 
-// ????????????????????????
-std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsync(const std::string& filename, bool repeat)
+std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename, bool repeat)
 {
     stbi_set_flip_vertically_on_load(true);
 
@@ -97,7 +97,7 @@ std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsync(cons
 }
 
 // **Asynchronous Texture Loading**
-unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool repeat, bool gammaCorrection)
 {
     if (filename.empty()) return 0;
 
@@ -159,8 +159,6 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
         return 0;  // Prevent further processing
     }
 
-
-
     // Queue OpenGL Calls for Execution in `processLoadedTextures()`
     {
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
@@ -171,8 +169,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
 
-
-            
+            //std::cerr << "EnqueueTextureCreation " << filename << " with TextureID " << textureID << std::endl;
 
             stbi_image_free(data);  // Free after OpenGL upload
 

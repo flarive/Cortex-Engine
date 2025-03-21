@@ -36,6 +36,8 @@ namespace engine
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean();
 
+        std::shared_ptr<Material> getMaterial() { return m_material; }
+
 
         static float* getScaledPlaneVertices(float uvScale)
         {

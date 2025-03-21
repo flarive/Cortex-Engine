@@ -19,7 +19,7 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material, const U
     setup(); // Geometry setup
 
     if (material)
-        material->loadTextures(); // Let material handle texture loading
+        material->loadTexturesAsync(); // Let material handle texture loading
 }
 
 void engine::Billboard::setup()

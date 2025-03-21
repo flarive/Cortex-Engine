@@ -125,7 +125,7 @@ namespace engine {
         setup(); // Geometry setup
 
         if (material)
-            material->loadTextures(); // Let material handle texture loading
+            material->loadTexturesAsync(); // Let material handle texture loading
     }
 
     void Cube::setup() 
@@ -168,8 +168,14 @@ namespace engine {
         if (m_material) {
             m_material->bind(shader);
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-            //shader.setFloat("uvScale", m_uvScale);
             shader.setBool("hasTangents", true);
+
+            auto material = getMaterial();
+            if (material)
+            {
+                shader.setFloat("material.heightScale", material->getHeightIntensity());
+                shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
+            }
         }
 
         glm::mat4 model = glm::mat4(1.0f);

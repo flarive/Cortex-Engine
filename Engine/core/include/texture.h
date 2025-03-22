@@ -39,10 +39,11 @@ namespace engine
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
         static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, bool repeat = true);
 
-        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool repeat);
 
-        static std::tuple<unsigned char*, int, int, int> loadTextureAsyncInternal(const std::string& filename, bool repeat);
+        static std::tuple<unsigned char*, int, int, int> loadTextureAsyncInternal(const std::string& filename);
         static void processLoadedTextures();
-        static unsigned int enqueueTextureCreation(const std::string& filename, bool repeat);
+        static unsigned int enqueueTextureCreation(const std::string& filename, bool generateMipmaps = true, bool repeat = false, bool gammaCorrection = false);
+
+        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection);
     };
 }

@@ -25,7 +25,7 @@ engine::Material::Material(const engine::Color& ambientColor, const std::string&
 }
 
 // Helper function to load a texture asynchronously
-void engine::Material::loadTextureAsync(const std::string& path, bool generateMipmaps, bool repeat, bool sRGB, bool gammaCorrection)
+void engine::Material::loadTextureAsync(const std::string& path)
 {
     if (path.empty()) return; // Avoid unnecessary loading
 
@@ -37,7 +37,7 @@ void engine::Material::loadTextureAsync(const std::string& path, bool generateMi
     }
     
     // Load texture
-    auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path, repeat);
+    auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
     engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
     
     return;
@@ -108,14 +108,14 @@ void engine::Material::loadTexturesAsync()
     textures.clear();
     textures.reserve(7);
 
-    // Load texrures asynchronously
-    loadTextureAsync(getDiffuseTexPath(), true);
-    loadTextureAsync(getSpecularTexPath(), true);
-    loadTextureAsync(getNormalTexPath(), true);
-    loadTextureAsync(getMetallicTexPath(), true);
-    loadTextureAsync(getRoughnessTexPath(), true);
-    loadTextureAsync(getAoTexPath(), true);
-    loadTextureAsync(getHeightTexPath(), true);
+    // Load textures asynchronously
+    loadTextureAsync(getDiffuseTexPath());
+    loadTextureAsync(getSpecularTexPath());
+    loadTextureAsync(getNormalTexPath());
+    loadTextureAsync(getMetallicTexPath());
+    loadTextureAsync(getRoughnessTexPath());
+    loadTextureAsync(getAoTexPath());
+    loadTextureAsync(getHeightTexPath());
 
     // Queue OpenGL execution on main thread
     unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;

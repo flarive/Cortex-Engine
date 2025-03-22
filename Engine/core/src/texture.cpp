@@ -81,7 +81,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 }
 
 
-std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename, bool repeat)
+std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
 {
     stbi_set_flip_vertically_on_load(true);
 
@@ -101,7 +101,7 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 {
     if (filename.empty()) return 0;
 
-    std::lock_guard<std::mutex> lock(engine::Texture textureCacheMutex);
+    std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
     // Check if the texture is already being loaded asynchronously
     if (engine::TextureManager::textureCache.find(filename) != engine::TextureManager::textureCache.end()) {
@@ -135,7 +135,7 @@ void engine::Texture::processLoadedTextures()
 }
 
 // **Helper: Enqueue Texture Creation to Run on Main Thread**
-unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool repeat)
+unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
@@ -163,9 +163,9 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     {
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
 
-        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, repeat]()
+        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection]()
         {
-            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, repeat);
+            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection);
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
 
@@ -184,20 +184,23 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
 
 // **Helper: Creates OpenGL Texture (Always Called on Main Thread)**
-unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool repeat)
+unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     if (!data) return 0;
 
     GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 
     unsigned int textureID{};
-    glGenTextures(1, &textureID);  // ✅ Runs on main thread!
+    glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+
+    if (generateMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

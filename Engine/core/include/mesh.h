@@ -32,6 +32,8 @@ namespace engine
         // render the mesh
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), float angle = 0.0f, glm::vec3 scale = glm::vec3(1.0f));
 
+        std::shared_ptr<Material> getMaterial() { return m_material; }
+
         void clean();
        
     private:

@@ -41,7 +41,7 @@ namespace engine
         Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
 
 
-        //void loadTextures();
+        void loadTextures();
         void loadTexturesAsync();
         static void loadTextureAsync(const std::string& path);
 

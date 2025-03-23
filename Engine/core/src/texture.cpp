@@ -5,11 +5,7 @@
 #include "../include/tools/file_system.h"
 
 
-#define STBI_FAILURE_USERMSG //generate user friendly error messages
-#define STB_IMAGE_IMPLEMENTATION // for HDR support
-#include "stb_image.h"
-
-
+#include "SOIL2.h"
 
 
 #include <iostream>
@@ -44,10 +40,12 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
     unsigned int textureID{};
     glGenTextures(1, &textureID);
 
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     int width{}, height{}, nrComponents{};
-    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
     if (data)
     {
         GLenum format{};
@@ -68,12 +66,12 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        stbi_image_free(data);
+        SOIL_free_image_data(data);
     }
     else
     {
         std::cout << "Texture failed to load at path: " << filename << std::endl;
-        stbi_image_free(data);
+        SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
     }
 
@@ -83,10 +81,12 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 
 std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
 {
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     int width{}, height{}, nrComponents{};
-    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+
+    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
     
     if (!data) {
         std::cerr << "Texture failed to load at path: " << filename << std::endl;
@@ -110,10 +110,12 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
-        stbi_set_flip_vertically_on_load(true);
+        //stbi_set_flip_vertically_on_load(true);
 
         int width{}, height{}, nrComponents{};
-        unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+        //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+        unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
         if (!data) {
             std::cerr << "Texture failed to load at path: " << filename << std::endl;
             return { nullptr, 0, 0, 0 };
@@ -171,7 +173,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
             //std::cerr << "EnqueueTextureCreation " << filename << " with TextureID " << textureID << std::endl;
 
-            stbi_image_free(data);  // Free after OpenGL upload
+            SOIL_free_image_data(data);  // Free after OpenGL upload
 
             return textureID;
         });
@@ -239,22 +241,24 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    stbi_set_flip_vertically_on_load(false);
+    //stbi_set_flip_vertically_on_load(false);
 
-    int width, height, nrComponents;
+    //int width, height, nrComponents;
+    int width = 0, height = 0, nrComponents = 0;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        
-        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
+        //unsigned char* data = nullptr;// stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
+        unsigned char* data = SOIL_load_image(faces[i].c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            stbi_image_free(data);
+            SOIL_free_image_data(data);
         }
         else
         {
             std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            stbi_image_free(data);
+            SOIL_free_image_data(data);
         }
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -268,34 +272,37 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
 
 unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alpha, bool repeat)
 {
+    unsigned int textureID;
     int width{}, height{}, nrComponents{};
-    stbi_set_flip_vertically_on_load(true);
 
-    float* data = stbi_loadf(filename.c_str(), &width, &height, &nrComponents, 0);
-    if (!data)
+    float* data = SOIL_load_HDR_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+    if (data)
     {
-        std::cerr << "Failed to load HDR image: " << filename << " - " << stbi_failure_reason() << std::endl;
-        return 0; // Return invalid texture ID instead of exiting.
+        GLenum internalFormat = (alpha && nrComponents == 4) ? GL_RGBA32F : GL_RGB32F;
+        GLenum format = (alpha && nrComponents == 4) ? GL_RGBA : GL_RGB;
+
+        
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_FLOAT, data);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // Trilinear filtering
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glGenerateMipmap(GL_TEXTURE_2D); // Improves quality at different distances
+
+        SOIL_free_float_image_data(data);
+    }
+    else
+    {
+        std::cout << "HDR texture failed to load at path: " << filename << std::endl;
+        SOIL_free_float_image_data(data);
+        exit(EXIT_FAILURE);
     }
 
-    GLenum internalFormat = (alpha && nrComponents == 4) ? GL_RGBA32F : GL_RGB32F;
-    GLenum format = (alpha && nrComponents == 4) ? GL_RGBA : GL_RGB;
-
-    unsigned int hdrTexture;
-    glGenTextures(1, &hdrTexture);
-    glBindTexture(GL_TEXTURE_2D, hdrTexture);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_FLOAT, data);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // Trilinear filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glGenerateMipmap(GL_TEXTURE_2D); // Improves quality at different distances
-
-    stbi_image_free(data);
-
-    return hdrTexture;
+    return textureID;
 }
 

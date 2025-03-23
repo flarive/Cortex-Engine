@@ -483,6 +483,9 @@
     <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\roughness.png">
       <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\albedo.dds">
+      <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">

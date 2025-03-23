@@ -1894,6 +1894,30 @@ int
 	return save_result;
 }
 
+float*
+SOIL_load_HDR_image
+(
+	const char* filename,
+	int* width, int* height, int* channels,
+	int force_channels
+)
+{
+	stbi_set_flip_vertically_on_load(1);
+	
+	float *result = stbi_loadf(filename, width, height, channels, force_channels);
+
+	if (result == NULL)
+	{
+		result_string_pointer = stbi_failure_reason();
+	}
+	else
+	{
+		result_string_pointer = "Image loaded";
+	}
+
+	return result;
+}
+
 unsigned char*
 	SOIL_load_image
 	(
@@ -2178,6 +2202,16 @@ void
 {
 	if ( img_data )
 		free( (void*)img_data );
+}
+
+void
+	SOIL_free_float_image_data
+	(
+		float* img_data
+	)
+{
+	if (img_data)
+		free((void*)img_data);
 }
 
 const char*

@@ -399,6 +399,15 @@ unsigned char*
 		int *width, int *height, int *channels,
 		int force_channels
 	);
+	
+	
+	float*
+SOIL_load_HDR_image
+(
+	const char* filename,
+	int* width, int* height, int* channels,
+	int force_channels
+);
 
 /**
 	Loads an image from memory into an array of unsigned chars.
@@ -479,6 +488,12 @@ void
 	SOIL_free_image_data
 	(
 		unsigned char *img_data
+	);
+	
+	void
+	SOIL_free_float_image_data
+	(
+		float *img_data
 	);
 
 /**

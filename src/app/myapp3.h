@@ -127,7 +127,7 @@ public:
         //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
 
         redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "models/sphere/rounded-metal-cubes/albedo.png",
+            "models/sphere/rounded-metal-cubes/albedo.dds",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
@@ -139,7 +139,7 @@ public:
         if (mat)
         {
             mat->setNormalIntensity(1.0f);
-            mat->setHeightIntensity(1.0f);
+            mat->setHeightIntensity(0.0f);
         }
 
 

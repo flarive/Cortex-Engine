@@ -126,19 +126,28 @@ public:
 
         //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
 
-        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        /*redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/rounded-metal-cubes/albedo.dds",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
             "models/sphere/rounded-metal-cubes/roughness.png",
             "models/sphere/rounded-metal-cubes/ao.png",
-            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
+            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));*/
+
+        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/bricks2.jpg",
+            "",
+            "textures/bricks2_normal.jpg",
+            "",
+            "",
+            "",
+            "textures/bricks2_disp.jpg"), engine::UvMapping(2.0f));
 
         auto mat = redSciFiMetalSphere.getMaterial();
         if (mat)
         {
-            mat->setNormalIntensity(1.0f);
+            mat->setNormalIntensity(0.5f);
             mat->setHeightIntensity(0.0f);
         }
 

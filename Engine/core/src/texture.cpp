@@ -2,11 +2,7 @@
 
 #include "../include/common_defines.h"
 
-#include "../include/tools/file_system.h"
-
-
 #include "SOIL2.h"
-
 
 #include <iostream>
 #include <functional>
@@ -21,20 +17,14 @@ namespace engine {
     }
 }
 
-
-
 engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
     : id(id), type(type), path(path)
 {
 }
 
 /// <summary>
-/// Synchronous version
+/// Synchronous texture loading
 /// </summary>
-/// <param name="filename"></param>
-/// <param name="repeat"></param>
-/// <param name="gammaCorrection"></param>
-/// <returns></returns>
 unsigned int engine::Texture::loadTexture(const std::string& filename, bool repeat, bool gammaCorrection)
 {
     unsigned int textureID{};
@@ -81,11 +71,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 
 std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
 {
-    //stbi_set_flip_vertically_on_load(true);
-
     int width{}, height{}, nrComponents{};
-    //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-
     unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
     
     if (!data) {
@@ -96,7 +82,9 @@ std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInter
     return { data, width, height, nrComponents };
 }
 
-// **Asynchronous Texture Loading**
+/// <summary>
+/// Asynchronous texture loading
+/// </summary>
 unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool repeat, bool gammaCorrection)
 {
     if (filename.empty()) return 0;
@@ -110,10 +98,7 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
-        //stbi_set_flip_vertically_on_load(true);
-
         int width{}, height{}, nrComponents{};
-        //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
         unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
         if (!data) {
@@ -126,7 +111,9 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
     return 0;  // Temporary ID, real ID is set later
 }
 
-// **Step 2: Process Texture Creation on Main Thread**
+/// <summary>
+/// Process Texture Creation on Main Thread
+/// </summary>
 void engine::Texture::processLoadedTextures()
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
@@ -136,7 +123,9 @@ void engine::Texture::processLoadedTextures()
     }
 }
 
-// **Helper: Enqueue Texture Creation to Run on Main Thread**
+/// <summary>
+/// Enqueue Texture Creation to Run on Main Thread
+/// </summary>
 unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
@@ -182,10 +171,9 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     return 0;
 }
 
-
-
-
-// **Helper: Creates OpenGL Texture (Always Called on Main Thread)**
+/// <summary>
+/// Creates OpenGL Texture (Always Called on Main Thread)
+/// </summary>
 unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     if (!data) return 0;
@@ -234,22 +222,16 @@ unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned 
     return texture;
 }
 
-
 unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    //stbi_set_flip_vertically_on_load(false);
-
-    //int width, height, nrComponents;
     int width = 0, height = 0, nrComponents = 0;
     for (unsigned int i = 0; i < faces.size(); i++)
     {
-        //unsigned char* data = nullptr;// stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
         unsigned char* data = SOIL_load_image(faces[i].c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -281,7 +263,6 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
         GLenum internalFormat = (alpha && nrComponents == 4) ? GL_RGBA32F : GL_RGB32F;
         GLenum format = (alpha && nrComponents == 4) ? GL_RGBA : GL_RGB;
 
-        
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -305,4 +286,3 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
 
     return textureID;
 }
-

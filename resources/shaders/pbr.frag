@@ -154,7 +154,6 @@ vec3 getNormalFromMap()
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
 
-
     // Compute the TBN matrix using either precomputed tangents or derivatives
     vec3 N = normalize(fs_in.Normal);
     vec3 T, B;
@@ -298,8 +297,8 @@ void main()
     // Modify TexCoords using Parallax Mapping
     //texCoords = parallaxMapping(texCoords, V);
     texCoords = parallaxMapping(fs_in.TexCoords, viewDir);
-     if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-        discard;
+//    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+//        discard;
 
 
     // material properties

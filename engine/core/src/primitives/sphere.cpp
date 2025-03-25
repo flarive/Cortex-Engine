@@ -52,11 +52,7 @@ void engine::Sphere::setup()
             glm::vec3 normal = glm::normalize(position);
 
             positions.emplace_back(position);
-
-            float u = fmod(xSegment * m_uvScale, 1.0f); // Wrap horizontally
-            float v = fmod(ySegment * m_uvScale, 1.0f); // Wrap vertically
-            uv.emplace_back(u, v);
-
+            uv.emplace_back(xSegment * m_uvScale, ySegment * m_uvScale);
             normals.emplace_back(normal);
 
             glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));
@@ -111,7 +107,7 @@ void engine::Sphere::setup()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-    constexpr unsigned int stride = (3 + 3 + 2 + 3 + 3) * sizeof(float);
+    constexpr unsigned int stride = 14 * sizeof(float);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);

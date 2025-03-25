@@ -142,7 +142,7 @@ public:
             "",
             "",
             "",
-            "textures/bricks2_disp.jpg"), engine::UvMapping(2.0f));
+            "textures/bricks2_disp.jpg"), engine::UvMapping(3.0f));
 
         auto mat = redSciFiMetalSphere.getMaterial();
         if (mat)

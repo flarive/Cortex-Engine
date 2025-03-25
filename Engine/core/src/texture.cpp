@@ -105,8 +105,9 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
             std::cerr << "Texture failed to load at path: " << filename << std::endl;
             return { nullptr, 0, 0, 0 };
         }
+
         return { data, width, height, nrComponents };
-        });
+    });
 
     return 0;  // Temporary ID, real ID is set later
 }
@@ -180,6 +181,22 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 
+    // Flip image vertically
+    int rowSize = width * nrComponents;  // Number of bytes per row
+    unsigned char* rowBuffer = new unsigned char[rowSize];
+
+    for (int y = 0; y < height / 2; ++y) {
+        unsigned char* rowTop = data + y * rowSize;
+        unsigned char* rowBottom = data + (height - y - 1) * rowSize;
+
+        std::memcpy(rowBuffer, rowTop, rowSize);
+        std::memcpy(rowTop, rowBottom, rowSize);
+        std::memcpy(rowBottom, rowBuffer, rowSize);
+    }
+
+    delete[] rowBuffer;
+
+    // Create and bind OpenGL texture
     unsigned int textureID{};
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -196,6 +213,7 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     return textureID;
 }
+
 
 unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {

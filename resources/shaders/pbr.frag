@@ -225,12 +225,12 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 // ----------------------------------------------------------------------------
 vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
-//    float height =  texture(material.texture_height, texCoords).r;    
-//    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
-//    return texCoords - p;
-
-    float height =  texture(material.texture_height, texCoords).r;     
-    return texCoords - viewDir.xy * (height * material.heightScale); 
+    float height =  texture(material.texture_height, texCoords).r;    
+    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
+    return texCoords - p;
+//
+//    float height =  texture(material.texture_height, texCoords).r;     
+//    return texCoords - viewDir.xy * (height * material.heightScale); 
 } 
 
 //

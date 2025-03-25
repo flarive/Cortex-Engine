@@ -6,7 +6,7 @@
 
 
 // make it easier to switch between apps
-using MyApp = MyApp3;
+using MyApp = MyApp1;
 
 
 engine::App* app{};

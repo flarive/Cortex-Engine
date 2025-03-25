@@ -203,9 +203,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        //shader.use();
-    
-    
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };

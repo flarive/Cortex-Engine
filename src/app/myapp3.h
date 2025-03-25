@@ -40,10 +40,6 @@ private:
 
     float rotation{};
 
-    //float heightScale{0.0f};
-    //float normalScale{0.5f};
-
-
 public:
     MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
@@ -126,28 +122,28 @@ public:
 
         //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
 
-        /*redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/rounded-metal-cubes/albedo.dds",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
             "models/sphere/rounded-metal-cubes/roughness.png",
             "models/sphere/rounded-metal-cubes/ao.png",
-            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));*/
+            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(3.0f));
 
-        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/bricks2.jpg",
-            "",
-            "textures/bricks2_normal.jpg",
-            "",
-            "",
-            "",
-            "textures/bricks2_disp.jpg"), engine::UvMapping(3.0f));
+        //redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //    "textures/bricks2.jpg",
+        //    "",
+        //    "textures/bricks2_normal.jpg",
+        //    "",
+        //    "",
+        //    "",
+        //    "textures/bricks2_disp.jpg"), engine::UvMapping(3.0f));
 
         auto mat = redSciFiMetalSphere.getMaterial();
         if (mat)
         {
-            mat->setNormalIntensity(0.5f);
+            mat->setNormalIntensity(5.0f);
             mat->setHeightIntensity(0.0f);
         }
 
@@ -239,37 +235,6 @@ public:
             camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
-
-        /*if (key == GLFW_KEY_Q && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            if (heightScale > 0.0f)
-                heightScale -= 0.01f;
-            else
-                heightScale = 0.0f;
-        }
-        else if (key == GLFW_KEY_E && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            if (heightScale < 1.0f)
-                heightScale += 0.01f;
-            else
-                heightScale = 1.0f;
-        }
-
-
-        if (key == GLFW_KEY_H && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            if (normalScale > 0.0f)
-                normalScale -= 0.01f;
-            else
-                normalScale = 0.0f;
-        }
-        else if (key == GLFW_KEY_J && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            if (normalScale < 1.0f)
-                normalScale += 0.01f;
-            else
-                normalScale = 1.0f;
-        }*/
     }
 
 
@@ -340,16 +305,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        shader.use();
-        //shader.setFloat("material.heightScale", heightScale);
-        //shader.setFloat("material.normalMapIntensity", normalScale);
-
-        //std::cout << normalScale << " - " << heightScale << std::endl;
-
-
-
-        //engine::Texture::processLoadedTextures();
-
         // render test sphere
         redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
         rustedIronSphere.draw(shader, glm::vec3(-5.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -363,7 +318,7 @@ private:
         
 
 
-        ourPlane.draw(shader, glm::vec3(10.0f, -10.0f, -15.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // render the loaded model
         //cushionModel.draw(shader, glm::vec3(0.0f, -4.0f, 0.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));

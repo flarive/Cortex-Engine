@@ -6,7 +6,7 @@
 
 
 // make it easier to switch between apps
-using MyApp = MyApp1;
+using MyApp = MyApp3;
 
 
 engine::App* app{};
@@ -30,6 +30,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+static void gamepadUpdate();
 
 // Startup method
 int main(int, char**)
@@ -42,8 +43,21 @@ int main(int, char**)
         glfwSetCursorPosCallback(app->window, mouseCallback);
         glfwSetScrollCallback(app->window, scrollCallback);
 
+        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+        if (present > 0)
+        {
+            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+            std::cout << "Joystick present " << name << std::endl;
+        }
+
         // start game loop
-        app->gameLoop();
+        while (!glfwWindowShouldClose(app->window))
+        {
+            gamepadUpdate(); // Update gamepad state
+            app->gameLoop();
+        }
+
+        app->gameExit();
     }
     else
     {
@@ -55,7 +69,7 @@ int main(int, char**)
 }
 
 // glfw: whenever a keyboard key is pressed, this callback is called
-// -------------------------------------------------------
+// -----------------------------------------------------------------
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     UNREFERENCED_PARAMETER(window);
@@ -94,10 +108,17 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     myApp->framebuffer_size_callback(width, height);
 }
 
-
-
-
-
-
-
-
+// Poll gamepad input and forward to MyApp
+// ---------------------------------------
+static void gamepadUpdate()
+{
+    if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1))
+    {
+        GLFWgamepadstate state;
+        if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
+        {
+            MyApp* myApp = (MyApp*)app;
+            myApp->gamepad_callback(state);
+        }
+    }
+}

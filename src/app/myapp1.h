@@ -173,6 +173,14 @@ public:
         camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
+    void gamepad_callback(const GLFWgamepadstate& state)
+    {
+        engine::App::gamepad_callback(state);
+
+        
+
+    }
+
     void framebuffer_size_callback(int newWidth, int newHeight)
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);

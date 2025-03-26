@@ -219,16 +219,10 @@ namespace engine
             pbrShader.setInt("material.texture_prefilter", 8);
             pbrShader.setInt("material.texture_brdfLUT", 9);
 
-            //pbrShader.setFloat("material.heightScale", 1.0f);
-
             pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
             pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
             pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
-            //pbrShader.setFloat("material.normalMapIntensity", 0.05f);
-            
-
-            
 
             
 
@@ -493,8 +487,8 @@ namespace engine
 
         void gameLoop()
         {
-            while (!glfwWindowShouldClose(window))
-            {
+            /*while (!glfwWindowShouldClose(window))
+            {*/
                 // Poll and handle events (inputs, window resize, etc.)
                 // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
                 // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
@@ -504,7 +498,8 @@ namespace engine
                 if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
                 {
                     ImGui_ImplGlfw_Sleep(10);
-                    continue;
+                    //continue;
+                    return;
                 }
 
                 // Start the Dear ImGui frame
@@ -514,8 +509,8 @@ namespace engine
 
                 framerate = ImGui::GetIO().Framerate;
 
-                if (show_window)
-                    renderUIWindow(show_window);
+                //if (show_window)
+                //    renderUIWindow(show_window);
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
@@ -546,12 +541,15 @@ namespace engine
 
                 auto end_time = std::chrono::high_resolution_clock::now();
                 std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY) - (end_time - start_time));
-            }
+            //}
+        }
 
+        void gameExit()
+        {
             glBindVertexArray(0);
 
             // optional: de-allocate all resources once they've outlived their purpose
-            //glDeleteVertexArrays(1, &quadVAO);
+            glDeleteVertexArrays(1, &quadVAO);
             //glDeleteBuffers(1, &quadVBO);
             glDeleteRenderbuffers(1, &rbo);
             glDeleteFramebuffers(1, &colorFramebuffer);
@@ -707,6 +705,11 @@ namespace engine
             UNREFERENCED_PARAMETER(yoffset);
         }
 
+        // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
+        void gamepad_callback(const GLFWgamepadstate& state)
+        {
+            UNREFERENCED_PARAMETER(state);
+        }
 
         // glfw: whenever the window size changed (by OS or user resize) this callback function executes
         // ---------------------------------------------------------------------------------------------
@@ -716,26 +719,6 @@ namespace engine
             // height will be significantly larger than specified on retina displays.
             glViewport(0, 0, newWidth, newHeight);
         }
-
-        //void setLightPosition(glm::vec3 pos)
-        //{
-        //    m_lightPosition = pos;
-        //}
-
-        //void setLightTarget(glm::vec3 pos)
-        //{
-        //    m_lightTarget = pos;
-        //}
-
-        //glm::vec3 getLightPosition()
-        //{
-        //    return m_lightPosition;
-        //}
-
-        //glm::vec3 getLightTarget()
-        //{
-        //    return m_lightTarget;
-        //}
 
         // renderCube() renders a 1x1 3D cube in NDC.
         // -------------------------------------------------
@@ -815,7 +798,7 @@ namespace engine
         // renderQuad() renders a 1x1 XY quad in NDC
         // -----------------------------------------
         unsigned int quadVAO = 0;
-        unsigned int quadVBO;
+        unsigned int quadVBO = 0;
         void renderQuad()
         {
             if (quadVAO == 0)

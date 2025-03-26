@@ -271,6 +271,31 @@ public:
         camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
+    void gamepad_callback(const GLFWgamepadstate& state)
+    {
+        engine::App::gamepad_callback(state);
+
+        camera.ProcessJoystickMovement(state);
+
+        //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+
+
+
+        if (GLFW_PRESS == state.buttons[1])
+        {
+            std::cout << "Pressed" << std::endl;
+        }
+        else if (GLFW_RELEASE == state.buttons[0])
+        {
+            //std::cout << "Released" << std::endl;
+        }
+    }
+
     void framebuffer_size_callback(int newWidth, int newHeight)
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);

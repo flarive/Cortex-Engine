@@ -97,6 +97,40 @@ void engine::Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolea
     updateCameraVectors();
 }
 
+void engine::Camera::ProcessJoystickMovement(const GLFWgamepadstate& state)
+{
+    float deadZone = 0.2f; // Dead zone threshold to prevent drift
+
+    float leftX = (fabs(state.axes[0]) > deadZone) ? state.axes[0] : 0.0f; // Left stick X-axis (left/right movement)
+    float leftY = (fabs(state.axes[1]) > deadZone) ? state.axes[1] : 0.0f; // Left stick Y-axis (forward/backward movement)
+    float rightX = (fabs(state.axes[2]) > deadZone) ? state.axes[2] : 0.0f; // Right stick X-axis (yaw rotation)
+    float rightY = (fabs(state.axes[3]) > deadZone) ? state.axes[3] : 0.0f; // Right stick Y-axis (pitch rotation)
+    float triggerL = (state.axes[4] > -0.9f) ? state.axes[4] : -1.0f; // Left trigger (down movement)
+    float triggerR = (state.axes[5] > -0.9f) ? state.axes[5] : -1.0f; // Right trigger (up movement)
+
+    float velocity = MovementSpeed * 0.1f; // Adjust movement speed
+    float rotationSpeed = MouseSensitivity * 2.0f; // Adjust rotation sensitivity
+
+    // Apply movement (left stick)
+    Position += Front * (-leftY * velocity); // Forward/backward
+    Position += Right * (leftX * velocity); // Left/right
+
+    // Vertical movement using triggers
+    if (triggerL > -0.9f) Position -= Up * ((triggerL + 1.0f) * 0.5f * velocity); // L2 moves down
+    if (triggerR > -0.9f) Position += Up * ((triggerR + 1.0f) * 0.5f * velocity); // R2 moves up
+
+    // Apply camera rotation (right stick)
+    Yaw += rightX * rotationSpeed;
+    Pitch -= rightY * rotationSpeed;
+
+    // Clamp pitch to avoid flipping
+    if (Pitch > 89.0f) Pitch = 89.0f;
+    if (Pitch < -89.0f) Pitch = -89.0f;
+
+    // Update camera vectors
+    updateCameraVectors();
+}
+
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 void engine::Camera::ProcessMouseScroll(float yoffset)
 {

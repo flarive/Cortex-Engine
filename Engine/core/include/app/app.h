@@ -485,7 +485,7 @@ namespace engine
         // must be overridden in derived class
         virtual void clean() = 0;
 
-        bool appRunning()
+        bool gameRunning()
         {
             return !glfwWindowShouldClose(window);
         }

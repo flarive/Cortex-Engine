@@ -6,7 +6,7 @@
 
 
 // make it easier to switch between apps
-using MyApp = MyApp3;
+using MyApp = MyApp4;
 
 
 engine::App* app{};
@@ -51,7 +51,7 @@ int main(int, char**)
         }
 
         // start game loop
-        while (!glfwWindowShouldClose(app->window))
+        while (app->gameRunning())
         {
             gamepadUpdate(); // Update gamepad state
             app->gameLoop();

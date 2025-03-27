@@ -224,8 +224,6 @@ public:
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::RIGHT, deltaTime);
 
-
-
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
         else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
@@ -283,8 +281,6 @@ public:
         //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
         //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
         //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
-
-
 
         if (GLFW_PRESS == state.buttons[1])
         {

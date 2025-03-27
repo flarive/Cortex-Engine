@@ -176,9 +176,6 @@ public:
     void gamepad_callback(const GLFWgamepadstate& state)
     {
         engine::App::gamepad_callback(state);
-
-        
-
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)

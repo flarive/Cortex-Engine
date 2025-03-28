@@ -51,7 +51,7 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 8.0f, -2.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 8.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         mySpotLight->setCutOff(12.5f);
         mySpotLight->setOuterCutOff(17.5f);
 

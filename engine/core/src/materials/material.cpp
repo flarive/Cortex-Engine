@@ -75,7 +75,6 @@ void engine::Material::unbind() const
     glActiveTexture(GL_TEXTURE0); // Reset to default
 }
 
-
 void engine::Material::loadTextures()
 {
     textures.clear();  // Prevent duplicates

@@ -30,10 +30,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
     unsigned int textureID{};
     glGenTextures(1, &textureID);
 
-    //stbi_set_flip_vertically_on_load(true);
-
     int width{}, height{}, nrComponents{};
-    //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
     if (data)

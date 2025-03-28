@@ -77,6 +77,9 @@
     <Filter Include="resources\models\sphere\rounded-metal-cubes">
       <UniqueIdentifier>{25cb4ec6-eb89-40bf-844a-657a534f5fcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\buddha">
+      <UniqueIdentifier>{c27a94eb-170b-4bbb-92c9-d8d289bcf7a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -486,6 +489,39 @@
     <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\albedo.dds">
       <Filter>resources\models\sphere\rounded-metal-cubes</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha1.mtl">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha1.obj">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha2.mtl">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha2.obj">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha3.mtl">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\buddha3.obj">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\albedo.png">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\ao.png">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\metallic.png">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\normal.png">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\buddha\roughness.png">
+      <Filter>resources\models\buddha</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -498,6 +534,9 @@
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\myapp4.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myapp5.h">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>

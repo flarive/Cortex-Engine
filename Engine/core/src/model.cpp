@@ -135,25 +135,25 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // normal: texture_normalN
 
     // 1. diffuse maps
-    std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
-    std::vector<engine::Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<engine::Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    std::vector<engine::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
+    std::vector<engine::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. metallic maps
-    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(material, aiTextureType_METALNESS, "texture_metalness");
+    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
     textures.insert(textures.end(), metallicMaps.begin(), metallicMaps.end());
     // 5. roughness maps
-    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness");
+    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_ao"); // using emissive because mtl doesn't support ao !!!!!!
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_ao"); // map_Ke
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
-    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height");
+    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height"); // bump
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // Create Material

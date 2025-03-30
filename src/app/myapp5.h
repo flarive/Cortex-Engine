@@ -17,13 +17,13 @@ private:
     std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
-    engine::Model cushionModel{};
+    engine::Model buddhaModel{};
 
     engine::Plane ourPlane{};
 
     engine::Text ourText{};
 
-    //float rotation{};
+    float rotation{};
 
     
 
@@ -33,7 +33,7 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 engine::RenderMethod::PBR,
-                false,
+                true,
                 "textures/hdr/blue_photo_studio_2k.hdr",
                 1.5f,
                 1.0f,
@@ -51,7 +51,7 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 8.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         mySpotLight->setCutOff(12.5f);
         mySpotLight->setOuterCutOff(17.5f);
 
@@ -65,7 +65,7 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        cushionModel = engine::Model("models/buddha/buddha1.obj");
+        buddhaModel = engine::Model("models/buddha/buddha1.obj");
 
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
@@ -120,40 +120,53 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        //UNREFERENCED_PARAMETER(xposIn);
-        //UNREFERENCED_PARAMETER(yposIn);
-
         engine::App::mouse_callback(xposIn, yposIn);
 
-        float xpos = static_cast<float>(xposIn);
-        float ypos = static_cast<float>(yposIn);
+        //float xpos = static_cast<float>(xposIn);
+        //float ypos = static_cast<float>(yposIn);
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+        //if (firstMouse)
+        //{
+        //    lastX = xpos;
+        //    lastY = ypos;
+        //    firstMouse = false;
+        //}
 
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        //float xoffset = xpos - lastX;
+        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        lastX = xpos;
-        lastY = ypos;
+        //lastX = xpos;
+        //lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        //camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
+        camera.ProcessJoystickMovement(state);
 
+        //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+
+        if (GLFW_PRESS == state.buttons[1])
+        {
+            std::cout << "Pressed" << std::endl;
+        }
+        else if (GLFW_RELEASE == state.buttons[0])
+        {
+            //std::cout << "Released" << std::endl;
+        }
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -178,7 +191,7 @@ public:
     {
         // clean up any resources
         ourPlane.clean();
-        cushionModel.clean();
+        buddhaModel.clean();
     }
 
 private:
@@ -189,8 +202,7 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
+
 
 
 
@@ -202,13 +214,19 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
-        //rotation += deltaTime * 10.0f;
+        
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+
+        // setup lights
+        mySpotLight->draw(shader, projection, view, 20.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
+
+        rotation += deltaTime * 10.0f;
     }
 
     void drawUI()
@@ -216,6 +234,4 @@ private:
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
     }
-
-
 };

@@ -20,7 +20,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
-    if (angle != 0) model = glm::rotate(model, glm::radians(angle), rotation);
+    model = glm::rotate(model, glm::radians(angle), rotation);
     model = glm::scale(model, scale);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

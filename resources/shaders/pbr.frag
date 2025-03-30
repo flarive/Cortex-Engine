@@ -27,6 +27,7 @@ struct Material {
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
     sampler2D texture_shadowMap; // 10
+
     float heightScale;
     float shadowIntensity; // Adjust to make shadows darker
     float normalMapIntensity;
@@ -400,7 +401,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     
     float distance = length(light.position - fs_in.FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    vec3 radiance = light.diffuse * intensity;
+    vec3 radiance = light.diffuse * intensity;// * attenuation;
 
     // Compute shadow factor
     float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);

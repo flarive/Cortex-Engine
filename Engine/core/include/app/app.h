@@ -159,6 +159,7 @@ namespace engine
             blinnPhongShader.use();
             blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
             blinnPhongShader.setFloat("material.shininess", 32.0f);
+            blinnPhongShader.setInt("blinn", true);
 
             // shader configuration
             // --------------------
@@ -592,7 +593,8 @@ namespace engine
             update(blinnPhongShader);
 
             // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer(blinnPhongShader, lights[0]);
+            if (lights.size() > 0)
+                computeDepthMapFramebuffer(blinnPhongShader, lights[0]);
 
             // render to framebuffer
             computeColorFramebuffer();
@@ -622,8 +624,8 @@ namespace engine
             pbrShader.setMat4("view", view);
             pbrShader.setVec3("viewPos", camera.Position);
 
-
-            pbrShader.setVec3("lightPos", lights[0]->getPosition());
+            if (lights.size() > 0)
+                pbrShader.setVec3("lightPos", lights[0]->getPosition());
 
 
             
@@ -658,7 +660,8 @@ namespace engine
             //renderQuad();
 
             // compute light shadows using a depth map framebuffer
-            computeDepthMapFramebuffer(pbrShader, lights[0]);
+            if (lights.size() > 0)
+                computeDepthMapFramebuffer(pbrShader, lights[0]);
 
             // render to framebuffer
             computeColorFramebuffer();

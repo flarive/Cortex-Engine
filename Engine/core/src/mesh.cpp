@@ -40,7 +40,6 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
-
 void engine::Mesh::setupMesh()
 {
     // create buffers/arrays

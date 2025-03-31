@@ -1,5 +1,4 @@
 #include "../../include/primitives/sphere.h"
-#include "../../include/texture.h"
 
 void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
@@ -145,7 +144,7 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
     }
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+    model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

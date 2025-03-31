@@ -1,6 +1,5 @@
 #include "../../include/primitives/cube.h"
 
-#include "../../include/texture.h"
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
@@ -180,9 +179,10 @@ namespace engine {
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
-        if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+        model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
         model = glm::scale(model, size);
         shader.setMat4("model", model);
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
         glBindVertexArray(m_VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);

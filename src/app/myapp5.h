@@ -33,7 +33,7 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 engine::RenderMethod::PBR,
-                true,
+                false,
                 "textures/hdr/blue_photo_studio_2k.hdr",
                 1.5f,
                 1.0f,
@@ -202,26 +202,18 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-
-
-
-
-        shader.use();
-        shader.setVec3("viewPos", camera.Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
+        //shader.use();
+        //shader.setVec3("viewPos", camera.Position);
+        //shader.setMat4("projection", projection);
+        //shader.setMat4("view", view);
 
 
 
         // render the loaded model
         buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
-
-        
-
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
 
         // setup lights
         mySpotLight->draw(shader, projection, view, 20.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????

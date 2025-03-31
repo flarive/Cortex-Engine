@@ -13,7 +13,7 @@ private:
     float lastY{ 0.0f };
 
 
-    engine::Model backpackModel{};
+    //engine::Model backpackModel{};
     engine::Model cushionModel{};
 
 
@@ -98,7 +98,7 @@ public:
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/rusted_metal_diffuse.jpg",
-            "textures/rusted_metal_specular.jpg"), engine::UvMapping(4.0f));
+            "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
         
 
@@ -228,9 +228,18 @@ private:
         shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
+        shader.setInt("blinn", true);
     
     
-    
+        // render test cube
+        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // render the loaded model
+        cushionModel.draw(shader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
     
     
         // render the loaded model
@@ -247,22 +256,6 @@ private:
         skyboxReflectShader.setMat4("view", view);
         skyboxReflectShader.setMat4("projection", projection);
         skyboxReflectShader.setVec3("cameraPos", camera.Position);
-    
-        // render the loaded model
-        //backpackModel.draw(skyboxReflectShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
-    
-    
-    
-    
-    
-        // render test cube
-        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    
-        ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    
-        // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    
     
         ourSkybox.draw(projection, view);
     }

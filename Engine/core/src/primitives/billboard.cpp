@@ -1,6 +1,5 @@
 #include "../../include/primitives/billboard.h"
 
-#include "../../include/texture.h"
 #include "../../include/uvmapping.h"
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
@@ -73,7 +72,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
-    if (rotationAngle != 0) model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+    model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
 

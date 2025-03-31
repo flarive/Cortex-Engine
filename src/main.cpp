@@ -7,7 +7,7 @@
 
 
 // make it easier to switch between apps
-using MyApp = MyApp5;
+using MyApp = MyApp1;
 
 
 engine::App* app{};
@@ -36,7 +36,7 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
-    app = new MyApp("MyApp", 1280, 720, false);
+    app = new MyApp("MyApp", 1280 / 5, 720 / 5, false);
     if (app)
     {
         glfwSetFramebufferSizeCallback(app->window, framebufferSizeCallback);

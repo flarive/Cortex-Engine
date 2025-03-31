@@ -78,7 +78,6 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     }
 }
 
-
 void engine::SpotLight::setCutOff(float cutoff)
 {
     m_cutoff = cutoff;

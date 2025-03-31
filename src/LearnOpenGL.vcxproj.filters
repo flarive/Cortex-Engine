@@ -522,10 +522,6 @@
     <CopyFileToFolders Include="..\resources\models\buddha\roughness.png">
       <Filter>resources\models\buddha</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\buddha\ao.dds" />
-    <CopyFileToFolders Include="..\resources\models\buddha\metallic.dds" />
-    <CopyFileToFolders Include="..\resources\models\buddha\normal.dds" />
-    <CopyFileToFolders Include="..\resources\models\buddha\roughness.dds" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">

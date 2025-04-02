@@ -14,7 +14,7 @@ namespace engine
     {
     protected:
         
-        Color m_ambientColor{ engine::Color(0.0f) };
+        Color m_ambientColor{ engine::Color(1.0f) };
         Color m_diffuseColor{ engine::Color(0.5f) };
 
         std::string m_diffuseTexPath{};
@@ -28,6 +28,7 @@ namespace engine
 
         float m_heightIntensity{};
         float m_normalIntensity{ 0.5f };
+        float m_ambientIntensity{ 1.0f };
 
 
         float m_shininess{};
@@ -79,11 +80,13 @@ namespace engine
         const float getNormalIntensity() const { return m_normalIntensity; }
         const float getHeightIntensity() const { return m_heightIntensity; }
         const float getShininessIntensity() const { return m_shininess; }
+        const float getAmbientIntensity() const { return m_ambientIntensity; }
         
 
         void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         void setShininessIntensity(float intensity) { m_shininess = intensity; }
+        void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
 
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 

@@ -167,14 +167,11 @@ namespace engine {
         if (m_material) {
             m_material->bind(shader);
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
             shader.setBool("hasTangents", true);
 
-            auto material = getMaterial();
-            if (material)
-            {
-                shader.setFloat("material.heightScale", material->getHeightIntensity());
-                shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
-            }
+            shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
         }
 
         glm::mat4 model = glm::mat4(1.0f);

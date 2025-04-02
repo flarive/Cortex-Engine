@@ -32,6 +32,9 @@ struct Material {
     float shadowIntensity; // Adjust to make shadows darker
     float normalMapIntensity;
 
+    float ambient_intensity;
+    vec3 ambient_color;
+
     float iblDiffuseIntensity;  // New uniform for diffuse IBL intensity
     float iblSpecularIntensity; // New uniform for specular IBL intensity
 
@@ -150,10 +153,10 @@ vec3 getNormalFromMap()
 {
     // Sample the normal map and convert the range from [0, 1] to [-1, 1]
     vec3 tangentNormal = texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0;
-    //tangentNormal.z = -tangentNormal.z;  // Flip Z-axis if normals look inverted
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
+    //tangentNormal.z = -tangentNormal.z;
 
     // Compute the TBN matrix using either precomputed tangents or derivatives
     vec3 N = normalize(fs_in.Normal);
@@ -286,9 +289,9 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
 void main()
 {		
     // input lighting data
-    vec3 N = getNormalFromMap();
+    vec3 normal = getNormalFromMap();
     vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
-    vec3 R = reflect(-V, N);
+    vec3 R = reflect(-V, normal);
 
     vec2 texCoords = fs_in.TexCoords;
 
@@ -297,7 +300,7 @@ void main()
 
     // Modify TexCoords using Parallax Mapping
     //texCoords = parallaxMapping(texCoords, V);
-    texCoords = parallaxMapping(fs_in.TexCoords, viewDir);
+    //texCoords = parallaxMapping(fs_in.TexCoords, viewDir);
 //    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
 //        discard;
 
@@ -319,24 +322,24 @@ void main()
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            Lo += CalcSpotLight(spotLights[i], N, V, albedo, metallic, roughness);
+            Lo += CalcSpotLight(spotLights[i], normal, V, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], N, fs_in.FragPos, V, albedo, metallic, roughness);
+            Lo += CalcPointLight(pointLights[i], normal, fs_in.FragPos, V, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            Lo += CalcDirLight(dirLights[i], N, fs_in.FragPos, V, vec3(1.0));
+            Lo += CalcDirLight(dirLights[i], normal, fs_in.FragPos, V, vec3(1.0));
     }
 
 
     // ambient lighting (we now use IBL as the ambient term)
-    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+    vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
     
     // kS is equal to Fresnel
     vec3 kS = F;
@@ -347,17 +350,17 @@ void main()
     // multiply kD by the inverse metalness such that only non-metals 
     // have diffuse lighting, or a linear blend if partly metal (pure metals
     // have no diffuse light).
-    kD *= 1.0 - metallic;	  
-    
-    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
+    kD *= 1.0 - metallic;
+
+    vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
     vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
 
     const float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
+    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
 
-    vec3 ambient = (kD * diffuse + specular) * ao;
+    vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
 
 
 
@@ -373,7 +376,7 @@ void main()
 
     FragColor = vec4(color , 1.0);
 
-
+ 
 
     // debug ao map
     //FragColor = vec4(vec3(ao), 1.0);
@@ -397,11 +400,12 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
         return vec3(0.0);
     
     vec3 H = normalize(viewDir + L);
-    float NdotL = max(dot(normal, L), 0.0);
+    //float NdotL = max(dot(normal, L), 0.0);
+    float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
     
     float distance = length(light.position - fs_in.FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    vec3 radiance = light.diffuse * intensity;// * attenuation;
+    vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
     float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);

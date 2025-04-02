@@ -64,32 +64,32 @@ public:
 
     void init() override
     {
-        //myPointLight1 = std::make_shared<engine::PointLight>(0);
-        //myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
+        myPointLight1 = std::make_shared<engine::PointLight>(0);
+        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
 
-        //myPointLight2 = std::make_shared<engine::PointLight>(1);
-        //myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+        myPointLight2 = std::make_shared<engine::PointLight>(1);
+        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
 
-        //myPointLight3 = std::make_shared<engine::PointLight>(2);
-        //myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+        myPointLight3 = std::make_shared<engine::PointLight>(2);
+        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
 
-        //myPointLight4 = std::make_shared<engine::PointLight>(3);
-        //myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
+        myPointLight4 = std::make_shared<engine::PointLight>(3);
+        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
 
 
         //myDirectionalLight = std::make_shared<engine::DirectionalLight>(0);
         //myDirectionalLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
 
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
         mySpotLight->setCutOff(12.5f);
-        mySpotLight->setOuterCutOff(17.5f);
+        mySpotLight->setOuterCutOff(27.5f);
 
 
-        //lights.emplace_back(myPointLight1);
-        //lights.emplace_back(myPointLight2);
-        //lights.emplace_back(myPointLight3);
-        //lights.emplace_back(myPointLight4);
+        lights.emplace_back(myPointLight1);
+        lights.emplace_back(myPointLight2);
+        lights.emplace_back(myPointLight3);
+        lights.emplace_back(myPointLight4);
         lights.emplace_back(mySpotLight);
         
 
@@ -109,7 +109,12 @@ public:
             "models/sphere/cliff/ao.jpg",
             "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
 
-
+        auto matPlane = ourPlane.getMaterial();
+        if (matPlane)
+        {
+            matPlane->setNormalIntensity(1.0f);
+            //matPlane->setAmbientIntensity(10.0f);
+        }
 
 
         lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
@@ -151,7 +156,6 @@ public:
         if (mat)
         {
             mat->setNormalIntensity(5.0f);
-            mat->setHeightIntensity(0.0f);
         }
 
 
@@ -197,13 +201,26 @@ public:
             "textures/pbr/wall/roughness.png",
             "textures/pbr/wall/ao.png"), engine::UvMapping(1.0f));
 
-        bronzeSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto wallPlane = wallSphere.getMaterial();
+        if (wallPlane)
+        {
+            wallPlane->setNormalIntensity(1.0f);
+        }
+
+        bronzeSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f, 1.0f, 0.1f, 1.0f),
             "textures/pbr/bronze/albedo.png",
             "",
             "textures/pbr/bronze/normal.png",
             "textures/pbr/bronze/metallic.png",
             "textures/pbr/bronze/roughness.png",
-            "textures/pbr/bronze/ao.png", "", 0.5f));
+            "textures/pbr/bronze/ao.png", "", 0.0f));
+
+
+        auto bronzeMat = bronzeSphere.getMaterial();
+        if (bronzeMat)
+        {
+            bronzeMat->setAmbientIntensity(5.0f);
+        }
 
 
         ourText.setup(width, height);
@@ -364,10 +381,10 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // setup lights
-        //myPointLight1->draw(shader, projection, view, 20.0f, myPointLight1->getPosition(), myPointLight1->getTarget()); // ????????????
-        //myPointLight2->draw(shader, projection, view, 20.0f, myPointLight2->getPosition(), myPointLight2->getTarget()); // ????????????
-        //myPointLight3->draw(shader, projection, view, 20.0f, myPointLight3->getPosition(), myPointLight3->getTarget()); // ????????????
-        //myPointLight4->draw(shader, projection, view, 20.0f, myPointLight4->getPosition(), myPointLight4->getTarget()); // ????????????
+        myPointLight1->draw(shader, projection, view, 50.0f, myPointLight1->getPosition(), myPointLight1->getTarget()); // ????????????
+        myPointLight2->draw(shader, projection, view, 50.0f, myPointLight2->getPosition(), myPointLight2->getTarget()); // ????????????
+        myPointLight3->draw(shader, projection, view, 50.0f, myPointLight3->getPosition(), myPointLight3->getTarget()); // ????????????
+        myPointLight4->draw(shader, projection, view, 50.0f, myPointLight4->getPosition(), myPointLight4->getTarget()); // ????????????
         //myDirectionalLight->draw(shader, projection, view, 1.0f, myDirectionalLight->getPosition(), myDirectionalLight->getTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 

@@ -25,6 +25,9 @@ namespace engine
         virtual glm::vec3 getPosition() { return m_lightPosition; }
         virtual glm::vec3 getTarget() { return m_lightTarget; }
 
+        virtual void setPosition(const glm::vec3& position) { m_lightPosition = position; }
+        virtual void setTarget(const glm::vec3& target) { m_lightTarget = target; }
+
     protected:
         // render data 
         unsigned int VBO{}, VAO{};

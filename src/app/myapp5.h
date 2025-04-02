@@ -51,7 +51,7 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 2.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         mySpotLight->setCutOff(12.5f);
         mySpotLight->setOuterCutOff(17.5f);
 
@@ -122,30 +122,30 @@ public:
     {
         engine::App::mouse_callback(xposIn, yposIn);
 
-        //float xpos = static_cast<float>(xposIn);
-        //float ypos = static_cast<float>(yposIn);
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
 
-        //if (firstMouse)
-        //{
-        //    lastX = xpos;
-        //    lastY = ypos;
-        //    firstMouse = false;
-        //}
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-        //float xoffset = xpos - lastX;
-        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        //lastX = xpos;
-        //lastY = ypos;
+        lastX = xpos;
+        lastY = ypos;
 
-        //camera.ProcessMouseMovement(xoffset, yoffset);
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -202,21 +202,21 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        //shader.use();
-        //shader.setVec3("viewPos", camera.Position);
-        //shader.setMat4("projection", projection);
-        //shader.setMat4("view", view);
+        shader.use();
+        shader.setVec3("viewPos", camera.Position);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
 
 
 
         // render the loaded model
-        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
+        mySpotLight->draw(shader, projection, view, 50.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
 
         rotation += deltaTime * 10.0f;
     }

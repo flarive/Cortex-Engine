@@ -23,7 +23,7 @@ private:
 
     engine::Text ourText{};
 
-    //float rotation{};
+    float rotation{};
 
     
 
@@ -202,10 +202,10 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
-        //rotation += deltaTime * 10.0f;
+        rotation += deltaTime * 10.0f;
 
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));

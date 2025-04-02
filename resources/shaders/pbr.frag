@@ -375,15 +375,6 @@ void main()
     color = pow(color, vec3(1.0/2.2)); 
 
     FragColor = vec4(color , 1.0);
-
- 
-
-    // debug ao map
-    //FragColor = vec4(vec3(ao), 1.0);
-
-    // debug shadows
-//    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, spotLights[0].position);
-//    FragColor = vec4(vec3(shadow), 1.0); // Debugging shadow output
 }
 
 // Calculates the color when using a spot light.

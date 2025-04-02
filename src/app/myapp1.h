@@ -216,9 +216,9 @@ private:
     
     
         // setup lights
-        myPointLight->draw(shader, projection, view, 1.0f, myPointLight->getPosition());
-        myDirectionalLight1->draw(shader, projection, view, 1.0f, myDirectionalLight1->getPosition(), myDirectionalLight1->getTarget());
-        myDirectionalLight2->draw(shader, projection, view, 1.0f, myDirectionalLight2->getPosition(), myDirectionalLight2->getTarget());
+        myPointLight->draw(shader, projection, view, 1.0f);
+        myDirectionalLight1->draw(shader, projection, view, 1.0f);
+        myDirectionalLight2->draw(shader, projection, view, 1.0f);
 
     
     

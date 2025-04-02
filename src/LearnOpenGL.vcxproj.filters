@@ -456,12 +456,6 @@
     <CopyFileToFolders Include="..\resources\textures\bricks2.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\height.png">
       <Filter>resources\textures\pbr\rusted_iron</Filter>
     </CopyFileToFolders>

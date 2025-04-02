@@ -33,13 +33,8 @@ void engine::DirectionalLight::setup(const Color& ambient, const glm::vec3& posi
 }
 
 // draws the model, and thus all its meshes
-void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
+void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity)
 {
-    UNREFERENCED_PARAMETER(target);
-
-    m_lightPosition = position;
-    m_lightTarget = target;
-
     std::string base = std::format("dirLights[{}]", m_index);
 
     // directional light
@@ -49,7 +44,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
     shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
     shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
 
-    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(m_lightPosition, m_lightTarget));
 
 
     if (DISPLAY_DEBUG_LIGHT_CUBE)
@@ -63,7 +58,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
+        model = glm::translate(model, m_lightPosition);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);

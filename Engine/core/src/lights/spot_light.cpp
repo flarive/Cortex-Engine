@@ -36,17 +36,14 @@ void engine::SpotLight::setup(const Color& ambient, const glm::vec3& position, c
 
 
 // draws the model, and thus all its meshes
-void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target)
+void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity)
 {
-    m_lightPosition = position;
-    m_lightTarget = target;
-    
     std::string base = std::format("spotLights[{}]", m_index);
 
     shader.setBool(std::format("{}.use", base), true);
 
-    shader.setVec3(std::format("{}.position", base), position);
-    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+    shader.setVec3(std::format("{}.position", base), m_lightPosition);
+    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(m_lightPosition, m_lightTarget));
     shader.setVec3(std::format("{}.ambient", base), m_ambientColor);
     shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
     shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
@@ -69,7 +66,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
+        model = glm::translate(model, m_lightPosition);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
         lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);

@@ -33,9 +33,9 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 engine::RenderMethod::PBR,
-                false,
+                true,
                 "textures/hdr/blue_photo_studio_2k.hdr",
-                1.5f,
+                0.9f,
                 1.0f,
                 1.0f
             })
@@ -114,7 +114,6 @@ public:
             camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
-
     }
 
 
@@ -216,7 +215,7 @@ private:
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 50.0f, mySpotLight->getPosition(), mySpotLight->getTarget()); // ???????????????
+        mySpotLight->draw(shader, projection, view, 50.0f); // ???????????????
 
         rotation += deltaTime * 10.0f;
     }

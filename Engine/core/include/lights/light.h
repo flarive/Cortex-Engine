@@ -19,7 +19,7 @@ namespace engine
         virtual ~Light() = default;
 
         virtual void setup(const Color& ambient, const glm::vec3& position, const glm::vec3& target) = 0;
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity, const glm::vec3& position, const glm::vec3& target = glm::vec3(0, 0, 0)) = 0;
+        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity) = 0;
         virtual void clean() = 0;
         
         virtual glm::vec3 getPosition() { return m_lightPosition; }

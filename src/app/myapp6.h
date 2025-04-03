@@ -13,13 +13,15 @@ private:
 
 
 
-
-    std::shared_ptr<engine::SpotLight> mySpotLight;
+    std::shared_ptr<engine::PointLight> myPointLight1;
+    std::shared_ptr<engine::PointLight> myPointLight2;
+    std::shared_ptr<engine::PointLight> myPointLight3;
+    std::shared_ptr<engine::PointLight> myPointLight4;
 
 
     engine::Model buddhaModel{};
 
-    engine::Plane ourPlane{};
+
 
     engine::Text ourText{};
 
@@ -33,10 +35,10 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 engine::RenderMethod::PBR,
-                true,
+                false,
                 "textures/hdr/blue_photo_studio_2k.hdr",
                 0.9f,
-                1.0f,
+                10.0f,
                 1.0f
             })
     {
@@ -50,32 +52,34 @@ public:
 
     void init() override
     {
-        mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-        mySpotLight->setCutOff(12.5f);
-        mySpotLight->setOuterCutOff(17.5f);
+        myPointLight1 = std::make_shared<engine::PointLight>(0);
+        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f));
 
-        lights.emplace_back(mySpotLight);
+        myPointLight2 = std::make_shared<engine::PointLight>(1);
+        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+
+        myPointLight3 = std::make_shared<engine::PointLight>(2);
+        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+
+        myPointLight4 = std::make_shared<engine::PointLight>(3);
+        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
+
+        lights.emplace_back(myPointLight1);
+        lights.emplace_back(myPointLight2);
+        lights.emplace_back(myPointLight3);
+        lights.emplace_back(myPointLight4);
         
 
         // override default camera properties
         camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
         camera.Fps = false;
-        camera.Zoom = 25.0f;
+        camera.Zoom = 100.0f;
         camera.MovementSpeed = 10.0f;
 
 
         buddhaModel = engine::Model("models/helmet/DamagedHelmet.gltf");
 
 
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/pbr/planks/albedo.jpg",
-            "",
-            "textures/pbr/planks/normal.jpg",
-            "textures/pbr/planks/metallic.jpg",
-            "textures/pbr/planks/roughness.jpg",
-            "textures/pbr/planks/ao.jpg",
-            ""), engine::UvMapping(1.0f));
 
         ourText.setup(width, height);
 
@@ -93,27 +97,30 @@ public:
         // Detect Shift key state
         bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
-        if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
-        else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
             camera.ProcessKeyboard(engine::LEFT, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+        }
 
-        if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
-        else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+
+
+        if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
             camera.ProcessKeyboard(engine::RIGHT, deltaTime);
+            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
+        }
 
 
-
-        if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
-        else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
             camera.ProcessKeyboard(engine::FORWARD, deltaTime);
+        }
 
-        if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
-        else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        {
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
+        }
     }
 
 
@@ -121,30 +128,30 @@ public:
     {
         engine::App::mouse_callback(xposIn, yposIn);
 
-        float xpos = static_cast<float>(xposIn);
-        float ypos = static_cast<float>(yposIn);
+        //float xpos = static_cast<float>(xposIn);
+        //float ypos = static_cast<float>(yposIn);
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+        //if (firstMouse)
+        //{
+        //    lastX = xpos;
+        //    lastY = ypos;
+        //    firstMouse = false;
+        //}
 
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        //float xoffset = xpos - lastX;
+        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        lastX = xpos;
-        lastY = ypos;
+        //lastX = xpos;
+        //lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        //camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -189,7 +196,6 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourPlane.clean();
         buddhaModel.clean();
     }
 
@@ -209,13 +215,13 @@ private:
 
 
         // render the loaded model
-        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        buddhaModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 50.0f);
+        myPointLight1->draw(shader, projection, view, 2.0f);
+        myPointLight2->draw(shader, projection, view, 2.0f);
+        myPointLight3->draw(shader, projection, view, 2.0f);
+        myPointLight4->draw(shader, projection, view, 2.0f);
 
         rotation += deltaTime * 10.0f;
     }

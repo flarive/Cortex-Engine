@@ -99,6 +99,9 @@ void engine::Material::loadTextures()
 
     unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(getHeightTexPath(), true, false) : 0;
     textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+
+    unsigned int emissiveMapId = hasEmissiveMap() ? engine::Texture::loadTexture(getEmissiveTexPath(), true, false) : 0;
+    textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 }
 
 
@@ -115,6 +118,7 @@ void engine::Material::loadTexturesAsync()
     loadTextureAsync(getRoughnessTexPath());
     loadTextureAsync(getAoTexPath());
     loadTextureAsync(getHeightTexPath());
+    loadTextureAsync(getEmissiveTexPath());
 
     // Queue OpenGL execution on main thread
     unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
@@ -124,6 +128,7 @@ void engine::Material::loadTexturesAsync()
     unsigned int roughnessMapId = hasRoughnessMap() ? engine::Texture::enqueueTextureCreation(getRoughnessTexPath(), true) : 0;
     unsigned int aoMapId = hasAoMap() ? engine::Texture::enqueueTextureCreation(getAoTexPath(), true) : 0;
     unsigned int heightMapId = hasHeightMap() ? engine::Texture::enqueueTextureCreation(getHeightTexPath(), true) : 0;
+    unsigned int emissiveMapId = hasEmissiveMap() ? engine::Texture::enqueueTextureCreation(getEmissiveTexPath(), true) : 0;
 
     // process queue
     engine::Texture::processLoadedTextures();
@@ -149,6 +154,12 @@ void engine::Material::loadTexturesAsync()
 
     heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
     textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+
+    heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
+    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+
+    emissiveMapId = engine::TextureManager::textureIDCache[getEmissiveTexPath()];
+    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_emissive", getEmissiveTexPath() }));
 }
 
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)

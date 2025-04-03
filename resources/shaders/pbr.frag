@@ -26,11 +26,13 @@ struct Material {
     sampler2D texture_roughness; // 4
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
+    sampler2D texture_emissive; // 7
     sampler2D texture_shadowMap; // 10
 
     float heightScale;
     float shadowIntensity; // Adjust to make shadows darker
     float normalMapIntensity;
+    float emissiveIntensity;
 
     float ambient_intensity;
     vec3 ambient_color;
@@ -50,6 +52,7 @@ struct Material {
     bool has_texture_roughness_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
+    bool has_texture_emissive_map;
 };
 
 struct DirLight {
@@ -310,7 +313,7 @@ void main()
     float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
     float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
-
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -371,8 +374,12 @@ void main()
     // HDR tonemapping
     color = color / (color + vec3(1.0));
 
+    // Add emissive contribution before gamma correction
+    color += emissive;
+
     // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    color = pow(color, vec3(1.0/2.2));
+
 
     FragColor = vec4(color , 1.0);
 }

@@ -10,6 +10,7 @@ struct Material {
     sampler2D texture_roughness; // 4
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
+    sampler2D texture_emissive; // 7
     sampler2D texture_shadowMap; // 10
 
     vec3 ambient_color;
@@ -22,6 +23,7 @@ struct Material {
     bool has_texture_roughness_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
+    bool has_texture_emissive_map;
 }; 
 
 struct DirLight {

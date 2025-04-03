@@ -117,6 +117,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
         
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 0.0f);
     }
 
     // calculate the model matrix for each object and pass it to shader before drawing

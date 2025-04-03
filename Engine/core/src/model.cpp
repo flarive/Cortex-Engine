@@ -150,11 +150,14 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_ao"); // map_Ke
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack)
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
     std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height"); // bump
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    // 8. emissive maps
+    std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
+    textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
 
     // Create Material
     auto meshMaterial = std::make_shared<Material>(textures);

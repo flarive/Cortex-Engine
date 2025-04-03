@@ -172,6 +172,7 @@ namespace engine {
 
             shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader.setFloat("material.emissiveIntensity", 0.0f);
         }
 
         glm::mat4 model = glm::mat4(1.0f);

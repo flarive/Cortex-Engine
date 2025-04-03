@@ -17,5 +17,5 @@ newmtl wire_008061138
 	#map_Ks specular.png
 	map_Kn normal.png
 	map_Pm metallic.png
-	map_Ke ao.png
+	map_Ps ao.png
 	map_Pr roughness.png

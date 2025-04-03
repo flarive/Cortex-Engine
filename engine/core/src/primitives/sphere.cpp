@@ -138,6 +138,7 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 0.0f);
     }
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);

@@ -24,6 +24,7 @@ namespace engine
         std::string m_roughnessTexPath{};
         std::string m_aoTexPath{};
         std::string m_heightTexPath{};
+        std::string m_emissiveTexPath{};
 
 
         float m_heightIntensity{};
@@ -57,6 +58,7 @@ namespace engine
         bool hasRoughnessMap() const { return !std::empty(m_roughnessTexPath); }
         bool hasAoMap() const { return !std::empty(m_aoTexPath); }
         bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
+        bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
 
         bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
@@ -75,6 +77,7 @@ namespace engine
         const std::string& getRoughnessTexPath() const { return m_roughnessTexPath; }
         const std::string& getAoTexPath() const { return m_aoTexPath; }
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
+        const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
 
 
         const float getNormalIntensity() const { return m_normalIntensity; }

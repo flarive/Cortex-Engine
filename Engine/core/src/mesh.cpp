@@ -31,6 +31,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     {
         shader.setFloat("material.heightScale", material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 4.0f);
     }
 
     // draw mesh

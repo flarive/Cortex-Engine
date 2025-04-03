@@ -80,6 +80,9 @@
     <Filter Include="resources\models\buddha">
       <UniqueIdentifier>{c27a94eb-170b-4bbb-92c9-d8d289bcf7a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\helmet">
+      <UniqueIdentifier>{cb5925f7-21da-4e66-8ad2-0d627bf7f4a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -516,6 +519,27 @@
     <CopyFileToFolders Include="..\resources\models\buddha\roughness.png">
       <Filter>resources\models\buddha</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\DamagedHelmet.bin">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\DamagedHelmet.gltf">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_albedo.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_AO.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_emissive.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalRoughness.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_normal.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">
@@ -531,6 +555,9 @@
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\myapp5.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myapp6.h">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>

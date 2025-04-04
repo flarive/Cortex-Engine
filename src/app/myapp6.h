@@ -19,11 +19,15 @@ private:
     std::shared_ptr<engine::PointLight> myPointLight4;
 
 
-    engine::Model buddhaModel{};
+    engine::Model helmetModel{};
 
 
 
     engine::Text ourText{};
+    engine::Text ourText2{};
+    engine::Sprite ourSprite{};
+
+    
 
     float rotation{};
 
@@ -77,11 +81,13 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        buddhaModel = engine::Model("models/helmet/DamagedHelmet.gltf");
+        helmetModel = engine::Model("models/helmet/DamagedHelmet.gltf");
 
 
 
-        ourText.setup(width, height);
+        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourText2.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourSprite.setup("textures/awesomeface.png", width, height);
 
         after_init();
     }
@@ -179,7 +185,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(newWidth, newHeight);
+        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override
@@ -196,7 +202,7 @@ public:
     void clean() override
     {
         // clean up any resources
-        buddhaModel.clean();
+        helmetModel.clean();
     }
 
 private:
@@ -207,15 +213,8 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        shader.use();
-        shader.setVec3("viewPos", camera.Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-
-
-
         // render the loaded model
-        buddhaModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 2.0f);
@@ -229,6 +228,8 @@ private:
     void drawUI()
     {
         // render HUD / UI
-        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5f, 0.8f, 0.2f));
+        ourText2.draw(std::format("{} polys", (int)polycount), width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        ourSprite.draw(glm::vec2(50, height - 50), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
     }
 };

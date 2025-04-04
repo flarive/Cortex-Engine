@@ -77,7 +77,7 @@ public:
             "textures/pbr/planks/ao.jpg",
             ""), engine::UvMapping(1.0f));
 
-        ourText.setup(width, height);
+        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
 
         after_init();
     }
@@ -172,7 +172,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(newWidth, newHeight);
+        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override

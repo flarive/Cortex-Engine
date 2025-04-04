@@ -540,6 +540,12 @@
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_normal.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\sprite.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\sprite.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h">

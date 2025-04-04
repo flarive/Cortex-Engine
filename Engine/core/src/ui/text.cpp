@@ -2,9 +2,9 @@
 
 #include "../../include/tools/file_system.h"
 
-void engine::Text::setup(int width, int height)
+void engine::Text::setup(const std::string& fontPath, int fontSize, int width, int height)
 {
-    m_textShader.init("text", "shaders/text.vertex", "shaders/text.frag");
+    m_textShader.init("UITextShader", "shaders/text.vertex", "shaders/text.frag");
 
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
@@ -22,7 +22,7 @@ void engine::Text::setup(int width, int height)
     }
 
     // find path to font
-    std::string font_name = file_system::getPath("fonts/Antonio-Regular.ttf");
+    std::string font_name = file_system::getPath(fontPath);
     if (font_name.empty())
     {
         std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;
@@ -37,7 +37,7 @@ void engine::Text::setup(int width, int height)
     }
     else {
         // set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 48);
+        FT_Set_Pixel_Sizes(face, 0, fontSize);
 
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

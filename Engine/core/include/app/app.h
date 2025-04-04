@@ -69,6 +69,8 @@ namespace engine
         
         SystemMonitor sysMonitor{};
 
+        GLuint query;
+
     
     protected:
         float framerate{};
@@ -76,6 +78,8 @@ namespace engine
         // timing
         float deltaTime{}; // time between current frame and last frame
         float lastFrame{};
+
+        GLint polycount{};
 
         // settings
         std::string title{};
@@ -495,12 +499,6 @@ namespace engine
         {
             /*while (!glfwWindowShouldClose(window))
             {*/
-                // Poll and handle events (inputs, window resize, etc.)
-                // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-                // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-                // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-                // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-                glfwPollEvents();
                 if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
                 {
                     ImGui_ImplGlfw_Sleep(10);
@@ -515,8 +513,8 @@ namespace engine
 
                 framerate = ImGui::GetIO().Framerate;
 
-                //if (show_window)
-                //    renderUIWindow(show_window);
+                if (show_window)
+                    renderUIWindow(show_window);
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
@@ -527,13 +525,16 @@ namespace engine
                 auto start_time = std::chrono::high_resolution_clock::now();
 
 
+                // get opengl stats such as polycount drawn
+                beginQuery();
 
                 if (settings.method == RenderMethod::PBR)
                     loop_PBR();
                 else
                     loop_BlinnPhong();
 
-
+                // get opengl stats such as polycount drawn
+                endQuery();
 
                 // ImGUI rendering
                 ImGui::Render();
@@ -544,6 +545,9 @@ namespace engine
 
 
                 glfwSwapBuffers(window);
+
+                // Poll and handle events (inputs, window resize, etc.)
+                glfwPollEvents();
 
                 auto end_time = std::chrono::high_resolution_clock::now();
                 std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY) - (end_time - start_time));
@@ -626,10 +630,6 @@ namespace engine
 
             if (lights.size() > 0)
                 pbrShader.setVec3("lightPos", lights[0]->getPosition());
-
-
-            
-
 
             // bind pre-computed IBL data
             glActiveTexture(GL_TEXTURE7);
@@ -1306,7 +1306,21 @@ namespace engine
 
         
 
+        // Function to count vertices and polygons
+        void beginQuery()
+        {
+            glGenQueries(1, &query);
+            glBeginQuery(GL_PRIMITIVES_GENERATED, query);
+        }
 
-        
+        // Function to count vertices and polygons
+        void endQuery()
+        {
+            glEndQuery(GL_PRIMITIVES_GENERATED);
+            
+            glGetQueryObjectiv(query, GL_QUERY_RESULT, &polycount);
+
+            glDeleteQueries(1, &query);
+        }
     };
 }

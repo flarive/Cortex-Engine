@@ -180,6 +180,7 @@
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
     <ClCompile Include="core\src\tools\system_monitor.cpp" />
+    <ClCompile Include="core\src\ui\sprite.cpp" />
     <ClCompile Include="core\src\ui\text.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
   </ItemGroup>
@@ -214,6 +215,7 @@
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\tools\system_monitor.h" />
+    <ClInclude Include="core\include\ui\sprite.h" />
     <ClInclude Include="core\include\ui\text.h" />
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />

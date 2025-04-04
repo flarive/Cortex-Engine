@@ -11,7 +11,6 @@
 
 namespace engine
 {
-
     namespace TextureManager {
         extern std::unordered_map<std::string, std::future<std::tuple<unsigned char*, int, int, int>>> textureCache;
         extern std::queue<std::function<void()>> textureUploadQueue;

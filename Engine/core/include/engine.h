@@ -24,7 +24,10 @@
 #include "lights/point_light.h"
 #include "lights/directional_light.h"
 #include "lights/spot_light.h"
+
+
 #include "ui/text.h"
+#include "ui/sprite.h"
 
 #include "primitives/primitive.h"
 #include "primitives/cube.h"

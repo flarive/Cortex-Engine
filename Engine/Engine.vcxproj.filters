@@ -159,6 +159,9 @@
     <ClCompile Include="core\src\tools\file_system.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\ui\sprite.cpp">
+      <Filter>Fichiers sources\core\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="core\include\tools\file_system.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ui\sprite.h">
+      <Filter>Fichiers d%27en-tête\core\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

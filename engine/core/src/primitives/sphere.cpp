@@ -22,8 +22,8 @@ void engine::Sphere::setup()
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
 
-    constexpr unsigned int X_SEGMENTS = 64 * 4;
-    constexpr unsigned int Y_SEGMENTS = 64 * 4;
+    constexpr unsigned int X_SEGMENTS = 64;
+    constexpr unsigned int Y_SEGMENTS = 64;
     constexpr float PI = 3.14159265359f;
 
     std::vector<glm::vec3> positions, normals, tangents, bitangents;

@@ -28,6 +28,8 @@ namespace engine
         float shadowIntensity = 1.5f;
         float iblDiffuseIntensity = 1.0f;
         float iblSpecularIntensity = 1.0f;
+
+        bool applyGammaCorrection{};
     };
     
     /// <summary>
@@ -152,7 +154,7 @@ namespace engine
             enableDepthTest(true);
             enableFaceCulling(true);
             enableAntiAliasing(true);
-            //enableGammaCorrection(true);
+            if (settings.applyGammaCorrection) enableGammaCorrection(true);
 
 
             loadShaders();

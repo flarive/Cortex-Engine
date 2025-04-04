@@ -38,12 +38,12 @@ public:
     MyApp6(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
-                engine::RenderMethod::PBR,
-                false,
-                "textures/hdr/blue_photo_studio_2k.hdr",
-                0.9f,
-                10.0f,
-                1.0f
+                .method = engine::RenderMethod::PBR,
+                .hideHDRSkybox = true,
+                .filePathHDRSkybox = "textures/hdr/blue_photo_studio_2k.hdr",
+                .shadowIntensity = 1.0f,
+                .iblDiffuseIntensity = 1.0f,
+                .iblSpecularIntensity = 1.0f
             })
     {
         // my application specific state gets initialized here

@@ -159,7 +159,7 @@ void engine::Material::loadTexturesAsync()
     textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
 
     emissiveMapId = engine::TextureManager::textureIDCache[getEmissiveTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_emissive", getEmissiveTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 }
 
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)

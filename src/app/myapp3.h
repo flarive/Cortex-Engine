@@ -29,8 +29,6 @@ private:
     engine::Sphere wallSphere{};
     engine::Sphere bronzeSphere{};
 
-    engine::Model cushionModel{};
-    //engine::Cube ourCube{};
 
     engine::Plane ourPlane{};
 
@@ -46,12 +44,13 @@ public:
     MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
-                engine::RenderMethod::PBR,
-                false,
-                "textures/hdr/newport_loft.hdr",
-                1.5f,
-                1.0f,
-                1.0f
+                .method = engine::RenderMethod::PBR,
+                .hideHDRSkybox = false,
+                .filePathHDRSkybox = "textures/hdr/newport_loft.hdr",
+                .shadowIntensity = 1.5f,
+                .iblDiffuseIntensity = 1.0f,
+                .iblSpecularIntensity = 1.0f,
+                .applyGammaCorrection = true
             })
     {
         // my application specific state gets initialized here
@@ -119,17 +118,6 @@ public:
 
         lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
-        cushionModel = engine::Model("models/cushion/cushion.obj");
-
-        //ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-        //    "models/sphere/rounded-metal-cubes/albedo.png",
-        //    "",
-        //    "models/sphere/rounded-metal-cubes/normal.png",
-        //    "models/sphere/rounded-metal-cubes/metallic.png",
-        //    "models/sphere/rounded-metal-cubes/roughness.png",
-        //    "models/sphere/rounded-metal-cubes/ao.png",
-        //    "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(2.0f));
-
 
 
         //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
@@ -142,15 +130,6 @@ public:
             "models/sphere/rounded-metal-cubes/roughness.png",
             "models/sphere/rounded-metal-cubes/ao.png",
             "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(3.0f));
-
-        //redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-        //    "textures/bricks2.jpg",
-        //    "",
-        //    "textures/bricks2_normal.jpg",
-        //    "",
-        //    "",
-        //    "",
-        //    "textures/bricks2_disp.jpg"), engine::UvMapping(3.0f));
 
         auto mat = redSciFiMetalSphere.getMaterial();
         if (mat)
@@ -344,7 +323,6 @@ public:
         wallSphere.clean();
         bronzeSphere.clean();
         ourPlane.clean();
-        cushionModel.clean();
     }
 
 private:
@@ -364,12 +342,6 @@ private:
 
 
         ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f, 12.0f, 12.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-        // render the loaded model
-        //cushionModel.draw(shader, glm::vec3(0.0f, -4.0f, 0.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // render test cube
-        //ourCube.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
 
 

@@ -31,7 +31,7 @@ public:
     MyApp2(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
-                engine::RenderMethod::BlinnPhong
+                .method = engine::RenderMethod::BlinnPhong
             })
     {
         // my application specific state gets initialized here

@@ -236,7 +236,8 @@ namespace engine
 
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
-
+            backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
+            backgroundShader.setFloat("blurStrength", 0.1f); // adjust this value
 
             // shader configuration
             // --------------------

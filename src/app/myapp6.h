@@ -39,7 +39,7 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 .method = engine::RenderMethod::PBR,
-                .hideHDRSkybox = true,
+                .hideHDRSkybox = false,
                 .filePathHDRSkybox = "textures/hdr/blue_photo_studio_2k.hdr",
                 .shadowIntensity = 1.0f,
                 .iblDiffuseIntensity = 1.0f,
@@ -228,7 +228,7 @@ private:
     void drawUI()
     {
         // render HUD / UI
-        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5f, 0.8f, 0.2f));
+        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, height - 50), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
     }

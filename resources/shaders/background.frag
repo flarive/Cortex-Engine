@@ -9,6 +9,7 @@ in vec3 WorldPos;
 in vec2 v_texcoord;
 
 uniform samplerCube environmentMap;
+uniform float blurStrength;
 
 const float pi = 3.14159265359;
 const int samples = 2;
@@ -50,8 +51,8 @@ vec3 blur(samplerCube cubeMap, vec3 dir, float spread) {
 
 void main()
 {		
-    //vec3 envColor = textureLod(environmentMap, WorldPos, 0.0).rgb;
-    vec3 envColor = texture(environmentMap, normalize(WorldPos)).rgb;
+    vec3 envColor = textureLod(environmentMap, WorldPos, blurStrength).rgb;
+    //vec3 envColor = texture(environmentMap, normalize(WorldPos)).rgb;
 
     //vec3 envColor = blur(environmentMap, normalize(WorldPos), 0.1);
     

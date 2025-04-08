@@ -33,7 +33,7 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 .method = engine::RenderMethod::PBR,
-                .hideHDRSkybox = true,
+                .hideHDRSkybox = false,
                 .filePathHDRSkybox = "textures/hdr/blue_photo_studio_2k.hdr",
                 .shadowIntensity = 0.9f,
                 .iblDiffuseIntensity = 1.0f,

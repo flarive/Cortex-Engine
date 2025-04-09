@@ -22,8 +22,9 @@ namespace engine
     {
         RenderMethod method{};
         
-        bool hideHDRSkybox = false;
-        std::string filePathHDRSkybox{};
+        bool HDRSkyboxHide = false;
+        std::string HDRSkyboxFilePath{};
+        float HDRSkyboxBlurStrength = 0.0f;
 
         float shadowIntensity = 1.5f;
         float iblDiffuseIntensity = 1.0f;
@@ -237,7 +238,7 @@ namespace engine
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
             backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
-            backgroundShader.setFloat("blurStrength", 0.0f); // adjust this value
+            backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
             // shader configuration
             // --------------------
@@ -275,7 +276,7 @@ namespace engine
 
             // pbr: load the HDR environment map
             // ---------------------------------
-            unsigned int hdrTexture = !settings.filePathHDRSkybox.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.filePathHDRSkybox)) : 0;
+            unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.HDRSkyboxFilePath)) : 0;
 
             // pbr: setup cubemap to render to and attach to framebuffer
             // ---------------------------------------------------------
@@ -655,7 +656,7 @@ namespace engine
             //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
             //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
             
-            if (!settings.hideHDRSkybox)
+            if (!settings.HDRSkyboxHide)
                 renderCube();
 
             // render BRDF map to screen

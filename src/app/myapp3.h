@@ -45,8 +45,8 @@ public:
         : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
             {
                 .method = engine::RenderMethod::PBR,
-                .hideHDRSkybox = false,
-                .filePathHDRSkybox = "textures/hdr/newport_loft.hdr",
+                .HDRSkyboxHide = false,
+                .HDRSkyboxFilePath = "textures/hdr/newport_loft.hdr",
                 .shadowIntensity = 1.5f,
                 .iblDiffuseIntensity = 1.0f,
                 .iblSpecularIntensity = 1.0f,

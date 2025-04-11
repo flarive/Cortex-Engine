@@ -82,7 +82,7 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        helmetModel = engine::Model("models/helmet/DamagedHelmet.gltf");
+        helmetModel = engine::Model("models/helmet/DamagedHelmet.obj");
 
 
 

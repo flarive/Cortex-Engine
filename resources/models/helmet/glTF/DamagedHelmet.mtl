@@ -9,10 +9,9 @@ Ni 1.500000
 d 1.000000
 illum 2
 map_Ka Default_albedo.jpg
-map_Kd cushion_albedo.jpg
-map_Ks cushion_specular.jpg
-map_Kn cushion_normal.jpg
-map_Pm ../../textures/pbr/gold/metallic.jpg
-map_Pr ../../textures/pbr/gold/roughness.png
-map_Ps ../../textures/pbr/gold/ao.png
-bump glTF/cushion_smoothness.jpg
+map_Kd Default_albedo.jpg
+map_Kn Default_normal.jpg
+map_Pm Default_metalness.jpg
+map_Pr Default_roughness.jpg
+map_Ps Default_AO2.jpg
+map_Ke Default_emissive.jpg

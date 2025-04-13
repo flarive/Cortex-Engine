@@ -41,7 +41,7 @@ public:
                 .method = engine::RenderMethod::PBR,
                 .HDRSkyboxHide = false,
                 .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-                .HDRSkyboxBlurStrength = 6.0f,
+                .HDRSkyboxBlurStrength = 0.0f,
                 .shadowIntensity = 1.0f,
                 .iblDiffuseIntensity = 1.0f,
                 .iblSpecularIntensity = 1.0f
@@ -82,7 +82,7 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        helmetModel = engine::Model("models/helmet/DamagedHelmet.obj");
+        helmetModel = engine::Model("models/helmet/DamagedHelmet.glTF");
 
 
 
@@ -135,30 +135,30 @@ public:
     {
         engine::App::mouse_callback(xposIn, yposIn);
 
-        //float xpos = static_cast<float>(xposIn);
-        //float ypos = static_cast<float>(yposIn);
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
 
-        //if (firstMouse)
-        //{
-        //    lastX = xpos;
-        //    lastY = ypos;
-        //    firstMouse = false;
-        //}
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-        //float xoffset = xpos - lastX;
-        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        //lastX = xpos;
-        //lastY = ypos;
+        lastX = xpos;
+        lastY = ypos;
 
-        //camera.ProcessMouseMovement(xoffset, yoffset);
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::App::scroll_callback(xoffset, yoffset);
 
-        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -218,10 +218,10 @@ private:
         helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // setup lights
-        myPointLight1->draw(shader, projection, view, 2.0f);
-        myPointLight2->draw(shader, projection, view, 2.0f);
-        myPointLight3->draw(shader, projection, view, 2.0f);
-        myPointLight4->draw(shader, projection, view, 2.0f);
+        myPointLight1->draw(shader, projection, view, 120.0f);
+        myPointLight2->draw(shader, projection, view, 20.0f);
+        myPointLight3->draw(shader, projection, view, 20.0f);
+        myPointLight4->draw(shader, projection, view, 20.0f);
 
         rotation += deltaTime * 10.0f;
     }

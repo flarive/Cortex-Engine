@@ -13,6 +13,9 @@ private:
     float lastY{ 0.0f };
 
 
+    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+
+
     //engine::Model backpackModel{};
     engine::Model cushionModel{};
 
@@ -49,9 +52,6 @@ public:
 
     void init() override
     {
-        // load models
-        //backpackModel = engine::Model("models/backpack/backpack.obj");
-        cushionModel = engine::Model("models/cushion/cushion.obj");
 
 
         myPointLight = std::make_shared<engine::PointLight>(0);
@@ -100,11 +100,17 @@ public:
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
+
+        // load models
+        //backpackModel = engine::Model("models/backpack/backpack.obj");
+        cushionModel = engine::Model("models/cushion/cushion.obj");
+
+
         
 
         ourBillboard.setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"));
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourText.setup(FONT_PATH, 28, width, height);
 
         ourSkybox.setup(faces);
 
@@ -182,7 +188,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
+        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override
@@ -203,6 +209,7 @@ public:
         ourCube.clean();
         ourPlane.clean();
         ourBillboard.clean();
+        cushionModel.clean();
     }
 
 private:
@@ -216,7 +223,7 @@ private:
     
     
         // setup lights
-        myPointLight->draw(shader, projection, view, 1.0f);
+        myPointLight->draw(shader, projection, view, 5.0f);
         myDirectionalLight1->draw(shader, projection, view, 1.0f);
         myDirectionalLight2->draw(shader, projection, view, 1.0f);
 
@@ -228,29 +235,16 @@ private:
         shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-        shader.setInt("blinn", true);
     
     
-        // render test cube
+        // render primitives
         ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
         ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
         ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-        // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f));
-    
-    
-        // render the loaded model
-        //glm::mat4 model1 { glm::mat4(1.0f) };
-        //model1 = glm::translate(model1, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-        //model1 = glm::scale(model1, glm::vec3(0.3f));	// it's a bit too big for our scene, so scale it down
-        //model1 = glm::rotate(model1, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        //shader.setMat4("model", model1);
-        //cushionModel.draw(shader);
-    
-    
+        // render models
+        cushionModel.draw(shader, glm::vec3(-1.0f, -0.15f, 0.0f), glm::vec3(0.2f));
+
         // activate skybox reflection shader
         skyboxReflectShader.use();
         skyboxReflectShader.setMat4("view", view);

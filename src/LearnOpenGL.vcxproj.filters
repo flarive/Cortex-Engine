@@ -549,8 +549,6 @@
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_AO2.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalness.jpg" />
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_roughness.jpg" />
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\DamagedHelmet.mtl">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
@@ -558,6 +556,12 @@
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalness2.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalness.jpg">
+      <Filter>resources\models\helmet</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_roughness.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
   </ItemGroup>

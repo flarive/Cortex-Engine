@@ -11,6 +11,8 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
+    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+
     std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
@@ -71,7 +73,7 @@ public:
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourText.setup(FONT_PATH, 28, width, height);
 
         after_init();
     }
@@ -152,7 +154,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
+        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override
@@ -191,9 +193,6 @@ private:
         shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-        shader.setInt("blinn", true);
-
-        
 
 
         // render the loaded model

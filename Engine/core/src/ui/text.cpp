@@ -2,12 +2,12 @@
 
 #include "../../include/tools/file_system.h"
 
-void engine::Text::setup(const std::string& fontPath, int fontSize, int width, int height)
+void engine::Text::setup(const std::string& fontPath, int fontSize, int screenWidth, int screenHeight)
 {
     m_textShader.init("UITextShader", "shaders/text.vertex", "shaders/text.frag");
 
 
-    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
     m_textShader.use();
     m_textShader.setMat4("projection", projection2);
 

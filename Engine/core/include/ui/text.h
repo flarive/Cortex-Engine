@@ -24,7 +24,7 @@ namespace engine
         Text() = default;
         ~Text() = default;
 
-        void setup(const std::string& fontPath, int fontSize, int width, int height);
+        void setup(const std::string& fontPath, int fontSize, int screenWidth, int screenHeight);
 
         // draws the model, and thus all its meshes
         // render line of text

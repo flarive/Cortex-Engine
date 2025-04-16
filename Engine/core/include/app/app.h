@@ -166,7 +166,6 @@ namespace engine
             blinnPhongShader.use();
             blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
             blinnPhongShader.setFloat("material.shininess", 32.0f);
-            blinnPhongShader.setInt("blinn", true);
 
             // shader configuration
             // --------------------

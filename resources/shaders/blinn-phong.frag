@@ -78,7 +78,6 @@ in VS_OUT {
 } fs_in;
 
 uniform vec3 viewPos;
-uniform bool blinn;
 
 uniform Material material;
 
@@ -265,17 +264,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     float diff = max(dot(normal, lightDir), 0.0);
 
     // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
-    float spec = 0.0;
-    if (blinn)
-    {
-        vec3 halfwayDir = normalize(lightDir + viewDir);  
-        spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    }
-    else
-    {
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    }
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // Ambient, Diffuse, and Specular components
     vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
@@ -301,17 +291,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     float diff = max(dot(normal, lightDir), 0.0);
     
     // specular shading
-    float spec = 0.0;
-    if (blinn)
-    {
-        vec3 halfwayDir = normalize(lightDir + viewDir);  
-        spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    }
-    else
-    {
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    }
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // attenuation
     float distance = length(light.position - fragPos);
@@ -343,17 +324,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float diff = max(dot(normal, lightDir), 0.0);
 
     // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
-    float spec = 0.0;
-    if (blinn)
-    {
-        vec3 halfwayDir = normalize(lightDir + viewDir);  
-        spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    }
-    else
-    {
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    }
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // Attenuation based on distance
     float distance = length(light.position - fragPos);

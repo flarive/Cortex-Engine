@@ -11,7 +11,7 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-
+    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
     std::shared_ptr<engine::PointLight> myPointLight1;
     std::shared_ptr<engine::PointLight> myPointLight2;
@@ -86,8 +86,8 @@ public:
 
 
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
-        ourText2.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourText.setup(FONT_PATH, 28, width, height);
+        ourText2.setup(FONT_PATH, 28, width, height);
         ourSprite.setup("textures/awesomeface.png", width, height);
 
         after_init();
@@ -186,7 +186,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
+        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override
@@ -213,7 +213,6 @@ private:
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
-
         // render the loaded model
         helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -231,6 +230,6 @@ private:
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-        ourSprite.draw(glm::vec2(50, height - 50), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
+        ourSprite.draw(glm::vec2(50, height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
     }
 };

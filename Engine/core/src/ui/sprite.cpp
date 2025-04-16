@@ -2,23 +2,26 @@
 
 #include "../../include/texture.h"
 
+#include <tuple>
+
 engine::Sprite::~Sprite()
 {
     glDeleteVertexArrays(1, &m_quadVAO);
 }
 
-void engine::Sprite::setup(const std::string& filepath, int width, int height)
+void engine::Sprite::setup(const std::string& filepath, int screenWidth, int screenHeight)
 {
     m_spriteShader.init("UISpriteShader", "shaders/sprite.vertex", "shaders/sprite.frag");
 
-    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
     m_spriteShader.use();
     m_spriteShader.setMat4("projection", projection2);
 
-
+    auto textureTuple = Texture::loadTextureExtended(filepath, false, false);
     
-
-    m_texture_id = Texture::loadTexture(filepath, false, false);
+    m_texture_id = std::get<0>(textureTuple);
+    width = std::get<2>(textureTuple);
+    height = std::get<3>(textureTuple);
 
     initRenderData();
 }
@@ -48,6 +51,14 @@ void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm:
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+
+
+    if (size.x != 1.0f && size.y != 1.0f)
+    {
+        // set sprite size to scaled display size
+        width = size.x;
+        height = size.y;
+    }
 }
 
 void engine::Sprite::initRenderData()

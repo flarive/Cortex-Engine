@@ -11,7 +11,7 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-
+    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
 
     std::shared_ptr<engine::SpotLight> mySpotLight;
@@ -77,7 +77,7 @@ public:
             "textures/pbr/planks/ao.jpg",
             ""), engine::UvMapping(1.0f));
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, width, height);
+        ourText.setup(FONT_PATH, 28, width, height);
 
         after_init();
     }
@@ -172,7 +172,7 @@ public:
     {
         engine::App::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup("fonts/Antonio-Regular.ttf", 28, newWidth, newHeight);
+        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override

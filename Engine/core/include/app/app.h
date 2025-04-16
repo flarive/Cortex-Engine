@@ -18,7 +18,7 @@ namespace engine
         PBR = 1 // mainstream
     };
 
-    struct AppSettings
+    struct SceneSettings
     {
         RenderMethod method{};
         
@@ -36,11 +36,13 @@ namespace engine
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
-    class App : private NonCopyable
+    class Scene : private NonCopyable
     {
     private:
         const int TARGET_FPS{ 60 };
         const int FRAME_DELAY{ 1000 / TARGET_FPS }; // in milliseconds
+
+        std::vector<std::shared_ptr<GameObject>> gameObjects;
 
 
         bool key_w_pressed { false };
@@ -90,7 +92,7 @@ namespace engine
         int height{}; // windowed height
         bool fullscreen{};
         
-        AppSettings settings;
+        SceneSettings settings;
 
     public:
         GLFWwindow* window{};
@@ -122,7 +124,7 @@ namespace engine
 
         
 
-        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
+        Scene(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, SceneSettings _settings)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
         {
             if (settings.method == RenderMethod::PBR)

@@ -14,6 +14,11 @@
 #include "shader.h"
 #include "materials/material.h"
 #include "texture.h"
+
+
+#include "gameobject.h"
+
+
 #include "model.h"
 
 #include "camera.h"

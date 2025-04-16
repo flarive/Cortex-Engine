@@ -11,7 +11,7 @@
 using MyApp = MyApp6;
 
 
-engine::App* app{};
+engine::Scene* app{};
 
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU

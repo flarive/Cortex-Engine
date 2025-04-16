@@ -162,6 +162,9 @@
     <ClCompile Include="core\src\ui\sprite.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\gameobject.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="core\include\ui\sprite.h">
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\gameobject.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

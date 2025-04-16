@@ -4,7 +4,7 @@
 #include "core/include/engine.h"
 
 
-class MyApp1 : public engine::App
+class MyApp1 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -37,7 +37,7 @@ private:
 
 public:
     MyApp1(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::App(_title, _width, _height, _fullscreen, engine::AppSettings
+        : engine::Scene(_title, _width, _height, _fullscreen, engine::SceneSettings
             {
                 .method = engine::RenderMethod::BlinnPhong
             })
@@ -122,7 +122,7 @@ public:
     // ---------------------------------------------------------------------------------------------------------
     void key_callback(int key, int scancode, int action, int mods)
     {
-        engine::App::key_callback(key, scancode, action, mods);
+        engine::Scene::key_callback(key, scancode, action, mods);
 
         // Detect Shift key state
         bool shiftPressed =  (mods & GLFW_MOD_SHIFT);
@@ -151,7 +151,7 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        engine::App::mouse_callback(xposIn, yposIn);
+        engine::Scene::mouse_callback(xposIn, yposIn);
 
         float xpos{ static_cast<float>(xposIn) };
         float ypos{ static_cast<float>(yposIn) };
@@ -174,19 +174,19 @@ public:
 
     void scroll_callback(double xoffset, double yoffset)
     {
-        engine::App::scroll_callback(xoffset, yoffset);
+        engine::Scene::scroll_callback(xoffset, yoffset);
 
         camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-        engine::App::gamepad_callback(state);
+        engine::Scene::gamepad_callback(state);
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
     {
-        engine::App::framebuffer_size_callback(newWidth, newHeight);
+        engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
         ourText.setup(FONT_PATH, 28, newWidth, newHeight);
     }

@@ -1,8 +1,11 @@
 #pragma once
 
 
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
+#include "misc/noncopyable.h"
 
 #include <string>
 
@@ -12,7 +15,7 @@
 
 namespace engine
 {
-	class GameObject
+	class GameObject : private NonCopyable
 	{
 	public:
 		std::string name;

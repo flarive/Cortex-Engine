@@ -1,4 +1,5 @@
 #include "core/include/app/app.h"
+#include "core/include/app/scene.h"
 #include "app/myapp1.h"
 #include "app/myapp2.h"
 #include "app/myapp3.h"

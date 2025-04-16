@@ -1,17 +1,18 @@
 #pragma once
 
-#include "../misc/noncopyable.h"
 #include "../common_defines.h"
 #include "../shader.h"
+#include "../gameobject.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
+#include "../misc/noncopyable.h"
 
 namespace engine
 {
     /// <summary>
     /// Abstract class for primitives
     /// </summary>
-    class Primitive : private NonCopyable
+    class Primitive : private GameObject
     {
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/include/app/app.h"
+#include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
 class MyApp6 : public engine::Scene

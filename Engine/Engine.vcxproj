@@ -194,6 +194,7 @@
     <ClInclude Include="..\libs\imgui\imgui_internal.h" />
     <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
     <ClInclude Include="core\include\app\app.h" />
+    <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />

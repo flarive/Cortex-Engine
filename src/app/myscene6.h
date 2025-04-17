@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyApp6 : public engine::Scene
+class MyScene6 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -36,8 +36,8 @@ private:
 
 
 public:
-    MyApp6(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::Scene(_title, _width, _height, _fullscreen, engine::SceneSettings
+    MyScene6(std::string _title, engine::App* _app)
+        : engine::Scene(_title, _app, engine::SceneSettings
             {
                 .method = engine::RenderMethod::PBR,
                 .HDRSkyboxHide = false,
@@ -50,8 +50,8 @@ public:
     {
         // my application specific state gets initialized here
 
-        lastX = width / 2.0f;
-        lastY = height / 2.0f;
+        lastX = app->width / 2.0f;
+        lastY = app->height / 2.0f;
 
         init();
     }
@@ -87,9 +87,9 @@ public:
 
 
 
-        ourText.setup(FONT_PATH, 28, width, height);
-        ourText2.setup(FONT_PATH, 28, width, height);
-        ourSprite.setup("textures/awesomeface.png", width, height);
+        ourText.setup(FONT_PATH, 28, app->width, app->height);
+        ourText2.setup(FONT_PATH, 28, app->width, app->height);
+        ourSprite.setup("textures/awesomeface.png", app->width, app->height);
 
         after_init();
     }
@@ -211,7 +211,7 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // render the loaded model
@@ -230,7 +230,7 @@ private:
     {
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-        ourText2.draw(std::format("{} polys", (int)polycount), width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-        ourSprite.draw(glm::vec2(50, height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
+        ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        ourSprite.draw(glm::vec2(50, app->height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
     }
 };

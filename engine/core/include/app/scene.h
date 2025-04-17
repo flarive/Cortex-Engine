@@ -10,8 +10,12 @@
 #include <chrono>
 #include <thread>
 
+
+
 namespace engine
 {
+    class App;
+
     enum class RenderMethod
     {
         BlinnPhong = 0, // legacy
@@ -22,13 +26,13 @@ namespace engine
     {
         RenderMethod method{};
         
-        bool HDRSkyboxHide = false;
+        bool HDRSkyboxHide{ false };
         std::string HDRSkyboxFilePath{};
-        float HDRSkyboxBlurStrength = 0.0f;
+        float HDRSkyboxBlurStrength{ 0.0f };
 
-        float shadowIntensity = 1.5f;
-        float iblDiffuseIntensity = 1.0f;
-        float iblSpecularIntensity = 1.0f;
+        float shadowIntensity{ 1.5f };
+        float iblDiffuseIntensity{ 1.0f };
+        float iblSpecularIntensity{ 1.0f };
 
         bool applyGammaCorrection{};
     };
@@ -39,8 +43,6 @@ namespace engine
     class Scene : private NonCopyable
     {
     private:
-        const int TARGET_FPS{ 60 };
-        const int FRAME_DELAY{ 1000 / TARGET_FPS }; // in milliseconds
 
         std::vector<std::shared_ptr<GameObject>> gameObjects;
 
@@ -72,7 +74,7 @@ namespace engine
         Shader debugDepthQuad{};
 
         
-        SystemMonitor sysMonitor{};
+        
 
         GLuint query;
 
@@ -88,14 +90,12 @@ namespace engine
 
         // settings
         std::string title{};
-        int width{}; // windowed width
-        int height{}; // windowed height
-        bool fullscreen{};
-        
+
+        App* app;
         SceneSettings settings;
 
     public:
-        GLFWwindow* window{};
+        
 
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
@@ -124,8 +124,8 @@ namespace engine
 
         
 
-        Scene(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, SceneSettings _settings)
-            : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
+        Scene(std::string _title, App* _app, SceneSettings _settings)
+            : title(_title), app(_app), settings(_settings)
         {
             if (settings.method == RenderMethod::PBR)
                 setupPBR();
@@ -133,25 +133,13 @@ namespace engine
                 setup_BlinnPhong();
         }
 
+        GLFWwindow* getWindow()
+        {
+            return app->window;
+        }
+
         void setup_BlinnPhong()
         {
-            initGLFW();
-
-            const char* glsl_version = initOpenGL();
-
-            initWindow();
-            
-            // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
-            glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
-
-            enableVerticalSync(true);
-
-            enableMouseCapture(true);
-
-            initGLAD();
-
-            initImGUI(glsl_version);
-
             // configure global opengl state
             // -----------------------------
             enableDepthTest(true);
@@ -189,24 +177,6 @@ namespace engine
 
         void setupPBR()
         {
-            initGLFW();
-
-            const char* glsl_version = initOpenGL();
-
-            initWindow();
-
-            // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
-            glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
-
-            enableVerticalSync(true);
-
-            enableMouseCapture(true);
-
-            initGLAD();
-
-            initImGUI(glsl_version);
-
-
             // configure global opengl state
             // -----------------------------
             enableDepthTest(true);
@@ -238,7 +208,7 @@ namespace engine
 
             backgroundShader.use();
             backgroundShader.setInt("environmentMap", 0);
-            backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
+            backgroundShader.setVec2("u_resolution", glm::vec2(app->width, app->height));
             backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
             // shader configuration
@@ -447,7 +417,7 @@ namespace engine
 
             // initialize static shader uniforms before rendering
             // --------------------------------------------------
-            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
             pbrShader.use();
             pbrShader.setMat4("projection", projection);
             backgroundShader.use();
@@ -455,7 +425,7 @@ namespace engine
 
             // then before rendering, configure the viewport to the original framebuffer's screen dimensions
             int scrWidth, scrHeight;
-            glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
+            glfwGetFramebufferSize(app->window, &scrWidth, &scrHeight);
             glViewport(0, 0, scrWidth, scrHeight);
         }
 
@@ -495,16 +465,16 @@ namespace engine
         // must be overridden in derived class
         virtual void clean() = 0;
 
-        bool gameRunning()
-        {
-            return !glfwWindowShouldClose(window);
-        }
+        //bool isRunning()
+        //{
+        //    return !glfwWindowShouldClose(app->window);
+        //}
 
         void gameLoop()
         {
             /*while (!glfwWindowShouldClose(window))
             {*/
-                if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
+                if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
                 {
                     ImGui_ImplGlfw_Sleep(10);
                     //continue;
@@ -519,7 +489,7 @@ namespace engine
                 framerate = ImGui::GetIO().Framerate;
 
                 if (show_window)
-                    renderUIWindow(show_window);
+                    app->renderUIWindow(show_window);
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
@@ -544,22 +514,22 @@ namespace engine
                 // ImGUI rendering
                 ImGui::Render();
                 int display_w, display_h;
-                glfwGetFramebufferSize(window, &display_w, &display_h);
+                glfwGetFramebufferSize(app->window, &display_w, &display_h);
                 glViewport(0, 0, display_w, display_h);
                 ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
-                glfwSwapBuffers(window);
+                glfwSwapBuffers(app->window);
 
                 // Poll and handle events (inputs, window resize, etc.)
                 glfwPollEvents();
 
                 auto end_time = std::chrono::high_resolution_clock::now();
-                std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY) - (end_time - start_time));
+                std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
             //}
         }
 
-        void gameExit()
+        void exit()
         {
             glBindVertexArray(0);
 
@@ -576,16 +546,6 @@ namespace engine
 
             // clean user stuffs
             clean();
-
-
-            // imGui Cleanup
-            ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
-
-            glfwDestroyWindow(window);
-
-            glfwTerminate();
         }
 
         void loop_BlinnPhong()
@@ -622,7 +582,7 @@ namespace engine
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
 
 
 
@@ -683,12 +643,12 @@ namespace engine
             // basic window handling
             switch (key) {
             case GLFW_KEY_ESCAPE:
-                glfwSetWindowShouldClose(window, GL_TRUE); break;
+                glfwSetWindowShouldClose(app->window, GL_TRUE); break;
             case GLFW_KEY_ENTER:
-                if (action == GLFW_RELEASE) toggleFullscreen(); break;
+                if (action == GLFW_RELEASE) app->toggleFullscreen(); break;
             }
 
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_PRESS)
             {
                 if (!key_w_pressed) // Only toggle when the key is first pressed
                 {
@@ -696,7 +656,7 @@ namespace engine
                     key_w_pressed = true; // Mark the key as pressed
                 }
             }
-            else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+            else if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_RELEASE)
             {
                 key_w_pressed = false; // Reset the state when the key is released
             }
@@ -731,6 +691,13 @@ namespace engine
             // make sure the viewport matches the new window dimensions; note that width and 
             // height will be significantly larger than specified on retina displays.
             glViewport(0, 0, newWidth, newHeight);
+        }
+
+        void refreshFullscreen()
+        {
+            // reinit framebuffers because width and height changed
+            initDepthMapFramebuffer();
+            initColorFramebuffer();
         }
 
         // renderCube() renders a 1x1 3D cube in NDC.
@@ -944,130 +911,130 @@ namespace engine
         static void glfw_error_callback(int error, const char* description)
         {
             fprintf(stderr, "GLFW Error %d: %s\n", error, description);
-            exit(EXIT_FAILURE);
+            std::exit(EXIT_FAILURE);
         }
 
-        void renderUIWindow(bool show)
-        {
-            ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
+        //void renderUIWindow(bool show)
+        //{
+        //    ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
 
-            ImGui::Begin("Hello, world!", &show);
+        //    ImGui::Begin("Hello, world!", &show);
 
-            ImGui::Text("CPU Usage: %.2f%%", sysMonitor.GetCPUUsage());
-            ImGui::Text("Memory Usage: %.2f Mo", sysMonitor.GetMemoryUsage());
-            ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
-            ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
-            ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
+        //    ImGui::Text("CPU Usage: %.2f%%", sysMonitor.GetCPUUsage());
+        //    ImGui::Text("Memory Usage: %.2f Mo", sysMonitor.GetMemoryUsage());
+        //    ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
+        //    ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
+        //    ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
-            ImGui::End();
-        }
+        //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
+        //    ImGui::End();
+        //}
 
-        void initGLFW()
-        {
-            glfwSetErrorCallback(glfw_error_callback);
-            if (!glfwInit())
-            {
-                std::cerr << "GLFW init failed" << std::endl;
-                exit(EXIT_FAILURE);
-            }
+        //void initGLFW()
+        //{
+        //    glfwSetErrorCallback(glfw_error_callback);
+        //    if (!glfwInit())
+        //    {
+        //        std::cerr << "GLFW init failed" << std::endl;
+        //        exit(EXIT_FAILURE);
+        //    }
 
-            glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
-        }
+        //    glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
+        //}
 
-        const char* initOpenGL()
-        {
-            // GL 3.3 + GLSL 130
-            const char* glsl_version = "#version 130";
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-            //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+        //const char* initOpenGL()
+        //{
+        //    // GL 3.3 + GLSL 130
+        //    const char* glsl_version = "#version 130";
+        //    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        //    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        //    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
+        //    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
-            return glsl_version;
-        }
+        //    return glsl_version;
+        //}
 
-        void initWindow()
-        {
-            GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+        //void initWindow()
+        //{
+        //    GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
 
-            const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-            if (fullscreen)
-            {
-                width = mode->width;
-                height = mode->height;
-            }
-            
-            // Create window with graphics context
-            window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? myMonitor : NULL, nullptr);
-            if (window == NULL)
-            {
-                std::cerr << "Failed to create GLFW window" << std::endl;
-                glfwTerminate();
-                exit(EXIT_FAILURE);
-            }
+        //    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
+        //    if (fullscreen)
+        //    {
+        //        width = mode->width;
+        //        height = mode->height;
+        //    }
+        //    
+        //    // Create window with graphics context
+        //    window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? myMonitor : NULL, nullptr);
+        //    if (window == NULL)
+        //    {
+        //        std::cerr << "Failed to create GLFW window" << std::endl;
+        //        glfwTerminate();
+        //        exit(EXIT_FAILURE);
+        //    }
 
-            glfwMakeContextCurrent(window);
-        }
+        //    glfwMakeContextCurrent(window);
+        //}
 
-        void initGLAD()
-        {
-            // glad: load all OpenGL function pointers
-            // ---------------------------------------
-            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-            {
-                std::cerr << "Failed to initialize GLAD" << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
+        //void initGLAD()
+        //{
+        //    // glad: load all OpenGL function pointers
+        //    // ---------------------------------------
+        //    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        //    {
+        //        std::cerr << "Failed to initialize GLAD" << std::endl;
+        //        exit(EXIT_FAILURE);
+        //    }
+        //}
 
-        void initImGUI(const char* glsl_version)
-        {
-            // Setup Dear ImGui context
-            IMGUI_CHECKVERSION();
-            ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO();
+        //void initImGUI(const char* glsl_version)
+        //{
+        //    // Setup Dear ImGui context
+        //    IMGUI_CHECKVERSION();
+        //    ImGui::CreateContext();
+        //    ImGuiIO& io = ImGui::GetIO();
 
-            // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-            ImGuiStyle& style = ImGui::GetStyle();
-            if (io.ConfigFlags)
-            {
-                style.WindowRounding = 0.0f;
-                style.ChildRounding = 5.0f;
-                style.TabRounding = 5.f;
-                style.FrameRounding = 5.f;
-                style.GrabRounding = 5.f;
-                style.PopupRounding = 5.f;
-                style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        //    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+        //    ImGuiStyle& style = ImGui::GetStyle();
+        //    if (io.ConfigFlags)
+        //    {
+        //        style.WindowRounding = 0.0f;
+        //        style.ChildRounding = 5.0f;
+        //        style.TabRounding = 5.f;
+        //        style.FrameRounding = 5.f;
+        //        style.GrabRounding = 5.f;
+        //        style.PopupRounding = 5.f;
+        //        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 
-                style.ItemSpacing.y = 8.0; // vertical padding between widgets
-                style.FramePadding.x = 8.0; // better widget horizontal padding
-                style.FramePadding.y = 4.0; // better widget vertical padding
-            }
+        //        style.ItemSpacing.y = 8.0; // vertical padding between widgets
+        //        style.FramePadding.x = 8.0; // better widget horizontal padding
+        //        style.FramePadding.y = 4.0; // better widget vertical padding
+        //    }
 
-            // Apply Adobe Spectrum theme
-            //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
-            ImGui::Spectrum::StyleColorsSpectrum();
-            ImGui::Spectrum::LoadFont(17.0);
+        //    // Apply Adobe Spectrum theme
+        //    //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
+        //    ImGui::Spectrum::StyleColorsSpectrum();
+        //    ImGui::Spectrum::LoadFont(17.0);
 
 
-            // Setup Platform/Renderer backends
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init(glsl_version);
-        }
+        //    // Setup Platform/Renderer backends
+        //    ImGui_ImplGlfw_InitForOpenGL(window, true);
+        //    ImGui_ImplOpenGL3_Init(glsl_version);
+        //}
 
-        void enableVerticalSync(bool enable)
-        {
-            // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
-            glfwSwapInterval(enable ? 1 : 0);
-        }
+        //void enableVerticalSync(bool enable)
+        //{
+        //    // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
+        //    glfwSwapInterval(enable ? 1 : 0);
+        //}
 
-        void enableMouseCapture(bool enable)
-        {
-            // tell GLFW to capture our mouse
-            if (!enable)
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        }
+        //void enableMouseCapture(bool enable)
+        //{
+        //    // tell GLFW to capture our mouse
+        //    if (!enable)
+        //        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //}
 
         void enableDepthTest(bool enable)
         {
@@ -1172,7 +1139,7 @@ namespace engine
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // reset viewport
-            glViewport(0, 0, width, height);
+            glViewport(0, 0, app->width, app->height);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // 2. render scene as normal using the previously generated depth/shadow map  
@@ -1208,14 +1175,14 @@ namespace engine
             // create a color attachment texture
             glGenTextures(1, &textureColorbuffer);
             glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, app->width, app->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
             // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
             glGenRenderbuffers(1, &rbo);
             glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height); // use a single renderbuffer object for both a depth AND stencil buffer.
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, app->width, app->height); // use a single renderbuffer object for both a depth AND stencil buffer.
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
             // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -1272,45 +1239,6 @@ namespace engine
             backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
         }
 
-        // Toggle Fullscreen
-        void toggleFullscreen()
-        {
-            static bool isFullscreen = false;
-
-            // remember window original position and size
-            static int windowPosX, windowPosY;
-            static int windowWidth, windowHeight;
-
-            if (!isFullscreen)
-            {
-                // Save window position and size
-                glfwGetWindowPos(window, &windowPosX, &windowPosY);
-                glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
-                // Get primary monitor
-                GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-                // Switch to fullscreen
-                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-                glfwGetWindowSize(window, &width, &height);
-            }
-            else
-            {
-                // Restore windowed mode
-                glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
-                glfwGetWindowSize(window, &width, &height);
-            }
-
-            // reinit framebuffers because width and height changed
-            initDepthMapFramebuffer();
-            initColorFramebuffer();
-            
-            isFullscreen = !isFullscreen;
-        }
-
-        
-
         // Function to count vertices and polygons
         void beginQuery()
         {
@@ -1327,5 +1255,8 @@ namespace engine
 
             glDeleteQueries(1, &query);
         }
+
+
+
     };
 }

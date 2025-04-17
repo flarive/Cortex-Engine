@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyApp3 : public engine::Scene
+class MyScene3 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -44,8 +44,8 @@ private:
     float rotation{};
 
 public:
-    MyApp3(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::Scene(_title, _width, _height, _fullscreen, engine::SceneSettings
+    MyScene3(std::string _title, engine::App* _app)
+        : engine::Scene(_title, _app, engine::SceneSettings
             {
                 .method = engine::RenderMethod::PBR,
                 .HDRSkyboxHide = false,
@@ -58,8 +58,8 @@ public:
     {
         // my application specific state gets initialized here
 
-        lastX = width / 2.0f;
-        lastY = height / 2.0f;
+        lastX = app->width / 2.0f;
+        lastY = app->height / 2.0f;
 
         init();
     }
@@ -205,7 +205,7 @@ public:
         }
 
 
-        ourText.setup(FONT_PATH, 28, width, height);
+        ourText.setup(FONT_PATH, 28, app->width, app->height);
 
         after_init();
     }
@@ -352,7 +352,7 @@ private:
 
 
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // setup lights

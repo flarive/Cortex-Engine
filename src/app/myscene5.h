@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyApp2 : public engine::Scene
+class MyScene5 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -14,14 +14,11 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
+
     std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
-
-
-    engine::Model cushionModel{};
-
-    engine::Cube ourCube1{};
+    engine::Model buddhaModel{};
 
     engine::Plane ourPlane{};
 
@@ -29,18 +26,25 @@ private:
 
     float rotation{};
 
+    
+
 
 public:
-    MyApp2(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::Scene(_title, _width, _height, _fullscreen, engine::SceneSettings
+    MyScene5(std::string _title, engine::App* _app)
+        : engine::Scene(_title, _app, engine::SceneSettings
             {
-                .method = engine::RenderMethod::BlinnPhong
+                .method = engine::RenderMethod::PBR,
+                .HDRSkyboxHide = false,
+                .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+                .shadowIntensity = 0.9f,
+                .iblDiffuseIntensity = 1.0f,
+                .iblSpecularIntensity = 1.0f
             })
     {
         // my application specific state gets initialized here
 
-        lastX = width / 2.0f;
-        lastY = height / 2.0f;
+        lastX = app->width / 2.0f;
+        lastY = app->height / 2.0f;
 
         init();
     }
@@ -48,36 +52,37 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        mySpotLight->setCutOff(8.0f);
-        mySpotLight->setOuterCutOff(20.f);
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setCutOff(12.5f);
+        mySpotLight->setOuterCutOff(17.5f);
 
         lights.emplace_back(mySpotLight);
+        
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
-        camera.Fps = true;
+        camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
+        camera.Fps = false;
         camera.Zoom = 25.0f;
         camera.MovementSpeed = 10.0f;
 
-        cushionModel = engine::Model("models/cushion/cushion.obj");
 
-        //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+        buddhaModel = engine::Model("models/buddha/buddha1.obj");
 
-        ourCube1.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/container2_diffuse.png",
-            "textures/container2_specular.png"));
-
-        //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/wood_diffuse.png",
-            "textures/wood_specular.png"), engine::UvMapping(2.0f));
+            "textures/pbr/planks/albedo.jpg",
+            "",
+            "textures/pbr/planks/normal.jpg",
+            "textures/pbr/planks/metallic.jpg",
+            "textures/pbr/planks/roughness.jpg",
+            "textures/pbr/planks/ao.jpg",
+            ""), engine::UvMapping(1.0f));
 
-        ourText.setup(FONT_PATH, 28, width, height);
+        ourText.setup(FONT_PATH, 28, app->width, app->height);
 
         after_init();
     }
+
 
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -115,28 +120,25 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        UNREFERENCED_PARAMETER(xposIn);
-        UNREFERENCED_PARAMETER(yposIn);
+        engine::Scene::mouse_callback(xposIn, yposIn);
 
-        //engine::App::mouse_callback(xposIn, yposIn);
+        float xpos = static_cast<float>(xposIn);
+        float ypos = static_cast<float>(yposIn);
 
-        //float xpos = static_cast<float>(xposIn);
-        //float ypos = static_cast<float>(yposIn);
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-        //if (firstMouse)
-        //{
-        //    lastX = xpos;
-        //    lastY = ypos;
-        //    firstMouse = false;
-        //}
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        //float xoffset = xpos - lastX;
-        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        lastX = xpos;
+        lastY = ypos;
 
-        //lastX = xpos;
-        //lastY = ypos;
-
-        //cam.ProcessMouseMovement(xoffset, yoffset);
+        camera.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
@@ -148,7 +150,23 @@ public:
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
+        camera.ProcessJoystickMovement(state);
 
+        //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+
+        if (GLFW_PRESS == state.buttons[1])
+        {
+            std::cout << "Pressed" << std::endl;
+        }
+        else if (GLFW_RELEASE == state.buttons[0])
+        {
+            //std::cout << "Released" << std::endl;
+        }
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -172,43 +190,35 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourCube1.clean();
-        //ourSphere1.clean();
         ourPlane.clean();
+        buddhaModel.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 2.0f); // ???????????????????
-        
-
-        // activate phong shader
         shader.use();
         shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
 
 
+
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
-
-
-        // render test cube
-        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        //ourSphere1.draw(blinnPhongShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
-
-        rotation += deltaTime * 10.0f;
+        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // setup lights
+        mySpotLight->draw(shader, projection, view, 50.0f); // ???????????????
+
+        rotation += deltaTime * 10.0f;
     }
 
     void drawUI()

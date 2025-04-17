@@ -190,11 +190,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp1.h" />
-    <ClInclude Include="app\myapp2.h" />
-    <ClInclude Include="app\myapp3.h" />
-    <ClInclude Include="app\myapp4.h" />
-    <ClInclude Include="app\myapp5.h" />
-    <ClInclude Include="app\myapp6.h" />
+    <ClInclude Include="app\myscene1.h" />
+    <ClInclude Include="app\myscene2.h" />
+    <ClInclude Include="app\myscene3.h" />
+    <ClInclude Include="app\myscene4.h" />
+    <ClInclude Include="app\myscene5.h" />
+    <ClInclude Include="app\myscene6.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">

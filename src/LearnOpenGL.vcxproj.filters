@@ -566,22 +566,25 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app\myscene1.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene2.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene3.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene4.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene5.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene6.h">
+      <Filter>app</Filter>
+    </ClInclude>
     <ClInclude Include="app\myapp1.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myapp2.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myapp3.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myapp4.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myapp5.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myapp6.h">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>

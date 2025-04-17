@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyApp4 : public engine::Scene
+class MyScene2 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -14,11 +14,14 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-
     std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
+
+
     engine::Model cushionModel{};
+
+    engine::Cube ourCube1{};
 
     engine::Plane ourPlane{};
 
@@ -26,25 +29,18 @@ private:
 
     float rotation{};
 
-    
-
 
 public:
-    MyApp4(std::string _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false)
-        : engine::Scene(_title, _width, _height, _fullscreen, engine::SceneSettings
+    MyScene2(std::string _title, engine::App* _app)
+        : engine::Scene(_title, _app, engine::SceneSettings
             {
-                .method = engine::RenderMethod::PBR,
-                .HDRSkyboxHide = false,
-                .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-                .shadowIntensity = 1.5f,
-                .iblDiffuseIntensity = 1.0f,
-                .iblSpecularIntensity = 1.0f
+                .method = engine::RenderMethod::BlinnPhong
             })
     {
         // my application specific state gets initialized here
 
-        lastX = width / 2.0f;
-        lastY = height / 2.0f;
+        lastX = app->width / 2.0f;
+        lastY = app->height / 2.0f;
 
         init();
     }
@@ -52,37 +48,36 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 8.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-        mySpotLight->setCutOff(12.5f);
-        mySpotLight->setOuterCutOff(17.5f);
+        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        mySpotLight->setCutOff(8.0f);
+        mySpotLight->setOuterCutOff(20.f);
 
         lights.emplace_back(mySpotLight);
-        
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
-        camera.Fps = false;
+        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
+        camera.Fps = true;
         camera.Zoom = 25.0f;
         camera.MovementSpeed = 10.0f;
 
-
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
+        //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
+
+        ourCube1.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/container2_diffuse.png",
+            "textures/container2_specular.png"));
+
+        //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/pbr/planks/albedo.jpg",
-            "",
-            "textures/pbr/planks/normal.jpg",
-            "textures/pbr/planks/metallic.jpg",
-            "textures/pbr/planks/roughness.jpg",
-            "textures/pbr/planks/ao.jpg",
-            ""), engine::UvMapping(1.0f));
+            "textures/wood_diffuse.png",
+            "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        ourText.setup(FONT_PATH, 28, width, height);
+        ourText.setup(FONT_PATH, 28, app->width, app->height);
 
         after_init();
     }
-
 
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -115,34 +110,33 @@ public:
             camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
-
     }
 
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        //UNREFERENCED_PARAMETER(xposIn);
-        //UNREFERENCED_PARAMETER(yposIn);
+        UNREFERENCED_PARAMETER(xposIn);
+        UNREFERENCED_PARAMETER(yposIn);
 
-        engine::Scene::mouse_callback(xposIn, yposIn);
+        //engine::App::mouse_callback(xposIn, yposIn);
 
-        float xpos = static_cast<float>(xposIn);
-        float ypos = static_cast<float>(yposIn);
+        //float xpos = static_cast<float>(xposIn);
+        //float ypos = static_cast<float>(yposIn);
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+        //if (firstMouse)
+        //{
+        //    lastX = xpos;
+        //    lastY = ypos;
+        //    firstMouse = false;
+        //}
 
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+        //float xoffset = xpos - lastX;
+        //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-        lastX = xpos;
-        lastY = ypos;
+        //lastX = xpos;
+        //lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        //cam.ProcessMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
@@ -178,38 +172,43 @@ public:
     void clean() override
     {
         // clean up any resources
+        ourCube1.clean();
+        //ourSphere1.clean();
         ourPlane.clean();
-        cushionModel.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f); // ???????????????
+        mySpotLight->draw(shader, projection, view, 2.0f); // ???????????????????
+        
 
-
-
-        //shader.use();
-        //shader.setVec3("viewPos", camera.Position);
-        //shader.setMat4("projection", projection);
-        //shader.setMat4("view", view);
-
+        // activate phong shader
+        shader.use();
+        shader.setVec3("viewPos", camera.Position);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
+
+
+        // render test cube
+        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        //ourSphere1.draw(blinnPhongShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
 
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), -90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
 
     void drawUI()
@@ -217,6 +216,4 @@ private:
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
     }
-
-
 };

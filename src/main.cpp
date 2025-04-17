@@ -1,18 +1,23 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
+
 #include "app/myapp1.h"
-#include "app/myapp2.h"
-#include "app/myapp3.h"
-#include "app/myapp4.h"
-#include "app/myapp5.h"
-#include "app/myapp6.h"
+
+#include "app/myscene1.h"
+#include "app/myscene2.h"
+#include "app/myscene3.h"
+#include "app/myscene4.h"
+#include "app/myscene5.h"
+#include "app/myscene6.h"
 
 
 // make it easier to switch between apps
-using MyApp = MyApp6;
+using MyApp = MyApp1;
+using MyScene = MyScene6;
 
 
-engine::Scene* app{};
+engine::App* app{};
+engine::Scene* scene{};
 
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
@@ -41,26 +46,33 @@ int main(int, char**)
     app = new MyApp("MyApp", 1280, 720, false);
     if (app)
     {
-        glfwSetFramebufferSizeCallback(app->window, framebufferSizeCallback);
-        glfwSetKeyCallback(app->window, keyCallback);
-        glfwSetCursorPosCallback(app->window, mouseCallback);
-        glfwSetScrollCallback(app->window, scrollCallback);
-
-        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-        if (present > 0)
+        scene = new MyScene("MyScene", app);
+        if (scene)
         {
-            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-            std::cout << "Joystick present " << name << std::endl;
-        }
+            app->setCurrentScene(scene);
 
-        // start game loop
-        while (app->gameRunning())
-        {
-            gamepadUpdate(); // Update gamepad state
-            app->gameLoop();
-        }
+            glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
+            glfwSetKeyCallback(scene->getWindow(), keyCallback);
+            glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);
+            glfwSetScrollCallback(scene->getWindow(), scrollCallback);
 
-        app->gameExit();
+            int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+            if (present > 0)
+            {
+                const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+                std::cout << "Joystick present " << name << std::endl;
+            }
+
+            // start game loop
+            while (app->isRunning())
+            {
+                gamepadUpdate(); // Update gamepad state
+                scene->gameLoop();
+            }
+
+            scene->exit();
+            app->exit();
+        }
     }
     else
     {
@@ -77,8 +89,8 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyApp* myApp = (MyApp*)app;
-    myApp->key_callback(key, scancode, action, mods);
+    MyScene* myScene = (MyScene*)scene;
+    myScene->key_callback(key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -87,8 +99,8 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyApp* myApp = (MyApp*)app;
-    myApp->mouse_callback(xposIn, yposIn);
+    MyScene* myScene = (MyScene*)scene;
+    myScene->mouse_callback(xposIn, yposIn);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -97,8 +109,8 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyApp* myApp = (MyApp*)app;
-    myApp->scroll_callback(xoffset, yoffset);
+    MyScene* myScene = (MyScene*)scene;
+    myScene->scroll_callback(xoffset, yoffset);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -107,8 +119,8 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyApp* myApp = (MyApp*)app;
-    myApp->framebuffer_size_callback(width, height);
+    MyScene* myScene = (MyScene*)scene;
+    myScene->framebuffer_size_callback(width, height);
 }
 
 // Poll gamepad input and forward to MyApp
@@ -120,7 +132,7 @@ static void gamepadUpdate()
         GLFWgamepadstate state;
         if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
         {
-            MyApp* myApp = (MyApp*)app;
+            MyScene* myApp = (MyScene*)scene;
             myApp->gamepad_callback(state);
         }
     }

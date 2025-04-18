@@ -587,5 +587,8 @@
     <ClInclude Include="app\myapp1.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="app\myscene7.h">
+      <Filter>app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

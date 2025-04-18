@@ -2,7 +2,7 @@
 
 #include "../common_defines.h"
 #include "../shader.h"
-#include "../gameobject.h"
+//#include "../entity.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"
@@ -12,7 +12,7 @@ namespace engine
     /// <summary>
     /// Abstract class for primitives
     /// </summary>
-    class Primitive : private GameObject
+    class Primitive
     {
     protected:
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};

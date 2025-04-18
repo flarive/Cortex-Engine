@@ -162,7 +162,7 @@
     <ClCompile Include="core\src\ui\sprite.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\gameobject.cpp">
+    <ClCompile Include="core\src\entity.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,7 +269,7 @@
     <ClInclude Include="core\include\ui\sprite.h">
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\gameobject.h">
+    <ClInclude Include="core\include\entity.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\app\scene.h">

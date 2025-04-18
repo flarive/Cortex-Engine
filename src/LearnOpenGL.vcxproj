@@ -196,6 +196,7 @@
     <ClInclude Include="app\myscene4.h" />
     <ClInclude Include="app\myscene5.h" />
     <ClInclude Include="app\myscene6.h" />
+    <ClInclude Include="app\myscene7.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">

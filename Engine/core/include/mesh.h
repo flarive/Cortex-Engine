@@ -18,13 +18,16 @@ namespace engine
         // render data 
         unsigned int VBO{}, EBO{}, VAO{};
 
-        // mesh Data
-        std::vector<Vertex>       vertices{};
-        std::vector<unsigned int> indices{};
+
 
         std::shared_ptr<Material> m_material{};
 
     public:
+        
+        // mesh Data
+        std::vector<Vertex>       vertices{};
+        std::vector<unsigned int> indices{};
+
         // constructor
         Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::shared_ptr<Material>& material);
 		~Mesh() = default;

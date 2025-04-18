@@ -16,7 +16,7 @@
 #include "texture.h"
 
 
-#include "gameobject.h"
+#include "entity.h"
 
 
 #include "model.h"

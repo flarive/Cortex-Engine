@@ -44,7 +44,7 @@ namespace engine
     {
     private:
 
-        std::vector<std::shared_ptr<GameObject>> gameObjects;
+        //std::vector<std::shared_ptr<GameObject>> gameObjects;
 
 
         bool key_w_pressed { false };

@@ -415,9 +415,9 @@ namespace engine
 		Model* pModel = nullptr;
 		std::unique_ptr<AABB> boundingVolume;
 
-		Entity() : pModel{ nullptr }
-		{
-		}
+		//Entity() : pModel{ nullptr }
+		//{
+		//}
 
 		// constructor, expects a filepath to a 3D model.
 		Entity(Model& model) : pModel{ &model }
@@ -458,7 +458,8 @@ namespace engine
 			return AABB(globalCenter, newIi, newIj, newIk);
 		}
 
-		//Add child. Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
+		//Add child.
+		//Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
 		template<typename... TArgs>
 		void addChild(TArgs&... args)
 		{

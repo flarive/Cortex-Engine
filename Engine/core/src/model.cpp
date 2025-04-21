@@ -11,6 +11,8 @@
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
+    assert(!path.empty() && "Model path is empty !");
+
     loadModel(path);
 }
 

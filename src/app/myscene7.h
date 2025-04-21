@@ -21,7 +21,7 @@ private:
 
 
     
-    engine::Entity ourEntity{};
+    //engine::Entity ourEntity{};
 
 
     engine::Text ourText{};
@@ -85,17 +85,17 @@ public:
 
         engine::Model model = engine::Model("models/sphere/smooth_sphere_80.obj");
 
+        rootEntity = new engine::Entity(model);
+        //ourEntity(model);
 
-        //engine::Entity ourEntity(model);
+        //ourEntity.setModel(model);
 
-        ourEntity.setModel(model);
-
-        ourEntity.transform.setLocalPosition({ 10, 0, 0 });
+        rootEntity->transform.setLocalPosition({ 10, 0, 0 });
         const float scale = 0.75;
-        ourEntity.transform.setLocalScale({ scale, scale, scale });
+        rootEntity->transform.setLocalScale({ scale, scale, scale });
 
         {
-            engine::Entity* lastEntity = &ourEntity;
+            engine::Entity* lastEntity = rootEntity;
 
             for (unsigned int i = 0; i < 10; ++i)
             {
@@ -107,7 +107,7 @@ public:
                 lastEntity->transform.setLocalScale({ scale, scale, scale });
             }
         }
-        ourEntity.updateSelfAndChild();
+        rootEntity->updateSelfAndChild();
 
 
 
@@ -243,7 +243,7 @@ private:
 
 
         // draw our scene graph
-        engine::Entity* lastEntity = &ourEntity;
+        engine::Entity* lastEntity = rootEntity;
         while (lastEntity->children.size())
         {
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
@@ -254,8 +254,8 @@ private:
             }
         }
 
-        ourEntity.transform.setLocalRotation({ 0.f, ourEntity.transform.getLocalRotation().y + 20 * deltaTime, 0.f });
-        ourEntity.updateSelfAndChild();
+        rootEntity->transform.setLocalRotation({ 0.f, rootEntity->transform.getLocalRotation().y + 20 * deltaTime, 0.f });
+        rootEntity->updateSelfAndChild();
 
 
         // setup lights

@@ -100,6 +100,10 @@ namespace engine
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
+
+        //std::shared_ptr<Entity> rootEntity;
+        Entity* rootEntity;
+
         std::vector<std::shared_ptr<engine::Light>> lights{};
 
         Shader blinnPhongShader{};

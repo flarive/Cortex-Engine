@@ -361,11 +361,11 @@ namespace engine
 		return frustum;
 	}
 
-	AABB generateAABB(const Model& model)
+	AABB generateAABB(const std::shared_ptr<Model> model)
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-		for (auto&& mesh : model.meshes)
+		for (auto&& mesh : model->meshes)
 		{
 			for (auto&& vertex : mesh.vertices)
 			{
@@ -412,7 +412,8 @@ namespace engine
 		//Space information
 		Transform transform;
 
-		Model* pModel = nullptr;
+		//Model* pModel = nullptr;
+		std::shared_ptr<Model> pModel;
 		std::unique_ptr<AABB> boundingVolume;
 
 		//Entity() : pModel{ nullptr }
@@ -420,18 +421,19 @@ namespace engine
 		//}
 
 		// constructor, expects a filepath to a 3D model.
-		Entity(Model& model) : pModel{ &model }
+		Entity(std::shared_ptr<Model> model) : pModel{ model }
 		{
 			boundingVolume = std::make_unique<AABB>(generateAABB(model));
 			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
+			int qq = 0;
 		}
 
-		void setModel(Model& model)
-		{
-			pModel = &model;
-			boundingVolume = std::make_unique<AABB>(generateAABB(model));
-			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
-		}
+		//void setModel(Model& model)
+		//{
+		//	pModel = &model;
+		//	boundingVolume = std::make_unique<AABB>(generateAABB(model));
+		//	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
+		//}
 
 		AABB getGlobalAABB()
 		{

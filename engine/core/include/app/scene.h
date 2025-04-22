@@ -101,7 +101,7 @@ namespace engine
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
 
-        //std::shared_ptr<Entity> rootEntity;
+        
         Entity* rootEntity;
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
@@ -608,6 +608,8 @@ namespace engine
             glActiveTexture(GL_TEXTURE9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
+
+            auto ppppp = rootEntity->pModel;
 
             // update user stuffs
             update(pbrShader);

@@ -83,15 +83,15 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        engine::Model model = engine::Model("models/sphere/smooth_sphere_80.obj");
+        //engine::Model model = engine::Model("models/sphere/smooth_sphere_80.obj");
+
+        std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
 
         rootEntity = new engine::Entity(model);
-        //ourEntity(model);
 
-        //ourEntity.setModel(model);
 
-        rootEntity->transform.setLocalPosition({ 10, 0, 0 });
-        const float scale = 0.75;
+        rootEntity->transform.setLocalPosition({ 0.0f, -10.0f, -10.0f });
+        const float scale = 2.0f;
         rootEntity->transform.setLocalScale({ scale, scale, scale });
 
         {
@@ -103,7 +103,7 @@ public:
                 lastEntity = lastEntity->children.back().get();
 
                 //Set transform values
-                lastEntity->transform.setLocalPosition({ 10, 0, 0 });
+                lastEntity->transform.setLocalPosition({ 10.0f, -10.0f, -10.0f });
                 lastEntity->transform.setLocalScale({ scale, scale, scale });
             }
         }
@@ -243,15 +243,18 @@ private:
 
 
         // draw our scene graph
+        float iii = 0.0f;
         engine::Entity* lastEntity = rootEntity;
         while (lastEntity->children.size())
         {
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
             if (lastEntity->pModel)
             {
-                lastEntity->pModel->draw(shader);
+                lastEntity->pModel->draw(shader, glm::vec3(iii, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
                 lastEntity = lastEntity->children.back().get();
             }
+
+            iii += 4.0f;
         }
 
         rootEntity->transform.setLocalRotation({ 0.f, rootEntity->transform.getLocalRotation().y + 20 * deltaTime, 0.f });

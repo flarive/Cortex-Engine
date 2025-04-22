@@ -21,10 +21,6 @@ void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, fl
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        // baam
-        Mesh mmmm = meshes[i];
-        auto xxx = mmmm.getMaterial();
-        
         meshes[i].draw(shader, position, scale, angle, rotation);
     }
 }

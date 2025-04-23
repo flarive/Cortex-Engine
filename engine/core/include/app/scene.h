@@ -608,9 +608,6 @@ namespace engine
             glActiveTexture(GL_TEXTURE9);
             glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-
-            auto ppppp = rootEntity->pModel;
-
             // update user stuffs
             update(pbrShader);
 

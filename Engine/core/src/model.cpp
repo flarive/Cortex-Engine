@@ -26,6 +26,16 @@ void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, fl
 }
 
 
+// draws the model, and thus all its meshes
+//void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
+//{
+//    for (unsigned int i = 0; i < meshes.size(); i++)
+//    {
+//        meshes[i].draw(shader, position, scale, 0.0f, rotation);
+//    }
+//}
+
+
 void engine::Model::loadModel(std::string const& path)
 {
     // read file via ASSIMP

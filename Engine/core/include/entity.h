@@ -416,24 +416,12 @@ namespace engine
 		std::shared_ptr<Model> pModel;
 		std::unique_ptr<AABB> boundingVolume;
 
-		//Entity() : pModel{ nullptr }
-		//{
-		//}
-
 		// constructor, expects a filepath to a 3D model.
 		Entity(std::shared_ptr<Model> model) : pModel{ model }
 		{
 			boundingVolume = std::make_unique<AABB>(generateAABB(model));
 			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
-			int qq = 0;
 		}
-
-		//void setModel(Model& model)
-		//{
-		//	pModel = &model;
-		//	boundingVolume = std::make_unique<AABB>(generateAABB(model));
-		//	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
-		//}
 
 		AABB getGlobalAABB()
 		{

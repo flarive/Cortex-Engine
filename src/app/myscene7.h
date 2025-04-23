@@ -89,7 +89,6 @@ public:
 
         rootEntity = new engine::Entity(model);
 
-
         rootEntity->transform.setLocalPosition({ 0.0f, -10.0f, -10.0f });
         const float scale = 2.0f;
         rootEntity->transform.setLocalScale({ scale, scale, scale });
@@ -97,14 +96,18 @@ public:
         {
             engine::Entity* lastEntity = rootEntity;
 
+            float offset = 0.0f;
             for (unsigned int i = 0; i < 10; ++i)
             {
                 lastEntity->addChild(model);
                 lastEntity = lastEntity->children.back().get();
 
                 //Set transform values
-                lastEntity->transform.setLocalPosition({ 10.0f, -10.0f, -10.0f });
+                lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
                 lastEntity->transform.setLocalScale({ scale, scale, scale });
+                lastEntity->transform.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+                offset += 2.0f;
             }
         }
         rootEntity->updateSelfAndChild();
@@ -243,21 +246,20 @@ private:
 
 
         // draw our scene graph
-        float iii = 0.0f;
         engine::Entity* lastEntity = rootEntity;
         while (lastEntity->children.size())
         {
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
             if (lastEntity->pModel)
             {
-                lastEntity->pModel->draw(shader, glm::vec3(iii, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+                auto zz = lastEntity->transform.getLocalRotation();
+
+                lastEntity->pModel->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
                 lastEntity = lastEntity->children.back().get();
             }
-
-            iii += 4.0f;
         }
 
-        rootEntity->transform.setLocalRotation({ 0.f, rootEntity->transform.getLocalRotation().y + 20 * deltaTime, 0.f });
+        //rootEntity->transform.setLocalRotation({ 0.f, rootEntity->transform.getLocalRotation().y + 20 * deltaTime, 0.f });
         rootEntity->updateSelfAndChild();
 
 

@@ -406,20 +406,28 @@ namespace engine
 	{
 	public:
 		//Scene graph
-		std::list<std::unique_ptr<Entity>> children;
+		//std::list<std::unique_ptr<Entity>> children;
+		std::list<std::shared_ptr<Entity>> children;
 		Entity* parent = nullptr;
 
 		//Space information
 		Transform transform;
 
-		//Model* pModel = nullptr;
-		std::shared_ptr<Model> pModel;
+		std::string name;
+		std::shared_ptr<Model> model;
 		std::unique_ptr<AABB> boundingVolume;
 
 		// constructor, expects a filepath to a 3D model.
-		Entity(std::shared_ptr<Model> model) : pModel{ model }
+		Entity(const std::string& _name, std::shared_ptr<Model> _model) : name{ _name }, model{ _model }
 		{
-			boundingVolume = std::make_unique<AABB>(generateAABB(model));
+			boundingVolume = std::make_unique<AABB>(generateAABB(_model));
+			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
+		}
+
+		// constructor, expects a filepath to a 3D model.
+		Entity(std::shared_ptr<Model> _model) : model{ _model }
+		{
+			boundingVolume = std::make_unique<AABB>(generateAABB(_model));
 			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
 		}
 
@@ -491,7 +499,7 @@ namespace engine
 			if (boundingVolume->isOnFrustum(frustum, transform))
 			{
 				ourShader.setMat4("model", transform.getModelMatrix());
-				pModel->draw(ourShader);
+				model->draw(ourShader);
 				display++;
 			}
 			total++;

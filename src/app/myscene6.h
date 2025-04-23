@@ -215,7 +215,7 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // render the loaded model
-        helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 120.0f);

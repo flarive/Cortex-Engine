@@ -203,7 +203,7 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), glm::vec3(0.0f, rotation, 0.0f));
 
 
         rotation += deltaTime * 10.0f;

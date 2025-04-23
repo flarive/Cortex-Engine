@@ -197,7 +197,7 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, rotation, 0.0f));
 
 
 

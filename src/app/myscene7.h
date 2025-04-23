@@ -26,6 +26,7 @@ private:
 
     engine::Text ourText{};
     engine::Text ourText2{};
+    engine::Text textMeshCount{};
     engine::Sprite ourSprite{};
 
     
@@ -87,24 +88,24 @@ public:
 
         std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
 
-        rootEntity = new engine::Entity(model);
-
-        rootEntity->transform.setLocalPosition({ 0.0f, -10.0f, -10.0f });
-        const float scale = 2.0f;
-        rootEntity->transform.setLocalScale({ scale, scale, scale });
+        //rootEntity = new engine::Entity("Root", model);
+        rootEntity = std::make_shared<engine::Entity>("Root", model);
+        rootEntity->transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
+        rootEntity->transform.setLocalScale(glm::vec3(0.0f));
 
         {
-            engine::Entity* lastEntity = rootEntity;
+            //engine::Entity* lastEntity = rootEntity;
+            std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
             float offset = 0.0f;
             for (unsigned int i = 0; i < 10; ++i)
             {
                 lastEntity->addChild(model);
-                lastEntity = lastEntity->children.back().get();
+                lastEntity = lastEntity->children.back();//.get();
 
                 //Set transform values
                 lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
-                lastEntity->transform.setLocalScale({ scale, scale, scale });
+                lastEntity->transform.setLocalScale(glm::vec3(2.0f));
                 lastEntity->transform.setLocalRotation({ 0.0f, 0.0f, 0.0f });
 
                 offset += 2.0f;
@@ -116,6 +117,7 @@ public:
 
         ourText.setup(FONT_PATH, 28, app->width, app->height);
         ourText2.setup(FONT_PATH, 28, app->width, app->height);
+        textMeshCount.setup(FONT_PATH, 28, app->width, app->height);
         ourSprite.setup("textures/awesomeface.png", app->width, app->height);
 
         after_init();
@@ -138,14 +140,11 @@ public:
             camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
         }
 
-
-
         if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
             camera.ProcessKeyboard(engine::RIGHT, deltaTime);
             camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
         }
-
 
         if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
@@ -246,16 +245,17 @@ private:
 
 
         // draw our scene graph
-        engine::Entity* lastEntity = rootEntity;
+        //engine::Entity* lastEntity = rootEntity;
+        std::shared_ptr<engine::Entity> lastEntity = rootEntity;
         while (lastEntity->children.size())
         {
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
-            if (lastEntity->pModel)
+            if (lastEntity->model)
             {
                 auto zz = lastEntity->transform.getLocalRotation();
 
-                lastEntity->pModel->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-                lastEntity = lastEntity->children.back().get();
+                lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, rotation, 0.0f));
+                lastEntity = lastEntity->children.back();// .get();
             }
         }
 
@@ -277,6 +277,7 @@ private:
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, app->height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
     }
 };

@@ -21,7 +21,7 @@ private:
 
 
     
-    //engine::Entity ourEntity{};
+    
 
 
     engine::Text ourText{};
@@ -88,20 +88,18 @@ public:
 
         std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
 
-        //rootEntity = new engine::Entity("Root", model);
         rootEntity = std::make_shared<engine::Entity>("Root", model);
         rootEntity->transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
         rootEntity->transform.setLocalScale(glm::vec3(0.0f));
 
         {
-            //engine::Entity* lastEntity = rootEntity;
             std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
             float offset = 0.0f;
             for (unsigned int i = 0; i < 10; ++i)
             {
-                lastEntity->addChild(model);
-                lastEntity = lastEntity->children.back();//.get();
+                lastEntity->addChild(std::format("Child{}", i), model);
+                lastEntity = lastEntity->children.back();
 
                 //Set transform values
                 lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
@@ -132,7 +130,7 @@ public:
         engine::Scene::key_callback(key, scancode, action, mods);
 
         // Detect Shift key state
-        bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+        //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
         if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
@@ -245,17 +243,16 @@ private:
 
 
         // draw our scene graph
-        //engine::Entity* lastEntity = rootEntity;
         std::shared_ptr<engine::Entity> lastEntity = rootEntity;
         while (lastEntity->children.size())
         {
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
             if (lastEntity->model)
             {
-                auto zz = lastEntity->transform.getLocalRotation();
+                //auto zz = lastEntity->transform.getLocalRotation();
 
                 lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, rotation, 0.0f));
-                lastEntity = lastEntity->children.back();// .get();
+                lastEntity = lastEntity->children.back();
             }
         }
 

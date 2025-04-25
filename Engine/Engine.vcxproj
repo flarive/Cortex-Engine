@@ -162,6 +162,7 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
+    <ClCompile Include="core\src\bounding_volume_plane.cpp" />
     <ClCompile Include="core\src\camera.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
     <ClCompile Include="core\src\tools\system_monitor.cpp" />
+    <ClCompile Include="core\src\transform.cpp" />
     <ClCompile Include="core\src\ui\sprite.cpp" />
     <ClCompile Include="core\src\ui\text.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
@@ -195,6 +197,7 @@
     <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
     <ClInclude Include="core\include\app\app.h" />
     <ClInclude Include="core\include\app\scene.h" />
+    <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\tools\system_monitor.h" />
+    <ClInclude Include="core\include\transform.h" />
     <ClInclude Include="core\include\ui\sprite.h" />
     <ClInclude Include="core\include\ui\text.h" />
     <ClInclude Include="core\include\uvmapping.h" />

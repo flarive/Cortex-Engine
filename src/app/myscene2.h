@@ -148,7 +148,7 @@ public:
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-
+        UNREFERENCED_PARAMETER(state);
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)

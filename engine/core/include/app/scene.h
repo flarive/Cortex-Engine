@@ -43,12 +43,7 @@ namespace engine
     class Scene : private NonCopyable
     {
     private:
-
-        //std::vector<std::shared_ptr<GameObject>> gameObjects;
-
-
         bool key_w_pressed { false };
-
 
         bool show_window{ false };
 
@@ -102,7 +97,6 @@ namespace engine
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
 
-        //Entity* rootEntity;
         std::shared_ptr<Entity> rootEntity;
 
         std::vector<std::shared_ptr<engine::Light>> lights{};

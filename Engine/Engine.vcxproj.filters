@@ -165,6 +165,12 @@
     <ClCompile Include="core\src\entity.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\transform.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\bounding_volume_plane.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -274,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="core\include\app\scene.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\transform.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\bounding_volume_plane.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

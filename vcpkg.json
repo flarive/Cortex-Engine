@@ -3,6 +3,7 @@
     "glfw3",
 	"glm",
 	"assimp",
-	"freetype"
+	"freetype",
+	"spdlog"
 	]
 }

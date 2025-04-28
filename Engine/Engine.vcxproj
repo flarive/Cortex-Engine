@@ -126,6 +126,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -144,6 +145,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -165,6 +167,7 @@
     <ClCompile Include="core\src\bounding_volume_plane.cpp" />
     <ClCompile Include="core\src\camera.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
+    <ClCompile Include="core\src\misc\log_manager.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
@@ -203,6 +206,7 @@
     <ClInclude Include="core\include\common_defines.h" />
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
+    <ClInclude Include="core\include\misc\log_manager.h" />
     <ClInclude Include="core\include\tools\file_system.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />

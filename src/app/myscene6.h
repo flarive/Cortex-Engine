@@ -103,7 +103,7 @@ public:
         engine::Scene::key_callback(key, scancode, action, mods);
 
         // Detect Shift key state
-        bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+        //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
         if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {

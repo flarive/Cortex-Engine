@@ -23,7 +23,7 @@
 
 #include "camera.h"
 
-
+#include "misc/log_manager.h"
 
 
 #include "lights/point_light.h"

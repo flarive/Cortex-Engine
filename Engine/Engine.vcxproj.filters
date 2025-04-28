@@ -73,6 +73,12 @@
     <Filter Include="Fichiers sources\core\tools">
       <UniqueIdentifier>{8f3b65f4-9b1d-436d-8d7f-63667b8849d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\misc">
+      <UniqueIdentifier>{02127387-2f56-4e9d-ae02-e4ad10325536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\misc">
+      <UniqueIdentifier>{a0f18bd0-79b9-4e11-84f4-2b0a901ecf76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -171,6 +177,9 @@
     <ClCompile Include="core\src\bounding_volume_plane.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\misc\log_manager.cpp">
+      <Filter>Fichiers sources\core\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -260,9 +269,6 @@
     <ClInclude Include="core\include\primitives\sphere.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\misc\noncopyable.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\materials\material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
@@ -286,6 +292,12 @@
     </ClInclude>
     <ClInclude Include="core\include\bounding_volume_plane.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\misc\noncopyable.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\misc\log_manager.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

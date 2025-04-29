@@ -22,6 +22,9 @@ engine::App* app{};
 engine::Scene* scene{};
 
 
+
+
+
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
 #ifdef __cplusplus
 extern "C" {
@@ -47,8 +50,9 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
+    logger.info("Engine startup");
 
-    engine::LogManager::info("aaaaaaaaaa");
+    
 
     app = new MyApp("MyApp", 1280, 720, false);
     if (app)

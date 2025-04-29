@@ -7,18 +7,21 @@ namespace engine
     class LogManager
     {
     public:
+        static LogManager& getInstance();
 
-        LogManager();
+        void info(const std::string& msg);
+        void warn(const std::string& msg);
+        void error(const std::string& msg);
 
-
-        static void info(const std::string& msg);
-
+        
 
     private:
+        LogManager();  // Constructor is private
+        LogManager(const LogManager&) = delete;
+        LogManager& operator=(const LogManager&) = delete;
 
-        void stdout_example();
-        void rotating_example();
+        void init_sinks();
 
-
+        const std::string LOGER_NAME = "multi_sink";
     };
 }

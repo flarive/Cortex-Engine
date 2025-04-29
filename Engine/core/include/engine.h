@@ -41,3 +41,7 @@
 #include "primitives/billboard.h"
 
 #include "primitives/skybox.h"
+
+
+
+auto& logger = engine::LogManager::getInstance();

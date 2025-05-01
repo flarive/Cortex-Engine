@@ -643,7 +643,13 @@ namespace engine
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(app->window, GL_TRUE); break;
             case GLFW_KEY_ENTER:
-                if (action == GLFW_RELEASE) app->toggleFullscreen(); break;
+                if (action == GLFW_RELEASE)
+                {
+                    app->toggleFullscreen([this]() {
+                        this->refreshFullscreen();
+                        });
+                }
+                break;
             }
 
             if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_PRESS)

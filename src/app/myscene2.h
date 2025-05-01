@@ -74,7 +74,7 @@ public:
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        ourText.setup(FONT_PATH, 28, app->width, app->height);
+        ourText.setup(app->window, FONT_PATH, 28);
 
         after_init();
     }
@@ -155,7 +155,7 @@ public:
     {
         engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
+        ourText.setup(app->window, FONT_PATH, 28);
     }
 
     void update(engine::Shader& shader) override

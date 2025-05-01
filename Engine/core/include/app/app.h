@@ -8,14 +8,14 @@
 
 
 #include <iostream>
-
+#include <functional>
 
 
 
 namespace engine
 {
     
-    class Scene;
+    //class Scene;
     
     struct AppSettings
     {
@@ -54,12 +54,14 @@ namespace engine
 
         AppSettings settings;
 
-        Scene* currentScene;
+        //Scene* currentScene;
 
         
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
         {
+            logger.info("Engine startup");
+            
             setup();
         }
 
@@ -67,12 +69,6 @@ namespace engine
         {
             return 1000 / settings.targetFPS; // in milliseconds
         }
-
-        void setCurrentScene(engine::Scene* scene)
-        {
-            currentScene = scene;
-        }
-
 
         bool isRunning()
         {
@@ -82,6 +78,8 @@ namespace engine
 
         void exit()
         {
+            logger.info("Engine exit");
+            
             // imGui Cleanup
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
@@ -94,7 +92,7 @@ namespace engine
 
 
         // Toggle Fullscreen
-        void toggleFullscreen()
+        void toggleFullscreen(std::function<void()> func)
         {
             static bool isFullscreen = false;
 
@@ -104,6 +102,8 @@ namespace engine
 
             if (!isFullscreen)
             {
+                logger.info("Toggle to fullscreen mode");
+                
                 // Save window position and size
                 glfwGetWindowPos(window, &windowPosX, &windowPosY);
                 glfwGetWindowSize(window, &windowWidth, &windowHeight);
@@ -118,6 +118,8 @@ namespace engine
             }
             else
             {
+                logger.info("Toggle to windowed mode");
+                
                 // Restore windowed mode
                 glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
                 glfwGetWindowSize(window, &width, &height);
@@ -125,6 +127,7 @@ namespace engine
 
             // reinit framebuffers because width and height changed
             //currentScene->refreshFullscreen();
+            func();
 
             isFullscreen = !isFullscreen;
         }

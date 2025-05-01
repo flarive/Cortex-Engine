@@ -87,9 +87,9 @@ public:
 
 
 
-        ourText.setup(FONT_PATH, 28, app->width, app->height);
-        ourText2.setup(FONT_PATH, 28, app->width, app->height);
-        ourSprite.setup("textures/awesomeface.png", app->width, app->height);
+        ourText.setup(app->window, FONT_PATH, 28);
+        ourText2.setup(app->window, FONT_PATH, 28);
+        ourSprite.setup(app->window, "textures/awesomeface.png");
 
         after_init();
     }
@@ -187,7 +187,7 @@ public:
     {
         engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
+        ourText.setup(app->window, FONT_PATH, 28);
     }
 
     void update(engine::Shader& shader) override

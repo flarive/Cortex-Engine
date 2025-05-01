@@ -109,7 +109,7 @@ public:
 
         ourBillboard.setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"));
 
-        ourText.setup(FONT_PATH, 28, app->width, app->height);
+        ourText.setup(app->window, FONT_PATH, 28);
 
         ourSkybox.setup(faces);
 
@@ -187,7 +187,7 @@ public:
     {
         engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(FONT_PATH, 28, newWidth, newHeight);
+        ourText.setup(app->window, FONT_PATH, 28);
     }
 
     void update(engine::Shader& shader) override

@@ -16,6 +16,7 @@ namespace engine
     class Text : private NonCopyable
     {
     private:
+        GLFWwindow* m_window{};
         std::map<GLchar, Character> m_characters{};
         unsigned int m_VAO{}, m_VBO{};
         Shader m_textShader{};
@@ -24,7 +25,7 @@ namespace engine
         Text() = default;
         ~Text() = default;
 
-        void setup(const std::string& fontPath, int fontSize, int screenWidth, int screenHeight);
+        void setup(GLFWwindow* window, const std::string& fontPath, int fontSize);
 
         // draws the model, and thus all its meshes
         // render line of text

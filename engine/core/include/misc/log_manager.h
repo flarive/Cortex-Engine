@@ -1,5 +1,7 @@
 #pragma once
 
+#include "spdlog/spdlog.h"
+
 #include <string>
 
 namespace engine
@@ -21,6 +23,8 @@ namespace engine
         LogManager& operator=(const LogManager&) = delete;
 
         void init_sinks();
+
+        spdlog::logger* logger = nullptr;
 
         const std::string LOGER_NAME = "multi_sink";
     };

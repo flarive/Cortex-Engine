@@ -9,11 +9,17 @@ engine::Sprite::~Sprite()
     glDeleteVertexArrays(1, &m_quadVAO);
 }
 
-void engine::Sprite::setup(const std::string& filepath, int screenWidth, int screenHeight)
+void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
 {
+    m_window = window;
+
+    int width{ 0 };
+    int height{ 0 };
+    glfwGetWindowSize(m_window, &width, &height);
+    
     m_spriteShader.init("UISpriteShader", "shaders/sprite.vertex", "shaders/sprite.frag");
 
-    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_spriteShader.use();
     m_spriteShader.setMat4("projection", projection2);
 
@@ -28,8 +34,15 @@ void engine::Sprite::setup(const std::string& filepath, int screenWidth, int scr
 
 void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
+    int width{ 0 };
+    int height{ 0 };
+    glfwGetWindowSize(m_window, &width, &height);
+    
     // prepare transformations
     m_spriteShader.use();
+
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    m_spriteShader.setMat4("projection", projection2);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)

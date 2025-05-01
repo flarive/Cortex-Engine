@@ -50,18 +50,12 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
-    logger.info("Engine startup");
-
-    
-
     app = new MyApp("MyApp", 1280, 720, false);
     if (app)
     {
         scene = new MyScene("MyScene", app);
         if (scene)
         {
-            app->setCurrentScene(scene);
-
             glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
             glfwSetKeyCallback(scene->getWindow(), keyCallback);
             glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);

@@ -120,6 +120,9 @@ public:
 
         //engine::App::mouse_callback(xposIn, yposIn);
 
+        //if (show_window)
+        //    return;
+
         //float xpos = static_cast<float>(xposIn);
         //float ypos = static_cast<float>(yposIn);
 

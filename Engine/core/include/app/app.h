@@ -2,21 +2,12 @@
 
 #include "../engine.h"
 #include "../tools/file_system.h"
-#include "../tools/system_monitor.h"
-
-
-
 
 #include <iostream>
 #include <functional>
 
-
-
 namespace engine
 {
-    
-    //class Scene;
-    
     struct AppSettings
     {
         unsigned int targetFPS{ 30 };
@@ -29,11 +20,6 @@ namespace engine
     {
     private:
 
-        SystemMonitor sysMonitor{};
-
-        
-
-    
     protected:
         float framerate{};
 
@@ -54,9 +40,7 @@ namespace engine
 
         AppSettings settings;
 
-        //Scene* currentScene;
-
-        
+       
         App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
             : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
         {
@@ -132,21 +116,20 @@ namespace engine
             isFullscreen = !isFullscreen;
         }
 
-        void renderUIWindow(bool show)
-        {
-            ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
+        //void renderUIWindowOld(bool show)
+        //{
+        //    ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
 
-            ImGui::Begin("Hello, world!", &show);
+        //    ImGui::Begin("Hello, world!", &show);
 
-            ImGui::Text("CPU Usage: %.2f%%", sysMonitor.GetCPUUsage());
-            ImGui::Text("Memory Usage: %.2f Mo", sysMonitor.GetMemoryUsage());
-            ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
-            ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
-            ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
-            ImGui::End();
-        }
+        //    //ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
+        //    //ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
+        //    //ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
+
+        //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
+        //    ImGui::End();
+        //}
 
 
     private:

@@ -4,7 +4,8 @@
 
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
-#include "../tools/system_monitor.h"
+
+#include "../debug/imgui_debug.h"
 
 #include <iostream>
 #include <chrono>
@@ -45,7 +46,7 @@ namespace engine
     private:
         bool key_w_pressed { false };
 
-        bool show_window{ false };
+        
 
 
 
@@ -69,7 +70,7 @@ namespace engine
         Shader debugDepthQuad{};
 
         
-        
+        ImGuiDebug m_debug{};
 
         GLuint query;
 
@@ -91,7 +92,7 @@ namespace engine
         SceneSettings settings;
 
     public:
-        
+        bool show_window{ false };
 
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
@@ -469,16 +470,23 @@ namespace engine
         //    return !glfwWindowShouldClose(app->window);
         //}
 
+
+
         void gameLoop()
         {
             /*while (!glfwWindowShouldClose(window))
             {*/
-                if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
+            // Poll and handle events (inputs, window resize, etc.)
+            glfwPollEvents();
+            
+            if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
                 {
                     ImGui_ImplGlfw_Sleep(10);
                     //continue;
                     return;
                 }
+
+                
 
                 // Start the Dear ImGui frame
                 ImGui_ImplOpenGL3_NewFrame();
@@ -488,7 +496,7 @@ namespace engine
                 framerate = ImGui::GetIO().Framerate;
 
                 if (show_window)
-                    app->renderUIWindow(show_window);
+                    m_debug.renderUIWindow(show_window);
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
@@ -520,8 +528,8 @@ namespace engine
 
                 glfwSwapBuffers(app->window);
 
-                // Poll and handle events (inputs, window resize, etc.)
-                glfwPollEvents();
+                //// Poll and handle events (inputs, window resize, etc.)
+                //glfwPollEvents();
 
                 auto end_time = std::chrono::high_resolution_clock::now();
                 std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
@@ -670,8 +678,11 @@ namespace engine
         // -------------------------------------------------------
         void mouse_callback(double xposIn, double yposIn)
         {
-            UNREFERENCED_PARAMETER(xposIn);
-            UNREFERENCED_PARAMETER(yposIn);
+            //UNREFERENCED_PARAMETER(xposIn);
+            //UNREFERENCED_PARAMETER(yposIn);
+
+            if (show_window)
+                ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
         }
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -700,7 +711,7 @@ namespace engine
         void refreshFullscreen()
         {
             // reinit framebuffers because width and height changed
-            initDepthMapFramebuffer();
+            //initDepthMapFramebuffer();
             initColorFramebuffer();
         }
 
@@ -917,128 +928,6 @@ namespace engine
             fprintf(stderr, "GLFW Error %d: %s\n", error, description);
             std::exit(EXIT_FAILURE);
         }
-
-        //void renderUIWindow(bool show)
-        //{
-        //    ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
-
-        //    ImGui::Begin("Hello, world!", &show);
-
-        //    ImGui::Text("CPU Usage: %.2f%%", sysMonitor.GetCPUUsage());
-        //    ImGui::Text("Memory Usage: %.2f Mo", sysMonitor.GetMemoryUsage());
-        //    ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
-        //    ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
-        //    ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
-
-        //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
-        //    ImGui::End();
-        //}
-
-        //void initGLFW()
-        //{
-        //    glfwSetErrorCallback(glfw_error_callback);
-        //    if (!glfwInit())
-        //    {
-        //        std::cerr << "GLFW init failed" << std::endl;
-        //        exit(EXIT_FAILURE);
-        //    }
-
-        //    glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
-        //}
-
-        //const char* initOpenGL()
-        //{
-        //    // GL 3.3 + GLSL 130
-        //    const char* glsl_version = "#version 130";
-        //    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        //    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        //    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-        //    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-
-        //    return glsl_version;
-        //}
-
-        //void initWindow()
-        //{
-        //    GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
-
-        //    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-        //    if (fullscreen)
-        //    {
-        //        width = mode->width;
-        //        height = mode->height;
-        //    }
-        //    
-        //    // Create window with graphics context
-        //    window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? myMonitor : NULL, nullptr);
-        //    if (window == NULL)
-        //    {
-        //        std::cerr << "Failed to create GLFW window" << std::endl;
-        //        glfwTerminate();
-        //        exit(EXIT_FAILURE);
-        //    }
-
-        //    glfwMakeContextCurrent(window);
-        //}
-
-        //void initGLAD()
-        //{
-        //    // glad: load all OpenGL function pointers
-        //    // ---------------------------------------
-        //    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        //    {
-        //        std::cerr << "Failed to initialize GLAD" << std::endl;
-        //        exit(EXIT_FAILURE);
-        //    }
-        //}
-
-        //void initImGUI(const char* glsl_version)
-        //{
-        //    // Setup Dear ImGui context
-        //    IMGUI_CHECKVERSION();
-        //    ImGui::CreateContext();
-        //    ImGuiIO& io = ImGui::GetIO();
-
-        //    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-        //    ImGuiStyle& style = ImGui::GetStyle();
-        //    if (io.ConfigFlags)
-        //    {
-        //        style.WindowRounding = 0.0f;
-        //        style.ChildRounding = 5.0f;
-        //        style.TabRounding = 5.f;
-        //        style.FrameRounding = 5.f;
-        //        style.GrabRounding = 5.f;
-        //        style.PopupRounding = 5.f;
-        //        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-
-        //        style.ItemSpacing.y = 8.0; // vertical padding between widgets
-        //        style.FramePadding.x = 8.0; // better widget horizontal padding
-        //        style.FramePadding.y = 4.0; // better widget vertical padding
-        //    }
-
-        //    // Apply Adobe Spectrum theme
-        //    //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
-        //    ImGui::Spectrum::StyleColorsSpectrum();
-        //    ImGui::Spectrum::LoadFont(17.0);
-
-
-        //    // Setup Platform/Renderer backends
-        //    ImGui_ImplGlfw_InitForOpenGL(window, true);
-        //    ImGui_ImplOpenGL3_Init(glsl_version);
-        //}
-
-        //void enableVerticalSync(bool enable)
-        //{
-        //    // This enables V-Sync, capping the frame rate to the monitor's refresh rate (usually 60Hz or 144Hz).
-        //    glfwSwapInterval(enable ? 1 : 0);
-        //}
-
-        //void enableMouseCapture(bool enable)
-        //{
-        //    // tell GLFW to capture our mouse
-        //    if (!enable)
-        //        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        //}
 
         void enableDepthTest(bool enable)
         {

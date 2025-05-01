@@ -69,8 +69,8 @@ void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm:
     if (size.x != 1.0f && size.y != 1.0f)
     {
         // set sprite size to scaled display size
-        width = size.x;
-        height = size.y;
+        width = static_cast<int>(size.x);
+        height = static_cast<int>(size.y);
     }
 }
 

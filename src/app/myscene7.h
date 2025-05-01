@@ -160,6 +160,9 @@ public:
     {
         engine::Scene::mouse_callback(xposIn, yposIn);
 
+        if (show_window)
+            return;
+
         float xpos = static_cast<float>(xposIn);
         float ypos = static_cast<float>(yposIn);
 
@@ -183,7 +186,7 @@ public:
     {
         engine::Scene::scroll_callback(xoffset, yoffset);
 
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -195,7 +198,8 @@ public:
         //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
         //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
         //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+        //std::cout <<
+        // "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
 
         if (GLFW_PRESS == state.buttons[1])
         {

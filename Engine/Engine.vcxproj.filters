@@ -79,6 +79,12 @@
     <Filter Include="Fichiers sources\core\misc">
       <UniqueIdentifier>{a0f18bd0-79b9-4e11-84f4-2b0a901ecf76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core\debug">
+      <UniqueIdentifier>{a89033c0-cccd-46f0-9776-f1df86ca8bf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\debug">
+      <UniqueIdentifier>{b902bccc-eff1-42ea-857b-13a570bdc636}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -179,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="core\src\misc\log_manager.cpp">
       <Filter>Fichiers sources\core\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\debug\imgui_debug.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +307,9 @@
     </ClInclude>
     <ClInclude Include="core\include\misc\log_manager.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\imgui_debug.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

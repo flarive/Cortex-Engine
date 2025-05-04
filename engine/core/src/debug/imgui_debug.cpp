@@ -9,6 +9,8 @@
 void engine::ImGuiDebug::setScene(std::shared_ptr<Entity> rootEntity)
 {
     m_rootEntity = rootEntity;
+
+    m_selectedEntity = rootEntity;
 }
 
 void engine::ImGuiDebug::renderUIWindow(bool show)
@@ -38,16 +40,6 @@ void engine::ImGuiDebug::renderUIWindow(bool show)
     ImGui::End();
 }
 
-void engine::ImGuiDebug::renderTabAbout()
-{
-    ImGui::Text(" ");
-    ImGui::Text("GPU Vendor: %s", m_sysMonitor.GetGPUVendor().c_str());
-    ImGui::Text("GPU Renderer: %s", m_sysMonitor.GetGPURenderer().c_str());
-    ImGui::Text("OpenGL Version: %s", m_sysMonitor.GetGPUVersion().c_str());
-    ImGui::Text(" ");
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-}
-
 void engine::ImGuiDebug::renderTabScene()
 {
     if (m_rootEntity)
@@ -60,6 +52,16 @@ void engine::ImGuiDebug::renderTabScene()
         displayEntityDetails(m_selectedEntity); // Your tree rendering function
         ImGui::EndChild();
     }
+}
+
+void engine::ImGuiDebug::renderTabAbout()
+{
+    ImGui::Text(" ");
+    ImGui::Text("GPU Vendor: %s", m_sysMonitor.GetGPUVendor().c_str());
+    ImGui::Text("GPU Renderer: %s", m_sysMonitor.GetGPURenderer().c_str());
+    ImGui::Text("OpenGL Version: %s", m_sysMonitor.GetGPUVersion().c_str());
+    ImGui::Text(" ");
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
 void engine::ImGuiDebug::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
@@ -102,7 +104,6 @@ void engine::ImGuiDebug::displayEntityInImGui(const std::shared_ptr<Entity>& ent
         ImGui::TreePop();
     }
 }
-
 
 void engine::ImGuiDebug::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {

@@ -423,10 +423,55 @@ namespace engine
             glViewport(0, 0, scrWidth, scrHeight);
         }
 
+
+        void initialize()
+        {
+            before_init();
+            
+            init();
+
+            after_init();
+        }
+
         // must be overridden in derived class
         virtual void init() = 0;
 
-        void after_init()
+
+        virtual void before_init()
+        {
+            before_init_internal();
+        }
+
+        virtual void after_init()
+        {
+            after_init_internal();
+        }
+
+
+
+
+        
+
+        // must be overridden in derived class
+        virtual void update(Shader& shader) = 0;
+
+        // must be overridden in derived class
+        virtual void updateUI() = 0;
+
+        // must be overridden in derived class
+        virtual void clean() = 0;
+
+        //bool isRunning()
+        //{
+        //    return !glfwWindowShouldClose(app->window);
+        //}
+
+
+        void before_init_internal()
+        {
+        }
+
+        void after_init_internal()
         {
             // Counters
             int spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
@@ -448,22 +493,9 @@ namespace engine
             pbrShader.setInt("pointLightsCount", pointLightCount);
             pbrShader.setInt("dirLightsCount", dirLightCount);
             pbrShader.setInt("spotLightsCount", spotLightCount);
+
+            m_debug.setScene(this->rootEntity);
         }
-
-        // must be overridden in derived class
-        virtual void update(Shader& shader) = 0;
-
-        // must be overridden in derived class
-        virtual void updateUI() = 0;
-
-        // must be overridden in derived class
-        virtual void clean() = 0;
-
-        //bool isRunning()
-        //{
-        //    return !glfwWindowShouldClose(app->window);
-        //}
-
 
 
         void gameLoop()
@@ -489,7 +521,7 @@ namespace engine
 
                 if (show_window)
                 {
-                    m_debug.setScene(this->rootEntity);
+                    //m_debug.setScene(this->rootEntity);
                     m_debug.renderUIWindow(show_window);
                 }
 

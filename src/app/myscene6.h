@@ -52,8 +52,6 @@ public:
 
         lastX = app->width / 2.0f;
         lastY = app->height / 2.0f;
-
-        init();
     }
 
     void init() override
@@ -90,8 +88,6 @@ public:
         ourText.setup(app->window, FONT_PATH, 28);
         ourText2.setup(app->window, FONT_PATH, 28);
         ourSprite.setup(app->window, "textures/awesomeface.png");
-
-        after_init();
     }
 
 

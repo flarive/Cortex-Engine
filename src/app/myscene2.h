@@ -41,8 +41,6 @@ public:
 
         lastX = app->width / 2.0f;
         lastY = app->height / 2.0f;
-
-        init();
     }
 
     void init() override
@@ -75,8 +73,6 @@ public:
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
         ourText.setup(app->window, FONT_PATH, 28);
-
-        after_init();
     }
 
 

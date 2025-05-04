@@ -47,8 +47,6 @@ public:
 
         lastX = app->width / 2.0f;
         lastY = app->height / 2.0f;
-
-        init();
     }
 
     void init() override
@@ -112,8 +110,6 @@ public:
         ourText.setup(app->window, FONT_PATH, 28);
 
         ourSkybox.setup(faces);
-
-        after_init();
     }
 
 

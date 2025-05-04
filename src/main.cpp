@@ -15,7 +15,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene7;
+using MyScene = MyScene4;
 
 
 engine::App* app{};
@@ -56,6 +56,8 @@ int main(int, char**)
         scene = new MyScene("MyScene", app);
         if (scene)
         {
+            scene->initialize();
+
             glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
             glfwSetKeyCallback(scene->getWindow(), keyCallback);
             glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);

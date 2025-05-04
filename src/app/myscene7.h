@@ -53,8 +53,12 @@ public:
 
         lastX = app->width / 2.0f;
         lastY = app->height / 2.0f;
+    }
 
-        init();
+    void before_init() override
+    {
+        // do something here if needed
+        before_init_internal();
     }
 
     void init() override
@@ -117,8 +121,13 @@ public:
         ourText2.setup(app->window, FONT_PATH, 28);
         textMeshCount.setup(app->window, FONT_PATH, 28);
         ourSprite.setup(app->window, "textures/awesomeface.png");
+    }
 
-        after_init();
+
+    void after_init() override
+    {
+        // do something here if needed
+        after_init_internal();
     }
 
 
@@ -186,7 +195,7 @@ public:
     {
         engine::Scene::scroll_callback(xoffset, yoffset);
 
-        //camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)

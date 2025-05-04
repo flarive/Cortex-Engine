@@ -37,7 +37,7 @@ public:
                 .HDRSkyboxHide = false,
                 .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
                 .shadowIntensity = 1.5f,
-                .iblDiffuseIntensity = 1.0f,
+                .iblDiffuseIntensity = 5.0f,
                 .iblSpecularIntensity = 1.0f
             })
     {
@@ -45,8 +45,6 @@ public:
 
         lastX = app->width / 2.0f;
         lastY = app->height / 2.0f;
-
-        init();
     }
 
     void init() override
@@ -79,8 +77,6 @@ public:
             ""), engine::UvMapping(1.0f));
 
         ourText.setup(app->window, FONT_PATH, 28);
-
-        after_init();
     }
 
 
@@ -194,15 +190,7 @@ private:
 
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f); // ???????????????
-
-
-
-        //shader.use();
-        //shader.setVec3("viewPos", camera.Position);
-        //shader.setMat4("projection", projection);
-        //shader.setMat4("view", view);
-
+        mySpotLight->draw(shader, projection, view, 20.0f);
 
 
         // render the loaded model

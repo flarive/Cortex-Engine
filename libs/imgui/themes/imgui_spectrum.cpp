@@ -58,7 +58,7 @@ namespace ImGui {
             colors[ImGuiCol_Button] = ColorConvertU32ToFloat4(Spectrum::GRAY75); // match default button to Spectrum's 'Action Button'.
             colors[ImGuiCol_ButtonHovered] = ColorConvertU32ToFloat4(Spectrum::GRAY50);
             colors[ImGuiCol_ButtonActive] = ColorConvertU32ToFloat4(Spectrum::GRAY200);
-            colors[ImGuiCol_Header] = ColorConvertU32ToFloat4(Spectrum::GRAY100); // BLUE400
+            colors[ImGuiCol_Header] = ColorConvertU32ToFloat4(Spectrum::GRAY100); // 
             colors[ImGuiCol_HeaderHovered] = ColorConvertU32ToFloat4(Spectrum::GRAY200); // BLUE500
             colors[ImGuiCol_HeaderActive] = ColorConvertU32ToFloat4(Spectrum::GRAY300); // BLUE600
             colors[ImGuiCol_Separator] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
@@ -87,10 +87,10 @@ namespace ImGui {
 
 
             colors[ImGuiCol_Tab] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
-            colors[ImGuiCol_TabHovered] = ColorConvertU32ToFloat4(Spectrum::BLUE600);
-            colors[ImGuiCol_TabActive] = ColorConvertU32ToFloat4(Spectrum::BLUE600);
+            colors[ImGuiCol_TabHovered] = ColorConvertU32ToFloat4(Spectrum::GRAY200);
+            colors[ImGuiCol_TabActive] = ColorConvertU32ToFloat4(Spectrum::GRAY200);
             colors[ImGuiCol_TabUnfocused] = ColorConvertU32ToFloat4(Spectrum::GRAY500);
-            colors[ImGuiCol_TabUnfocusedActive] = ColorConvertU32ToFloat4(Spectrum::GRAY200);
+            colors[ImGuiCol_TabUnfocusedActive] = ColorConvertU32ToFloat4(Spectrum::GRAY800);
 
             //colors[ImGuiCol_DockingPreview] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
             //colors[ImGuiCol_DockingEmptyBg] = ColorConvertU32ToFloat4(Spectrum::GRAY100);

@@ -11,8 +11,6 @@
 #include <chrono>
 #include <thread>
 
-
-
 namespace engine
 {
     class App;
@@ -46,10 +44,6 @@ namespace engine
     private:
         bool key_w_pressed { false };
 
-        
-
-
-
         const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
 
         unsigned int depthMapFramebuffer{};
@@ -72,7 +66,7 @@ namespace engine
         
         ImGuiDebug m_debug{};
 
-        GLuint query;
+        GLuint query{};
 
     
     protected:
@@ -88,8 +82,8 @@ namespace engine
         // settings
         std::string title{};
 
-        App* app;
-        SceneSettings settings;
+        App* app{};
+        SceneSettings settings{};
 
     public:
         bool show_window{ false };
@@ -98,7 +92,7 @@ namespace engine
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
 
-        std::shared_ptr<Entity> rootEntity;
+        std::shared_ptr<Entity> rootEntity{};
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
 
@@ -116,9 +110,9 @@ namespace engine
  
 
 
-        unsigned int irradianceMap;
-        unsigned int prefilterMap;
-        unsigned int brdfLUTTexture;
+        unsigned int irradianceMap{};
+        unsigned int prefilterMap{};
+        unsigned int brdfLUTTexture{};
         unsigned int envCubemap{};
 
 
@@ -486,8 +480,6 @@ namespace engine
                     return;
                 }
 
-                
-
                 // Start the Dear ImGui frame
                 ImGui_ImplOpenGL3_NewFrame();
                 ImGui_ImplGlfw_NewFrame();
@@ -496,7 +488,10 @@ namespace engine
                 framerate = ImGui::GetIO().Framerate;
 
                 if (show_window)
+                {
+                    m_debug.setScene(this->rootEntity);
                     m_debug.renderUIWindow(show_window);
+                }
 
                 float currentFrame = static_cast<float>(glfwGetTime());
                 deltaTime = currentFrame - lastFrame;
@@ -678,9 +673,6 @@ namespace engine
         // -------------------------------------------------------
         void mouse_callback(double xposIn, double yposIn)
         {
-            //UNREFERENCED_PARAMETER(xposIn);
-            //UNREFERENCED_PARAMETER(yposIn);
-
             if (show_window)
                 ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
         }

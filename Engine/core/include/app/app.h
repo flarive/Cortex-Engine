@@ -110,26 +110,11 @@ namespace engine
             }
 
             // reinit framebuffers because width and height changed
-            //currentScene->refreshFullscreen();
             func();
 
             isFullscreen = !isFullscreen;
         }
 
-        //void renderUIWindowOld(bool show)
-        //{
-        //    ImGui::SetNextWindowSize(ImVec2(480, 260), ImGuiCond_Always);
-
-        //    ImGui::Begin("Hello, world!", &show);
-
-
-        //    //ImGui::Text("GPU Vendor: %s", sysMonitor.GetGPUVendor().c_str());
-        //    //ImGui::Text("GPU Renderer: %s", sysMonitor.GetGPURenderer().c_str());
-        //    //ImGui::Text("OpenGL Version: %s", sysMonitor.GetGPUVersion().c_str());
-
-        //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / framerate, framerate);
-        //    ImGui::End();
-        //}
 
 
     private:

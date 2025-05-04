@@ -209,7 +209,7 @@ namespace engine
 		};
 	};
 
-	Frustum createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar)
+	inline Frustum createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar)
 	{
 		Frustum     frustum;
 		const float halfVSide = zFar * tanf(fovY * .5f);
@@ -225,7 +225,7 @@ namespace engine
 		return frustum;
 	}
 
-	AABB generateAABB(const std::shared_ptr<Model> model)
+	inline AABB generateAABB(const std::shared_ptr<Model> model)
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
@@ -245,7 +245,7 @@ namespace engine
 		return AABB(minAABB, maxAABB);
 	}
 
-	SphereVolume generateSphereBV(const Model& model)
+	inline SphereVolume generateSphereBV(const Model& model)
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());

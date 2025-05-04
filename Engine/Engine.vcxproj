@@ -164,6 +164,8 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
+    <ClCompile Include="core\src\app\app.cpp" />
+    <ClCompile Include="core\src\app\scene.cpp" />
     <ClCompile Include="core\src\bounding_volume_plane.cpp" />
     <ClCompile Include="core\src\camera.cpp" />
     <ClCompile Include="core\src\debug\imgui_debug.cpp" />

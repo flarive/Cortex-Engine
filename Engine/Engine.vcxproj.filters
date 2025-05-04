@@ -85,6 +85,9 @@
     <Filter Include="Fichiers d%27en-tête\core\debug">
       <UniqueIdentifier>{b902bccc-eff1-42ea-857b-13a570bdc636}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\app">
+      <UniqueIdentifier>{49036efb-f28c-49f2-ab7d-b9d1ade26ea3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -188,6 +191,12 @@
     </ClCompile>
     <ClCompile Include="core\src\debug\imgui_debug.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\app\app.cpp">
+      <Filter>Fichiers sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\app\scene.cpp">
+      <Filter>Fichiers sources\app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

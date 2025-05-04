@@ -44,4 +44,4 @@
 
 
 
-auto& logger = engine::LogManager::getInstance();
+inline auto& logger = engine::LogManager::getInstance();

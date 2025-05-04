@@ -55,10 +55,10 @@ public:
         lastY = app->height / 2.0f;
     }
 
-    void before_init() override
+    void before_init_hook() override
     {
         // do something here if needed
-        before_init_internal();
+        int qqq = 0;
     }
 
     void init() override
@@ -124,11 +124,12 @@ public:
     }
 
 
-    void after_init() override
+    void after_init_hook() override
     {
         // do something here if needed
-        after_init_internal();
+        int qqq = 0;
     }
+
 
 
 

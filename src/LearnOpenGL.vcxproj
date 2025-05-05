@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;$(MSBuildStartupDirectory)\libs\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -129,7 +129,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)libs\soil2\debug\soil2.lib;$(SolutionDir)tmp\engine\debug\engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)libs\soil2\debug\soil2.lib;$(SolutionDir)libs\spdlog\debug\spdlogd.lib;$(SolutionDir)tmp\engine\debug\engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
       <EntryPointSymbol>
@@ -166,7 +166,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\engine;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;$(MSBuildStartupDirectory)\libs\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -177,7 +177,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)libs\soil2\release\soil2.lib;$(SolutionDir)tmp\engine\release\engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;$(SolutionDir)libs\soil2\release\soil2.lib;$(SolutionDir)libs\spdlog\release\spdlog.lib;$(SolutionDir)tmp\engine\release\engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>

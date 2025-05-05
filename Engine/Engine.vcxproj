@@ -171,6 +171,9 @@
     <ClCompile Include="core\src\debug\imgui_debug.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
     <ClCompile Include="core\src\misc\log_manager.cpp" />
+    <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\renderer.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
@@ -211,6 +214,9 @@
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
+    <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
+    <ClInclude Include="core\include\renderers\pbr_renderer.h" />
+    <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\tools\file_system.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />

@@ -88,6 +88,18 @@
     <Filter Include="Fichiers sources\app">
       <UniqueIdentifier>{49036efb-f28c-49f2-ab7d-b9d1ade26ea3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\renderers">
+      <UniqueIdentifier>{3972c228-6e96-4e1d-9c77-7e3ce523139b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\renderers">
+      <UniqueIdentifier>{aa24da26-f99b-4c0a-9941-fe31f1c50a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\renderers\base">
+      <UniqueIdentifier>{2b0d9ab1-e57d-4c69-84f8-d2e75f1b4bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\renderers\base">
+      <UniqueIdentifier>{3fcdd127-1263-46bb-9303-e02bbc1fd9f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -197,6 +209,15 @@
     </ClCompile>
     <ClCompile Include="core\src\app\scene.cpp">
       <Filter>Fichiers sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp">
+      <Filter>Fichiers sources\core\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\pbr_renderer.cpp">
+      <Filter>Fichiers sources\core\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\renderer.cpp">
+      <Filter>Fichiers sources\core\renderers\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +340,15 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\imgui_debug.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\blinnphong_renderer.h">
+      <Filter>Fichiers d%27en-tête\core\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\pbr_renderer.h">
+      <Filter>Fichiers d%27en-tête\core\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\renderer.h">
+      <Filter>Fichiers d%27en-tête\core\renderers\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

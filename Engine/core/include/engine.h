@@ -15,6 +15,8 @@
 #include "materials/material.h"
 #include "texture.h"
 
+#include "renderers/blinnphong_renderer.h"
+#include "renderers/pbr_renderer.h"
 
 #include "entity.h"
 

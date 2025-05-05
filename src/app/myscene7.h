@@ -58,7 +58,6 @@ public:
     void before_init_hook() override
     {
         // do something here if needed
-        int qqq = 0;
     }
 
     void init() override
@@ -127,7 +126,6 @@ public:
     void after_init_hook() override
     {
         // do something here if needed
-        int qqq = 0;
     }
 
 

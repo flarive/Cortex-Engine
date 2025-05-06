@@ -5,7 +5,7 @@
 
 #include "../shader.h"
 
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
 namespace engine
 {

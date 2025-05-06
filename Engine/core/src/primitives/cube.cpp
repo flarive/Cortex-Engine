@@ -4,10 +4,10 @@
 #include "../../include/materials/material.h"
 
 #include <vector>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 
-namespace engine {
-
+namespace engine
+{
     struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;

@@ -29,7 +29,6 @@ private:
     engine::Text textMeshCount{};
     engine::Sprite ourSprite{};
 
-    
 
     float rotation{};
 

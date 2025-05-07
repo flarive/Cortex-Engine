@@ -10,6 +10,18 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
         setup_BlinnPhong();
 }
 
+void engine::Scene::before_init()
+{
+    before_init_internal();     // Always called
+    before_init_hook();         // Hook for derived logic
+}
+
+void engine::Scene::after_init()
+{
+    after_init_internal();     // Always called
+    after_init_hook();         // Hook for derived logic
+}
+
 
 void engine::Scene::before_init_internal()
 {
@@ -42,6 +54,11 @@ void engine::Scene::after_init_internal()
     pbrShader.setInt("spotLightsCount", spotLightCount);
 
     m_debug.setScene(this->rootEntity);
+
+
+
+    // count all meshes in the scene
+    countMeshes(this->rootEntity);
 }
 
 void engine::Scene::initialize()
@@ -824,6 +841,18 @@ void engine::Scene::endQuery()
     glGetQueryObjectiv(query, GL_QUERY_RESULT, &polycount);
 
     glDeleteQueries(1, &query);
+}
+
+void engine::Scene::countMeshes(std::shared_ptr<Entity>& entity)
+{
+    if (entity)
+    {
+        for (auto& child : entity->children)
+        {
+            meshcount += child->model->numberOfMeshes;
+            countMeshes(child);
+        }
+    }
 }
 
 

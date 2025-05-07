@@ -121,15 +121,8 @@ namespace engine
         // must be overridden in derived class
         virtual void init() = 0;
 
-        void before_init() {
-            before_init_internal();     // Always called
-            before_init_hook();         // Hook for derived logic
-        }
-
-        void after_init() {
-            after_init_internal();     // Always called
-            after_init_hook();         // Hook for derived logic
-        }
+        void before_init();
+        void after_init();
 
         // must be overridden in derived class
         virtual void update(Shader& shader) = 0;
@@ -218,5 +211,7 @@ namespace engine
 
         // Function to count vertices and polygons
         void endQuery();
+
+        void countMeshes(std::shared_ptr<Entity>& entity);
     };
 }

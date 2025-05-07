@@ -27,6 +27,8 @@ namespace engine
         std::string directory{};
         bool gammaCorrection{};
 
+        unsigned int numberOfMeshes{};
+
         Model() = default;
 		~Model() = default;
 

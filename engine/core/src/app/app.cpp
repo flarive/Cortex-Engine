@@ -211,3 +211,8 @@ void engine::App::glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
     std::exit(EXIT_FAILURE);
 }
+
+void engine::App::setWindowTitle(const std::string& title)
+{
+    glfwSetWindowTitle(window, title.c_str());
+}

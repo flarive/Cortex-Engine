@@ -21,11 +21,11 @@ namespace engine
     private:
 
     protected:
-        float framerate{};
+        //float framerate{};
 
         // timing
-        float deltaTime{}; // time between current frame and last frame
-        float lastFrame{};
+        //float deltaTime{}; // time between current frame and last frame
+        //float lastFrame{};
 
 
 
@@ -53,7 +53,7 @@ namespace engine
 
         void exit();
 
-
+        void setWindowTitle(const std::string& title);
 
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);

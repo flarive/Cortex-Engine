@@ -16,46 +16,6 @@ engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamm
     loadModel(path);
 }
 
-// draws the model, and thus all its meshes
-void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
-{
-    float angle2 = 0.0f;
-    glm::vec3 rotation2 = glm::vec3(0.0f);
-    
-    if (rotation.x > 0.0f)
-    {
-        angle2 = rotation.x;
-        rotation2.x = 1.0;
-    }
-
-    if (rotation.y > 0.0f)
-    {
-        angle2 = rotation.y;
-        rotation2.y = 1.0;
-    }
-
-    if (rotation.z > 0.0f)
-    {
-        angle2 = rotation.z;
-        rotation2.z = 1.0;
-    }
-    
-    for (unsigned int i = 0; i < meshes.size(); i++)
-    {
-        meshes[i].draw(shader, position, scale, angle2, rotation2);
-    }
-}
-
-
-// draws the model, and thus all its meshes
-//void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
-//{
-//    for (unsigned int i = 0; i < meshes.size(); i++)
-//    {
-//        meshes[i].draw(shader, position, scale, 0.0f, rotation);
-//    }
-//}
-
 
 void engine::Model::loadModel(std::string const& path)
 {
@@ -73,6 +33,8 @@ void engine::Model::loadModel(std::string const& path)
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
+
+    numberOfMeshes += scene->mRootNode->mNumMeshes;
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -231,6 +193,38 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
     }
     return textures;
 }
+
+// draws the model, and thus all its meshes
+void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
+{
+    float angle2 = 0.0f;
+    glm::vec3 rotation2 = glm::vec3(0.0f);
+
+    if (rotation.x > 0.0f)
+    {
+        angle2 = rotation.x;
+        rotation2.x = 1.0;
+    }
+
+    if (rotation.y > 0.0f)
+    {
+        angle2 = rotation.y;
+        rotation2.y = 1.0;
+    }
+
+    if (rotation.z > 0.0f)
+    {
+        angle2 = rotation.z;
+        rotation2.z = 1.0;
+    }
+
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        meshes[i].draw(shader, position, scale, angle2, rotation2);
+    }
+}
+
+
     
 unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {

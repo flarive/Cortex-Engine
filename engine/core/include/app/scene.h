@@ -3,6 +3,11 @@
 #include "app.h"
 #include "../engine.h"
 
+
+#include "../renderers/renderer.h"
+#include "../renderers/blinnphong_renderer.h"
+#include "../renderers/pbr_renderer.h"
+
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../debug/imgui_debug.h"
@@ -13,27 +18,6 @@
 
 namespace engine
 {
-    enum class RenderMethod
-    {
-        BlinnPhong = 0, // legacy
-        PBR = 1 // mainstream
-    };
-
-    struct SceneSettings
-    {
-        RenderMethod method{};
-        
-        bool HDRSkyboxHide{ false };
-        std::string HDRSkyboxFilePath{};
-        float HDRSkyboxBlurStrength{ 0.0f };
-
-        float shadowIntensity{ 1.5f };
-        float iblDiffuseIntensity{ 1.0f };
-        float iblSpecularIntensity{ 1.0f };
-
-        bool applyGammaCorrection{};
-    };
-    
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
@@ -70,7 +54,7 @@ namespace engine
         void after_init_internal();
 
         void setup_BlinnPhong();
-        void setupPBR();
+        void setup_PBR();
 
         void loop_BlinnPhong();
         void loop_PBR();

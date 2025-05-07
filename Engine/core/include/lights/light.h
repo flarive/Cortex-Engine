@@ -11,7 +11,6 @@ namespace engine
     /// Abstract class for lights
     /// </summary>
     class Light : private NonCopyable
-
     {
     public:
         Light();

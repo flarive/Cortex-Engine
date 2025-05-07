@@ -136,7 +136,7 @@ void engine::App::initWindow()
     }
 
     // Create window with graphics context
-    window = glfwCreateWindow(width, height, "Learn OpenGL", fullscreen ? myMonitor : NULL, nullptr);
+    window = glfwCreateWindow(width, height, "Cortex engine", fullscreen ? myMonitor : NULL, nullptr);
     if (window == NULL)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;

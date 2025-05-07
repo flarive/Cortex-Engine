@@ -1,21 +1,14 @@
 #include "../../include/primitives/cube.h"
 
+#include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
 
 #include <vector>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 namespace engine
 {
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec3 normal;
-        glm::vec2 texCoords;
-        glm::vec3 tangent;
-        glm::vec3 bitangent;
-    };
-
     inline std::vector<Vertex> generateCubeVertices()
     {
         std::vector<Vertex> vertices = {

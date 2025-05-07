@@ -350,5 +350,8 @@
     <ClInclude Include="core\include\renderers\renderer.h">
       <Filter>Fichiers d%27en-tête\core\renderers\base</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\app\scene_settings.h">
+      <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

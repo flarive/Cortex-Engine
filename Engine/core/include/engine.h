@@ -10,6 +10,8 @@
 #include "misc/noncopyable.h"
 
 
+#include "app/scene_settings.h"
+
 #include "vertex.h"
 #include "shader.h"
 #include "materials/material.h"
@@ -25,9 +27,9 @@
 
 #include "camera.h"
 
-#include "misc/log_manager.h"
 
 
+#include "lights/light.h"
 #include "lights/point_light.h"
 #include "lights/directional_light.h"
 #include "lights/spot_light.h"
@@ -45,5 +47,6 @@
 #include "primitives/skybox.h"
 
 
+#include "misc/log_manager.h"
 
 inline auto& logger = engine::LogManager::getInstance();

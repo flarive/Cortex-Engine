@@ -2,7 +2,6 @@
 
 #include "../common_defines.h"
 #include "../shader.h"
-//#include "../entity.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"

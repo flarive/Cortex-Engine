@@ -5,7 +5,7 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), settings(_settings)
 {
     if (settings.method == RenderMethod::PBR)
-        setupPBR();
+        setup_PBR();
     else
         setup_BlinnPhong();
 }
@@ -157,7 +157,7 @@ void engine::Scene::setup_BlinnPhong()
 }
 
 
-void engine::Scene::setupPBR()
+void engine::Scene::setup_PBR()
 {
     // configure global opengl state
     // -----------------------------

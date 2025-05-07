@@ -1,8 +1,5 @@
 #pragma once
 
-//#include <glad/glad.h>
-//#include <glm/glm.hpp>
-
 #include "common_defines.h"
 
 #include "misc/noncopyable.h"
@@ -233,13 +230,13 @@ namespace engine
 		{
 			for (auto&& vertex : mesh.vertices)
 			{
-				minAABB.x = std::min(minAABB.x, vertex.Position.x);
-				minAABB.y = std::min(minAABB.y, vertex.Position.y);
-				minAABB.z = std::min(minAABB.z, vertex.Position.z);
+				minAABB.x = std::min(minAABB.x, vertex.position.x);
+				minAABB.y = std::min(minAABB.y, vertex.position.y);
+				minAABB.z = std::min(minAABB.z, vertex.position.z);
 
-				maxAABB.x = std::max(maxAABB.x, vertex.Position.x);
-				maxAABB.y = std::max(maxAABB.y, vertex.Position.y);
-				maxAABB.z = std::max(maxAABB.z, vertex.Position.z);
+				maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+				maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+				maxAABB.z = std::max(maxAABB.z, vertex.position.z);
 			}
 		}
 		return AABB(minAABB, maxAABB);
@@ -253,13 +250,13 @@ namespace engine
 		{
 			for (auto&& vertex : mesh.vertices)
 			{
-				minAABB.x = std::min(minAABB.x, vertex.Position.x);
-				minAABB.y = std::min(minAABB.y, vertex.Position.y);
-				minAABB.z = std::min(minAABB.z, vertex.Position.z);
+				minAABB.x = std::min(minAABB.x, vertex.position.x);
+				minAABB.y = std::min(minAABB.y, vertex.position.y);
+				minAABB.z = std::min(minAABB.z, vertex.position.z);
 
-				maxAABB.x = std::max(maxAABB.x, vertex.Position.x);
-				maxAABB.y = std::max(maxAABB.y, vertex.Position.y);
-				maxAABB.z = std::max(maxAABB.z, vertex.Position.z);
+				maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+				maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+				maxAABB.z = std::max(maxAABB.z, vertex.position.z);
 			}
 		}
 

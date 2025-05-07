@@ -125,7 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glm\include;$(MSBuildStartupDirectory)\libs\glfw3\include;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\assimp\include;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;$(MSBuildStartupDirectory)\libs\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glm\include;$(MSBuildStartupDirectory)\libs\glfw3\include;$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\assimp\include;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;$(MSBuildStartupDirectory)\libs\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildStartupDirectory)\libs\glad\inc;$(MSBuildStartupDirectory)\libs\imgui;$(MSBuildStartupDirectory)\libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -206,6 +206,7 @@
     <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
     <ClInclude Include="core\include\app\app.h" />
     <ClInclude Include="core\include\app\scene.h" />
+    <ClInclude Include="core\include\app\scene_settings.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\camera.h" />
     <ClInclude Include="core\include\character.h" />

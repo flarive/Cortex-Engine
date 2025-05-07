@@ -1,11 +1,19 @@
 #pragma once
 
+#include "renderer.h"
+
 namespace engine
 {
-	class BlinnPhongRenderer
+	class BlinnPhongRenderer : public Renderer
 	{
 	public:
-		void setup();
+		BlinnPhongRenderer(GLFWwindow* window, const Camera& camera, std::vector<std::shared_ptr<engine::Light>> lights);
+		
+		void setup(const SceneSettings& settings, int width, int height) override;
+		void loop(int width, int height) override;
+
+	private:
+		void loadShaders();
 	};
 }
 

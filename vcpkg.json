@@ -1,5 +1,9 @@
 {
   "dependencies": [
-	"freetype"
+	"glfw3",
+	"glm",
+	"spdlog",
+	"freetype",
+	"assimp"
 	]
 }

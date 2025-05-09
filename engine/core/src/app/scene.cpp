@@ -8,11 +8,11 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     
     if (settings.method == RenderMethod::PBR)
     {
-        m_renderer = new PbrRenderer(app->window, settings, camera);
+        m_renderer = new PbrRenderer(app->window, settings);
     }
     else
     {
-        m_renderer = new BlinnPhongRenderer(app->window, settings, camera);
+        m_renderer = new BlinnPhongRenderer(app->window, settings);
     }
 }
 
@@ -56,15 +56,8 @@ void engine::Scene::after_init_internal()
 
     m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount);
 
-    //pbrShader.use();
-    //pbrShader.setInt("pointLightsCount", pointLightCount);
-    //pbrShader.setInt("dirLightsCount", dirLightCount);
-    //pbrShader.setInt("spotLightsCount", spotLightCount);
-
     // Fill imGui debug window with current scene hierarchy
     m_debug.setScene(this->rootEntity);
-
-
 
     // count all meshes in the scene
     countMeshes(this->rootEntity);
@@ -76,7 +69,7 @@ void engine::Scene::initialize()
 
     init();
 
-    m_renderer->setup(app->width, app->height, lights);
+    m_renderer->setup(app->width, app->height, std::make_shared<Camera>(camera), lights);
 
     after_init();
 }
@@ -122,11 +115,6 @@ void engine::Scene::gameLoop()
     beginQuery();
 
 
-    // draw in selected renderer loop
-    //m_renderer->loop(app->width, app->height, [this](Shader& shader) {
-    //    update(shader);
-    //    });
-
     // Lambda to update the shader (e.g., set uniforms)
     auto updateShader = [this](Shader& shader) {
         update(shader);
@@ -138,7 +126,7 @@ void engine::Scene::gameLoop()
         };
 
     // Call the method
-    m_renderer->loop(app->width, app->height, updateShader, updateUIShader);
+    m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateShader, updateUIShader);
 
 
 
@@ -579,16 +567,16 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 
     // basic window handling
     switch (key) {
-    case GLFW_KEY_ESCAPE:
-        glfwSetWindowShouldClose(app->window, GL_TRUE); break;
-    case GLFW_KEY_ENTER:
-        if (action == GLFW_RELEASE)
-        {
-            app->toggleFullscreen([this]() {
-                this->refreshFullscreen();
-                });
-        }
-        break;
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(app->window, GL_TRUE); break;
+        case GLFW_KEY_ENTER:
+            if (action == GLFW_RELEASE)
+            {
+                app->toggleFullscreen([this]() {
+                    this->refreshFullscreen();
+                    });
+            }
+            break;
     }
 
     if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_PRESS)

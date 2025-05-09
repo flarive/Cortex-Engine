@@ -26,6 +26,6 @@ namespace engine
 
         spdlog::logger* logger = nullptr;
 
-        const std::string LOGER_NAME = "multi_sink";
+        const std::string LOGER_NAME = "cortex";
     };
 }

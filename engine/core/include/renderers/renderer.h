@@ -17,11 +17,11 @@ namespace engine
 	{
 	public:
 		
-		Renderer(GLFWwindow* window, const SceneSettings& settings, const Camera& camera);
+		Renderer(GLFWwindow* window, const SceneSettings& settings);
 		virtual ~Renderer() = default;
 
-		virtual void setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights) = 0;
-		virtual void loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
+		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights) = 0;
+		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
 
 		void initColorFramebuffer(int width, int height);
 
@@ -31,7 +31,7 @@ namespace engine
 	protected:
 		GLFWwindow* m_window{};
 
-		Camera m_camera{};
+		//std::shared_ptr<Camera> m_camera{};
 
 		SceneSettings m_settings{};
 

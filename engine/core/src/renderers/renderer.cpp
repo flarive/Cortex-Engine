@@ -1,8 +1,8 @@
 #include "../../include/renderers/renderer.h"
 
 
-engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
-    : m_window(window), m_settings(settings), m_camera(camera)
+engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& settings)
+    : m_window(window), m_settings(settings)
 {
 }
 

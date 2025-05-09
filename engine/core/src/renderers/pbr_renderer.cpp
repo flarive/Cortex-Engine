@@ -1,12 +1,12 @@
 #include "../../include/renderers/pbr_renderer.h"
 
 
-engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
-    : Renderer(window, settings, camera)
+engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
+    : Renderer(window, settings)
 {
 }
 
-void engine::PbrRenderer::setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights)
+void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights)
 {
     m_lights = lights;
     
@@ -250,9 +250,10 @@ void engine::PbrRenderer::setup(int width, int height, std::vector<std::shared_p
 
     // initialize static shader uniforms before rendering
     // --------------------------------------------------
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
+
     backgroundShader.use();
     backgroundShader.setMat4("projection", projection);
 
@@ -262,7 +263,7 @@ void engine::PbrRenderer::setup(int width, int height, std::vector<std::shared_p
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
-void engine::PbrRenderer::loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI)
+void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -272,16 +273,13 @@ void engine::PbrRenderer::loop(int width, int height, std::function<void(Shader&
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-
-
+    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 view = camera->GetViewMatrix();
 
     pbrShader.use();
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = m_camera.GetViewMatrix();
     pbrShader.setMat4("projection", projection);
     pbrShader.setMat4("view", view);
-    pbrShader.setVec3("viewPos", m_camera.Position);
+    pbrShader.setVec3("viewPos", camera->Position);
 
     if (m_lights.size() > 0)
         pbrShader.setVec3("lightPos", m_lights[0]->getPosition());

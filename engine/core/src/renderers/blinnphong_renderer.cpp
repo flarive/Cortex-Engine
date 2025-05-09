@@ -1,13 +1,13 @@
 #include "../../include/renderers/blinnphong_renderer.h"
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
-    : Renderer(window, settings, camera)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
+    : Renderer(window, settings)
 {
 }
 
 
-void engine::BlinnPhongRenderer::setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights)
+void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights)
 {
     m_lights = lights;
     
@@ -46,7 +46,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::vector<std::s
 }
 
 
-void engine::BlinnPhongRenderer::loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI)
+void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);

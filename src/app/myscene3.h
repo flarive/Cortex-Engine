@@ -14,14 +14,15 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    std::shared_ptr<engine::PointLight> myPointLight1;
-    std::shared_ptr<engine::PointLight> myPointLight2;
-    std::shared_ptr<engine::PointLight> myPointLight3;
-    std::shared_ptr<engine::PointLight> myPointLight4;
+    std::shared_ptr<engine::PointLight> myPointLight1{};
+    std::shared_ptr<engine::PointLight> myPointLight2{};
+    std::shared_ptr<engine::PointLight> myPointLight3{};
+    std::shared_ptr<engine::PointLight> myPointLight4{};
 
-    std::shared_ptr<engine::DirectionalLight> myDirectionalLight;
+    std::shared_ptr<engine::DirectionalLight> myDirectionalLight{};
 
-    std::shared_ptr<engine::SpotLight> mySpotLight;
+    std::shared_ptr<engine::SpotLight> mySpotLight{};
+
 
 
     engine::Sphere redSciFiMetalSphere{};
@@ -91,7 +92,9 @@ public:
         lights.emplace_back(myPointLight3);
         lights.emplace_back(myPointLight4);
         lights.emplace_back(mySpotLight);
-        
+
+
+
 
 
         // override default camera properties
@@ -353,6 +356,9 @@ private:
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
+
+
+
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 50.0f); // ????????????

@@ -221,27 +221,19 @@ void main()
 
     vec3 result = vec3(0.0);
 
-    // phase 1: directional lighting
+    // Lighting
     for (int i = 0; i < NBR_MAX_LIGHTS; i++)
     {
         if (dirLights[i].use)
             result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir, color);
-    }
-    
-    // phase 2: point lights
-    for (int i = 0; i < NBR_MAX_LIGHTS; i++)
-    {
+
         if (pointLights[i].use)
             result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir, color);
-    }
-    
-    // phase 3: spot light
-    for (int i = 0; i < NBR_MAX_LIGHTS; i++)
-    {
+
         if (spotLights[i].use)
             result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir, color);
     }
-
+    
     // Sample the alpha value from the diffuse texture
     float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
 

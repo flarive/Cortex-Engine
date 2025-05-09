@@ -185,7 +185,7 @@ private:
 
 
         // setup lights
-        mySpotLight->draw(shader, projection, view, 2.0f); // ???????????????????
+        mySpotLight->draw(shader, projection, view, 2.0f);
         
 
         // activate phong shader

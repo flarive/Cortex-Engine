@@ -1,12 +1,15 @@
 #include "../../include/renderers/pbr_renderer.h"
 
 
-engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const Camera& camera, std::vector<std::shared_ptr<engine::Light>> lights) : Renderer(window, camera, lights)
+engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
+    : Renderer(window, settings, camera)
 {
 }
 
-void engine::PbrRenderer::setup(const SceneSettings& settings, int width, int height)
+void engine::PbrRenderer::setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights)
 {
+    m_lights = lights;
+    
     // configure global opengl state
     // -----------------------------
     enableDepthTest(true);
@@ -28,9 +31,9 @@ void engine::PbrRenderer::setup(const SceneSettings& settings, int width, int he
     pbrShader.setInt("material.texture_prefilter", 8);
     pbrShader.setInt("material.texture_brdfLUT", 9);
 
-    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+    pbrShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
+    pbrShader.setFloat("material.iblDiffuseIntensity", m_settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShader.setFloat("material.iblSpecularIntensity", m_settings.iblSpecularIntensity); // [0.0, 5.0]
 
 
 
@@ -39,7 +42,7 @@ void engine::PbrRenderer::setup(const SceneSettings& settings, int width, int he
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
     backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
-    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
+    backgroundShader.setFloat("blurStrength", m_settings.HDRSkyboxBlurStrength);
 
     // shader configuration
     // --------------------
@@ -77,7 +80,7 @@ void engine::PbrRenderer::setup(const SceneSettings& settings, int width, int he
 
     // pbr: load the HDR environment map
     // ---------------------------------
-    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.HDRSkyboxFilePath)) : 0;
+    unsigned int hdrTexture = !m_settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(m_settings.HDRSkyboxFilePath)) : 0;
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------
@@ -259,12 +262,89 @@ void engine::PbrRenderer::setup(const SceneSettings& settings, int width, int he
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
-void engine::PbrRenderer::loop(int width, int height)
+void engine::PbrRenderer::loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
+    // bind to color framebuffer and draw scene as we normally would to color texture 
+    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+    glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    glm::mat4 projection = glm::perspective(glm::radians(m_camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+
+
+
+    pbrShader.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = m_camera.GetViewMatrix();
+    pbrShader.setMat4("projection", projection);
+    pbrShader.setMat4("view", view);
+    pbrShader.setVec3("viewPos", m_camera.Position);
+
+    if (m_lights.size() > 0)
+        pbrShader.setVec3("lightPos", m_lights[0]->getPosition());
+
+    // bind pre-computed IBL data
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+    glActiveTexture(GL_TEXTURE8);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+    glActiveTexture(GL_TEXTURE9);
+    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+    // update user stuffs
+    update(pbrShader);
+
+    // render skybox (render as last to prevent overdraw)
+    backgroundShader.use();
+    backgroundShader.setMat4("view", view);
+    backgroundShader.setMat4("projection", projection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
+
+    if (!m_settings.HDRSkyboxHide)
+        renderCube();
+
+    // render BRDF map to screen
+    //brdfShader.use();
+    //renderQuad();
+
+    // compute light shadows using a depth map framebuffer
+    if (m_lights.size() > 0)
+        computeDepthMapFramebuffer(pbrShader, width, height, update, m_lights[0]);
+
+    // render to framebuffer
+    computeColorFramebuffer();
+
+    // display UI/HUD above the scene and outside the framebuffer
+    updateUI();
 }
 
 void engine::PbrRenderer::loadShaders()
 {
-    
+    pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
+
+
+    // color framebuffer to screen shader
+    screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+
+    // skybox reflection shader
+    skyboxReflectShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
+
+    simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+    debugDepthQuad.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
+
+
+
+    // PBR
+    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
+    irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
+    prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
+    brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
+
+    backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
 }

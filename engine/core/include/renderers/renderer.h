@@ -17,20 +17,23 @@ namespace engine
 	{
 	public:
 		
-		Renderer(GLFWwindow* window, const Camera& camera, std::vector<std::shared_ptr<engine::Light>> lights);
+		Renderer(GLFWwindow* window, const SceneSettings& settings, const Camera& camera);
 		virtual ~Renderer() = default;
 
-		virtual void setup(const SceneSettings& settings, int width, int height) = 0;
-		virtual void loop(int width, int height) = 0;
+		virtual void setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights) = 0;
+		virtual void loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
 
-		
+		void initColorFramebuffer(int width, int height);
 
 
+		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount);
 
 	protected:
 		GLFWwindow* m_window{};
 
 		Camera m_camera{};
+
+		SceneSettings m_settings{};
 
 		std::vector<std::shared_ptr<engine::Light>> m_lights{};
 
@@ -74,8 +77,8 @@ namespace engine
 		void enableGammaCorrection(bool enable);
 
 		void initDepthMapFramebuffer();
-		void computeDepthMapFramebuffer(Shader& shader, int width, int height, std::shared_ptr<Light> light);
-		void initColorFramebuffer(int width, int height);
+		void computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
+		
 		void computeColorFramebuffer();
 
 
@@ -99,5 +102,12 @@ namespace engine
 		unsigned int sphereVAO = 0;
 		GLsizei indexCount;
 		void renderSphere();
+
+
+	private:
+
+		unsigned short m_spotLightCount{};
+		unsigned short m_dirLightCount{};
+		unsigned short m_pointLightCount{};
 	};
 }

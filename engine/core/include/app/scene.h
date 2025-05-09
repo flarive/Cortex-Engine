@@ -26,24 +26,24 @@ namespace engine
     private:
         bool key_w_pressed { false };
 
-        const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
+        //const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
 
-        unsigned int depthMapFramebuffer{};
-        unsigned int colorFramebuffer{};
-
-
-
-        unsigned int rbo{}; // renderbuffer object
+        //unsigned int depthMapFramebuffer{};
+        //unsigned int colorFramebuffer{};
 
 
 
-        unsigned int textureDepthMapBuffer{};
-        unsigned int textureColorbuffer{};
+        //unsigned int rbo{}; // renderbuffer object
 
 
-        Shader screenShader{};
-        Shader simpleDepthShader{};
-        Shader debugDepthQuad{};
+
+        //unsigned int textureDepthMapBuffer{};
+        //unsigned int textureColorbuffer{};
+
+
+        //Shader screenShader{};
+        //Shader simpleDepthShader{};
+        //Shader debugDepthQuad{};
 
         
         ImGuiDebug m_debug{};
@@ -53,11 +53,11 @@ namespace engine
         void before_init_internal();
         void after_init_internal();
 
-        void setup_BlinnPhong();
-        void setup_PBR();
+        //void setup_BlinnPhong();
+        //void setup_PBR();
 
-        void loop_BlinnPhong();
-        void loop_PBR();
+        //void loop_BlinnPhong();
+        //void loop_PBR();
 
 
     
@@ -77,6 +77,8 @@ namespace engine
         App* app{};
         SceneSettings settings{};
 
+        Renderer* m_renderer{};
+
         virtual void before_init_hook() {}; // Overridable by derived classes
         virtual void after_init_hook() {}; // Overridable by derived classes
 
@@ -91,24 +93,24 @@ namespace engine
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
 
-        Shader blinnPhongShader{};
-        Shader pbrShader{};
+        //Shader blinnPhongShader{};
+        //Shader pbrShader{};
         Shader skyboxReflectShader{};
-        Shader backgroundShader{};
+        //Shader backgroundShader{};
 
-        // PBR
-        Shader equirectangularToCubemapShader{};
-        Shader irradianceShader{};
-        Shader prefilterShader{};
-        Shader brdfShader{};
+        //// PBR
+        //Shader equirectangularToCubemapShader{};
+        //Shader irradianceShader{};
+        //Shader prefilterShader{};
+        //Shader brdfShader{};
 
  
 
 
-        unsigned int irradianceMap{};
-        unsigned int prefilterMap{};
-        unsigned int brdfLUTTexture{};
-        unsigned int envCubemap{};
+        //unsigned int irradianceMap{};
+        //unsigned int prefilterMap{};
+        //unsigned int brdfLUTTexture{};
+        //unsigned int envCubemap{};
 
 
         
@@ -196,14 +198,14 @@ namespace engine
 
     private:
         static void glfw_error_callback(int error, const char* description);
-        void enableDepthTest(bool enable);
-        void enableFaceCulling(bool enable);
-        void enableAntiAliasing(bool enable);
-        void enableGammaCorrection(bool enable);
-        void initDepthMapFramebuffer();
-        void computeDepthMapFramebuffer(Shader& shader, std::shared_ptr<Light> light);
-        void initColorFramebuffer();
-        void computeColorFramebuffer();
+        //void enableDepthTest(bool enable);
+        //void enableFaceCulling(bool enable);
+        //void enableAntiAliasing(bool enable);
+        //void enableGammaCorrection(bool enable);
+        //void initDepthMapFramebuffer();
+        //void computeDepthMapFramebuffer(Shader& shader, std::shared_ptr<Light> light);
+        //void initColorFramebuffer();
+        //void computeColorFramebuffer();
         void loadShaders();
      
         // Function to count vertices and polygons

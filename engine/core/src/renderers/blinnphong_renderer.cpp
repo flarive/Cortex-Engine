@@ -1,19 +1,22 @@
 #include "../../include/renderers/blinnphong_renderer.h"
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const Camera& camera, std::vector<std::shared_ptr<engine::Light>> lights) : Renderer(window, camera, lights)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
+    : Renderer(window, settings, camera)
 {
 }
 
 
-void engine::BlinnPhongRenderer::setup(const SceneSettings& settings, int width, int height)
+void engine::BlinnPhongRenderer::setup(int width, int height, std::vector<std::shared_ptr<engine::Light>> lights)
 {
+    m_lights = lights;
+    
     // configure global opengl state
     // -----------------------------
     enableDepthTest(true);
     enableFaceCulling(true);
     enableAntiAliasing(true);
-    if (settings.applyGammaCorrection) enableGammaCorrection(true);
+    if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
 
     loadShaders();
@@ -43,7 +46,7 @@ void engine::BlinnPhongRenderer::setup(const SceneSettings& settings, int width,
 }
 
 
-void engine::BlinnPhongRenderer::loop(int width, int height)
+void engine::BlinnPhongRenderer::loop(int width, int height, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -54,27 +57,23 @@ void engine::BlinnPhongRenderer::loop(int width, int height)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // update user stuffs
-    //update(blinnPhongShader); ouchhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    update(blinnPhongShader);
 
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
-        computeDepthMapFramebuffer(blinnPhongShader, width, height, m_lights[0]);
+        computeDepthMapFramebuffer(blinnPhongShader, width, height, update, m_lights[0]);
 
     // render to framebuffer
     computeColorFramebuffer();
 
     // display UI/HUD above the scene and outside the framebuffer
-    //updateUI(); ouchhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    updateUI();
 }
 
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
     blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
-
-    pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
-
-    //Shader depthBufferShader("debug_depth_buffer", "shaders/debug/debug_depth_buffer.vertex", "shaders/debug/debug_depth_buffer.frag"); // depth buffer debugging shader
 
     // color framebuffer to screen shader
     screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
@@ -84,14 +83,6 @@ void engine::BlinnPhongRenderer::loadShaders()
 
     simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
     debugDepthQuad.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
-
-
-
-    // PBR
-    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
-    irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
-    prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
-    brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
 
     backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
 }

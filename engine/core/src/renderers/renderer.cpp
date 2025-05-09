@@ -1,7 +1,8 @@
 #include "../../include/renderers/renderer.h"
 
 
-engine::Renderer::Renderer(GLFWwindow* window, const engine::Camera& camera, std::vector<std::shared_ptr<engine::Light>> lights)
+engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& settings, const engine::Camera& camera)
+    : m_window(window), m_settings(settings), m_camera(camera)
 {
 }
 
@@ -77,7 +78,7 @@ void engine::Renderer::initDepthMapFramebuffer()
     debugDepthQuad.setInt("depthMap", 0);
 }
 
-void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     glm::vec3 light_position = light->getPosition();
     glm::vec3 light_target = light->getTarget();
@@ -102,7 +103,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
 
     glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
     glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-    //update(simpleDepthShader); ouchhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    update(simpleDepthShader);
     glDisable(GL_POLYGON_OFFSET_FILL);
 
 
@@ -119,7 +120,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     // update user stuffs
-    //update(shader); ouchhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+    update(shader);
 
     glActiveTexture(GL_TEXTURE10);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
@@ -370,4 +371,19 @@ void engine::Renderer::renderSphere()
 
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+}
+
+
+void engine::Renderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)
+{
+    m_pointLightCount = pointLightCount;
+    m_dirLightCount = dirLightCount;
+    m_spotLightCount = spotLightCount;
+
+
+    //make the same for blinnphong shader !
+    pbrShader.use();
+    pbrShader.setInt("pointLightsCount", m_pointLightCount);
+    pbrShader.setInt("dirLightsCount", m_dirLightCount);
+    pbrShader.setInt("spotLightsCount", m_spotLightCount);
 }

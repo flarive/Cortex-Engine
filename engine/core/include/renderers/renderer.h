@@ -17,6 +17,19 @@ namespace engine
 	{
 	public:
 		
+		// shaders accessible publicly
+
+		// Shader that renders the color framebuffer to the screen
+		Shader screenShader{};
+
+		// Shader that renders a depth framebuffer for shadow maps
+		Shader simpleDepthShader{};
+		Shader debugDepthQuad{};
+
+		Shader skyboxReflectShader{};
+		Shader backgroundShader{};
+
+		
 		Renderer(GLFWwindow* window, const SceneSettings& settings);
 		virtual ~Renderer() = default;
 
@@ -26,7 +39,7 @@ namespace engine
 		void initColorFramebuffer(int width, int height);
 
 
-		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount);
+		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) = 0;
 
 	protected:
 		GLFWwindow* m_window{};
@@ -37,25 +50,27 @@ namespace engine
 
 		std::vector<std::shared_ptr<engine::Light>> m_lights{};
 
+		// shadow maps texture size
 		const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
 
 		unsigned int rbo{}; // renderbuffer object
 
-		unsigned int depthMapFramebuffer{};
+		
+
+		// main framebuffer
 		unsigned int colorFramebuffer{};
 
+		// depth map framebuffer for shadow maps
+		unsigned int depthMapFramebuffer{};
+
+		// texture ID that holds main framebuffer rendering
+		unsigned int textureColorBuffer{};
+
+		// texture ID that holds depth map framebuffer
 		unsigned int textureDepthMapBuffer{};
-		unsigned int textureColorbuffer{};
+		
 
-		Shader screenShader{};
-		Shader simpleDepthShader{};
-		Shader debugDepthQuad{};
-
-		Shader blinnPhongShader{};
-		Shader pbrShader{};
-		Shader skyboxReflectShader{};
-		Shader backgroundShader{};
-
+		// internal shaders (not accessible)
 		// PBR
 		Shader equirectangularToCubemapShader{};
 		Shader irradianceShader{};
@@ -71,6 +86,12 @@ namespace engine
 		unsigned int envCubemap{};
 
 
+
+		unsigned short m_spotLightCount{};
+		unsigned short m_dirLightCount{};
+		unsigned short m_pointLightCount{};
+
+
 		void enableDepthTest(bool enable);
 		void enableFaceCulling(bool enable);
 		void enableAntiAliasing(bool enable);
@@ -84,30 +105,27 @@ namespace engine
 
 		// renderCube() renders a 1x1 3D cube in NDC.
 		// -------------------------------------------------
-		unsigned int cubeVAO = 0;
-		unsigned int cubeVBO = 0;
+		unsigned int cubeVAO{};
+		unsigned int cubeVBO{};
 		void renderCube();
 
 
 		// renderQuad() renders a 1x1 XY quad in NDC
 		// -----------------------------------------
-		unsigned int quadVAO = 0;
-		unsigned int quadVBO = 0;
+		unsigned int quadVAO{};
+		unsigned int quadVBO{};
 		void renderQuad();
 
 
 
 		// renders (and builds at first invocation) a sphere
 		// -------------------------------------------------
-		unsigned int sphereVAO = 0;
-		GLsizei indexCount;
+		unsigned int sphereVAO{};
+		GLsizei indexCount{};
 		void renderSphere();
 
 
 	private:
 
-		unsigned short m_spotLightCount{};
-		unsigned short m_dirLightCount{};
-		unsigned short m_pointLightCount{};
 	};
 }

@@ -86,3 +86,17 @@ void engine::BlinnPhongRenderer::loadShaders()
 
     backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
 }
+
+void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)
+{
+    m_pointLightCount = pointLightCount;
+    m_dirLightCount = dirLightCount;
+    m_spotLightCount = spotLightCount;
+
+
+    //make the same for blinnphong shader !
+    blinnPhongShader.use();
+    blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
+    blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
+    blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
+}

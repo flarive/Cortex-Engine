@@ -346,3 +346,17 @@ void engine::PbrRenderer::loadShaders()
 
     backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
 }
+
+void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)
+{
+    m_pointLightCount = pointLightCount;
+    m_dirLightCount = dirLightCount;
+    m_spotLightCount = spotLightCount;
+
+
+    //make the same for blinnphong shader !
+    pbrShader.use();
+    pbrShader.setInt("pointLightsCount", m_pointLightCount);
+    pbrShader.setInt("dirLightsCount", m_dirLightCount);
+    pbrShader.setInt("spotLightsCount", m_spotLightCount);
+}

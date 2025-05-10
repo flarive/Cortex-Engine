@@ -26,24 +26,7 @@ namespace engine
     private:
         bool key_w_pressed { false };
 
-        //const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
-
-        //unsigned int depthMapFramebuffer{};
-        //unsigned int colorFramebuffer{};
-
-
-
-        //unsigned int rbo{}; // renderbuffer object
-
-
-
-        //unsigned int textureDepthMapBuffer{};
-        //unsigned int textureColorbuffer{};
-
-
-        //Shader screenShader{};
-        //Shader simpleDepthShader{};
-        //Shader debugDepthQuad{};
+        
 
         
         ImGuiDebug m_debug{};
@@ -53,12 +36,8 @@ namespace engine
         void before_init_internal();
         void after_init_internal();
 
-        //void setup_BlinnPhong();
-        //void setup_PBR();
 
-        //void loop_BlinnPhong();
-        //void loop_PBR();
-
+        
 
     
     protected:
@@ -92,25 +71,8 @@ namespace engine
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
 
-        //Shader blinnPhongShader{};
-        //Shader pbrShader{};
-        Shader skyboxReflectShader{};
-        //Shader backgroundShader{};
 
-        //// PBR
-        //Shader equirectangularToCubemapShader{};
-        //Shader irradianceShader{};
-        //Shader prefilterShader{};
-        //Shader brdfShader{};
-
- 
-
-
-        //unsigned int irradianceMap{};
-        //unsigned int prefilterMap{};
-        //unsigned int brdfLUTTexture{};
-        //unsigned int envCubemap{};
-
+        //Shader skyboxReflectShader{};
 
         
 
@@ -141,7 +103,7 @@ namespace engine
 
         GLFWwindow* getWindow();
 
-
+        Renderer* getRenderer() { return m_renderer; };
         
 
         // glfw: whenever a key is pressed or released, this callback is called
@@ -173,23 +135,23 @@ namespace engine
 
         // renderCube() renders a 1x1 3D cube in NDC.
         // -------------------------------------------------
-        unsigned int cubeVAO = 0;
-        unsigned int cubeVBO = 0;
+        unsigned int cubeVAO{};
+        unsigned int cubeVBO{};
         void renderCube();
         
 
         // renderQuad() renders a 1x1 XY quad in NDC
         // -----------------------------------------
-        unsigned int quadVAO = 0;
-        unsigned int quadVBO = 0;
+        unsigned int quadVAO{};
+        unsigned int quadVBO{};
         void renderQuad();
       
 
 
         // renders (and builds at first invocation) a sphere
         // -------------------------------------------------
-        unsigned int sphereVAO = 0;
-        GLsizei indexCount;
+        unsigned int sphereVAO{};
+        GLsizei indexCount{};
         void renderSphere();
      
 
@@ -197,16 +159,7 @@ namespace engine
 
     private:
         static void glfw_error_callback(int error, const char* description);
-        //void enableDepthTest(bool enable);
-        //void enableFaceCulling(bool enable);
-        //void enableAntiAliasing(bool enable);
-        //void enableGammaCorrection(bool enable);
-        //void initDepthMapFramebuffer();
-        //void computeDepthMapFramebuffer(Shader& shader, std::shared_ptr<Light> light);
-        //void initColorFramebuffer();
-        //void computeColorFramebuffer();
-        void loadShaders();
-     
+
         // Function to count vertices and polygons
         void beginQuery();
 

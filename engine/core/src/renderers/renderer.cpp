@@ -126,8 +126,8 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
     shader.setInt("material.texture_shadowMap", 10);
 
-    // 3. render Depth map to quad
-    // ---------------------------
+    // 3. render Depth map to dedicated framebuffer
+    // --------------------------------------------
     debugDepthQuad.use();
     debugDepthQuad.setFloat("near_plane", near_plane);
     debugDepthQuad.setFloat("far_plane", far_plane);
@@ -144,12 +144,12 @@ void engine::Renderer::initColorFramebuffer(int width, int height)
     glGenFramebuffers(1, &colorFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     // create a color attachment texture
-    glGenTextures(1, &textureColorbuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
     // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
@@ -176,7 +176,7 @@ void engine::Renderer::computeColorFramebuffer()
     screenShader.use();
 
     //glBindVertexArray(quadVAO);
-    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
     renderQuad();
 }
@@ -374,16 +374,3 @@ void engine::Renderer::renderSphere()
 }
 
 
-void engine::Renderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)
-{
-    m_pointLightCount = pointLightCount;
-    m_dirLightCount = dirLightCount;
-    m_spotLightCount = spotLightCount;
-
-
-    //make the same for blinnphong shader !
-    pbrShader.use();
-    pbrShader.setInt("pointLightsCount", m_pointLightCount);
-    pbrShader.setInt("dirLightsCount", m_dirLightCount);
-    pbrShader.setInt("spotLightsCount", m_spotLightCount);
-}

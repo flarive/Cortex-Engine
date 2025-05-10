@@ -244,10 +244,10 @@ private:
         cushionModel.draw(shader, glm::vec3(-1.0f, -0.15f, 0.0f), glm::vec3(0.2f));
 
         // activate skybox reflection shader
-        skyboxReflectShader.use();
-        skyboxReflectShader.setMat4("view", view);
-        skyboxReflectShader.setMat4("projection", projection);
-        skyboxReflectShader.setVec3("cameraPos", camera.Position);
+        getRenderer()->skyboxReflectShader.use();
+        getRenderer()->skyboxReflectShader.setMat4("view", view);
+        getRenderer()->skyboxReflectShader.setMat4("projection", projection);
+        getRenderer()->skyboxReflectShader.setVec3("cameraPos", camera.Position);
     
         ourSkybox.draw(projection, view);
     }

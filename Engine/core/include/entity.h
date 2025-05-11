@@ -211,14 +211,14 @@ namespace engine
 		Frustum     frustum;
 		const float halfVSide = zFar * tanf(fovY * .5f);
 		const float halfHSide = halfVSide * aspect;
-		const glm::vec3 frontMultFar = zFar * cam.Front;
+		const glm::vec3 frontMultFar = zFar * cam.front;
 
-		frustum.nearFace = { cam.Position + zNear * cam.Front, cam.Front };
-		frustum.farFace = { cam.Position + frontMultFar, -cam.Front };
-		frustum.rightFace = { cam.Position, glm::cross(frontMultFar - cam.Right * halfHSide, cam.Up) };
-		frustum.leftFace = { cam.Position, glm::cross(cam.Up, frontMultFar + cam.Right * halfHSide) };
-		frustum.topFace = { cam.Position, glm::cross(cam.Right, frontMultFar - cam.Up * halfVSide) };
-		frustum.bottomFace = { cam.Position, glm::cross(frontMultFar + cam.Up * halfVSide, cam.Right) };
+		frustum.nearFace = { cam.position + zNear * cam.front, cam.front };
+		frustum.farFace = { cam.position + frontMultFar, -cam.front };
+		frustum.rightFace = { cam.position, glm::cross(frontMultFar - cam.right * halfHSide, cam.up) };
+		frustum.leftFace = { cam.position, glm::cross(cam.up, frontMultFar + cam.right * halfHSide) };
+		frustum.topFace = { cam.position, glm::cross(cam.right, frontMultFar - cam.up * halfVSide) };
+		frustum.bottomFace = { cam.position, glm::cross(frontMultFar + cam.up * halfVSide, cam.right) };
 		return frustum;
 	}
 

@@ -98,10 +98,10 @@ public:
 
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, -5.0f, 2.0f);
-        camera.Fps = false;
-        camera.Zoom = 75.0f;
-        camera.MovementSpeed = 10.0f;
+        camera.position = glm::vec3(0.0f, -5.0f, 2.0f);
+        camera.fps = false;
+        camera.zoom = 75.0f;
+        camera.movementSpeed = 10.0f;
 
         ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/cliff/albedo.jpg",
@@ -354,7 +354,7 @@ private:
 
 
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
 

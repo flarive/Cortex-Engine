@@ -70,11 +70,8 @@ namespace engine
         std::shared_ptr<Entity> rootEntity{};
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
+        std::vector<std::shared_ptr<engine::Camera>> cameras{};
 
-
-        //Shader skyboxReflectShader{};
-
-        
 
         Scene(std::string _title, App* _app, SceneSettings _settings);
 

@@ -250,7 +250,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // initialize static shader uniforms before rendering
     // --------------------------------------------------
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
 
@@ -273,13 +273,13 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->GetViewMatrix();
 
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
     pbrShader.setMat4("view", view);
-    pbrShader.setVec3("viewPos", camera->Position);
+    pbrShader.setVec3("viewPos", camera->position);
 
     if (m_lights.size() > 0)
         pbrShader.setVec3("lightPos", m_lights[0]->getPosition());
@@ -325,26 +325,15 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 void engine::PbrRenderer::loadShaders()
 {
     pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
-
-
-    // color framebuffer to screen shader
-    screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
-
-    // skybox reflection shader
-    skyboxReflectShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
-
-    simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
-    debugDepthQuad.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
-
-
-
-    // PBR
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
     prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
     brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
 
+    // HDR skybox shader
     backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
+
+    Renderer::loadShaders();
 }
 
 void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)

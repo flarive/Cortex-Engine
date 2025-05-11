@@ -23,11 +23,11 @@ namespace engine
 		Shader screenShader{};
 
 		// Shader that renders a depth framebuffer for shadow maps
-		Shader simpleDepthShader{};
-		Shader debugDepthQuad{};
+		Shader depthMapShader{};
+		Shader depthMapToQuadShader{};
 
-		Shader skyboxReflectShader{};
-		Shader backgroundShader{};
+		
+		
 
 		
 		Renderer(GLFWwindow* window, const SceneSettings& settings);
@@ -53,9 +53,8 @@ namespace engine
 		// shadow maps texture size
 		const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
 
-		unsigned int rbo{}; // renderbuffer object
-
-		
+		// renderbuffer object to render the main framebuffer
+		unsigned int rbo{};
 
 		// main framebuffer
 		unsigned int colorFramebuffer{};
@@ -92,6 +91,9 @@ namespace engine
 		unsigned short m_pointLightCount{};
 
 
+		virtual void loadShaders() = 0;
+
+
 		void enableDepthTest(bool enable);
 		void enableFaceCulling(bool enable);
 		void enableAntiAliasing(bool enable);
@@ -105,27 +107,23 @@ namespace engine
 
 		// renderCube() renders a 1x1 3D cube in NDC.
 		// -------------------------------------------------
-		unsigned int cubeVAO{};
-		unsigned int cubeVBO{};
+		unsigned int m_cubeVAO{};
+		unsigned int m_cubeVBO{};
 		void renderCube();
 
 
 		// renderQuad() renders a 1x1 XY quad in NDC
 		// -----------------------------------------
-		unsigned int quadVAO{};
-		unsigned int quadVBO{};
+		unsigned int m_quadVAO{};
+		unsigned int m_quadVBO{};
 		void renderQuad();
 
 
 
 		// renders (and builds at first invocation) a sphere
 		// -------------------------------------------------
-		unsigned int sphereVAO{};
-		GLsizei indexCount{};
+		unsigned int m_sphereVAO{};
+		GLsizei m_indexCount{};
 		void renderSphere();
-
-
-	private:
-
 	};
 }

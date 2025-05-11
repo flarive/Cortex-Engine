@@ -80,10 +80,10 @@ public:
         
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
-        camera.Fps = false;
-        camera.Zoom = 100.0f;
-        camera.MovementSpeed = 10.0f;
+        camera.position = glm::vec3(0.0f, -8.0f, 2.0f);
+        camera.fps = false;
+        camera.zoom = 100.0f;
+        camera.movementSpeed = 10.0f;
 
 
         //engine::Model model = engine::Model("models/sphere/smooth_sphere_80.obj");
@@ -249,7 +249,7 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
         // render the loaded model

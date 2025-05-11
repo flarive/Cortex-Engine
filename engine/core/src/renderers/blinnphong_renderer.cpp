@@ -75,16 +75,10 @@ void engine::BlinnPhongRenderer::loadShaders()
     // blinn phong illumination model and lightning shader
     blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
 
-    // color framebuffer to screen shader
-    screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
-
     // skybox reflection shader
-    skyboxReflectShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
+    skyboxShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
-    simpleDepthShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
-    debugDepthQuad.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
-
-    backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
+    Renderer::loadShaders();
 }
 
 void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)

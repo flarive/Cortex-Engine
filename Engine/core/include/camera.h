@@ -32,29 +32,30 @@ namespace engine
     {
     public:
         // camera Attributes
-        glm::vec3 Position{};
-        glm::vec3 Front{};
-        glm::vec3 Up{};
-        glm::vec3 Right{};
-        glm::vec3 WorldUp{};
+        std::string name{};
+        glm::vec3 position{};
+        glm::vec3 front{};
+        glm::vec3 up{};
+        glm::vec3 right{};
+        glm::vec3 worldUp{};
         // euler Angles
-        float Yaw{};
-        float Pitch{};
+        float yaw{};
+        float pitch{};
         // camera options
-        float MovementSpeed{};
-        float MouseSensitivity{};
-        float Zoom{};
+        float movementSpeed{};
+        float mouseSensitivity{};
+        float zoom{};
 
-        bool Fps{ false};
+        bool fps{ false};
 
 
 
 
         // constructor with vectors
-        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), bool fps = false, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+        Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), bool _fps = false, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
         // constructor with scalar values
-        Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, bool fps);
+        Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch, bool _fps);
 
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix

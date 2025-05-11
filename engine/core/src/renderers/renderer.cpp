@@ -7,6 +7,16 @@ engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& sett
 }
 
 
+void engine::Renderer::loadShaders()
+{
+    // color framebuffer to screen shader
+    screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+
+    depthMapShader.init("simpleDepthBuffer", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+    depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
+}
+
+
 void engine::Renderer::enableDepthTest(bool enable)
 {
     // enable z buffer (depth test) to have correct objects depth ordering
@@ -74,8 +84,8 @@ void engine::Renderer::initDepthMapFramebuffer()
 
     // shader configuration
     // --------------------
-    debugDepthQuad.use();
-    debugDepthQuad.setInt("depthMap", 0);
+    depthMapToQuadShader.use();
+    depthMapToQuadShader.setInt("depthMap", 0);
 }
 
 void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
@@ -93,8 +103,8 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     lightView = glm::lookAt(light_position, light_target, glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
     // render scene from light's point of view
-    simpleDepthShader.use();
-    simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    depthMapShader.use();
+    depthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
@@ -103,7 +113,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
 
     glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
     glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-    update(simpleDepthShader);
+    update(depthMapShader);
     glDisable(GL_POLYGON_OFFSET_FILL);
 
 
@@ -128,9 +138,9 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
 
     // 3. render Depth map to dedicated framebuffer
     // --------------------------------------------
-    debugDepthQuad.use();
-    debugDepthQuad.setFloat("near_plane", near_plane);
-    debugDepthQuad.setFloat("far_plane", far_plane);
+    depthMapToQuadShader.use();
+    depthMapToQuadShader.setFloat("near_plane", near_plane);
+    depthMapToQuadShader.setFloat("far_plane", far_plane);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
 
@@ -184,7 +194,7 @@ void engine::Renderer::computeColorFramebuffer()
 void engine::Renderer::renderCube()
 {
     // initialize (if necessary)
-    if (cubeVAO == 0)
+    if (m_cubeVAO == 0)
     {
         float vertices[] = {
             // back face
@@ -230,13 +240,13 @@ void engine::Renderer::renderCube()
              -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
              -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
         };
-        glGenVertexArrays(1, &cubeVAO);
-        glGenBuffers(1, &cubeVBO);
+        glGenVertexArrays(1, &m_cubeVAO);
+        glGenBuffers(1, &m_cubeVBO);
         // fill buffer
-        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_cubeVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
         // link vertex attributes
-        glBindVertexArray(cubeVAO);
+        glBindVertexArray(m_cubeVAO);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
@@ -247,7 +257,7 @@ void engine::Renderer::renderCube()
         glBindVertexArray(0);
     }
     // render Cube
-    glBindVertexArray(cubeVAO);
+    glBindVertexArray(m_cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
@@ -255,7 +265,7 @@ void engine::Renderer::renderCube()
 
 void engine::Renderer::renderQuad()
 {
-    if (quadVAO == 0)
+    if (m_quadVAO == 0)
     {
         float quadVertices[] = {
             // positions        // texture Coords
@@ -265,26 +275,26 @@ void engine::Renderer::renderQuad()
              1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
         };
         // setup plane VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glGenVertexArrays(1, &m_quadVAO);
+        glGenBuffers(1, &m_quadVBO);
+        glBindVertexArray(m_quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     }
-    glBindVertexArray(quadVAO);
+    glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }
 
 void engine::Renderer::renderSphere()
 {
-    if (sphereVAO == 0)
+    if (m_sphereVAO == 0)
     {
-        glGenVertexArrays(1, &sphereVAO);
+        glGenVertexArrays(1, &m_sphereVAO);
 
         unsigned int vbo, ebo;
         glGenBuffers(1, &vbo);
@@ -335,7 +345,7 @@ void engine::Renderer::renderSphere()
             }
             oddRow = !oddRow;
         }
-        indexCount = static_cast<GLsizei>(indices.size());
+        m_indexCount = static_cast<GLsizei>(indices.size());
 
         std::vector<float> data;
         for (unsigned int i = 0; i < positions.size(); ++i)
@@ -355,7 +365,7 @@ void engine::Renderer::renderSphere()
                 data.push_back(uv[i].y);
             }
         }
-        glBindVertexArray(sphereVAO);
+        glBindVertexArray(m_sphereVAO);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -369,8 +379,8 @@ void engine::Renderer::renderSphere()
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
     }
 
-    glBindVertexArray(sphereVAO);
-    glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(m_sphereVAO);
+    glDrawElements(GL_TRIANGLE_STRIP, m_indexCount, GL_UNSIGNED_INT, 0);
 }
 
 

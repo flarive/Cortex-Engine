@@ -18,17 +18,6 @@ namespace engine
     /// </summary>
     class App : private NonCopyable
     {
-    private:
-
-    protected:
-        //float framerate{};
-
-        // timing
-        //float deltaTime{}; // time between current frame and last frame
-        //float lastFrame{};
-
-
-
     public:
         GLFWwindow* window{};
 

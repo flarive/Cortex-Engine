@@ -4,6 +4,8 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
+#include "core/include/renderers/blinnphong_renderer.h"
+
 
 class MyScene1 : public engine::Scene
 {
@@ -68,10 +70,10 @@ public:
 
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
-        camera.Fps = true;
-        camera.Zoom = 25.0f;
-        camera.MovementSpeed = 10.0f;
+        camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
+        camera.fps = true;
+        camera.zoom = 25.0f;
+        camera.movementSpeed = 10.0f;
 
         std::vector<std::string> faces
         {
@@ -214,7 +216,7 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
     
     
@@ -230,7 +232,7 @@ private:
     
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", camera.Position);
+        shader.setVec3("viewPos", camera.position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
     
@@ -244,11 +246,15 @@ private:
         cushionModel.draw(shader, glm::vec3(-1.0f, -0.15f, 0.0f), glm::vec3(0.2f));
 
         // activate skybox reflection shader
-        getRenderer()->skyboxReflectShader.use();
-        getRenderer()->skyboxReflectShader.setMat4("view", view);
-        getRenderer()->skyboxReflectShader.setMat4("projection", projection);
-        getRenderer()->skyboxReflectShader.setVec3("cameraPos", camera.Position);
-    
+        auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
+        if (zzz)
+        {
+            zzz->skyboxShader.use();
+            zzz->skyboxShader.setMat4("view", view);
+            zzz->skyboxShader.setMat4("projection", projection);
+            zzz->skyboxShader.setVec3("cameraPos", camera.position);
+        }
+
         ourSkybox.draw(projection, view);
     }
     

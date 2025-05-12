@@ -9,6 +9,14 @@ You can choose between 2 rendering illumination model :
 - Blinn Phong (Legacy)
 - Physically Based Rendering (aka PBR) (default)
 
+
+![Screenshot](images/blinnphong_cushion.jpg)
+
+![Screenshot](images/pbr_cushion.jpg)
+
+
+
+
 Main features :
 - Camera
 - Lights (omni, spot, directional)

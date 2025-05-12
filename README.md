@@ -15,14 +15,22 @@ You can choose between 2 rendering illumination model :
 ![Screenshot](images/pbr_cushion.jpg)
 
 
-
-
 Main features :
 - Camera
 - Lights (omni, spot, directional)
-- Shadows
+- Shadows (shadow maps using depth buffer)
 - Simple animations
 - Skybox (cubemap)
+- PBR supported textures : Diffuse, Normal, Metalness, Roughness, AmbientOcclusion
+- Blinn Phong supported textures : Diffuse, Specular, Normal
+- Debug imGUI windows
+- Toggle windowed/fullscreen
+
+![Screenshot](images/pbr_spheres.jpg)
+
+![Screenshot](images/pbr_bouddha.jpg)
+
+![Screenshot](images/pbr_helmets.jpg)  
 
 Tech :
 - OpenGL
@@ -30,3 +38,5 @@ Tech :
 - GLFW
 - imGUI
 - Assimp
+
+

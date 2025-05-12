@@ -17,10 +17,10 @@ You can choose between 2 rendering illumination model :
 
 
 Main features :
+- Framebuffer and post processing using GLSL shaders
 - Camera
 - Lights (omni, spot, directional)
 - Shadows (shadow maps using depth buffer)
-- Framebuffer and post processing using GLSL shaders
 - Simple animations
 - Skybox (cubemap)
 - PBR supported textures : Diffuse, Normal, Metalness, Roughness, AmbientOcclusion

@@ -1,5 +1,7 @@
 #include "../../include/renderers/pbr_renderer.h"
 
+#include "../../include/tools/file_system.h"
+
 
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
     : Renderer(window, settings)
@@ -26,26 +28,22 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // -------------------------
     loadShaders();
 
+
+    // shader configuration
+    // --------------------
     pbrShader.use();
     pbrShader.setInt("material.texture_irradiance", 7);
     pbrShader.setInt("material.texture_prefilter", 8);
     pbrShader.setInt("material.texture_brdfLUT", 9);
-
     pbrShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
     pbrShader.setFloat("material.iblDiffuseIntensity", m_settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", m_settings.iblSpecularIntensity); // [0.0, 5.0]
-
-
-
-
 
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
     backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
     backgroundShader.setFloat("blurStrength", m_settings.HDRSkyboxBlurStrength);
 
-    // shader configuration
-    // --------------------
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
 

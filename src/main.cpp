@@ -15,7 +15,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene1;
+using MyScene = MyScene7;
 
 
 engine::App* app{};
@@ -26,16 +26,10 @@ engine::Scene* scene{};
 
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
-#ifdef __cplusplus
 extern "C" {
-#endif
-
     __declspec(dllexport) uint32_t NvOptimusEnablement = 1;
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-
-#ifdef __cplusplus
 }
-#endif
 
 
 

@@ -98,7 +98,7 @@ public:
 
 
         // override default camera properties
-        camera.position = glm::vec3(0.0f, -5.0f, 2.0f);
+        camera.position = glm::vec3(0.0f, -12.0f, 2.0f);
         camera.fps = false;
         camera.zoom = 75.0f;
         camera.movementSpeed = 10.0f;

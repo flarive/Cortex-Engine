@@ -1,5 +1,7 @@
 #include "../../include/renderers/blinnphong_renderer.h"
 
+#include "../../include/tools/file_system.h"
+
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
     : Renderer(window, settings)

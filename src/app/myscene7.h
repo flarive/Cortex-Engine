@@ -263,14 +263,11 @@ private:
             shader.setMat4("model", lastEntity->transform.getModelMatrix());
             if (lastEntity->model)
             {
-                //auto zz = lastEntity->transform.getLocalRotation();
-
                 lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, rotation, 0.0f));
                 lastEntity = lastEntity->children.back();
             }
         }
 
-        //rootEntity->transform.setLocalRotation({ 0.f, rootEntity->transform.getLocalRotation().y + 20 * deltaTime, 0.f });
         rootEntity->updateSelfAndChild();
 
 

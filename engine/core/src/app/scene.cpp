@@ -67,6 +67,7 @@ void engine::Scene::initialize()
 
     init();
 
+    // renderer setup
     m_renderer->setup(app->width, app->height, std::make_shared<Camera>(camera), lights);
 
     after_init();
@@ -80,7 +81,6 @@ void engine::Scene::gameLoop()
     if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
     {
         ImGui_ImplGlfw_Sleep(10);
-        //continue;
         return;
     }
 
@@ -93,7 +93,6 @@ void engine::Scene::gameLoop()
 
     if (show_window)
     {
-        //m_debug.setScene(this->rootEntity);
         m_debug.renderUIWindow(show_window);
     }
 
@@ -110,18 +109,39 @@ void engine::Scene::gameLoop()
     beginQuery();
 
 
-    // Lambda to update the shader (e.g., set uniforms)
-    auto updateShader = [this](Shader& shader) {
+
+    
+
+
+
+
+    // Lambda to update
+    auto updateLambda = [this](Shader& shader) {
         update(shader);
+
+
+        // draw our scene graph
+        std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+        while (lastEntity->children.size())
+        {
+            shader.setMat4("model", lastEntity->transform.getModelMatrix());
+            if (lastEntity->model)
+            {
+                lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, 0.0f, 0.0f));
+                lastEntity = lastEntity->children.back();
+            }
+        }
+
+        rootEntity->updateSelfAndChild();
         };
 
     // Lambda to update the UI
-    auto updateUIShader = [this]() {
+    auto updateUILambda = [this]() {
         updateUI();
         };
 
     // Call the method
-    m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateShader, updateUIShader);
+    m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateLambda, updateUILambda);
 
 
 

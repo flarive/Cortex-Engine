@@ -20,7 +20,7 @@ Main features :
 - Framebuffer and post processing using GLSL shaders
 - Camera
 - Lights (omni, spot, directional)
-- Shadows (deffered rendering shadow maps using depth buffer)
+- Shadows (deferred rendering shadow maps using depth buffer)
 - Simple animations
 - Skybox (cubemap)
 - PBR supported textures : Diffuse, Normal, Metalness, Roughness, AmbientOcclusion

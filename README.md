@@ -1,7 +1,7 @@
 # Simple OpenGL realtime 3D engine
 
 
-Cortex Engine is a user friendly simple realtime 3D engine.
+Cortex Engine is a user friendly GPU simple realtime 3D engine using GLSL shaders.
 It handles builtin primitives such as plane, sphere, cube, billboard and also model loading (obj, fbx, glTF...)
 
 
@@ -19,6 +19,7 @@ Main features :
 - Camera
 - Lights (omni, spot, directional)
 - Shadows (shadow maps using depth buffer)
+- Framebuffer and post processing using GLSL shaders
 - Simple animations
 - Skybox (cubemap)
 - PBR supported textures : Diffuse, Normal, Metalness, Roughness, AmbientOcclusion

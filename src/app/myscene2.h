@@ -53,10 +53,10 @@ public:
         lights.emplace_back(mySpotLight);
 
         // override default camera properties
-        camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
-        camera.fps = true;
-        camera.zoom = 25.0f;
-        camera.movementSpeed = 10.0f;
+        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
+        camera.Fps = true;
+        camera.Zoom = 25.0f;
+        camera.MovementSpeed = 10.0f;
 
         cushionModel = engine::Model("models/cushion/cushion.obj");
 
@@ -180,7 +180,7 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
@@ -190,7 +190,7 @@ private:
 
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", camera.position);
+        shader.setVec3("viewPos", camera.Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
 

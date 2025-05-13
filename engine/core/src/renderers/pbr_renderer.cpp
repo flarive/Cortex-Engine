@@ -3,12 +3,14 @@
 #include "../../include/tools/file_system.h"
 
 
+
+
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
     : Renderer(window, settings)
 {
 }
 
-void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights)
+void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
     
@@ -346,4 +348,9 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
     pbrShader.setInt("pointLightsCount", m_pointLightCount);
     pbrShader.setInt("dirLightsCount", m_dirLightCount);
     pbrShader.setInt("spotLightsCount", m_spotLightCount);
+}
+
+engine::Shader& engine::PbrRenderer::getShader()
+{
+    return pbrShader;
 }

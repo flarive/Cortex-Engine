@@ -3,6 +3,8 @@
 #include "../../include/tools/file_system.h"
 
 
+
+
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
     : Renderer(window, settings)
 {
@@ -95,4 +97,9 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
     blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
     blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
+}
+
+engine::Shader& engine::BlinnPhongRenderer::getShader()
+{
+    return blinnPhongShader;
 }

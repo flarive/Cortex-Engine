@@ -33,13 +33,15 @@ namespace engine
 		Renderer(GLFWwindow* window, const SceneSettings& settings);
 		virtual ~Renderer() = default;
 
-		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights) = 0;
+		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
 		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
 
 		void initColorFramebuffer(int width, int height);
 
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) = 0;
+
+		virtual Shader& getShader() = 0;
 
 	protected:
 		GLFWwindow* m_window{};
@@ -48,7 +50,7 @@ namespace engine
 
 		SceneSettings m_settings{};
 
-		std::vector<std::shared_ptr<engine::Light>> m_lights{};
+		std::vector<std::shared_ptr<Light>> m_lights{};
 
 		// shadow maps texture size
 		const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };

@@ -118,27 +118,31 @@ void engine::Scene::gameLoop()
     // Lambda to update
     auto updateLambda = [this](Shader& shader) {
         update(shader);
-
-
-        // draw our scene graph
-        std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-        while (lastEntity->children.size())
-        {
-            shader.setMat4("model", lastEntity->transform.getModelMatrix());
-            if (lastEntity->model)
-            {
-                lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, 0.0f, 0.0f));
-                lastEntity = lastEntity->children.back();
-            }
-        }
-
-        rootEntity->updateSelfAndChild();
         };
 
     // Lambda to update the UI
     auto updateUILambda = [this]() {
         updateUI();
         };
+
+
+
+
+    // draw our scene graph
+    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+    while (lastEntity->children.size())
+    {
+        m_renderer->getShader().setMat4("model", lastEntity->transform.getModelMatrix());
+        if (lastEntity->model)
+        {
+            lastEntity->model->draw(m_renderer->getShader(), lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, 0.0f, 0.0f));
+            lastEntity = lastEntity->children.back();
+        }
+    }
+
+    rootEntity->updateSelfAndChild();
+
+
 
     // Call the method
     m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateLambda, updateUILambda);

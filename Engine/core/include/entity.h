@@ -226,17 +226,21 @@ namespace engine
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-		for (auto&& mesh : model->meshes)
-		{
-			for (auto&& vertex : mesh.vertices)
-			{
-				minAABB.x = std::min(minAABB.x, vertex.position.x);
-				minAABB.y = std::min(minAABB.y, vertex.position.y);
-				minAABB.z = std::min(minAABB.z, vertex.position.z);
 
-				maxAABB.x = std::max(maxAABB.x, vertex.position.x);
-				maxAABB.y = std::max(maxAABB.y, vertex.position.y);
-				maxAABB.z = std::max(maxAABB.z, vertex.position.z);
+		if (model)
+		{
+			for (auto&& mesh : model->meshes)
+			{
+				for (auto&& vertex : mesh.vertices)
+				{
+					minAABB.x = std::min(minAABB.x, vertex.position.x);
+					minAABB.y = std::min(minAABB.y, vertex.position.y);
+					minAABB.z = std::min(minAABB.z, vertex.position.z);
+
+					maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+					maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+					maxAABB.z = std::max(maxAABB.z, vertex.position.z);
+				}
 			}
 		}
 		return AABB(minAABB, maxAABB);
@@ -246,6 +250,7 @@ namespace engine
 	{
 		glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+		
 		for (auto&& mesh : model.meshes)
 		{
 			for (auto&& vertex : mesh.vertices)
@@ -259,7 +264,7 @@ namespace engine
 				maxAABB.z = std::max(maxAABB.z, vertex.position.z);
 			}
 		}
-
+		
 		return SphereVolume((maxAABB + minAABB) * 0.5f, glm::length(minAABB - maxAABB));
 	}
 
@@ -267,17 +272,25 @@ namespace engine
 	{
 	public:
 		//Scene graph
-		std::list<std::shared_ptr<Entity>> children;
+		std::list<std::shared_ptr<Entity>> children{};
 		
 		
-		Entity* parent = nullptr;
+		Entity* parent{};
 
 		//Space information
-		Transform transform;
+		Transform transform{};
 
-		std::string name;
-		std::shared_ptr<Model> model;
-		std::unique_ptr<AABB> boundingVolume;
+		std::string name{};
+		std::shared_ptr<Model> model{};
+		std::unique_ptr<AABB> boundingVolume{};
+
+
+		// constructor, expects a filepath to a 3D model.
+		Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform) : name{ _name }, model{ _model }, transform{ _transform }
+		{
+			boundingVolume = std::make_unique<AABB>(generateAABB(_model));
+			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
+		}
 
 		// constructor, expects a filepath to a 3D model.
 		Entity(const std::string& _name, std::shared_ptr<Model> _model) : name{ _name }, model{ _model }
@@ -291,6 +304,11 @@ namespace engine
 		{
 			boundingVolume = std::make_unique<AABB>(generateAABB(_model));
 			//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
+		}
+
+		// constructor, expects just a name
+		Entity(const std::string& _name) : name{ _name }
+		{
 		}
 
 		AABB getGlobalAABB()
@@ -323,7 +341,13 @@ namespace engine
 		template<typename... TArgs>
 		void addChild(const std::string& name, TArgs&... args)
 		{
-			children.emplace_back(std::make_unique<Entity>(name, args...));
+			children.emplace_back(std::make_shared<Entity>(name, args...));
+			children.back()->parent = this;
+		}
+
+		void addChild(std::shared_ptr<Entity> entity)
+		{
+			children.emplace_back(entity);
 			children.back()->parent = this;
 		}
 
@@ -354,6 +378,42 @@ namespace engine
 				child->forceUpdateSelfAndChild();
 			}
 		}
+
+
+		//void updateSelfAndChild()
+		//{
+		//	// Always update self if dirty
+		//	if (transform.isDirty()) {
+		//		if (parent)
+		//			transform.computeModelMatrix(parent->transform.getModelMatrix());
+		//		else
+		//			transform.computeModelMatrix();
+
+		//		transform.clearDirty();
+		//	}
+
+		//	// Always check and update children
+		//	for (auto&& child : children)
+		//	{
+		//		child->updateSelfAndChild();
+		//	}
+		//}
+
+
+		//void forceUpdateSelfAndChild()
+		//{
+		//	if (parent)
+		//		transform.computeModelMatrix(parent->transform.getModelMatrix());
+		//	else
+		//		transform.computeModelMatrix();
+
+		//	transform.clearDirty(); // Ensure it's marked clean
+
+		//	for (auto&& child : children)
+		//	{
+		//		child->forceUpdateSelfAndChild();
+		//	}
+		//}
 
 
 		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)

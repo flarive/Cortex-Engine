@@ -12,6 +12,9 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     {
         m_renderer = new BlinnPhongRenderer(app->window, settings);
     }
+
+    // create scene entities hierarchy
+    rootEntity = std::make_shared<engine::Entity>("Root");
 }
 
 void engine::Scene::before_init()
@@ -118,6 +121,9 @@ void engine::Scene::gameLoop()
     // Lambda to update
     auto updateLambda = [this](Shader& shader) {
         update(shader);
+
+        // draw our scene graph
+        drawEntities(shader);
         };
 
     // Lambda to update the UI
@@ -126,26 +132,11 @@ void engine::Scene::gameLoop()
         };
 
 
-
-
-    // draw our scene graph
-    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-    while (lastEntity->children.size())
-    {
-        m_renderer->getShader().setMat4("model", lastEntity->transform.getModelMatrix());
-        if (lastEntity->model)
-        {
-            lastEntity->model->draw(m_renderer->getShader(), lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, 0.0f, 0.0f));
-            lastEntity = lastEntity->children.back();
-        }
-    }
-
-    rootEntity->updateSelfAndChild();
-
-
-
     // Call the method
     m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateLambda, updateUILambda);
+
+    
+
 
 
 
@@ -167,6 +158,24 @@ void engine::Scene::gameLoop()
 
     auto end_time = std::chrono::high_resolution_clock::now();
     std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
+}
+
+void engine::Scene::drawEntities(Shader& shader)
+{
+    // draw our scene graph
+    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+    while (lastEntity && lastEntity->children.size() > 0)
+    {
+        //shader.setMat4("model", lastEntity->transform.getModelMatrix());
+        if (lastEntity->model)
+        {
+            lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), lastEntity->transform.getLocalRotation());
+        }
+
+        lastEntity = lastEntity->children.back();
+    }
+
+    rootEntity->updateSelfAndChild();
 }
 
 void engine::Scene::exit()

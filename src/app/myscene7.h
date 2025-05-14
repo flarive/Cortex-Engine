@@ -86,18 +86,14 @@ public:
         camera.MovementSpeed = 10.0f;
 
 
-        //engine::Model model = engine::Model("models/sphere/smooth_sphere_80.obj");
+        
 
         std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
-
-        rootEntity = std::make_shared<engine::Entity>("Root", model);
-        rootEntity->transform.setLocalPosition({ 0.0f, 0.0f, 0.0f });
-        rootEntity->transform.setLocalScale(glm::vec3(0.0f));
 
         {
             std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
-            float offset = 0.0f;
+            float offset = -15.0f;
             for (unsigned int i = 0; i < 10; ++i)
             {
                 lastEntity->addChild(std::format("Child{}", i), model);
@@ -108,10 +104,33 @@ public:
                 lastEntity->transform.setLocalScale(glm::vec3(2.0f));
                 lastEntity->transform.setLocalRotation({ 0.0f, 0.0f, 0.0f });
 
-                offset += 2.0f;
+                offset += 5.0f;
             }
         }
         rootEntity->updateSelfAndChild();
+
+
+
+        //float offset = -15.0f;
+        //for (unsigned int i = 1; i <= 10; ++i)
+        //{
+        //    auto trs = engine::Transform{};
+        //    trs.setLocalPosition({ offset, -10.0f, -10.0f });
+        //    trs.setLocalScale(glm::vec3(2.0f));
+        //    trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+
+        //    std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+
+        //    rootEntity->addChild(entity);
+
+        //    offset += 5.0f;
+        //}
+        //
+        //rootEntity->updateSelfAndChild();
+
+
+
 
 
 
@@ -251,25 +270,6 @@ private:
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
-
-        // render the loaded model
-        //helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
-
-        // draw our scene graph
-        //std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-        //while (lastEntity->children.size())
-        //{
-        //    shader.setMat4("model", lastEntity->transform.getModelMatrix());
-        //    if (lastEntity->model)
-        //    {
-        //        lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), glm::vec3(0.0f, rotation, 0.0f));
-        //        lastEntity = lastEntity->children.back();
-        //    }
-        //}
-
-        //rootEntity->updateSelfAndChild();
-
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 120.0f);

@@ -118,6 +118,12 @@ namespace engine
 		{
 			return m_isDirty;
 		}
+
+		void clearDirty()
+		{
+			m_isDirty = false;
+		}
+		
 	};
 }
 

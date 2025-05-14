@@ -12,8 +12,6 @@ engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsign
 // render the mesh
 void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
 {
-    //assert(!m_material);
-
     assert(m_material);
     
     m_material->bind(shader); // Bind material textures
@@ -24,7 +22,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
-    model = glm::rotate(model, glm::radians(angle), rotation);
+    if (angle > 0.0f) model = glm::rotate(model, glm::radians(angle), rotation);
     model = glm::scale(model, scale);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

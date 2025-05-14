@@ -101,6 +101,8 @@ namespace engine
         GLFWwindow* getWindow();
 
         Renderer* getRenderer() { return m_renderer; };
+
+        void drawEntities(Shader& shader);
         
 
         // glfw: whenever a key is pressed or released, this callback is called

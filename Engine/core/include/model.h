@@ -35,6 +35,11 @@ namespace engine
         // constructor, expects a filepath to a 3D model.
         Model(std::string const& path, bool gamma = false);
 
+
+        
+
+
+
         // draws the model, and thus all its meshes
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f));
 

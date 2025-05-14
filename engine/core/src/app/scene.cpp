@@ -166,7 +166,7 @@ void engine::Scene::drawEntities(Shader& shader)
     std::shared_ptr<engine::Entity> lastEntity = rootEntity;
     while (lastEntity && lastEntity->children.size() > 0)
     {
-        //shader.setMat4("model", lastEntity->transform.getModelMatrix());
+        shader.setMat4("model", lastEntity->transform.getModelMatrix());
         if (lastEntity->model)
         {
             lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), lastEntity->transform.getLocalRotation());

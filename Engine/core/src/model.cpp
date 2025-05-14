@@ -21,7 +21,7 @@ void engine::Model::loadModel(std::string const& path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace); //aiProcess_FlipUVs
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace | aiProcess_FlipUVs); //aiProcess_FlipUVs
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
@@ -236,9 +236,6 @@ unsigned int engine::TextureFromFile(const char* path, const std::string& direct
 
     //int width, height, nrComponents;
     int width = 0, height = 0, nrComponents = 0;
-    //unsigned char* data = nullptr;// stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-
-    //std::string aaa = file_system::getPath(filename);
     unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
     if (data)

@@ -44,8 +44,7 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
-    //app = new MyApp("MyApp", 1280, 720, false);
-    app = new MyApp("MyApp", 640, 480, false);
+    app = new MyApp("MyApp", 1280, 720, false);
     if (app)
     {
         scene = new MyScene("MyScene", app);

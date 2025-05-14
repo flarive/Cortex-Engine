@@ -94,7 +94,7 @@ public:
             std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
             float offset = -15.0f;
-            for (unsigned int i = 0; i < 10; ++i)
+            for (unsigned int i = 0; i < 8; ++i)
             {
                 lastEntity->addChild(std::format("Child{}", i), model);
                 lastEntity = lastEntity->children.back();
@@ -102,7 +102,7 @@ public:
                 //Set transform values
                 lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
                 lastEntity->transform.setLocalScale(glm::vec3(2.0f));
-                lastEntity->transform.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+                lastEntity->transform.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
                 offset += 5.0f;
             }
@@ -286,6 +286,6 @@ private:
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-        ourSprite.draw(glm::vec2(50, app->height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
+        ourSprite.draw(glm::vec2(50, app->height - 50), glm::vec2(50.0f, -50.0f), 0.0f, glm::vec3(1.0f));
     }
 };

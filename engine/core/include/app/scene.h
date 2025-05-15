@@ -103,6 +103,7 @@ namespace engine
         Renderer* getRenderer() { return m_renderer; };
 
         void drawEntities(Shader& shader);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);
         
 
         // glfw: whenever a key is pressed or released, this callback is called

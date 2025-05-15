@@ -90,44 +90,44 @@ public:
 
         std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
 
-        {
-            std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-
-            float offset = -15.0f;
-            for (unsigned int i = 0; i < 8; ++i)
-            {
-                lastEntity->addChild(std::format("Child{}", i), model);
-                lastEntity = lastEntity->children.back();
-
-                //Set transform values
-                lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
-                lastEntity->transform.setLocalScale(glm::vec3(2.0f));
-                lastEntity->transform.setLocalRotation({ 0.0f, 180.0f, 0.0f });
-
-                offset += 5.0f;
-            }
-        }
-        rootEntity->updateSelfAndChild();
-
-
-
-        //float offset = -15.0f;
-        //for (unsigned int i = 1; i <= 10; ++i)
         //{
-        //    auto trs = engine::Transform{};
-        //    trs.setLocalPosition({ offset, -10.0f, -10.0f });
-        //    trs.setLocalScale(glm::vec3(2.0f));
-        //    trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+        //    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
+        //    float offset = -15.0f;
+        //    for (unsigned int i = 0; i < 8; ++i)
+        //    {
+        //        lastEntity->addChild(std::format("Child{}", i), model);
+        //        lastEntity = lastEntity->children.back();
 
-        //    std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+        //        //Set transform values
+        //        lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
+        //        lastEntity->transform.setLocalScale(glm::vec3(2.0f));
+        //        lastEntity->transform.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-        //    rootEntity->addChild(entity);
-
-        //    offset += 5.0f;
+        //        offset += 5.0f;
+        //    }
         //}
-        //
         //rootEntity->updateSelfAndChild();
+
+
+
+        float offset = -15.0f;
+        for (unsigned int i = 1; i <= 10; ++i)
+        {
+            auto trs = engine::Transform{};
+            trs.setLocalPosition({ offset, -10.0f, -10.0f });
+            trs.setLocalScale(glm::vec3(2.0f));
+            trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+
+
+            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+
+            rootEntity->addChild(entity);
+
+            offset += 5.0f;
+        }
+        
+        rootEntity->updateSelfAndChild();
 
 
 

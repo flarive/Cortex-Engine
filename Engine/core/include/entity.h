@@ -338,23 +338,37 @@ namespace engine
 
 		//Add child.
 		//Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
+		//template<typename... TArgs>
+		//void addChild(const std::string& name, TArgs&... args)
+		//{
+		//	children.emplace_back(std::make_shared<Entity>(name, args...));
+		//	children.back()->parent = this;
+		//}
+
+
 		template<typename... TArgs>
-		void addChild(const std::string& name, TArgs&... args)
+		void addChild(const std::string& name, TArgs&&... args)
 		{
-			children.emplace_back(std::make_shared<Entity>(name, args...));
+			children.emplace_back(std::make_shared<Entity>(name, std::forward<TArgs>(args)...));
 			children.back()->parent = this;
 		}
 
+
 		void addChild(std::shared_ptr<Entity> entity)
 		{
-			children.emplace_back(entity);
-			children.back()->parent = this;
+			if (entity->parent != nullptr) {
+				// Optional: throw, log warning, or remove from previous parent
+				return;
+			}
+
+			entity->parent = this;
+			children.emplace_back(std::move(entity));
 		}
 
 		//Update transform if it was changed
 		void updateSelfAndChild()
 		{
-			if (transform.isDirty()) {
+			/*if (transform.isDirty()) {
 				forceUpdateSelfAndChild();
 				return;
 			}
@@ -362,6 +376,18 @@ namespace engine
 			for (auto&& child : children)
 			{
 				child->updateSelfAndChild();
+			}*/
+
+			if (transform.isDirty()) {
+				// Update current node and propagate to children
+				forceUpdateSelfAndChild();
+			}
+			else {
+				// Still update children because they may be dirty themselves
+				for (auto&& child : children)
+				{
+					child->updateSelfAndChild();
+				}
 			}
 		}
 

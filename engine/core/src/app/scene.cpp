@@ -160,23 +160,51 @@ void engine::Scene::gameLoop()
     std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
 }
 
+//void engine::Scene::drawEntities(Shader& shader)
+//{
+//    // draw our scene graph
+//    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+//    while (lastEntity && lastEntity->children.size() > 0)
+//    {
+//        shader.setMat4("model", lastEntity->transform.getModelMatrix());
+//        if (lastEntity->model)
+//        {
+//            lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), lastEntity->transform.getLocalRotation());
+//        }
+//
+//        lastEntity = lastEntity->children.back();
+//    }
+//
+//    rootEntity->updateSelfAndChild();
+//}
+
 void engine::Scene::drawEntities(Shader& shader)
 {
-    // draw our scene graph
-    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-    while (lastEntity && lastEntity->children.size() > 0)
-    {
-        shader.setMat4("model", lastEntity->transform.getModelMatrix());
-        if (lastEntity->model)
-        {
-            lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), lastEntity->transform.getLocalRotation());
-        }
-
-        lastEntity = lastEntity->children.back();
-    }
-
+    drawEntityRecursive(rootEntity, shader);
     rootEntity->updateSelfAndChild();
 }
+
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
+{
+    // Set model matrix for current entity
+    shader.setMat4("model", entity->transform.getModelMatrix());
+
+    // Draw the entity if it has a model
+    if (entity->model)
+    {
+        entity->model->draw(shader,
+            entity->transform.getLocalPosition(),
+            entity->transform.getLocalScale(),
+            entity->transform.getLocalRotation());
+    }
+
+    // Recurse on children
+    for (const auto& child : entity->children)
+    {
+        drawEntityRecursive(child, shader);
+    }
+}
+
 
 void engine::Scene::exit()
 {

@@ -104,6 +104,11 @@ namespace engine
 
         void drawEntities(Shader& shader);
         void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);
+
+
+        // Find a single entity in the root entities hierarchy by name
+        Entity& find(const std::string& name);
+
         
 
         // glfw: whenever a key is pressed or released, this callback is called

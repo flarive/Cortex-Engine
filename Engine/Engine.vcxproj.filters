@@ -219,6 +219,12 @@
     <ClCompile Include="core\src\renderers\renderer.cpp">
       <Filter>Fichiers sources\core\renderers\base</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\bounding_volume.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\aabb.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -352,6 +358,15 @@
     </ClInclude>
     <ClInclude Include="core\include\app\scene_settings.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\bounding_volume.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\frustrum.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\aabb.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

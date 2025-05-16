@@ -164,6 +164,8 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
+    <ClCompile Include="core\src\aabb.cpp" />
+    <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
     <ClCompile Include="core\src\bounding_volume_plane.cpp" />
@@ -204,9 +206,11 @@
     <ClInclude Include="..\libs\imgui\imgui.h" />
     <ClInclude Include="..\libs\imgui\imgui_internal.h" />
     <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
+    <ClInclude Include="core\include\aabb.h" />
     <ClInclude Include="core\include\app\app.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
+    <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\camera.h" />
     <ClInclude Include="core\include\character.h" />
@@ -214,6 +218,7 @@
     <ClInclude Include="core\include\debug\imgui_debug.h" />
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
+    <ClInclude Include="core\include\frustrum.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />

@@ -4,6 +4,8 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
+
+
 class MyScene7 : public engine::Scene
 {
 private:
@@ -80,7 +82,7 @@ public:
         
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, -8.0f, 2.0f);
+        camera.Position = glm::vec3(0.0f, -16.0f, 2.0f);
         camera.Fps = false;
         camera.Zoom = 100.0f;
         camera.MovementSpeed = 10.0f;
@@ -110,23 +112,39 @@ public:
         //rootEntity->updateSelfAndChild();
 
 
-
+        // flat entity hierarchy
         float offset = -15.0f;
-        for (unsigned int i = 1; i <= 10; ++i)
+        for (unsigned int i = 1; i <= 7; ++i)
         {
             auto trs = engine::Transform{};
-            trs.setLocalPosition({ offset, -10.0f, -10.0f });
+            trs.setLocalPosition({ offset, -22.0f, -10.0f });
             trs.setLocalScale(glm::vec3(2.0f));
-            trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
-
+            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-
             rootEntity->addChild(entity);
 
             offset += 5.0f;
         }
-        
+
+
+        // nested entity hierarchy
+        offset = -15.0f;
+        std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+        for (unsigned int i = 11; i < 18; ++i)
+        {
+            auto trs = engine::Transform{};
+            trs.setLocalPosition({ offset, -12.0f, -10.0f });
+            trs.setLocalScale(glm::vec3(2.0f));
+            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+
+            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+            lastEntity->addChild(entity);
+            lastEntity = lastEntity->children.back();
+
+            offset += 5.0f;
+        }
+
         rootEntity->updateSelfAndChild();
 
 
@@ -250,26 +268,16 @@ public:
     void update(engine::Shader& shader) override
     {
         // draw scene and UI in framebuffer
-        drawScene(shader);
-    }
-
-    void updateUI() override
-    {
-        drawUI();
-    }
-
-    void clean() override
-    {
-        // clean up any resources
-        //helmetModel.clean();
-    }
-
-private:
-    void drawScene(engine::Shader& shader)
-    {
+        
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
+
+        auto zzz = rootEntity->children.front();
+        if (zzz)
+        {
+            zzz->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        }
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 120.0f);
@@ -280,12 +288,18 @@ private:
         rotation += deltaTime * 10.0f;
     }
 
-    void drawUI()
+    void updateUI() override
     {
         // render HUD / UI
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, app->height - 50), glm::vec2(50.0f, -50.0f), 0.0f, glm::vec3(1.0f));
+    }
+
+    void clean() override
+    {
+        // clean up any resources
+        //helmetModel.clean();
     }
 };

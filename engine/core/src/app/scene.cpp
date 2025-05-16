@@ -111,13 +111,6 @@ void engine::Scene::gameLoop()
     // get opengl stats such as polycount drawn
     beginQuery();
 
-
-
-    
-
-
-
-
     // Lambda to update
     auto updateLambda = [this](Shader& shader) {
         update(shader);
@@ -131,14 +124,8 @@ void engine::Scene::gameLoop()
         updateUI();
         };
 
-
     // Call the method
     m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateLambda, updateUILambda);
-
-    
-
-
-
 
     // get opengl stats such as polycount drawn
     endQuery();
@@ -160,26 +147,9 @@ void engine::Scene::gameLoop()
     std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
 }
 
-//void engine::Scene::drawEntities(Shader& shader)
-//{
-//    // draw our scene graph
-//    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
-//    while (lastEntity && lastEntity->children.size() > 0)
-//    {
-//        shader.setMat4("model", lastEntity->transform.getModelMatrix());
-//        if (lastEntity->model)
-//        {
-//            lastEntity->model->draw(shader, lastEntity->transform.getLocalPosition(), lastEntity->transform.getLocalScale(), lastEntity->transform.getLocalRotation());
-//        }
-//
-//        lastEntity = lastEntity->children.back();
-//    }
-//
-//    rootEntity->updateSelfAndChild();
-//}
-
 void engine::Scene::drawEntities(Shader& shader)
 {
+    // draw flat and nested entity hierarchy
     drawEntityRecursive(rootEntity, shader);
     rootEntity->updateSelfAndChild();
 }
@@ -204,7 +174,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         drawEntityRecursive(child, shader);
     }
 }
-
 
 void engine::Scene::exit()
 {
@@ -231,7 +200,6 @@ GLFWwindow* engine::Scene::getWindow()
 {
     return app->window;
 }
-
 
 void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 {
@@ -303,8 +271,6 @@ void engine::Scene::refreshFullscreen()
     m_renderer->initColorFramebuffer(app->width, app->height);
 }
 
-
-
 void engine::Scene::glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -339,7 +305,6 @@ void engine::Scene::countMeshes(std::shared_ptr<Entity>& entity)
         }
     }
 }
-
 
 void engine::Scene::renderCube()
 {
@@ -531,4 +496,10 @@ void engine::Scene::renderSphere()
 
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+}
+
+engine::Entity& engine::Scene::find(const std::string& name)
+{
+    auto zz = engine::Entity{ "aaaaaaaa" };
+    return zz;
 }

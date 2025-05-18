@@ -1,6 +1,7 @@
 #include "../../include/app/scene.h"
 
 
+
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), settings(_settings)
 {

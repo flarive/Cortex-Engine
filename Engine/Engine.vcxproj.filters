@@ -100,6 +100,12 @@
     <Filter Include="Fichiers sources\core\renderers\base">
       <UniqueIdentifier>{3fcdd127-1263-46bb-9303-e02bbc1fd9f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\managers">
+      <UniqueIdentifier>{1092d06d-5dab-4c03-9bf8-a7351a6df8f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\managers">
+      <UniqueIdentifier>{9a97329e-ad6f-4f47-91c7-10e21182ce92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -224,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="core\src\aabb.cpp">
       <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\managers\entity_manager.cpp">
+      <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="core\include\aabb.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\src\managers\entity_manager.h">
+      <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

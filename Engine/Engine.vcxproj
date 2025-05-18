@@ -172,6 +172,7 @@
     <ClCompile Include="core\src\camera.cpp" />
     <ClCompile Include="core\src\debug\imgui_debug.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
+    <ClCompile Include="core\src\managers\entity_manager.cpp" />
     <ClCompile Include="core\src\misc\log_manager.cpp" />
     <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
     <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="core\include\ui\text.h" />
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />
+    <ClInclude Include="core\include\managers\entity_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

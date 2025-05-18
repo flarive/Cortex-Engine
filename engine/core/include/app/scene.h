@@ -12,12 +12,17 @@
 #include "../tools/file_system.h"
 #include "../debug/imgui_debug.h"
 
+//#include "../managers/entity_manager.h"
+
 #include <iostream>
 #include <chrono>
 #include <thread>
 
 namespace engine
 {
+    
+    class EntityManager;
+    
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
@@ -57,6 +62,7 @@ namespace engine
         SceneSettings settings{};
 
         Renderer* m_renderer{};
+        EntityManager* m_entityManager{};
 
         virtual void before_init_hook() {}; // Overridable by derived classes
         virtual void after_init_hook() {}; // Overridable by derived classes

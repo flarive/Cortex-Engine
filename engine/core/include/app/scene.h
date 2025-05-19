@@ -12,7 +12,7 @@
 #include "../tools/file_system.h"
 #include "../debug/imgui_debug.h"
 
-//#include "../managers/entity_manager.h"
+#include "../managers/entity_manager.h"
 
 #include <iostream>
 #include <chrono>
@@ -29,11 +29,11 @@ namespace engine
     class Scene : private NonCopyable
     {
     private:
-        bool key_w_pressed { false };
+        bool key_w_pressed{ false };
 
-        
 
-        
+
+
         ImGuiDebug m_debug{};
 
         GLuint query{};
@@ -42,9 +42,9 @@ namespace engine
         void after_init_internal();
 
 
-        
 
-    
+
+
     protected:
         float framerate{};
 
@@ -62,7 +62,10 @@ namespace engine
         SceneSettings settings{};
 
         Renderer* m_renderer{};
-        EntityManager* m_entityManager{};
+        
+        
+        EntityManager m_entityManager{};
+    
 
         virtual void before_init_hook() {}; // Overridable by derived classes
         virtual void after_init_hook() {}; // Overridable by derived classes
@@ -73,7 +76,7 @@ namespace engine
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
 
-        std::shared_ptr<Entity> rootEntity{};
+        //std::shared_ptr<Entity> rootEntity{};
 
         std::vector<std::shared_ptr<engine::Light>> lights{};
         std::vector<std::shared_ptr<engine::Camera>> cameras{};

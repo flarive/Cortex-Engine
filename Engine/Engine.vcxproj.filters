@@ -377,7 +377,7 @@
     <ClInclude Include="core\include\aabb.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
-    <ClInclude Include="core\src\managers\entity_manager.h">
+    <ClInclude Include="core\include\managers\entity_manager.h">
       <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
   </ItemGroup>

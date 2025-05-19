@@ -122,7 +122,7 @@ public:
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-            rootEntity->addChild(entity);
+            entityManager.rootEntity->addChild(entity);
 
             offset += 5.0f;
         }
@@ -130,7 +130,7 @@ public:
 
         // nested entity hierarchy
         offset = -15.0f;
-        std::shared_ptr<engine::Entity> lastEntity = rootEntity;
+        std::shared_ptr<engine::Entity> lastEntity = entityManager.rootEntity;
         for (unsigned int i = 11; i < 18; ++i)
         {
             auto trs = engine::Transform{};
@@ -145,7 +145,7 @@ public:
             offset += 5.0f;
         }
 
-        rootEntity->updateSelfAndChild();
+        entityManager.rootEntity->updateSelfAndChild();
 
 
 
@@ -273,12 +273,20 @@ public:
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
-        //auto zzz = rootEntity->children.front();
-        auto zzz = rootEntity->children.front();
-        if (zzz)
+        //auto zzz = entityManager.rootEntity->children.front();
+        //if (zzz)
+        //{
+        //    zzz->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        //}
+
+
+        auto child2 = entityManager.find("Child2");
+        if (child2)
         {
-            zzz->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+            child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
         }
+
+
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 120.0f);

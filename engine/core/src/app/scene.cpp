@@ -16,7 +16,7 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
 
     // create scene entities hierarchy
     //rootEntity = std::make_shared<engine::Entity>("Root");
-    m_entityManager.create();
+    entityManager.create();
 }
 
 void engine::Scene::before_init()
@@ -60,12 +60,12 @@ void engine::Scene::after_init_internal()
 
     // Fill imGui debug window with current scene hierarchy
     //m_debug.setScene(this->rootEntity);
-    m_debug.setScene(m_entityManager.rootEntity);
+    m_debug.setScene(entityManager.rootEntity);
     
 
     // count all meshes in the scene
     //countMeshes(this->rootEntity);
-    countMeshes(m_entityManager.rootEntity);
+    countMeshes(entityManager.rootEntity);
 }
 
 void engine::Scene::initialize()
@@ -151,14 +151,19 @@ void engine::Scene::gameLoop()
     std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
 }
 
+
+//engine::Entity* engine::Scene::find(const std::string& name)
+//{
+//    auto zzz = entityManager.find("aaaaaa");
+//    return zzz;
+//}
+
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
-    //drawEntityRecursive(rootEntity, shader);
-    drawEntityRecursive(m_entityManager.rootEntity, shader);
+    drawEntityRecursive(entityManager.rootEntity, shader);
     
-    //rootEntity->updateSelfAndChild();
-    m_entityManager.rootEntity->updateSelfAndChild();
+    entityManager.rootEntity->updateSelfAndChild();
 }
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
@@ -503,12 +508,4 @@ void engine::Scene::renderSphere()
 
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-}
-
-engine::Entity& engine::Scene::find(const std::string& name)
-{
-    auto zz = engine::Entity{ "aaaaaaaa" };
-    return zz;
-
-    //auto zzz = m_entityManager.find("aaaaaa");
 }

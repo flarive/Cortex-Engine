@@ -17,11 +17,11 @@ namespace engine
 		void create();
 
 		void set(std::shared_ptr<Entity> rootEntity);
-		//std::shared_ptr<Entity>& get();
 
-		Entity& find(const std::string& name);
+		std::shared_ptr<engine::Entity> find(const std::string& name);
 
-
+	private:
+		std::shared_ptr<engine::Entity> findEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::string& name);
 		
 	};
 }

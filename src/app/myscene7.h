@@ -151,7 +151,6 @@ public:
 
 
 
-
         ourText.setup(app->window, FONT_PATH, 28);
         ourText2.setup(app->window, FONT_PATH, 28);
         textMeshCount.setup(app->window, FONT_PATH, 28);
@@ -273,11 +272,6 @@ public:
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };
 
-        //auto zzz = entityManager.rootEntity->children.front();
-        //if (zzz)
-        //{
-        //    zzz->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
-        //}
 
 
         auto child2 = entityManager.find("Child2");

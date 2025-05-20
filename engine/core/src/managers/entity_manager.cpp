@@ -12,25 +12,27 @@ void engine::EntityManager::set(std::shared_ptr<engine::Entity> rootEntity)
 
 std::shared_ptr<engine::Entity> engine::EntityManager::find(const std::string& name)
 {
-    return findEntityRecursive(rootEntity, name);
+    auto zzz = findEntityRecursive(rootEntity, name);
 	
+    return zzz;
 
 }
 
 std::shared_ptr<engine::Entity> engine::EntityManager::findEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::string& name)
 {
-    // Draw the entity if it has a model
     if (entity && entity->name == name)
     {
         return entity;
     }
 
-    // Recurse on children
-
     for (const auto& child : entity->children)
     {
-        findEntityRecursive(child, name);
+        auto found = findEntityRecursive(child, name);
+        if (found)
+        {
+            return found; // Return as soon as you find a match
+        }
     }
 
-    return nullptr;
+    return nullptr; // Not found
 }

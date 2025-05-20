@@ -164,6 +164,10 @@ void engine::App::initImGUI(const char* glsl_version)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
@@ -182,10 +186,16 @@ void engine::App::initImGUI(const char* glsl_version)
         style.FramePadding.y = 4.0; // better widget vertical padding
     }
 
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+
     // Apply Adobe Spectrum theme
     //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
     ImGui::Spectrum::StyleColorsSpectrum();
-    ImGui::Spectrum::LoadFont(17.0);
+    ImGui::Spectrum::LoadFont(17.0f);
 
 
     // Setup Platform/Renderer backends

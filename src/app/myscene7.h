@@ -92,27 +92,8 @@ public:
 
         std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
 
-        //{
-        //    std::shared_ptr<engine::Entity> lastEntity = rootEntity;
 
-        //    float offset = -15.0f;
-        //    for (unsigned int i = 0; i < 8; ++i)
-        //    {
-        //        lastEntity->addChild(std::format("Child{}", i), model);
-        //        lastEntity = lastEntity->children.back();
-
-        //        //Set transform values
-        //        lastEntity->transform.setLocalPosition({ offset, -10.0f, -10.0f });
-        //        lastEntity->transform.setLocalScale(glm::vec3(2.0f));
-        //        lastEntity->transform.setLocalRotation({ 0.0f, 180.0f, 0.0f });
-
-        //        offset += 5.0f;
-        //    }
-        //}
-        //rootEntity->updateSelfAndChild();
-
-
-        // flat entity hierarchy
+        // sample flat entity hierarchy
         float offset = -15.0f;
         for (unsigned int i = 1; i <= 7; ++i)
         {
@@ -122,15 +103,15 @@ public:
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-            entityManager.rootEntity->addChild(entity);
+            getEntityManager().rootEntity->addChild(entity);
 
             offset += 5.0f;
         }
 
 
-        // nested entity hierarchy
+        // sample nested entity hierarchy
         offset = -15.0f;
-        std::shared_ptr<engine::Entity> lastEntity = entityManager.rootEntity;
+        std::shared_ptr<engine::Entity> lastEntity = getEntityManager().rootEntity;
         for (unsigned int i = 11; i < 18; ++i)
         {
             auto trs = engine::Transform{};
@@ -145,7 +126,7 @@ public:
             offset += 5.0f;
         }
 
-        entityManager.rootEntity->updateSelfAndChild();
+        getEntityManager().rootEntity->updateSelfAndChild();
 
 
 
@@ -274,7 +255,7 @@ public:
 
 
 
-        auto child2 = entityManager.find("Child2");
+        auto child2 = getEntityManager().find("Child2");
         if (child2)
         {
             child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));

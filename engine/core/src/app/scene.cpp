@@ -15,8 +15,7 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     }
 
     // create scene entities hierarchy
-    //rootEntity = std::make_shared<engine::Entity>("Root");
-    entityManager.create();
+    m_entityManager.create();
 }
 
 void engine::Scene::before_init()
@@ -60,12 +59,12 @@ void engine::Scene::after_init_internal()
 
     // Fill imGui debug window with current scene hierarchy
     //m_debug.setScene(this->rootEntity);
-    m_debug.setScene(entityManager.rootEntity);
+    m_debug.setScene(m_entityManager.rootEntity);
     
 
     // count all meshes in the scene
     //countMeshes(this->rootEntity);
-    countMeshes(entityManager.rootEntity);
+    countMeshes(m_entityManager.rootEntity);
 }
 
 void engine::Scene::initialize()
@@ -99,9 +98,11 @@ void engine::Scene::gameLoop()
     framerate = ImGui::GetIO().Framerate;
 
     if (show_window)
-    {
         m_debug.renderUIWindow(show_window);
-    }
+    
+    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
 
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
@@ -141,6 +142,18 @@ void engine::Scene::gameLoop()
     glViewport(0, 0, display_w, display_h);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+    // Update and Render additional Platform Windows
+    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+    //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
+
 
     glfwSwapBuffers(app->window);
 
@@ -151,19 +164,12 @@ void engine::Scene::gameLoop()
     std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
 }
 
-
-//engine::Entity* engine::Scene::find(const std::string& name)
-//{
-//    auto zzz = entityManager.find("aaaaaa");
-//    return zzz;
-//}
-
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
-    drawEntityRecursive(entityManager.rootEntity, shader);
+    drawEntityRecursive(m_entityManager.rootEntity, shader);
     
-    entityManager.rootEntity->updateSelfAndChild();
+    m_entityManager.rootEntity->updateSelfAndChild();
 }
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)

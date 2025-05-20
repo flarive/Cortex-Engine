@@ -62,9 +62,7 @@ namespace engine
         SceneSettings settings{};
 
         Renderer* m_renderer{};
-        //EntityManager m_entityManager{};
-        
-        
+        EntityManager m_entityManager{};
     
 
         virtual void before_init_hook() {}; // Overridable by derived classes
@@ -72,6 +70,8 @@ namespace engine
 
     public:
         bool show_window{ false };
+        bool show_demo_window{ true };
+        
 
         // default camera
         engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
@@ -107,17 +107,14 @@ namespace engine
         void exit();
 
         GLFWwindow* getWindow();
-
         Renderer* getRenderer() { return m_renderer; };
+        EntityManager getEntityManager() { return m_entityManager; };
 
-        EntityManager entityManager{};
+        
 
         void drawEntities(Shader& shader);
         void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);
 
-
-        // Find a single entity in the root entities hierarchy by name
-        //Entity* find(const std::string& name);
 
 
         // glfw: whenever a key is pressed or released, this callback is called

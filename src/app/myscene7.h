@@ -105,6 +105,8 @@ public:
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
             getEntityManager().rootEntity->addChild(entity);
 
+            getEntityManager().addChild(entity);
+
             offset += 5.0f;
         }
 
@@ -247,8 +249,6 @@ public:
 
     void update(engine::Shader& shader) override
     {
-        // draw scene and UI in framebuffer
-        
         // view/projection transformations
         glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ camera.GetViewMatrix() };

@@ -20,7 +20,6 @@
 
 namespace engine
 {
-    
     class EntityManager;
     
     /// <summary>
@@ -30,9 +29,6 @@ namespace engine
     {
     private:
         bool key_w_pressed{ false };
-
-
-
 
         ImGuiDebug m_debug{};
 
@@ -70,7 +66,7 @@ namespace engine
 
     public:
         bool show_window{ false };
-        bool show_demo_window{ true };
+        bool show_demo_window{ false };
         
 
         // default camera
@@ -150,23 +146,17 @@ namespace engine
         unsigned int cubeVBO{};
         void renderCube();
         
-
         // renderQuad() renders a 1x1 XY quad in NDC
         // -----------------------------------------
         unsigned int quadVAO{};
         unsigned int quadVBO{};
         void renderQuad();
       
-
-
         // renders (and builds at first invocation) a sphere
         // -------------------------------------------------
         unsigned int sphereVAO{};
         GLsizei indexCount{};
         void renderSphere();
-     
-
-
 
     private:
         static void glfw_error_callback(int error, const char* description);

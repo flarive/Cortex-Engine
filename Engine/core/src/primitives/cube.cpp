@@ -154,6 +154,11 @@ namespace engine
         glBindVertexArray(0);
     }
 
+    std::vector<Vertex> Cube::generateVertices()
+    {
+        return generateCubeVertices();
+    }
+
     void Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis) {
         shader.use();
 

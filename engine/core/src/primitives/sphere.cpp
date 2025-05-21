@@ -1,5 +1,7 @@
 #include "../../include/primitives/sphere.h"
 
+#include "../../include/vertex.h"
+
 void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
@@ -124,6 +126,13 @@ void engine::Sphere::setup()
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11 * sizeof(float)));
 
     glBindVertexArray(0);
+}
+
+std::vector<engine::Vertex> engine::Sphere::generateVertices()
+{
+    std::vector<Vertex> vertices{};
+
+    return vertices;
 }
 
 void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)

@@ -1,5 +1,6 @@
 #include "../../include/primitives/billboard.h"
 
+#include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
@@ -51,6 +52,13 @@ void engine::Billboard::setup()
     // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2); // stride 6 to 7
+}
+
+std::vector<engine::Vertex> engine::Billboard::generateVertices()
+{
+    std::vector<Vertex> vertices{};
+
+    return vertices;
 }
 
 // draws the model, and thus all its meshes

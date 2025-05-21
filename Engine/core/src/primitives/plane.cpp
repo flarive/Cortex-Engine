@@ -1,5 +1,6 @@
 #include "../../include/primitives/plane.h"
 
+#include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 #include "../../include/primitives/primitive.h"
 
@@ -102,6 +103,13 @@ void engine::Plane::setup()
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
+}
+
+std::vector<engine::Vertex> engine::Plane::generateVertices()
+{
+    std::vector<engine::Vertex> vertices{};
+
+    return vertices;
 }
 
 // draws the model, and thus all its meshes

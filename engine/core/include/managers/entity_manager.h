@@ -5,12 +5,15 @@
 
 namespace engine
 {
+	/// <summary>
+	/// ECS (Entity Component System)
+	/// https://en.wikipedia.org/wiki/Entity_component_system
+	/// </summary>
 	class EntityManager
 	{
 	public:
 		
-		std::shared_ptr<Entity> rootEntity{};
-		std::unordered_map<std::string, std::shared_ptr<Entity>> nameCache;
+		const std::string ROOT_ENTITY_NAME = "Root";
 		
 		EntityManager() = default;
 		~EntityManager() = default;
@@ -19,16 +22,31 @@ namespace engine
 
 		void set(std::shared_ptr<Entity> rootEntity);
 
-		void addChild(std::shared_ptr<engine::Entity> child);
+		std::shared_ptr<Entity>& getRootEntity();
 
+		void addChild(std::shared_ptr<engine::Entity> child);
 		void addChild(std::shared_ptr<engine::Entity> parent, std::shared_ptr<engine::Entity> child);
+
+
+
+
+		bool remove(const std::string& name);
 
 		std::shared_ptr<engine::Entity> find(const std::string& name);
 
+		void updateSelfAndChild();
+
 	private:
+		std::shared_ptr<Entity> m_rootEntity{};
+		
+		std::unordered_map<std::string, std::shared_ptr<Entity>> m_entityCache{};
+		
 		std::shared_ptr<engine::Entity> findEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::string& name);
 
-		//void buildCache(); // Optional: builds the cache once
-		
+		bool removeRecursive(const std::shared_ptr<Entity>& parent, const std::shared_ptr<Entity>& current, const std::string& targetName);
+
+		void addToCache(const std::shared_ptr<Entity>& entity);
+		void removeFromCache(const std::shared_ptr<Entity>& entity);
+		void removeFromCacheRecursive(const std::shared_ptr<Entity>& entity);
 	};
 }

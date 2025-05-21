@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../common_defines.h"
+#include "../vertex.h"
 #include "../shader.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
@@ -35,6 +36,8 @@ namespace engine
 
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean();
+
+        virtual std::vector<Vertex> generateVertices() = 0;
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 

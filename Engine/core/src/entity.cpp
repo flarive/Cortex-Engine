@@ -1,5 +1,12 @@
 #include "../include/entity.h"
 
+#include "../include/primitives/cube.h"
+
+// constructor, expects just a name
+engine::Entity::Entity(const std::string& _name) : name{ _name }
+{
+}
+
 // constructor, expects a filepath to a 3D model and a transform
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform) : name{ _name }, model{ _model }, transform{ _transform }
 {
@@ -21,10 +28,26 @@ engine::Entity::Entity(std::shared_ptr<Model> _model) : model{ _model }
 	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
 }
 
-// constructor, expects just a name
-engine::Entity::Entity(const std::string& _name) : name{ _name }
+
+// constructor, expects a filepath to a 3D model.
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform)
 {
+
 }
+
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive)
+{
+
+}
+
+engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive)
+{
+
+}
+
+
+
+
 
 engine::AABB engine::Entity::getGlobalAABB()
 {
@@ -130,6 +153,28 @@ engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Model> model)
 			}
 		}
 	}
+	return engine::AABB(minAABB, maxAABB);
+}
+
+
+engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Primitive> primitive)
+{
+	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::lowest()); // Use lowest(), not min()
+
+	//std::vector<Vertex> vertices = engine::gener
+
+	//for (const auto& vertex : vertices)
+	//{
+	//	minAABB.x = std::min(minAABB.x, vertex.position.x);
+	//	minAABB.y = std::min(minAABB.y, vertex.position.y);
+	//	minAABB.z = std::min(minAABB.z, vertex.position.z);
+
+	//	maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+	//	maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+	//	maxAABB.z = std::max(maxAABB.z, vertex.position.z);
+	//}
+
 	return engine::AABB(minAABB, maxAABB);
 }
 

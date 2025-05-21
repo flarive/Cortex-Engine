@@ -16,6 +16,8 @@ namespace engine
 
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
+
+        std::vector<Vertex> generateVertices() override;
         
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f));

@@ -34,7 +34,7 @@ private:
 
     float rotation{};
 
-    
+    float offset_dynamic = -15.0f;
 
 
 public:
@@ -103,8 +103,6 @@ public:
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-            getEntityManager().rootEntity->addChild(entity);
-
             getEntityManager().addChild(entity);
 
             offset += 5.0f;
@@ -113,7 +111,7 @@ public:
 
         // sample nested entity hierarchy
         offset = -15.0f;
-        std::shared_ptr<engine::Entity> lastEntity = getEntityManager().rootEntity;
+        std::shared_ptr<engine::Entity> lastEntity = getEntityManager().getRootEntity();
         for (unsigned int i = 11; i < 18; ++i)
         {
             auto trs = engine::Transform{};
@@ -122,13 +120,13 @@ public:
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-            lastEntity->addChild(entity);
+            getEntityManager().addChild(lastEntity, entity);
             lastEntity = lastEntity->children.back();
 
             offset += 5.0f;
         }
 
-        getEntityManager().rootEntity->updateSelfAndChild();
+        getEntityManager().updateSelfAndChild();
 
 
 
@@ -178,6 +176,25 @@ public:
         if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
             camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
+        }
+
+        if (key == GLFW_KEY_N && action == GLFW_PRESS)
+        {
+            auto trs = engine::Transform{};
+            trs.setLocalPosition({ offset_dynamic, -32.0f, -10.0f });
+            trs.setLocalScale(glm::vec3(2.0f));
+            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+
+            std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
+            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", 88), model, trs);
+            getEntityManager().addChild(entity);
+
+            offset_dynamic += 5.0f;
+        }
+
+        if (key == GLFW_KEY_M && action == GLFW_PRESS)
+        {
+            getEntityManager().remove("Child88");
         }
     }
 

@@ -58,13 +58,11 @@ void engine::Scene::after_init_internal()
     m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount);
 
     // Fill imGui debug window with current scene hierarchy
-    //m_debug.setScene(this->rootEntity);
-    m_debug.setScene(m_entityManager.rootEntity);
+    m_debug.setScene(m_entityManager.getRootEntity());
     
 
     // count all meshes in the scene
-    //countMeshes(this->rootEntity);
-    countMeshes(m_entityManager.rootEntity);
+    countMeshes(m_entityManager.getRootEntity());
 }
 
 void engine::Scene::initialize()
@@ -167,9 +165,9 @@ void engine::Scene::gameLoop()
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
-    drawEntityRecursive(m_entityManager.rootEntity, shader);
+    drawEntityRecursive(m_entityManager.getRootEntity(), shader);
     
-    m_entityManager.rootEntity->updateSelfAndChild();
+    m_entityManager.getRootEntity()->updateSelfAndChild();
 }
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)

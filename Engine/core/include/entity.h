@@ -5,6 +5,7 @@
 #include "misc/noncopyable.h"
 
 #include "model.h"
+#include "primitives/primitive.h"
 #include "transform.h"
 #include "frustrum.h"
 #include "bounding_volume.h"
@@ -48,17 +49,19 @@ namespace engine
 		std::unique_ptr<AABB> boundingVolume{};
 
 
-		// constructor, expects a filepath to a 3D model and a transform
-		Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform);
-
-		// constructor, expects a filepath to a 3D model.
-		Entity(const std::string& _name, std::shared_ptr<Model> _model);
-
-		// constructor, expects a filepath to a 3D model.
-		Entity(std::shared_ptr<Model> _model);
-
 		// constructor, expects just a name
 		Entity(const std::string& _name);
+
+
+		Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform);
+		Entity(const std::string& _name, std::shared_ptr<Model> _model);
+		Entity(std::shared_ptr<Model> _model);
+
+		
+
+		Entity(const std::string& _name, std::shared_ptr<Primitive> _primitive, Transform _transform);
+		Entity(const std::string& _name, std::shared_ptr<Primitive> _primitive);
+		Entity(std::shared_ptr<Primitive> _primitive);
 
 
 		// Add child using Entity constructor
@@ -86,6 +89,7 @@ namespace engine
 		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
 
 		AABB generateAABB(const std::shared_ptr<Model> model);
+		AABB generateAABB(const std::shared_ptr<Primitive> primitive);
 
 		SphereVolume generateSphereBV(const Model& model);
 	};

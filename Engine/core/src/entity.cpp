@@ -32,17 +32,17 @@ engine::Entity::Entity(std::shared_ptr<Model> _model) : model{ _model }
 // constructor, expects a filepath to a 3D model.
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform)
 {
-
+	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive)
 {
-
+	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
 engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive)
 {
-
+	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
 
@@ -162,18 +162,18 @@ engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Primitive> primi
 	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::lowest()); // Use lowest(), not min()
 
-	//std::vector<Vertex> vertices = engine::gener
+	std::vector<Vertex> vertices = primitive->generateVertices();
 
-	//for (const auto& vertex : vertices)
-	//{
-	//	minAABB.x = std::min(minAABB.x, vertex.position.x);
-	//	minAABB.y = std::min(minAABB.y, vertex.position.y);
-	//	minAABB.z = std::min(minAABB.z, vertex.position.z);
+	for (const auto& vertex : vertices)
+	{
+		minAABB.x = std::min(minAABB.x, vertex.position.x);
+		minAABB.y = std::min(minAABB.y, vertex.position.y);
+		minAABB.z = std::min(minAABB.z, vertex.position.z);
 
-	//	maxAABB.x = std::max(maxAABB.x, vertex.position.x);
-	//	maxAABB.y = std::max(maxAABB.y, vertex.position.y);
-	//	maxAABB.z = std::max(maxAABB.z, vertex.position.z);
-	//}
+		maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+		maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+		maxAABB.z = std::max(maxAABB.z, vertex.position.z);
+	}
 
 	return engine::AABB(minAABB, maxAABB);
 }

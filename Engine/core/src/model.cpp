@@ -3,6 +3,7 @@
 #include "../include/texture.h"
 
 #include "../include/tools/file_system.h"
+#include "../include/tools/helpers.h"
 
 #include "SOIL2.h"
 
@@ -197,34 +198,13 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat
 // draws the model, and thus all its meshes
 void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
 {
-    float angle2 = 0.0f;
-    glm::vec3 rotation2 = glm::vec3(0.0f);
-
-    if (rotation.x > 0.0f)
-    {
-        angle2 = rotation.x;
-        rotation2.x = 1.0;
-    }
-
-    if (rotation.y > 0.0f)
-    {
-        angle2 = rotation.y;
-        rotation2.y = 1.0;
-    }
-
-    if (rotation.z > 0.0f)
-    {
-        angle2 = rotation.z;
-        rotation2.z = 1.0;
-    }
+    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
 
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        meshes[i].draw(shader, position, scale, angle2, rotation2);
+        meshes[i].draw(shader, position, scale, normalizedRotation.angle, normalizedRotation.axis);
     }
 }
-
-
     
 unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
 {

@@ -183,6 +183,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
     }
+    else if (entity->primitive)
+    {
+        entity->primitive->draw(shader,
+            entity->transform.getLocalPosition(),
+            entity->transform.getLocalScale(),
+            entity->transform.getLocalRotation());
+    }
 
     // Recurse on children
     for (const auto& child : entity->children)
@@ -316,8 +323,18 @@ void engine::Scene::countMeshes(std::shared_ptr<Entity>& entity)
     {
         for (auto& child : entity->children)
         {
-            meshcount += child->model->numberOfMeshes;
-            countMeshes(child);
+            if (child)
+            {
+                if (child->model)
+                {
+                    meshcount += child->model->numberOfMeshes;
+                    countMeshes(child);
+                }
+                else if (child->primitive)
+                {
+                    primitivecount += 1;
+                }
+            }
         }
     }
 }

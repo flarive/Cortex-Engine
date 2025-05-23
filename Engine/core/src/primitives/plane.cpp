@@ -3,6 +3,7 @@
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 #include "../../include/primitives/primitive.h"
+#include "../../include/tools/helpers.h"
 
 namespace engine
 {
@@ -205,7 +206,7 @@ namespace engine
 
 
     // draws the model, and thus all its meshes
-    void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
+    void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
     {
         shader.use();
 
@@ -220,10 +221,12 @@ namespace engine
             shader.setFloat("material.emissiveIntensity", 0.0f);
         }
 
+        auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+
         // calculate the model matrix for each object and pass it to shader before drawing
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, position);
-        model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+        model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, glm::vec3(size.x, size.y, size.z));
         shader.setMat4("model", model);
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

@@ -46,6 +46,7 @@ namespace engine
 
 		std::string name{};
 		std::shared_ptr<Model> model{};
+		std::shared_ptr<Primitive> primitive{};
 		std::unique_ptr<AABB> boundingVolume{};
 
 

@@ -3,6 +3,7 @@
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 #include "../../include/materials/material.h"
+#include "../../include/tools/helpers.h"
 
 #include <vector>
 #include <glm/glm.hpp>
@@ -159,7 +160,8 @@ namespace engine
         return generateCubeVertices();
     }
 
-    void Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis) {
+    void Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+    {
         shader.use();
 
         if (m_material) {
@@ -173,9 +175,11 @@ namespace engine
             shader.setFloat("material.emissiveIntensity", 0.0f);
         }
 
+        auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
-        model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+        model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, size);
         shader.setMat4("model", model);
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
@@ -187,4 +191,3 @@ namespace engine
         m_material->unbind();
     }
 }
-

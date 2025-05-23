@@ -193,6 +193,7 @@
     <ClCompile Include="core\src\primitives\sphere.cpp" />
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
+    <ClCompile Include="core\src\tools\helpers.cpp" />
     <ClCompile Include="core\src\tools\system_monitor.cpp" />
     <ClCompile Include="core\src\transform.cpp" />
     <ClCompile Include="core\src\ui\sprite.cpp" />
@@ -241,6 +242,7 @@
     <ClInclude Include="core\include\primitives\sphere.h" />
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
+    <ClInclude Include="core\include\tools\helpers.h" />
     <ClInclude Include="core\include\tools\system_monitor.h" />
     <ClInclude Include="core\include\transform.h" />
     <ClInclude Include="core\include\ui\sprite.h" />

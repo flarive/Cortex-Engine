@@ -234,6 +234,9 @@
     <ClCompile Include="core\src\managers\entity_manager.cpp">
       <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\tools\helpers.cpp">
+      <Filter>Fichiers sources\core\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -379,6 +382,9 @@
     </ClInclude>
     <ClInclude Include="core\include\managers\entity_manager.h">
       <Filter>Fichiers d%27en-tête\core\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\tools\helpers.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

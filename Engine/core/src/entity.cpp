@@ -30,17 +30,17 @@ engine::Entity::Entity(std::shared_ptr<Model> _model) : model{ _model }
 
 
 // constructor, expects a filepath to a 3D model.
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform)
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform) : name{ _name }, primitive{ _primitive }, transform{ _transform }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive)
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive) : name{ _name }, primitive{ _primitive }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
-engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive)
+engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : primitive{ _primitive }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }

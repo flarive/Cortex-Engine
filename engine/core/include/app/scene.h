@@ -50,6 +50,7 @@ namespace engine
 
         GLint polycount{};
         GLint meshcount{};
+        GLint primitivecount{};
 
         // settings
         std::string title{};

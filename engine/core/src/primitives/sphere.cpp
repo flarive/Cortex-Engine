@@ -1,6 +1,7 @@
 #include "../../include/primitives/sphere.h"
 
 #include "../../include/vertex.h"
+#include "../../include/tools/helpers.h"
 
 void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
@@ -135,7 +136,7 @@ std::vector<engine::Vertex> engine::Sphere::generateVertices()
     return vertices;
 }
 
-void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
+void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
     shader.use();
     if (m_material)
@@ -150,8 +151,10 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
         shader.setFloat("material.emissiveIntensity", 0.0f);
     }
 
+    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+    model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

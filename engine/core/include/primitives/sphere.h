@@ -21,7 +21,7 @@ namespace engine
         std::vector<Vertex> generateVertices() override;
 
         // draws the model, and thus all its meshes
-        void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle = 0.0f, const glm::vec3& rotationAxis = glm::vec3(0.0f, 0.0f, 0.0f));
+        void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f));
 
     private:
         void setup();

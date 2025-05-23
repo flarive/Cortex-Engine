@@ -2,6 +2,7 @@
 
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
+#include "../../include/tools/helpers.h"
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
@@ -62,7 +63,7 @@ std::vector<engine::Vertex> engine::Billboard::generateVertices()
 }
 
 // draws the model, and thus all its meshes
-void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, float rotationAngle, const glm::vec3& rotationAxis)
+void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
     shader.use();
 
@@ -77,11 +78,13 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     
+    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+
 
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
-    model = glm::rotate(model, glm::radians(rotationAngle), rotationAxis);
+    model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
 

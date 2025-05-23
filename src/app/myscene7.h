@@ -129,7 +129,18 @@ public:
         getEntityManager().updateSelfAndChild();
 
 
+        std::shared_ptr<engine::Plane> myPlane = std::make_shared< engine::Plane>();
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/rusted_metal_diffuse.jpg",
+            "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
+        auto trs = engine::Transform{};
+        trs.setLocalPosition({ offset, -12.0f, -10.0f });
+        trs.setLocalScale(glm::vec3(2.0f));
+        trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+
+        std::shared_ptr<engine::Entity> entity8 = std::make_shared<engine::Entity>("MyPlane", myPlane, trs);
+        getEntityManager().addChild(entity8);
 
 
         ourText.setup(app->window, FONT_PATH, 28);

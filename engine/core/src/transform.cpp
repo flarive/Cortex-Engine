@@ -1,6 +1,10 @@
 #include "../include/transform.h"
 
 
+engine::Transform::Transform(glm::vec3 _position, glm::vec3 _scale, glm::vec3 _rotation) : m_pos(_position), m_scale(_scale), m_eulerRot(_rotation)
+{
+}
+
 glm::mat4 engine::Transform::getLocalModelMatrix()
 {
 	const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f), glm::radians(m_eulerRot.x), glm::vec3(1.0f, 0.0f, 0.0f));

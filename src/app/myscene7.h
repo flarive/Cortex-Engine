@@ -29,6 +29,7 @@ private:
     engine::Text ourText{};
     engine::Text ourText2{};
     engine::Text textMeshCount{};
+    engine::Text textPrimitiveCount{};
     engine::Sprite ourSprite{};
 
 
@@ -126,26 +127,54 @@ public:
             offset += 5.0f;
         }
 
-        getEntityManager().updateSelfAndChild();
+        
 
 
-        std::shared_ptr<engine::Plane> myPlane = std::make_shared< engine::Plane>();
+        // ground
+        auto myPlane = std::make_shared<engine::Plane>();
         myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-        auto trs = engine::Transform{};
-        trs.setLocalPosition({ offset, -12.0f, -10.0f });
-        trs.setLocalScale(glm::vec3(2.0f));
-        trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+        getEntityManager().addChild(entityPlane);
 
-        std::shared_ptr<engine::Entity> entity8 = std::make_shared<engine::Entity>("MyPlane", myPlane, trs);
-        getEntityManager().addChild(entity8);
+
+        // cube
+        auto myCube = std::make_shared<engine::Cube>();
+        myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/container2_diffuse.png",
+            "textures/container2_specular.png"));
+
+        auto trsCube = engine::Transform(glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(1.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
+        getEntityManager().addChild(entityCube);
+
+
+        // sphere
+        auto mySphere = std::make_shared<engine::Sphere>();
+        mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/container2_diffuse.png",
+            "textures/container2_specular.png"));
+
+        auto trsSphere = engine::Transform(glm::vec3(0.0f, -17.0f, -5.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
+        getEntityManager().addChild(entitySphere);
+
+
+
+        getEntityManager().updateSelfAndChild();
+
+
+
+
 
 
         ourText.setup(app->window, FONT_PATH, 28);
         ourText2.setup(app->window, FONT_PATH, 28);
         textMeshCount.setup(app->window, FONT_PATH, 28);
+        textPrimitiveCount.setup(app->window, FONT_PATH, 28);
         ourSprite.setup(app->window, "textures/awesomeface.png");
     }
 
@@ -306,6 +335,7 @@ public:
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, app->height - 50), glm::vec2(50.0f, -50.0f), 0.0f, glm::vec3(1.0f));
     }
 

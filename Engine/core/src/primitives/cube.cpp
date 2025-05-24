@@ -179,7 +179,7 @@ namespace engine
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
-        model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+        if (normalizedRotation.angle > 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, size);
         shader.setMat4("model", model);
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

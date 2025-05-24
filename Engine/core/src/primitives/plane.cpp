@@ -99,71 +99,7 @@ namespace engine
 
     void engine::Plane::setup()
     {
-        // positions
-        //glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
-        //glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
-        //glm::vec3 pos3(1.0f, -1.0f, 0.0f);
-        //glm::vec3 pos4(1.0f, 1.0f, 0.0f);
-        //// texture coordinates
-        //glm::vec2 uv1(0.0f, m_uvScale);
-        //glm::vec2 uv2(0.0f, 0.0f);
-        //glm::vec2 uv3(m_uvScale, 0.0f);
-        //glm::vec2 uv4(m_uvScale, m_uvScale);
-        //// normal vector
-        //glm::vec3 nm(0.0f, 0.0f, 1.0f);
-
-        //// calculate tangent/bitangent vectors of both triangles
-        //glm::vec3 tangent1, bitangent1;
-        //glm::vec3 tangent2, bitangent2;
-        //// triangle 1
-        //// ----------
-        //glm::vec3 edge1 = pos2 - pos1;
-        //glm::vec3 edge2 = pos3 - pos1;
-        //glm::vec2 deltaUV1 = uv2 - uv1;
-        //glm::vec2 deltaUV2 = uv3 - uv1;
-
-        //float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-        //tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-        //tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-        //tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-
-        //bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        //bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        //bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-        //// triangle 2
-        //// ----------
-        //edge1 = pos3 - pos1;
-        //edge2 = pos4 - pos1;
-        //deltaUV1 = uv3 - uv1;
-        //deltaUV2 = uv4 - uv1;
-
-        //f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-        //tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-        //tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-        //tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-
-
-        //bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        //bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        //bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-
-        //float quadVertices[] = {
-        //    // positions            // normal         // texcoords  // tangent                          // bitangent
-        //    pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-        //    pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-        //    pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-
-        //    pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
-        //    pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
-        //    pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
-        //};
-
         std::vector<Vertex> vertices = generatePlaneVertices(m_uvScale);
-
 
         // configure plane VAO
         glGenVertexArrays(1, &m_VAO);
@@ -171,20 +107,15 @@ namespace engine
         glBindVertexArray(m_VAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
 
         // Position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
         glEnableVertexAttribArray(0);
 
-
         // Normal attribute
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         glEnableVertexAttribArray(1);
-
-
 
         // Texture coordinate attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
@@ -226,7 +157,7 @@ namespace engine
         // calculate the model matrix for each object and pass it to shader before drawing
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, position);
-        model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+        if (normalizedRotation.angle > 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, glm::vec3(size.x, size.y, size.z));
         shader.setMat4("model", model);
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

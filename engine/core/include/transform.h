@@ -21,6 +21,12 @@ namespace engine
 		glm::mat4 getLocalModelMatrix();
 
 	public:
+
+		Transform() = default;
+		~Transform() = default;
+
+		Transform(glm::vec3 _position, glm::vec3 _scale, glm::vec3 _rotation);
+
 		void computeModelMatrix();
 		void computeModelMatrix(const glm::mat4& parentGlobalModelMatrix);
 		void setLocalPosition(const glm::vec3& newPosition);

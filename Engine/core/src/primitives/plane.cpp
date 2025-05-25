@@ -157,7 +157,7 @@ namespace engine
         // calculate the model matrix for each object and pass it to shader before drawing
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, position);
-        if (normalizedRotation.angle > 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+        if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, glm::vec3(size.x, size.y, size.z));
         shader.setMat4("model", model);
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

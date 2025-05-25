@@ -564,6 +564,9 @@
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_roughness.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\earth_diffuse.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -590,5 +593,13 @@
     <ClInclude Include="app\myscene7.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\earth_normal.jpg">
+      <Filter>resources\textures</Filter>
+    </Image>
+    <Image Include="..\resources\textures\earth_specular.jpg">
+      <Filter>resources\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

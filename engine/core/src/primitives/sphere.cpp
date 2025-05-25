@@ -292,7 +292,7 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
     auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    if (normalizedRotation.angle > 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+    if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

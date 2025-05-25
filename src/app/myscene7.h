@@ -155,8 +155,8 @@ public:
         // sphere
         auto mySphere = std::make_shared<engine::Sphere>();
         mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/container2_diffuse.png",
-            "textures/container2_specular.png"));
+            "textures/earth_diffuse.jpg",
+            "textures/earth_specular.jpg"));
 
         auto trsSphere = engine::Transform(glm::vec3(0.0f, -17.0f, -5.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
@@ -297,11 +297,6 @@ public:
     void framebuffer_size_callback(int newWidth, int newHeight)
     {
         engine::Scene::framebuffer_size_callback(newWidth, newHeight);
-
-        //ourText.setup(FONT_PATH, 28, newWidth, newHeight);
-        //ourText2.setup(FONT_PATH, 28, newWidth, newHeight);
-        //textMeshCount.setup(FONT_PATH, 28, newWidth, newHeight);
-        //ourSprite.setup("textures/awesomeface.png", newWidth, newHeight);
     }
 
     void update(engine::Shader& shader) override
@@ -319,6 +314,13 @@ public:
         }
 
 
+        auto mySphere = getEntityManager().find("MySphere");
+        if (mySphere)
+        {
+            mySphere->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        }
+
+
 
         // setup lights
         myPointLight1->draw(shader, projection, view, 120.0f);
@@ -327,6 +329,7 @@ public:
         myPointLight4->draw(shader, projection, view, 20.0f);
 
         rotation += deltaTime * 10.0f;
+        
     }
 
     void updateUI() override

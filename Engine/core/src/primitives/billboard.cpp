@@ -4,6 +4,45 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
+inline std::vector<engine::Vertex> generateBillboardVertices(float uvScale)
+{
+    const glm::vec3 normal(0.0f, 0.0f, 1.0f);      // facing forward
+    const glm::vec3 tangent(1.0f, 0.0f, 0.0f);     // horizontal right
+    const glm::vec3 bitangent(0.0f, 1.0f, 0.0f);   // vertical up
+
+    // Quad corners, counter-clockwise order
+    glm::vec3 positions[] = {
+        { -0.5f, -0.5f, 0.0f },  // bottom-left
+        {  0.5f, -0.5f, 0.0f },  // bottom-right
+        {  0.5f,  0.5f, 0.0f },  // top-right
+        { -0.5f,  0.5f, 0.0f }   // top-left
+    };
+
+    // UVs (with uv scaling)
+    glm::vec2 uvs[] = {
+        { 0.0f, 0.0f },
+        { 1.0f * uvScale, 0.0f },
+        { 1.0f * uvScale, 1.0f * uvScale },
+        { 0.0f, 1.0f * uvScale }
+    };
+
+    // Define the two triangles (CCW winding)
+    std::vector<engine::Vertex> vertices;
+    vertices.reserve(6);
+
+    // Triangle 1
+    vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
+    vertices.emplace_back(engine::Vertex{ positions[1], normal, uvs[1], tangent, bitangent });
+    vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
+
+    // Triangle 2
+    vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
+    vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
+    vertices.emplace_back(engine::Vertex{ positions[3], normal, uvs[3], tangent, bitangent });
+
+    return vertices;
+}
+
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material; // Store material reference
@@ -55,12 +94,12 @@ void engine::Billboard::setup()
     glEnableVertexAttribArray(2); // stride 6 to 7
 }
 
+
 std::vector<engine::Vertex> engine::Billboard::generateVertices()
 {
-    std::vector<Vertex> vertices{};
-
-    return vertices;
+    return generateBillboardVertices(m_uvScale);
 }
+
 
 // draws the model, and thus all its meshes
 void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
@@ -84,7 +123,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     // calculate the model matrix for each object and pass it to shader before drawing
     glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
     model = glm::translate(model, position);
-    model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+    if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
 

@@ -22,9 +22,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    //enableFaceCulling(true);
+    enableFaceCulling(true);
     enableAntiAliasing(true);
-    //enableGammaCorrection(true);
+    if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
     // build and compile shaders
     // -------------------------
@@ -242,7 +242,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, vsize, vsize);
     brdfShader.use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderQuad();
+    //renderQuad();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

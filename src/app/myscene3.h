@@ -53,8 +53,7 @@ public:
                 .HDRSkyboxFilePath = "textures/hdr/newport_loft.hdr",
                 .shadowIntensity = 1.5f,
                 .iblDiffuseIntensity = 1.0f,
-                .iblSpecularIntensity = 1.0f,
-                .applyGammaCorrection = true
+                .iblSpecularIntensity = 1.0f
             })
     {
         // my application specific state gets initialized here

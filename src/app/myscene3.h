@@ -34,7 +34,7 @@ private:
     engine::Sphere bronzeSphere{};
 
 
-    engine::Plane ourPlane{};
+    //engine::Plane ourPlane{};
 
 
     engine::Text ourText{};
@@ -102,21 +102,20 @@ public:
         camera.Zoom = 75.0f;
         camera.MovementSpeed = 10.0f;
 
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "models/sphere/cliff/albedo.jpg",
-            "",
-            "models/sphere/cliff/normal.jpg",
-            "models/sphere/cliff/metallic.jpg",
-            "models/sphere/cliff/roughness.jpg",
-            "models/sphere/cliff/ao.jpg",
-            "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
+        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //    "models/sphere/cliff/albedo.jpg",
+        //    "",
+        //    "models/sphere/cliff/normal.jpg",
+        //    "models/sphere/cliff/metallic.jpg",
+        //    "models/sphere/cliff/roughness.jpg",
+        //    "models/sphere/cliff/ao.jpg",
+        //    "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
 
-        auto matPlane = ourPlane.getMaterial();
+        /*auto matPlane = ourPlane.getMaterial();
         if (matPlane)
         {
             matPlane->setNormalIntensity(1.0f);
-            //matPlane->setAmbientIntensity(10.0f);
-        }
+        }*/
 
 
         lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
@@ -326,7 +325,7 @@ public:
         plasticSphere.clean();
         wallSphere.clean();
         bronzeSphere.clean();
-        ourPlane.clean();
+        //ourPlane.clean();
     }
 
 private:
@@ -345,7 +344,7 @@ private:
         
 
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f, 12.0f, 12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        //ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
 
 
 

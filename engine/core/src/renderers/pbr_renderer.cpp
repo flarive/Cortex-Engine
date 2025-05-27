@@ -200,7 +200,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     unsigned int maxMipLevels = 5;
     for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
     {
-        // reisze framebuffer according to mip-level size.
+        // resize framebuffer according to mip-level size.
         unsigned int mipWidth = static_cast<unsigned int>(128 * std::pow(0.5, mip));
         unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);

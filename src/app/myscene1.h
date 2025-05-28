@@ -222,10 +222,10 @@ private:
     
     
     
-        // setup lights
-        myPointLight->draw(shader, projection, view, 5.0f);
+        // draw lights
+        /*myPointLight->draw(shader, projection, view, 5.0f);
         myDirectionalLight1->draw(shader, projection, view, 1.0f);
-        myDirectionalLight2->draw(shader, projection, view, 1.0f);
+        myDirectionalLight2->draw(shader, projection, view, 1.0f);*/
 
     
     

@@ -6,6 +6,7 @@
 
 #include "model.h"
 #include "primitives/primitive.h"
+#include "lights/light.h"
 #include "transform.h"
 #include "frustrum.h"
 #include "bounding_volume.h"
@@ -47,6 +48,7 @@ namespace engine
 		std::string name{};
 		std::shared_ptr<Model> model{};
 		std::shared_ptr<Primitive> primitive{};
+		std::shared_ptr<Light> light{};
 		std::unique_ptr<AABB> boundingVolume{};
 
 
@@ -64,6 +66,10 @@ namespace engine
 		Entity(const std::string& _name, std::shared_ptr<Primitive> _primitive);
 		Entity(std::shared_ptr<Primitive> _primitive);
 
+
+		Entity(const std::string& _name, std::shared_ptr<Light> _light, Transform _transform);
+		Entity(const std::string& _name, std::shared_ptr<Light> _light);
+		Entity(std::shared_ptr<Light> _light);
 
 		// Add child using Entity constructor
 		// Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
@@ -91,6 +97,7 @@ namespace engine
 
 		AABB generateAABB(const std::shared_ptr<Model> model);
 		AABB generateAABB(const std::shared_ptr<Primitive> primitive);
+		AABB generateAABB(const std::shared_ptr<Light> light);
 
 		SphereVolume generateSphereBV(const Model& model);
 	};

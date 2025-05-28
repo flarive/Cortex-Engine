@@ -184,8 +184,8 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 2.0f);
+        // draw lights
+        //mySpotLight->draw(shader, projection, view, 2.0f);
         
 
         // activate phong shader

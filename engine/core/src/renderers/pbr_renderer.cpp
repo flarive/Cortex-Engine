@@ -57,8 +57,11 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // -------------------------
     initColorFramebuffer(width, height);
 
+    // uncomment this call to draw in wireframe polygons.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
 
-    int vsize = 512;
+
+    int vsize{ 512 };
     //int scrWidth, scrHeight;
     //glfwGetFramebufferSize(window, &scrWidth, &scrHeight);
     //float qualityFactor = 2.0f; // 200% of the screen resolution
@@ -68,8 +71,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: setup framebuffer
     // ----------------------
-    unsigned int captureFBO;
-    unsigned int captureRBO;
+    unsigned int captureFBO{};
+    unsigned int captureRBO{};
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
 
@@ -102,13 +105,16 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
     glm::mat4 captureViews[] =
     {
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)), // +X (right)
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)), // -X (left)
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)), // +Y (top)
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)), // -Y (bottom)
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)), // +Z (front)
+        glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)) // -Z (back)
     };
+
+
+
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
@@ -126,7 +132,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderCube();
+        renderCube(); // render skybox
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -197,7 +203,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-    unsigned int maxMipLevels = 5;
+    unsigned int maxMipLevels{5};
     for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
     {
         // resize framebuffer according to mip-level size.
@@ -242,7 +248,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, vsize, vsize);
     brdfShader.use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //renderQuad();
+    renderQuad();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -258,7 +264,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     backgroundShader.setMat4("projection", projection);
 
     // then before rendering, configure the viewport to the original framebuffer's screen dimensions
-    int scrWidth, scrHeight;
+    int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 }

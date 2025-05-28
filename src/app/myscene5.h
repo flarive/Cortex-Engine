@@ -214,8 +214,8 @@ private:
         // render test plane
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 50.0f);
+        // draw lights
+        //mySpotLight->draw(shader, projection, view, 50.0f);
 
         rotation += deltaTime * 10.0f;
 

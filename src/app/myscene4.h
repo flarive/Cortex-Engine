@@ -189,8 +189,8 @@ private:
         glm::mat4 view{ camera.GetViewMatrix() };
 
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f);
+        // draw lights
+        //mySpotLight->draw(shader, projection, view, 20.0f);
 
 
         // render the loaded model

@@ -34,7 +34,7 @@ private:
     engine::Sphere bronzeSphere{};
 
 
-    //engine::Plane ourPlane{};
+    engine::Plane ourPlane{};
 
 
     engine::Text ourText{};
@@ -102,14 +102,14 @@ public:
         camera.Zoom = 75.0f;
         camera.MovementSpeed = 10.0f;
 
-        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-        //    "models/sphere/cliff/albedo.jpg",
-        //    "",
-        //    "models/sphere/cliff/normal.jpg",
-        //    "models/sphere/cliff/metallic.jpg",
-        //    "models/sphere/cliff/roughness.jpg",
-        //    "models/sphere/cliff/ao.jpg",
-        //    "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
+        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "models/sphere/cliff/albedo.jpg",
+            "",
+            "models/sphere/cliff/normal.jpg",
+            "models/sphere/cliff/metallic.jpg",
+            "models/sphere/cliff/roughness.jpg",
+            "models/sphere/cliff/ao.jpg",
+            "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
 
         /*auto matPlane = ourPlane.getMaterial();
         if (matPlane)
@@ -325,7 +325,7 @@ public:
         plasticSphere.clean();
         wallSphere.clean();
         bronzeSphere.clean();
-        //ourPlane.clean();
+        ourPlane.clean();
     }
 
 private:
@@ -344,7 +344,7 @@ private:
         
 
 
-        //ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
 
 
 
@@ -358,16 +358,16 @@ private:
 
 
 
-        // setup lights
-        myPointLight1->draw(shader, projection, view, 50.0f); // ????????????
-        myPointLight2->draw(shader, projection, view, 50.0f); // ????????????
-        myPointLight3->draw(shader, projection, view, 50.0f); // ????????????
-        myPointLight4->draw(shader, projection, view, 50.0f); // ????????????
+        // draw lights
+        //myPointLight1->draw(shader, projection, view, 50.0f); // ????????????
+        //myPointLight2->draw(shader, projection, view, 50.0f); // ????????????
+        //myPointLight3->draw(shader, projection, view, 50.0f); // ????????????
+        //myPointLight4->draw(shader, projection, view, 50.0f); // ????????????
         //myDirectionalLight->draw(shader, projection, view, 1.0f, myDirectionalLight->getPosition(), myDirectionalLight->getTarget());
         //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
 
-        // setup lights
-        mySpotLight->draw(shader, projection, view, 20.0f); // ???????????????
+        // draw lights
+        //mySpotLight->draw(shader, projection, view, 20.0f); // ???????????????
     }
 
     void drawUI()

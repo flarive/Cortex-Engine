@@ -18,14 +18,14 @@ namespace engine
         virtual ~Light() = default;
 
         virtual void setup(const Color& ambient, const glm::vec3& position, const glm::vec3& target) = 0;
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, float intensity) = 0;
+        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
         virtual void clean() = 0;
         
-        virtual glm::vec3 getPosition() { return m_lightPosition; }
-        virtual glm::vec3 getTarget() { return m_lightTarget; }
+        //virtual glm::vec3 getPosition() { return m_lightPosition; }
+        //virtual glm::vec3 getTarget() { return m_lightTarget; }
 
-        virtual void setPosition(const glm::vec3& position) { m_lightPosition = position; }
-        virtual void setTarget(const glm::vec3& target) { m_lightTarget = target; }
+        //virtual void setPosition(const glm::vec3& position) { m_lightPosition = position; }
+        //virtual void setTarget(const glm::vec3& target) { m_lightTarget = target; }
 
     protected:
         // render data 
@@ -35,10 +35,12 @@ namespace engine
 
         Shader lightCubeShader{};
 
-        Color m_ambientColor{};
+        Color m_ambientColor{ glm::vec4(0.1f, 0.1f, 0.1f, 1.0f) };
 
-        glm::vec3 m_lightPosition{};
-        glm::vec3 m_lightTarget{};
+        //glm::vec3 m_lightPosition{};
+        //glm::vec3 m_lightTarget{};
+
+        float m_intensity{ 20.0f };
 
         const float LIGHT_CUBE_SIZE{ 0.02f };
         const bool DISPLAY_DEBUG_LIGHT_CUBE{ false };

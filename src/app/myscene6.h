@@ -216,11 +216,11 @@ private:
         // render the loaded model
         helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
 
-        // setup lights
-        myPointLight1->draw(shader, projection, view, 120.0f);
+        // draw lights
+        /*myPointLight1->draw(shader, projection, view, 120.0f);
         myPointLight2->draw(shader, projection, view, 20.0f);
         myPointLight3->draw(shader, projection, view, 20.0f);
-        myPointLight4->draw(shader, projection, view, 20.0f);
+        myPointLight4->draw(shader, projection, view, 20.0f);*/
 
         rotation += deltaTime * 10.0f;
     }

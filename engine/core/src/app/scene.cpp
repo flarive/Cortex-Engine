@@ -190,6 +190,19 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
     }
+    else if (entity->light)
+    {
+        // view/projection transformations
+        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        glm::mat4 view{ camera.GetViewMatrix() };
+
+        entity->light->draw(shader,
+            projection,
+            view,
+            entity->transform.getLocalPosition(),
+            entity->transform.getLocalScale(),
+            entity->transform.getLocalRotation());
+    }
 
     // Recurse on children
     for (const auto& child : entity->children)

@@ -16,14 +16,7 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    std::shared_ptr<engine::PointLight> myPointLight1;
-    std::shared_ptr<engine::PointLight> myPointLight2;
-    std::shared_ptr<engine::PointLight> myPointLight3;
-    std::shared_ptr<engine::PointLight> myPointLight4;
-
-
-    
-    
+  
 
 
     engine::Text ourText{};
@@ -64,22 +57,50 @@ public:
 
     void init() override
     {
-        myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f));
+        auto trsLight1 = engine::Transform{};
+        trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
 
-        myPointLight2 = std::make_shared<engine::PointLight>(1);
-        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f)); // ?????????
 
-        myPointLight3 = std::make_shared<engine::PointLight>(2);
-        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
 
-        myPointLight4 = std::make_shared<engine::PointLight>(3);
-        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
 
-        lights.emplace_back(myPointLight1);
-        lights.emplace_back(myPointLight2);
-        lights.emplace_back(myPointLight3);
-        lights.emplace_back(myPointLight4);
+
+
+
+        auto trsLight2 = engine::Transform{};
+        trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
+
+        auto light2 = std::make_shared<engine::PointLight>(1);
+        light2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f)); // ?????????
+
+        auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
+        getEntityManager().addChild(entityLight2);
+
+
+
+        auto trsLight3 = engine::Transform{};
+        trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
+
+        auto light3 = std::make_shared<engine::PointLight>(2);
+        light3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f)); // ?????????
+
+        auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
+        getEntityManager().addChild(entityLight3);
+
+
+
+        auto trsLight4 = engine::Transform{};
+        trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
+
+        auto light4 = std::make_shared<engine::PointLight>(3);
+        light4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f)); // ?????????
+
+        auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
+        getEntityManager().addChild(entityLight4);
+
         
 
         // override default camera properties
@@ -136,7 +157,7 @@ public:
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -301,12 +322,6 @@ public:
 
     void update(engine::Shader& shader) override
     {
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ camera.GetViewMatrix() };
-
-
-
         auto child2 = getEntityManager().find("Child2");
         if (child2)
         {
@@ -321,15 +336,7 @@ public:
         }
 
 
-
-        // setup lights
-        myPointLight1->draw(shader, projection, view, 120.0f);
-        myPointLight2->draw(shader, projection, view, 20.0f);
-        myPointLight3->draw(shader, projection, view, 20.0f);
-        myPointLight4->draw(shader, projection, view, 20.0f);
-
         rotation += deltaTime * 10.0f;
-        
     }
 
     void updateUI() override

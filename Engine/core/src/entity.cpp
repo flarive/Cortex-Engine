@@ -29,7 +29,7 @@ engine::Entity::Entity(std::shared_ptr<Model> _model) : model{ _model }
 }
 
 
-// constructor, expects a filepath to a 3D model.
+
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform) : name{ _name }, primitive{ _primitive }, transform{ _transform }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
@@ -46,6 +46,20 @@ engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : primitiv
 }
 
 
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light, Transform _transform) : name{ _name }, light{ _light }, transform{ _transform }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
+}
+
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light) : name{ _name }, light{ _light }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
+}
+
+engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : light{ _light }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
+}
 
 
 
@@ -174,6 +188,14 @@ engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Primitive> primi
 		maxAABB.y = std::max(maxAABB.y, vertex.position.y);
 		maxAABB.z = std::max(maxAABB.z, vertex.position.z);
 	}
+
+	return engine::AABB(minAABB, maxAABB);
+}
+
+engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Light> light)
+{
+	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
 
 	return engine::AABB(minAABB, maxAABB);
 }

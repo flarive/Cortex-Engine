@@ -19,7 +19,7 @@ private:
     std::shared_ptr<engine::PointLight> myPointLight3{};
     std::shared_ptr<engine::PointLight> myPointLight4{};
 
-    std::shared_ptr<engine::DirectionalLight> myDirectionalLight{};
+
 
     std::shared_ptr<engine::SpotLight> mySpotLight{};
 
@@ -65,23 +65,19 @@ public:
     void init() override
     {
         myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
+        myPointLight1->setup();
 
         myPointLight2 = std::make_shared<engine::PointLight>(1);
-        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+        myPointLight2->setup();
 
         myPointLight3 = std::make_shared<engine::PointLight>(2);
-        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+        myPointLight3->setup();
 
         myPointLight4 = std::make_shared<engine::PointLight>(3);
-        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
-
-
-        //myDirectionalLight = std::make_shared<engine::DirectionalLight>(0);
-        //myDirectionalLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
+        myPointLight4->setup();
 
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
+        mySpotLight->setup();
         mySpotLight->setCutOff(12.5f);
         mySpotLight->setOuterCutOff(27.5f);
 
@@ -359,15 +355,11 @@ private:
 
 
         // draw lights
-        //myPointLight1->draw(shader, projection, view, 50.0f); // ????????????
-        //myPointLight2->draw(shader, projection, view, 50.0f); // ????????????
-        //myPointLight3->draw(shader, projection, view, 50.0f); // ????????????
-        //myPointLight4->draw(shader, projection, view, 50.0f); // ????????????
-        //myDirectionalLight->draw(shader, projection, view, 1.0f, myDirectionalLight->getPosition(), myDirectionalLight->getTarget());
-        //mySpotLight.draw(shader, projection, view, 20.0f, getLightPosition(), getLightTarget());
-
-        // draw lights
-        //mySpotLight->draw(shader, projection, view, 20.0f); // ???????????????
+        myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
+        myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, 10.0f, 10.0f));
+        myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(-10.0f, -10.0f, 10.0f));
+        myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, -10.0f, 10.0f));
+        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
     }
 
     void drawUI()

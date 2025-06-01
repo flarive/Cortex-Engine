@@ -46,7 +46,7 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        mySpotLight->setup();
         mySpotLight->setCutOff(8.0f);
         mySpotLight->setOuterCutOff(20.f);
 
@@ -185,7 +185,7 @@ private:
 
 
         // draw lights
-        //mySpotLight->draw(shader, projection, view, 2.0f);
+        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         
 
         // activate phong shader

@@ -50,7 +50,7 @@ public:
     void init() override
     {
         mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        mySpotLight->setup();
         mySpotLight->setCutOff(12.5f);
         mySpotLight->setOuterCutOff(17.5f);
 
@@ -215,7 +215,7 @@ private:
         ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
 
         // draw lights
-        //mySpotLight->draw(shader, projection, view, 50.0f);
+        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 
         rotation += deltaTime * 10.0f;
 

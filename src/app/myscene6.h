@@ -57,16 +57,16 @@ public:
     void init() override
     {
         myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, 10.0f, 10.0f));
+        myPointLight1->setup();
 
         myPointLight2 = std::make_shared<engine::PointLight>(1);
-        myPointLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, 10.0f, 10.0f));
+        myPointLight2->setup();
 
         myPointLight3 = std::make_shared<engine::PointLight>(2);
-        myPointLight3->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-10.0f, -10.0f, 10.0f));
+        myPointLight3->setup();
 
         myPointLight4 = std::make_shared<engine::PointLight>(3);
-        myPointLight4->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(10.0f, -10.0f, 10.0f));
+        myPointLight4->setup();
 
         lights.emplace_back(myPointLight1);
         lights.emplace_back(myPointLight2);
@@ -217,10 +217,10 @@ private:
         helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
 
         // draw lights
-        /*myPointLight1->draw(shader, projection, view, 120.0f);
-        myPointLight2->draw(shader, projection, view, 20.0f);
-        myPointLight3->draw(shader, projection, view, 20.0f);
-        myPointLight4->draw(shader, projection, view, 20.0f);*/
+        myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 120.0f, glm::vec3(-10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(-10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
 
         rotation += deltaTime * 10.0f;
     }

@@ -54,13 +54,13 @@ public:
     void init() override
     {
         myPointLight = std::make_shared<engine::PointLight>(0);
-        myPointLight->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(0.0f, 0.3f, 2.0f));
+        myPointLight->setup();
 
         myDirectionalLight1 = std::make_shared<engine::DirectionalLight>(0);
-        myDirectionalLight1->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight1->setup();
 
         myDirectionalLight2 = std::make_shared<engine::DirectionalLight>(1);
-        myDirectionalLight2->setup(engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight2->setup();
 
 
 
@@ -223,9 +223,9 @@ private:
     
     
         // draw lights
-        /*myPointLight->draw(shader, projection, view, 5.0f);
-        myDirectionalLight1->draw(shader, projection, view, 1.0f);
-        myDirectionalLight2->draw(shader, projection, view, 1.0f);*/
+        myPointLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 5.0f, glm::vec3(0.0f, 0.3f, 2.0f));
+        myDirectionalLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        myDirectionalLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 1.0f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
     
     

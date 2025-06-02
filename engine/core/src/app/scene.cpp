@@ -71,6 +71,10 @@ void engine::Scene::initialize()
 
     init();
 
+
+    auto lights222 = m_entityManager.findEntitiesOfType<Light>();
+
+
     // renderer setup
     m_renderer->setup(app->width, app->height, std::make_shared<Camera>(camera), lights);
 

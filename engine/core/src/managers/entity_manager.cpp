@@ -15,7 +15,7 @@ std::shared_ptr<engine::Entity>& engine::EntityManager::getRootEntity()
     return m_rootEntity;
 }
 
-std::shared_ptr<engine::Entity> engine::EntityManager::find(const std::string& name)
+std::shared_ptr<engine::Entity> engine::EntityManager::findEntityByName(const std::string& name)
 {
     // Try to get from cache
     auto it = m_entityCache.find(name);
@@ -68,7 +68,7 @@ void engine::EntityManager::addChild(std::shared_ptr<engine::Entity> parent, std
 {
     if (parent && child)
     {
-        auto parentEntity = find(parent->name);
+        auto parentEntity = findEntityByName(parent->name);
         if (parentEntity)
         {
             parentEntity->addChild(child);

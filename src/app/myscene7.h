@@ -322,14 +322,14 @@ public:
 
     void update(engine::Shader& shader) override
     {
-        auto child2 = getEntityManager().find("Child2");
+        auto child2 = getEntityManager().findEntityByName("Child2");
         if (child2)
         {
             child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
         }
 
 
-        auto mySphere = getEntityManager().find("MySphere");
+        auto mySphere = getEntityManager().findEntityByName("MySphere");
         if (mySphere)
         {
             mySphere->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));

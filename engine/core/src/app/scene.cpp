@@ -72,7 +72,11 @@ void engine::Scene::initialize()
     init();
 
 
-    auto lights222 = m_entityManager.findEntitiesOfType<Light>();
+
+    lights = m_entityManager.findEntitiesOfType<Light>();
+    //auto primitives = m_entityManager.findEntitiesOfType<Primitive>();
+    //auto models = m_entityManager.findEntitiesOfType<Model>();
+
 
 
     // renderer setup

@@ -106,6 +106,18 @@
     <Filter Include="Fichiers sources\core\managers">
       <UniqueIdentifier>{9a97329e-ad6f-4f47-91c7-10e21182ce92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\cameras">
+      <UniqueIdentifier>{21ff511a-0c7e-4283-8382-accf9066c4c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\cameras">
+      <UniqueIdentifier>{3fdc4067-10fd-42a0-8e26-8ce515d5d488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\cameras\base">
+      <UniqueIdentifier>{00a01672-22ef-46a6-8be0-f2e590b76bf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\cameras\base">
+      <UniqueIdentifier>{2ca76577-550b-4a60-b0d4-532bbf0a285e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -155,9 +167,6 @@
     </ClCompile>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>Fichiers sources\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\camera.cpp">
-      <Filter>Fichiers sources\core</Filter>
     </ClCompile>
     <ClCompile Include="core\src\mesh.cpp">
       <Filter>Fichiers sources\core</Filter>
@@ -237,6 +246,12 @@
     <ClCompile Include="core\src\tools\helpers.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\cameras\camera.cpp">
+      <Filter>Fichiers sources\core\cameras\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\cameras\fly_camera.cpp">
+      <Filter>Fichiers sources\core\cameras</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -289,9 +304,6 @@
     </ClInclude>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h">
       <Filter>Fichiers sources\imgui\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\camera.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\character.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
@@ -385,6 +397,12 @@
     </ClInclude>
     <ClInclude Include="core\include\tools\helpers.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\cameras\camera.h">
+      <Filter>Fichiers d%27en-tête\core\cameras\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\cameras\fly_camera.h">
+      <Filter>Fichiers d%27en-tête\core\cameras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

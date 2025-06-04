@@ -17,7 +17,7 @@ std::shared_ptr<engine::Entity>& engine::EntityManager::getRootEntity()
 
 std::shared_ptr<engine::Entity> engine::EntityManager::findEntityByName(const std::string& name)
 {
-    // Try to get from cache
+    // Try to get from cache (faster)
     auto it = m_entityCache.find(name);
     if (it != m_entityCache.end()) {
         // Found
@@ -50,8 +50,6 @@ std::shared_ptr<engine::Entity> engine::EntityManager::findEntityRecursive(const
 
     return nullptr; // Not found
 }
-
-
 
 void engine::EntityManager::addChild(std::shared_ptr<engine::Entity> child)
 {

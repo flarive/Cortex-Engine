@@ -70,10 +70,11 @@ public:
 
 
         // override default camera properties
-        camera.Position = glm::vec3(0.0f, 0.0f, 3.0f);
-        camera.Fps = true;
-        camera.Zoom = 25.0f;
-        camera.MovementSpeed = 10.0f;
+        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
+        camera->Zoom = 25.0f;
+        camera->MovementSpeed = 10.0f;
+        cameras.emplace_back(camera);
+        
 
         std::vector<std::string> faces
         {
@@ -125,24 +126,24 @@ public:
         bool shiftPressed =  (mods & GLFW_MOD_SHIFT);
 
         if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+            getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
         else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::LEFT, deltaTime);
+            getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
+            getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
         else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::RIGHT, deltaTime);
+            getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::PITCH_UP, deltaTime);
+            getActiveCamera()->processKeyboard(engine::PITCH_UP, deltaTime);
         else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::FORWARD, deltaTime);
+            getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
 
         if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::PITCH_DOWN, deltaTime);
+            getActiveCamera()->processKeyboard(engine::PITCH_DOWN, deltaTime);
         else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-            camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
+            getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
     }
 
 
@@ -169,14 +170,14 @@ public:
         lastX = xpos;
         lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        getActiveCamera()->processMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::Scene::scroll_callback(xoffset, yoffset);
 
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -216,8 +217,8 @@ private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ camera.GetViewMatrix() };
+        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
     
     
     
@@ -232,7 +233,7 @@ private:
     
         // activate phong shader
         shader.use();
-        shader.setVec3("viewPos", camera.Position);
+        shader.setVec3("viewPos", getActiveCamera()->Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
     
@@ -252,7 +253,7 @@ private:
             zzz->skyboxShader.use();
             zzz->skyboxShader.setMat4("view", view);
             zzz->skyboxShader.setMat4("projection", projection);
-            zzz->skyboxShader.setVec3("cameraPos", camera.Position);
+            zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
         }
 
         ourSkybox.draw(projection, view);

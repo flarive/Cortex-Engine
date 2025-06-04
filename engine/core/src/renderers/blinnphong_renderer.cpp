@@ -11,7 +11,7 @@ engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine:
 }
 
 
-void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights)
+void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
     

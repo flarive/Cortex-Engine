@@ -5,7 +5,7 @@
 
 #include "../shader.h"
 #include "../lights/light.h"
-#include "../camera.h"
+#include "../cameras/camera.h"
 
 
 namespace engine

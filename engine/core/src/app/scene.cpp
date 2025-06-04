@@ -71,16 +71,19 @@ void engine::Scene::initialize()
 
     init();
 
+    if (lights.size() == 0)
+        lights = m_entityManager.findEntitiesOfType<Light>();
 
+    if (cameras.size() == 0)
+        cameras = m_entityManager.findEntitiesOfType<Camera>();
 
-    lights = m_entityManager.findEntitiesOfType<Light>();
     //auto primitives = m_entityManager.findEntitiesOfType<Primitive>();
     //auto models = m_entityManager.findEntitiesOfType<Model>();
 
-
+    //ASSERT() if no camera
 
     // renderer setup
-    m_renderer->setup(app->width, app->height, std::make_shared<Camera>(camera), lights);
+    m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
 
     after_init();
 }
@@ -136,7 +139,7 @@ void engine::Scene::gameLoop()
         };
 
     // Call the method
-    m_renderer->loop(app->width, app->height, std::make_shared<Camera>(camera), updateLambda, updateUILambda);
+    m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
 
     // get opengl stats such as polycount drawn
     endQuery();
@@ -201,8 +204,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     else if (entity->light)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(camera.Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ camera.GetViewMatrix() };
+        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
         entity->light->draw(shader,
             projection,

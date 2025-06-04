@@ -63,6 +63,21 @@ engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : light{ _light }
 
 
 
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, camera{ _camera }, transform{ _transform }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
+}
+
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera) : name{ _name }, camera{ _camera }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
+}
+
+engine::Entity::Entity(std::shared_ptr<engine::Camera> _camera) : camera{ _camera }
+{
+	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
+}
+
 engine::AABB engine::Entity::getGlobalAABB()
 {
 	//Get global scale thanks to our transform
@@ -199,6 +214,15 @@ engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Light> light)
 
 	return engine::AABB(minAABB, maxAABB);
 }
+
+engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Camera> camera)
+{
+	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+
+	return engine::AABB(minAABB, maxAABB);
+}
+
 
 engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 {

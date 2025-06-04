@@ -60,6 +60,8 @@ namespace engine
 
         Renderer* m_renderer{};
         EntityManager m_entityManager{};
+
+        unsigned short m_activeCameraIndex{};
     
 
         virtual void before_init_hook() {}; // Overridable by derived classes
@@ -70,12 +72,12 @@ namespace engine
         bool show_demo_window{ false };
         
 
-        // default camera
-        engine::Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f), true };
-
-
+        
         std::vector<std::shared_ptr<engine::Light>> lights{};
         std::vector<std::shared_ptr<engine::Camera>> cameras{};
+
+
+
 
 
         Scene(std::string _title, App* _app, SceneSettings _settings);
@@ -107,6 +109,15 @@ namespace engine
         Renderer* getRenderer() { return m_renderer; };
         EntityManager getEntityManager() { return m_entityManager; };
 
+        std::shared_ptr<engine::Camera> getActiveCamera() const
+        {
+            return cameras[m_activeCameraIndex];
+        }
+
+        void setActiveCamera(unsigned short index)
+        {
+            m_activeCameraIndex = index;
+        }
         
 
         void drawEntities(Shader& shader);

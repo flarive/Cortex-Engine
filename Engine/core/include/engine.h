@@ -25,7 +25,8 @@
 
 #include "model.h"
 
-#include "camera.h"
+#include "cameras/camera.h"
+#include "cameras/fly_camera.h"
 
 
 

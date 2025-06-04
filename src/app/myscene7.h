@@ -57,6 +57,23 @@ public:
 
     void init() override
     {
+        // cameras
+        auto trsCamera1 = engine::Transform{};
+        trsCamera1.setLocalPosition({ 0.0f, -16.0f, 2.0f });
+
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -16.0f, 2.0f), false);
+        camera1->Zoom = 100.0f;
+        camera1->MovementSpeed = 10.0f;
+
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(EntityCamera1);
+
+
+
+
+
+
+        // lights
         auto trsLight1 = engine::Transform{};
         trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
 
@@ -101,13 +118,12 @@ public:
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
         getEntityManager().addChild(entityLight4);
 
-        
 
-        // override default camera properties
-        camera.Position = glm::vec3(0.0f, -16.0f, 2.0f);
-        camera.Fps = false;
-        camera.Zoom = 100.0f;
-        camera.MovementSpeed = 10.0f;
+
+
+
+
+        
 
 
         
@@ -219,24 +235,24 @@ public:
 
         if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            camera.ProcessKeyboard(engine::LEFT, deltaTime);
-            camera.ProcessKeyboard(engine::YAW_DOWN, deltaTime);
+            getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
+            getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
         }
 
         if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            camera.ProcessKeyboard(engine::RIGHT, deltaTime);
-            camera.ProcessKeyboard(engine::YAW_UP, deltaTime);
+            getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
+            getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
         }
 
         if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            camera.ProcessKeyboard(engine::FORWARD, deltaTime);
+            getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
         }
 
         if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            camera.ProcessKeyboard(engine::BACKWARD, deltaTime);
+            getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
         }
 
         if (key == GLFW_KEY_N && action == GLFW_PRESS)
@@ -283,19 +299,19 @@ public:
         lastX = xpos;
         lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        getActiveCamera()->processMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
         engine::Scene::scroll_callback(xoffset, yoffset);
 
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-        camera.ProcessJoystickMovement(state);
+        getActiveCamera()->processJoystickMovement(state);
 
         //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
         //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable

@@ -5,7 +5,6 @@
 
 
 #include <unordered_map>
-#include <typeindex>
 #include <memory>
 
 
@@ -74,19 +73,22 @@ namespace engine
 
 			// Try casting the entity to the desired type
 			std::shared_ptr<T> casted{};
-			if (entity->primitive)
+			if (entity->primitive && typeid(std::dynamic_pointer_cast<T>(entity->primitive)) == typeid(entity->primitive))
 			{
 				casted = std::dynamic_pointer_cast<T>(entity->primitive);
 			}
-			else if (entity->model)
+			else if (entity->model && typeid(std::dynamic_pointer_cast<T>(entity->model)) == typeid(entity->model))
 			{
-				casted = std::dynamic_pointer_cast<T>(entity->model);
+				casted = std::reinterpret_pointer_cast<T>(entity->model);
 			}
-			else if (entity->light)
+			else if (entity->light && typeid(std::dynamic_pointer_cast<T>(entity->light)) == typeid(entity->light))
 			{
 				casted = std::dynamic_pointer_cast<T>(entity->light);
 			}
-
+			else if (entity->camera && typeid(std::dynamic_pointer_cast<T>(entity->camera)) == typeid(entity->camera))
+			{
+				casted = std::dynamic_pointer_cast<T>(entity->camera);
+			}
 
 			if (casted)
 			{
@@ -98,6 +100,9 @@ namespace engine
 				findEntitiesOfTypeRecursive<T>(child, result);
 			}
 		}
+
+
+
 
 		bool removeRecursive(const std::shared_ptr<Entity>& parent, const std::shared_ptr<Entity>& current, const std::string& targetName);
 

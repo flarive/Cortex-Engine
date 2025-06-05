@@ -5,7 +5,7 @@
 namespace engine
 {
     // A fly/fps camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-    class FlyCamera : public Camera
+    class FlyCamera final : public Camera
     {
     public:
         // constructor with vectors

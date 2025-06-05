@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    class Sphere : public Primitive
+    class Sphere final : public Primitive
     {
     public:
         Sphere() = default;

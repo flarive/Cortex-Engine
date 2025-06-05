@@ -6,7 +6,7 @@
 
 namespace engine
 {
-    class PointLight : public Light
+    class PointLight final : public Light
     {
     public:
         PointLight();

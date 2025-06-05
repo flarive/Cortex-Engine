@@ -6,7 +6,7 @@
 
 namespace engine
 {
-	class PbrRenderer : public Renderer
+	class PbrRenderer final : public Renderer
 	{
 	public:
 		// Main PBR shader

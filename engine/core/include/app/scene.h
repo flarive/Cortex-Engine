@@ -11,6 +11,7 @@
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../debug/imgui_debug.h"
+#include "../debug/imgui_docking.h"
 
 #include "../managers/entity_manager.h"
 
@@ -111,6 +112,8 @@ namespace engine
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {
+            assert(m_activeCameraIndex >= cameras.size() == 0 && "Bad camera index !");
+            
             return cameras[m_activeCameraIndex];
         }
 

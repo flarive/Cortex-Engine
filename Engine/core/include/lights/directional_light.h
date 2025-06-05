@@ -5,7 +5,7 @@
 
 namespace engine
 {
-    class DirectionalLight : public Light
+    class DirectionalLight final : public Light
     {
     public:
         DirectionalLight();

@@ -6,7 +6,7 @@
 
 namespace engine
 {
-    class Cube : public Primitive
+    class Cube final : public Primitive
     {
     public:
         Cube() = default;

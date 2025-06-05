@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class Billboard : public Primitive
+    class Billboard final : public Primitive
     {
     public:
         Billboard() = default;

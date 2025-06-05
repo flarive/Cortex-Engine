@@ -80,7 +80,7 @@ void engine::Scene::initialize()
     //auto primitives = m_entityManager.findEntitiesOfType<Primitive>();
     //auto models = m_entityManager.findEntitiesOfType<Model>();
 
-    //ASSERT() if no camera
+    assert(cameras.size() == 0 && "Scene has no camera !");
 
     // renderer setup
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);

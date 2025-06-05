@@ -252,6 +252,9 @@
     <ClCompile Include="core\src\cameras\fly_camera.cpp">
       <Filter>Fichiers sources\core\cameras</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\debug\imgui_docking.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -403,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="core\include\cameras\fly_camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\imgui_docking.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

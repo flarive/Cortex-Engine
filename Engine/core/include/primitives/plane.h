@@ -6,7 +6,7 @@
 
 namespace engine
 {
-    class Plane : public Primitive
+    class Plane final : public Primitive
     {
     public:
         Plane() = default;

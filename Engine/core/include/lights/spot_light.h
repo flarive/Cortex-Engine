@@ -4,7 +4,7 @@
 
 namespace engine
 {
-    class SpotLight : public Light
+    class SpotLight final : public Light
     {
     public:
         SpotLight();

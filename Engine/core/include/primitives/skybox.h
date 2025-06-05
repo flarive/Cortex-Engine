@@ -7,7 +7,7 @@
 
 namespace engine
 {
-    class Skybox : private NonCopyable
+    class Skybox final : private NonCopyable
     {
     private:
         unsigned int m_cubemapTexture{};

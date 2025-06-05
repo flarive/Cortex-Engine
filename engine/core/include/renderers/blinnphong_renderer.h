@@ -6,7 +6,7 @@
 
 namespace engine
 {
-	class BlinnPhongRenderer : public Renderer
+	class BlinnPhongRenderer final : public Renderer
 	{
 	public:
 		// Main Blinn Phong shader

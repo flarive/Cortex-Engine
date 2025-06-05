@@ -1,6 +1,6 @@
 #include "../include/entity.h"
 
-#include "../include/primitives/cube.h"
+//#include "../include/primitives/cube.h"
 
 // constructor, expects just a name
 engine::Entity::Entity(const std::string& _name) : name{ _name }

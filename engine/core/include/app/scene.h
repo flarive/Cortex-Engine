@@ -31,7 +31,8 @@ namespace engine
     private:
         bool key_w_pressed{ false };
 
-        ImGuiDebug m_debug{};
+        //ImGuiDebug m_debug{};
+        ImGuiDocking m_debug{};
 
         GLuint query{};
 

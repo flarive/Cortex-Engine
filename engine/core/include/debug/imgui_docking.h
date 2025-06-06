@@ -22,12 +22,6 @@ namespace engine
 		std::shared_ptr<Entity> m_rootEntity{};
 
 		std::shared_ptr<Entity> m_selectedEntity{};
-
-		void renderTabAbout();
-		void renderTabScene();
-
-		void displayEntityInImGui(const std::shared_ptr<Entity>& entity);
-		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 	};
 }
 

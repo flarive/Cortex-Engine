@@ -6,6 +6,8 @@
 #include <iostream>
 #include <functional>
 
+#define SPECTRUM_USE_DARK_THEME
+
 namespace engine
 {
     struct AppSettings

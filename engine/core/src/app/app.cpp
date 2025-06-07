@@ -173,13 +173,13 @@ void engine::App::initImGUI(const char* glsl_version)
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags)
     {
-        style.WindowRounding = 0.0f;
-        style.ChildRounding = 5.0f;
-        style.TabRounding = 5.f;
-        style.FrameRounding = 5.f;
-        style.GrabRounding = 5.f;
-        style.PopupRounding = 5.f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        //style.WindowRounding = 0.0f;
+        //style.ChildRounding = 5.0f;
+        //style.TabRounding = 5.f;
+        //style.FrameRounding = 5.f;
+        //style.GrabRounding = 5.f;
+        //style.PopupRounding = 5.f;
+        //style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 
         style.ItemSpacing.y = 8.0; // vertical padding between widgets
         style.FramePadding.x = 8.0; // better widget horizontal padding

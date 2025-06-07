@@ -110,8 +110,8 @@ void engine::Scene::gameLoop()
         m_debug.renderUIWindow(show_window);
     
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    //if (show_demo_window)
+    //    ImGui::ShowDemoWindow(&show_demo_window);
 
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
@@ -267,19 +267,17 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
                     });
             }
             break;
-    }
-
-    if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        if (!key_w_pressed) // Only toggle when the key is first pressed
-        {
-            show_window = !show_window;
-            key_w_pressed = true; // Mark the key as pressed
-        }
-    }
-    else if (glfwGetKey(app->window, GLFW_KEY_W) == GLFW_RELEASE)
-    {
-        key_w_pressed = false; // Reset the state when the key is released
+        case GLFW_KEY_W:
+            if (action == GLFW_PRESS && !key_w_pressed)
+            {
+                show_window = !show_window;
+                key_w_pressed = true;
+            }
+            else if (action == GLFW_RELEASE)
+            {
+                key_w_pressed = false;
+            }
+            break;
     }
 }
 

@@ -295,6 +295,9 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
 {
     UNREFERENCED_PARAMETER(xoffset);
     UNREFERENCED_PARAMETER(yoffset);
+
+    if (show_window)
+        ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????
 }
 
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp

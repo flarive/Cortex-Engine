@@ -36,7 +36,7 @@ namespace ImGui {
             ImVec4* colors = style->Colors;
             colors[ImGuiCol_Text] = ColorConvertU32ToFloat4(Spectrum::GRAY800); // text on hovered controls is gray900
             colors[ImGuiCol_TextDisabled] = ColorConvertU32ToFloat4(Spectrum::GRAY500);
-            colors[ImGuiCol_WindowBg] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
+            colors[ImGuiCol_WindowBg] = ColorConvertU32ToFloat4(Spectrum::GRAY50);
             colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
             colors[ImGuiCol_PopupBg] = ColorConvertU32ToFloat4(Spectrum::GRAY50); // not sure about this. Note: applies to tooltips too.
             colors[ImGuiCol_Border] = ColorConvertU32ToFloat4(Spectrum::GRAY300);
@@ -97,7 +97,7 @@ namespace ImGui {
 
 
             colors[ImGuiCol_DockingPreview] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
-            colors[ImGuiCol_DockingEmptyBg] = ColorConvertU32ToFloat4(Spectrum::GRAY100);
+            colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f); // transparent
 
             colors[ImGuiCol_SliderGrab] = ColorConvertU32ToFloat4(Spectrum::BLUE600);
             colors[ImGuiCol_SliderGrabActive] = ColorConvertU32ToFloat4(Spectrum::BLUE400);

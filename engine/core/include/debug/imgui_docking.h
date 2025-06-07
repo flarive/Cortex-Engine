@@ -28,7 +28,8 @@ namespace engine
 
 
 		void renderTabAbout();
-		void renderTabScene();
+		void renderHierarchyWidget();
+		void renderPropertiesWidget();
 
 		void displayEntityInImGui(const std::shared_ptr<Entity>& entity);
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);

@@ -22,13 +22,13 @@ void engine::ImGuiDocking::setScene(std::shared_ptr<Entity> rootEntity)
 void engine::ImGuiDocking::renderUIWindow(bool show)
 {
 	bool open = true;
-	bool open1 = true;
-	bool open2 = false;
-	bool open3 = false;
 
 	static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    dockspace_flags |= ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;
 
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->Pos);
@@ -37,11 +37,10 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace Demo", &open, window_flags);
+	ImGui::Begin("DockSpace", &open, window_flags);
 	ImGui::PopStyleVar();
 
 	ImGui::PopStyleVar(2);
@@ -57,62 +56,67 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
 		ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-		ImGuiID dock_main_id = dockspace_id; // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
+        // This variable will track the document node, however we are not using it here as we aren't docking anything into it
+		ImGuiID dock_main_id = dockspace_id;
+
 		ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.22f, NULL, &dock_main_id);
 		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.30f, NULL, &dock_main_id);
 
-		ImGui::DockBuilderDockWindow("TabHierarchy", dock_id_left);
-		//ImGui::DockBuilderDockWindow("TabSearch", dock_id_left);     // New tab
+		ImGui::DockBuilderDockWindow("Scene", dock_id_left);
+		ImGui::DockBuilderDockWindow("About", dock_id_left);
 
-		ImGui::DockBuilderDockWindow("TabProperties", dock_id_right);
+		ImGui::DockBuilderDockWindow("Properties", dock_id_right);
+
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
 
-	
-
-	ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.0f, 0.0f, 0.0f, 0.5f));
 	ImGui::DockSpace(dockspace_id, ImGui::GetContentRegionAvail(), dockspace_flags);
-	ImGui::PopStyleColor();
 
 	ImGui::End();
 
-	ImGui::Begin("TabHierarchy", &open, 0);
-    renderTabScene();
-	//ImGui::Text("Avail: %.1f x %.1f", ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+	ImGui::Begin("Scene", nullptr, 0);
+    renderHierarchyWidget();
 	ImGui::End();
 
-	//ImGui::Begin("TabSearch", &open2, 0);
-	//ImGui::Text("This is the search tab.");
-	//ImGui::End();
-
-	ImGui::Begin("TabProperties", &open, 0);
+	ImGui::Begin("About", nullptr, 0);
     renderTabAbout();
+	ImGui::End();
+
+	ImGui::Begin("Properties", nullptr, 0);
+    renderPropertiesWidget();
 	ImGui::End();
 }
 
 
-void engine::ImGuiDocking::renderTabScene()
+void engine::ImGuiDocking::renderHierarchyWidget()
 {
     if (m_rootEntity)
     {
-        ImGui::BeginChild("EntityTreeRegion", ImVec2(0, 200), true); // 300 pixels height
-        displayEntityInImGui(m_rootEntity); // Your tree rendering function
+        ImGui::BeginChild("EntityTreeRegion", ImVec2(0, 0), true);
+        displayEntityInImGui(m_rootEntity);
         ImGui::EndChild();
+    }
+}
 
-        ImGui::BeginChild("EntityTreeDetailRegion", ImVec2(0, 150), true); // 300 pixels height
-        displayEntityDetails(m_selectedEntity); // Your tree rendering function
+void engine::ImGuiDocking::renderPropertiesWidget()
+{
+    if (m_rootEntity)
+    {
+        ImGui::BeginChild("EntityPropertyRegion", ImVec2(0, 300), true);
+        displayEntityDetails(m_selectedEntity);
         ImGui::EndChild();
     }
 }
 
 void engine::ImGuiDocking::renderTabAbout()
 {
+    ImGui::BeginChild("AboutRegion", ImVec2(0, 0), true);
+    ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
+    ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
+    ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());
     ImGui::Text(" ");
-    ImGui::Text("GPU Vendor: %s", m_sysMonitor.GetGPUVendor().c_str());
-    ImGui::Text("GPU Renderer: %s", m_sysMonitor.GetGPURenderer().c_str());
-    ImGui::Text("OpenGL Version: %s", m_sysMonitor.GetGPUVersion().c_str());
-    ImGui::Text(" ");
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::EndChild();
 }
 
 void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
@@ -136,15 +140,11 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
 
     // Check for click to select
     if (ImGui::IsItemClicked())
-    {
         m_selectedEntity = entity;
-    }
 
     // Pop color if it was pushed
     if (isSelected)
-    {
         ImGui::PopStyleColor();
-    }
 
     if (nodeOpen)
     {

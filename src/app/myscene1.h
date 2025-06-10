@@ -19,21 +19,6 @@ private:
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
 
-    //engine::Model backpackModel{};
-    engine::Model cushionModel{};
-
-
-
-
-    std::shared_ptr<engine::PointLight> myPointLight;
-    std::shared_ptr<engine::DirectionalLight> myDirectionalLight1;
-    std::shared_ptr<engine::DirectionalLight> myDirectionalLight2;
-
-
-    engine::Cube ourCube{};
-    engine::Plane ourPlane{};
-    engine::Billboard ourBillboard{};
-
     engine::Text ourText{};
 
     engine::Skybox ourSkybox{};
@@ -53,28 +38,56 @@ public:
 
     void init() override
     {
-        myPointLight = std::make_shared<engine::PointLight>(0);
-        myPointLight->setup();
+        // cameras
+        auto trsCamera1 = engine::Transform{};
+        trsCamera1.setLocalPosition({ 0.0f, -16.0f, 2.0f });
 
-        myDirectionalLight1 = std::make_shared<engine::DirectionalLight>(0);
-        myDirectionalLight1->setup();
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
+        camera1->Zoom = 25.0f;
+        camera1->MovementSpeed = 10.0f;
 
-        myDirectionalLight2 = std::make_shared<engine::DirectionalLight>(1);
-        myDirectionalLight2->setup();
-
-
-
-        lights.emplace_back(myPointLight);
-        lights.emplace_back(myDirectionalLight1);
-        lights.emplace_back(myDirectionalLight2);
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(EntityCamera1);
 
 
-        // override default camera properties
-        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
-        camera->Zoom = 25.0f;
-        camera->MovementSpeed = 10.0f;
-        cameras.emplace_back(camera);
-        
+
+
+
+
+        // lights
+        auto trsLight1 = engine::Transform{};
+        trsLight1.setLocalPosition({ 0.0f, 0.3f, 2.0f });
+
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setup();
+
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
+
+
+
+        auto trsLight2 = engine::Transform{};
+        trsLight2.setLocalPosition({ 2.0f, 0.3f, 2.0f });
+
+        auto light2 = std::make_shared<engine::DirectionalLight>(0);
+        light2->setup();
+
+        auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
+        getEntityManager().addChild(entityLight2);
+
+
+
+
+        auto trsLight3 = engine::Transform{};
+        trsLight3.setLocalPosition({ -2.0f, 0.3f, 2.0f });
+
+        auto light3 = std::make_shared<engine::DirectionalLight>(1);
+        light3->setup();
+
+        auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
+        getEntityManager().addChild(entityLight3);
+
+
 
         std::vector<std::string> faces
         {
@@ -86,29 +99,66 @@ public:
             "textures/skybox/back.jpg"
         };
 
-        //auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
-        //zzz.setCubeMapTexs(faces);
+        auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+        zzz.setCubeMapTexs(faces);
 
 
 
-        ourCube.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/container2_diffuse.png",
-            "textures/container2_specular.png"));
-
-
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        // ground
+        auto myPlane = std::make_shared<engine::Plane>();
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+        auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+        getEntityManager().addChild(entityPlane);
 
-        // load models
-        //backpackModel = engine::Model("models/backpack/backpack.obj");
-        cushionModel = engine::Model("models/cushion/cushion.obj");
 
 
-        
+        // billboard
+        auto myBillboard = std::make_shared<engine::Billboard>();
+        myBillboard->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/grass.png"), engine::UvMapping(1.0f));
 
-        ourBillboard.setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"));
+        auto trsBillboard = engine::Transform(glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
+        getEntityManager().addChild(entityBillboard);
+
+
+
+
+        // cube
+        auto myCube = std::make_shared<engine::Cube>();
+        myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/container2_diffuse.png",
+            "textures/container2_specular.png"));
+
+        auto trsCube = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
+        getEntityManager().addChild(entityCube);
+
+
+
+
+
+
+        // cushion model
+        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
+        getEntityManager().addChild(entityCushion);
+
+
+        // backpack model
+        std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
+        auto trsBackpack = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
+        getEntityManager().addChild(entityBackpack);
+
+
+
+
 
         ourText.setup(app->window, FONT_PATH, 28);
 
@@ -207,10 +257,6 @@ public:
     {
         // clean up any resources
         ourSkybox.clean();
-        ourCube.clean();
-        ourPlane.clean();
-        ourBillboard.clean();
-        cushionModel.clean();
     }
 
 private:
@@ -220,16 +266,7 @@ private:
         glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
         glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
     
-    
-    
-    
-        // draw lights
-        myPointLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 5.0f, glm::vec3(0.0f, 0.3f, 2.0f));
-        myDirectionalLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 1.0f, glm::vec3(2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        myDirectionalLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 1.0f, glm::vec3(-2.0f, 0.3f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-    
-    
     
         // activate phong shader
         shader.use();
@@ -237,15 +274,7 @@ private:
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
     
-    
-        // render primitives
-        ourCube.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
-        ourBillboard.draw(shader, glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-
-        // render models
-        cushionModel.draw(shader, glm::vec3(-1.0f, -0.15f, 0.0f), glm::vec3(0.2f));
-
+  
         // activate skybox reflection shader
         auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
         if (zzz)

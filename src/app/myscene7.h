@@ -338,6 +338,9 @@ public:
 
     void update(engine::Shader& shader) override
     {
+        UNREFERENCED_PARAMETER(shader);
+
+
         auto child2 = getEntityManager().findEntityByName("Child2");
         if (child2)
         {

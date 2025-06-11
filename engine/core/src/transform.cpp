@@ -21,12 +21,18 @@ glm::mat4 engine::Transform::getLocalModelMatrix()
 void engine::Transform::computeModelMatrix()
 {
 	m_modelMatrix = getLocalModelMatrix();
+
+	m_globalPosition = m_modelMatrix[3];
+
 	m_isDirty = false;
 }
 
 void engine::Transform::computeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
 {
 	m_modelMatrix = parentGlobalModelMatrix * getLocalModelMatrix();
+
+	m_globalPosition = m_modelMatrix[3];
+
 	m_isDirty = false;
 }
 
@@ -50,7 +56,8 @@ void engine::Transform::setLocalScale(const glm::vec3& newScale)
 
 const glm::vec3& engine::Transform::getGlobalPosition() const
 {
-	return m_modelMatrix[3];
+	return m_globalPosition;
+	//return m_modelMatrix[3];
 }
 
 const glm::vec3& engine::Transform::getLocalPosition() const

@@ -210,8 +210,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         entity->light->draw(shader,
             projection,
             view,
-            engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, // TODO !!!!!
-            20.0f, // TODO !!!!!!!!!!!!!!!!
+            entity->light->getAmbientColor(),
+            entity->light->getIntensity(),
             entity->transform.getLocalPosition(),
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());

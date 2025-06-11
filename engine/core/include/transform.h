@@ -8,12 +8,17 @@ namespace engine
 	{
 	protected:
 		//Local space information
-		glm::vec3 m_pos = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 m_eulerRot = { 0.0f, 0.0f, 0.0f }; //In degrees
-		glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };
+		glm::vec3 m_pos{};
+		glm::vec3 m_eulerRot{}; //In degrees
+		glm::vec3 m_scale{ 1.0f };
 
 		//Global space information concatenate in matrix
 		glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+
+
+		// Global space information
+		glm::vec3 m_globalPosition{};
+		
 
 		//Dirty flag
 		bool m_isDirty = true;
@@ -25,7 +30,7 @@ namespace engine
 		Transform() = default;
 		~Transform() = default;
 
-		Transform(glm::vec3 _position, glm::vec3 _scale, glm::vec3 _rotation);
+		Transform(glm::vec3 _position, glm::vec3 _scale = glm::vec3(1.0f), glm::vec3 _rotation = glm::vec3(0.0f));
 
 		void computeModelMatrix();
 		void computeModelMatrix(const glm::mat4& parentGlobalModelMatrix);

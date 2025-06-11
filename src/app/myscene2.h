@@ -14,7 +14,7 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    std::shared_ptr<engine::SpotLight> mySpotLight;
+    /*std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
 
@@ -23,7 +23,7 @@ private:
 
     engine::Cube ourCube1{};
 
-    engine::Plane ourPlane{};
+    engine::Plane ourPlane{};*/
 
     engine::Text ourText{};
 
@@ -45,32 +45,67 @@ public:
 
     void init() override
     {
-        mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup();
-        mySpotLight->setCutOff(8.0f);
-        mySpotLight->setOuterCutOff(20.f);
+        // cameras
+        auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 2.0f } };
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
+        camera1->Zoom = 25.0f;
+        camera1->MovementSpeed = 10.0f;
+        auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(entityCamera1);
 
-        lights.emplace_back(mySpotLight);
 
-        // override default camera properties
-        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
-        camera->Zoom = 25.0f;
-        camera->MovementSpeed = 10.0f;
-        cameras.emplace_back(camera);
+        // lights
+        auto trsLight1 = engine::Transform{ { 0.0f, 1.0f, 3.0f} };
+        auto light1 = std::make_shared<engine::SpotLight>(0);
+        light1->setIntensity(2.0f);
+        // position : glm::vec3(0.0f, 1.0f, 3.0f)
+        // target : glm::vec3(0.0f, 0.0f, 1.0f)
+        light1->setup();
+        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        cushionModel = engine::Model("models/cushion/cushion.obj");
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
 
-        //ourCube1.setup(engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png"));
 
-        ourCube1.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/container2_diffuse.png",
-            "textures/container2_specular.png"));
 
-        //ourSphere1.setup(engine::Material(engine::Color(0.1f), "textures/rusted_metal_diffuse.jpg", "textures/rusted_metal_specular.jpg"));
 
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/wood_diffuse.png",
-            "textures/wood_specular.png"), engine::UvMapping(2.0f));
+
+
+
+
+
+
+
+
+        // ground
+        auto myPlane = std::make_shared<engine::Plane>();
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+            "textures/rusted_metal_diffuse.jpg",
+            "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
+
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+        getEntityManager().addChild(entityPlane);
+
+
+
+
+        // cushion model
+        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
+        getEntityManager().addChild(entityCushion);
+
+
+
+
+        
+
+        
+
+        
+        
+
 
         ourText.setup(app->window, FONT_PATH, 28);
     }
@@ -171,9 +206,9 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourCube1.clean();
-        //ourSphere1.clean();
-        ourPlane.clean();
+        //ourCube1.clean();
+        ////ourSphere1.clean();
+        //ourPlane.clean();
     }
 
 private:
@@ -185,7 +220,7 @@ private:
 
 
         // draw lights
-        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         
 
         // activate phong shader
@@ -196,7 +231,7 @@ private:
 
 
         // render the loaded model
-        cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, rotation, 0.0f));
+        //cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, rotation, 0.0f));
 
 
 
@@ -207,7 +242,7 @@ private:
         rotation += deltaTime * 10.0f;
 
         // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+        //ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
     }
 
     void drawUI()

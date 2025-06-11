@@ -55,10 +55,9 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{};
-        trsLight1.setLocalPosition({ 0.0f, 0.3f, 2.0f });
-
+        auto trsLight1 = engine::Transform{ { 0.0f, 0.3f, 2.0f } };
         auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setIntensity(5.0f);
         light1->setup();
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -66,10 +65,9 @@ public:
 
 
 
-        auto trsLight2 = engine::Transform{};
-        trsLight2.setLocalPosition({ 2.0f, 0.3f, 2.0f });
-
+        auto trsLight2 = engine::Transform{ { 2.0f, 0.3f, 2.0f } };
         auto light2 = std::make_shared<engine::DirectionalLight>(0);
+        light2->setIntensity(1.0f);
         light2->setup();
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
@@ -78,10 +76,9 @@ public:
 
 
 
-        auto trsLight3 = engine::Transform{};
-        trsLight3.setLocalPosition({ -2.0f, 0.3f, 2.0f });
-
+        auto trsLight3 = engine::Transform{ { -2.0f, 0.3f, 2.0f } };
         auto light3 = std::make_shared<engine::DirectionalLight>(1);
+        light3->setIntensity(1.0f);
         light3->setup();
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
@@ -110,7 +107,7 @@ public:
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -150,7 +147,7 @@ public:
         getEntityManager().addChild(entityCushion);
 
 
-        // backpack model
+        //// backpack model
         std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
         auto trsBackpack = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);

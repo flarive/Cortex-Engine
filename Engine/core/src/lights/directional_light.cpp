@@ -27,7 +27,7 @@ void engine::DirectionalLight::setup()
     glEnableVertexAttribArray(0);
 
     // load light cube debug shader
-    lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+    m_lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 }
 
 void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, float intensity, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation)
@@ -52,17 +52,17 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
     if (DISPLAY_DEBUG_LIGHT_CUBE)
     {
         // also draw the lamp object(s)
-        lightCubeShader.use();
+        m_lightCubeShader.use();
 
         // we now draw as many light bulbs as we have point lights.
         glBindVertexArray(VAO);
 
-        lightCubeShader.setMat4("projection", projection);
-        lightCubeShader.setMat4("view", view);
+        m_lightCubeShader.setMat4("projection", projection);
+        m_lightCubeShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
-        lightCubeShader.setMat4("model", model);
+        m_lightCubeShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glBindVertexArray(0);

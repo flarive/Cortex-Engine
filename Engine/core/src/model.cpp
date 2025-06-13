@@ -35,7 +35,8 @@ void engine::Model::loadModel(std::string const& path)
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    numberOfMeshes += scene->mRootNode->mNumMeshes;
+    //numberOfMeshes += scene->mRootNode->mNumMeshes;
+    numberOfMeshes += scene->mNumMeshes;
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

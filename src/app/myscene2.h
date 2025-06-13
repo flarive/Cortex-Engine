@@ -14,20 +14,15 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    /*std::shared_ptr<engine::SpotLight> mySpotLight;
 
-
-
-
-    engine::Model cushionModel{};
-
-    engine::Cube ourCube1{};
-
-    engine::Plane ourPlane{};*/
-
-    engine::Text ourText{};
+    engine::Text textFPSCount{};
+    engine::Text textPolyCount{};
+    engine::Text textMeshCount{};
+    engine::Text textPrimitiveCount{};
 
     float rotation{};
+
+    //engine::Skybox ourSkybox{};
 
 
 public:
@@ -46,8 +41,8 @@ public:
     void init() override
     {
         // cameras
-        auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 2.0f } };
-        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
+        auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -16.0f, 2.0f), true);
         camera1->Zoom = 25.0f;
         camera1->MovementSpeed = 10.0f;
         auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
@@ -55,25 +50,17 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ { 0.0f, 1.0f, 3.0f} };
+        auto trsLight1 = engine::Transform{ { 0.0f, 1.0f, 3.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->setIntensity(2.0f);
-        // position : glm::vec3(0.0f, 1.0f, 3.0f)
-        // target : glm::vec3(0.0f, 0.0f, 1.0f)
+        light1->setCutOff(8.0f);
+        light1->setOuterCutOff(20.0f);
+        light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
+        light1->setTarget(glm::vec3(0.0f, 0.0f, 1.0f));
         light1->setup();
-        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -83,7 +70,7 @@ public:
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -99,15 +86,27 @@ public:
 
 
 
-        
-
-        
-
-        
-        
+        textFPSCount.setup(app->window, FONT_PATH, 28);
+        textPolyCount.setup(app->window, FONT_PATH, 28);
+        textMeshCount.setup(app->window, FONT_PATH, 28);
+        textPrimitiveCount.setup(app->window, FONT_PATH, 28);
 
 
-        ourText.setup(app->window, FONT_PATH, 28);
+        //std::vector<std::string> faces
+        //{
+        //    "textures/skybox/right.jpg",
+        //    "textures/skybox/left.jpg",
+        //    "textures/skybox/top.jpg",
+        //    "textures/skybox/bottom.jpg",
+        //    "textures/skybox/front.jpg",
+        //    "textures/skybox/back.jpg"
+        //};
+
+        //auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+        //zzz.setCubeMapTexs(faces);
+
+        //ourSkybox.setup(faces);
+
     }
 
 
@@ -189,7 +188,7 @@ public:
     {
         engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
-        ourText.setup(app->window, FONT_PATH, 28);
+        //ourText.setup(app->window, FONT_PATH, 28);
     }
 
     void update(engine::Shader& shader) override
@@ -218,11 +217,6 @@ private:
         glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
         glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
-
-        // draw lights
-        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 2.0f, glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        
-
         // activate phong shader
         shader.use();
         shader.setVec3("viewPos", getActiveCamera()->Position);
@@ -230,24 +224,30 @@ private:
         shader.setMat4("view", view);
 
 
-        // render the loaded model
-        //cushionModel.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, rotation, 0.0f));
+
+        // activate skybox reflection shader
+        //auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
+        //if (zzz)
+        //{
+        //    zzz->skyboxShader.use();
+        //    zzz->skyboxShader.setMat4("view", view);
+        //    zzz->skyboxShader.setMat4("projection", projection);
+        //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
+        //}
+
+        //ourSkybox.draw(projection, view);
 
 
-
-        // render test cube
-        //ourCube1.draw(shader, glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f, 0.35f, 0.35f), rotation, glm::vec3(0.0f, 1.0f, 0.0f));
-        //ourSphere1.draw(blinnPhongShader, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.5f, 0.5f), 0.0f, glm::vec3(1.0f, 1.0f, 0.0f));
 
         rotation += deltaTime * 10.0f;
-
-        // render test plane
-        //ourPlane.draw(shader, glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
     }
 
     void drawUI()
     {
         // render HUD / UI
-        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     }
 };

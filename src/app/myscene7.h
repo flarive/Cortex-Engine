@@ -19,8 +19,8 @@ private:
   
 
 
-    engine::Text ourText{};
-    engine::Text ourText2{};
+    engine::Text textFPSCount{};
+    engine::Text textPolyCount{};
     engine::Text textMeshCount{};
     engine::Text textPrimitiveCount{};
     engine::Sprite ourSprite{};
@@ -78,6 +78,7 @@ public:
         trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
 
         auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setIntensity(10.0f);
         light1->setup();
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -91,6 +92,7 @@ public:
         trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
 
         auto light2 = std::make_shared<engine::PointLight>(1);
+        light2->setIntensity(10.0f);
         light2->setup();
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
@@ -102,6 +104,7 @@ public:
         trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
 
         auto light3 = std::make_shared<engine::PointLight>(2);
+        light3->setIntensity(10.0f);
         light3->setup();
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
@@ -113,6 +116,7 @@ public:
         trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
 
         auto light4 = std::make_shared<engine::PointLight>(3);
+        light4->setIntensity(10.0f);
         light4->setup();
 
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
@@ -208,8 +212,8 @@ public:
 
 
 
-        ourText.setup(app->window, FONT_PATH, 28);
-        ourText2.setup(app->window, FONT_PATH, 28);
+        textFPSCount.setup(app->window, FONT_PATH, 28);
+        textPolyCount.setup(app->window, FONT_PATH, 28);
         textMeshCount.setup(app->window, FONT_PATH, 28);
         textPrimitiveCount.setup(app->window, FONT_PATH, 28);
         ourSprite.setup(app->window, "textures/awesomeface.png");
@@ -361,8 +365,8 @@ public:
     void updateUI() override
     {
         // render HUD / UI
-        ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-        ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+        textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, app->height - 50), glm::vec2(50.0f, -50.0f), 0.0f, glm::vec3(1.0f));

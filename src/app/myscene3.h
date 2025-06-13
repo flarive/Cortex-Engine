@@ -14,33 +14,10 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    std::shared_ptr<engine::PointLight> myPointLight1{};
-    std::shared_ptr<engine::PointLight> myPointLight2{};
-    std::shared_ptr<engine::PointLight> myPointLight3{};
-    std::shared_ptr<engine::PointLight> myPointLight4{};
-
-
-
-    std::shared_ptr<engine::SpotLight> mySpotLight{};
-
-
-
-    engine::Sphere redSciFiMetalSphere{};
-    engine::Sphere rustedIronSphere{};
-    engine::Sphere goldSphere{};
-    engine::Sphere grassSphere{};
-    engine::Sphere plasticSphere{};
-    engine::Sphere wallSphere{};
-    engine::Sphere bronzeSphere{};
-
-
-    engine::Plane ourPlane{};
-
+ 
 
     engine::Text ourText{};
 
-
-    engine::Shader lightCubeShader{};
 
     float rotation{};
 
@@ -64,82 +41,122 @@ public:
 
     void init() override
     {
-        myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup();
+        // cameras
+        auto trsCamera1 = engine::Transform{};
+        trsCamera1.setLocalPosition({ 0.0f, -12.0f, 2.0f });
 
-        myPointLight2 = std::make_shared<engine::PointLight>(1);
-        myPointLight2->setup();
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -12.0f, 2.0f), false);
+        camera1->Zoom = 75;
+        camera1->MovementSpeed = 10.0f;
 
-        myPointLight3 = std::make_shared<engine::PointLight>(2);
-        myPointLight3->setup();
-
-        myPointLight4 = std::make_shared<engine::PointLight>(3);
-        myPointLight4->setup();
-
-        mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup();
-        mySpotLight->setCutOff(12.5f);
-        mySpotLight->setOuterCutOff(27.5f);
-
-
-        lights.emplace_back(myPointLight1);
-        lights.emplace_back(myPointLight2);
-        lights.emplace_back(myPointLight3);
-        lights.emplace_back(myPointLight4);
-        lights.emplace_back(mySpotLight);
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(EntityCamera1);
 
 
 
+        // lights
+        auto trsLight1 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setIntensity(50.0f);
+        //light1->setPosition(glm::vec3(-10.0f, 10.0f, 10.0f));
+        light1->setup();
+
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
 
 
-        // override default camera properties
-        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -12.0f, 2.0f), false);
-        camera->Zoom = 75.0f;
-        camera->MovementSpeed = 10.0f;
-        cameras.emplace_back(camera);
+
+        auto trsLight2 = engine::Transform{ { 10.0f, 10.0f, 10.0f } };
+        auto light2 = std::make_shared<engine::PointLight>(1);
+        light2->setIntensity(50.0f);
+        //light2->setPosition(glm::vec3(10.0f, 10.0f, 10.0f));
+        light2->setup();
+
+        auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
+        getEntityManager().addChild(entityLight2);
+
+
+
+        auto trsLight3 = engine::Transform{ { -10.0f, -10.0f, 10.0f } };
+        auto light3 = std::make_shared<engine::PointLight>(2);
+        light3->setIntensity(50.0f);
+        //light3->setPosition(glm::vec3(-10.0f, -10.0f, 10.0f));
+        light3->setup();
+
+        auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
+        getEntityManager().addChild(entityLight3);
+
+
+
+        auto trsLight4 = engine::Transform{ { 10.0f, -10.0f, 10.0f } };
+        auto light4 = std::make_shared<engine::PointLight>(3);
+        light4->setIntensity(50.0f);
+        //light4->setPosition(glm::vec3(10.0f, -10.0f, 10.0f));
+        light4->setup();
+
+        auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
+        getEntityManager().addChild(entityLight4);
 
 
 
 
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto trsLight5 = engine::Transform{ { 0.0f, 4.0f, -2.0f } };
+        auto light5 = std::make_shared<engine::SpotLight>(0);
+        light5->setIntensity(50.0f);
+        light5->setCutOff(12.5f);
+        light5->setOuterCutOff(27.5f);
+        light5->setPosition(glm::vec3(0.0f, 4.0f, -2.0f));
+        light5->setTarget(glm::vec3(0.0f, 0.0f, -4.0f));
+        light5->setup();
+
+        auto entityLight5 = std::make_shared<engine::Entity>("Light5", light3, trsLight3);
+        getEntityManager().addChild(entityLight3);
+
+
+        // ground
+        auto myPlane = std::make_shared<engine::Plane>();
+        auto matPlane = std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/cliff/albedo.jpg",
             "",
             "models/sphere/cliff/normal.jpg",
             "models/sphere/cliff/metallic.jpg",
             "models/sphere/cliff/roughness.jpg",
             "models/sphere/cliff/ao.jpg",
-            "models/sphere/cliff/height.jpg"), engine::UvMapping(2.0f));
+            "models/sphere/cliff/height.jpg");
+        matPlane->setNormalIntensity(1.0f);
 
-        /*auto matPlane = ourPlane.getMaterial();
-        if (matPlane)
-        {
-            matPlane->setNormalIntensity(1.0f);
-        }*/
+        myPlane->setup(matPlane, engine::UvMapping(2.0f));
 
-
-        lightCubeShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+        getEntityManager().addChild(entityPlane);
 
 
 
-        //redSciFiMetalSphere = engine::Model("models/sphere/smooth_sphere_80.obj");
+        // sphere models
+        auto redSciFiMetalSphere = std::make_shared<engine::Sphere>();
 
-        redSciFiMetalSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto matSphere1 = std::make_shared<engine::Material>(engine::Color(0.1f),
             "models/sphere/rounded-metal-cubes/albedo.dds",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
             "models/sphere/rounded-metal-cubes/metallic.png",
             "models/sphere/rounded-metal-cubes/roughness.png",
             "models/sphere/rounded-metal-cubes/ao.png",
-            "models/sphere/rounded-metal-cubes/height.png"), engine::UvMapping(3.0f));
+            "models/sphere/rounded-metal-cubes/height.png");
+        matSphere1->setNormalIntensity(5.0f);
 
-        auto mat = redSciFiMetalSphere.getMaterial();
-        if (mat)
-        {
-            mat->setNormalIntensity(5.0f);
-        }
+        redSciFiMetalSphere->setup(matSphere1, engine::UvMapping(2.0f));
+
+        auto trsSphere1 = engine::Transform(glm::vec3(-5.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere1 = std::make_shared<engine::Entity>("MySphere1", redSciFiMetalSphere, trsSphere1);
+        getEntityManager().addChild(entitySphere1);
 
 
-        rustedIronSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+
+
+        auto rustedIronSphere = std::make_shared<engine::Sphere>();
+        rustedIronSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/rusted_iron/albedo.png",
             "",
             "textures/pbr/rusted_iron/normal.png",
@@ -148,7 +165,14 @@ public:
             "textures/pbr/rusted_iron/ao.png",
             "textures/pbr/rusted_iron/height.png"));
 
-        goldSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto trsSphere2 = engine::Transform(glm::vec3(-3.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere2 = std::make_shared<engine::Entity>("MySphere2", rustedIronSphere, trsSphere2);
+        getEntityManager().addChild(entitySphere2);
+
+
+
+        auto goldSphere = std::make_shared<engine::Sphere>();
+        goldSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/gold/albedo.png",
             "",
             "textures/pbr/gold/normal.png",
@@ -156,7 +180,14 @@ public:
             "textures/pbr/gold/roughness.png",
             "textures/pbr/gold/ao.png"));
 
-        grassSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto trsSphere3 = engine::Transform(glm::vec3(-1.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere3 = std::make_shared<engine::Entity>("MySphere3", goldSphere, trsSphere3);
+        getEntityManager().addChild(entitySphere3);
+
+
+
+        auto grassSphere = std::make_shared<engine::Sphere>();
+        grassSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/grass/albedo.png",
             "",
             "textures/pbr/grass/normal.png",
@@ -164,7 +195,14 @@ public:
             "textures/pbr/grass/roughness.png",
             "textures/pbr/grass/ao.png"));
 
-        plasticSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto trsSphere4 = engine::Transform(glm::vec3(1.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere4 = std::make_shared<engine::Entity>("MySphere3", grassSphere, trsSphere4);
+        getEntityManager().addChild(entitySphere4);
+
+
+
+        auto plasticSphere = std::make_shared<engine::Sphere>();
+        plasticSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/plastic/albedo.png",
             "",
             "textures/pbr/plastic/normal.png",
@@ -172,8 +210,14 @@ public:
             "textures/pbr/plastic/roughness.png",
             "textures/pbr/plastic/ao.png", "", 1.0f));
 
+        auto trsSphere5 = engine::Transform(glm::vec3(3.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere5 = std::make_shared<engine::Entity>("MySphere4", plasticSphere, trsSphere5);
+        getEntityManager().addChild(entitySphere5);
 
-        wallSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+
+
+        auto wallSphere = std::make_shared<engine::Sphere>();
+        wallSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/wall/albedo.png",
             "",
             "textures/pbr/wall/normal.png",
@@ -181,26 +225,37 @@ public:
             "textures/pbr/wall/roughness.png",
             "textures/pbr/wall/ao.png"), engine::UvMapping(1.0f));
 
-        auto wallPlane = wallSphere.getMaterial();
-        if (wallPlane)
-        {
-            wallPlane->setNormalIntensity(1.0f);
-        }
+        auto trsSphere6 = engine::Transform(glm::vec3(5.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere6 = std::make_shared<engine::Entity>("MySphere5", wallSphere, trsSphere6);
+        getEntityManager().addChild(entitySphere6);
 
-        bronzeSphere.setup(std::make_shared<engine::Material>(engine::Color(0.1f, 1.0f, 0.1f, 1.0f),
+
+        //auto wallPlane = wallSphere.getMaterial();
+        //if (wallPlane)
+        //{
+        //    wallPlane->setNormalIntensity(1.0f);
+        //}
+
+
+
+        auto bronzeSphere = std::make_shared<engine::Sphere>();
+        bronzeSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/pbr/bronze/albedo.png",
             "",
             "textures/pbr/bronze/normal.png",
             "textures/pbr/bronze/metallic.png",
             "textures/pbr/bronze/roughness.png",
-            "textures/pbr/bronze/ao.png", "", 0.0f));
+            "textures/pbr/bronze/ao.png"), engine::UvMapping(1.0f));
 
+        auto trsSphere7 = engine::Transform(glm::vec3(7.0f, -14.0f, -10.0f), glm::vec3(1.0f));
+        auto entitySphere7 = std::make_shared<engine::Entity>("MySphere6", bronzeSphere, trsSphere7);
+        getEntityManager().addChild(entitySphere7);
 
-        auto bronzeMat = bronzeSphere.getMaterial();
-        if (bronzeMat)
-        {
-            bronzeMat->setAmbientIntensity(5.0f);
-        }
+        //auto bronzeMat = bronzeSphere.getMaterial();
+        //if (bronzeMat)
+        //{
+        //    bronzeMat->setAmbientIntensity(5.0f);
+        //}
 
 
         ourText.setup(app->window, FONT_PATH, 28);
@@ -318,32 +373,32 @@ public:
     void clean() override
     {
         // clean up any resources
-        rustedIronSphere.clean();
-        goldSphere.clean();
-        grassSphere.clean();
-        plasticSphere.clean();
-        wallSphere.clean();
-        bronzeSphere.clean();
-        ourPlane.clean();
+        //rustedIronSphere.clean();
+        //goldSphere.clean();
+        //grassSphere.clean();
+        //plasticSphere.clean();
+        //wallSphere.clean();
+        //bronzeSphere.clean();
+        //ourPlane.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
         // render test sphere
-        redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        rustedIronSphere.draw(shader, glm::vec3(-5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        goldSphere.draw(shader, glm::vec3(-3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        grassSphere.draw(shader, glm::vec3(-1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        plasticSphere.draw(shader, glm::vec3(1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        wallSphere.draw(shader, glm::vec3(3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        bronzeSphere.draw(shader, glm::vec3(5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //rustedIronSphere.draw(shader, glm::vec3(-5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //goldSphere.draw(shader, glm::vec3(-3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //grassSphere.draw(shader, glm::vec3(-1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //plasticSphere.draw(shader, glm::vec3(1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //wallSphere.draw(shader, glm::vec3(3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //bronzeSphere.draw(shader, glm::vec3(5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
 
 
         
 
 
-        ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        //ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
 
 
 
@@ -358,11 +413,11 @@ private:
 
 
         // draw lights
-        myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
-        myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, 10.0f, 10.0f));
-        myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(-10.0f, -10.0f, 10.0f));
-        myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, -10.0f, 10.0f));
-        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
+        //myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
+        //myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, 10.0f, 10.0f));
+        //myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(-10.0f, -10.0f, 10.0f));
+        //myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, -10.0f, 10.0f));
+        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
     }
 
     void drawUI()

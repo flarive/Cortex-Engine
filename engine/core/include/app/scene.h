@@ -183,6 +183,6 @@ namespace engine
         // Function to count vertices and polygons
         void endQuery();
 
-        void countMeshes(std::shared_ptr<Entity>& entity);
+        void countItems(std::shared_ptr<Entity>& entity);
     };
 }

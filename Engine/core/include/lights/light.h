@@ -39,7 +39,7 @@ namespace engine
 
         unsigned int m_index{};
 
-        Shader lightCubeShader{};
+        Shader m_lightCubeShader{};
 
         Color m_ambientColor{ glm::vec4(0.1f, 0.1f, 0.1f, 1.0f) };
 

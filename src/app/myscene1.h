@@ -131,7 +131,7 @@ public:
             "textures/container2_diffuse.png",
             "textures/container2_specular.png"));
 
-        auto trsCube = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCube = engine::Transform(glm::vec3(0.5f, -0.15f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
         getEntityManager().addChild(entityCube);
 
@@ -142,14 +142,14 @@ public:
 
         // cushion model
         std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
-        auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.20f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);
 
 
-        //// backpack model
+        // backpack model
         std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
-        auto trsBackpack = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsBackpack = engine::Transform(glm::vec3(-0.5f, -0.10f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
         getEntityManager().addChild(entityBackpack);
 

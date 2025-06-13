@@ -121,8 +121,9 @@ bool engine::EntityManager::removeRecursive(
 
 void engine::EntityManager::addToCache(const std::shared_ptr<engine::Entity>& entity)
 {
-    if (entity)
-        m_entityCache[entity->name] = entity;
+    if (!entity) return;
+    
+    m_entityCache.emplace(entity->name, entity);
 }
 
 void engine::EntityManager::removeFromCache(const std::shared_ptr<engine::Entity>& entity)

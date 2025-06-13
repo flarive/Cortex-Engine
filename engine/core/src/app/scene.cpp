@@ -61,8 +61,8 @@ void engine::Scene::after_init_internal()
     m_debug.setScene(m_entityManager.getRootEntity());
     
 
-    // count all meshes in the scene
-    countMeshes(m_entityManager.getRootEntity());
+    // count all items in the scene
+    countItems(m_entityManager.getRootEntity());
 }
 
 void engine::Scene::initialize()
@@ -344,7 +344,7 @@ void engine::Scene::endQuery()
     glDeleteQueries(1, &query);
 }
 
-void engine::Scene::countMeshes(std::shared_ptr<Entity>& entity)
+void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
 {
     if (entity)
     {
@@ -355,7 +355,7 @@ void engine::Scene::countMeshes(std::shared_ptr<Entity>& entity)
                 if (child->model)
                 {
                     meshcount += child->model->numberOfMeshes;
-                    countMeshes(child);
+                    countItems(child);
                 }
                 else if (child->primitive)
                 {

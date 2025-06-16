@@ -22,7 +22,7 @@ private:
 
     float rotation{};
 
-    //engine::Skybox ourSkybox{};
+
 
 
 public:
@@ -50,14 +50,16 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ { 0.0f, 1.0f, 3.0f } };
+        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
+        light1->setup();
         light1->setIntensity(2.0f);
         light1->setCutOff(8.0f);
         light1->setOuterCutOff(20.0f);
         light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, 1.0f));
-        light1->setup();
+        //light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
+        
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
@@ -66,11 +68,11 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(1.0f),
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -90,23 +92,6 @@ public:
         textPolyCount.setup(app->window, FONT_PATH, 28);
         textMeshCount.setup(app->window, FONT_PATH, 28);
         textPrimitiveCount.setup(app->window, FONT_PATH, 28);
-
-
-        //std::vector<std::string> faces
-        //{
-        //    "textures/skybox/right.jpg",
-        //    "textures/skybox/left.jpg",
-        //    "textures/skybox/top.jpg",
-        //    "textures/skybox/bottom.jpg",
-        //    "textures/skybox/front.jpg",
-        //    "textures/skybox/back.jpg"
-        //};
-
-        //auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
-        //zzz.setCubeMapTexs(faces);
-
-        //ourSkybox.setup(faces);
-
     }
 
 
@@ -222,22 +207,6 @@ private:
         shader.setVec3("viewPos", getActiveCamera()->Position);
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-
-
-
-        // activate skybox reflection shader
-        //auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
-        //if (zzz)
-        //{
-        //    zzz->skyboxShader.use();
-        //    zzz->skyboxShader.setMat4("view", view);
-        //    zzz->skyboxShader.setMat4("projection", projection);
-        //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
-        //}
-
-        //ourSkybox.draw(projection, view);
-
-
 
         rotation += deltaTime * 10.0f;
     }

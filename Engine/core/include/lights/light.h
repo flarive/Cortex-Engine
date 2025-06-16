@@ -49,7 +49,7 @@ namespace engine
         float m_intensity{ 1.0f };
 
         const float LIGHT_CUBE_SIZE{ 0.02f };
-        const bool DISPLAY_DEBUG_LIGHT_CUBE{ false };
+        const bool DISPLAY_DEBUG_LIGHT_CUBE{ true };
 
         glm::vec3 calculateLightDirection(const glm::vec3& position, const glm::vec3& target);
     };

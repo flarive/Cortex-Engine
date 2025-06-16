@@ -109,13 +109,13 @@ public:
         light5->setTarget(glm::vec3(0.0f, 0.0f, -4.0f));
         light5->setup();
 
-        auto entityLight5 = std::make_shared<engine::Entity>("Light5", light3, trsLight3);
-        getEntityManager().addChild(entityLight3);
+        auto entityLight5 = std::make_shared<engine::Entity>("Light5", light5, trsLight5);
+        getEntityManager().addChild(entityLight5);
 
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        auto matPlane = std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto matPlane = std::make_shared<engine::Material>(engine::Color(1.0f),
             "models/sphere/cliff/albedo.jpg",
             "",
             "models/sphere/cliff/normal.jpg",

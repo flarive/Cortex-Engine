@@ -207,13 +207,16 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
         glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
+        auto zzz = entity->transform.getGlobalPosition();
+
         entity->light->draw(shader,
             projection,
             view,
             entity->light->getAmbientColor(),
             entity->light->getIntensity(),
-            entity->transform.getLocalPosition(),
-            entity->transform.getLocalScale(),
+            entity->light->getPosition(),
+            entity->light->getTarget(),
+            entity->transform.getGlobalScale(),
             entity->transform.getLocalRotation());
     }
 

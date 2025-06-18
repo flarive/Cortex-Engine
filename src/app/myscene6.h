@@ -14,14 +14,6 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    std::shared_ptr<engine::PointLight> myPointLight1;
-    std::shared_ptr<engine::PointLight> myPointLight2;
-    std::shared_ptr<engine::PointLight> myPointLight3;
-    std::shared_ptr<engine::PointLight> myPointLight4;
-
-
-    engine::Model helmetModel{};
-
 
 
     engine::Text ourText{};
@@ -56,33 +48,85 @@ public:
 
     void init() override
     {
-        myPointLight1 = std::make_shared<engine::PointLight>(0);
-        myPointLight1->setup();
+        // cameras
+        auto trsCamera1 = engine::Transform{};
+        trsCamera1.setLocalPosition({ 0.0f, -16.0f, 2.0f });
 
-        myPointLight2 = std::make_shared<engine::PointLight>(1);
-        myPointLight2->setup();
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -16.0f, 2.0f), false);
+        camera1->Zoom = 100.0f;
+        camera1->MovementSpeed = 10.0f;
 
-        myPointLight3 = std::make_shared<engine::PointLight>(2);
-        myPointLight3->setup();
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(EntityCamera1);
 
-        myPointLight4 = std::make_shared<engine::PointLight>(3);
-        myPointLight4->setup();
 
-        lights.emplace_back(myPointLight1);
-        lights.emplace_back(myPointLight2);
-        lights.emplace_back(myPointLight3);
-        lights.emplace_back(myPointLight4);
+
+
+
+
+        // lights
+        auto trsLight1 = engine::Transform{};
+        trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
+
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->setIntensity(10.0f);
+        light1->setup();
+
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
+
+
+
+
+
+        auto trsLight2 = engine::Transform{};
+        trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
+
+        auto light2 = std::make_shared<engine::PointLight>(1);
+        light2->setIntensity(10.0f);
+        light2->setup();
+
+        auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
+        getEntityManager().addChild(entityLight2);
+
+
+
+        auto trsLight3 = engine::Transform{};
+        trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
+
+        auto light3 = std::make_shared<engine::PointLight>(2);
+        light3->setIntensity(10.0f);
+        light3->setup();
+
+        auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
+        getEntityManager().addChild(entityLight3);
+
+
+
+        auto trsLight4 = engine::Transform{};
+        trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
+
+        auto light4 = std::make_shared<engine::PointLight>(3);
+        light4->setIntensity(10.0f);
+        light4->setup();
+
+        auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
+        getEntityManager().addChild(entityLight4);
+
+
+
+
+
+
+        // helmet model
+        std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
+        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet", helmetModel, trsHelmet);
+        getEntityManager().addChild(entityHelmet);
+
+
+
         
-
-        // override default camera properties
-        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -8.0f, 2.0f), false);
-        camera->Zoom = 100;
-        camera->MovementSpeed = 10.0f;
-        cameras.emplace_back(camera);
-
-
-
-        helmetModel = engine::Model("models/helmet/DamagedHelmet.glTF");
 
 
 
@@ -204,24 +248,24 @@ public:
     void clean() override
     {
         // clean up any resources
-        helmetModel.clean();
+        //helmetModel.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
         // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+        //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
+        //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
-        // render the loaded model
-        helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
+        //// render the loaded model
+        ////helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
 
-        // draw lights
-        myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 120.0f, glm::vec3(-10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(-10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        //// draw lights
+        //myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 120.0f, glm::vec3(-10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        //myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        //myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(-10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
+        //myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
 
         rotation += deltaTime * 10.0f;
     }

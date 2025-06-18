@@ -53,12 +53,12 @@ public:
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->setup();
-        light1->setIntensity(2.0f);
-        light1->setCutOff(8.0f);
-        light1->setOuterCutOff(20.0f);
+        light1->setIntensity(20.0f);
+        light1->setCutOff(12.5f);
+        light1->setOuterCutOff(17.0f);
         light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-        light1->setTarget(glm::vec3(0.0f, 0.0f, 1.0f));
-        //light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
+        light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+        light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
         
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -68,11 +68,11 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(1.0f),
-            "textures/rusted_metal_diffuse.jpg",
-            "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
+            "textures/wood_diffuse.png",
+            "textures/wood_specular.png"), engine::UvMapping(1.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 4.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -83,7 +83,7 @@ public:
         std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
         auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
-        getEntityManager().addChild(entityCushion);
+        //getEntityManager().addChild(entityCushion);
 
 
 

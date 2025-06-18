@@ -15,12 +15,12 @@ private:
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
 
-    std::shared_ptr<engine::SpotLight> mySpotLight;
+    //std::shared_ptr<engine::SpotLight> mySpotLight;
 
 
-    engine::Model buddhaModel{};
+    //engine::Model buddhaModel{};
 
-    engine::Plane ourPlane{};
+    //engine::Plane ourPlane{};
 
     engine::Text ourText{};
 
@@ -49,25 +49,62 @@ public:
 
     void init() override
     {
-        mySpotLight = std::make_shared<engine::SpotLight>(0);
-        mySpotLight->setup();
-        mySpotLight->setCutOff(12.5f);
-        mySpotLight->setOuterCutOff(17.5f);
+        //mySpotLight = std::make_shared<engine::SpotLight>(0);
+        //mySpotLight->setup();
+        //mySpotLight->setCutOff(12.5f);
+        //mySpotLight->setOuterCutOff(17.5f);
 
-        lights.emplace_back(mySpotLight);
-        
-
-        // override default camera properties
-        auto camera = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -8.0f, 2.0f), false);
-        camera->Zoom = 25.0f;
-        camera->MovementSpeed = 10.0f;
-        cameras.emplace_back(camera);
+        //lights.emplace_back(mySpotLight);
+        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 
 
-        buddhaModel = engine::Model("models/buddha/buddha1.obj");
+
+        //buddhaModel = engine::Model("models/buddha/buddha1.obj");
+        //buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, rotation, 0.0f));
 
 
-        ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        //    "textures/pbr/planks/albedo.jpg",
+        //    "",
+        //    "textures/pbr/planks/normal.jpg",
+        //    "textures/pbr/planks/metallic.jpg",
+        //    "textures/pbr/planks/roughness.jpg",
+        //    "textures/pbr/planks/ao.jpg",
+        //    ""), engine::UvMapping(1.0f));
+        //ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+
+
+        // cameras
+        auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -8.0f, 2.0f), false);
+        camera1->Zoom = 25.0f;
+        camera1->MovementSpeed = 10.0f;
+        auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        getEntityManager().addChild(entityCamera1);
+
+
+
+
+
+        // lights
+        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto light1 = std::make_shared<engine::SpotLight>(0);
+        light1->setup();
+        light1->setIntensity(50.0f);
+        light1->setCutOff(12.5f);
+        light1->setOuterCutOff(17.5f);
+        light1->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+        light1->setTarget(glm::vec3(0.0f, 0.0f, -5.0f));
+        light1->setAmbientColor(engine::Color(0.1f, 0.1f, 0.1f, 1.0f));
+
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
+
+
+
+        // ground
+        auto myPlane = std::make_shared<engine::Plane>();
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
             "textures/pbr/planks/albedo.jpg",
             "",
             "textures/pbr/planks/normal.jpg",
@@ -75,6 +112,21 @@ public:
             "textures/pbr/planks/roughness.jpg",
             "textures/pbr/planks/ao.jpg",
             ""), engine::UvMapping(1.0f));
+
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+        getEntityManager().addChild(entityPlane);
+
+
+
+
+        // buddha model
+        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/buddha/buddha1.obj"));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
+        getEntityManager().addChild(entityCushion);
+
+
 
         ourText.setup(app->window, FONT_PATH, 28);
     }
@@ -189,33 +241,18 @@ public:
     void clean() override
     {
         // clean up any resources
-        ourPlane.clean();
-        buddhaModel.clean();
+        //ourPlane.clean();
+        //buddhaModel.clean();
     }
 
 private:
     void drawScene(engine::Shader& shader)
     {
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
-
-        shader.use();
-        shader.setVec3("viewPos", getActiveCamera()->Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-
-
-
-        // render the loaded model
-        buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, rotation, 0.0f));
-
-        // render test plane
-        ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-
-        // draw lights
-        mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        auto myCushion = getEntityManager().findEntityByName("MyCushion");
+        if (myCushion)
+        {
+            myCushion->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        }
 
         rotation += deltaTime * 10.0f;
 

@@ -55,7 +55,7 @@ public:
         light1->setup();
         light1->setIntensity(20.0f);
         light1->setCutOff(12.5f);
-        light1->setOuterCutOff(17.0f);
+        light1->setOuterCutOff(17.5f);
         light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
@@ -70,9 +70,9 @@ public:
         auto myPlane = std::make_shared<engine::Plane>();
         myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
             "textures/wood_diffuse.png",
-            "textures/wood_specular.png"), engine::UvMapping(1.0f));
+            "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 4.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 

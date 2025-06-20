@@ -380,7 +380,7 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-    FragColor = vec4(color , 1.0);
+    FragColor = vec4(color, 1.0);
 }
 
 // Calculates the color when using a spot light.
@@ -397,7 +397,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
         return vec3(0.0);
     
     vec3 H = normalize(viewDir + L);
-    //float NdotL = max(dot(normal, L), 0.0);
     float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
     
     float distance = length(light.position - fs_in.FragPos);

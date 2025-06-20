@@ -50,6 +50,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setFloat(std::format("{}.linear", base), 0.09f);
     shader.setFloat(std::format("{}.quadratic", base), 0.032f); // tweak shadow intensity
 
+    // clamp
     shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(m_cutoff)));
     shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(m_outerCutoff)));
 

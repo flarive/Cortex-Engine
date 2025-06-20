@@ -41,7 +41,7 @@ namespace engine
 
         Shader m_lightCubeShader{};
 
-        Color m_ambientColor{ glm::vec4(0.1f, 0.1f, 0.1f, 1.0f) };
+        Color m_ambientColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 
         glm::vec3 m_lightPosition{};
         glm::vec3 m_lightTarget{};

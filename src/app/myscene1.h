@@ -55,9 +55,11 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ { 0.0f, 0.3f, 2.0f } };
+        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->setIntensity(5.0f);
+        light1->setPosition(glm::vec3(0.0f, 1.0f, 2.0f));
+        light1->setAmbientColor(engine::Color(1.0f, 1.0f, 1.0f, 1.0f));
         light1->setup();
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -65,9 +67,11 @@ public:
 
 
 
-        auto trsLight2 = engine::Transform{ { 2.0f, 0.3f, 2.0f } };
+        auto trsLight2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light2 = std::make_shared<engine::DirectionalLight>(0);
         light2->setIntensity(1.0f);
+        light2->setPosition(glm::vec3(2.0f, 0.5f, 2.0f));
+        light2->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
         light2->setup();
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
@@ -76,9 +80,11 @@ public:
 
 
 
-        auto trsLight3 = engine::Transform{ { -2.0f, 0.3f, 2.0f } };
+        auto trsLight3 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light3 = std::make_shared<engine::DirectionalLight>(1);
         light3->setIntensity(1.0f);
+        light3->setPosition(glm::vec3(-2.0f, 0.5f, 2.0f));
+        light3->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
         light3->setup();
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
@@ -264,13 +270,6 @@ private:
         glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
     
 
-    
-        // activate phong shader
-        shader.use();
-        shader.setVec3("viewPos", getActiveCamera()->Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-    
   
         // activate skybox reflection shader
         auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());

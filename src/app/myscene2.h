@@ -53,10 +53,10 @@ public:
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->setup();
-        light1->setIntensity(20.0f);
+        light1->setIntensity(2.0f);
         light1->setCutOff(12.5f);
         light1->setOuterCutOff(17.5f);
-        light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
+        light1->setPosition(glm::vec3(0.0f, 3.0f, 3.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
         
@@ -81,9 +81,9 @@ public:
 
         // cushion model
         std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
-        auto trsCushion = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
-        //getEntityManager().addChild(entityCushion);
+        getEntityManager().addChild(entityCushion);
 
 
 
@@ -198,15 +198,11 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
-        // activate phong shader
-        shader.use();
-        shader.setVec3("viewPos", getActiveCamera()->Position);
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
+        auto myCushion = getEntityManager().findEntityByName("MyCushion");
+        if (myCushion)
+        {
+            myCushion->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        }
 
         rotation += deltaTime * 10.0f;
     }

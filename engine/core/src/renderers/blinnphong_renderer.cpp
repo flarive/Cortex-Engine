@@ -60,6 +60,18 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
+    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 view = camera->GetViewMatrix();
+
+    
+
+    blinnPhongShader.use();
+    blinnPhongShader.setMat4("projection", projection);
+    blinnPhongShader.setMat4("view", view);
+    blinnPhongShader.setVec3("viewPos", camera->Position);
+
     // update user stuffs
     update(blinnPhongShader);
 

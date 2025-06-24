@@ -32,6 +32,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
     blinnPhongShader.setFloat("material.shininess", 32.0f);
 
+    blinnPhongShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
+
     // shader configuration
     // --------------------
     screenShader.use();

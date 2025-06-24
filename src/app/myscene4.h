@@ -63,7 +63,6 @@ public:
         // lights
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
-        //light1->setup();
         light1->setIntensity(20.0f);
         light1->setCutOff(12.5f);
         light1->setOuterCutOff(17.5f);

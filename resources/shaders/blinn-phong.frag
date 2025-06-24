@@ -108,7 +108,7 @@ uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 
 
 const vec2 poissonDisk[16] = vec2[](
@@ -242,7 +242,7 @@ void main()
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
+            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir, color);
     }
 
     for (int i = 0; i < pointLightsCount; i++)
@@ -336,7 +336,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
 {
     // Direction from fragment to light
     vec3 lightDir = normalize(light.position - fragPos);
@@ -375,13 +375,15 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     specular *= attenuation * intensity;
 
     // Shadow calculation (using the light's position for shadow mapping)
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);                      
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+    
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
 
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
 
     // debug spot light cut off
-    //FragColor = vec4(vec3(1.0 - shadow), 1.0);
+    //FragColor = vec4(vec3(shadow), 1.0);
 
-    return lighting;
+    return vec3(lighting);
 }

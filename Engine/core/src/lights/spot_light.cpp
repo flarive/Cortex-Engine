@@ -32,10 +32,10 @@ void engine::SpotLight::setup()
 
 void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, float intensity, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation)
 {
-    m_ambientColor = ambient;
-    m_intensity = intensity;
-    m_lightPosition = position;
-    m_lightTarget = target;
+    //m_ambientColor = ambient;
+    //m_intensity = intensity;
+    //m_lightPosition = position;
+    //m_lightTarget = target;
     
     std::string base = std::format("spotLights[{}]", m_index);
 

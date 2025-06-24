@@ -49,31 +49,6 @@ public:
 
     void init() override
     {
-        //mySpotLight = std::make_shared<engine::SpotLight>(0);
-        //mySpotLight->setup();
-        //mySpotLight->setCutOff(12.5f);
-        //mySpotLight->setOuterCutOff(17.5f);
-
-        //lights.emplace_back(mySpotLight);
-        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.0f, 6.0f, 0.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-
-
-
-        //buddhaModel = engine::Model("models/buddha/buddha1.obj");
-        //buddhaModel.draw(shader, glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, rotation, 0.0f));
-
-
-        //ourPlane.setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-        //    "textures/pbr/planks/albedo.jpg",
-        //    "",
-        //    "textures/pbr/planks/normal.jpg",
-        //    "textures/pbr/planks/metallic.jpg",
-        //    "textures/pbr/planks/roughness.jpg",
-        //    "textures/pbr/planks/ao.jpg",
-        //    ""), engine::UvMapping(1.0f));
-        //ourPlane.draw(shader, glm::vec3(0.0f, -11.00f, -10.0f), glm::vec3(8.0f, 8.0f, 8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-
-
         // cameras
         auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -8.0f, 2.0f), false);
@@ -89,7 +64,6 @@ public:
         // lights
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
-        //light1->setup();
         light1->setIntensity(50.0f);
         light1->setCutOff(12.5f);
         light1->setOuterCutOff(17.5f);

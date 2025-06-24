@@ -8,6 +8,7 @@ engine::SpotLight::SpotLight() : Light(0)
 
 engine::SpotLight::SpotLight(unsigned int index) : Light(index)
 {
+    setup();
 }
 
 void engine::SpotLight::setup()

@@ -52,13 +52,12 @@ public:
         // lights
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
-        light1->setup();
         light1->setIntensity(2.0f);
         light1->setCutOff(12.5f);
-        light1->setOuterCutOff(17.5f);
+        light1->setOuterCutOff(37.5f);
         light1->setPosition(glm::vec3(0.0f, 3.0f, 3.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-        light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 1.0f));
+        light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 0.5f));
         
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -81,7 +80,7 @@ public:
 
         // cushion model
         std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
-        auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.1f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);
 

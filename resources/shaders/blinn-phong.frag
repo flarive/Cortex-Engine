@@ -364,8 +364,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // Ambient, Diffuse, and Specular components
     vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-//    float ambientStrength = 0.1;
-//    vec3 ambient = light.ambient * mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength);
+    //float ambientStrength = 0.5;
+    //vec3 ambient = light.ambient * mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength);
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords));
 
@@ -381,7 +381,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
 
     // debug spot light cut off
-    //FragColor = vec4(vec3(lighting), 1.0);
+    //FragColor = vec4(vec3(1.0 - shadow), 1.0);
 
     return lighting;
 }

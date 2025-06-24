@@ -9,6 +9,7 @@ engine::DirectionalLight::DirectionalLight() : Light(0)
 
 engine::DirectionalLight::DirectionalLight(unsigned int index) : Light(index)
 {
+    setup();
 }
 
 void engine::DirectionalLight::setup()

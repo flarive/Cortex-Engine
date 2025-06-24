@@ -79,7 +79,7 @@ public:
 
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->setIntensity(10.0f);
-        light1->setup();
+        //light1->setup();
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
@@ -93,7 +93,7 @@ public:
 
         auto light2 = std::make_shared<engine::PointLight>(1);
         light2->setIntensity(10.0f);
-        light2->setup();
+        //light2->setup();
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
         getEntityManager().addChild(entityLight2);
@@ -105,7 +105,7 @@ public:
 
         auto light3 = std::make_shared<engine::PointLight>(2);
         light3->setIntensity(10.0f);
-        light3->setup();
+        //light3->setup();
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
         getEntityManager().addChild(entityLight3);
@@ -117,7 +117,7 @@ public:
 
         auto light4 = std::make_shared<engine::PointLight>(3);
         light4->setIntensity(10.0f);
-        light4->setup();
+        //light4->setup();
 
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
         getEntityManager().addChild(entityLight4);

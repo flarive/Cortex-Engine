@@ -7,6 +7,7 @@ engine::PointLight::PointLight() : Light(0)
 
 engine::PointLight::PointLight(unsigned int index) : Light(index)
 {
+    setup();
 }
 
 void engine::PointLight::setup()

@@ -60,7 +60,7 @@ public:
         light1->setIntensity(5.0f);
         light1->setPosition(glm::vec3(0.0f, 1.0f, 2.0f));
         light1->setAmbientColor(engine::Color(1.0f, 1.0f, 1.0f, 1.0f));
-        light1->setup();
+        //light1->setup();
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
@@ -72,7 +72,7 @@ public:
         light2->setIntensity(1.0f);
         light2->setPosition(glm::vec3(2.0f, 0.5f, 2.0f));
         light2->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
-        light2->setup();
+        //light2->setup();
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
         getEntityManager().addChild(entityLight2);
@@ -85,7 +85,7 @@ public:
         light3->setIntensity(1.0f);
         light3->setPosition(glm::vec3(-2.0f, 0.5f, 2.0f));
         light3->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
-        light3->setup();
+        //light3->setup();
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
         getEntityManager().addChild(entityLight3);

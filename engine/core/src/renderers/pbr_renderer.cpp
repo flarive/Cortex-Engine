@@ -287,8 +287,8 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->Position);
 
-    if (m_lights.size() > 0)
-        pbrShader.setVec3("lightPos", m_lights[0]->getPosition());
+    //if (m_lights.size() > 0)
+    //    pbrShader.setVec3("lightPos", m_lights[0]->getPosition());
 
     // bind pre-computed IBL data
     glActiveTexture(GL_TEXTURE7);

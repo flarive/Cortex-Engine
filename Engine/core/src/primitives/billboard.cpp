@@ -114,7 +114,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     }
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     
     auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);

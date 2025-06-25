@@ -108,7 +108,7 @@ uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 
 const vec2 poissonDisk[16] = vec2[](
@@ -202,7 +202,6 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-
 void main()
 {
     vec3 norm;
@@ -239,12 +238,6 @@ void main()
     vec3 result = vec3(0.0);
 
     // Lighting
-    for (int i = 0; i < spotLightsCount; i++)
-    {
-        if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir, color);
-    }
-
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
@@ -255,6 +248,12 @@ void main()
     {
         if (dirLights[i].use)
             result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir, color);
+    }
+
+    for (int i = 0; i < spotLightsCount; i++)
+    {
+        if (spotLights[i].use)
+            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
     }
 
 
@@ -269,8 +268,8 @@ void main()
     FragColor = vec4(result, alpha);
 
     // Discard transparent fragments (optional)
-    if (alpha < 0.1)
-        discard;
+//    if (alpha < 0.1)
+//        discard;
 }
 
 
@@ -336,13 +335,13 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     // Direction from fragment to light
     vec3 lightDir = normalize(light.position - fragPos);
 
     // Diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, light.direction), 0.0);
 
     // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
     vec3 halfwayDir = normalize(lightDir + viewDir);  
@@ -363,11 +362,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
+    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
     //float ambientStrength = 0.5;
     //vec3 ambient = light.ambient * mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength);
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
+    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb;
 
     // Apply attenuation and spotlight intensity
     ambient *= attenuation * intensity;
@@ -379,10 +378,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
 
-    // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
 
-    // debug spot light cut off
+    // Final lighting with shadow applied
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
+
+    // debug shadows
     //FragColor = vec4(vec3(shadow), 1.0);
 
     return vec3(lighting);

@@ -74,6 +74,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setMat4("view", view);
     blinnPhongShader.setVec3("viewPos", camera->Position);
 
+
     // update user stuffs
     update(blinnPhongShader);
 

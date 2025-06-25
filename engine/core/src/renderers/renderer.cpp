@@ -128,7 +128,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     shader.use();
-    shader.setVec3("lightPos", light_position); // ?????????????????
+    shader.setVec3("lightPos", light_position);
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     // update user stuffs

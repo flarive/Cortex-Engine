@@ -55,7 +55,7 @@ public:
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->setIntensity(2.0f);
         light1->setCutOff(12.5f);
-        light1->setOuterCutOff(37.5f);
+        light1->setOuterCutOff(18.0f);
         light1->setPosition(glm::vec3(0.0f, 3.0f, 3.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 0.0f));
@@ -67,7 +67,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(1.0f),
+        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
@@ -79,7 +79,7 @@ public:
 
 
         // cushion model
-        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
+        auto cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
         auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);
@@ -129,38 +129,42 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        //UNREFERENCED_PARAMETER(xposIn);
-        //UNREFERENCED_PARAMETER(yposIn);
+        UNREFERENCED_PARAMETER(xposIn);
+        UNREFERENCED_PARAMETER(yposIn);
 
-        engine::Scene::mouse_callback(xposIn, yposIn);
+        //engine::Scene::mouse_callback(xposIn, yposIn);
 
-        if (show_window)
-            return;
+        //if (show_window)
+        //    return;
 
-        float xpos{ static_cast<float>(xposIn) };
-        float ypos{ static_cast<float>(yposIn) };
+        //float xpos{ static_cast<float>(xposIn) };
+        //float ypos{ static_cast<float>(yposIn) };
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+        //if (firstMouse)
+        //{
+        //    lastX = xpos;
+        //    lastY = ypos;
+        //    firstMouse = false;
+        //}
 
-        float xoffset{ xpos - lastX };
-        float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+        //float xoffset{ xpos - lastX };
+        //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-        lastX = xpos;
-        lastY = ypos;
+        //lastX = xpos;
+        //lastY = ypos;
 
-        getActiveCamera()->processMouseMovement(xoffset, yoffset);
+        //getActiveCamera()->processMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
-        engine::Scene::scroll_callback(xoffset, yoffset);
+        UNREFERENCED_PARAMETER(xoffset);
+        UNREFERENCED_PARAMETER(yoffset);
 
-        getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+
+        //engine::Scene::scroll_callback(xoffset, yoffset);
+
+        //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)

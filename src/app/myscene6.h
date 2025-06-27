@@ -242,19 +242,6 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        // view/projection transformations
-        //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
-        //// render the loaded model
-        ////helmetModel.draw(shader, glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, rotation, 0.0f));
-
-        //// draw lights
-        //myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 120.0f, glm::vec3(-10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        //myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, 10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        //myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(-10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-        //myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(10.0f, -10.0f, 10.0f), glm::vec3(1.0f), glm::vec3(0.0f));
-
         rotation += deltaTime * 10.0f;
     }
 

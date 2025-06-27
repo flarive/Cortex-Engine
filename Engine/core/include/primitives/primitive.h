@@ -178,7 +178,7 @@ namespace engine
         const float PI = 3.14159265359f;
         float halfHeight = height / 2.0f;
 
-        // Side surface
+        // === Side Surface Vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
             float sectorAngle = 2 * PI * i / sectorCount;
@@ -186,9 +186,12 @@ namespace engine
             float z = sinf(sectorAngle);
 
             glm::vec3 normal(x, 0.0f, z);
-            glm::vec2 texCoord((float)i / sectorCount * uvScale, 0.0f);
+
+            // FIX: Flip U coordinate to correct horizontal texture orientation
+            float u = (1.0f - (float)i / sectorCount) * uvScale;
 
             // Bottom vertex
+            glm::vec2 texCoord(u, 0.0f);
             vertices.push_back(Vertex{ glm::vec3(radius * x, -halfHeight, radius * z), normal, texCoord });
 
             // Top vertex
@@ -196,36 +199,38 @@ namespace engine
             vertices.push_back(Vertex{ glm::vec3(radius * x, halfHeight, radius * z), normal, texCoord });
         }
 
-        // Top cap center
+        // === Top Cap Center Vertex ===
         glm::vec3 topCenter(0.0f, halfHeight, 0.0f);
         glm::vec3 topNormal(0.0f, 1.0f, 0.0f);
         glm::vec2 topTex(0.5f * uvScale, 0.5f * uvScale);
         vertices.push_back(Vertex{ topCenter, topNormal, topTex });
 
-        // Top cap ring
+        // === Top Cap Ring Vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
             float angle = 2 * PI * i / sectorCount;
             float x = cosf(angle);
             float z = sinf(angle);
             glm::vec3 pos(radius * x, halfHeight, radius * z);
+
             glm::vec2 tex(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
             vertices.push_back(Vertex{ pos, topNormal, tex });
         }
 
-        // Bottom cap center
+        // === Bottom Cap Center Vertex ===
         glm::vec3 bottomCenter(0.0f, -halfHeight, 0.0f);
         glm::vec3 bottomNormal(0.0f, -1.0f, 0.0f);
         glm::vec2 bottomTex(0.5f * uvScale, 0.5f * uvScale);
         vertices.push_back(Vertex{ bottomCenter, bottomNormal, bottomTex });
 
-        // Bottom cap ring
+        // === Bottom Cap Ring Vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
             float angle = 2 * PI * i / sectorCount;
             float x = cosf(angle);
             float z = sinf(angle);
             glm::vec3 pos(radius * x, -halfHeight, radius * z);
+
             glm::vec2 tex(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
             vertices.push_back(Vertex{ pos, bottomNormal, tex });
         }
@@ -233,48 +238,53 @@ namespace engine
         return vertices;
     }
 
-    inline std::vector<Vertex> generateConeVertices(unsigned int sectorCount = 36, float height = 2.0f, float radius = 1.0f, float uvScale = 1.0f)
+    inline std::vector<Vertex> generateConeVertices(unsigned int sectorCount, float height, float radius, float uvScale)
     {
-        const float halfHeight = height / 2.0f;
-        const float PI = 3.14159265359f;
-
         std::vector<Vertex> vertices;
-
-        // Tip of the cone
+        const float PI = 3.14159265359f;
+        float halfHeight = height / 2.0f;
         glm::vec3 tip(0.0f, halfHeight, 0.0f);
-        glm::vec3 tipNormal(0.0f, 1.0f, 0.0f);
-        vertices.push_back(Vertex{ tip, tipNormal, glm::vec2(0.5f, 1.0f) });
 
-        // Base ring
+        // === Side vertices ===
+        // Tip vertex (single)
+        glm::vec3 tipNormal(0.0f, 1.0f, 0.0f); // We'll compute actual smooth normals below
+        glm::vec2 tipUV(0.5f * uvScale, 1.0f * uvScale);
+        vertices.push_back(Vertex{ tip, tipNormal, tipUV });
+
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
             float angle = 2 * PI * i / sectorCount;
             float x = cosf(angle);
             float z = sinf(angle);
+
             glm::vec3 pos(radius * x, -halfHeight, radius * z);
-            glm::vec3 normal = glm::normalize(glm::vec3(x, radius / height, z));
-            glm::vec2 tex((x + 1.0f) * 0.5f * uvScale, (z + 1.0f) * 0.5f * uvScale);
-            vertices.push_back(Vertex{ pos, normal, tex });
+            glm::vec3 dir = glm::normalize(glm::vec3(x, radius / height, z)); // Approximate normal
+            glm::vec2 uv((1.0f - (float)i / sectorCount) * uvScale, 0.0f); // Flip u so texture isn't mirrored
+
+            vertices.push_back(Vertex{ pos, dir, uv });
         }
 
-        // Base center
+        // === Base center vertex ===
         glm::vec3 baseCenter(0.0f, -halfHeight, 0.0f);
         glm::vec3 baseNormal(0.0f, -1.0f, 0.0f);
-        vertices.push_back(Vertex{ baseCenter, baseNormal, glm::vec2(0.5f, 0.5f) });
+        glm::vec2 baseUV(0.5f * uvScale, 0.5f * uvScale);
+        vertices.push_back(Vertex{ baseCenter, baseNormal, baseUV });
 
-        // Base ring again for cap
+        // === Base ring vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
             float angle = 2 * PI * i / sectorCount;
             float x = cosf(angle);
             float z = sinf(angle);
+
             glm::vec3 pos(radius * x, -halfHeight, radius * z);
-            glm::vec2 tex((x + 1.0f) * 0.5f * uvScale, (z + 1.0f) * 0.5f * uvScale);
-            vertices.push_back(Vertex{ pos, baseNormal, tex });
+            glm::vec2 uv(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
+            vertices.push_back(Vertex{ pos, baseNormal, uv });
         }
 
         return vertices;
     }
+
 
     inline float screenQuadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
         // positions   // texCoords

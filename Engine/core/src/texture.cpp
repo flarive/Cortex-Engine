@@ -171,20 +171,20 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
-    // 1️⃣ Check if the texture was loaded asynchronously
+    // 1️. Check if the texture was loaded asynchronously
     auto it = engine::TextureManager::textureCache.find(filename);
     if (it == engine::TextureManager::textureCache.end()) {
         std::cerr << "Warning: Texture future for " << filename << " not found!" << std::endl;
         return 0;  // Exit if the texture is not found in cache
     }
 
-    // 2️⃣ Ensure the future is valid before calling `.get()`
+    // 2️. Ensure the future is valid before calling `.get()`
     if (!it->second.valid()) {
         std::cerr << "Warning: Texture future for " << filename << " is invalid!" << std::endl;
         return 0;  // Future is invalid, exit early
     }
 
-    // 3️⃣ Retrieve texture data (blocking call)
+    // 3️. Retrieve texture data (blocking call)
     auto [data, width, height, nrComponents] = it->second.get();
     if (!data || width == 0 || height == 0 || nrComponents == 0) {
         std::cerr << "Error: Texture " << filename << " failed to load or is empty!" << std::endl;

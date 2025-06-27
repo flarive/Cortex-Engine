@@ -1,6 +1,7 @@
 #pragma once
 
 #include "light.h"
+#include "../primitives/cylinder.h"
 
 
 namespace engine
@@ -18,6 +19,8 @@ namespace engine
 
 
     private:
+        Cylinder m_debug_cylinder{};
+        
         void setup() override;
     };
 }

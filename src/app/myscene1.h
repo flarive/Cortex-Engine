@@ -42,7 +42,7 @@ public:
         auto trsCamera1 = engine::Transform{};
         trsCamera1.setLocalPosition({ 0.0f, -16.0f, 2.0f });
 
-        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), true);
+        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, 0.0f, 3.0f), false);
         camera1->Zoom = 25.0f;
         camera1->MovementSpeed = 10.0f;
 
@@ -55,14 +55,14 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
-        auto light1 = std::make_shared<engine::PointLight>(0);
-        light1->setIntensity(5.0f);
-        light1->setPosition(glm::vec3(0.0f, 1.0f, 2.0f));
-        light1->setAmbientColor(engine::Color(1.0f, 1.0f, 1.0f, 1.0f));
+        //auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        //auto light1 = std::make_shared<engine::PointLight>(0);
+        //light1->setIntensity(5.0f);
+        //light1->setPosition(glm::vec3(0.0f, 1.0f, 2.0f));
+        //light1->setAmbientColor(engine::Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
-        getEntityManager().addChild(entityLight1);
+        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        //getEntityManager().addChild(entityLight1);
 
 
 
@@ -78,14 +78,14 @@ public:
 
 
 
-        auto trsLight3 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
-        auto light3 = std::make_shared<engine::DirectionalLight>(1);
-        light3->setIntensity(1.0f);
-        light3->setPosition(glm::vec3(-2.0f, 0.5f, 2.0f));
-        light3->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
+        //auto trsLight3 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        //auto light3 = std::make_shared<engine::DirectionalLight>(1);
+        //light3->setIntensity(1.0f);
+        //light3->setPosition(glm::vec3(-2.0f, 0.5f, 2.0f));
+        //light3->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
 
-        auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
-        getEntityManager().addChild(entityLight3);
+        //auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
+        //getEntityManager().addChild(entityLight3);
 
 
 
@@ -281,23 +281,23 @@ private:
     {
         UNREFERENCED_PARAMETER(shader);
 
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+        //// view/projection transformations
+        //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+        //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
     
 
   
-        // activate skybox reflection shader
-        auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
-        if (zzz)
-        {
-            zzz->skyboxShader.use();
-            zzz->skyboxShader.setMat4("view", view);
-            zzz->skyboxShader.setMat4("projection", projection);
-            zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
-        }
+        //// activate skybox reflection shader
+        //auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
+        //if (zzz)
+        //{
+        //    zzz->skyboxShader.use();
+        //    zzz->skyboxShader.setMat4("view", view);
+        //    zzz->skyboxShader.setMat4("projection", projection);
+        //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
+        //}
 
-        ourSkybox.draw(projection, view);
+        //ourSkybox.draw(projection, view);
     }
     
     void drawUI()

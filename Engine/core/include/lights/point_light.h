@@ -20,10 +20,9 @@ namespace engine
         void clean() override;
 
 
-    protected:
-        Sphere m_sphere;
-
     private:
+        Sphere m_debug_sphere{};
+
         void setup() override;
     };
 }

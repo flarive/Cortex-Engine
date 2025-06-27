@@ -14,30 +14,17 @@ engine::DirectionalLight::DirectionalLight(unsigned int index) : Light(index)
 
 void engine::DirectionalLight::setup()
 {
-    glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
-    glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
-
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-    GLsizei stride = 8;
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
     // load light cube debug shader
     m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+
+
+    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 1.0f));
+    m_debug_cylinder.setup(matDebugLight);
+
 }
 
 void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, float intensity, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation)
 {
-    //m_ambientColor = ambient;
-    //m_intensity = intensity;
-    //m_lightPosition = position;
-    //m_lightTarget = target;
-    
     std::string base = std::format("dirLights[{}]", m_index);
 
     // directional light
@@ -52,25 +39,22 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 
     if (DISPLAY_DEBUG_LIGHT_CUBE)
     {
-        // also draw the lamp object(s)
-        m_lightDebugShader.use();
-
-        // we now draw as many light bulbs as we have point lights.
-        glBindVertexArray(VAO);
-
-        m_lightDebugShader.setMat4("projection", projection);
-        m_lightDebugShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
-        m_lightDebugShader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        glBindVertexArray(0);
+        // also draw the lamp object(s)
+        m_lightDebugShader.use();
+        m_lightDebugShader.setMat4("projection", projection);
+        m_lightDebugShader.setMat4("view", view);
+        m_lightDebugShader.setMat4("model", model);
+        m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor()); // RGBA
+
+        m_debug_cylinder.draw(m_lightDebugShader, position, glm::vec3(0.05f));
     }
 }
 
 void engine::DirectionalLight::clean()
 {
-    glDeleteVertexArrays(1, &VAO);
+    //glDeleteVertexArrays(1, &VAO);
 }

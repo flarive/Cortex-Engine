@@ -16,7 +16,7 @@ void engine::PointLight::setup()
     m_lightDebugShader.init("light_debug", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
     auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 1.0f));
-    m_sphere.setup(matDebugLight);
+    m_debug_sphere.setup(matDebugLight);
 }
 
 
@@ -48,12 +48,15 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         m_lightDebugShader.setMat4("projection", projection);
         m_lightDebugShader.setMat4("view", view);
         m_lightDebugShader.setMat4("model", model);
+        m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor()); // RGBA
 
-        m_sphere.draw(m_lightDebugShader, position, glm::vec3(0.05f));
+        
+
+        m_debug_sphere.draw(m_lightDebugShader, position, glm::vec3(0.05f));
     }
 }
 
 void engine::PointLight::clean()
 {
-    glDeleteVertexArrays(1, &VAO);
+    //glDeleteVertexArrays(1, &VAO);
 }

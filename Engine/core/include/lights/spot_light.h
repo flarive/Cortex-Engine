@@ -1,6 +1,7 @@
 #pragma once
 
 #include "light.h"
+#include "../primitives/cone.h"
 
 namespace engine
 {
@@ -23,6 +24,8 @@ namespace engine
 
 
     private:
+        Cone m_debug_cone{};
+
         void setup() override;
 
     protected:

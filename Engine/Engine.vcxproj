@@ -176,6 +176,8 @@
     <ClCompile Include="core\src\entity.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
     <ClCompile Include="core\src\misc\log_manager.cpp" />
+    <ClCompile Include="core\src\primitives\cone.cpp" />
+    <ClCompile Include="core\src\primitives\cylinder.cpp" />
     <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
     <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
     <ClCompile Include="core\src\renderers\renderer.cpp" />
@@ -226,6 +228,7 @@
     <ClInclude Include="core\include\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
+    <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />
     <ClInclude Include="core\include\renderers\renderer.h" />
@@ -244,6 +247,7 @@
     <ClInclude Include="core\include\primitives\primitive.h" />
     <ClInclude Include="core\include\primitives\skybox.h" />
     <ClInclude Include="core\include\primitives\sphere.h" />
+	<ClInclude Include="core\include\primitives\cone.h" />
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\tools\helpers.h" />

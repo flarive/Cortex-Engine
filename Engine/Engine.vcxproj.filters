@@ -255,6 +255,12 @@
     <ClCompile Include="core\src\debug\imgui_docking.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\primitives\cylinder.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\primitives\cone.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -409,6 +415,12 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\imgui_docking.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\cylinder.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="cone.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

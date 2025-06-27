@@ -1,25 +1,29 @@
-#include "../../include/primitives/sphere.h"
+#include "../../include/primitives/cylinder.h"
 
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
-void engine::Sphere::setup(const std::shared_ptr<Material>& material)
+void engine::Cylinder::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
+
     const UvMapping uv{};
+
     setup(material, uv);
 }
 
-void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
+void engine::Cylinder::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
     m_material = material;
     m_uvScale = uv.getUvScale();
+
     setup();
+
     if (material)
         material->loadTexturesAsync();
 }
 
-void engine::Sphere::setup()
+void engine::Cylinder::setup()
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -29,31 +33,42 @@ void engine::Sphere::setup()
     std::vector<engine::Vertex> vertices = generateVertices();
 
     // === Step 2: Generate index data ===
-    constexpr unsigned int X_SEGMENTS = 64;
-    constexpr unsigned int Y_SEGMENTS = 64;
     std::vector<unsigned int> indices;
-    indices.reserve(Y_SEGMENTS * (X_SEGMENTS + 1) * 2);
+    const unsigned int sectorCount = 36;
 
-    bool oddRow = false;
-    for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+    // Side indices
+    for (unsigned int i = 0; i < sectorCount; ++i)
     {
-        if (!oddRow)
-        {
-            for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-            {
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-            }
-        }
-        else
-        {
-            for (int x = X_SEGMENTS; x >= 0; --x)
-            {
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-            }
-        }
-        oddRow = !oddRow;
+        unsigned int k1 = i * 2;
+        unsigned int k2 = k1 + 1;
+        unsigned int k3 = ((i + 1) % sectorCount) * 2;
+        unsigned int k4 = k3 + 1;
+
+        indices.push_back(k1);
+        indices.push_back(k3);
+        indices.push_back(k2);
+
+        indices.push_back(k2);
+        indices.push_back(k3);
+        indices.push_back(k4);
+    }
+
+    // Top cap indices
+    unsigned int topCenterIndex = static_cast<unsigned int>(vertices.size() - (sectorCount + 1) - (sectorCount + 2));
+    for (unsigned int i = 0; i < sectorCount; ++i)
+    {
+        indices.push_back(topCenterIndex);
+        indices.push_back(topCenterIndex + i + 1);
+        indices.push_back(topCenterIndex + i + 2);
+    }
+
+    // Bottom cap indices
+    unsigned int bottomCenterIndex = static_cast<unsigned int>(vertices.size() - (sectorCount + 1));
+    for (unsigned int i = 0; i < sectorCount; ++i)
+    {
+        indices.push_back(bottomCenterIndex);
+        indices.push_back(bottomCenterIndex + i + 2);
+        indices.push_back(bottomCenterIndex + i + 1);
     }
 
     indexCount = static_cast<unsigned int>(indices.size());
@@ -113,14 +128,12 @@ void engine::Sphere::setup()
     glBindVertexArray(0);
 }
 
-
-std::vector<engine::Vertex> engine::Sphere::generateVertices()
+std::vector<engine::Vertex> engine::Cylinder::generateVertices()
 {
-    return generateSphereVertices(radius, m_uvScale);
+    return generateCylinderVertices(36, height, radius, m_uvScale);
 }
 
-
-void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
     shader.use();
     if (m_material)

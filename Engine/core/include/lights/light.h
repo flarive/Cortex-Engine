@@ -42,7 +42,7 @@ namespace engine
 
         unsigned int m_index{};
 
-        Shader m_lightCubeShader{};
+        Shader m_lightDebugShader{};
 
         Color m_ambientColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 

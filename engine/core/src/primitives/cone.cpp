@@ -1,25 +1,29 @@
-#include "../../include/primitives/sphere.h"
+#include "../../include/primitives/cone.h"
 
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
-void engine::Sphere::setup(const std::shared_ptr<Material>& material)
+void engine::Cone::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
+
     const UvMapping uv{};
+
     setup(material, uv);
 }
 
-void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
+void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
     m_material = material;
     m_uvScale = uv.getUvScale();
+
     setup();
+
     if (material)
         material->loadTexturesAsync();
 }
 
-void engine::Sphere::setup()
+void engine::Cone::setup()
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -29,31 +33,26 @@ void engine::Sphere::setup()
     std::vector<engine::Vertex> vertices = generateVertices();
 
     // === Step 2: Generate index data ===
-    constexpr unsigned int X_SEGMENTS = 64;
-    constexpr unsigned int Y_SEGMENTS = 64;
     std::vector<unsigned int> indices;
-    indices.reserve(Y_SEGMENTS * (X_SEGMENTS + 1) * 2);
+    const unsigned int sectorCount = 36;
 
-    bool oddRow = false;
-    for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+    // Side indices
+    for (unsigned int i = 0; i < sectorCount; ++i)
     {
-        if (!oddRow)
-        {
-            for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-            {
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-            }
-        }
-        else
-        {
-            for (int x = X_SEGMENTS; x >= 0; --x)
-            {
-                indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                indices.push_back(y * (X_SEGMENTS + 1) + x);
-            }
-        }
-        oddRow = !oddRow;
+        unsigned int baseIndex = i + 1;
+        unsigned int nextIndex = (i + 1) % sectorCount + 1;
+        indices.push_back(0);           // tip
+        indices.push_back(nextIndex);   // next base
+        indices.push_back(baseIndex);   // current base
+    }
+
+    // Base indices
+    unsigned int baseCenterIndex = static_cast<unsigned int>(vertices.size() - (sectorCount + 1));
+    for (unsigned int i = 0; i < sectorCount; ++i)
+    {
+        indices.push_back(baseCenterIndex);             // center
+        indices.push_back(baseCenterIndex + i + 1);     // current
+        indices.push_back(baseCenterIndex + i + 2);     // next
     }
 
     indexCount = static_cast<unsigned int>(indices.size());
@@ -114,13 +113,12 @@ void engine::Sphere::setup()
 }
 
 
-std::vector<engine::Vertex> engine::Sphere::generateVertices()
+std::vector<engine::Vertex> engine::Cone::generateVertices()
 {
-    return generateSphereVertices(radius, m_uvScale);
+    return generateConeVertices(36, height, radius, m_uvScale);
 }
 
-
-void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::Cone::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
     shader.use();
     if (m_material)
@@ -144,7 +142,7 @@ void engine::Sphere::draw(Shader& shader, const glm::vec3& position, const glm::
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     m_material->unbind();

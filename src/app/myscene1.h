@@ -118,25 +118,42 @@ public:
 
         // billboard
         auto myBillboard = std::make_shared<engine::Billboard>();
-        myBillboard->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/grass.png"), engine::UvMapping(1.0f));
+        myBillboard->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
 
         auto trsBillboard = engine::Transform(glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
         getEntityManager().addChild(entityBillboard);
 
 
-
-
         // cube
         auto myCube = std::make_shared<engine::Cube>();
-        myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/container2_diffuse.png",
-            "textures/container2_specular.png"));
+        myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
 
         auto trsCube = engine::Transform(glm::vec3(0.5f, -0.15f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
         getEntityManager().addChild(entityCube);
+
+
+        // cylinder
+        auto myCylinder = std::make_shared<engine::Cylinder>();
+        myCylinder->radius = 0.2f;
+        myCylinder->height = 0.6f;
+        myCylinder->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+
+        auto trsCylinder = engine::Transform(glm::vec3(2.0f, -0.15f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder", myCylinder, trsCylinder);
+        getEntityManager().addChild(entityCylinder);
+
+
+        // cone
+        auto myCone = std::make_shared<engine::Cone>();
+        myCone->radius = 0.2f;
+        myCone->height = 0.6f;
+        myCone->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+
+        auto trsCone = engine::Transform(glm::vec3(3.0f, -0.15f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entityCone = std::make_shared<engine::Entity>("MyCylinder", myCone, trsCone);
+        getEntityManager().addChild(entityCone);
 
 
 

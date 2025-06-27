@@ -9,13 +9,14 @@
 
 namespace engine
 {
-    class Sphere final : public Primitive
+    class Cone final : public Primitive
     {
     public:
         float radius{ 1.0f };
+        float height{ 2.0f };
 
-        Sphere() = default;
-        ~Sphere() = default;
+        Cone() = default;
+        ~Cone() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;

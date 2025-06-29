@@ -32,12 +32,18 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
     shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
     shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
 
+    //constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
+    //Usually 1.0 so the denominator never goes to zero.
     shader.setFloat(std::format("{}.constant", base), 1.0f);
-    shader.setFloat(std::format("{}.linear", base), 0.09f);
-    shader.setFloat(std::format("{}.quadratic", base), 0.032f);
+
+    // linear: Controls how quickly the light falls off linearly with distance.
+    shader.setFloat(std::format("{}.linear", base), 0.09f); //0.09, 0.045, 0.0014
+
+    // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
+    shader.setFloat(std::format("{}.quadratic", base), 0.032f); // 0.032, 0.0075, 0.000007
 
 
-    if (DISPLAY_DEBUG_LIGHT_CUBE)
+    if (DISPLAY_DEBUG_LIGHT)
     {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);

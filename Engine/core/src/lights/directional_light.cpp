@@ -1,5 +1,12 @@
 #include "../../include/lights/directional_light.h"
 
+#include "../../include/tools/helpers.h"
+
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+
 #include <format>
 
 
@@ -18,7 +25,7 @@ void engine::DirectionalLight::setup()
     m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
 
-    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 1.0f));
+    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.2f));
     m_debug_cylinder.setup(matDebugLight);
 
 }
@@ -37,11 +44,23 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
     shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
 
 
-    if (DISPLAY_DEBUG_LIGHT_CUBE)
+    if (DISPLAY_DEBUG_LIGHT)
     {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
+        auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+        //model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
+
+
+        glm::vec3 direction = glm::normalize(target - position);
+
+        // Compute rotation to align the cylinder's Y-axis with the direction
+        glm::quat rotationQuat = glm::rotation(glm::vec3(0.0f, 1.0f, 0.0f), direction);
+        glm::vec3 eulerAngles = glm::eulerAngles(rotationQuat); // In radians
+        glm::vec3 eulerDegrees = glm::degrees(eulerAngles);     // Now in degrees
+
+
 
         // also draw the lamp object(s)
         m_lightDebugShader.use();
@@ -50,8 +69,13 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         m_lightDebugShader.setMat4("model", model);
         m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor()); // RGBA
 
-        m_debug_cylinder.draw(m_lightDebugShader, position, glm::vec3(0.05f));
+        m_debug_cylinder.draw(m_lightDebugShader, position, glm::vec3(0.05f), eulerDegrees);
     }
+
+
+
+
+
 }
 
 void engine::DirectionalLight::clean()

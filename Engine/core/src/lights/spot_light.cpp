@@ -50,16 +50,11 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setFloat(std::format("{}.quadratic", base), 0.032f); // tweak shadow intensity
 
     // clamp
-    shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(m_cutoff)));
-    shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(m_outerCutoff)));
+    shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(cutoff)));
+    shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(outerCutoff)));
 
-    if (DISPLAY_DEBUG_LIGHT_CUBE)
+    if (DISPLAY_DEBUG_LIGHT)
     {
-        
-
-        // we now draw as many light bulbs as we have point lights.
-        //glBindVertexArray(VAO);
-
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, position);
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
@@ -71,22 +66,8 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         m_lightDebugShader.setMat4("model", model);
         m_lightDebugShader.setVec4("customColor", glm::vec4(1.0f, 0.5f, 0.2f, 1.0f)); // RGBA
 
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        //glBindVertexArray(0);
-
         m_debug_cone.draw(m_lightDebugShader, position, glm::vec3(0.05f));
     }
-}
-
-void engine::SpotLight::setCutOff(float cutoff)
-{
-    m_cutoff = cutoff;
-}
-
-void engine::SpotLight::setOuterCutOff(float outerCutoff)
-{
-    m_outerCutoff = outerCutoff;
 }
 
 void engine::SpotLight::clean()

@@ -399,6 +399,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 H = normalize(viewDir + L);
     float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
     
+    // Compute ligh attenuation
     float distance = length(light.position - fs_in.FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 radiance = light.diffuse * intensity * attenuation;

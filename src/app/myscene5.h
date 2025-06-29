@@ -65,8 +65,8 @@ public:
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->setIntensity(50.0f);
-        light1->setCutOff(12.5f);
-        light1->setOuterCutOff(17.5f);
+        light1->cutoff = 12.5f;
+        light1->outerCutoff = 17.5f;
         light1->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
         light1->setTarget(glm::vec3(0.0f, 0.0f, -5.0f));
         light1->setAmbientColor(engine::Color(0.1f, 0.1f, 0.1f, 1.0f));

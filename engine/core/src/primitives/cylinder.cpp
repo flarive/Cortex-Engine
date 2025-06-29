@@ -153,6 +153,19 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
     if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
+
+
+    //glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+
+    //// Apply Euler rotations in YXZ order (tweak if needed for your coordinate system)
+    //model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0)); // Yaw
+    //model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0)); // Pitch
+    //model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1)); // Roll
+
+    //model = glm::scale(model, size);
+
+
+
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
 

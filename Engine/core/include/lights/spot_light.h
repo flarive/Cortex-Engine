@@ -8,8 +8,10 @@ namespace engine
     class SpotLight final : public Light
     {
     public:
+        float cutoff = 12.5f;
+        float outerCutoff = 15.0f;
+        
         SpotLight();
-
         SpotLight(unsigned int index);
 
         // draws the model, and thus all its meshes
@@ -27,9 +29,5 @@ namespace engine
         Cone m_debug_cone{};
 
         void setup() override;
-
-    protected:
-        float m_cutoff = 12.5f;
-        float m_outerCutoff = 15.0f;
     };
 }

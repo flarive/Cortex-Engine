@@ -419,7 +419,7 @@
     <ClInclude Include="core\include\primitives\cylinder.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
-    <ClInclude Include="cone.h">
+    <ClInclude Include="core\include\primitives\cone.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
   </ItemGroup>

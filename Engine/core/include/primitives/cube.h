@@ -18,9 +18,9 @@ namespace engine
         std::vector<Vertex> generateVertices() override;
 
         // draws the model, and thus all its meshes
-        void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation);
+        void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
 
-        
+        void draw(Shader& shader, const glm::mat4 model) override;
 
     private:
         void setup();

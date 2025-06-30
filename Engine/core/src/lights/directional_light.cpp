@@ -46,36 +46,29 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 
     if (DISPLAY_DEBUG_LIGHT)
     {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
-        auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
-        //model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
-        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
-
-
         glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 defaultAxis = glm::vec3(0.0f, 1.0f, 0.0f); // cylinder points up
 
-        // Compute rotation to align the cylinder's Y-axis with the direction
-        glm::quat rotationQuat = glm::rotation(glm::vec3(0.0f, 1.0f, 0.0f), direction);
-        glm::vec3 eulerAngles = glm::eulerAngles(rotationQuat); // In radians
-        glm::vec3 eulerDegrees = glm::degrees(eulerAngles);     // Now in degrees
+        // Compute quaternion rotation between default axis and desired direction
+        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
 
+        // Convert to rotation matrix
+        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
 
+        // Compose final model matrix
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        model *= rotationMatrix;
+        model = glm::scale(model, glm::vec3(0.05f, glm::length(target - position), 0.05f)); // scale lengthwise toward target
 
-        // also draw the lamp object(s)
+        // Pass model matrix to shader
         m_lightDebugShader.use();
         m_lightDebugShader.setMat4("projection", projection);
         m_lightDebugShader.setMat4("view", view);
-        m_lightDebugShader.setMat4("model", model);
-        m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor()); // RGBA
+        m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
 
-        m_debug_cylinder.draw(m_lightDebugShader, position, glm::vec3(0.05f), eulerDegrees);
+        // You can pass glm::vec3(0) for rotation since model is already transformed
+        m_debug_cylinder.draw(m_lightDebugShader, model);
     }
-
-
-
-
-
 }
 
 void engine::DirectionalLight::clean()

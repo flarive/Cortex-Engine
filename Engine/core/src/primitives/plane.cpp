@@ -238,4 +238,8 @@ namespace engine
 
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
     }
+
+    void engine::Plane::draw(Shader& shader, const glm::mat4 model)
+    {
+    }
 }

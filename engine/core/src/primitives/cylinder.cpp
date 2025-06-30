@@ -154,17 +154,28 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
     if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
 
+    glBindVertexArray(m_VAO);
+    glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 
-    //glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-
-    //// Apply Euler rotations in YXZ order (tweak if needed for your coordinate system)
-    //model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0)); // Yaw
-    //model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0)); // Pitch
-    //model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1)); // Roll
-
-    //model = glm::scale(model, size);
+    m_material->unbind();
+}
 
 
+void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
+{
+    shader.use();
+    if (m_material)
+    {
+        m_material->bind(shader);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+        shader.setBool("hasTangents", true);
+
+        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 0.0f);
+    }
 
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));

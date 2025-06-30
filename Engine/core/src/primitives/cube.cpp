@@ -190,4 +190,9 @@ namespace engine
 
         m_material->unbind();
     }
+
+    void Cube::draw(Shader& shader, const glm::mat4 model)
+    {
+    }
 }
+

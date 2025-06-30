@@ -69,7 +69,7 @@ public:
         auto trsLight2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light2 = std::make_shared<engine::DirectionalLight>(0);
         
-        light2->setPosition(glm::vec3(-2.0f, 1.0f, 2.0f));
+        light2->setPosition(glm::vec3(-1.0f, 0.5f, 2.0f));
         light2->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
         light2->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
         light2->setIntensity(1.0f);
@@ -109,7 +109,7 @@ public:
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
         myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+            "textures/uv_mapper.jpg"), engine::UvMapping(2.0f));
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(3.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
@@ -121,7 +121,7 @@ public:
         auto myBillboard = std::make_shared<engine::Billboard>();
         myBillboard->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
 
-        auto trsBillboard = engine::Transform(glm::vec3(1.0f, -0.15f, 0.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsBillboard = engine::Transform(glm::vec3(0.0f, -0.15f, -3.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
         getEntityManager().addChild(entityBillboard);
 
@@ -130,29 +130,29 @@ public:
         auto myCube = std::make_shared<engine::Cube>();
         myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
 
-        auto trsCube = engine::Transform(glm::vec3(0.5f, -0.15f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
         getEntityManager().addChild(entityCube);
 
 
         // cylinder
         auto myCylinder = std::make_shared<engine::Cylinder>();
-        myCylinder->radius = 0.2f;
-        myCylinder->height = 0.6f;
+        myCylinder->radius = 0.1f;
+        myCylinder->height = 0.3f;
         myCylinder->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
-        auto trsCylinder = engine::Transform(glm::vec3(2.0f, -0.15f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder", myCylinder, trsCylinder);
         getEntityManager().addChild(entityCylinder);
 
 
         // cone
         auto myCone = std::make_shared<engine::Cone>();
-        myCone->radius = 0.2f;
-        myCone->height = 0.6f;
+        myCone->radius = 0.1f;
+        myCone->height = 0.3f;
         myCone->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
-        auto trsCone = engine::Transform(glm::vec3(0.0f, -0.15f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCone = std::make_shared<engine::Entity>("MyCylinder", myCone, trsCone);
         getEntityManager().addChild(entityCone);
 
@@ -163,14 +163,14 @@ public:
 
         // cushion model
         std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
-        auto trsCushion = engine::Transform(glm::vec3(1.0f, -0.20f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsCushion = engine::Transform(glm::vec3(-0.5f, -0.35f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);
 
 
         // backpack model
         std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
-        auto trsBackpack = engine::Transform(glm::vec3(-2.0f, -0.10f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.35f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
         getEntityManager().addChild(entityBackpack);
 

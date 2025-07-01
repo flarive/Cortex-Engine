@@ -145,10 +145,16 @@ namespace engine
         glm::vec3 pos4(1.0f, 1.0f, 0.0f); // Top-right
 
         // Texture coordinates
-        glm::vec2 uv1(0.0f, uvScale);
-        glm::vec2 uv2(0.0f, 0.0f);
-        glm::vec2 uv3(uvScale, 0.0f);
-        glm::vec2 uv4(uvScale, uvScale);
+        glm::vec2 uv1(0.0f, 0.0f);          // Top-left (now at v=0)
+        glm::vec2 uv2(0.0f, uvScale);       // Bottom-left (now at v=uvScale)
+        glm::vec2 uv3(uvScale, uvScale);    // Bottom-right
+        glm::vec2 uv4(uvScale, 0.0f);       // Top-right
+
+        
+        //glm::vec2 uv1(0.0f, uvScale);
+        //glm::vec2 uv2(0.0f, 0.0f);
+        //glm::vec2 uv3(uvScale, 0.0f);
+        //glm::vec2 uv4(uvScale, uvScale);
 
         // Normal vector (facing +Z)
         glm::vec3 normal(0.0f, 0.0f, 1.0f);

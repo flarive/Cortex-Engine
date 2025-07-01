@@ -376,7 +376,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
     
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
 
 
     // Final lighting with shadow applied

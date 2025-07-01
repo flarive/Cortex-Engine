@@ -69,9 +69,9 @@ public:
         auto trsLight2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light2 = std::make_shared<engine::DirectionalLight>(0);
         
-        light2->setPosition(glm::vec3(-1.0f, 0.5f, 2.0f));
-        light2->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-        light2->setAmbientColor(engine::Color(0.4f, 0.4f, 0.4f, 1.0f));
+        light2->position = glm::vec3(-1.0f, 0.5f, 2.0f);
+        light2->target = glm::vec3(0.0f, 0.0f, 0.0f);
+        light2->ambientColor = engine::Color(0.4f, 0.4f, 0.4f, 1.0f);
         light2->intensity = 1.0f;
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);

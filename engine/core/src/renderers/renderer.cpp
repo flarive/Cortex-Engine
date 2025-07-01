@@ -92,8 +92,8 @@ void engine::Renderer::initDepthMapFramebuffer()
 
 void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
-    glm::vec3 light_position = light->getPosition();
-    glm::vec3 light_target = light->getTarget();
+    glm::vec3 light_position = light->position;
+    glm::vec3 light_target = light->target;
 
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------

@@ -54,14 +54,14 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight1 = engine::Transform{};
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->intensity = 2.0f;
-        light1->cutoff = 12.5f;
+        light1->cutoff = 12.0f;
         light1->outerCutoff = 18.0f;
-        light1->setPosition(glm::vec3(0.0f, 1.0f, 3.0f));
-        light1->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-        light1->setAmbientColor(engine::Color(0.8f, 0.8f, 0.8f, 0.0f));
+        light1->position = glm::vec3(0.0f, 1.0f, 3.0f);
+        light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
+        light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
         
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
@@ -74,7 +74,7 @@ public:
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(10.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 

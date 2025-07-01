@@ -18,7 +18,7 @@ glm::vec3 engine::Light::calculateLightDirection(const glm::vec3& position, cons
 //    m_intensity = intensity;
 //}
 
-void engine::Light::setAmbientColor(const engine::Color& ambientColor)
-{
-    m_ambientColor = ambientColor;
-}
+//void engine::Light::setAmbientColor(const engine::Color& ambientColor)
+//{
+//    m_ambientColor = ambientColor;
+//}

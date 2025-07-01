@@ -67,9 +67,9 @@ public:
         light1->intensity = 50.0f;
         light1->cutoff = 12.5f;
         light1->outerCutoff = 17.5f;
-        light1->setPosition(glm::vec3(0.0f, 6.0f, 0.0f));
-        light1->setTarget(glm::vec3(0.0f, 0.0f, -5.0f));
-        light1->setAmbientColor(engine::Color(0.1f, 0.1f, 0.1f, 1.0f));
+        light1->position = glm::vec3(0.0f, 6.0f, 0.0f);
+        light1->target = glm::vec3(0.0f, 0.0f, -5.0f);
+        light1->ambientColor = engine::Color(0.1f, 0.1f, 0.1f, 1.0f);
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);

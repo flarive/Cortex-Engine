@@ -17,7 +17,6 @@ namespace engine
 
         void clean() override;
 
-
     private:
         Cylinder m_debug_cylinder{};
         

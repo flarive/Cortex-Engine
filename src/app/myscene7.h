@@ -77,7 +77,7 @@ public:
         auto trsLight1 = engine::Transform{};
         trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
         auto light1 = std::make_shared<engine::PointLight>(0);
-        light1->setIntensity(10.0f);
+        light1->intensity = 10.0f;
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
 
@@ -88,7 +88,7 @@ public:
         auto trsLight2 = engine::Transform{};
         trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
         auto light2 = std::make_shared<engine::PointLight>(1);
-        light2->setIntensity(10.0f);
+        light2->intensity = 10.0f;
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
         getEntityManager().addChild(entityLight2);
 
@@ -97,7 +97,7 @@ public:
         auto trsLight3 = engine::Transform{};
         trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
         auto light3 = std::make_shared<engine::PointLight>(2);
-        light3->setIntensity(10.0f);
+        light3->intensity = 10.0f;
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
         getEntityManager().addChild(entityLight3);
 
@@ -106,7 +106,7 @@ public:
         auto trsLight4 = engine::Transform{};
         trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
         auto light4 = std::make_shared<engine::PointLight>(3);
-        light4->setIntensity(10.0f);
+        light4->intensity = 10.0f;
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
         getEntityManager().addChild(entityLight4);
 

@@ -1,5 +1,9 @@
 #include "../../include/lights/point_light.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+
 
 engine::PointLight::PointLight() : Light(0)
 {
@@ -45,20 +49,28 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
 
     if (DISPLAY_DEBUG_LIGHT)
     {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
-        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
+        glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
 
-        // also draw the lamp object(s)
+        // Compute quaternion rotation between default axis and desired direction
+        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
+
+        // Convert to rotation matrix
+        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
+
+        // Compose final model matrix
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        model *= rotationMatrix;
+        model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
+
+        // Pass model matrix to shader
         m_lightDebugShader.use();
         m_lightDebugShader.setMat4("projection", projection);
         m_lightDebugShader.setMat4("view", view);
-        m_lightDebugShader.setMat4("model", model);
-        m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor()); // RGBA
-
+        m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
         
 
-        m_debug_sphere.draw(m_lightDebugShader, position, glm::vec3(0.05f));
+        m_debug_sphere.draw(m_lightDebugShader, model);
     }
 }
 

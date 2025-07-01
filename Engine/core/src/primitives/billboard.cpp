@@ -4,142 +4,101 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
-namespace engine
+
+void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
-    inline std::vector<engine::Vertex> generateBillboardVertices(float uvScale)
+    m_material = material; // Store material reference
+
+    const UvMapping uv{};
+    setup(material, uv);
+}
+
+void engine::Billboard::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
+{
+    m_material = material;
+    m_uvScale = uv.getUvScale();
+
+    setup(); // Geometry setup
+
+    if (material)
+        material->loadTexturesAsync(); // Let material handle texture loading
+}
+
+void engine::Billboard::setup()
+{
+    glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
+    glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
+
+    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    glBindVertexArray(m_VAO);
+
+    float* quadVertices = engine::Primitive::GetScaledQuadVertices(1.0f);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), quadVertices, GL_STATIC_DRAW);
+
+    GLsizei stride = 8;
+
+    // position attribute (XYZ)
+    // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0); // stride 0 to 2
+
+
+    // normal attribute (XYZ)
+    // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1); // stride 3 to 5
+
+    // texture coord attribute (RGB)
+    // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2); // stride 6 to 7
+}
+
+
+std::vector<engine::Vertex> engine::Billboard::generateVertices()
+{
+    return generateBillboardVertices(m_uvScale);
+}
+
+
+// draws the model, and thus all its meshes
+void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+{
+    shader.use();
+
+    if (m_material)
     {
-        const glm::vec3 normal(0.0f, 0.0f, 1.0f);      // facing forward
-        const glm::vec3 tangent(1.0f, 0.0f, 0.0f);     // horizontal right
-        const glm::vec3 bitangent(0.0f, 1.0f, 0.0f);   // vertical up
-
-        // Quad corners, counter-clockwise order
-        glm::vec3 positions[] = {
-            { -0.5f, -0.5f, 0.0f },  // bottom-left
-            {  0.5f, -0.5f, 0.0f },  // bottom-right
-            {  0.5f,  0.5f, 0.0f },  // top-right
-            { -0.5f,  0.5f, 0.0f }   // top-left
-        };
-
-        // UVs (with uv scaling)
-        glm::vec2 uvs[] = {
-            { 0.0f, 0.0f },
-            { 1.0f * uvScale, 0.0f },
-            { 1.0f * uvScale, 1.0f * uvScale },
-            { 0.0f, 1.0f * uvScale }
-        };
-
-        // Define the two triangles (CCW winding)
-        std::vector<engine::Vertex> vertices;
-        vertices.reserve(6);
-
-        // Triangle 1
-        vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[1], normal, uvs[1], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
-
-        // Triangle 2
-        vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[3], normal, uvs[3], tangent, bitangent });
-
-        return vertices;
+        m_material->bind(shader);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
     }
 
-    void Billboard::setup(const std::shared_ptr<Material>& material)
-    {
-        m_material = material; // Store material reference
-
-        const UvMapping uv{};
-        setup(material, uv);
-    }
-
-    void Billboard::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
-    {
-        m_material = material;
-        m_uvScale = uv.getUvScale();
-
-        setup(); // Geometry setup
-
-        if (material)
-            material->loadTexturesAsync(); // Let material handle texture loading
-    }
-
-    void Billboard::setup()
-    {
-        glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
-        glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
-
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        glBindVertexArray(m_VAO);
-
-        float* quadVertices = engine::Primitive::GetScaledQuadVertices(1.0f);
-
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, 48 * sizeof(float), quadVertices, GL_STATIC_DRAW);
-
-        GLsizei stride = 8;
-
-        // position attribute (XYZ)
-        // layout (location = 0), vec3, vector of floats, normalized, stride, offset in buffer
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0); // stride 0 to 2
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 
-        // normal attribute (XYZ)
-        // layout(location = 1), vec3, vector of floats, normalized, stride, offset in buffer
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1); // stride 3 to 5
-
-        // texture coord attribute (RGB)
-        // layout(location = 2), vec3, vector of floats, normalized, stride, offset in buffer
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2); // stride 6 to 7
-    }
+    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
 
 
-    std::vector<Vertex> Billboard::generateVertices()
-    {
-        return generateBillboardVertices(m_uvScale);
-    }
+    // calculate the model matrix for each object and pass it to shader before drawing
+    glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    model = glm::translate(model, position);
+    if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+    model = glm::scale(model, size);
+    shader.setMat4("model", model);
 
+    // Render billboard
+    glBindVertexArray(m_VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    // draws the model, and thus all its meshes
-    void Billboard::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
-    {
-        shader.use();
+    glBindVertexArray(0);
 
-        if (m_material)
-        {
-            m_material->bind(shader);
-            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        }
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+}
 
-        glEnable(GL_BLEND);
-        //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+void engine::Billboard::draw(Shader& shader, const glm::mat4 model)
+{
 
-
-        auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
-
-
-        // calculate the model matrix for each object and pass it to shader before drawing
-        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        model = glm::translate(model, position);
-        if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
-        model = glm::scale(model, size);
-        shader.setMat4("model", model);
-
-        // Render billboard
-        glBindVertexArray(m_VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        glBindVertexArray(0);
-
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    }
-
-    void Billboard::draw(Shader& shader, const glm::mat4 model)
-    {
-
-    }
 }

@@ -13,6 +13,9 @@ namespace engine
     class Light : private NonCopyable
     {
     public:
+        
+        float intensity{};
+        
         Light();
         Light(unsigned int index);
         virtual ~Light() = default;
@@ -23,13 +26,13 @@ namespace engine
         virtual glm::vec3 getPosition() const { return m_lightPosition; }
         virtual glm::vec3 getTarget() const { return m_lightTarget; }
 
-        virtual float getIntensity() const { return m_intensity; }
+        //virtual float getIntensity() const { return m_intensity; }
         virtual Color getAmbientColor() const { return m_ambientColor; }
 
         virtual void setPosition(const glm::vec3& position) { m_lightPosition = position; }
         virtual void setTarget(const glm::vec3& target) { m_lightTarget = target; }
 
-        virtual void setIntensity(const float intensity);
+        //virtual void setIntensity(const float intensity);
         virtual void setAmbientColor(const engine::Color& ambientColor);
 
 
@@ -49,7 +52,7 @@ namespace engine
         glm::vec3 m_lightPosition{};
         glm::vec3 m_lightTarget{};
 
-        float m_intensity{ 1.0f };
+        //float m_intensity{ 1.0f };
 
         const float LIGHT_CUBE_SIZE{ 0.02f };
         const bool DISPLAY_DEBUG_LIGHT{ true };

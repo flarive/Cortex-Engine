@@ -2,6 +2,10 @@
 
 #include <format>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+
 engine::SpotLight::SpotLight() : Light(0)
 {
 }
@@ -13,23 +17,10 @@ engine::SpotLight::SpotLight(unsigned int index) : Light(index)
 
 void engine::SpotLight::setup()
 {
-    //glGenVertexArrays(1, &VAO);  // 1 is the uniqueID of the VAO
-    //glGenBuffers(1, &VBO);  // 1 is the uniqueID of the VBO
-
-    //// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    //glBindVertexArray(VAO);
-
-    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-
-    //GLsizei stride = 8;
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-    //glEnableVertexAttribArray(0);
-
     // load light cube debug shader
     m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
 
-    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 1.0f));
+    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 1.0f, 1.0f, 0.2f));
     m_debug_cone.setup(matDebugLight);
 }
 
@@ -55,18 +46,28 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
 
     if (DISPLAY_DEBUG_LIGHT)
     {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, position);
-        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE)); // Make it a smaller cube
+        glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
 
-        // also draw the lamp object(s)
+        // Compute quaternion rotation between default axis and desired direction
+        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
+
+        // Convert to rotation matrix
+        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
+
+        // Compose final model matrix
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        model *= rotationMatrix;
+        model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
+
+        // Pass model matrix to shader
         m_lightDebugShader.use();
         m_lightDebugShader.setMat4("projection", projection);
         m_lightDebugShader.setMat4("view", view);
-        m_lightDebugShader.setMat4("model", model);
-        m_lightDebugShader.setVec4("customColor", glm::vec4(1.0f, 0.5f, 0.2f, 1.0f)); // RGBA
+        m_lightDebugShader.setVec4("customColor", m_debug_cone.getMaterial()->getAmbientColor());
 
-        m_debug_cone.draw(m_lightDebugShader, position, glm::vec3(0.05f));
+        // You can pass glm::vec3(0) for rotation since model is already transformed
+        m_debug_cone.draw(m_lightDebugShader, model);
     }
 }
 

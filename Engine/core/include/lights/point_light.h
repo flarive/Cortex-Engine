@@ -19,7 +19,6 @@ namespace engine
 
         void clean() override;
 
-
     private:
         Sphere m_debug_sphere{};
 

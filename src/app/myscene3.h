@@ -57,9 +57,9 @@ public:
         // lights
         auto trsLight5 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light5 = std::make_shared<engine::SpotLight>(0);
-        light5->setIntensity(50.0f);
-        light5->setCutOff(12.5f);
-        light5->setOuterCutOff(27.5f);
+        light5->intensity = 50.0f;
+        light5->cutoff = 12.5f;
+        light5->outerCutoff = 27.5f;
         light5->setPosition(glm::vec3(0.0f, 4.0f, -2.0f));
         light5->setTarget(glm::vec3(0.0f, 0.0f, -4.0f));
 
@@ -71,7 +71,7 @@ public:
 
         auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light1 = std::make_shared<engine::PointLight>(0);
-        light1->setIntensity(50.0f);
+        light1->intensity = 50.0f;
         light1->setPosition(glm::vec3(-10.0f, 10.0f, 10.0f));
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -81,7 +81,7 @@ public:
 
         auto trsLight2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light2 = std::make_shared<engine::PointLight>(1);
-        light2->setIntensity(50.0f);
+        light2->intensity = 50.0f;
         light2->setPosition(glm::vec3(10.0f, 10.0f, 10.0f));
 
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
@@ -91,7 +91,7 @@ public:
 
         auto trsLight3 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light3 = std::make_shared<engine::PointLight>(2);
-        light3->setIntensity(50.0f);
+        light3->intensity = 50.0f;
         light3->setPosition(glm::vec3(-10.0f, -10.0f, 10.0f));
 
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
@@ -101,7 +101,7 @@ public:
 
         auto trsLight4 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto light4 = std::make_shared<engine::PointLight>(3);
-        light4->setIntensity(50.0f);
+        light4->intensity = 50.0f;
         light4->setPosition(glm::vec3(10.0f, -10.0f, 10.0f));
 
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);

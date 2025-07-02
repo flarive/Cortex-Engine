@@ -3,6 +3,11 @@
 #include "../../include/tools/file_system.h"
 
 
+#include "../../include/lights/spot_light.h"
+#include "../../include/lights/point_light.h"
+#include "../../include/lights/directional_light.h"
+
+
 
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
@@ -14,6 +19,7 @@ engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine:
 void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
+    m_camera = camera;
     
     // configure global opengl state
     // -----------------------------
@@ -41,7 +47,14 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
-    initDepthMapFramebuffer();
+    
+    if (m_lights.size() > 0)
+    {
+        if (std::dynamic_pointer_cast<SpotLight>(m_lights[0]))
+            initDepthMapFramebuffer();
+        else
+            initDepthMapFramebuffer2();
+    }
 
     // color framebuffer configuration
     // -------------------------
@@ -80,7 +93,12 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
-        computeDepthMapFramebuffer(blinnPhongShader, width, height, update, m_lights[0]);
+    {
+        if (std::dynamic_pointer_cast<SpotLight>(m_lights[0]))
+            computeDepthMapFramebuffer(blinnPhongShader, width, height, update, m_lights[0]);
+        else
+            computeDepthMapFramebuffer2(blinnPhongShader, width, height, update, m_lights[0]);
+    }
 
     // render to framebuffer
     computeColorFramebuffer();

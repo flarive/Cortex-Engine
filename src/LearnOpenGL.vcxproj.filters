@@ -567,6 +567,11 @@
     <CopyFileToFolders Include="..\resources\textures\earth_diffuse.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\earth_normal.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\earth_specular.jpg" />
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -595,11 +600,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\resources\textures\earth_normal.jpg">
-      <Filter>resources\textures</Filter>
-    </Image>
-    <Image Include="..\resources\textures\earth_specular.jpg">
-      <Filter>resources\textures</Filter>
-    </Image>
+    <None Include="..\resources\shaders\point_shadow_depth.geometry">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\point_shadow_depth.vertex">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

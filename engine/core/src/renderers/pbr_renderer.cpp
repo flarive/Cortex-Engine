@@ -13,6 +13,7 @@ engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings
 void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
+    m_camera = camera;
     
     // configure global opengl state
     // -----------------------------

@@ -23,7 +23,8 @@ namespace engine
 		Shader screenShader{};
 
 		// Shader that renders a depth framebuffer for shadow maps
-		Shader depthMapShader{};
+		Shader directionalDepthMapShader{};
+		Shader pointDepthMapShader{};
 		Shader depthMapToQuadShader{};
 
 		
@@ -46,7 +47,7 @@ namespace engine
 	protected:
 		GLFWwindow* m_window{};
 
-		//std::shared_ptr<Camera> m_camera{};
+		std::shared_ptr<Camera> m_camera{};
 
 		SceneSettings m_settings{};
 
@@ -101,9 +102,17 @@ namespace engine
 		void enableAntiAliasing(bool enable);
 		void enableGammaCorrection(bool enable);
 
-		void initDepthMapFramebuffer();
+		void initDepthMapFramebuffer(); // for point light
+		void initDepthMapFramebuffer2(); // for omni light
+
+
 		void computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
+		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
 		
+
+		void renderScene(const Shader& shader);
+
+
 		void computeColorFramebuffer();
 
 
@@ -112,6 +121,10 @@ namespace engine
 		unsigned int m_cubeVAO{};
 		unsigned int m_cubeVBO{};
 		void renderCube();
+
+		unsigned int m_cube2VAO{};
+		unsigned int m_cube2VBO{};
+		void renderCube2();
 
 
 		// renderQuad() renders a 1x1 XY quad in NDC

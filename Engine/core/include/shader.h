@@ -17,7 +17,7 @@ namespace engine
         Shader() = default;
         ~Shader() = default;
 
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
+        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
         // activate the shader
         void use();

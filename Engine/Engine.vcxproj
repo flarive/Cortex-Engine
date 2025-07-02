@@ -227,6 +227,7 @@
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
+    <ClInclude Include="core\include\misc\color_manager.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
@@ -247,7 +248,7 @@
     <ClInclude Include="core\include\primitives\primitive.h" />
     <ClInclude Include="core\include\primitives\skybox.h" />
     <ClInclude Include="core\include\primitives\sphere.h" />
-	<ClInclude Include="core\include\primitives\cone.h" />
+    <ClInclude Include="core\include\primitives\cone.h" />
     <ClInclude Include="core\include\shader.h" />
     <ClInclude Include="core\include\texture.h" />
     <ClInclude Include="core\include\tools\helpers.h" />

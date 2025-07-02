@@ -90,11 +90,16 @@ void engine::Renderer::initDepthMapFramebuffer()
     depthMapToQuadShader.setInt("depthMap", 0);
 }
 
+/// <summary>
+/// Spotlight only !!!!!
+/// </summary>
+/// <param name="shader"></param>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="update"></param>
+/// <param name="light"></param>
 void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
-    glm::vec3 light_position = light->position;
-    glm::vec3 light_target = light->target;
-
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
     glm::mat4 lightProjection, lightView;
@@ -102,7 +107,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     float near_plane = 0.1f;  // Previously 1.0f
     float far_plane = 100.0f;  // Previously 7.5f
     lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-    lightView = glm::lookAt(light_position, light_target, glm::vec3(0.0, 1.0, 0.0));
+    lightView = glm::lookAt(light->position, light->target, glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
     // render scene from light's point of view
     depthMapShader.use();
@@ -128,7 +133,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     shader.use();
-    shader.setVec3("lightPos", light_position);
+    shader.setVec3("lightPos", light->position);
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     // update user stuffs

@@ -51,5 +51,6 @@
 
 
 #include "misc/log_manager.h"
+#include "misc/color_manager.h"
 
 inline auto& logger = engine::LogManager::getInstance();

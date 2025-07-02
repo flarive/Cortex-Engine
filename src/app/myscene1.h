@@ -4,9 +4,6 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-#include "core/include/renderers/blinnphong_renderer.h"
-
-
 class MyScene1 : public engine::Scene
 {
 private:
@@ -56,14 +53,14 @@ public:
 
 
         // lights
-        //auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
-        //auto light1 = std::make_shared<engine::PointLight>(0);
-        //light1->setIntensity(5.0f);
-        //light1->setPosition(glm::vec3(0.0f, 1.0f, 2.0f));
-        //light1->setAmbientColor(engine::Color(1.0f, 1.0f, 1.0f, 1.0f));
+        auto trsLight1 = engine::Transform{};
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->intensity = 5.0f;
+        light1->position = glm::vec3(0.5f, 1.0f, 0.0f);
+        light1->ambientColor = engine::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
-        //getEntityManager().addChild(entityLight1);
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
 
 
 
@@ -92,17 +89,17 @@ public:
 
 
 
-        auto trsLight1 = engine::Transform{};
-        auto light1 = std::make_shared<engine::SpotLight>(0);
-        light1->intensity = 2.0f;
-        light1->cutoff = 12.0f;
-        light1->outerCutoff = 28.0f;
-        light1->position = glm::vec3(0.5f, 1.0f, 3.0f);
-        light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-        light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
+        //auto trsLight1 = engine::Transform{};
+        //auto light1 = std::make_shared<engine::SpotLight>(0);
+        //light1->intensity = 2.0f;
+        //light1->cutoff = 12.0f;
+        //light1->outerCutoff = 28.0f;
+        //light1->position = glm::vec3(0.5f, 1.0f, 3.0f);
+        //light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
+        //light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
 
-        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
-        getEntityManager().addChild(entityLight1);
+        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        //getEntityManager().addChild(entityLight1);
 
 
 
@@ -120,13 +117,13 @@ public:
         zzz.setCubeMapTexs(faces);
 
 
-
         // ground
+        // engine::ColorManager::hexToNormalizedRGB("#FFF1AD")
         auto myPlane = std::make_shared<engine::Plane>();
         myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
             "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
 
-        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(4.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
         getEntityManager().addChild(entityPlane);
 
@@ -185,7 +182,7 @@ public:
 
         // backpack model
         std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
-        auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.35f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
+        auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
         getEntityManager().addChild(entityBackpack);
 

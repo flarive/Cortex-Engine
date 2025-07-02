@@ -422,5 +422,8 @@
     <ClInclude Include="core\include\primitives\cone.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\misc\color_manager.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

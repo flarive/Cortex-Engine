@@ -287,15 +287,23 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords));
+//    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
+//    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
+//    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords));
+
+    float ambientStrength = 0.5;
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
+    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : vec3(1.0));
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : vec3(1.0));
 
     // Shadow Calculation (no light position needed)
     float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir);
+
+    // Apply shadow intensity for darker/lighter shadows
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
     
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
 
     return lighting;
 }
@@ -317,10 +325,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     
-    // combine results
-    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords));
+
+    float ambientStrength = 0.5;
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
+    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : vec3(1.0));
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : vec3(1.0));
+
     
     // apply attenuation
     ambient *= attenuation;
@@ -328,8 +338,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     specular *= attenuation;
 
     // calculate shadow
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);                      
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
+    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+
+    // Apply shadow intensity for darker/lighter shadows
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
+    
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
 
     return lighting;
 }
@@ -362,11 +376,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
-    //float ambientStrength = 0.5;
-    //vec3 ambient = light.ambient * mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength);
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb;
+    //vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
+    float ambientStrength = 0.5;
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
+    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : vec3(1.0));
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : vec3(1.0));
 
     // Apply attenuation and spotlight intensity
     ambient *= attenuation * intensity;
@@ -376,8 +390,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
     
+    // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
-
 
     // Final lighting with shadow applied
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));

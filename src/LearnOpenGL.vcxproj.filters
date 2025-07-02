@@ -572,6 +572,8 @@
     <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geometry" />
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vertex" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -598,13 +600,5 @@
     <ClInclude Include="app\myscene7.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\point_shadow_depth.geometry">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="..\resources\shaders\point_shadow_depth.vertex">
-      <Filter>resources\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

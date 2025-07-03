@@ -181,13 +181,13 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
     shader.setInt("material.texture_shadowMap", 10);
 
-    // 3. render Depth map to dedicated framebuffer
-    // --------------------------------------------
-    depthMapToQuadShader.use();
-    depthMapToQuadShader.setFloat("near_plane", near_plane);
-    depthMapToQuadShader.setFloat("far_plane", far_plane);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+    // render Depth map to quad for visual debugging
+    // ---------------------------------------------
+    //depthMapToQuadShader.use();
+    //depthMapToQuadShader.setFloat("near_plane", near_plane);
+    //depthMapToQuadShader.setFloat("far_plane", far_plane);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
 
     // test depth map (also comment computeColorFramebuffer);
     //renderQuad();
@@ -318,7 +318,7 @@ void engine::Renderer::computeColorFramebuffer()
 
     screenShader.use();
 
-    //glBindVertexArray(quadVAO);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
     glDrawArrays(GL_TRIANGLES, 0, 6);
     renderQuad();

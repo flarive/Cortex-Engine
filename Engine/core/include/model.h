@@ -33,7 +33,7 @@ namespace engine
 		~Model() = default;
 
         // constructor, expects a filepath to a 3D model.
-        Model(std::string const& path, bool gamma = false);
+        Model(std::string const& path, bool gamma = false, bool flipUVs = false);
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f));
@@ -43,7 +43,7 @@ namespace engine
 
     private:
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-        void loadModel(std::string const& path);
+        void loadModel(std::string const& path, bool flipUVs = false);
 
         // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
         void processNode(aiNode* node, const aiScene* scene);

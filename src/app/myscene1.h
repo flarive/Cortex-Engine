@@ -53,14 +53,14 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{};
-        auto light1 = std::make_shared<engine::PointLight>(0);
-        light1->intensity = 5.0f;
-        light1->position = glm::vec3(0.0f, 2.0f, .0f);
-        light1->ambientColor = engine::Color(1.0f, 1.0f, 1.0f, 1.0f);
+        //auto trsLight1 = engine::Transform{};
+        //auto light1 = std::make_shared<engine::PointLight>(0);
+        //light1->intensity = 5.0f;
+        //light1->position = glm::vec3(0.0f, 2.0f, .0f);
+        //light1->ambientColor = engine::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
-        getEntityManager().addChild(entityLight1);
+        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        //getEntityManager().addChild(entityLight1);
 
 
 
@@ -89,17 +89,17 @@ public:
 
 
 
-        //auto trsLight1 = engine::Transform{};
-        //auto light1 = std::make_shared<engine::SpotLight>(0);
-        //light1->intensity = 2.0f;
-        //light1->cutoff = 12.0f;
-        //light1->outerCutoff = 28.0f;
-        //light1->position = glm::vec3(0.5f, 1.0f, 3.0f);
-        //light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-        //light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
+        auto trsLight1 = engine::Transform{};
+        auto light1 = std::make_shared<engine::SpotLight>(0);
+        light1->intensity = 2.0f;
+        light1->cutoff = 12.0f;
+        light1->outerCutoff = 28.0f;
+        light1->position = glm::vec3(0.5f, 1.0f, 3.0f);
+        light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
+        light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
 
-        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
-        //getEntityManager().addChild(entityLight1);
+        auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        getEntityManager().addChild(entityLight1);
 
 
 
@@ -229,35 +229,35 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        engine::Scene::mouse_callback(xposIn, yposIn);
+        //engine::Scene::mouse_callback(xposIn, yposIn);
 
-        if (show_window)
-            return;
+        //if (show_window)
+        //    return;
 
-        float xpos{ static_cast<float>(xposIn) };
-        float ypos{ static_cast<float>(yposIn) };
+        //float xpos{ static_cast<float>(xposIn) };
+        //float ypos{ static_cast<float>(yposIn) };
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+        //if (firstMouse)
+        //{
+        //    lastX = xpos;
+        //    lastY = ypos;
+        //    firstMouse = false;
+        //}
 
-        float xoffset{ xpos - lastX };
-        float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+        //float xoffset{ xpos - lastX };
+        //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-        lastX = xpos;
-        lastY = ypos;
+        //lastX = xpos;
+        //lastY = ypos;
 
-        getActiveCamera()->processMouseMovement(xoffset, yoffset);
+        //getActiveCamera()->processMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
-        engine::Scene::scroll_callback(xoffset, yoffset);
+        //engine::Scene::scroll_callback(xoffset, yoffset);
 
-        getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+        //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)

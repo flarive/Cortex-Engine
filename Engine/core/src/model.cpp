@@ -10,19 +10,26 @@
 #include <format>
 
 // constructor, expects a filepath to a 3D model.
-engine::Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
+engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
 {
     assert(!path.empty() && "Model path is empty !");
 
-    loadModel(path);
+    loadModel(path, flipUVs);
 }
 
 
-void engine::Model::loadModel(std::string const& path)
+void engine::Model::loadModel(std::string const& path, bool flipUVs)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace); //aiProcess_FlipUVs
+
+    auto flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
+
+    if (flipUVs)
+        flags |= aiProcess_FlipUVs;
+
+
+    const aiScene* scene = importer.ReadFile(path, flags);
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {

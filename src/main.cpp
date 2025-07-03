@@ -10,12 +10,12 @@
 #include "app/myscene5.h"
 #include "app/myscene6.h"
 #include "app/myscene7.h"
-
+#include "app/myscene8.h"
 
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene1;
+using MyScene = MyScene8;
 
 
 engine::App* app{};

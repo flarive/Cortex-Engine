@@ -107,14 +107,14 @@ public:
 
 
         // helmet model
-        std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
-        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
+        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
         auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet", helmetModel, trsHelmet);
         getEntityManager().addChild(entityHelmet);
 
 
 
-        
+        //getEntityManager().updateSelfAndChild();
 
 
 

@@ -120,7 +120,7 @@ public:
 
         
 
-        std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
+        std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
 
 
         // sample flat entity hierarchy
@@ -254,7 +254,7 @@ public:
             trs.setLocalScale(glm::vec3(2.0f));
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-            std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>(engine::Model("models/helmet/DamagedHelmet.glTF"));
+            std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
             std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", 88), model, trs);
             getEntityManager().addChild(entity);
 

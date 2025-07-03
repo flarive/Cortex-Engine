@@ -567,13 +567,21 @@
     <CopyFileToFolders Include="..\resources\textures\earth_diffuse.jpg">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\earth_normal.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\earth_specular.jpg" />
     <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geometry" />
-    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vertex" />
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geometry">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\earth_specular.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\earth_normal.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

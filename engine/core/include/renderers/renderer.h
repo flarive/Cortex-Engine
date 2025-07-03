@@ -110,9 +110,6 @@ namespace engine
 		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
 		
 
-		void renderScene(const Shader& shader);
-
-
 		void computeColorFramebuffer();
 
 
@@ -122,9 +119,6 @@ namespace engine
 		unsigned int m_cubeVBO{};
 		void renderCube();
 
-		unsigned int m_cube2VAO{};
-		unsigned int m_cube2VBO{};
-		void renderCube2();
 
 
 		// renderQuad() renders a 1x1 XY quad in NDC

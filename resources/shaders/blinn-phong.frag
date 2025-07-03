@@ -216,6 +216,23 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
+//float ShadowCalculation(vec3 fragPos, vec3 lightPos)
+//{
+//    // get vector between fragment position and light position
+//    vec3 fragToLight = fragPos - lightPos;
+//    // use the light to fragment vector to sample from the depth map    
+//    float closestDepth = texture(material.texture_shadowMap, fragToLight).r;
+//    // it is currently in linear range between [0,1]. Re-transform back to original value
+//    closestDepth *= far_plane;
+//    // now get current linear depth as the length between the fragment and light position
+//    float currentDepth = length(fragToLight);
+//    // now test for shadows
+//    float bias = 0.05; 
+//    float shadow = currentDepth -  bias > closestDepth ? 1.0 : 0.0;
+//
+//    return shadow;
+//}  
+
 float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
 {
     // get vector between fragment position and light position
@@ -334,6 +351,9 @@ void main()
     // Set the fragment color with the alpha channel
     FragColor = vec4(result, alpha);
 
+
+    //FragColor = texture(material.texture_shadowMap, fs_in.TexCoords);
+
     // Discard transparent fragments (optional)
     if (alpha < 0.1)
         discard;
@@ -398,17 +418,18 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : vec3(1.0));
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : vec3(1.0));
 
-    
+    float intensity = 2.0;
     // apply attenuation
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
+    ambient *= attenuation * intensity;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
 
     // calculate shadow
-    float shadow = shadows ? ShadowCalculationPointLight(fragPos, light.position) : 0.0;
+    float shadow = ShadowCalculationPointLight(fragPos, light.position);
+    //float shadow = shadows ? ShadowCalculationPointLight(fragPos, light.position) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
+    //shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
     
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
 

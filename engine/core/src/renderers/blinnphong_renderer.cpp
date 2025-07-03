@@ -50,10 +50,11 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     
     if (m_lights.size() > 0)
     {
-        if (std::dynamic_pointer_cast<SpotLight>(m_lights[0]))
-            initDepthMapFramebuffer();
-        else
+        auto firstLight = m_lights[0];
+        if (std::dynamic_pointer_cast<PointLight>(firstLight))
             initDepthMapFramebuffer2();
+        else
+            initDepthMapFramebuffer();
     }
 
     // color framebuffer configuration
@@ -94,10 +95,11 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
     {
-        if (std::dynamic_pointer_cast<SpotLight>(m_lights[0]))
-            computeDepthMapFramebuffer(blinnPhongShader, width, height, update, m_lights[0]);
+        auto firstLight = m_lights[0];
+        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+            computeDepthMapFramebuffer2(blinnPhongShader, width, height, update, firstLight);
         else
-            computeDepthMapFramebuffer2(blinnPhongShader, width, height, update, m_lights[0]);
+            computeDepthMapFramebuffer(blinnPhongShader, width, height, update, firstLight);
     }
 
     // render to framebuffer

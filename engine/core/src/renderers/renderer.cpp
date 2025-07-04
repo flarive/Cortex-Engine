@@ -18,11 +18,12 @@ void engine::Renderer::loadShaders()
     directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
 
     // for point lights
-    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vertex", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geometry"); 
+    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vertex", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geometry");
 
 
-
+    // debug only
     depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
+    cubeFaceDebugShader.init("debugDepthCube", "shaders/debug/cube_face_debugger.vertex", "shaders/debug/cube_face_debugger.frag");
 }
 
 
@@ -96,8 +97,8 @@ void engine::Renderer::initDepthMapFramebuffer()
 
     // shader configuration
     // --------------------
-    depthMapToQuadShader.use();
-    depthMapToQuadShader.setInt("depthMap", 0);
+    //depthMapToQuadShader.use();
+    //depthMapToQuadShader.setInt("depthMap", 0);
 }
 
 /// <summary>
@@ -129,8 +130,9 @@ void engine::Renderer::initDepthMapFramebuffer2()
 
     // shader configuration
     // --------------------
-    depthMapToQuadShader.use();
-    depthMapToQuadShader.setInt("depthMap", 0);
+    //cubeFaceDebugShader.use();
+    //cubeFaceDebugShader.setInt("uCubeMap", 0);
+    //cubeFaceDebugShader.setInt("uFaceIndex", 1);
 }
 
 /// <summary>
@@ -189,7 +191,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
 
-    // test depth map (also comment computeColorFramebuffer);
+    //// test depth map (also comment computeColorFramebuffer);
     //renderQuad();
 }
 
@@ -214,14 +216,6 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
 
 
 
-    // ??????????????
-    //glm::mat4 lightProjection, lightView;
-    //glm::mat4 lightSpaceMatrix;
-    //lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-    //lightView = glm::lookAt(light->position, light->target, glm::vec3(0.0, 1.0, 0.0));
-    //lightSpaceMatrix = lightProjection * lightView;
-
-
     // 1. render scene to depth cubemap
     // --------------------------------
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
@@ -234,7 +228,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     }
     pointDepthMapShader.setFloat("far_plane", far_plane);
     pointDepthMapShader.setVec3("lightPos", light->position);
-    
+
     // update user stuffs
     update(pointDepthMapShader);
 
@@ -251,31 +245,26 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     shader.setMat4("view", view);
     // set lighting uniforms
     shader.setVec3("lightPos", light->position);
-    //shader.setMat4("lightSpaceMatrix", lightSpaceMatrix); // ????
     shader.setVec3("viewPos", m_camera->Position);
     shader.setInt("shadows", 1); // enable/disable shadows by pressing 'SPACE'
     shader.setFloat("far_plane", far_plane);
-    /*glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, woodTexture);*/
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
-
-   
-
-    glActiveTexture(GL_TEXTURE10);
-    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-    shader.setInt("material.texture_shadowMap", 10);
 
     // update user stuffs
     update(shader);
 
-    // 3. render Depth map to dedicated framebuffer
-    // --------------------------------------------
-    //depthMapToQuadShader.use();
-    //depthMapToQuadShader.setFloat("near_plane", near_plane);
-    //depthMapToQuadShader.setFloat("far_plane", far_plane);
+    glActiveTexture(GL_TEXTURE11);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
+    shader.setInt("material.texture_shadowMapCube", 11);
+
+
+    // render Depth map to quad for visual debugging
+    // ---------------------------------------------
+    //cubeFaceDebugShader.use();
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+
+    //// test depth map (also comment computeColorFramebuffer);
+    //renderQuad();
 }
 
 
@@ -362,21 +351,21 @@ void engine::Renderer::renderCube()
             1.0f, 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
             1.0f,  -1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 
-              // bottom face (y = -1)
-               1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-               1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-              -1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-               1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-              -1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-              -1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            // bottom face (y = -1)
+             1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+             1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f,  0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 
-              // top face (y = 1)
-               1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-               1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-              -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-               1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-              -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-              -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+            // top face (y = 1)
+             1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+             1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f
         };
 
 

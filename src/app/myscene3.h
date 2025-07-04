@@ -385,39 +385,9 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        // render test sphere
-        //redSciFiMetalSphere.draw(shader, glm::vec3(-7.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //rustedIronSphere.draw(shader, glm::vec3(-5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //goldSphere.draw(shader, glm::vec3(-3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //grassSphere.draw(shader, glm::vec3(-1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //plasticSphere.draw(shader, glm::vec3(1.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //wallSphere.draw(shader, glm::vec3(3.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-        //bronzeSphere.draw(shader, glm::vec3(5.0f, -14.0f, -10.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, rotation, 0.0f));
-
-
-        
-
-
-        //ourPlane.draw(shader, glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-
-
+        UNREFERENCED_PARAMETER(shader);
 
         rotation += deltaTime * 10.0f;
-
-
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
-
-
-
-        // draw lights
-        //myPointLight1->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(0.5f, 1.0f, 0.3f)); //glm::vec3(-10.0f, 10.0f, 10.0f));
-        //myPointLight2->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, 10.0f, 10.0f));
-        //myPointLight3->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(-10.0f, -10.0f, 10.0f));
-        //myPointLight4->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 50.0f, glm::vec3(10.0f, -10.0f, 10.0f));
-        //mySpotLight->draw(shader, projection, view, engine::Color{ 0.1f, 0.1f, 0.1f, 1.0f }, 20.0f, glm::vec3(0.0f, 4.0f, -2.0f), glm::vec3(0.0f, 0.0f, -4.0f));
     }
 
     void drawUI()

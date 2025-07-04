@@ -248,7 +248,7 @@ namespace engine
     }
 
 
-    inline std::vector<engine::Vertex> generateSphereVertices(float radius, float uvScale)
+    inline std::vector<engine::Vertex> generateSphereVertices(float radius = 1.0f, float uvScale = 1.0f)
     {
         std::vector<engine::Vertex> vertices;
 
@@ -266,8 +266,8 @@ namespace engine
                 float yPos = cos(ySegment * PI);
                 float zPos = sin(xSegment * 2.0f * PI) * sin(ySegment * PI);
 
-                glm::vec3 position = { xPos, yPos, zPos };
-                glm::vec3 normal = glm::normalize(position);
+                glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
+                glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
                 glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
 
                 // Calculate tangent and bitangent

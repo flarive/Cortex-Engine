@@ -242,6 +242,8 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
+        UNREFERENCED_PARAMETER(shader);
+
         rotation += deltaTime * 10.0f;
     }
 

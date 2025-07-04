@@ -74,6 +74,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+        shader.setBool("hasTangents", true);
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
@@ -89,7 +90,6 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     model = glm::scale(model, glm::vec3(size.x, size.y, size.z));
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-    shader.setBool("hasTangents", true);
 
     // Render plane
     glBindVertexArray(m_VAO);

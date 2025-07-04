@@ -58,7 +58,8 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         // Compose final model matrix
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
         model *= rotationMatrix;
-        model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
+        //model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
+        model = glm::scale(model, glm::vec3(0.25f));
 
         // Pass model matrix to shader
         m_lightDebugShader.use();

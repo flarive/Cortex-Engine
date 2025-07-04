@@ -103,18 +103,18 @@ public:
 
 
 
-        std::vector<std::string> faces
-        {
-            "textures/skybox/right.jpg",
-            "textures/skybox/left.jpg",
-            "textures/skybox/top.jpg",
-            "textures/skybox/bottom.jpg",
-            "textures/skybox/front.jpg",
-            "textures/skybox/back.jpg"
-        };
+        //std::vector<std::string> faces
+        //{
+        //    "textures/skybox/right.jpg",
+        //    "textures/skybox/left.jpg",
+        //    "textures/skybox/top.jpg",
+        //    "textures/skybox/bottom.jpg",
+        //    "textures/skybox/front.jpg",
+        //    "textures/skybox/back.jpg"
+        //};
 
-        auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
-        zzz.setCubeMapTexs(faces);
+        //auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+        //zzz.setCubeMapTexs(faces);
 
 
         // ground
@@ -165,7 +165,7 @@ public:
         myCone->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
         auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        auto entityCone = std::make_shared<engine::Entity>("MyCylinder", myCone, trsCone);
+        auto entityCone = std::make_shared<engine::Entity>("MyConer", myCone, trsCone);
         getEntityManager().addChild(entityCone);
 
 
@@ -192,7 +192,7 @@ public:
 
         ourText.setup(app->window, FONT_PATH, 28);
 
-        ourSkybox.setup(faces);
+        //ourSkybox.setup(faces);
     }
 
 
@@ -229,35 +229,35 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        //engine::Scene::mouse_callback(xposIn, yposIn);
+        engine::Scene::mouse_callback(xposIn, yposIn);
 
-        //if (show_window)
-        //    return;
+        if (show_window)
+            return;
 
-        //float xpos{ static_cast<float>(xposIn) };
-        //float ypos{ static_cast<float>(yposIn) };
+        float xpos{ static_cast<float>(xposIn) };
+        float ypos{ static_cast<float>(yposIn) };
 
-        //if (firstMouse)
-        //{
-        //    lastX = xpos;
-        //    lastY = ypos;
-        //    firstMouse = false;
-        //}
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
 
-        //float xoffset{ xpos - lastX };
-        //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+        float xoffset{ xpos - lastX };
+        float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-        //lastX = xpos;
-        //lastY = ypos;
+        lastX = xpos;
+        lastY = ypos;
 
-        //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+        getActiveCamera()->processMouseMovement(xoffset, yoffset);
     }
 
     void scroll_callback(double xoffset, double yoffset)
     {
-        //engine::Scene::scroll_callback(xoffset, yoffset);
+        engine::Scene::scroll_callback(xoffset, yoffset);
 
-        //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+        getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
     }
 
     void gamepad_callback(const GLFWgamepadstate& state)
@@ -294,7 +294,7 @@ private:
     {
         UNREFERENCED_PARAMETER(shader);
 
-        //// view/projection transformations
+        // view/projection transformations
         //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
         //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
     

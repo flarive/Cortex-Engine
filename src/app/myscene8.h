@@ -55,8 +55,8 @@ public:
         // lights
         auto trsLight1 = engine::Transform{};
         auto light1 = std::make_shared<engine::PointLight>(0);
-        light1->intensity = 5.0f;
-        light1->position = glm::vec3(0.0f, 2.0f, .0f);
+        light1->intensity = 1.0f;
+        light1->position = glm::vec3(0.0f, 0.5f, 0.0f);
         light1->ambientColor = engine::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -101,14 +101,13 @@ public:
         //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         //getEntityManager().addChild(entityLight1);
 
-
+        auto zzz = engine::ColorManager::hexToNormalizedRGB("#FFF1AD");
+        //auto zzz = engine::Color(0.1f);
 
 
         // ground
-        // engine::ColorManager::hexToNormalizedRGB("#FFF1AD")
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
+        myPlane->setup(std::make_shared<engine::Material>(zzz, ""), engine::UvMapping(6.0f)); //textures/uv_mapper.jpg
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
@@ -117,7 +116,7 @@ public:
 
         // cube 1
         auto myCube1 = std::make_shared<engine::Cube>();
-        myCube1->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+        myCube1->setup(std::make_shared<engine::Material>(zzz, "textures/uv_mapper.jpg"));
 
         auto trsCube1 = engine::Transform(glm::vec3(-1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube1 = std::make_shared<engine::Entity>("MyCube1", myCube1, trsCube1);
@@ -126,7 +125,7 @@ public:
 
         // cube 2
         auto myCube2 = std::make_shared<engine::Cube>();
-        myCube2->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+        myCube2->setup(std::make_shared<engine::Material>(zzz, "textures/uv_mapper.jpg"));
 
         auto trsCube2 = engine::Transform(glm::vec3(1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube2 = std::make_shared<engine::Entity>("MyCube2", myCube2, trsCube2);
@@ -135,7 +134,7 @@ public:
 
         // cube 3
         auto myCube3 = std::make_shared<engine::Cube>();
-        myCube3->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+        myCube3->setup(std::make_shared<engine::Material>(zzz, "textures/uv_mapper.jpg"));
 
         auto trsCube3 = engine::Transform(glm::vec3(1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube3 = std::make_shared<engine::Entity>("MyCube3", myCube3, trsCube3);
@@ -144,7 +143,7 @@ public:
 
         // cube 4
         auto myCube4 = std::make_shared<engine::Cube>();
-        myCube4->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+        myCube4->setup(std::make_shared<engine::Material>(zzz, "textures/uv_mapper.jpg"));
 
         auto trsCube4 = engine::Transform(glm::vec3(-1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube4 = std::make_shared<engine::Entity>("MyCube3", myCube4, trsCube4);

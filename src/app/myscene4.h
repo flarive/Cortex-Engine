@@ -204,6 +204,8 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
+        UNREFERENCED_PARAMETER(shader);
+
         auto myCushion = getEntityManager().findEntityByName("MyCushion");
         if (myCushion)
         {

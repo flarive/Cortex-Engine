@@ -25,7 +25,9 @@ namespace engine
 		// Shader that renders a depth framebuffer for shadow maps
 		Shader directionalDepthMapShader{};
 		Shader pointDepthMapShader{};
-		Shader depthMapToQuadShader{};
+		
+		Shader depthMapToQuadShader{}; // for depth map texture debugging purposes
+		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes
 
 		
 		

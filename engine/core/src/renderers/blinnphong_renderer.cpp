@@ -25,7 +25,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -----------------------------
     enableDepthTest(true);
     enableFaceCulling(true);
-    enableAntiAliasing(true);
+    //enableAntiAliasing(true);
     if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
 
@@ -59,7 +59,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebuffer(width, height);
+    initColorFramebufferMSAA(width, height);
 
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
@@ -104,6 +104,13 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // render to framebuffer
     computeColorFramebuffer();
+
+    // Resolve MSAA to screen or another texture FBO
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height,
+        0, 0, width, height,
+        GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

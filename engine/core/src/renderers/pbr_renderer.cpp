@@ -24,7 +24,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     enableFaceCulling(true);
-    enableAntiAliasing(true);
+    //enableAntiAliasing(true);
     if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
     // build and compile shaders

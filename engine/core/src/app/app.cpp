@@ -95,7 +95,15 @@ void engine::App::setup()
 
     initGLAD();
 
+
+
+    //glEnable(GL_MULTISAMPLE);
+
     initImGUI(glsl_version);
+
+    //int samples = 0;
+    //glGetIntegerv(GL_SAMPLES, &samples);
+    //std::cout << "MSAA Samples: " << samples << std::endl;
 }
 
 
@@ -120,6 +128,9 @@ const char* engine::App::initOpenGL()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+
+    // MSAA anti aliasing
+    //glfwWindowHint(GLFW_SAMPLES, 4);
 
     return glsl_version;
 }

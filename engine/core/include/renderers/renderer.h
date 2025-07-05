@@ -40,6 +40,7 @@ namespace engine
 		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
 
 		void initColorFramebuffer(int width, int height);
+		void initColorFramebufferMSAA(int width, int height);
 
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) = 0;
@@ -101,7 +102,7 @@ namespace engine
 
 		void enableDepthTest(bool enable);
 		void enableFaceCulling(bool enable);
-		void enableAntiAliasing(bool enable);
+		//void enableAntiAliasing(bool enable);
 		void enableGammaCorrection(bool enable);
 
 		void initDepthMapFramebuffer(); // for point light

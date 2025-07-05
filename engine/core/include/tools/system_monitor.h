@@ -8,18 +8,18 @@ class SystemMonitor
 {
 public:
     SystemMonitor();
-    ~SystemMonitor();
+    ~SystemMonitor() = default;
 
-    double GetCPUUsage();
-    double GetMemoryUsage();
+    //double GetCPUUsage();
+    //double GetMemoryUsage();
     std::string GetGPUVendor();
     std::string GetGPURenderer();
     std::string GetGPUVersion();
 
 private:
-#ifdef _WIN32
-    void InitWindowsCPUUsage();
-#elif __linux__
-    long lastTotalUser, lastTotalNice, lastTotalSystem, lastTotalIdle;
-#endif
+//#ifdef _WIN32
+//    void InitWindowsCPUUsage();
+//#elif __linux__
+//    long lastTotalUser, lastTotalNice, lastTotalSystem, lastTotalIdle;
+//#endif
 };

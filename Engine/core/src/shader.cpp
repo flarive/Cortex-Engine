@@ -53,7 +53,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     // 2. compile shaders
-    unsigned int vertex, fragment, geometry;
+    unsigned int vertex, fragment;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);

@@ -15,11 +15,11 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene3;
+using MyScene = MyScene8;
 
 
-engine::App* app{};
-engine::Scene* scene{};
+engine::App* myApp{};
+engine::Scene* myScene{};
 
 
 
@@ -44,18 +44,18 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
-    app = new MyApp("MyApp", 1280, 720, false);
-    if (app)
+    myApp = new MyApp("MyApp", 1280, 720, false);
+    if (myApp)
     {
-        scene = new MyScene("MyScene", app);
-        if (scene)
+        myScene = new MyScene("MyScene", myApp);
+        if (myScene)
         {
-            scene->initialize();
+            myScene->initialize();
 
-            glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
-            glfwSetKeyCallback(scene->getWindow(), keyCallback);
-            glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);
-            glfwSetScrollCallback(scene->getWindow(), scrollCallback);
+            glfwSetFramebufferSizeCallback(myScene->getWindow(), framebufferSizeCallback);
+            glfwSetKeyCallback(myScene->getWindow(), keyCallback);
+            glfwSetCursorPosCallback(myScene->getWindow(), mouseCallback);
+            glfwSetScrollCallback(myScene->getWindow(), scrollCallback);
 
             int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
             if (present > 0)
@@ -65,14 +65,14 @@ int main(int, char**)
             }
 
             // start game loop
-            while (app->isRunning())
+            while (myApp->isRunning())
             {
                 gamepadUpdate(); // Update gamepad state
-                scene->gameLoop();
+                myScene->gameLoop();
             }
 
-            scene->exit();
-            app->exit();
+            myScene->exit();
+            myApp->exit();
         }
     }
     else
@@ -90,8 +90,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyScene* myScene = (MyScene*)scene;
-    myScene->key_callback(key, scancode, action, mods);
+    ((MyScene*)myScene)->key_callback(key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -100,8 +99,7 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyScene* myScene = (MyScene*)scene;
-    myScene->mouse_callback(xposIn, yposIn);
+    ((MyScene*)myScene)->mouse_callback(xposIn, yposIn);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -110,8 +108,7 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyScene* myScene = (MyScene*)scene;
-    myScene->scroll_callback(xoffset, yoffset);
+    ((MyScene*)myScene)->scroll_callback(xoffset, yoffset);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -120,8 +117,7 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     UNREFERENCED_PARAMETER(window);
 
-    MyScene* myScene = (MyScene*)scene;
-    myScene->framebuffer_size_callback(width, height);
+    ((MyScene*)myScene)->framebuffer_size_callback(width, height);
 }
 
 // Poll gamepad input and forward to MyApp
@@ -133,8 +129,7 @@ static void gamepadUpdate()
         GLFWgamepadstate state;
         if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
         {
-            MyScene* myApp = (MyScene*)scene;
-            myApp->gamepad_callback(state);
+            ((MyScene*)myScene)->gamepad_callback(state);
         }
     }
 }

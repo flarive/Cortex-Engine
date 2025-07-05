@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _WIN32
+#include "windows.h" // to avoid warning C4005: 'APIENTRY' : redefinition de macro
+#endif
+
 #include "common_defines.h"
 
 #include "imgui.h"

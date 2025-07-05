@@ -25,7 +25,7 @@ public:
         : engine::Scene(_title, _app, engine::SceneSettings
             {
                 .method = engine::RenderMethod::BlinnPhong,
-                .shadowIntensity = 2.0f
+                .shadowIntensity = 5.0f
             })
     {
         // my application specific state gets initialized here
@@ -56,7 +56,7 @@ public:
         auto trsLight1 = engine::Transform{};
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->intensity = 1.0f;
-        light1->position = glm::vec3(0.0f, 0.5f, 0.0f);
+        light1->position = glm::vec3(0.0f, 1.5f, 0.0f);
         light1->ambientColor = engine::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
@@ -101,13 +101,13 @@ public:
         //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         //getEntityManager().addChild(entityLight1);
 
-        auto zzz = engine::ColorManager::hexToNormalizedRGB("#FFF1AD");
-        //auto zzz = engine::Color(0.1f);
+        //auto zzz = engine::ColorManager::hexToNormalizedRGB("#FFF1AD");
+        auto zzz = engine::Color(0.1f);
 
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(zzz, ""), engine::UvMapping(6.0f)); //textures/uv_mapper.jpg
+        myPlane->setup(std::make_shared<engine::Material>(zzz, "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);

@@ -216,7 +216,7 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
+float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 {
     // get vector between fragment position and light position
     vec3 fragToLight = fragPos - lightPos;
@@ -228,10 +228,10 @@ float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
     // now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
 
-    // test for shadows
-    //float bias = 0.05; // we use a much larger bias since depth is now in [near_plane, far_plane] range
-    float bias = max(0.05 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.01);
+    float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+
      
      // PCF
 //     float shadow = 0.0;
@@ -271,7 +271,7 @@ float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
 
         
     // display closestDepth as debug (to visualize depth cubemap)
-    // FragColor = vec4(vec3(closestDepth / far_plane), 1.0);    
+    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0); 
         
     return shadow;
 }
@@ -408,7 +408,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     specular *= attenuation * intensity;
 
     // calculate shadow
-    float shadow = shadows ? ShadowCalculationPointLight(fragPos, light.position) : 0.0;
+    float shadow = shadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

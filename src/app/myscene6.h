@@ -108,14 +108,9 @@ public:
 
         // helmet model
         std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -15.0f, -10.0f), glm::vec3(4.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet", helmetModel, trsHelmet);
         getEntityManager().addChild(entityHelmet);
-
-
-
-        //getEntityManager().updateSelfAndChild();
-
 
 
         ourText.setup(app->window, FONT_PATH, 28);
@@ -243,6 +238,12 @@ private:
     void drawScene(engine::Shader& shader)
     {
         UNREFERENCED_PARAMETER(shader);
+
+        auto myCushion = getEntityManager().findEntityByName("MyHelmet");
+        if (myCushion)
+        {
+            myCushion->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        }
 
         rotation += deltaTime * 10.0f;
     }

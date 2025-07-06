@@ -102,7 +102,6 @@ namespace engine
 
 		void enableDepthTest(bool enable);
 		void enableFaceCulling(bool enable);
-		//void enableAntiAliasing(bool enable);
 		void enableGammaCorrection(bool enable);
 
 		void initDepthMapFramebuffer(); // for point light

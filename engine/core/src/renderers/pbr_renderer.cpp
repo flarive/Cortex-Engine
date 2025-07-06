@@ -2,6 +2,11 @@
 
 #include "../../include/tools/file_system.h"
 
+#include "../../include/lights/spot_light.h"
+#include "../../include/lights/point_light.h"
+#include "../../include/lights/directional_light.h"
+
+
 
 
 
@@ -24,7 +29,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     enableFaceCulling(true);
-    //enableAntiAliasing(true);
     if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
     // build and compile shaders
@@ -56,7 +60,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebuffer(width, height);
+    initColorFramebufferMSAA(width, height);
 
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
@@ -288,8 +292,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->Position);
 
-    //if (m_lights.size() > 0)
-    //    pbrShader.setVec3("lightPos", m_lights[0]->getPosition());
 
     // bind pre-computed IBL data
     glActiveTexture(GL_TEXTURE7);
@@ -318,12 +320,31 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     //brdfShader.use();
     //renderQuad();
 
+
+
+
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
-        computeDepthMapFramebuffer(pbrShader, width, height, update, m_lights[0]);
+    {
+        auto firstLight = m_lights[0];
+        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+            computeDepthMapFramebuffer2(pbrShader, width, height, update, firstLight);
+        else
+            computeDepthMapFramebuffer(pbrShader, width, height, update, firstLight);
+    }
+
+
 
     // render to framebuffer
     computeColorFramebuffer();
+
+
+    // Resolve MSAA to screen or another texture FBO
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height,
+        0, 0, width, height,
+        GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

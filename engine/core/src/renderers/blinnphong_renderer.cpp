@@ -25,7 +25,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -----------------------------
     enableDepthTest(true);
     enableFaceCulling(true);
-    //enableAntiAliasing(true);
     if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
 
 

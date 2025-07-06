@@ -73,6 +73,9 @@ public:
 
 
 
+
+
+
         // lights
         auto trsLight1 = engine::Transform{};
         trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });

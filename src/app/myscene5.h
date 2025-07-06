@@ -15,13 +15,6 @@ private:
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
 
-    //std::shared_ptr<engine::SpotLight> mySpotLight;
-
-
-    //engine::Model buddhaModel{};
-
-    //engine::Plane ourPlane{};
-
     engine::Text ourText{};
 
     float rotation{};
@@ -95,7 +88,7 @@ public:
 
 
         // buddha model
-        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/buddha/buddha1.obj"));
+        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/buddha/buddha1.obj");
         auto trsCushion = engine::Transform(glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);

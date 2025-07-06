@@ -52,16 +52,6 @@ void engine::Renderer::enableFaceCulling(bool enable)
     }
 }
 
-//void engine::Renderer::enableAntiAliasing(bool enable)
-//{
-//    if (enable)
-//    {
-//        // MSAA anti aliasing
-//        glfwWindowHint(GLFW_SAMPLES, 4);
-//        glEnable(GL_MULTISAMPLE);
-//    }
-//}
-
 void engine::Renderer::enableGammaCorrection(bool enable)
 {
     // gamma correction (default 2.2 gamma correction)

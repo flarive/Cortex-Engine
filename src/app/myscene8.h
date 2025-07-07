@@ -53,10 +53,9 @@ public:
 
 
         // light
-        auto trsLight1 = engine::Transform{};
+        auto trsLight1 = engine::Transform{ {0.0f, 1.5f, 0.0f} };
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->intensity = 1.0f;
-        light1->position = glm::vec3(0.0f, 1.5f, 0.0f);
         light1->ambientColor = engine::Color(0.2f);
 
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);

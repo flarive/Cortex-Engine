@@ -212,9 +212,9 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             view,
             entity->light->ambientColor,
             entity->light->intensity,
-            entity->light->position,
+            entity->transform.getLocalPosition(),
             entity->light->target,
-            entity->transform.getGlobalScale(),
+            entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
     }
 

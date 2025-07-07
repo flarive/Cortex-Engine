@@ -40,7 +40,7 @@ namespace engine
 
         Shader m_lightDebugShader{};
 
-        const float LIGHT_CUBE_SIZE{ 0.02f };
+        const float LIGHT_CUBE_SIZE{ 0.82f };
         const bool DISPLAY_DEBUG_LIGHT{ false };
 
         glm::vec3 calculateLightDirection(const glm::vec3& position, const glm::vec3& target);

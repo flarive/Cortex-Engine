@@ -55,55 +55,45 @@ public:
 
 
         // lights
-        auto trsLight5 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight5 = engine::Transform{ { 0.0f, 4.0f, -2.0f } };
         auto light5 = std::make_shared<engine::SpotLight>(0);
         light5->intensity = 50.0f;
         light5->cutoff = 12.5f;
         light5->outerCutoff = 27.5f;
-        light5->position = glm::vec3(0.0f, 4.0f, -2.0f);
         light5->target = glm::vec3(0.0f, 0.0f, -4.0f);
-
         auto entityLight5 = std::make_shared<engine::Entity>("Light5", light5, trsLight5);
         getEntityManager().addChild(entityLight5);
 
 
 
 
-        auto trsLight1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight1 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->intensity = 50.0f;
-        light1->position = glm::vec3(-10.0f, 10.0f, 10.0f);
-
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
 
 
 
-        auto trsLight2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight2 = engine::Transform{ { 10.0f, 10.0f, 10.0f } };
         auto light2 = std::make_shared<engine::PointLight>(1);
         light2->intensity = 50.0f;
-        light2->position = glm::vec3(10.0f, 10.0f, 10.0f);
-
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
         getEntityManager().addChild(entityLight2);
 
 
 
-        auto trsLight3 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight3 = engine::Transform{ { -10.0f, -10.0f, 10.0f } };
         auto light3 = std::make_shared<engine::PointLight>(2);
         light3->intensity = 50.0f;
-        light3->position = glm::vec3(-10.0f, -10.0f, 10.0f);
-
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
         getEntityManager().addChild(entityLight3);
 
 
 
-        auto trsLight4 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
+        auto trsLight4 = engine::Transform{ { 10.0f, -10.0f, 10.0f } };
         auto light4 = std::make_shared<engine::PointLight>(3);
         light4->intensity = 50.0f;
-        light4->position = glm::vec3(10.0f, -10.0f, 10.0f);
-
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
         getEntityManager().addChild(entityLight4);
 

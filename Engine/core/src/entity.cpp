@@ -48,6 +48,8 @@ engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : primitiv
 
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light, Transform _transform) : name{ _name }, light{ _light }, transform{ _transform }
 {
+	_light->position = _transform.getLocalPosition();
+	
 	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
 }
 

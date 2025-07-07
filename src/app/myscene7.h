@@ -71,7 +71,15 @@ public:
 
 
 
-
+        // lights
+        //auto trsLight1 = engine::Transform{};
+        //trsLight1.setLocalPosition({ 0.0f, 0.0f, 0.0f });
+        //auto light1 = std::make_shared<engine::PointLight>(0);
+        //light1->intensity = 10.0f;
+        //light1->position = glm::vec3(0.0f, -15.0f, 0.0f);
+        //light1->ambientColor = engine::Color(0.8f);
+        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        //getEntityManager().addChild(entityLight1);
 
 
 
@@ -81,6 +89,7 @@ public:
         trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
         auto light1 = std::make_shared<engine::PointLight>(0);
         light1->intensity = 10.0f;
+        light1->position = glm::vec3(-10.0f, 10.0f, 10.0f);
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
 
@@ -92,6 +101,7 @@ public:
         trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
         auto light2 = std::make_shared<engine::PointLight>(1);
         light2->intensity = 10.0f;
+        light2->position = glm::vec3(10.0f, 10.0f, 10.0f);
         auto entityLight2 = std::make_shared<engine::Entity>("Light2", light2, trsLight2);
         getEntityManager().addChild(entityLight2);
 
@@ -101,6 +111,7 @@ public:
         trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
         auto light3 = std::make_shared<engine::PointLight>(2);
         light3->intensity = 10.0f;
+        light3->position = glm::vec3(-10.0f, -10.0f, 10.0f);
         auto entityLight3 = std::make_shared<engine::Entity>("Light3", light3, trsLight3);
         getEntityManager().addChild(entityLight3);
 
@@ -110,6 +121,7 @@ public:
         trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
         auto light4 = std::make_shared<engine::PointLight>(3);
         light4->intensity = 10.0f;
+        light4->position = glm::vec3(10.0f, -10.0f, 10.0f);
         auto entityLight4 = std::make_shared<engine::Entity>("Light4", light4, trsLight4);
         getEntityManager().addChild(entityLight4);
 
@@ -179,7 +191,7 @@ public:
             "textures/container2_diffuse.png",
             "textures/container2_specular.png"));
 
-        auto trsCube = engine::Transform(glm::vec3(0.0f, -20.0f, 0.0f), glm::vec3(1.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+        auto trsCube = engine::Transform(glm::vec3(-3.0f, -15.0f, -10.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
         getEntityManager().addChild(entityCube);
 
@@ -187,10 +199,9 @@ public:
         // sphere
         auto mySphere = std::make_shared<engine::Sphere>();
         mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
-            "textures/earth_diffuse.jpg",
-            "textures/earth_specular.jpg"));
+            "textures/uv_mapper.jpg"));
 
-        auto trsSphere = engine::Transform(glm::vec3(0.0f, -17.0f, -5.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto trsSphere = engine::Transform(glm::vec3(3.0f, -15.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
         getEntityManager().addChild(entitySphere);
 
@@ -343,11 +354,11 @@ public:
         }
 
 
-        auto mySphere = getEntityManager().findEntityByName("MySphere");
-        if (mySphere)
-        {
-            mySphere->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
-        }
+        //auto mySphere = getEntityManager().findEntityByName("MySphere");
+        //if (mySphere)
+        //{
+        //    mySphere->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        //}
 
 
         rotation += deltaTime * 10.0f;

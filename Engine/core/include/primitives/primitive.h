@@ -268,7 +268,9 @@ namespace engine
 
                 glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
                 glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
-                glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
+                //glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
+                glm::vec2 texCoord = { (1.0f - xSegment) * uvScale, (1.0f - ySegment) * uvScale };
+
 
                 // Calculate tangent and bitangent
                 glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));

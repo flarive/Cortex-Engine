@@ -14,7 +14,7 @@ namespace engine
     {
     public:
         
-        float intensity{};
+        float intensity{ 1.0f };
         Color ambientColor{ Color(0.1f, 0.1f, 0.1f, 1.0f) };
 
 

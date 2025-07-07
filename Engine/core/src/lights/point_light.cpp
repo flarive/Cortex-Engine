@@ -36,6 +36,15 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
     shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
     shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
 
+
+
+    // no attenuation values
+    //shader.setFloat(std::format("{}.constant", base), 1.0f);
+    //shader.setFloat(std::format("{}.linear", base), 0.0f);
+    //shader.setFloat(std::format("{}.quadratic", base), 0.0f);
+
+
+
     //constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
     //Usually 1.0 so the denominator never goes to zero.
     shader.setFloat(std::format("{}.constant", base), 1.0f);

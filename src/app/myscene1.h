@@ -93,7 +93,7 @@ public:
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->intensity = 2.0f;
         light1->cutoff = 12.0f;
-        light1->outerCutoff = 28.0f;
+        light1->outerCutoff = 48.0f;
         light1->position = glm::vec3(0.5f, 1.0f, 3.0f);
         light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
         light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
@@ -167,6 +167,16 @@ public:
         auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCone = std::make_shared<engine::Entity>("MyConer", myCone, trsCone);
         getEntityManager().addChild(entityCone);
+
+
+        // sphere
+        auto mySphere = std::make_shared<engine::Sphere>();
+        mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+
+        auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
+        auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
+        getEntityManager().addChild(entitySphere);
+
 
 
 

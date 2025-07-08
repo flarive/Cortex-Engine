@@ -77,7 +77,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
 
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->GetViewMatrix();
 
     
@@ -85,7 +85,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.use();
     blinnPhongShader.setMat4("projection", projection);
     blinnPhongShader.setMat4("view", view);
-    blinnPhongShader.setVec3("viewPos", camera->Position);
+    blinnPhongShader.setVec3("viewPos", camera->position);
 
 
     // update user stuffs

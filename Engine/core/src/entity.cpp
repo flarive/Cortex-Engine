@@ -46,8 +46,10 @@ engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : primitiv
 }
 
 
+
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light, Transform _transform) : name{ _name }, light{ _light }, transform{ _transform }
 {
+	// set light position from transform position
 	_light->position = _transform.getLocalPosition();
 	
 	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
@@ -67,6 +69,9 @@ engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : light{ _light }
 
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, camera{ _camera }, transform{ _transform }
 {
+	// set camera position from transform position
+	_camera->position = _transform.getLocalPosition();
+
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }
 

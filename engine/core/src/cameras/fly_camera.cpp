@@ -15,42 +15,42 @@ engine::FlyCamera::FlyCamera(float posX, float posY, float posZ, float upX, floa
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 void engine::FlyCamera::processKeyboard(engine::Camera_Movement direction, float deltaTime, GLboolean constrainPitch)
 {
-    float velocity = MovementSpeed * deltaTime;
+    float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)
-        Position += Front * velocity;
+        position += front * velocity;
     if (direction == BACKWARD)
-        Position -= Front * velocity;
+        position -= front * velocity;
     if (direction == LEFT)
-        Position -= Right * velocity;
+        position -= right * velocity;
     if (direction == RIGHT)
-        Position += Right * velocity;
+        position += right * velocity;
     if (direction == UP)
-        Position += Up * velocity;
+        position += up * velocity;
     if (direction == DOWN)
-        Position -= Up * velocity;
+        position -= up * velocity;
 
     if (direction == YAW_UP)
-        Yaw += 20 * velocity;
+        yaw += 20 * velocity;
     if (direction == YAW_DOWN)
-        Yaw -= 20 * velocity;
+        yaw -= 20 * velocity;
 
     if (direction == PITCH_UP)
-        Pitch += 20 * velocity;
+        pitch += 20 * velocity;
     if (direction == PITCH_DOWN)
-        Pitch -= 20 * velocity;
+        pitch -= 20 * velocity;
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
     {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
     }
 
     // for FPS camera
-    if (Fps)
-        Position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
+    if (fps)
+        position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
 
     // update Front, Right and Up Vectors using the updated Euler angles
     updateCameraVectors();
@@ -59,24 +59,24 @@ void engine::FlyCamera::processKeyboard(engine::Camera_Movement direction, float
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
-    xoffset *= MouseSensitivity;
+    xoffset *= mouseSensitivity;
 
-    if (Fps)
+    if (fps)
         yoffset = 0;
     else
-        yoffset *= MouseSensitivity;
+        yoffset *= mouseSensitivity;
 
 
-    Yaw += xoffset;
-    Pitch += yoffset;
+    yaw += xoffset;
+    pitch += yoffset;
 
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
     {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
@@ -94,24 +94,24 @@ void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
     float triggerL = (state.axes[4] > -0.9f) ? state.axes[4] : -1.0f; // Left trigger (down movement)
     float triggerR = (state.axes[5] > -0.9f) ? state.axes[5] : -1.0f; // Right trigger (up movement)
 
-    float velocity = MovementSpeed * 0.1f; // Adjust movement speed
-    float rotationSpeed = MouseSensitivity * 2.0f; // Adjust rotation sensitivity
+    float velocity = movementSpeed * 0.1f; // Adjust movement speed
+    float rotationSpeed = mouseSensitivity * 2.0f; // Adjust rotation sensitivity
 
     // Apply movement (left stick)
-    Position += Front * (-leftY * velocity); // Forward/backward
-    Position += Right * (leftX * velocity); // Left/right
+    position += front * (-leftY * velocity); // Forward/backward
+    position += right * (leftX * velocity); // Left/right
 
     // Vertical movement using triggers
-    if (triggerL > -0.9f) Position -= Up * ((triggerL + 1.0f) * 0.5f * velocity); // L2 moves down
-    if (triggerR > -0.9f) Position += Up * ((triggerR + 1.0f) * 0.5f * velocity); // R2 moves up
+    if (triggerL > -0.9f) position -= up * ((triggerL + 1.0f) * 0.5f * velocity); // L2 moves down
+    if (triggerR > -0.9f) position += up * ((triggerR + 1.0f) * 0.5f * velocity); // R2 moves up
 
     // Apply camera rotation (right stick)
-    Yaw += rightX * rotationSpeed;
-    Pitch -= rightY * rotationSpeed;
+    yaw += rightX * rotationSpeed;
+    pitch -= rightY * rotationSpeed;
 
     // Clamp pitch to avoid flipping
-    if (Pitch > 89.0f) Pitch = 89.0f;
-    if (Pitch < -89.0f) Pitch = -89.0f;
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
 
     // Update camera vectors
     updateCameraVectors();
@@ -120,9 +120,11 @@ void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 void engine::FlyCamera::processMouseScroll(float yoffset)
 {
-    Zoom -= (float)yoffset;
-    if (Zoom < 1.0f)
-        Zoom = 1.0f;
-    if (Zoom > 45.0f)
-        Zoom = 45.0f;
+    zoom -= (float)yoffset;
+
+    if (zoom < 1.0f)
+        zoom = 1.0f;
+    
+    if (zoom > 45.0f)
+        zoom = 45.0f;
 }

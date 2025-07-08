@@ -44,15 +44,15 @@ public:
         // cameras
         auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -8.0f, 2.0f), false);
-        camera1->Zoom = 25.0f;
-        camera1->MovementSpeed = 10.0f;
+        camera1->zoom = 25.0f;
+        camera1->movementSpeed = 10.0f;
         auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
         getEntityManager().addChild(entityCamera1);
 
         auto trsCamera2 = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
         auto camera2 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -10.0f, 2.0f), false);
-        camera2->Zoom = 15.0f;
-        camera2->MovementSpeed = 10.0f;
+        camera2->zoom = 15.0f;
+        camera2->movementSpeed = 10.0f;
         auto entityCamera2 = std::make_shared<engine::Entity>("Camera2", camera2, trsCamera2);
         getEntityManager().addChild(entityCamera2);
 

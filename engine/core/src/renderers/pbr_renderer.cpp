@@ -261,7 +261,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // initialize static shader uniforms before rendering
     // --------------------------------------------------
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
+    
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
 
@@ -284,13 +285,13 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->GetViewMatrix();
 
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
     pbrShader.setMat4("view", view);
-    pbrShader.setVec3("viewPos", camera->Position);
+    pbrShader.setVec3("viewPos", camera->position);
 
 
     // bind pre-computed IBL data

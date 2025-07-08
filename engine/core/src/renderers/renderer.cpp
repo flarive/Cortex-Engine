@@ -229,13 +229,13 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shader.use();
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera->Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(m_camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = m_camera->GetViewMatrix();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
     // set lighting uniforms
     shader.setVec3("lightPos", light->position);
-    shader.setVec3("viewPos", m_camera->Position);
+    shader.setVec3("viewPos", m_camera->position);
     shader.setInt("shadows", 1); // enable/disable shadows by pressing 'SPACE'
     shader.setFloat("far_plane", far_plane);
 

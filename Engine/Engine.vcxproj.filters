@@ -118,6 +118,12 @@
     <Filter Include="Fichiers sources\core\cameras\base">
       <UniqueIdentifier>{2ca76577-550b-4a60-b0d4-532bbf0a285e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core\materials\base">
+      <UniqueIdentifier>{336e2109-2526-463e-b94e-27b8290c4e07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\materials\base">
+      <UniqueIdentifier>{efdb9ff7-90dd-4a21-995c-3c39901d0e85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -192,9 +198,6 @@
     <ClCompile Include="core\src\primitives\sphere.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\materials\material.cpp">
-      <Filter>Fichiers sources\core\materials</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\tools\system_monitor.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
@@ -260,6 +263,18 @@
     </ClCompile>
     <ClCompile Include="core\src\primitives\cone.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\materials\blinnphong_material.cpp">
+      <Filter>Fichiers sources\core\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\materials\material.cpp">
+      <Filter>Fichiers sources\core\materials\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\materials\base_material.cpp">
+      <Filter>Fichiers sources\core\materials\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\materials\pbr_material.cpp">
+      <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +362,6 @@
     <ClInclude Include="core\include\primitives\sphere.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\materials\material.h">
-      <Filter>Fichiers d%27en-tête\core\materials</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\tools\system_monitor.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
@@ -424,6 +436,18 @@
     </ClInclude>
     <ClInclude Include="core\include\misc\color_manager.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\materials\blinnphong_material.h">
+      <Filter>Fichiers d%27en-tête\core\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\materials\material.h">
+      <Filter>Fichiers d%27en-tête\core\materials\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\materials\base_material.h">
+      <Filter>Fichiers d%27en-tête\core\materials\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\materials\pbr_material.h">
+      <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

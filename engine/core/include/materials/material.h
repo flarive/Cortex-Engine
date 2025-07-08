@@ -14,8 +14,8 @@ namespace engine
     {
     protected:
         
-        Color m_ambientColor{ engine::Color(1.0f) };
-        Color m_diffuseColor{ engine::Color(0.5f) };
+        Color m_ambientColor{ Color(1.0f) };
+        Color m_diffuseColor{ Color(0.5f) };
 
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};
@@ -38,9 +38,9 @@ namespace engine
         std::vector<Texture> textures{}; // Store textures
 
         Material(const std::vector<Texture>& textures);
-        Material(const engine::Color& ambientColor);
-        Material(const engine::Color& ambientColor, const engine::Color& diffuseColor, float shininess = 0.0f);
-        Material(const engine::Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
+        Material(const Color& ambientColor);
+        Material(const Color& ambientColor, const Color& diffuseColor, float shininess = 0.0f);
+        Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 0.0f);
 
 
         void loadTextures();

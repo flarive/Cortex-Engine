@@ -175,6 +175,9 @@
     <ClCompile Include="core\src\debug\imgui_docking.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
+    <ClCompile Include="core\src\materials\base_material.cpp" />
+    <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
+    <ClCompile Include="core\src\materials\pbr_material.cpp" />
     <ClCompile Include="core\src\misc\log_manager.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
@@ -227,6 +230,9 @@
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
+    <ClInclude Include="core\include\materials\base_material.h" />
+    <ClInclude Include="core\include\materials\blinnphong_material.h" />
+    <ClInclude Include="core\include\materials\pbr_material.h" />
     <ClInclude Include="core\include\misc\color_manager.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />

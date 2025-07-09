@@ -1,22 +1,22 @@
 #include "../../include/materials/base_material.h"
 
 
-engine::BaseMaterial::BaseMaterial(const std::vector<Texture>& textures)
+engine::Material::Material(const std::vector<Texture>& textures) : textures(textures)
 {
 
 }
 
-engine::BaseMaterial::BaseMaterial(const Color& ambientColor)
+engine::Material::Material(const Color& ambientColor) : m_ambientColor(ambientColor), m_diffuseTexPath(""), m_specularTexPath(""), m_normalTexPath(""), m_metallicTexPath(""), m_roughnessTexPath(""), m_aoTexPath(""), m_heightTexPath(""), m_shininess(0.0f)
 {
 
 }
 
-engine::BaseMaterial::BaseMaterial(const Color& ambientColor, const Color& diffuseColor, float shininess)
+engine::Material::Material(const Color& ambientColor, const Color& diffuseColor, float shininess) : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_shininess(shininess)
 {
 
 }
 
-engine::BaseMaterial::BaseMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
+engine::Material::Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess) : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_metallicTexPath(metallicTexPath), m_roughnessTexPath(roughnessTexPath), m_aoTexPath(aoTexPath), m_heightTexPath(heightTexPath), m_shininess(shininess)
 {
 
 }
@@ -24,7 +24,7 @@ engine::BaseMaterial::BaseMaterial(const Color& ambientColor, const std::string&
 
 
 // Helper function to load a texture asynchronously
-void engine::BaseMaterial::loadTextureAsync(const std::string& path)
+void engine::Material::loadTextureAsync(const std::string& path)
 {
     if (path.empty()) return; // Avoid unnecessary loading
 
@@ -44,7 +44,7 @@ void engine::BaseMaterial::loadTextureAsync(const std::string& path)
 
 
 
-void engine::BaseMaterial::bind(engine::Shader& shader) const
+void engine::Material::bind(engine::Shader& shader) const
 {
     unsigned int textureUnit = 0;
 
@@ -63,7 +63,7 @@ void engine::BaseMaterial::bind(engine::Shader& shader) const
     glActiveTexture(GL_TEXTURE0); // Reset active texture
 }
 
-void engine::BaseMaterial::unbind() const
+void engine::Material::unbind() const
 {
     for (size_t i = 0; i < textures.size(); i++)
     {
@@ -74,7 +74,7 @@ void engine::BaseMaterial::unbind() const
     glActiveTexture(GL_TEXTURE0); // Reset to default
 }
 
-void engine::BaseMaterial::loadTextures()
+void engine::Material::loadTextures()
 {
     textures.clear();  // Prevent duplicates
 
@@ -104,7 +104,7 @@ void engine::BaseMaterial::loadTextures()
 }
 
 
-void engine::BaseMaterial::loadTexturesAsync()
+void engine::Material::loadTexturesAsync()
 {
     textures.clear();
     textures.reserve(7);
@@ -161,7 +161,7 @@ void engine::BaseMaterial::loadTexturesAsync()
     textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 }
 
-void engine::BaseMaterial::setCubeMapTexs(const std::vector<std::string>& faces)
+void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)
 {
     m_cubemapTextures = faces;
 }

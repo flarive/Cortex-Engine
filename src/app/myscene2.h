@@ -66,7 +66,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
+        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.2f),
             "textures/wood_diffuse.png",
             "textures/wood_specular.png"), engine::UvMapping(2.0f));
 

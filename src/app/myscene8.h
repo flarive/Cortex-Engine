@@ -68,7 +68,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(zzz, ""), engine::UvMapping(6.0f)); //textures/uv_mapper.jpg
+        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""), engine::UvMapping(6.0f)); //textures/uv_mapper.jpg
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
@@ -77,7 +77,7 @@ public:
 
         // cube 1
         auto myCube1 = std::make_shared<engine::Cube>();
-        myCube1->setup(std::make_shared<engine::Material>(zzz, ""));
+        myCube1->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""));
 
         auto trsCube1 = engine::Transform(glm::vec3(-1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube1 = std::make_shared<engine::Entity>("MyCube1", myCube1, trsCube1);
@@ -86,7 +86,7 @@ public:
 
         // cube 2
         auto myCube2 = std::make_shared<engine::Cube>();
-        myCube2->setup(std::make_shared<engine::Material>(zzz, ""));
+        myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""));
 
         auto trsCube2 = engine::Transform(glm::vec3(1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube2 = std::make_shared<engine::Entity>("MyCube2", myCube2, trsCube2);
@@ -95,7 +95,7 @@ public:
 
         // cube 3
         auto myCube3 = std::make_shared<engine::Cube>();
-        myCube3->setup(std::make_shared<engine::Material>(zzz, ""));
+        myCube3->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""));
 
         auto trsCube3 = engine::Transform(glm::vec3(1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube3 = std::make_shared<engine::Entity>("MyCube3", myCube3, trsCube3);
@@ -104,7 +104,7 @@ public:
 
         // cube 4
         auto myCube4 = std::make_shared<engine::Cube>();
-        myCube4->setup(std::make_shared<engine::Material>(zzz, ""));
+        myCube4->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""));
 
         auto trsCube4 = engine::Transform(glm::vec3(-1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCube4 = std::make_shared<engine::Entity>("MyCube3", myCube4, trsCube4);
@@ -113,7 +113,7 @@ public:
 
         // sphere
         auto mySphere = std::make_shared<engine::Sphere>();
-        mySphere->setup(std::make_shared<engine::Material>(zzz, ""));
+        mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, ""));
 
         auto trsSphere = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);

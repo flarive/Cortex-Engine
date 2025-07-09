@@ -103,7 +103,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        auto matPlane = std::make_shared<engine::Material>(engine::Color(1.0f),
+        auto matPlane = std::make_shared<engine::PBRMaterial>(engine::Color(1.0f),
             "models/sphere/cliff/albedo.jpg",
             "",
             "models/sphere/cliff/normal.jpg",
@@ -124,7 +124,7 @@ public:
         // sphere models
         auto redSciFiMetalSphere = std::make_shared<engine::Sphere>();
 
-        auto matSphere1 = std::make_shared<engine::Material>(engine::Color(0.1f),
+        auto matSphere1 = std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "models/sphere/rounded-metal-cubes/albedo.dds",
             "",
             "models/sphere/rounded-metal-cubes/normal.png",
@@ -144,7 +144,7 @@ public:
 
 
         auto rustedIronSphere = std::make_shared<engine::Sphere>();
-        rustedIronSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        rustedIronSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/rusted_iron/albedo.png",
             "",
             "textures/pbr/rusted_iron/normal.png",
@@ -160,7 +160,7 @@ public:
 
 
         auto goldSphere = std::make_shared<engine::Sphere>();
-        goldSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        goldSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/gold/albedo.png",
             "",
             "textures/pbr/gold/normal.png",
@@ -175,7 +175,7 @@ public:
 
 
         auto grassSphere = std::make_shared<engine::Sphere>();
-        grassSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        grassSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/grass/albedo.png",
             "",
             "textures/pbr/grass/normal.png",
@@ -190,7 +190,7 @@ public:
 
 
         auto plasticSphere = std::make_shared<engine::Sphere>();
-        plasticSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        plasticSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/plastic/albedo.png",
             "",
             "textures/pbr/plastic/normal.png",
@@ -205,7 +205,7 @@ public:
 
 
         auto wallSphere = std::make_shared<engine::Sphere>();
-        wallSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        wallSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/wall/albedo.png",
             "",
             "textures/pbr/wall/normal.png",
@@ -227,7 +227,7 @@ public:
 
 
         auto bronzeSphere = std::make_shared<engine::Sphere>();
-        bronzeSphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        bronzeSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/pbr/bronze/albedo.png",
             "",
             "textures/pbr/bronze/normal.png",

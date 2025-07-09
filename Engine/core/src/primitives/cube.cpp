@@ -2,7 +2,7 @@
 
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
-#include "../../include/materials/material.h"
+#include "../../include/materials/base_material.h"
 #include "../../include/tools/helpers.h"
 
 #include <vector>

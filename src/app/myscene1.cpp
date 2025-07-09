@@ -55,14 +55,14 @@ void MyScene1::init()
     //    "textures/skybox/back.jpg"
     //};
 
-    //auto zzz{ engine::Material(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+    //auto zzz{ engine::BlinnPhongMaterial(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
     //zzz.setCubeMapTexs(faces);
 
 
     // ground
     // engine::ColorManager::hexToNormalizedRGB("#FFF1AD")
     auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f),
         "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
 
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
@@ -73,7 +73,7 @@ void MyScene1::init()
 
     // billboard
     auto myBillboard = std::make_shared<engine::Billboard>();
-    myBillboard->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
+    myBillboard->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
 
     auto trsBillboard = engine::Transform(glm::vec3(0.0f, -0.15f, -3.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
@@ -82,7 +82,7 @@ void MyScene1::init()
 
     // cube
     auto myCube = std::make_shared<engine::Cube>();
-    myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+    myCube->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
 
     auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
@@ -93,7 +93,7 @@ void MyScene1::init()
     auto myCylinder = std::make_shared<engine::Cylinder>();
     myCylinder->radius = 0.1f;
     myCylinder->height = 0.3f;
-    myCylinder->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    myCylinder->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
     auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder", myCylinder, trsCylinder);
@@ -104,7 +104,7 @@ void MyScene1::init()
     auto myCone = std::make_shared<engine::Cone>();
     myCone->radius = 0.1f;
     myCone->height = 0.3f;
-    myCone->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    myCone->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
     auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCone = std::make_shared<engine::Entity>("MyConer", myCone, trsCone);
@@ -113,7 +113,7 @@ void MyScene1::init()
 
     // sphere
     auto mySphere = std::make_shared<engine::Sphere>();
-    mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
     auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);

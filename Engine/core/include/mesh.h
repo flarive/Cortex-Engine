@@ -6,7 +6,7 @@
 #include "misc/noncopyable.h"
 
 #include "vertex.h"
-#include "materials/material.h"
+#include "materials/base_material.h"
 #include "texture.h"
 #include "shader.h"
 

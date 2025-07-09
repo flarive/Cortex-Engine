@@ -18,7 +18,7 @@
 
 #include "vertex.h"
 #include "shader.h"
-#include "materials/material.h"
+//#include "materials/material.h"
 #include "texture.h"
 
 

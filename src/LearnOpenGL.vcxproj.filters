@@ -83,6 +83,9 @@
     <Filter Include="resources\models\helmet">
       <UniqueIdentifier>{cb5925f7-21da-4e66-8ad2-0d627bf7f4a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\app">
+      <UniqueIdentifier>{15194900-fd6a-4c65-b601-a834e1986099}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\libs\glad\src\glad.c">
       <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene1.cpp">
+      <Filter>sources\app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -585,6 +591,9 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\cube_face_debugger.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\cube_face_debugger.vertex">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -614,10 +623,5 @@
     <ClInclude Include="app\myscene8.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\debug\cube_face_debugger.vertex">
-      <Filter>resources\shaders\debug</Filter>
-    </None>
   </ItemGroup>
 </Project>

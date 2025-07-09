@@ -66,7 +66,6 @@ engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : light{ _light }
 }
 
 
-
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, camera{ _camera }, transform{ _transform }
 {
 	// set camera position from transform position

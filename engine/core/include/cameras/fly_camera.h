@@ -8,11 +8,13 @@ namespace engine
     class FlyCamera final : public Camera
     {
     public:
+        FlyCamera(bool _fps = false, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+        
         // constructor with vectors
-        FlyCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), bool fps = false, glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+        FlyCamera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), bool _fps = false, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
         // constructor with scalar values
-        FlyCamera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch, bool fps);
+        FlyCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch, bool _fps);
 
 
         

@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="app\myscene1.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\libs\glad\src\glad.c" />
   </ItemGroup>

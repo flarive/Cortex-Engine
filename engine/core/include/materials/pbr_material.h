@@ -4,7 +4,7 @@
 
 namespace engine
 {
-	class PBRMaterial final : public BaseMaterial
+	class PBRMaterial final// : public BaseMaterial
 	{
 	public:
 

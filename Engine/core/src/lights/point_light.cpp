@@ -2,7 +2,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
-#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
 
 
 engine::PointLight::PointLight() : Light(0)
@@ -24,7 +24,7 @@ void engine::PointLight::setup()
 }
 
 
-void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, float intensity, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation)
+void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& position, const glm::vec3& target, const glm::vec3& size, const glm::vec3& rotation)
 {
     std::string base = std::format("pointLights[{}]", m_index);
 
@@ -32,9 +32,10 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
     shader.setBool(std::format("{}.use", base), true);
 
     shader.setVec3(std::format("{}.position", base), position);
+
     shader.setVec3(std::format("{}.ambient", base), ambient);
-    shader.setVec3(std::format("{}.diffuse", base), intensity * 1.0f, intensity * 1.0f, intensity * 1.0f);
-    shader.setVec3(std::format("{}.specular", base), 1.0f, 1.0f, 1.0f);
+    shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
+    shader.setVec3(std::format("{}.specular", base), specular);
 
 
 

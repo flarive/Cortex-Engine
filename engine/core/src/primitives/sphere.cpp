@@ -7,6 +7,7 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
     const UvMapping uv{};
+
     setup(material, uv);
 }
 
@@ -14,7 +15,9 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMa
 {
     m_material = material;
     m_uvScale = uv.getUvScale();
+
     setup();
+
     if (material)
         material->loadTexturesAsync();
 }

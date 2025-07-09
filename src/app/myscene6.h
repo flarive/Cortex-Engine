@@ -49,13 +49,10 @@ public:
     void init() override
     {
         // cameras
-        auto trsCamera1 = engine::Transform{};
-        trsCamera1.setLocalPosition({ 0.0f, -16.0f, 2.0f });
-
-        auto camera1 = std::make_shared<engine::FlyCamera>(glm::vec3(0.0f, -16.0f, 2.0f), false);
+        auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 2.0f } };
+        auto camera1 = std::make_shared<engine::FlyCamera>(false);
         camera1->zoom = 100.0f;
         camera1->movementSpeed = 10.0f;
-
         auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
         getEntityManager().addChild(EntityCamera1);
 

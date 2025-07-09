@@ -211,6 +211,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             projection,
             view,
             entity->light->ambientColor,
+            entity->light->diffuseColor,
+            entity->light->specularColor,
             entity->light->intensity,
             entity->transform.getLocalPosition(),
             entity->light->target,

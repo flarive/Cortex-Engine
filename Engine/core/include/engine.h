@@ -21,6 +21,11 @@
 #include "materials/material.h"
 #include "texture.h"
 
+
+#include "materials/base_material.h"
+#include "materials/blinnphong_material.h"
+#include "materials/pbr_material.h"
+
 #include "renderers/blinnphong_renderer.h"
 #include "renderers/pbr_renderer.h"
 

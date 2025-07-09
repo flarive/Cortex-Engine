@@ -1,10 +1,19 @@
 #include "../../include/cameras/camera.h"
 
-engine::Camera::Camera(glm::vec3 _position, bool _fps, glm::vec3 up, float _yaw, float _pitch)
+engine::Camera::Camera(bool _fps, glm::vec3 _up, float _yaw, float _pitch)
     : fps(_fps), front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
 {
-    position = position;
-    worldUp = up;
+    worldUp = _up;
+    yaw = _yaw;
+    pitch = _pitch;
+    updateCameraVectors();
+}
+
+engine::Camera::Camera(glm::vec3 _position, bool _fps, glm::vec3 _up, float _yaw, float _pitch)
+    : fps(_fps), front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
+{
+    position = _position;
+    worldUp = _up;
     yaw = _yaw;
     pitch = _pitch;
     updateCameraVectors();
@@ -29,13 +38,13 @@ glm::mat4 engine::Camera::GetViewMatrix()
 void engine::Camera::updateCameraVectors()
 {
     // calculate the new Front vector
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = glm::normalize(front);
+    glm::vec3 new_front;
+    new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    new_front.y = sin(glm::radians(pitch));
+    new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front = glm::normalize(new_front);
 
     // also re-calculate the Right and Up vector
     right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    up = glm::normalize(glm::cross(right, front));
+    up = glm::normalize(glm::cross(right, new_front));
 }

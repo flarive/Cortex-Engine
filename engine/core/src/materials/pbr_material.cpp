@@ -5,7 +5,8 @@ engine::PBRMaterial::PBRMaterial(const Color& ambientColor) : Material(ambientCo
 {
 }
 
-engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuseColor, float shininess) : Material(ambientColor, diffuseColor, shininess)
+engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess) 
+	: Material(ambientColor, diffuseColor, specularColor, shininess)
 {
 }
 

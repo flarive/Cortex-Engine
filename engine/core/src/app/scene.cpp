@@ -306,7 +306,24 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
 void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)
 {
-    UNREFERENCED_PARAMETER(state);
+    getActiveCamera()->processJoystickMovement(state);
+
+    //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+
+    if (GLFW_PRESS == state.buttons[1])
+    {
+        std::cout << "Pressed" << std::endl;
+    }
+    else if (GLFW_RELEASE == state.buttons[0])
+    {
+        //std::cout << "Released" << std::endl;
+    }
+
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

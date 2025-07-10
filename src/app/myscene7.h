@@ -153,7 +153,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/rusted_metal_diffuse.jpg",
             "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
@@ -164,7 +164,7 @@ public:
 
         // cube
         auto myCube = std::make_shared<engine::Cube>();
-        myCube->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        myCube->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/container2_diffuse.png",
             "textures/container2_specular.png"));
 
@@ -175,7 +175,7 @@ public:
 
         // sphere
         auto mySphere = std::make_shared<engine::Sphere>();
-        mySphere->setup(std::make_shared<engine::Material>(engine::Color(0.1f),
+        mySphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
             "textures/uv_mapper.jpg"));
 
         auto trsSphere = engine::Transform(glm::vec3(3.0f, -17.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));

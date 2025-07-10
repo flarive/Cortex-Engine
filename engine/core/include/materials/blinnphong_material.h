@@ -1,4 +1,4 @@
-#include "base_material.h"
+#include "material.h"
 
 #include "../cameras/camera.h"
 

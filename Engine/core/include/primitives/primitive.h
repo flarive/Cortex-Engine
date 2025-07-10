@@ -4,7 +4,7 @@
 #include "../vertex.h"
 #include "../shader.h"
 #include "../uvmapping.h"
-#include "../materials/base_material.h"
+#include "../materials/material.h"
 #include "../misc/noncopyable.h"
 
 namespace engine

@@ -18,11 +18,10 @@
 
 #include "vertex.h"
 #include "shader.h"
-//#include "materials/material.h"
 #include "texture.h"
 
 
-#include "materials/base_material.h"
+#include "materials/material.h"
 #include "materials/blinnphong_material.h"
 #include "materials/pbr_material.h"
 

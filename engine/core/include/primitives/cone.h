@@ -3,7 +3,7 @@
 #include "../common_defines.h"
 
 #include "../shader.h"
-#include "../materials/base_material.h"
+#include "../materials/material.h"
 #include "../primitives/primitive.h"
 #include "../uvmapping.h"
 

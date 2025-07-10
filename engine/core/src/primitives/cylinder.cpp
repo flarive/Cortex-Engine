@@ -140,7 +140,10 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
     {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
         shader.setBool("hasTangents", true);
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
@@ -169,6 +172,8 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
     {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
         shader.setBool("hasTangents", true);
 

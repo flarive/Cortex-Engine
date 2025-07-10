@@ -76,7 +76,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::Material>(engine::Color(0.2f),
+        myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.2f),
             "textures/pbr/planks/albedo.jpg",
             "",
             "textures/pbr/planks/normal.jpg",

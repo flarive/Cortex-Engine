@@ -175,7 +175,7 @@
     <ClCompile Include="core\src\debug\imgui_docking.cpp" />
     <ClCompile Include="core\src\entity.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
-    <ClCompile Include="core\src\materials\base_material.cpp" />
+    <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
     <ClCompile Include="core\src\misc\log_manager.cpp" />
@@ -189,7 +189,6 @@
     <ClCompile Include="core\src\lights\light.cpp" />
     <ClCompile Include="core\src\lights\point_light.cpp" />
     <ClCompile Include="core\src\lights\spot_light.cpp" />
-    <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\mesh.cpp" />
     <ClCompile Include="core\src\model.cpp" />
     <ClCompile Include="core\src\primitives\billboard.cpp" />
@@ -230,7 +229,7 @@
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
-    <ClInclude Include="core\include\materials\base_material.h" />
+    <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\materials\blinnphong_material.h" />
     <ClInclude Include="core\include\materials\pbr_material.h" />
     <ClInclude Include="core\include\misc\color_manager.h" />
@@ -244,7 +243,6 @@
     <ClInclude Include="core\include\lights\light.h" />
     <ClInclude Include="core\include\lights\point_light.h" />
     <ClInclude Include="core\include\lights\spot_light.h" />
-    <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\mesh.h" />
     <ClInclude Include="core\include\misc\noncopyable.h" />
     <ClInclude Include="core\include\model.h" />

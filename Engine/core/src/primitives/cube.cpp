@@ -2,7 +2,7 @@
 
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
-#include "../../include/materials/base_material.h"
+#include "../../include/materials/material.h"
 #include "../../include/tools/helpers.h"
 
 #include <vector>
@@ -166,6 +166,8 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
     if (m_material) {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
         shader.setBool("hasTangents", true);
 

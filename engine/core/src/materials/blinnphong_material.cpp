@@ -13,6 +13,6 @@ engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const 
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, 
 	const std::string& normalTexPath, float shininess) 
-	: Material(ambientColor, diffuseTexPath, specularTexPath, normalTexPath, "", "", "")
+	: Material(ambientColor, diffuseTexPath, specularTexPath, normalTexPath, "", "", "", "", shininess)
 {
 }

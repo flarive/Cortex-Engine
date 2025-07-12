@@ -70,7 +70,7 @@ public:
 
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), engine::UvMapping(6.0f)); //textures/uv_mapper.jpg
+        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, "textures/uv_mapper.jpg"), engine::UvMapping(6.0f)); //
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);

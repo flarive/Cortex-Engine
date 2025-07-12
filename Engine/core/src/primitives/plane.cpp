@@ -76,10 +76,10 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
         shader.setVec3("material.specular_color", m_material->getSpecularColor());
         
-        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+        //shader.setFloat("material.shininess", m_material->getShininessIntensity());
 
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        shader.setBool("hasTangents", true);
+        
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
@@ -95,6 +95,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     model = glm::scale(model, glm::vec3(size.x, size.y, size.z));
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     // Render plane
     glBindVertexArray(m_VAO);

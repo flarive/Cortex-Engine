@@ -60,15 +60,11 @@ void MyScene1::init()
 
 
     // ground
-    // engine::ColorManager::hexToNormalizedRGB("#FFF1AD")
     auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f),
-        "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
-
+    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
     getEntityManager().addChild(entityPlane);
-
 
 
     // billboard

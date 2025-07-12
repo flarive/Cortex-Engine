@@ -133,7 +133,7 @@ void engine::Cone::draw(Shader& shader, const glm::vec3& position, const glm::ve
         shader.setFloat("material.shininess", m_material->getShininessIntensity());
 
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        shader.setBool("hasTangents", true);
+        
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
@@ -147,6 +147,7 @@ void engine::Cone::draw(Shader& shader, const glm::vec3& position, const glm::ve
     model = glm::scale(model, size);
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
@@ -168,7 +169,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4 model)
         shader.setFloat("material.shininess", m_material->getShininessIntensity());
 
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        shader.setBool("hasTangents", true);
+        
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
@@ -177,6 +178,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4 model)
 
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);

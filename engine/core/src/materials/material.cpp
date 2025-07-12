@@ -40,8 +40,11 @@ void engine::Material::loadTextureAsync(const std::string& path)
     }
 
     // Load texture
-    auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
-    engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
+    unsigned int tttt = engine::Texture::loadTextureAsync(path);
+    //auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
+    //engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
+
+    auto lll = engine::TextureManager::textureCache.size();
 
     return;
 }

@@ -147,8 +147,6 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
 
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
-        shader.setBool("hasTangents", true);
-
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
         shader.setFloat("material.emissiveIntensity", 0.0f);
@@ -159,6 +157,10 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
     if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
+
+    shader.setMat4("model", model);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
@@ -178,7 +180,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
         shader.setVec3("material.specular_color", m_material->getSpecularColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        shader.setBool("hasTangents", true);
+        
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
@@ -187,6 +189,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
 
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);

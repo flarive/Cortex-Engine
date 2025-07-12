@@ -109,18 +109,18 @@ std::tuple<unsigned int, unsigned char*, int, int, int> engine::Texture::loadTex
 }
 
 
-std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
-{
-    int width{}, height{}, nrComponents{};
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-    
-    if (!data) {
-        std::cerr << "Texture failed to load at path: " << filename << std::endl;
-        return { nullptr, 0, 0, 0 };
-    }
-
-    return { data, width, height, nrComponents };
-}
+//std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
+//{
+//    int width{}, height{}, nrComponents{};
+//    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+//    
+//    if (!data) {
+//        std::cerr << "Texture failed to load at path: " << filename << std::endl;
+//        return { nullptr, 0, 0, 0 };
+//    }
+//
+//    return { data, width, height, nrComponents };
+//}
 
 /// <summary>
 /// Asynchronous texture loading
@@ -148,6 +148,20 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 
         return { data, width, height, nrComponents };
     });
+
+    //auto future = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
+    //    int width{}, height{}, nrComponents{};
+    //    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
+    //    if (!data) {
+    //        std::cerr << "Texture failed to load at path: " << filename << std::endl;
+    //        return { nullptr, 0, 0, 0 };
+    //    }
+
+    //    return { data, width, height, nrComponents };
+    //    });
+    //engine::TextureManager::textureCache[filename] = std::shared_future<std::tuple<unsigned char*, int, int, int>>(std::move(future));
+
 
     return 0;  // Temporary ID, real ID is set later
 }

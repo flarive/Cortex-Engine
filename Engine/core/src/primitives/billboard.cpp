@@ -20,7 +20,7 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material, const U
 
     setup(); // Geometry setup
 
-    if (material)
+    if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
 }
 

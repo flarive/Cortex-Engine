@@ -67,6 +67,7 @@ void MyScene1::init()
     getEntityManager().addChild(entityPlane);
 
 
+
     // billboard
     auto myBillboard = std::make_shared<engine::Billboard>();
     myBillboard->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
@@ -114,6 +115,7 @@ void MyScene1::init()
     auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
     getEntityManager().addChild(entitySphere);
+
 
 
 

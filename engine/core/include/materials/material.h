@@ -29,7 +29,6 @@ namespace engine
 
         virtual void loadTextures();
         virtual void loadTexturesAsync();
-        static void loadTextureAsync(const std::string& path);
 
 
         virtual void bind(Shader& shader) const;

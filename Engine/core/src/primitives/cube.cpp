@@ -116,7 +116,7 @@ void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapp
 
     setup(); // Geometry setup
 
-    if (material)
+    if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
 }
 

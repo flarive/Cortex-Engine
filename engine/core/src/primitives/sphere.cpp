@@ -18,7 +18,7 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMa
 
     setup();
 
-    if (material)
+    if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 

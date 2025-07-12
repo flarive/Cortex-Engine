@@ -11,8 +11,14 @@
 
 namespace engine
 {
+    struct TextureLoadResult {
+        std::future<std::tuple<unsigned char*, int, int, int>> future;
+        bool ready = false;
+        std::tuple<unsigned char*, int, int, int> result;
+    };
+    
     namespace TextureManager {
-        extern std::unordered_map<std::string, std::future<std::tuple<unsigned char*, int, int, int>>> textureCache;
+        extern std::unordered_map<std::string, TextureLoadResult> textureCache;
         extern std::queue<std::function<void()>> textureUploadQueue;
         extern std::mutex textureCacheMutex;
         extern std::mutex textureQueueMutex;

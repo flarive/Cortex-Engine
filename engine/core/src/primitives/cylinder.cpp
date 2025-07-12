@@ -19,7 +19,7 @@ void engine::Cylinder::setup(const std::shared_ptr<Material>& material, const Uv
 
     setup();
 
-    if (material)
+    if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 

@@ -28,26 +28,29 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 
 
 // Helper function to load a texture asynchronously
-void engine::Material::loadTextureAsync(const std::string& path)
-{
-    if (path.empty()) return; // Avoid unnecessary loading
-
-    // Check cache first
-    auto it = engine::TextureManager::textureCache.find(path);
-    if (it != engine::TextureManager::textureCache.end())
-    {
-        return;
-    }
-
-    // Load texture
-    unsigned int tttt = engine::Texture::loadTextureAsync(path);
-    //auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
-    //engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
-
-    auto lll = engine::TextureManager::textureCache.size();
-
-    return;
-}
+//void engine::Material::loadTextureAsync(const std::string& path)
+//{
+//    if (path.empty()) return; // Avoid unnecessary loading
+//
+//    // Check cache first
+//    auto it = engine::TextureManager::textureCache.find(path);
+//    if (it != engine::TextureManager::textureCache.end())
+//    {
+//        return;
+//    }
+//
+//    // Load texture
+//    unsigned int tttt = engine::Texture::loadTextureAsync(path);
+//    //auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
+//    //engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
+//
+//    //unsigned int wwwwwwww = engine::Texture::enqueueTextureCreation(path, true);
+//
+//    //// process queue
+//    //engine::Texture::processLoadedTextures();
+//
+//    return;
+//}
 
 
 
@@ -117,14 +120,24 @@ void engine::Material::loadTexturesAsync()
     textures.reserve(7);
 
     // Load textures asynchronously
-    loadTextureAsync(getDiffuseTexPath());
-    loadTextureAsync(getSpecularTexPath());
-    loadTextureAsync(getNormalTexPath());
-    loadTextureAsync(getMetallicTexPath());
-    loadTextureAsync(getRoughnessTexPath());
-    loadTextureAsync(getAoTexPath());
-    loadTextureAsync(getHeightTexPath());
-    loadTextureAsync(getEmissiveTexPath());
+    //loadTextureAsync(getDiffuseTexPath());
+    //loadTextureAsync(getSpecularTexPath());
+    //loadTextureAsync(getNormalTexPath());
+    //loadTextureAsync(getMetallicTexPath());
+    //loadTextureAsync(getRoughnessTexPath());
+    //loadTextureAsync(getAoTexPath());
+    //loadTextureAsync(getHeightTexPath());
+    //loadTextureAsync(getEmissiveTexPath());
+
+    engine::Texture::loadTextureAsync(getDiffuseTexPath());
+    engine::Texture::loadTextureAsync(getSpecularTexPath());
+    engine::Texture::loadTextureAsync(getNormalTexPath());
+    engine::Texture::loadTextureAsync(getMetallicTexPath());
+    engine::Texture::loadTextureAsync(getRoughnessTexPath());
+    engine::Texture::loadTextureAsync(getAoTexPath());
+    engine::Texture::loadTextureAsync(getHeightTexPath());
+    engine::Texture::loadTextureAsync(getEmissiveTexPath());
+    
 
     // Queue OpenGL execution on main thread
     unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;

@@ -21,7 +21,7 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapp
 
     setup();
 
-    if (material)
+    if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 

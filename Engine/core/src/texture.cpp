@@ -7,9 +7,12 @@
 #include <iostream>
 #include <functional>
 
+
+
+
 namespace engine {
     namespace TextureManager {
-        std::unordered_map<std::string, std::future<std::tuple<unsigned char*, int, int, int>>> textureCache;
+        std::unordered_map<std::string, TextureLoadResult> textureCache;
         std::queue<std::function<void()>> textureUploadQueue;
         std::mutex textureCacheMutex;
         std::mutex textureQueueMutex;
@@ -108,20 +111,6 @@ std::tuple<unsigned int, unsigned char*, int, int, int> engine::Texture::loadTex
     return { textureID, data, width, height, nrComponents };
 }
 
-
-//std::tuple<unsigned char*, int, int, int> engine::Texture::loadTextureAsyncInternal(const std::string& filename)
-//{
-//    int width{}, height{}, nrComponents{};
-//    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-//    
-//    if (!data) {
-//        std::cerr << "Texture failed to load at path: " << filename << std::endl;
-//        return { nullptr, 0, 0, 0 };
-//    }
-//
-//    return { data, width, height, nrComponents };
-//}
-
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
@@ -136,32 +125,26 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
         return 0; // Already loading
     }
 
+    //std::cout << "LoadTextureAsync " << filename << std::endl;
+
     // Ensure the future is correctly assigned
-    engine::TextureManager::textureCache[filename] = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
-        int width{}, height{}, nrComponents{};
-        unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+    engine::TextureManager::textureCache[filename] = {
+        std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
+            int width{}, height{}, nrComponents{};
+            unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+            if (!data) {
+                std::cerr << "Texture failed to load at path: " << filename << std::endl;
+                return { nullptr, 0, 0, 0 };
+            }
+            //std::cout << "TextureAsync loaded " << filename << std::endl;
+            return { data, width, height, nrComponents };
+        }),
+        false,
+        {}  // Result is empty initially
+    };
 
-        if (!data) {
-            std::cerr << "Texture failed to load at path: " << filename << std::endl;
-            return { nullptr, 0, 0, 0 };
-        }
 
-        return { data, width, height, nrComponents };
-    });
-
-    //auto future = std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
-    //    int width{}, height{}, nrComponents{};
-    //    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-
-    //    if (!data) {
-    //        std::cerr << "Texture failed to load at path: " << filename << std::endl;
-    //        return { nullptr, 0, 0, 0 };
-    //    }
-
-    //    return { data, width, height, nrComponents };
-    //    });
-    //engine::TextureManager::textureCache[filename] = std::shared_future<std::tuple<unsigned char*, int, int, int>>(std::move(future));
-
+    //std::cout << "textureCache size " << engine::TextureManager::textureCache.size() << std::endl;
 
     return 0;  // Temporary ID, real ID is set later
 }
@@ -172,7 +155,9 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 void engine::Texture::processLoadedTextures()
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
-    while (!engine::TextureManager::textureUploadQueue.empty()) {
+
+    while (!engine::TextureManager::textureUploadQueue.empty())
+    {
         engine::TextureManager::textureUploadQueue.front()(); // Execute OpenGL task
         engine::TextureManager::textureUploadQueue.pop();
     }
@@ -185,6 +170,8 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
+    //std::cerr << "EnqueueTextureCreation " << filename << std::endl;
+
     // 1️. Check if the texture was loaded asynchronously
     auto it = engine::TextureManager::textureCache.find(filename);
     if (it == engine::TextureManager::textureCache.end()) {
@@ -193,16 +180,29 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     }
 
     // 2️. Ensure the future is valid before calling `.get()`
-    if (!it->second.valid()) {
-        std::cerr << "Warning: Texture future for " << filename << " is invalid!" << std::endl;
-        return 0;  // Future is invalid, exit early
+    auto& entry = engine::TextureManager::textureCache[filename];
+    if (!entry.ready) {
+        if (!entry.future.valid()) {
+            std::cerr << "Warning: Texture future for " << filename << " is invalid!" << std::endl;
+            return 0;
+        }
+
+        entry.result = entry.future.get();  // Retrieve once
+        entry.ready = true;  // Mark it as ready
     }
 
     // 3️. Retrieve texture data (blocking call)
-    auto [data, width, height, nrComponents] = it->second.get();
+    //auto [data, width, height, nrComponents] = it->second.get();
+    auto [data, width, height, nrComponents] = entry.result;
     if (!data || width == 0 || height == 0 || nrComponents == 0) {
         std::cerr << "Error: Texture " << filename << " failed to load or is empty!" << std::endl;
         return 0;  // Prevent further processing
+    }
+
+    // Avoid duplicate OpenGL uploads
+    if (engine::TextureManager::textureIDCache.find(filename) != engine::TextureManager::textureIDCache.end())
+    {
+        return engine::TextureManager::textureIDCache[filename];  // Already created
     }
 
     // Queue OpenGL Calls for Execution in `processLoadedTextures()`
@@ -211,13 +211,14 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
         engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection]()
         {
+            //std::cerr << "Call createOpenGLTexture " << filename << std::endl;
+            
+            //  OpenGL upload texture
             unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection);
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
 
-            //std::cerr << "EnqueueTextureCreation " << filename << " with TextureID " << textureID << std::endl;
-
-            SOIL_free_image_data(data);  // Free after OpenGL upload
+            //SOIL_free_image_data(data);  // Free after OpenGL upload
 
             return textureID;
         });
@@ -232,6 +233,8 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     if (!data) return 0;
+
+    //std::cout << "createOpenGLTexture " << width << "x" << height << std::endl;
 
     GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 

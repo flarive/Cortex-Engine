@@ -124,7 +124,7 @@ void MyScene1::init()
 
 
     // cushion model
-    std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
+    std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb");
     auto trsCushion = engine::Transform(glm::vec3(-0.5f, -0.35f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
     auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
     getEntityManager().addChild(entityCushion);

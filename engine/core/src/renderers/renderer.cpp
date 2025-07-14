@@ -165,6 +165,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     shader.use();
     shader.setVec3("lightPos", light->position);
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    shader.setBool("enableShadows", true);
 
     // update user stuffs
     update(shader);
@@ -236,7 +237,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     // set lighting uniforms
     shader.setVec3("lightPos", light->position);
     shader.setVec3("viewPos", m_camera->position);
-    shader.setInt("shadows", 1); // enable/disable shadows by pressing 'SPACE'
+    shader.setBool("enableShadows", true);
     shader.setFloat("far_plane", far_plane);
 
     // update user stuffs

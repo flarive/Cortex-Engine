@@ -90,7 +90,7 @@ in VS_OUT {
 // coming from code
 uniform vec3 viewPos;
 uniform float far_plane;
-uniform bool shadows;
+uniform bool enableShadows;
 uniform Material material;
 
 
@@ -474,7 +474,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
 
     // Shadow Calculation (no light position needed)
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir);
+    float shadow = enableShadows ? ShadowCalculationSlower(fs_in.FragPosLightSpace, lightDir) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
@@ -516,7 +516,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // calculate shadow
     //vec2 screenSize = vec2(1280, 720);
-    float shadow = shadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+    float shadow = enableShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
     //float shadow = shadows ? ShadowCalculationCubeMap2(fragPos, light.position, normal, lightDir, screenSize) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
@@ -566,10 +566,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
 
-    //**************
-
     // Shadow calculation (using the light's position for shadow mapping)
-    float shadow = ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position);
+    float shadow = enableShadows ? ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position) : 0.0;
     
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

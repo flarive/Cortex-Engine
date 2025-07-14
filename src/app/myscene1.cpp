@@ -32,13 +32,13 @@ void MyScene1::init()
     getEntityManager().addChild(EntityCamera1);
 
 
-    auto trsLight1 = engine::Transform{ {0.5f, 1.0f, 3.0f} };
+    auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
-    light1->intensity = 2.0f;
+    light1->intensity = 1.2f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-    light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
+    light1->ambientColor = engine::Color(1.0f);
 
     auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
     getEntityManager().addChild(entityLight1);
@@ -104,7 +104,7 @@ void MyScene1::init()
     myCone->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
     auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCone = std::make_shared<engine::Entity>("MyConer", myCone, trsCone);
+    auto entityCone = std::make_shared<engine::Entity>("MyCone", myCone, trsCone);
     getEntityManager().addChild(entityCone);
 
 
@@ -124,15 +124,15 @@ void MyScene1::init()
 
 
     // cushion model
-    std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
+    std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
     auto trsCushion = engine::Transform(glm::vec3(-0.5f, -0.35f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
     auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
     getEntityManager().addChild(entityCushion);
 
 
     // backpack model
-    std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>(engine::Model("models/backpack/backpack.obj"));
-    auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.12f), glm::vec3(0.0f, 45.0f, 0.0f));
+    std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>("models/backpack/backpack.glb");
+    auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.12f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
     getEntityManager().addChild(entityBackpack);
 

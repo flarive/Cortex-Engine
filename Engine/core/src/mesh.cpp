@@ -31,6 +31,47 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     auto material = getMaterial();
     if (material)
     {
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+        
+        shader.setFloat("material.heightScale", material->getHeightIntensity());
+        shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 4.0f);
+    }
+
+    // draw mesh
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+}
+
+// render the mesh
+void engine::Mesh::draw(Shader& shader, const glm::mat4 model)
+{
+    assert(m_material);
+
+    m_material->bind(shader); // Bind material textures
+
+    glBindVertexArray(VAO);
+
+    shader.setMat4("model", model);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
+
+    auto material = getMaterial();
+    if (material)
+    {
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+
+        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
         shader.setFloat("material.heightScale", material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", material->getNormalIntensity());
         shader.setFloat("material.emissiveIntensity", 4.0f);

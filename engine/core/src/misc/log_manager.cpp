@@ -30,17 +30,17 @@ void engine::LogManager::init_sinks()
     logger = new spdlog::logger(LOGER_NAME, { console_sink, file_sink });
 }
 
-void engine::LogManager::info(const std::string& msg)
-{
-    logger->info(msg);
-}
+//void engine::LogManager::info(const std::string& msg)
+//{
+//    logger->info(msg);
+//}
 
-void engine::LogManager::warn(const std::string& msg)
-{
-    logger->warn(msg);
-}
+//void engine::LogManager::warn(const std::string& msg)
+//{
+//    logger->warn(msg);
+//}
 
-void engine::LogManager::error(const std::string& msg)
-{
-    logger->error(msg);
-}
+//void engine::LogManager::error(const std::string& msg)
+//{
+//    logger->error(msg);
+//}

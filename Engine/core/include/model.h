@@ -15,10 +15,11 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 namespace engine
 {
-	class Model// : private NonCopyable
+	class Model : private NonCopyable
     {
     public:
         // model data 
@@ -52,8 +53,14 @@ namespace engine
 
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
-        std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+        std::vector<Texture> loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName);
+
+
+    protected:
+        mutable std::mutex textureMutex;
     };
 
-    static unsigned int TextureFromFile(const char* path, const std::string& directory);
+    static unsigned int loadTextureFromFile(const char* path, const std::string& directory);
+    static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size);
+    static unsigned int loadUncompressedTexture(const aiTexture* texture);
 }

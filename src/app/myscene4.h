@@ -93,7 +93,7 @@ public:
 
 
         // cushion model
-        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>(engine::Model("models/cushion/cushion.obj"));
+        std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
         auto trsCushion = engine::Transform(glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);

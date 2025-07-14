@@ -115,6 +115,8 @@ uniform bool hasTangents; // does the primitive to render has tangents and bitan
 uniform vec3 viewPos;
 uniform mat4 lightSpaceMatrix;
 
+uniform bool enableShadows;
+
 //uniform float uvScale;
 
 const float PI = 3.14159265359;
@@ -405,7 +407,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
-    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);
+    float shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  
@@ -465,7 +467,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     vec3 radiance = light.diffuse;
 
     // Shadow calculation
-    float shadow = ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction);
+    float shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
     radiance *= (1.0 - shadow);  
 
     vec3 F0 = mix(vec3(0.04), color, 1.0);  

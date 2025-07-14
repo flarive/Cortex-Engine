@@ -1,13 +1,27 @@
-#include "../include/model.h"
+﻿#include "../include/model.h"
 
 #include "../include/texture.h"
 
+#include "../include/misc/log_manager.h"
 #include "../include/tools/file_system.h"
 #include "../include/tools/helpers.h"
 
+
 #include "SOIL2.h"
 
+#include <omp.h> // Include OpenMP header
+
 #include <format>
+#include <chrono>
+#include <future>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+
+
+
+//3188 ms
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
@@ -20,10 +34,14 @@ engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaC
 
 void engine::Model::loadModel(std::string const& path, bool flipUVs)
 {
+    // Start the timer
+    auto start = std::chrono::high_resolution_clock::now();
+    
     // read file via ASSIMP
     Assimp::Importer importer;
 
-    auto flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
+    auto flags = 0x0;
+    flags |= aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
 
     if (flipUVs)
         flags |= aiProcess_FlipUVs;
@@ -44,6 +62,15 @@ void engine::Model::loadModel(std::string const& path, bool flipUVs)
 
     //numberOfMeshes += scene->mRootNode->mNumMeshes;
     numberOfMeshes += scene->mNumMeshes;
+
+    // Stop the timer
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // Calculate the duration
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    // Print the time taken
+    logger.info("Time taken to load and parse the model: {} milliseconds", duration.count());
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -66,10 +93,14 @@ void engine::Model::processNode(aiNode* node, const aiScene* scene)
 
 engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    // data to fill
-    std::vector<engine::Vertex> vertices{};
+    // Data to fill
+    std::vector<engine::Vertex> vertices{}; // Pre-allocate space
     std::vector<unsigned int> indices{};
     std::vector<engine::Texture> textures{};
+    
+    // Reserve space to avoid reallocations
+    indices.reserve(mesh->mNumFaces * 3); // Assuming each face is a triangle
+    vertices.reserve(mesh->mNumVertices);
 
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -139,28 +170,28 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // normal: texture_normalN
 
     // 1. diffuse maps
-    std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
+    std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
-    std::vector<engine::Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
+    std::vector<engine::Texture> specularMaps = loadMaterialTextures(scene, material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
-    std::vector<engine::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
+    std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. metallic maps
-    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
+    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(scene, material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
     textures.insert(textures.end(), metallicMaps.begin(), metallicMaps.end());
     // 5. roughness maps
-    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
+    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
     textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
     // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
+    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(scene, material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
     textures.insert(textures.end(), ambientOcclusionMaps.begin(), ambientOcclusionMaps.end());
     // 7. height maps
-    std::vector<engine::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_height"); // bump
+    std::vector<engine::Texture> heightMaps = loadMaterialTextures(scene, material, aiTextureType_HEIGHT, "texture_height"); // bump
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     // 8. emissive maps
-    std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
+    std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
     textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
 
     // Create Material
@@ -170,51 +201,132 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh{ vertices, indices, meshMaterial };
 }
 
-// checks all material textures of a given type and loads the textures if they're not loaded yet.
-// the required info is returned as a Texture struct.
-std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
+//checks all material textures of a given type and loads the textures if they're not loaded yet.
+//the required info is returned as a Texture struct.
+//std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
+//{
+//    std::vector<engine::Texture> textures{};
+//    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+//    {
+//        aiString str{};
+//        mat->GetTexture(type, i, &str);
+//        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
+//        bool skip{ false };
+//        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+//        {
+//            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+//            {
+//                textures.push_back(textures_loaded[j]);
+//                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+//                break;
+//            }
+//        }
+//        if (!skip)
+//        {   
+//            // if texture hasn't been loaded already, load it
+//            engine::Texture texture{};
+//            texture.id = loadTextureFromFile(str.C_Str(), this->directory);
+//            texture.type = typeName;
+//            texture.path = str.C_Str();
+//            textures.push_back(texture);
+//            textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+//        }
+//    }
+//
+//    return textures;
+//}
+
+std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
     std::vector<engine::Texture> textures{};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str{};
         mat->GetTexture(type, i, &str);
-        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        bool skip{ false };
-        for (unsigned int j = 0; j < textures_loaded.size(); j++)
+
+        // Check if texture was already loaded
+        bool skip = false;
+        for (const auto& loaded : textures_loaded)
         {
-            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
+            if (std::strcmp(loaded.path.c_str(), str.C_Str()) == 0)
             {
-                textures.push_back(textures_loaded[j]);
-                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
+                textures.push_back(loaded);
+                skip = true;
                 break;
             }
         }
+
         if (!skip)
-        {   // if texture hasn't been loaded already, load it
+        {
             engine::Texture texture{};
-            texture.id = TextureFromFile(str.C_Str(), this->directory);
             texture.type = typeName;
             texture.path = str.C_Str();
+
+            if (str.C_Str()[0] == '*')
+            {
+                // Embedded texture
+                int index = std::atoi(str.C_Str() + 1); // "*0" -> 0
+                const aiTexture* aiTex = scene->mTextures[index];
+
+                if (aiTex->mHeight == 0)
+                {
+                    // Compressed texture (e.g., JPEG/PNG blob)
+                    texture.id = loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+                }
+                else
+                {
+                    // Uncompressed (e.g., RGBA32 format)
+                    texture.id = loadUncompressedTexture(aiTex);
+                }
+            }
+            else
+            {
+                // Texture from file
+                texture.id = loadTextureFromFile(str.C_Str(), this->directory);
+            }
+
             textures.push_back(texture);
-            textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
+            textures_loaded.push_back(texture);
         }
     }
+
     return textures;
 }
+
+
 
 // draws the model, and thus all its meshes
 void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
 {
-    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+    // Compute quaternion from Euler rotation
+    glm::quat quaternion = glm::quat(glm::radians(rotation)); // Euler (XYZ) -> quaternion
+    quaternion = glm::normalize(quaternion);
+
+    //float angle = glm::angle(quaternion);
+    //glm::vec3 axis = glm::axis(quaternion);
+
+    // Compose model matrix
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+    model *= glm::mat4_cast(quaternion); // apply rotation
+    model = glm::scale(model, scale);
 
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
-        meshes[i].draw(shader, position, scale, normalizedRotation.angle, normalizedRotation.axis);
+        meshes[i].draw(shader, model);
     }
+
+
+    //auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+
+    //for (unsigned int i = 0; i < meshes.size(); i++)
+    //{
+    //    meshes[i].draw(shader, position, scale, normalizedRotation.angle, normalizedRotation.axis);
+    //}
 }
-    
-unsigned int engine::TextureFromFile(const char* path, const std::string& directory)
+
+
+  
+unsigned int engine::loadTextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
@@ -256,6 +368,84 @@ unsigned int engine::TextureFromFile(const char* path, const std::string& direct
 
     return textureID;
 }
+
+unsigned int engine::loadTextureFromMemory(const unsigned char* data, size_t size)
+{
+    int width = 0, height = 0, channels = 0;
+
+    // Load image from memory buffer using SOIL
+    unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);
+
+    if (!image)
+    {
+        std::cerr << "Failed to load embedded texture from memory." << std::endl;
+        return 0;
+    }
+
+    GLenum format = GL_RGB;
+    if (channels == 1)
+        format = GL_RED;
+    else if (channels == 3)
+        format = GL_RGB;
+    else if (channels == 4)
+        format = GL_RGBA;
+
+    unsigned int textureID = 0;
+    glGenTextures(1, &textureID);
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    SOIL_free_image_data(image);
+
+    return textureID;
+}
+
+unsigned int engine::loadUncompressedTexture(const aiTexture* texture)
+{
+    if (!texture || texture->mHeight == 0 || texture->mWidth == 0)
+    {
+        std::cerr << "Invalid uncompressed texture." << std::endl;
+        return 0;
+    }
+
+    unsigned int textureID = 0;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Each pixel is an aiTexel (RGBA8888)
+    const unsigned char* pixelData = reinterpret_cast<const unsigned char*>(texture->pcData);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        texture->mWidth,
+        texture->mHeight,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        pixelData
+    );
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return textureID;
+}
+
 
 void engine::Model::clean()
 {

@@ -82,9 +82,9 @@ namespace engine
 
     protected:
 
-        Color m_ambientColor{ Color(1.0f) };
-        Color m_diffuseColor{ Color(0.5f) };
-        Color m_specularColor{ Color(0.5f) };
+        Color m_ambientColor{ Color(0.1f) };
+        Color m_diffuseColor{ Color(1.0f) };
+        Color m_specularColor{ Color(0.0f) };
 
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};

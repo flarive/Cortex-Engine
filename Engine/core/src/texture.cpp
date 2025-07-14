@@ -1,5 +1,6 @@
 ﻿#include "../include/texture.h"
 
+#include "../include/misc/log_manager.h"
 #include "../include/common_defines.h"
 
 #include "SOIL2.h"
@@ -125,7 +126,7 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
         return 0; // Already loading
     }
 
-    //std::cout << "LoadTextureAsync " << filename << std::endl;
+    logger.info("Loading texture {}", filename);
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = {
@@ -133,18 +134,15 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
             int width{}, height{}, nrComponents{};
             unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
             if (!data) {
-                std::cerr << "Texture failed to load at path: " << filename << std::endl;
+                logger.error("Texture failed to load at path: {}", filename);
                 return { nullptr, 0, 0, 0 };
             }
-            //std::cout << "TextureAsync loaded " << filename << std::endl;
+
             return { data, width, height, nrComponents };
         }),
         false,
         {}  // Result is empty initially
     };
-
-
-    //std::cout << "textureCache size " << engine::TextureManager::textureCache.size() << std::endl;
 
     return 0;  // Temporary ID, real ID is set later
 }
@@ -174,8 +172,9 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
     // 1️. Check if the texture was loaded asynchronously
     auto it = engine::TextureManager::textureCache.find(filename);
-    if (it == engine::TextureManager::textureCache.end()) {
-        std::cerr << "Warning: Texture future for " << filename << " not found!" << std::endl;
+    if (it == engine::TextureManager::textureCache.end())
+    {
+        logger.warn("Texture future for {} not found !", filename);
         return 0;  // Exit if the texture is not found in cache
     }
 
@@ -183,7 +182,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     auto& entry = engine::TextureManager::textureCache[filename];
     if (!entry.ready) {
         if (!entry.future.valid()) {
-            std::cerr << "Warning: Texture future for " << filename << " is invalid!" << std::endl;
+            logger.warn("Texture future for {} is invalid !", filename);
             return 0;
         }
 
@@ -195,7 +194,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     //auto [data, width, height, nrComponents] = it->second.get();
     auto [data, width, height, nrComponents] = entry.result;
     if (!data || width == 0 || height == 0 || nrComponents == 0) {
-        std::cerr << "Error: Texture " << filename << " failed to load or is empty!" << std::endl;
+        logger.error("Texture {} failed to load or is empty !", filename);
         return 0;  // Prevent further processing
     }
 
@@ -211,8 +210,6 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
         engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection]()
         {
-            //std::cerr << "Call createOpenGLTexture " << filename << std::endl;
-            
             //  OpenGL upload texture
             unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection);
 
@@ -233,8 +230,6 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection)
 {
     if (!data) return 0;
-
-    //std::cout << "createOpenGLTexture " << width << "x" << height << std::endl;
 
     GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 
@@ -314,7 +309,7 @@ unsigned int engine::Texture::loadCubemap(const std::vector<std::string>& faces)
         }
         else
         {
-            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            logger.error("Cubemap texture failed to load at path: {}", faces[i]);
             SOIL_free_image_data(data);
         }
     }
@@ -354,7 +349,7 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
     }
     else
     {
-        std::cout << "HDR texture failed to load at path: " << filename << std::endl;
+        logger.error("HDR texture failed to load at path: {}", filename);
         SOIL_free_float_image_data(data);
         exit(EXIT_FAILURE);
     }

@@ -33,7 +33,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3(std::format("{}.position", base), position);
     shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
 
-    shader.setVec3(std::format("{}.ambient", base), ambient);
+    shader.setVec3(std::format("{}.ambient", base), ambient * intensity);
     shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
     shader.setVec3(std::format("{}.specular", base), specular);
 

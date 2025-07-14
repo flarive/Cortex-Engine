@@ -4,6 +4,7 @@
 	"glm",
 	"spdlog",
 	"freetype",
-	"assimp"
+	"assimp",
+	"fmt"
 	]
 }

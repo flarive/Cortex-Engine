@@ -26,34 +26,6 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 }
 
 
-
-// Helper function to load a texture asynchronously
-//void engine::Material::loadTextureAsync(const std::string& path)
-//{
-//    if (path.empty()) return; // Avoid unnecessary loading
-//
-//    // Check cache first
-//    auto it = engine::TextureManager::textureCache.find(path);
-//    if (it != engine::TextureManager::textureCache.end())
-//    {
-//        return;
-//    }
-//
-//    // Load texture
-//    unsigned int tttt = engine::Texture::loadTextureAsync(path);
-//    //auto texture = std::async(std::launch::async, &engine::Texture::loadTextureAsyncInternal, path);
-//    //engine::TextureManager::textureCache[path] = std::move(texture); // Store in cache
-//
-//    //unsigned int wwwwwwww = engine::Texture::enqueueTextureCreation(path, true);
-//
-//    //// process queue
-//    //engine::Texture::processLoadedTextures();
-//
-//    return;
-//}
-
-
-
 void engine::Material::bind(engine::Shader& shader) const
 {
     unsigned int textureUnit = 0;

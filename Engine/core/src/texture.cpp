@@ -61,7 +61,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << filename << std::endl;
+        logger.error("Texture failed to load at path: {}", filename);
         SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
     }
@@ -104,7 +104,7 @@ std::tuple<unsigned int, unsigned char*, int, int, int> engine::Texture::loadTex
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << filename << std::endl;
+        logger.error("Texture failed to load at path: {}", filename);
         SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
     }
@@ -356,3 +356,127 @@ unsigned int engine::Texture::loadHDRImage(const std::string& filename, bool alp
 
     return textureID;
 }
+
+
+
+
+unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::string& directory)
+{
+    std::string filename = std::string(path);
+    filename = directory + '/' + filename;
+
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    //int width, height, nrComponents;
+    int width = 0, height = 0, nrComponents = 0;
+    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
+    if (data)
+    {
+        GLenum format{};
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        SOIL_free_image_data(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        SOIL_free_image_data(data);
+        exit(EXIT_FAILURE);
+    }
+
+    return textureID;
+}
+
+unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size)
+{
+    int width = 0, height = 0, channels = 0;
+
+    // Load image from memory buffer using SOIL
+    unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);
+
+    if (!image)
+    {
+        std::cerr << "Failed to load embedded texture from memory." << std::endl;
+        return 0;
+    }
+
+    GLenum format = GL_RGB;
+    if (channels == 1)
+        format = GL_RED;
+    else if (channels == 3)
+        format = GL_RGB;
+    else if (channels == 4)
+        format = GL_RGBA;
+
+    unsigned int textureID = 0;
+    glGenTextures(1, &textureID);
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    SOIL_free_image_data(image);
+
+    return textureID;
+}
+
+unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height)
+{
+    if (!data || height == 0 || width == 0)
+    {
+        std::cerr << "Invalid uncompressed texture." << std::endl;
+        return 0;
+    }
+
+    unsigned int textureID = 0;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Each pixel is an aiTexel (RGBA8888)
+    //const unsigned char* pixelData = reinterpret_cast<const unsigned char*>(texture->pcData);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        data
+    );
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return textureID;
+}
+

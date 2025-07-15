@@ -51,24 +51,36 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ {0.0f, 1.0f, 3.0f} };
-        auto light1 = std::make_shared<engine::SpotLight>(0);
-        light1->intensity = 2.0f;
-        light1->cutoff = 12.0f;
-        light1->outerCutoff = 18.0f;
-        light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-        light1->ambientColor = engine::Color(0.8f, 0.8f, 0.8f, 0.0f);
-        
+        //auto trsLight1 = engine::Transform{ {0.0f, 1.0f, 3.0f} };
+        //auto light1 = std::make_shared<engine::SpotLight>(0);
+        //light1->intensity = 2.0f;
+        //light1->cutoff = 12.0f;
+        //light1->outerCutoff = 18.0f;
+        //light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
+        //light1->ambientColor = engine::Color(1.0f);
+        //
+        //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+        //getEntityManager().addChild(entityLight1);
+
+
+        auto trsLight1 = engine::Transform{ {0.0f, 3.0f, 5.0f} };
+        auto light1 = std::make_shared<engine::PointLight>(0);
+        light1->intensity = 3.0f;
+        light1->ambientColor = engine::Color(0.5f);
+        light1->diffuseColor = engine::Color(1.0f);
+        light1->specularColor = engine::Color(0.0f);
+
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
 
 
 
+
         // ground
         auto myPlane = std::make_shared<engine::Plane>();
-        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.2f),
+        myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f),
             "textures/wood_diffuse.png",
-            "textures/wood_specular.png"), engine::UvMapping(2.0f));
+            "textures/wood_specular.png", "", 32.0f), engine::UvMapping(2.0f));
 
         auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(10.0f), glm::vec3(90.0f, 0.0f, 0.0f));
         auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
@@ -78,7 +90,7 @@ public:
 
 
         // cushion model
-        auto cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
+        auto cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj", true);
         auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
         auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
         getEntityManager().addChild(entityCushion);

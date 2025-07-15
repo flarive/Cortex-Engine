@@ -6,7 +6,6 @@
 #include "../include/tools/file_system.h"
 #include "../include/tools/helpers.h"
 
-
 #include "SOIL2.h"
 
 #include <omp.h> // Include OpenMP header
@@ -19,9 +18,6 @@
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 //#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
 
-
-
-//3188 ms
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
@@ -70,7 +66,7 @@ void engine::Model::loadModel(std::string const& path, bool flipUVs)
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     // Print the time taken
-    logger.info("Time taken to load and parse the model: {} milliseconds", duration.count());
+    logger.info("Loading model {} : {} milliseconds", path, duration.count());
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -201,41 +197,6 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh{ vertices, indices, meshMaterial };
 }
 
-//checks all material textures of a given type and loads the textures if they're not loaded yet.
-//the required info is returned as a Texture struct.
-//std::vector<engine::Texture> engine::Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
-//{
-//    std::vector<engine::Texture> textures{};
-//    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-//    {
-//        aiString str{};
-//        mat->GetTexture(type, i, &str);
-//        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-//        bool skip{ false };
-//        for (unsigned int j = 0; j < textures_loaded.size(); j++)
-//        {
-//            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-//            {
-//                textures.push_back(textures_loaded[j]);
-//                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-//                break;
-//            }
-//        }
-//        if (!skip)
-//        {   
-//            // if texture hasn't been loaded already, load it
-//            engine::Texture texture{};
-//            texture.id = loadTextureFromFile(str.C_Str(), this->directory);
-//            texture.type = typeName;
-//            texture.path = str.C_Str();
-//            textures.push_back(texture);
-//            textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
-//        }
-//    }
-//
-//    return textures;
-//}
-
 std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
     std::vector<engine::Texture> textures{};
@@ -271,18 +232,21 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* 
                 if (aiTex->mHeight == 0)
                 {
                     // Compressed texture (e.g., JPEG/PNG blob)
-                    texture.id = loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
+                    logger.info("Loading model embedded texture {} ({})", aiTex->mFilename.C_Str(), str.C_Str());
+                    texture.id = engine::Texture::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
                 }
                 else
                 {
                     // Uncompressed (e.g., RGBA32 format)
-                    texture.id = loadUncompressedTexture(aiTex);
+                    logger.info("Loading model uncompressed embedded texture {} ({})", aiTex->mFilename.C_Str(), str.C_Str());
+                    texture.id = engine::Texture::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
                 }
             }
             else
             {
                 // Texture from file
-                texture.id = loadTextureFromFile(str.C_Str(), this->directory);
+                logger.info("Loading model texture {}", str.C_Str());
+                texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->directory);
             }
 
             textures.push_back(texture);
@@ -302,9 +266,6 @@ void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, gl
     glm::quat quaternion = glm::quat(glm::radians(rotation)); // Euler (XYZ) -> quaternion
     quaternion = glm::normalize(quaternion);
 
-    //float angle = glm::angle(quaternion);
-    //glm::vec3 axis = glm::axis(quaternion);
-
     // Compose model matrix
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
     model *= glm::mat4_cast(quaternion); // apply rotation
@@ -314,136 +275,6 @@ void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, gl
     {
         meshes[i].draw(shader, model);
     }
-
-
-    //auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
-
-    //for (unsigned int i = 0; i < meshes.size(); i++)
-    //{
-    //    meshes[i].draw(shader, position, scale, normalizedRotation.angle, normalizedRotation.axis);
-    //}
-}
-
-
-  
-unsigned int engine::loadTextureFromFile(const char* path, const std::string& directory)
-{
-    std::string filename = std::string(path);
-    filename = directory + '/' + filename;
-
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    //int width, height, nrComponents;
-    int width = 0, height = 0, nrComponents = 0;
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-
-    if (data)
-    {
-        GLenum format{};
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        SOIL_free_image_data(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        SOIL_free_image_data(data);
-        exit(EXIT_FAILURE);
-    }
-
-    return textureID;
-}
-
-unsigned int engine::loadTextureFromMemory(const unsigned char* data, size_t size)
-{
-    int width = 0, height = 0, channels = 0;
-
-    // Load image from memory buffer using SOIL
-    unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);
-
-    if (!image)
-    {
-        std::cerr << "Failed to load embedded texture from memory." << std::endl;
-        return 0;
-    }
-
-    GLenum format = GL_RGB;
-    if (channels == 1)
-        format = GL_RED;
-    else if (channels == 3)
-        format = GL_RGB;
-    else if (channels == 4)
-        format = GL_RGBA;
-
-    unsigned int textureID = 0;
-    glGenTextures(1, &textureID);
-
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    SOIL_free_image_data(image);
-
-    return textureID;
-}
-
-unsigned int engine::loadUncompressedTexture(const aiTexture* texture)
-{
-    if (!texture || texture->mHeight == 0 || texture->mWidth == 0)
-    {
-        std::cerr << "Invalid uncompressed texture." << std::endl;
-        return 0;
-    }
-
-    unsigned int textureID = 0;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Each pixel is an aiTexel (RGBA8888)
-    const unsigned char* pixelData = reinterpret_cast<const unsigned char*>(texture->pcData);
-
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,
-        texture->mWidth,
-        texture->mHeight,
-        0,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        pixelData
-    );
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    return textureID;
 }
 
 

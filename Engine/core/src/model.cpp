@@ -191,7 +191,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
 
     // Create Material
-    auto meshMaterial = std::make_shared<Material>(textures);
+    auto meshMaterial = std::make_shared<Material>(textures, 32.0f);
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ vertices, indices, meshMaterial };

@@ -1,8 +1,8 @@
 #include "../../include/materials/material.h"
 
 
-engine::Material::Material(const std::vector<Texture>& textures) 
-    : textures(textures)
+engine::Material::Material(const std::vector<Texture>& _textures, float _shininess)
+    : textures(_textures), m_shininess(_shininess)
 {
 
 }

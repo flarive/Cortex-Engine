@@ -17,7 +17,7 @@ namespace engine
 	{
 	public:
 
-        Material(const std::vector<Texture>& textures);
+        Material(const std::vector<Texture>& _textures, float _shininess = 1.0f);
         Material(const Color& ambientColor);
         Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
         Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 1.0f);

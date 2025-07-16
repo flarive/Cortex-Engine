@@ -73,12 +73,6 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 model)
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
         shader.setVec3("material.specular_color", m_material->getSpecularColor());
 
-        float aa = m_material->getShininessIntensity();
-        if (aa > 0.0f)
-        {
-            int aa = 0.0f; // WHY ?????????????
-        }
-
         shader.setFloat("material.shininess", m_material->getShininessIntensity());
 
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());

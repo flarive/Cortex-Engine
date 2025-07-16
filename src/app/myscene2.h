@@ -51,7 +51,7 @@ public:
 
 
         // lights
-        auto trsLight1 = engine::Transform{ {0.0f, 1.0f, 3.0f} };
+        auto trsLight1 = engine::Transform{ {0.0f, 0.5f, 3.0f} };
         auto light1 = std::make_shared<engine::SpotLight>(0);
         light1->intensity = 2.0f;
         light1->cutoff = 12.0f;
@@ -59,7 +59,7 @@ public:
         light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
         light1->ambientColor = engine::Color(0.5f);
         light1->diffuseColor = engine::Color(1.0f);
-        light1->specularColor = engine::Color(0.0f);
+        light1->specularColor = engine::Color(1.0f);
         
         auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         getEntityManager().addChild(entityLight1);
@@ -70,7 +70,7 @@ public:
         //light1->intensity = 3.0f;
         //light1->ambientColor = engine::Color(0.5f);
         //light1->diffuseColor = engine::Color(1.0f);
-        //light1->specularColor = engine::Color(0.0f);
+        //light1->specularColor = engine::Color(5.0f);
 
         //auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
         //getEntityManager().addChild(entityLight1);

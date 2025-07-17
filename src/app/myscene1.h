@@ -23,18 +23,13 @@ public:
     MyScene1(std::string _title, engine::App* _app);
 
     void init() override;
-   
+    void update(engine::Shader& shader) override;
+    void updateUI() override;
+    void clean() override;
 
-    // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-    // ---------------------------------------------------------------------------------------------------------
     void key_callback(int key, int scancode, int action, int mods);
     void mouse_callback(double xposIn, double yposIn);
     void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
-
-    void update(engine::Shader& shader) override;
-    void updateUI() override;
-
-    void clean() override;
 };

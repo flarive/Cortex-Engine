@@ -1,5 +1,7 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
+#include "core/include/misc/log_manager.h"
+
 
 #include "app/myapp1.h"
 
@@ -15,7 +17,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene2;
+using MyScene = MyScene1;
 
 
 engine::App* myApp{};
@@ -61,7 +63,7 @@ int main(int, char**)
             if (present > 0)
             {
                 const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-                std::cout << "Joystick present " << name << std::endl;
+                engine::logger.info("Joystick present {}", name);
             }
 
             // start game loop

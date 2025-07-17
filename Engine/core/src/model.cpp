@@ -190,8 +190,15 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
     textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
 
+    float shininess{};
+    if (AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) || shininess <= 0.0f)
+    {
+        // if unsuccessful set a default
+        shininess = 32.0f;
+    }
+
     // Create Material
-    auto meshMaterial = std::make_shared<Material>(textures, 32.0f);
+    auto meshMaterial = std::make_shared<Material>(textures, shininess);
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ vertices, indices, meshMaterial };

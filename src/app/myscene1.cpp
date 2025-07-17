@@ -34,11 +34,14 @@ void MyScene1::init()
 
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
-    light1->intensity = 1.2f;
+    light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
     light1->ambientColor = engine::Color(1.0f);
+    light1->diffuseColor = engine::Color(1.0f);
+    light1->specularColor = engine::Color(10.0f);
+
 
     auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
     getEntityManager().addChild(entityLight1);
@@ -224,8 +227,8 @@ void MyScene1::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
 
-    // view/projection transformations
-    //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->Zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+    //view/projection transformations
+    //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
     //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
 
@@ -237,7 +240,7 @@ void MyScene1::update(engine::Shader& shader)
     //    zzz->skyboxShader.use();
     //    zzz->skyboxShader.setMat4("view", view);
     //    zzz->skyboxShader.setMat4("projection", projection);
-    //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->Position);
+    //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->position);
     //}
 
     //ourSkybox.draw(projection, view);

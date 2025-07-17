@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "../include/common_defines.h"
+#include "../include/misc/log_manager.h"
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
@@ -46,7 +47,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     catch (std::ifstream::failure& e)
     {
         const char* error = e.what();
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error << std::endl;
+        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
         exit(EXIT_FAILURE);
     }
 
@@ -116,7 +117,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     catch (std::ifstream::failure& e)
     {
         const char* error = e.what();
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << error << std::endl;
+        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
         exit(EXIT_FAILURE);
     }
 
@@ -235,7 +236,7 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
         if (!success)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cerr << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n" << std::endl;
+            logger.error("Shader {} SHADER_COMPILATION_ERROR of type: {}", shader, infoLog);
             exit(EXIT_FAILURE);
         }
     }
@@ -245,7 +246,7 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
         if (!success)
         {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cerr << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n " << std::endl;
+            logger.error("Shader {} PROGRAM_LINKING_ERROR of type {}: {}", shader, type, infoLog);
             exit(EXIT_FAILURE);
         }
     }

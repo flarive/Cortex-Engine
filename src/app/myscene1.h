@@ -19,6 +19,8 @@ private:
 
     engine::Skybox ourSkybox{};
 
+    float rotation{};
+
 public:
     MyScene1(std::string _title, engine::App* _app);
 

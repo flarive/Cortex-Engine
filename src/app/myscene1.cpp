@@ -244,6 +244,21 @@ void MyScene1::update(engine::Shader& shader)
     //}
 
     //ourSkybox.draw(projection, view);
+
+
+    auto myCushion = getEntityManager().findEntityByName("MyCushion");
+    if (myCushion)
+    {
+        myCushion->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+    }
+
+    auto myBackpack = getEntityManager().findEntityByName("MyBackpack");
+    if (myBackpack)
+    {
+        myBackpack->transform.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+    }
+
+    rotation += deltaTime * 10.0f;
 }
 
 void MyScene1::updateUI()

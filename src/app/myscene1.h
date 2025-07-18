@@ -17,7 +17,7 @@ private:
 
     engine::Text ourText{};
 
-    engine::Skybox ourSkybox{};
+    //engine::Skybox ourSkybox{};
 
     float rotation{};
 

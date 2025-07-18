@@ -34,8 +34,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
-    blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-    blinnPhongShader.setFloat("material.shininess", 32.0f);
+    /*blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+    blinnPhongShader.setFloat("material.shininess", 32.0f);*/
     blinnPhongShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
 
     // shader configuration

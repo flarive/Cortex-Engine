@@ -38,9 +38,7 @@ namespace engine
 		bool remove(const std::string& name);
 
 		std::shared_ptr<engine::Entity> findEntityByName(const std::string& name);
-
-
-
+		
 
 
 		template<typename T>
@@ -51,9 +49,15 @@ namespace engine
 			return result;
 		}
 
-		
-		
 
+		template<typename T>
+		std::shared_ptr<T> findEntityOfType()
+		{
+			std::vector<std::shared_ptr<T>> result;
+			findEntitiesOfTypeRecursive<T>(m_rootEntity, result);
+
+			return result.size() > 0 ? result[0] : nullptr;
+		}
 
 
 
@@ -89,6 +93,10 @@ namespace engine
 			{
 				casted = std::dynamic_pointer_cast<T>(entity->camera);
 			}
+			else if (entity->skybox && typeid(std::dynamic_pointer_cast<T>(entity->skybox)) == typeid(entity->skybox))
+			{
+				casted = std::reinterpret_pointer_cast<T>(entity->skybox);
+			}
 
 			if (casted)
 			{
@@ -100,8 +108,6 @@ namespace engine
 				findEntitiesOfTypeRecursive<T>(child, result);
 			}
 		}
-
-
 
 
 		bool removeRecursive(const std::shared_ptr<Entity>& parent, const std::shared_ptr<Entity>& current, const std::string& targetName);

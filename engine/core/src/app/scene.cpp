@@ -133,24 +133,13 @@ void engine::Scene::gameLoop()
         drawEntities(shader);
         };
 
-    // Lambda to update the skybox
-    auto drawSkyboxLambda = [this](const glm::mat4& projection, const glm::mat4& view)
-    {
-        auto skyboxEntity = getEntityManager().findEntityByName("MySkybox");
-        if (skyboxEntity && skyboxEntity->skybox)
-        {
-            skyboxEntity->skybox->draw(projection, view);
-        }
-    };
-
-
     // Lambda to update the UI
     auto updateUILambda = [this]() {
         updateUI();
         };
 
-    // Call the renderer loop
-    m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda, drawSkyboxLambda);
+    // Call the method
+    m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
 
     // get opengl stats such as polycount drawn
     endQuery();
@@ -186,28 +175,9 @@ void engine::Scene::gameLoop()
 
 void engine::Scene::drawEntities(Shader& shader)
 {
-    // Setup camera matrices
-    //glm::mat4 projection = glm::perspective(
-    //    glm::radians(getActiveCamera()->zoom),
-    //    static_cast<float>(app->width) / static_cast<float>(app->height),
-    //    0.1f,
-    //    100.0f
-    //);
-    //glm::mat4 view = getActiveCamera()->GetViewMatrix();
-    
-    // 1. Draw all non-skybox entities (models, primitives, lights, etc.)
+    // draw flat and nested entity hierarchy
     drawEntityRecursive(m_entityManager.getRootEntity(), shader);
-
-    // 2. Draw skybox separately, last
-    //auto skyboxEntity = getEntityManager().findEntityByName("MySkybox");
-
-
-    //if (skyboxEntity && skyboxEntity->skybox)
-    //{
-    //    skyboxEntity->skybox->draw(projection, view);
-    //}
     
-    // 3. Update all entities
     m_entityManager.getRootEntity()->updateSelfAndChild();
 }
 
@@ -248,6 +218,10 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->light->target,
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
+    }
+    else if (entity->skybox)
+    {
+        entity->skybox->draw(projection, view);
     }
 
     // Recurse on children

@@ -38,6 +38,10 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 // draws the model, and thus all its meshes
 void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 {
+    // draw skybox as last
+    //glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    
+
     // Change depth function so skybox passes when depth is equal
     glDepthFunc(GL_LEQUAL);
     glDepthMask(GL_FALSE); // Disable depth writing
@@ -61,6 +65,11 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 
     glDepthMask(GL_TRUE); // Re-enable depth writing
     glDepthFunc(GL_LESS); // Restore default depth function
+
+
+    //glDepthMask(GL_TRUE);
+    
+    //glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 // optional: de-allocate all resources once they've outlived their purpose

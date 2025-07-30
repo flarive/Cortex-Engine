@@ -1,4 +1,4 @@
-﻿#include "../../include/renderers/blinnphong_renderer.h"
+#include "../../include/renderers/blinnphong_renderer.h"
 
 #include "../../include/tools/file_system.h"
 
@@ -34,6 +34,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
+    /*blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+    blinnPhongShader.setFloat("material.shininess", 32.0f);*/
     blinnPhongShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
 
     // shader configuration
@@ -62,7 +64,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 }
 
 
-void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI, std::function<void(const glm::mat4&, const glm::mat4&)> updateSkybox)
+void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -88,9 +90,6 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // update user stuffs
     update(blinnPhongShader);
 
-
-
-
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
     {
@@ -104,10 +103,6 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // render to framebuffer
     computeColorFramebuffer();
 
-
-    
-
-
     // Resolve MSAA to screen or another texture FBO
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
@@ -115,16 +110,6 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
         0, 0, width, height,
         GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); // <-- Screen framebuffer
-    glDepthFunc(GL_LEQUAL);               // Required for skybox
-    glDepthMask(GL_FALSE);                // Skybox shouldn't write depth
-    //glClear(GL_DEPTH_BUFFER_BIT);         // Optional: if your skybox is still fighting with z-buffer
-    updateSkybox(projection, view);       // Renders to screen
-    glDepthMask(GL_TRUE);                 // Re-enable depth write
-    glDepthFunc(GL_LESS);                 // Restore default
-
-    
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
 }

@@ -275,7 +275,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
-void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI, std::function<void(const glm::mat4&, const glm::mat4&)> updateSkybox)
+void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);

@@ -253,6 +253,33 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
+// good
+float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+   
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+   
+    float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 20;
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+    for(int i = 0; i < samples; ++i)
+    {
+        vec3 zzz = fragToLight + gridSamplingDisk[i] * diskRadius;
+        float closestDepth = texture(material.texture_shadowMap, vec2(zzz.x, zzz.y)).r;
+        closestDepth *= far_plane;   // undo mapping [0;1]
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+       
+    return shadow;
+}
+
 float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 {
     // get vector between fragment position and light position
@@ -516,7 +543,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // calculate shadow
     //vec2 screenSize = vec2(1280, 720);
-    float shadow = enableShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+    float shadow = enableShadows ? ShadowCalculationPointLight(fragPos, light.position) : 0.0;
     //float shadow = shadows ? ShadowCalculationCubeMap2(fragPos, light.position, normal, lightDir, screenSize) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows

@@ -48,18 +48,18 @@ void MyScene1::init()
 
 
 
-    //std::vector<std::string> faces
-    //{
-    //    "textures/skybox/right.jpg",
-    //    "textures/skybox/left.jpg",
-    //    "textures/skybox/top.jpg",
-    //    "textures/skybox/bottom.jpg",
-    //    "textures/skybox/front.jpg",
-    //    "textures/skybox/back.jpg"
-    //};
+    std::vector<std::string> faces
+    {
+        "textures/skybox/right.jpg",
+        "textures/skybox/left.jpg",
+        "textures/skybox/top.jpg",
+        "textures/skybox/bottom.jpg",
+        "textures/skybox/front.jpg",
+        "textures/skybox/back.jpg"
+    };
 
-    //auto zzz{ engine::BlinnPhongMaterial(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
-    //zzz.setCubeMapTexs(faces);
+    auto zzz{ engine::BlinnPhongMaterial(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+    zzz.setCubeMapTexs(faces);
 
 
     // ground
@@ -145,7 +145,14 @@ void MyScene1::init()
 
     ourText.setup(app->window, FONT_PATH, 28);
 
-    //ourSkybox.setup(faces);
+    ourSkybox.setup(faces);
+
+    auto kkkk = getRenderer();
+    engine::BlinnPhongRenderer* zzza = dynamic_cast<engine::BlinnPhongRenderer*>(kkkk);
+    if (zzza)
+    {
+        zzza->setSkybox(std::make_shared<engine::Skybox>(ourSkybox));
+    }
 }
 
 
@@ -228,12 +235,12 @@ void MyScene1::update(engine::Shader& shader)
     UNREFERENCED_PARAMETER(shader);
 
     //view/projection transformations
-    //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
-    //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+    glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+    glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
 
 
-    //// activate skybox reflection shader
+    // activate skybox reflection shader
     //auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
     //if (zzz)
     //{
@@ -243,7 +250,10 @@ void MyScene1::update(engine::Shader& shader)
     //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->position);
     //}
 
+
+
     //ourSkybox.draw(projection, view);
+
 
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");

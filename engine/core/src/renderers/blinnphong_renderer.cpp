@@ -1,4 +1,4 @@
-#include "../../include/renderers/blinnphong_renderer.h"
+﻿#include "../../include/renderers/blinnphong_renderer.h"
 
 #include "../../include/tools/file_system.h"
 
@@ -34,8 +34,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
-    blinnPhongShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-    blinnPhongShader.setFloat("material.shininess", 32.0f);
     blinnPhongShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
 
     // shader configuration
@@ -63,6 +61,10 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
 }
 
+void engine::BlinnPhongRenderer::setSkybox(std::shared_ptr<Skybox> skybox)
+{
+    m_skybox = skybox;
+}
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
@@ -74,12 +76,16 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->GetViewMatrix();
 
-    
+
+    // draw skybox FIRST
+    if (m_skybox)
+        m_skybox->draw(projection, view);  // this handles view matrix stripping translation inside
+
+
+
 
     blinnPhongShader.use();
     blinnPhongShader.setMat4("projection", projection);

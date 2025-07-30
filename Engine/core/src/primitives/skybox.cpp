@@ -35,8 +35,11 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 {
     // draw skybox as last
     glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-    m_skyboxShader.use();
+    glDepthMask(GL_FALSE);
+   
     glm::mat4 view_fixed = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+    
+    m_skyboxShader.use();
     m_skyboxShader.setMat4("view", view_fixed);
     m_skyboxShader.setMat4("projection", projection);
 
@@ -47,6 +50,8 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
+
+    glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS); // set depth function back to default
 }
 

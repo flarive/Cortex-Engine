@@ -1,6 +1,7 @@
 #pragma once
 
 #include "renderer.h"
+#include "../primitives/skybox.h"
 
 #include "../shader.h"
 
@@ -22,9 +23,15 @@ namespace engine
 
 		Shader& getShader() override;
 
+		void setSkybox(std::shared_ptr<Skybox> skybox);
+
 	private:
 		void loadShaders() override;
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) override;
+
+
+	protected:
+		std::shared_ptr<Skybox> m_skybox{};
 	};
 }

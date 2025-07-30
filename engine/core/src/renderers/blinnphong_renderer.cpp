@@ -114,12 +114,12 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glBlitFramebuffer(0, 0, width, height,
         0, 0, width, height,
         GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // <-- Screen framebuffer
     glDepthFunc(GL_LEQUAL);               // Required for skybox
     glDepthMask(GL_FALSE);                // Skybox shouldn't write depth
-    glClear(GL_DEPTH_BUFFER_BIT);         // Optional: if your skybox is still fighting with z-buffer
+    //glClear(GL_DEPTH_BUFFER_BIT);         // Optional: if your skybox is still fighting with z-buffer
     updateSkybox(projection, view);       // Renders to screen
     glDepthMask(GL_TRUE);                 // Re-enable depth write
     glDepthFunc(GL_LESS);                 // Restore default

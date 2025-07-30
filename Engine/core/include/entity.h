@@ -48,7 +48,6 @@ namespace engine
 		Transform transform{};
 
 		std::string name{};
-		//std::string type{};
 		std::shared_ptr<Model> model{};
 		std::shared_ptr<Primitive> primitive{};
 		std::shared_ptr<Light> light{};
@@ -102,9 +101,6 @@ namespace engine
 
 		//Force update of transform even if local space don't change
 		void forceUpdateSelfAndChild();
-
-		std::string getType();
-		
 
 
 	private:

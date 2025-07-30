@@ -136,10 +136,10 @@ void engine::Scene::gameLoop()
     // Lambda to update the skybox
     auto drawSkyboxLambda = [this](const glm::mat4& projection, const glm::mat4& view)
     {
-        auto skybox = getEntityManager().findEntityOfType<Skybox>();
-        if (skybox)
+        auto skyboxEntity = getEntityManager().findEntityByName("MySkybox");
+        if (skyboxEntity && skyboxEntity->skybox)
         {
-            skybox->draw(projection, view);
+            skyboxEntity->skybox->draw(projection, view);
         }
     };
 

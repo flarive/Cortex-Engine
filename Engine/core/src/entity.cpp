@@ -98,22 +98,6 @@ engine::Entity::Entity(std::shared_ptr<engine::Skybox> _skybox) : skybox{ _skybo
 }
 
 
-std::string engine::Entity::getType()
-{
-	if (this->light)
-		return typeid(this->light).name();
-	else if (this->camera)
-		return typeid(this->camera).name();
-	else if (this->primitive)
-		return typeid(this->primitive).name();
-	else if (this->model)
-		return typeid(this->model).name();
-	else if (this->skybox)
-		return typeid(this->skybox).name();
-	
-	return "";
-}
-
 
 engine::AABB engine::Entity::getGlobalAABB()
 {

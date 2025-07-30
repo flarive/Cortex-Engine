@@ -18,7 +18,7 @@ private:
 
     engine::Text ourText{};
 
-    
+    engine::Skybox ourSkybox{};
 
 public:
     MyScene8(std::string _title, engine::App* _app)
@@ -217,6 +217,7 @@ public:
     void clean() override
     {
         // clean up any resources
+        ourSkybox.clean();
     }
 
 private:

@@ -3,11 +3,6 @@
 #include "../../include/texture.h"
 #include "../../include/primitives/primitive.h"
 
-engine::Skybox::Skybox(const std::vector<std::string>& faces)
-{
-    setup(faces);
-}
-
 void engine::Skybox::setup(const std::vector<std::string>& faces)
 {
     m_skyboxShader.init("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
@@ -39,17 +34,9 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 {
     // draw skybox as last
-    //glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-    
-
-    // Change depth function so skybox passes when depth is equal
-    glDepthFunc(GL_LEQUAL);
-    glDepthMask(GL_FALSE); // Disable depth writing
-
-    
-    glm::mat4 view_fixed = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-    
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
     m_skyboxShader.use();
+    glm::mat4 view_fixed = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
     m_skyboxShader.setMat4("view", view_fixed);
     m_skyboxShader.setMat4("projection", projection);
 
@@ -60,16 +47,7 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
-
-
-
-    glDepthMask(GL_TRUE); // Re-enable depth writing
-    glDepthFunc(GL_LESS); // Restore default depth function
-
-
-    //glDepthMask(GL_TRUE);
-    
-    //glDepthFunc(GL_LESS); // set depth function back to default
+    glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 // optional: de-allocate all resources once they've outlived their purpose

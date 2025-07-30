@@ -6,7 +6,6 @@
 
 #include "model.h"
 #include "primitives/primitive.h"
-#include "primitives/skybox.h"
 #include "lights/light.h"
 #include "cameras/camera.h"
 #include "transform.h"
@@ -52,7 +51,6 @@ namespace engine
 		std::shared_ptr<Primitive> primitive{};
 		std::shared_ptr<Light> light{};
 		std::shared_ptr<Camera> camera{};
-		std::shared_ptr<Skybox> skybox{};
 		std::unique_ptr<AABB> boundingVolume{};
 
 
@@ -79,10 +77,6 @@ namespace engine
 		Entity(const std::string& _name, std::shared_ptr<Camera> _camera, Transform _transform);
 		Entity(const std::string& _name, std::shared_ptr<Camera> _camera);
 		Entity(std::shared_ptr<Camera> _camera);
-
-
-		Entity(const std::string& _name, std::shared_ptr<Skybox> _skybox);
-		Entity(std::shared_ptr<Skybox> _skybox);
 
 		// Add child using Entity constructor
 		// Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
@@ -112,7 +106,6 @@ namespace engine
 		AABB generateAABB(const std::shared_ptr<Primitive> primitive);
 		AABB generateAABB(const std::shared_ptr<Light> light);
 		AABB generateAABB(const std::shared_ptr<Camera> camera);
-		AABB generateAABB(const std::shared_ptr<Skybox> skybox);
 
 		SphereVolume generateSphereBV(const Model& model);
 	};

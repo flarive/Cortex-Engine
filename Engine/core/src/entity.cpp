@@ -1,6 +1,6 @@
 #include "../include/entity.h"
 
-
+//#include "../include/primitives/cube.h"
 
 // constructor, expects just a name
 engine::Entity::Entity(const std::string& _name) : name{ _name }
@@ -83,21 +83,6 @@ engine::Entity::Entity(std::shared_ptr<engine::Camera> _camera) : camera{ _camer
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }
-
-
-
-
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Skybox> _skybox) : name{ _name }, skybox{ _skybox }
-{
-	boundingVolume = std::make_unique<AABB>(generateAABB(_skybox));
-}
-
-engine::Entity::Entity(std::shared_ptr<engine::Skybox> _skybox) : skybox{ _skybox }
-{
-	boundingVolume = std::make_unique<AABB>(generateAABB(_skybox));
-}
-
-
 
 engine::AABB engine::Entity::getGlobalAABB()
 {
@@ -244,13 +229,6 @@ engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Camera> camera)
 	return engine::AABB(minAABB, maxAABB);
 }
 
-engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Skybox> skybox)
-{
-	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-
-	return engine::AABB(minAABB, maxAABB);
-}
 
 engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 {

@@ -32,10 +32,6 @@ void MyScene1::init()
     getEntityManager().addChild(EntityCamera1);
 
 
-
-
-
-
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
     light1->intensity = 2.0f;
@@ -50,6 +46,20 @@ void MyScene1::init()
     auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
     getEntityManager().addChild(entityLight1);
 
+
+
+    //std::vector<std::string> faces
+    //{
+    //    "textures/skybox/right.jpg",
+    //    "textures/skybox/left.jpg",
+    //    "textures/skybox/top.jpg",
+    //    "textures/skybox/bottom.jpg",
+    //    "textures/skybox/front.jpg",
+    //    "textures/skybox/back.jpg"
+    //};
+
+    //auto zzz{ engine::BlinnPhongMaterial(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
+    //zzz.setCubeMapTexs(faces);
 
 
     // ground
@@ -132,29 +142,10 @@ void MyScene1::init()
 
 
 
-    std::vector<std::string> faces
-    {
-        "textures/skybox/right.jpg",
-        "textures/skybox/left.jpg",
-        "textures/skybox/top.jpg",
-        "textures/skybox/bottom.jpg",
-        "textures/skybox/front.jpg",
-        "textures/skybox/back.jpg"
-    };
-
-    // skybox
-    std::shared_ptr<engine::Skybox> ourSkybox = std::make_shared<engine::Skybox>(faces);
-    auto entitySkybox = std::make_shared<engine::Entity>("MySkybox", ourSkybox);
-    getEntityManager().addChild(entitySkybox);
-
-
-    //auto zzz{ engine::BlinnPhongMaterial(engine::Color(0.1f), "textures/container2_diffuse.png", "textures/container2_specular.png") };
-    //zzz.setCubeMapTexs(faces);
-
-
-
 
     ourText.setup(app->window, FONT_PATH, 28);
+
+    //ourSkybox.setup(faces);
 }
 
 
@@ -236,7 +227,7 @@ void MyScene1::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
 
-    // view/projection transformations
+    //view/projection transformations
     //glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
     //glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
 
@@ -279,5 +270,5 @@ void MyScene1::updateUI()
 void MyScene1::clean()
 {
     // clean up any resources
-    //ourSkybox.clean();
+    ourSkybox.clean();
 }

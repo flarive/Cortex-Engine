@@ -186,10 +186,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     // Set model matrix for current entity
     shader.setMat4("model", entity->transform.getModelMatrix());
 
-    // view / projection transformations
-    glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f) };
-    glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
     // Draw the entity if it has a model
     if (entity->model)
     {
@@ -207,6 +203,10 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
     else if (entity->light)
     {
+        // view/projection transformations
+        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+
         entity->light->draw(shader,
             projection,
             view,
@@ -218,10 +218,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->light->target,
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
-    }
-    else if (entity->skybox)
-    {
-        entity->skybox->draw(projection, view);
     }
 
     // Recurse on children

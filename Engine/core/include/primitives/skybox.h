@@ -14,13 +14,11 @@ namespace engine
         unsigned int m_skyboxVAO{}, m_skyboxVBO{};
         Shader m_skyboxShader{};
 
-        void setup(const std::vector<std::string>& faces);
-
-        
-
     public:
-        Skybox(const std::vector<std::string>& faces);
+        Skybox() = default;
         ~Skybox() = default;
+
+        void setup(const std::vector<std::string>& faces);
 
         // draws the model, and thus all its meshes
         void draw(const glm::mat4& projection, const glm::mat4& view);

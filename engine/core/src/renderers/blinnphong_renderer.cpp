@@ -63,7 +63,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
 void engine::BlinnPhongRenderer::setSkybox(std::shared_ptr<Skybox> skybox)
 {
-    m_skybox = skybox;
+    m_skybox = std::move(skybox);
 }
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
@@ -80,7 +80,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glm::mat4 view = camera->GetViewMatrix();
 
 
-    // draw skybox FIRST
+    // draw skybox first
     if (m_skybox)
         m_skybox->draw(projection, view);  // this handles view matrix stripping translation inside
 

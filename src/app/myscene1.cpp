@@ -143,16 +143,20 @@ void MyScene1::init()
 
 
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    
 
-    ourSkybox.setup(faces);
+    ourSkybox = std::make_shared<engine::Skybox>();
+    ourSkybox->setup(faces);
 
-    auto kkkk = getRenderer();
-    engine::BlinnPhongRenderer* zzza = dynamic_cast<engine::BlinnPhongRenderer*>(kkkk);
-    if (zzza)
+    auto renderer = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
+    if (renderer)
     {
-        zzza->setSkybox(std::make_shared<engine::Skybox>(ourSkybox));
+        renderer->setSkybox(ourSkybox);
     }
+
+
+
+    ourText.setup(app->window, FONT_PATH, 28);
 }
 
 
@@ -280,5 +284,5 @@ void MyScene1::updateUI()
 void MyScene1::clean()
 {
     // clean up any resources
-    ourSkybox.clean();
+    ourSkybox->clean();
 }

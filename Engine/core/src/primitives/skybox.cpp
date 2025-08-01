@@ -27,7 +27,7 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 
 
     m_skyboxShader.use();
-    m_skyboxShader.setInt("skybox", 0);
+    m_skyboxShader.setInt("texture_skybox", 0);
 }
 
 // draws the model, and thus all its meshes

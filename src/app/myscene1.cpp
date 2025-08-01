@@ -144,14 +144,11 @@ void MyScene1::init()
 
 
     
-
-    ourSkybox = std::make_shared<engine::Skybox>();
-    ourSkybox->setup(faces);
-
+    // skybox
     auto renderer = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
     if (renderer)
     {
-        renderer->setSkybox(ourSkybox);
+        renderer->setSkybox(faces);
     }
 
 
@@ -238,28 +235,6 @@ void MyScene1::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
 
-    //view/projection transformations
-    glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
-    glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-
-
-
-    // activate skybox reflection shader
-    //auto zzz = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
-    //if (zzz)
-    //{
-    //    zzz->skyboxShader.use();
-    //    zzz->skyboxShader.setMat4("view", view);
-    //    zzz->skyboxShader.setMat4("projection", projection);
-    //    zzz->skyboxShader.setVec3("cameraPos", getActiveCamera()->position);
-    //}
-
-
-
-    //ourSkybox.draw(projection, view);
-
-
-
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
@@ -284,5 +259,4 @@ void MyScene1::updateUI()
 void MyScene1::clean()
 {
     // clean up any resources
-    ourSkybox->clean();
 }

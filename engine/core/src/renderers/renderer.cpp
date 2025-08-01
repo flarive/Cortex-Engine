@@ -174,6 +174,12 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
     shader.setInt("material.texture_shadowMap", 10);
 
+
+    // not needed but need to be reserved to avoid conflicts or overrides
+    glActiveTexture(GL_TEXTURE11);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    shader.setInt("material.texture_shadowMapCube", 11);
+
     // render Depth map to quad for visual debugging
     // ---------------------------------------------
     //depthMapToQuadShader.use();
@@ -229,9 +235,12 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     // -------------------------
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    shader.use();
+
+    
     glm::mat4 projection = glm::perspective(glm::radians(m_camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = m_camera->GetViewMatrix();
+
+    shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
     // set lighting uniforms
@@ -242,6 +251,11 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
 
     // update user stuffs
     update(shader);
+
+    // not needed but need to be reserved to avoid conflicts or overrides
+    glActiveTexture(GL_TEXTURE10);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    shader.setInt("material.texture_shadowMap", 10);
 
     glActiveTexture(GL_TEXTURE11);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);

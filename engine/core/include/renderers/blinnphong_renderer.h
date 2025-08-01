@@ -23,7 +23,7 @@ namespace engine
 
 		Shader& getShader() override;
 
-		void setSkybox(std::shared_ptr<Skybox> skybox);
+		void setSkybox(const std::vector<std::string>& faces);
 
 	private:
 		void loadShaders() override;

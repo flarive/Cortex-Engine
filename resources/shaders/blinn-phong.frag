@@ -253,32 +253,6 @@ float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-// good
-float ShadowCalculationPointLight(vec3 fragPos, vec3 lightPos)
-{
-    // get vector between fragment position and light position
-    vec3 fragToLight = fragPos - lightPos;
-   
-    // now get current linear depth as the length between the fragment and light position
-    float currentDepth = length(fragToLight);
-   
-    float shadow = 0.0;
-    float bias = 0.15;
-    int samples = 20;
-    float viewDistance = length(viewPos - fragPos);
-    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
-    for(int i = 0; i < samples; ++i)
-    {
-        vec3 zzz = fragToLight + gridSamplingDisk[i] * diskRadius;
-        float closestDepth = texture(material.texture_shadowMap, vec2(zzz.x, zzz.y)).r;
-        closestDepth *= far_plane;   // undo mapping [0;1]
-        if(currentDepth - bias > closestDepth)
-            shadow += 1.0;
-    }
-    shadow /= float(samples);
-       
-    return shadow;
-}
 
 float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 {
@@ -361,81 +335,6 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 }
 
 
-
-
-
-void main()
-{
-    vec3 norm;
-    if (material.has_texture_normal_map)
-    {
-        // Sample the normal map texture
-        norm = texture(material.texture_normal, fs_in.TexCoords).rgb;
-        norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
-
-        // Transform normal from tangent space to world space
-        vec3 T = normalize(fs_in.Tangent);
-        vec3 B = normalize(fs_in.Bitangent);
-        vec3 N = normalize(fs_in.Normal);
-        mat3 TBN = mat3(T, B, N);
-        norm = normalize(TBN * norm);
-    }
-    else
-    {
-        norm = normalize(fs_in.Normal); // Use the geometry normal as a fallback
-    }
-
-    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-
-        
-    vec3 color = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
-    
-    // == =====================================================
-    // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
-    // For each phase, a calculate function is defined that calculates the corresponding color
-    // per lamp. In the main() function we take all the calculated colors and sum them up for
-    // this fragment's final color.
-    // == =====================================================
-
-    vec3 result = vec3(0.0);
-
-    // Lighting
-    for (int i = 0; i < pointLightsCount; i++)
-    {
-        if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
-    }
-
-    for (int i = 0; i < dirLightsCount; i++)
-    {
-        if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir);
-    }
-
-    for (int i = 0; i < spotLightsCount; i++)
-    {
-        if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
-    }
-    
-    // Sample the alpha value from the diffuse texture
-    float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
-
-    // gamma correct
-    //color = pow(color, vec3(1.0/2.2));
-
-    // Set the fragment color with the alpha channel
-    FragColor = vec4(result, alpha);
-
-    //FragColor = texture(material.texture_shadowMapCube, fs_in.TexCoords);
-
-    // Discard transparent fragments (optional)
-    if (alpha < 0.1)
-        discard;
-}
-
-
-
 float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
 {
     float shadow = 0.0;
@@ -480,6 +379,81 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 l
     shadow /= float(samples);
     return shadow;
 }
+
+void main()
+{
+    vec3 norm;
+    if (material.has_texture_normal_map)
+    {
+        // Sample the normal map texture
+        norm = texture(material.texture_normal, fs_in.TexCoords).rgb;
+        norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
+
+        // Transform normal from tangent space to world space
+        vec3 T = normalize(fs_in.Tangent);
+        vec3 B = normalize(fs_in.Bitangent);
+        vec3 N = normalize(fs_in.Normal);
+        mat3 TBN = mat3(T, B, N);
+        norm = normalize(TBN * norm);
+    }
+    else
+    {
+        norm = normalize(fs_in.Normal); // Use the geometry normal as a fallback
+    }
+
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+
+        
+    vec3 color = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
+    
+    // == =====================================================
+    // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
+    // For each phase, a calculate function is defined that calculates the corresponding color
+    // per lamp. In the main() function we take all the calculated colors and sum them up for
+    // this fragment's final color.
+    // == =====================================================
+
+    vec3 result = vec3(0.0);
+
+
+
+    // Lighting
+    for (int i = 0; i < pointLightsCount; i++)
+    {
+        if (pointLights[i].use)
+            result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
+    }
+
+    for (int i = 0; i < dirLightsCount; i++)
+    {
+        if (dirLights[i].use)
+            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir);
+    }
+
+    for (int i = 0; i < spotLightsCount; i++)
+    {
+        if (spotLights[i].use)
+            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
+    }
+    
+    // Sample the alpha value from the diffuse texture
+    float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
+
+    // gamma correct
+    //color = pow(color, vec3(1.0/2.2));
+
+    // Set the fragment color with the alpha channel
+    FragColor = vec4(result, alpha);
+
+    //FragColor = texture(material.texture_shadowMapCube, fs_in.TexCoords);
+
+    // Discard transparent fragments (optional)
+    if (alpha < 0.1)
+        discard;
+}
+
+
+
 
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -543,7 +517,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // calculate shadow
     //vec2 screenSize = vec2(1280, 720);
-    float shadow = enableShadows ? ShadowCalculationPointLight(fragPos, light.position) : 0.0;
+    float shadow = enableShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
     //float shadow = shadows ? ShadowCalculationCubeMap2(fragPos, light.position, normal, lightDir, screenSize) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows

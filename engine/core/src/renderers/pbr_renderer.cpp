@@ -353,6 +353,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 void engine::PbrRenderer::loadShaders()
 {
+    // PBR shaders
     pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
@@ -362,6 +363,7 @@ void engine::PbrRenderer::loadShaders()
     // HDR skybox shader
     backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
 
+    // shared shaders
     Renderer::loadShaders();
 }
 

@@ -17,8 +17,6 @@ private:
 
     engine::Text ourText{};
 
-    std::shared_ptr<engine::Skybox> ourSkybox{};
-
     float rotation{};
 
 public:

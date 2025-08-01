@@ -61,9 +61,10 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
 }
 
-void engine::BlinnPhongRenderer::setSkybox(std::shared_ptr<Skybox> skybox)
+void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
 {
-    m_skybox = std::move(skybox);
+    m_skybox = std::make_shared<Skybox>();
+    m_skybox->setup(faces);
 }
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
@@ -128,6 +129,7 @@ void engine::BlinnPhongRenderer::loadShaders()
     // skybox reflection shader
     skyboxShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
 
+    // shared shaders
     Renderer::loadShaders();
 }
 

@@ -1,7 +1,10 @@
 #include "../../include/debug/imgui_docking.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
+#include <imgui.h>
+#include <imgui_internal.h>
+
+#include <string>
+#include <format>
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -119,42 +122,92 @@ void engine::ImGuiDocking::renderTabAbout()
     ImGui::EndChild();
 }
 
+//void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
+//{
+//    // Check if this entity is selected
+//    bool isSelected = (m_selectedEntity == entity);
+//
+//
+//    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
+//
+//    if (m_selectedEntity == entity)
+//    {
+//        flags |= ImGuiTreeNodeFlags_Selected;
+//
+//        // Change text color when selected
+//        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.2f, 1.0f)); // Yellow text
+//    }
+//
+//    if (entity->children.size() == 0)
+//        flags |= ImGuiTreeNodeFlags_Leaf;
+//
+//    // Render the node
+//    bool nodeOpen = ImGui::TreeNodeEx(entity->name.c_str(), flags);
+//
+//    // Check for click to select
+//    if (ImGui::IsItemClicked())
+//        m_selectedEntity = entity;
+//
+//    // Pop color if it was pushed
+//    if (isSelected)
+//        ImGui::PopStyleColor();
+//
+//    if (nodeOpen)
+//    {
+//        for (const auto& child : entity->children)
+//        {
+//            displayEntityInImGui(child);
+//        }
+//        ImGui::TreePop();
+//    }
+//}
+
 void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
 {
     // Check if this entity is selected
     bool isSelected = (m_selectedEntity == entity);
 
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
 
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
+    if (entity->children.empty())
+        flags |= ImGuiTreeNodeFlags_Leaf;
 
-    if (m_selectedEntity == entity)
+    if (isSelected)
     {
         flags |= ImGuiTreeNodeFlags_Selected;
-
-        // Change text color when selected
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.2f, 1.0f)); // Yellow text
     }
 
-    // Render the node
-    bool nodeOpen = ImGui::TreeNodeEx(entity->name.c_str(), flags);
+    ImGui::PushID(entity.get()); // Unique ID per entity
 
-    // Check for click to select
+    GLuint iconTexture = getEntityTypeIcon(entity->getType());
+
+    // Start horizontal layout
+    bool nodeOpen = false;
+    ImGui::Image(iconTexture, ImVec2(16, 16));
+    ImGui::SameLine();
+
+    // Use TreeNodeEx with invisible label (##) to show triangle only
+    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
+
+    // Handle selection
     if (ImGui::IsItemClicked())
         m_selectedEntity = entity;
 
-    // Pop color if it was pushed
     if (isSelected)
         ImGui::PopStyleColor();
 
     if (nodeOpen)
     {
         for (const auto& child : entity->children)
-        {
             displayEntityInImGui(child);
-        }
+
         ImGui::TreePop();
     }
+
+    ImGui::PopID();
 }
+
 
 void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
@@ -177,5 +230,20 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
             m_selectedEntity->transform.getLocalScale().x,
             m_selectedEntity->transform.getLocalScale().y,
             m_selectedEntity->transform.getLocalScale().z);
+    }
+}
+
+GLuint engine::ImGuiDocking::getEntityTypeIcon(const engine::EntityType entityType)
+{
+    auto it = m_map.find(entityType);
+    if (it != m_map.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_20x20.png", static_cast<int>(entityType));
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_map.insert(std::make_pair(entityType, iconTexture));
     }
 }

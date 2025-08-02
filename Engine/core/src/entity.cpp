@@ -109,6 +109,20 @@ engine::AABB engine::Entity::getGlobalAABB()
 	return engine::AABB(globalCenter, newIi, newIj, newIk);
 }
 
+engine::EntityType engine::Entity::getType()
+{
+	if (this->model)
+		return engine::EntityType::model;
+	else if (this->primitive)
+		return engine::EntityType::primitive;
+	else if (this->light)
+		return engine::EntityType::light;
+	else if (this->camera)
+		return engine::EntityType::camera;
+
+	return engine::EntityType::undefined;
+}
+
 // Add a child using an existing Entity instance
 void engine::Entity::addChild(std::shared_ptr< engine::Entity> entity)
 {

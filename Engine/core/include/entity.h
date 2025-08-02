@@ -34,6 +34,9 @@ namespace engine
 	//	return frustum;
 	//}
 
+
+	enum class EntityType { undefined = 0, model = 1, primitive = 2, light = 3, camera = 4 };
+
 	class Entity
 	{
 	public:
@@ -77,6 +80,9 @@ namespace engine
 		Entity(const std::string& _name, std::shared_ptr<Camera> _camera, Transform _transform);
 		Entity(const std::string& _name, std::shared_ptr<Camera> _camera);
 		Entity(std::shared_ptr<Camera> _camera);
+
+		EntityType getType();
+	
 
 		// Add child using Entity constructor
 		// Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.

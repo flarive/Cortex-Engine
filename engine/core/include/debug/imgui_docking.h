@@ -33,6 +33,14 @@ namespace engine
 
 		void displayEntityInImGui(const std::shared_ptr<Entity>& entity);
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
+
+		GLuint getEntityTypeIcon(const engine::EntityType entityType);
+
+
+	protected:
+		std::unordered_map< engine::EntityType, GLuint> m_map;
+
+
 	};
 }
 

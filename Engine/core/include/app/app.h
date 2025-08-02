@@ -10,7 +10,7 @@ namespace engine
 {
     struct AppSettings
     {
-        unsigned int targetFPS{ 30 };
+        unsigned int targetFPS{ 0 }; // 0 means no FPS capping
     };
     
     /// <summary>
@@ -34,6 +34,7 @@ namespace engine
            
 
         const int getFrameDelay();
+        const bool capFramerate();
 
 
         bool isRunning();

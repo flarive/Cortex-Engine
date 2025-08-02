@@ -52,7 +52,15 @@ namespace engine
 		}
 
 		
-		
+		template<typename T>
+		std::shared_ptr<T> findEntityOfType()
+		{
+			std::vector<std::shared_ptr<T>> result;
+			findEntitiesOfTypeRecursive<T>(m_rootEntity, result);
+
+			return result.size() > 0 ? result[0] : nullptr;
+		}
+
 
 
 

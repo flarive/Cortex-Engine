@@ -53,6 +53,7 @@ namespace engine
         static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection);
 
         static unsigned int loadTextureFromFile(const char* path, const std::string& directory);
+        static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory);
         static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size);
         static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height);
     };

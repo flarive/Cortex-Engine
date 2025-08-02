@@ -6475,6 +6475,34 @@ bool ImGui::TreeNode(const char* label)
     return TreeNodeBehavior(id, ImGuiTreeNodeFlags_None, label, NULL);
 }
 
+//bool ImGui::TreeNodeEx2(const char* label)
+//{
+//    ImGuiContext& g = *ImGui::GetCurrentContext();
+//    ImGuiWindow* window = g.CurrentWindow;
+//
+//    ImGuiID id = window->GetID(label);
+//    ImVec2 pos = window->DC.CursorPos;
+//    ImRect bb(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+//    bool opened = ImGui::TreeNodeUpdateNextOpen(id, ImGuiTreeNodeFlags_None);
+//    bool hovered, held;
+//    if (ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick))
+//        window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
+//    if (hovered || held)
+//        window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::GetColorU32(held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered));
+//
+//    // Icon, text
+//    float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
+//    window->DrawList->AddRectFilled(pos, ImVec2(pos.x + button_sz, pos.y + button_sz), ImGui::GetColorU32(opened ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 255, 0, 255)));
+//    ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
+//
+//    ImGui::ItemSize(bb, g.Style.FramePadding.y);
+//    ImGui::ItemAdd(bb, id);
+//
+//    if (opened)
+//        ImGui::TreePush(label);
+//    return opened;
+//}
+
 bool ImGui::TreeNodeV(const char* str_id, const char* fmt, va_list args)
 {
     return TreeNodeExV(str_id, 0, fmt, args);
@@ -6876,7 +6904,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             if (flags & ImGuiTreeNodeFlags_Bullet)
                 RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
-                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f);
+                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x - 4.0, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f); // FL !!!!!!
             if (g.LogEnabled)
                 LogSetNextTextDecoration(">", NULL);
         }
@@ -6887,8 +6915,18 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         // Label
         if (display_frame)
             RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-        else
-            RenderText(text_pos, label, label_end, false);
+        else if (!is_leaf)
+        {
+            // FL !!!!!!!!!!!!!!!!!!
+            ImVec2 p(text_pos.x - 10.0, text_pos.y);
+            RenderText(p, label, label_end, false);
+        }
+        else if (is_leaf)
+        {
+            // FL !!!!!!!!!!!!!!!!!!
+            ImVec2 p(text_pos.x - 26.0, text_pos.y);
+            RenderText(p, label, label_end, false);
+        }
 
         if (span_all_columns_label)
             TablePopBackgroundChannel();

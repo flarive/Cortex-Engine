@@ -16,6 +16,11 @@ const int engine::App::getFrameDelay()
     return 1000 / settings.targetFPS; // in milliseconds
 }
 
+const bool engine::App::capFramerate()
+{
+    return settings.targetFPS > 0 ? true : false;
+}
+
 bool engine::App::isRunning()
 {
     return !glfwWindowShouldClose(window);

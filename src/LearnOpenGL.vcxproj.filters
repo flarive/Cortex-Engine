@@ -86,6 +86,9 @@
     <Filter Include="sources\app">
       <UniqueIdentifier>{15194900-fd6a-4c65-b601-a834e1986099}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\icons">
+      <UniqueIdentifier>{71d8d761-eb92-4eda-9955-007f9d6610e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -606,6 +609,9 @@
     <CopyFileToFolders Include="..\resources\models\cushion\cushion.glb">
       <Filter>resources\models\cushion</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_0_20x20.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -635,5 +641,19 @@
     <ClInclude Include="app\myscene8.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\icons\icon_1_20x20.png">
+      <Filter>resources\icons</Filter>
+    </Image>
+    <Image Include="..\resources\icons\icon_2_20x20.png">
+      <Filter>resources\icons</Filter>
+    </Image>
+    <Image Include="..\resources\icons\icon_3_20x20.png">
+      <Filter>resources\icons</Filter>
+    </Image>
+    <Image Include="..\resources\icons\icon_4_20x20.png">
+      <Filter>resources\icons</Filter>
+    </Image>
   </ItemGroup>
 </Project>

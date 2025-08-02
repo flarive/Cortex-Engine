@@ -110,16 +110,19 @@ void engine::Scene::gameLoop()
         m_debug.renderUIWindow(show_window);
     
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    //if (show_demo_window)
-    //    ImGui::ShowDemoWindow(&show_demo_window);
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
 
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
 
-
-    auto start_time = std::chrono::high_resolution_clock::now();
+    std::chrono::steady_clock::time_point start_time{};
+    if (app->capFramerate())
+    {
+        start_time = std::chrono::high_resolution_clock::now();
+    }
 
 
     // get opengl stats such as polycount drawn
@@ -169,8 +172,11 @@ void engine::Scene::gameLoop()
     // Poll and handle events (inputs, window resize, etc.)
     //glfwPollEvents();
 
-    auto end_time = std::chrono::high_resolution_clock::now();
-    std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
+    if (app->capFramerate())
+    {
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
+    }
 }
 
 void engine::Scene::drawEntities(Shader& shader)
@@ -288,7 +294,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 // -------------------------------------------------------
 void engine::Scene::mouse_callback(double xposIn, double yposIn)
 {
-    if (show_window)
+    if (show_window || show_demo_window)
         ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
 }
 

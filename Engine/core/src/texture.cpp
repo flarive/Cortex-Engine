@@ -403,6 +403,35 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
     return textureID;
 }
 
+unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory)
+{
+    std::string filename = directory + '/' + path;
+
+    unsigned int textureID = SOIL_load_OGL_texture(
+        filename.c_str(),
+        SOIL_LOAD_AUTO,
+        SOIL_CREATE_NEW_ID,
+        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT
+    );
+
+    if (textureID == 0)
+    {
+        std::cout << "Texture failed to load at path: " << path << "\n";
+        std::cout << "SOIL error: " << SOIL_last_result() << "\n";
+        exit(EXIT_FAILURE);
+    }
+
+    // Set texture parameters manually, since SOIL does not handle all of them
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return textureID;
+}
+
+
 unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size)
 {
     int width = 0, height = 0, channels = 0;

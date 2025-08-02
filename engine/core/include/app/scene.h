@@ -71,7 +71,7 @@ namespace engine
 
     public:
         bool show_window{ false };
-        bool show_demo_window{ true };
+        bool show_demo_window{ false };
         
 
         

@@ -4,6 +4,9 @@
 
 #include "../entity.h"
 
+#include <imgui.h>
+#include <imgui_internal.h>
+
 namespace engine
 {
 	class ImGuiDocking
@@ -35,10 +38,11 @@ namespace engine
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
 		GLuint getEntityTypeIcon(const engine::EntityType entityType);
+		ImVec4 getEntityColor(const engine::EntityType entityType);
 
 
 	protected:
-		std::unordered_map< engine::EntityType, GLuint> m_map;
+		std::unordered_map< engine::EntityType, GLuint> m_iconTextureCache;
 
 
 	};

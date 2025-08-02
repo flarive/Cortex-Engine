@@ -1,7 +1,6 @@
 #include "../../include/debug/imgui_docking.h"
 
-#include <imgui.h>
-#include <imgui_internal.h>
+#include "../../include/misc/color_manager.h"
 
 #include <string>
 #include <format>
@@ -9,6 +8,8 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
+
+
 
 
 void engine::ImGuiDocking::setScene(std::shared_ptr<Entity> rootEntity)
@@ -172,15 +173,17 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     if (entity->children.empty())
         flags |= ImGuiTreeNodeFlags_Leaf;
 
+    auto entityType = entity->getType();
+
     if (isSelected)
     {
         flags |= ImGuiTreeNodeFlags_Selected;
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.2f, 1.0f)); // Yellow text
+        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType)); // Yellow text
     }
 
     ImGui::PushID(entity.get()); // Unique ID per entity
 
-    GLuint iconTexture = getEntityTypeIcon(entity->getType());
+    GLuint iconTexture = getEntityTypeIcon(entityType);
 
     // Start horizontal layout
     bool nodeOpen = false;
@@ -235,8 +238,8 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
 
 GLuint engine::ImGuiDocking::getEntityTypeIcon(const engine::EntityType entityType)
 {
-    auto it = m_map.find(entityType);
-    if (it != m_map.end())
+    auto it = m_iconTextureCache.find(entityType);
+    if (it != m_iconTextureCache.end())
     {
         return it->second;
     }
@@ -244,6 +247,32 @@ GLuint engine::ImGuiDocking::getEntityTypeIcon(const engine::EntityType entityTy
         auto iconName = std::format("icon_{}_20x20.png", static_cast<int>(entityType));
         GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
 
-        m_map.insert(std::make_pair(entityType, iconTexture));
+        m_iconTextureCache.insert(std::make_pair(entityType, iconTexture));
     }
+}
+
+ImVec4 engine::ImGuiDocking::getEntityColor(const engine::EntityType entityType)
+{
+    if (entityType == engine::EntityType::model)
+    {
+        auto purple = engine::ColorManager::hexToNormalizedRGB("#d478ff");
+        return ImVec4(purple.r, purple.g, purple.b, purple.a);
+    }
+    else if (entityType == engine::EntityType::primitive)
+    {
+        auto green = engine::ColorManager::hexToNormalizedRGB("#abff78");
+        return ImVec4(green.r, green.g, green.b, green.a);
+    }
+    else if (entityType == engine::EntityType::light)
+    {
+        auto yellow = engine::ColorManager::hexToNormalizedRGB("#ffd83b");
+        return ImVec4(yellow.r, yellow.g, yellow.b, yellow.a);
+    }
+    else if (entityType == engine::EntityType::camera)
+    {
+        auto blue = engine::ColorManager::hexToNormalizedRGB("#0f9cff");
+        return ImVec4(blue.r, blue.g, blue.b, blue.a);
+    }
+
+    return ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 }

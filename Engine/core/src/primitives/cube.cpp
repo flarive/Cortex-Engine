@@ -198,4 +198,31 @@ void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::ve
 
 void engine::Cube::draw(Shader& shader, const glm::mat4 model)
 {
+    shader.use();
+
+    if (m_material) {
+        m_material->bind(shader);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+
+        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
+
+        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+        shader.setFloat("material.emissiveIntensity", 0.0f);
+    }
+
+    shader.setMat4("model", model);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
+
+    glBindVertexArray(m_VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    m_material->unbind();
 }

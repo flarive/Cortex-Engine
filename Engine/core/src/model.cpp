@@ -285,6 +285,15 @@ void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, gl
 }
 
 
+// draws the model, and thus all its meshes
+void engine::Model::draw(Shader& shader, const glm::mat4& worldTransform)
+{
+    for (auto& mesh : meshes)
+    {
+        mesh.draw(shader, worldTransform);
+    }
+}
+
 void engine::Model::clean()
 {
     for (unsigned int i = 0; i < meshes.size(); i++)

@@ -182,36 +182,148 @@ void engine::Scene::gameLoop()
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
-    drawEntityRecursive(m_entityManager.getRootEntity(), shader);
-    
+    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, glm::mat4(1.0f));
+    //
+    //m_entityManager.getRootEntity()->updateSelfAndChild();
+
+    // Precompute transforms for all entities before drawing
     m_entityManager.getRootEntity()->updateSelfAndChild();
+
+    // Draw using stored world transforms
+    drawEntityRecursive(m_entityManager.getRootEntity(), shader);
 }
 
-void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
-{
-    // Set model matrix for current entity
-    shader.setMat4("model", entity->transform.getModelMatrix());
+//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& parentTransform)
+//{
+//    // Set model matrix for current entity
+//    //shader.setMat4("model", entity->transform.getModelMatrix());
+//
+//    glm::mat4 worldTransform = parentTransform * entity->transform.getModelMatrix();
+//    shader.setMat4("model", worldTransform);
+//
+//    // Draw the entity if it has a model
+//    if (entity->model)
+//    {
+//        entity->model->draw(shader,
+//            entity->transform.getLocalPosition(),
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());
+//    }
+//    else if (entity->primitive)
+//    {
+//        entity->primitive->draw(shader,
+//            entity->transform.getLocalPosition(),
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());
+//    }
+//    else if (entity->light)
+//    {
+//        // view/projection transformations
+//        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
+//        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+//
+//        entity->light->draw(shader,
+//            projection,
+//            view,
+//            entity->light->ambientColor,
+//            entity->light->diffuseColor,
+//            entity->light->specularColor,
+//            entity->light->intensity,
+//            entity->transform.getLocalPosition(),
+//            entity->light->target,
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());
+//    }
+//
+//    // Recurse on children
+//    for (const auto& child : entity->children)
+//    {
+//        drawEntityRecursive(child, shader, worldTransform);
+//    }
+//}
 
-    // Draw the entity if it has a model
+//void engine::Scene::drawEntityRecursive(
+//    const std::shared_ptr<engine::Entity>& entity,
+//    Shader& shader,
+//    const glm::mat4& parentTransform)
+//{
+//    // Combine parent's world transform with this entity's local transform
+//    glm::mat4 worldTransform = parentTransform * entity->transform.getModelMatrix();
+//
+//    // Send to shader
+//    shader.setMat4("model", worldTransform);
+//
+//    // Draw the entity if it has a model
+//    if (entity->model)
+//    {
+//        /*entity->model->draw(shader,
+//            entity->transform.getLocalPosition(),
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());*/
+//
+//        entity->model->draw(shader, worldTransform);
+//    }
+//    else if (entity->primitive)
+//    {
+//        entity->primitive->draw(shader,
+//            entity->transform.getLocalPosition(),
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());
+//    }
+//    else if (entity->light)
+//    {
+//        glm::mat4 projection = glm::perspective(
+//            glm::radians(getActiveCamera()->zoom),
+//            (float)app->width / (float)app->height,
+//            0.1f, 100.0f
+//        );
+//        glm::mat4 view = getActiveCamera()->GetViewMatrix();
+//
+//        entity->light->draw(shader,
+//            projection,
+//            view,
+//            entity->light->ambientColor,
+//            entity->light->diffuseColor,
+//            entity->light->specularColor,
+//            entity->light->intensity,
+//            entity->transform.getLocalPosition(),
+//            entity->light->target,
+//            entity->transform.getLocalScale(),
+//            entity->transform.getLocalRotation());
+//    }
+//
+//    // Draw children using the computed world transform
+//    for (const auto& child : entity->children)
+//    {
+//        drawEntityRecursive(child, shader, worldTransform);
+//    }
+//}
+
+
+void engine::Scene::drawEntityRecursive(
+    const std::shared_ptr<engine::Entity>& entity,
+    Shader& shader)
+{
+    // Use the precomputed transform
+    shader.use();
+    shader.setMat4("model", entity->worldTransform);
+
     if (entity->model)
     {
-        entity->model->draw(shader,
-            entity->transform.getLocalPosition(),
-            entity->transform.getLocalScale(),
-            entity->transform.getLocalRotation());
+        entity->model->draw(shader, entity->worldTransform);
     }
     else if (entity->primitive)
     {
-        entity->primitive->draw(shader,
-            entity->transform.getLocalPosition(),
-            entity->transform.getLocalScale(),
-            entity->transform.getLocalRotation());
+        entity->primitive->draw(shader, entity->worldTransform);
     }
     else if (entity->light)
     {
-        // view/projection transformations
-        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
-        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
+        glm::mat4 projection = glm::perspective(
+            glm::radians(getActiveCamera()->zoom),
+            (float)app->width / (float)app->height,
+            0.1f, 100.0f
+        );
+        glm::mat4 view = getActiveCamera()->GetViewMatrix();
 
         entity->light->draw(shader,
             projection,
@@ -226,12 +338,14 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->transform.getLocalRotation());
     }
 
-    // Recurse on children
+    // Draw children
     for (const auto& child : entity->children)
     {
         drawEntityRecursive(child, shader);
     }
 }
+
+
 
 void engine::Scene::exit()
 {
@@ -264,8 +378,17 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     UNREFERENCED_PARAMETER(scancode);
     UNREFERENCED_PARAMETER(mods);
 
-    // basic window handling
-    switch (key) {
+
+    if (show_window || show_demo_window)
+        ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
+    else
+    {
+
+
+
+
+        // basic window handling
+        switch (key) {
         case GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(app->window, GL_TRUE); break;
         case GLFW_KEY_ENTER:
@@ -287,6 +410,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
                 key_w_pressed = false;
             }
             break;
+        }
     }
 }
 
@@ -305,7 +429,7 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
     UNREFERENCED_PARAMETER(xoffset);
     UNREFERENCED_PARAMETER(yoffset);
 
-    if (show_window)
+    if (show_window || show_demo_window)
         ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????
 }
 

@@ -1,4 +1,4 @@
-#include "../include/entity.h"
+﻿#include "../include/entity.h"
 
 //#include "../include/primitives/cube.h"
 
@@ -123,6 +123,20 @@ engine::EntityType engine::Entity::getType()
 	return engine::EntityType::undefined;
 }
 
+std::string engine::Entity::getTypeName()
+{
+	if (this->model)
+		return "Model";
+	else if (this->primitive)
+		return "Primitive";
+	else if (this->light)
+		return "Light";
+	else if (this->camera)
+		return "Camera";
+
+	return "";
+}
+
 // Add a child using an existing Entity instance
 void engine::Entity::addChild(std::shared_ptr< engine::Entity> entity)
 {
@@ -136,8 +150,15 @@ void engine::Entity::addChild(std::shared_ptr< engine::Entity> entity)
 }
 
 //Update transform if it was changed
-void engine::Entity::updateSelfAndChild()
+void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 {
+	// Compute world transform from parent's world and local
+	//worldTransform = parentTransform * transform.getModelMatrix();
+
+	// Compute my world transform
+	glm::mat4 localModel = transform.getModelMatrix(); // local
+	worldTransform = parentTransform * localModel;         // world
+	
 	if (transform.isDirty()) {
 		// Update current node and propagate to children
 		forceUpdateSelfAndChild();
@@ -146,18 +167,34 @@ void engine::Entity::updateSelfAndChild()
 		// Still update children because they may be dirty themselves
 		for (auto&& child : children)
 		{
-			child->updateSelfAndChild();
+			child->updateSelfAndChild(worldTransform);
 		}
 	}
 }
+
+//void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
+//{
+//	// Compute world transform from parent's world and local
+//	worldTransform = parentTransform * transform.getModelMatrix();
+//
+//	// Recursively update children
+//	for (auto& child : children)
+//	{
+//		if (child) child->updateSelfAndChild(worldTransform);
+//	}
+//}
+
+
 
 //Force update of transform even if local space don't change
 void engine::Entity::forceUpdateSelfAndChild()
 {
 	if (parent)
-		transform.computeModelMatrix(parent->transform.getModelMatrix());
+	{
+		transform.computeModelMatrix(name, parent->transform.getModelMatrix());
+	}
 	else
-		transform.computeModelMatrix();
+		transform.computeModelMatrix(name);
 
 	for (auto&& child : children)
 	{
@@ -169,7 +206,8 @@ void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader,
 {
 	if (boundingVolume->isOnFrustum(frustum, transform))
 	{
-		ourShader.setMat4("model", transform.getModelMatrix());
+		//ourShader.setMat4("model", transform.getModelMatrix());
+		ourShader.setMat4("model", worldTransform);
 		model->draw(ourShader);
 		display++;
 	}

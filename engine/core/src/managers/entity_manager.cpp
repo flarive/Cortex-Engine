@@ -145,5 +145,5 @@ void engine::EntityManager::removeFromCacheRecursive(const std::shared_ptr<engin
 
 void engine::EntityManager::updateSelfAndChild()
 {
-    m_rootEntity->updateSelfAndChild();
+    m_rootEntity->updateSelfAndChild(glm::mat4(1.0f));
 }

@@ -63,6 +63,9 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 model)
 
     glBindVertexArray(VAO);
 
+    std::cout << "engine::Mesh::draw " << model[3].x << "/" << model[3].y << "/" << model[3].z << std::endl;
+        
+        
     shader.setMat4("model", model);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
     shader.setBool("hasTangents", true);

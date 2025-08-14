@@ -37,12 +37,19 @@ namespace engine
 		void displayEntityInImGui(const std::shared_ptr<Entity>& entity);
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
-		GLuint getEntityTypeIcon(const engine::EntityType entityType);
+		GLuint getEntityTypeSmallIcon(const EntityType entityType);
+		GLuint getEntityTypeMediumIcon(const EntityType entityType);
+
 		ImVec4 getEntityColor(const engine::EntityType entityType);
+
+		void drawTransformEditor(Transform& transform);
 
 
 	protected:
-		std::unordered_map< engine::EntityType, GLuint> m_iconTextureCache;
+		std::unordered_map< EntityType, GLuint> m_iconSmallTextureCache;
+		std::unordered_map< EntityType, GLuint> m_iconMediumTextureCache;
+
+		float itemWidth = 60.0f; // pixels
 
 
 	};

@@ -39,6 +39,8 @@ namespace engine
         // draws the model, and thus all its meshes
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f));
 
+        void draw(Shader& shader, const glm::mat4& worldTransform);
+
         void clean();
 
 

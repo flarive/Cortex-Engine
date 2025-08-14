@@ -47,7 +47,12 @@ namespace engine
 		Entity* parent{};
 
 		//Space information
-		Transform transform{};
+		//Transform transform{};
+
+		//glm::mat4 worldTransform{ 1.0f }; // new: stores final world transform
+
+		Transform transform{};       // local position/rotation/scale
+		glm::mat4 worldTransform{};  // should be full parent * local
 
 		std::string name{};
 		std::shared_ptr<Model> model{};
@@ -82,6 +87,7 @@ namespace engine
 		Entity(std::shared_ptr<Camera> _camera);
 
 		EntityType getType();
+		std::string getTypeName();
 	
 
 		// Add child using Entity constructor
@@ -97,7 +103,9 @@ namespace engine
 		void addChild(std::shared_ptr<Entity> entity);
 
 		//Update transform if it was changed
-		void updateSelfAndChild();
+		//void updateSelfAndChild();
+
+		void updateSelfAndChild(const glm::mat4& parentTransform = glm::mat4(1.0f));
 
 		//Force update of transform even if local space don't change
 		void forceUpdateSelfAndChild();

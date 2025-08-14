@@ -185,6 +185,14 @@ void engine::App::initImGUI(const char* glsl_version)
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
+    ////ImGuiIO& io = ImGui::GetIO();
+    //ImFont* defaultFont = io.Fonts->AddFontDefault(); // Default
+    //ImFont* largeFont = io.Fonts->AddFontFromFileTTF("fonts/Raleway-Medium.ttf", 20.0f); // Larger font
+
+
+
+
+
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags)

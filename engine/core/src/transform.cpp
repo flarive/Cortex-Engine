@@ -18,20 +18,24 @@ glm::mat4 engine::Transform::getLocalModelMatrix()
 	return glm::translate(glm::mat4(1.0f), m_pos) * rotationMatrix * glm::scale(glm::mat4(1.0f), m_scale);
 }
 
-void engine::Transform::computeModelMatrix()
+void engine::Transform::computeModelMatrix(const std::string& name)
 {
 	m_modelMatrix = getLocalModelMatrix();
 
 	m_globalPosition = m_modelMatrix[3];
 
+	std::cout << "computeModelMatrix " << name << " " << m_globalPosition.x << "/" << m_globalPosition.y << "/" << m_globalPosition.z << std::endl;
+
 	m_isDirty = false;
 }
 
-void engine::Transform::computeModelMatrix(const glm::mat4& parentGlobalModelMatrix)
+void engine::Transform::computeModelMatrix(const std::string& name, const glm::mat4& parentGlobalModelMatrix)
 {
 	m_modelMatrix = parentGlobalModelMatrix * getLocalModelMatrix();
 
 	m_globalPosition = m_modelMatrix[3];
+
+	std::cout << "computeModelMatrix parent " << name << " " << m_globalPosition.x << "/" << m_globalPosition.y << "/" << m_globalPosition.z << std::endl;
 
 	m_isDirty = false;
 }
@@ -60,17 +64,17 @@ const glm::vec3& engine::Transform::getGlobalPosition() const
 	//return m_modelMatrix[3];
 }
 
-const glm::vec3& engine::Transform::getLocalPosition() const
+glm::vec3& engine::Transform::getLocalPosition()
 {
 	return m_pos;
 }
 
-const glm::vec3& engine::Transform::getLocalRotation() const
+glm::vec3& engine::Transform::getLocalRotation()
 {
 	return m_eulerRot;
 }
 
-const glm::vec3& engine::Transform::getLocalScale() const
+glm::vec3& engine::Transform::getLocalScale()
 {
 	return m_scale;
 }
@@ -104,6 +108,11 @@ glm::vec3 engine::Transform::getForward() const
 glm::vec3 engine::Transform::getGlobalScale() const
 {
 	return { glm::length(getRight()), glm::length(getUp()), glm::length(getBackward()) };
+}
+
+void engine::Transform::setDirty()
+{
+	m_isDirty = true;
 }
 
 bool engine::Transform::isDirty() const

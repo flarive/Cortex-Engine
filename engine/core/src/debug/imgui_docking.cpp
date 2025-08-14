@@ -8,7 +8,11 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
+#include "../../include/transform.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -123,46 +127,6 @@ void engine::ImGuiDocking::renderTabAbout()
     ImGui::EndChild();
 }
 
-//void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
-//{
-//    // Check if this entity is selected
-//    bool isSelected = (m_selectedEntity == entity);
-//
-//
-//    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
-//
-//    if (m_selectedEntity == entity)
-//    {
-//        flags |= ImGuiTreeNodeFlags_Selected;
-//
-//        // Change text color when selected
-//        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.2f, 1.0f)); // Yellow text
-//    }
-//
-//    if (entity->children.size() == 0)
-//        flags |= ImGuiTreeNodeFlags_Leaf;
-//
-//    // Render the node
-//    bool nodeOpen = ImGui::TreeNodeEx(entity->name.c_str(), flags);
-//
-//    // Check for click to select
-//    if (ImGui::IsItemClicked())
-//        m_selectedEntity = entity;
-//
-//    // Pop color if it was pushed
-//    if (isSelected)
-//        ImGui::PopStyleColor();
-//
-//    if (nodeOpen)
-//    {
-//        for (const auto& child : entity->children)
-//        {
-//            displayEntityInImGui(child);
-//        }
-//        ImGui::TreePop();
-//    }
-//}
-
 void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
 {
     // Check if this entity is selected
@@ -178,12 +142,12 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     if (isSelected)
     {
         flags |= ImGuiTreeNodeFlags_Selected;
-        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType)); // Yellow text
+        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType));
     }
 
     ImGui::PushID(entity.get()); // Unique ID per entity
 
-    GLuint iconTexture = getEntityTypeIcon(entityType);
+    GLuint iconTexture = getEntityTypeSmallIcon(entityType);
 
     // Start horizontal layout
     bool nodeOpen = false;
@@ -191,7 +155,7 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     ImGui::SameLine();
 
     // Use TreeNodeEx with invisible label (##) to show triangle only
-    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
+    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s %s", entity->name.c_str(), (entity->transform.isDirty() ? "*" : ""));
 
     // Handle selection
     if (ImGui::IsItemClicked())
@@ -211,43 +175,208 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     ImGui::PopID();
 }
 
-
 void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
     if (entity)
     {
-        ImGui::Text("%s",
-            m_selectedEntity->name.c_str());
+        auto entityType = entity->getType();
+        GLuint iconTexture = getEntityTypeMediumIcon(entityType);
 
-        ImGui::Text("Position = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalPosition().x,
-            m_selectedEntity->transform.getLocalPosition().y,
-            m_selectedEntity->transform.getLocalPosition().z);
+        // Draw the icon
+        ImGui::Image(iconTexture, ImVec2(48, 48));
 
-        ImGui::Text("Rotation = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalRotation().x,
-            m_selectedEntity->transform.getLocalRotation().y,
-            m_selectedEntity->transform.getLocalRotation().z);
+        // Place next content on the same line as the image
+        ImGui::SameLine();
 
-        ImGui::Text("Scale = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalScale().x,
-            m_selectedEntity->transform.getLocalScale().y,
-            m_selectedEntity->transform.getLocalScale().z);
+        // Create a vertical group next to the image
+        ImGui::BeginGroup();
+
+        // Entity name with color
+        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType));
+        ImGui::Text("%s", m_selectedEntity->name.c_str());
+        ImGui::PopStyleColor();
+
+        // Type name directly below
+        ImGui::Text("%s", m_selectedEntity->getTypeName().c_str());
+
+        ImGui::EndGroup();
+
+        ImGui::Separator();
+
+        //static float posx;
+        //ImGui::InputFloat("aaa", &posx, 0.1f, 0.5f, "%.3f");
+
+
+
+
+        //ImGui::Text("Position = (%.2f, %.2f, %.2f)",
+        //    m_selectedEntity->transform.getLocalPosition().x,
+        //    m_selectedEntity->transform.getLocalPosition().y,
+        //    m_selectedEntity->transform.getLocalPosition().z);
+
+        //ImGui::Text("Rotation = (%.2f, %.2f, %.2f)",
+        //    m_selectedEntity->transform.getLocalRotation().x,
+        //    m_selectedEntity->transform.getLocalRotation().y,
+        //    m_selectedEntity->transform.getLocalRotation().z);
+
+        //ImGui::Text("Scale = (%.2f, %.2f, %.2f)",
+        //    m_selectedEntity->transform.getLocalScale().x,
+        //    m_selectedEntity->transform.getLocalScale().y,
+        //    m_selectedEntity->transform.getLocalScale().z);
+
+
+        drawTransformEditor(m_selectedEntity->transform);
     }
 }
 
-GLuint engine::ImGuiDocking::getEntityTypeIcon(const engine::EntityType entityType)
+// Draw the TRS editor
+void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
 {
-    auto it = m_iconTextureCache.find(entityType);
-    if (it != m_iconTextureCache.end())
+    // ---------------- Position ----------------
+    ImGui::Text("Position");
+
+    
+
+    // X
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+    if (ImGui::DragFloat("X##pos", &transform.getLocalPosition().x, 0.1f))
+    {
+        transform.setDirty();
+    }
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Y
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+    if (ImGui::DragFloat("Y##pos", &transform.getLocalPosition().y, 0.1f))
+    {
+        transform.setDirty();
+    }
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Z
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+    if (ImGui::DragFloat("Z##pos", &transform.getLocalPosition().z, 0.1f))
+    {
+        transform.setDirty();
+    }
+    ImGui::PopStyleColor(3);
+
+    
+
+
+
+    // ---------------- Rotation ----------------
+    ImGui::Text("Rotation");
+
+    // X (Red)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+    ImGui::DragFloat("X##rot", &transform.getLocalRotation().x, 0.5f);
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Y (Green)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+    ImGui::DragFloat("Y##rot", &transform.getLocalRotation().y, 0.5f);
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Z (Blue)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+    ImGui::DragFloat("Z##rot", &transform.getLocalRotation().z, 0.5f);
+    ImGui::PopStyleColor(3);
+
+
+    
+    // ---------------- Scale ----------------
+    ImGui::Text("Scale");
+
+
+    // X (Red)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+    ImGui::DragFloat("X##sca", &transform.getLocalScale().x, 0.05f);
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Y (Green)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+    ImGui::DragFloat("Y##sca", &transform.getLocalScale().y, 0.05f);
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    // Z (Blue)
+    ImGui::SetNextItemWidth(itemWidth);
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+    ImGui::DragFloat("Z##sca", &transform.getLocalScale().z, 0.05f);
+    ImGui::PopStyleColor(3);
+}
+
+
+
+GLuint engine::ImGuiDocking::getEntityTypeSmallIcon(const engine::EntityType entityType)
+{
+    auto it = m_iconSmallTextureCache.find(entityType);
+    if (it != m_iconSmallTextureCache.end())
     {
         return it->second;
     }
     else {
-        auto iconName = std::format("icon_{}_20x20.png", static_cast<int>(entityType));
+        auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
         GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
 
-        m_iconTextureCache.insert(std::make_pair(entityType, iconTexture));
+        m_iconSmallTextureCache.insert(std::make_pair(entityType, iconTexture));
+
+        return iconTexture;
+    }
+}
+
+GLuint engine::ImGuiDocking::getEntityTypeMediumIcon(const engine::EntityType entityType)
+{
+    auto it = m_iconMediumTextureCache.find(entityType);
+    if (it != m_iconMediumTextureCache.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_48x48.png", static_cast<int>(entityType));
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_iconMediumTextureCache.insert(std::make_pair(entityType, iconTexture));
+
+        return iconTexture;
     }
 }
 

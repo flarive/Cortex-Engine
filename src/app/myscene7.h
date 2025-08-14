@@ -117,35 +117,48 @@ public:
 
         // sample flat entity hierarchy
         float offset = -15.0f;
-        for (unsigned int i = 1; i <= 7; ++i)
-        {
-            auto trs = engine::Transform{};
-            trs.setLocalPosition({ offset, -22.0f, -10.0f });
-            trs.setLocalScale(glm::vec3(2.0f));
-            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+        //for (unsigned int i = 1; i <= 7; ++i)
+        //{
+        //    auto trs = engine::Transform{};
+        //    trs.setLocalPosition({ offset, -22.0f, -10.0f });
+        //    trs.setLocalScale(glm::vec3(2.0f));
+        //    trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-            getEntityManager().addChild(entity);
 
-            offset += 5.0f;
-        }
+        //    std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+        //    getEntityManager().addChild(entity);
+
+        //    offset += 5.0f;
+        //}
 
 
         // sample nested entity hierarchy
         offset = -15.0f;
         std::shared_ptr<engine::Entity> lastEntity = getEntityManager().getRootEntity();
-        for (unsigned int i = 11; i < 18; ++i)
+        for (unsigned int i = 1; i < 3; ++i)
         {
             auto trs = engine::Transform{};
-            trs.setLocalPosition({ offset, -12.0f, -10.0f });
-            trs.setLocalScale(glm::vec3(2.0f));
-            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+            if (i == 1)
+            {
+                trs.setLocalPosition({ offset, -12.0f, -10.0f });
+                trs.setLocalScale(glm::vec3(2.0f));
+                trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+            }
+            else
+            {
+                trs.setLocalPosition({ offset, 0.0f, 0.0f });
+                trs.setLocalScale(glm::vec3(1.0f));
+                trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
+            }
+
+            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i), model, trs);
             getEntityManager().addChild(lastEntity, entity);
-            lastEntity = lastEntity->children.back();
 
-            offset += 5.0f;
+            if (i == 1)
+                lastEntity = lastEntity->children.back();
+
+            offset += 3.0f;
         }
 
         
@@ -184,7 +197,7 @@ public:
 
 
 
-        getEntityManager().updateSelfAndChild();
+        //getEntityManager().updateSelfAndChild();
 
 
 
@@ -324,11 +337,11 @@ public:
         UNREFERENCED_PARAMETER(shader);
 
 
-        auto child2 = getEntityManager().findEntityByName("Child2");
-        if (child2)
-        {
-            child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
-        }
+        //auto child2 = getEntityManager().findEntityByName("Child2");
+        //if (child2)
+        //{
+        //    child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        //}
 
 
         //auto mySphere = getEntityManager().findEntityByName("MySphere");

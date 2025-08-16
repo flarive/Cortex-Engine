@@ -5,7 +5,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
-//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
 
 #include <format>
 

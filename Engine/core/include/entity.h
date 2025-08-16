@@ -46,11 +46,6 @@ namespace engine
 		
 		Entity* parent{};
 
-		//Space information
-		//Transform transform{};
-
-		//glm::mat4 worldTransform{ 1.0f }; // new: stores final world transform
-
 		Transform transform{};       // local position/rotation/scale
 		glm::mat4 worldTransform{};  // should be full parent * local
 

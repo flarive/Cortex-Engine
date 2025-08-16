@@ -86,14 +86,15 @@ engine::Entity::Entity(std::shared_ptr<engine::Camera> _camera) : camera{ _camer
 
 engine::AABB engine::Entity::getGlobalAABB()
 {
-	//Get global scale thanks to our transform
-	const glm::vec3 globalCenter{ transform.getModelMatrix() * glm::vec4(boundingVolume->center, 1.f) };
+	// Transform local center into world space
+	const glm::vec3 globalCenter{ worldTransform * glm::vec4(boundingVolume->center, 1.f) };
 
-	// Scaled orientation
-	const glm::vec3 right = transform.getRight() * boundingVolume->extents.x;
-	const glm::vec3 up = transform.getUp() * boundingVolume->extents.y;
-	const glm::vec3 forward = transform.getForward() * boundingVolume->extents.z;
+	// Get scaled orientation axes from world transform
+	const glm::vec3 right = transform.getRight(worldTransform) * boundingVolume->extents.x;
+	const glm::vec3 up = transform.getUp(worldTransform) * boundingVolume->extents.y;
+	const glm::vec3 forward = transform.getForward(worldTransform) * boundingVolume->extents.z;
 
+	// Project onto global axes
 	const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
 		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
 		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
@@ -138,7 +139,7 @@ std::string engine::Entity::getTypeName()
 }
 
 // Add a child using an existing Entity instance
-void engine::Entity::addChild(std::shared_ptr< engine::Entity> entity)
+void engine::Entity::addChild(std::shared_ptr<engine::Entity> entity)
 {
 	if (entity->parent != nullptr) {
 		// Optional: throw, log warning, or remove from previous parent
@@ -149,75 +150,45 @@ void engine::Entity::addChild(std::shared_ptr< engine::Entity> entity)
 	children.emplace_back(std::move(entity));
 }
 
-//Update transform if it was changed
+// Recursively update world transforms
 void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 {
-	// Compute world transform from parent's world and local
-	//worldTransform = parentTransform * transform.getModelMatrix();
-
-	// Compute my world transform
-	glm::mat4 localModel = transform.getModelMatrix(); // local
-	worldTransform = parentTransform * localModel;         // world
-	
-	if (transform.isDirty()) {
-		// Update current node and propagate to children
-		forceUpdateSelfAndChild();
+	if (parent == nullptr) {
+		glm::mat4 localModel = transform.getLocalModelMatrix();
+		worldTransform = parentTransform * localModel;
 	}
 	else {
-		// Still update children because they may be dirty themselves
-		for (auto&& child : children)
-		{
-			child->updateSelfAndChild(worldTransform);
-		}
+		// Still need to recompute in case parent changed
+		worldTransform = parentTransform * transform.getLocalModelMatrix();
+	}
+
+	for (auto& child : children) {
+		child->updateSelfAndChild(worldTransform);
 	}
 }
 
-//void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
-//{
-//	// Compute world transform from parent's world and local
-//	worldTransform = parentTransform * transform.getModelMatrix();
-//
-//	// Recursively update children
-//	for (auto& child : children)
-//	{
-//		if (child) child->updateSelfAndChild(worldTransform);
-//	}
-//}
-
-
-
-//Force update of transform even if local space don't change
 void engine::Entity::forceUpdateSelfAndChild()
 {
 	if (parent)
-	{
-		transform.computeModelMatrix(name, parent->transform.getModelMatrix());
-	}
+		updateSelfAndChild(parent->worldTransform);
 	else
-		transform.computeModelMatrix(name);
-
-	for (auto&& child : children)
-	{
-		child->forceUpdateSelfAndChild();
-	}
+		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
 }
 
 void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)
 {
-	if (boundingVolume->isOnFrustum(frustum, transform))
-	{
-		//ourShader.setMat4("model", transform.getModelMatrix());
+	if (boundingVolume->isOnFrustum(frustum, worldTransform)) {
 		ourShader.setMat4("model", worldTransform);
-		model->draw(ourShader);
+		if (model) model->draw(ourShader);
 		display++;
 	}
 	total++;
 
-	for (auto&& child : children)
-	{
+	for (auto& child : children) {
 		child->drawSelfAndChild(frustum, ourShader, display, total);
 	}
 }
+
 
 engine::AABB engine::Entity::generateAABB(const std::shared_ptr<Model> model)
 {

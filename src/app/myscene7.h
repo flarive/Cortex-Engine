@@ -117,36 +117,40 @@ public:
 
         // sample flat entity hierarchy
         float offset = -15.0f;
-        //for (unsigned int i = 1; i <= 7; ++i)
-        //{
-        //    auto trs = engine::Transform{};
-        //    trs.setLocalPosition({ offset, -22.0f, -10.0f });
-        //    trs.setLocalScale(glm::vec3(2.0f));
-        //    trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+        for (unsigned int i = 1; i <= 7; ++i)
+        {
+            auto trs = engine::Transform{};
+            trs.setLocalPosition({ offset, -22.0f, -10.0f });
+            trs.setLocalScale(glm::vec3(2.0f));
+            trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
 
-        //    std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
-        //    getEntityManager().addChild(entity);
+            std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), model, trs);
+            getEntityManager().addChild(entity);
 
-        //    offset += 5.0f;
-        //}
+            offset += 5.0f;
+        }
 
 
         // sample nested entity hierarchy
         offset = -15.0f;
         std::shared_ptr<engine::Entity> lastEntity = getEntityManager().getRootEntity();
-        for (unsigned int i = 1; i < 3; ++i)
+        for (unsigned int i = 1; i < 8; ++i)
         {
             auto trs = engine::Transform{};
 
             if (i == 1)
             {
+                // parent
                 trs.setLocalPosition({ offset, -12.0f, -10.0f });
                 trs.setLocalScale(glm::vec3(2.0f));
                 trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
+
+                offset = 0.0f;
             }
             else
             {
+                // childs
                 trs.setLocalPosition({ offset, 0.0f, 0.0f });
                 trs.setLocalScale(glm::vec3(1.0f));
                 trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
@@ -158,7 +162,7 @@ public:
             if (i == 1)
                 lastEntity = lastEntity->children.back();
 
-            offset += 3.0f;
+            offset -= 2.5f;
         }
 
         

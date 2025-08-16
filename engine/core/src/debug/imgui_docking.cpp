@@ -155,7 +155,7 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     ImGui::SameLine();
 
     // Use TreeNodeEx with invisible label (##) to show triangle only
-    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s %s", entity->name.c_str(), (entity->transform.isDirty() ? "*" : ""));
+    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
 
     // Handle selection
     if (ImGui::IsItemClicked())
@@ -242,10 +242,7 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-    if (ImGui::DragFloat("X##pos", &transform.getLocalPosition().x, 0.1f))
-    {
-        transform.setDirty();
-    }
+    ImGui::DragFloat("X##pos", &transform.getLocalPosition().x, 0.1f);
     ImGui::PopStyleColor(3);
 
     ImGui::SameLine();
@@ -255,10 +252,7 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-    if (ImGui::DragFloat("Y##pos", &transform.getLocalPosition().y, 0.1f))
-    {
-        transform.setDirty();
-    }
+    ImGui::DragFloat("Y##pos", &transform.getLocalPosition().y, 0.1f);
     ImGui::PopStyleColor(3);
 
     ImGui::SameLine();
@@ -268,10 +262,7 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-    if (ImGui::DragFloat("Z##pos", &transform.getLocalPosition().z, 0.1f))
-    {
-        transform.setDirty();
-    }
+    ImGui::DragFloat("Z##pos", &transform.getLocalPosition().z, 0.1f);
     ImGui::PopStyleColor(3);
 
     

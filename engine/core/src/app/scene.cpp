@@ -185,7 +185,8 @@ void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
     // Precompute transforms for all entities before drawing
-    m_entityManager.getRootEntity()->updateSelfAndChild();
+    if (shader.name != "outline")
+        m_entityManager.getRootEntity()->updateSelfAndChild();
 
     // Draw using stored world transforms
     drawEntityRecursive(m_entityManager.getRootEntity(), shader);
@@ -197,33 +198,42 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     shader.use();
     shader.setMat4("model", entity->worldTransform);
 
+    glm::mat4 projection = glm::perspective(
+        glm::radians(getActiveCamera()->zoom),
+        (float)app->width / (float)app->height,
+        0.1f, 100.0f
+    );
+    glm::mat4 view = getActiveCamera()->GetViewMatrix();
+
+
+    if (shader.name != "outline")
+    {
+        glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+        glStencilMask(0xFF);
+    }
+    else
+    {
+        // Only draw outline where stencil != objectID
+        glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+        glStencilMask(0x00); // disable stencil writes
+
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
+        shader.setFloat("outlineWidth", 0.08f);
+    }
+
+    
+
     if (entity->model)
     {
         entity->model->draw(shader, entity->worldTransform);
-
-        if (shader.name == "outline" && entity->name == "MySphere5")
-        {
-            shader.setFloat("outlineWidth", 0.08f);
-        }
     }
     else if (entity->primitive)
     {
         entity->primitive->draw(shader, entity->worldTransform);
-
-        if (shader.name == "outline" && entity->name == "MySphere5")
-        {
-            shader.setFloat("outlineWidth", 0.08f);
-        }
     }
     else if (entity->light)
     {
-        glm::mat4 projection = glm::perspective(
-            glm::radians(getActiveCamera()->zoom),
-            (float)app->width / (float)app->height,
-            0.1f, 100.0f
-        );
-        glm::mat4 view = getActiveCamera()->GetViewMatrix();
-
         entity->light->draw(shader,
             projection,
             view,
@@ -235,6 +245,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->light->target,
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
+    }
+
+    if (shader.name == "outline")
+    {
+        // Restore state
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
     }
 
     // Draw children

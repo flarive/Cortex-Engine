@@ -316,35 +316,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 
-
-
-    // 1st. render pass, draw objects as normal, writing to the stencil buffer
-    // --------------------------------------------------------------------
-    // This writes 1 into the stencil buffer wherever an object is rendered.
-    glStencilFunc(GL_ALWAYS, 1, 0xFF);
-    glStencilMask(0xFF);
-
     // update user stuffs
     update(pbrShader);
-
-
-    // 2nd. render pass: now draw slightly scaled versions of the objects, this time disabling stencil writing.
-    // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not drawn, thus only drawing 
-    // the objects' size differences, making it look like borders.
-    // -----------------------------------------------------------------------------------------------------------------------------
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilMask(0x00);
-    //glDisable(GL_DEPTH_TEST);
-    outlineColorShader.use();
-    outlineColorShader.setMat4("view", view);
-    outlineColorShader.setMat4("projection", projection);
-    outlineColorShader.setFloat("outlineWidth", 0.0f);
     update(outlineColorShader);
-    //glEnable(GL_DEPTH_TEST);
-    glStencilMask(0xFF);
-    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-    
-
 
     // render skybox (render as last to prevent overdraw)
     backgroundShader.use();

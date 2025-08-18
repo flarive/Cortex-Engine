@@ -40,6 +40,7 @@ namespace engine
 	class Entity
 	{
 	public:
+		
 		//Scene graph
 		std::list<std::shared_ptr<Entity>> children{};
 		
@@ -49,6 +50,7 @@ namespace engine
 		Transform transform{};       // local position/rotation/scale
 		glm::mat4 worldTransform{};  // should be full parent * local
 
+		unsigned int id{};
 		std::string name{};
 		std::shared_ptr<Model> model{};
 		std::shared_ptr<Primitive> primitive{};
@@ -107,6 +109,8 @@ namespace engine
 
 
 	private:
+
+		unsigned int generateID();
 		AABB getGlobalAABB();
 
 		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);

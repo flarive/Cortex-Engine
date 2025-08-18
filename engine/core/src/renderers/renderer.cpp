@@ -24,6 +24,9 @@ void engine::Renderer::loadShaders()
     // debug only
     depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
     cubeFaceDebugShader.init("debugDepthCube", "shaders/debug/cube_face_debugger.vertex", "shaders/debug/cube_face_debugger.frag");
+
+    // Editor mode outline shader
+    outlineColorShader.init("outline", "shaders/debug/stencil_testing.vertex", "shaders/debug/stencil_testing.frag");
 }
 
 
@@ -34,6 +37,15 @@ void engine::Renderer::enableDepthTest(bool enable)
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
+}
+
+void engine::Renderer::enableStencilTest(bool enable)
+{
+    // enable stencil buffer (stencil test) to have objects outlining
+    if (enable)
+        glEnable(GL_STENCIL_TEST);
+    else
+        glDisable(GL_STENCIL_TEST);
 }
 
 void engine::Renderer::enableFaceCulling(bool enable)

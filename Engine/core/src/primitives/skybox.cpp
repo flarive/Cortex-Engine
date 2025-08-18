@@ -34,13 +34,11 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 {
     // draw skybox as last
-    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
     glDepthMask(GL_FALSE);
    
-    glm::mat4 view_fixed = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-    
     m_skyboxShader.use();
-    m_skyboxShader.setMat4("view", view_fixed);
+    m_skyboxShader.setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
     m_skyboxShader.setMat4("projection", projection);
 
 

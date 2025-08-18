@@ -24,8 +24,14 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // configure global opengl state
     // -----------------------------
     enableDepthTest(true);
-    enableFaceCulling(true);
-    if (m_settings.applyGammaCorrection) enableGammaCorrection(true);
+
+    // enable objects outlining
+    enableStencilTest(true);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    if (m_settings.enableFaceCulling) enableFaceCulling(true);
+    if (m_settings.enableGammaCorrection) enableGammaCorrection(true);
 
 
     loadShaders();
@@ -75,7 +81,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // make sure we clear the framebuffer's content
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->GetViewMatrix();
@@ -93,9 +99,33 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setMat4("view", view);
     blinnPhongShader.setVec3("viewPos", camera->position);
 
+    // 1st. render pass, draw objects as normal, writing to the stencil buffer
+    // --------------------------------------------------------------------
+    // This writes 1 into the stencil buffer wherever an object is rendered.
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilMask(0xFF);
 
     // update user stuffs
     update(blinnPhongShader);
+
+
+    // 2nd. render pass: now draw slightly scaled versions of the objects, this time disabling stencil writing.
+    // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not drawn, thus only drawing 
+    // the objects' size differences, making it look like borders.
+    // -----------------------------------------------------------------------------------------------------------------------------
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+    //glDisable(GL_DEPTH_TEST);
+    outlineColorShader.use();
+    outlineColorShader.setMat4("view", view);
+    outlineColorShader.setMat4("projection", projection);
+    outlineColorShader.setFloat("outlineWidth", 0.08f);
+    update(outlineColorShader);
+    //glEnable(GL_DEPTH_TEST);
+    glStencilMask(0xFF);
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+
+
 
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
@@ -113,9 +143,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // Resolve MSAA to screen or another texture FBO
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    glBlitFramebuffer(0, 0, width, height,
-        0, 0, width, height,
-        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
@@ -139,8 +167,6 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     m_dirLightCount = dirLightCount;
     m_spotLightCount = spotLightCount;
 
-
-    //make the same for blinnphong shader !
     blinnPhongShader.use();
     blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
     blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);

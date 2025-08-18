@@ -612,10 +612,6 @@
     <CopyFileToFolders Include="..\resources\icons\icon_0_16x16.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_1_16x16.png" />
-    <CopyFileToFolders Include="..\resources\icons\icon_2_16x16.png" />
-    <CopyFileToFolders Include="..\resources\icons\icon_3_16x16.png" />
-    <CopyFileToFolders Include="..\resources\icons\icon_4_16x16.png" />
     <CopyFileToFolders Include="..\resources\icons\icon_4_48x48.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
@@ -633,6 +629,24 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\fonts\Raleway-Medium.ttf">
       <Filter>resources\fonts</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.frag">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.vertex">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_1_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_2_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_3_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_4_16x16.png">
+      <Filter>resources\icons</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

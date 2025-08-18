@@ -14,6 +14,8 @@ namespace engine
 
 		// PBR environmentMap shader (for HDR skybox)
 		Shader backgroundShader{};
+
+		
 		
 		PbrRenderer(GLFWwindow* window, const SceneSettings& settings);
 

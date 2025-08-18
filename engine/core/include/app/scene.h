@@ -125,7 +125,6 @@ namespace engine
         
 
         void drawEntities(Shader& shader);
-        //void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& parentTransform);
         void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);
 
 

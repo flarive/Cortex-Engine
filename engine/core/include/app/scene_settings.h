@@ -22,6 +22,7 @@ namespace engine
         float iblDiffuseIntensity{ 1.0f };
         float iblSpecularIntensity{ 1.0f };
 
-        bool applyGammaCorrection{};
+        bool enableGammaCorrection{ false };
+        bool enableFaceCulling{ true };
     };
 }

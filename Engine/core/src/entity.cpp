@@ -177,14 +177,16 @@ void engine::Entity::forceUpdateSelfAndChild()
 
 void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)
 {
-	if (boundingVolume->isOnFrustum(frustum, worldTransform)) {
+	if (boundingVolume->isOnFrustum(frustum, worldTransform))
+	{
 		ourShader.setMat4("model", worldTransform);
 		if (model) model->draw(ourShader);
 		display++;
 	}
 	total++;
 
-	for (auto& child : children) {
+	for (auto& child : children)
+	{
 		child->drawSelfAndChild(frustum, ourShader, display, total);
 	}
 }

@@ -130,7 +130,9 @@ void engine::Scene::gameLoop()
 
     // Lambda to update
     auto updateLambda = [this](Shader& shader) {
-        update(shader);
+        // execute scene update
+        if (shader.name != "outline")
+            update(shader);
 
         // draw our scene graph
         drawEntities(shader);
@@ -156,7 +158,7 @@ void engine::Scene::gameLoop()
 
     // Update and Render additional Platform Windows
     // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-    //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+    // For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
@@ -182,10 +184,6 @@ void engine::Scene::gameLoop()
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
-    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, glm::mat4(1.0f));
-    //
-    //m_entityManager.getRootEntity()->updateSelfAndChild();
-
     // Precompute transforms for all entities before drawing
     m_entityManager.getRootEntity()->updateSelfAndChild();
 
@@ -193,116 +191,7 @@ void engine::Scene::drawEntities(Shader& shader)
     drawEntityRecursive(m_entityManager.getRootEntity(), shader);
 }
 
-//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& parentTransform)
-//{
-//    // Set model matrix for current entity
-//    //shader.setMat4("model", entity->transform.getModelMatrix());
-//
-//    glm::mat4 worldTransform = parentTransform * entity->transform.getModelMatrix();
-//    shader.setMat4("model", worldTransform);
-//
-//    // Draw the entity if it has a model
-//    if (entity->model)
-//    {
-//        entity->model->draw(shader,
-//            entity->transform.getLocalPosition(),
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());
-//    }
-//    else if (entity->primitive)
-//    {
-//        entity->primitive->draw(shader,
-//            entity->transform.getLocalPosition(),
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());
-//    }
-//    else if (entity->light)
-//    {
-//        // view/projection transformations
-//        glm::mat4 projection{ glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f)};
-//        glm::mat4 view{ getActiveCamera()->GetViewMatrix() };
-//
-//        entity->light->draw(shader,
-//            projection,
-//            view,
-//            entity->light->ambientColor,
-//            entity->light->diffuseColor,
-//            entity->light->specularColor,
-//            entity->light->intensity,
-//            entity->transform.getLocalPosition(),
-//            entity->light->target,
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());
-//    }
-//
-//    // Recurse on children
-//    for (const auto& child : entity->children)
-//    {
-//        drawEntityRecursive(child, shader, worldTransform);
-//    }
-//}
-
-//void engine::Scene::drawEntityRecursive(
-//    const std::shared_ptr<engine::Entity>& entity,
-//    Shader& shader,
-//    const glm::mat4& parentTransform)
-//{
-//    // Combine parent's world transform with this entity's local transform
-//    glm::mat4 worldTransform = parentTransform * entity->transform.getModelMatrix();
-//
-//    // Send to shader
-//    shader.setMat4("model", worldTransform);
-//
-//    // Draw the entity if it has a model
-//    if (entity->model)
-//    {
-//        /*entity->model->draw(shader,
-//            entity->transform.getLocalPosition(),
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());*/
-//
-//        entity->model->draw(shader, worldTransform);
-//    }
-//    else if (entity->primitive)
-//    {
-//        entity->primitive->draw(shader,
-//            entity->transform.getLocalPosition(),
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());
-//    }
-//    else if (entity->light)
-//    {
-//        glm::mat4 projection = glm::perspective(
-//            glm::radians(getActiveCamera()->zoom),
-//            (float)app->width / (float)app->height,
-//            0.1f, 100.0f
-//        );
-//        glm::mat4 view = getActiveCamera()->GetViewMatrix();
-//
-//        entity->light->draw(shader,
-//            projection,
-//            view,
-//            entity->light->ambientColor,
-//            entity->light->diffuseColor,
-//            entity->light->specularColor,
-//            entity->light->intensity,
-//            entity->transform.getLocalPosition(),
-//            entity->light->target,
-//            entity->transform.getLocalScale(),
-//            entity->transform.getLocalRotation());
-//    }
-//
-//    // Draw children using the computed world transform
-//    for (const auto& child : entity->children)
-//    {
-//        drawEntityRecursive(child, shader, worldTransform);
-//    }
-//}
-
-
-void engine::Scene::drawEntityRecursive(
-    const std::shared_ptr<engine::Entity>& entity,
-    Shader& shader)
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
 {
     // Use the precomputed transform
     shader.use();
@@ -311,10 +200,20 @@ void engine::Scene::drawEntityRecursive(
     if (entity->model)
     {
         entity->model->draw(shader, entity->worldTransform);
+
+        if (shader.name == "outline" && entity->name == "MySphere5")
+        {
+            shader.setFloat("outlineWidth", 0.08f);
+        }
     }
     else if (entity->primitive)
     {
         entity->primitive->draw(shader, entity->worldTransform);
+
+        if (shader.name == "outline" && entity->name == "MySphere5")
+        {
+            shader.setFloat("outlineWidth", 0.08f);
+        }
     }
     else if (entity->light)
     {

@@ -82,7 +82,7 @@ namespace engine
 		Shader prefilterShader{};
 		Shader brdfShader{};
 
-
+		Shader outlineColorShader{};
 
 
 		unsigned int irradianceMap{};
@@ -101,6 +101,7 @@ namespace engine
 
 
 		void enableDepthTest(bool enable);
+		void enableStencilTest(bool enable);
 		void enableFaceCulling(bool enable);
 		void enableGammaCorrection(bool enable);
 

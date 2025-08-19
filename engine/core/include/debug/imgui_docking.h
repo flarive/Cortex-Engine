@@ -19,6 +19,11 @@ namespace engine
 
 		void renderUIWindow(bool show);
 
+		// Let parent register a callback
+		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
+			m_onSelectionChanged = std::move(callback);
+		}
+
 
 	private:
 		SystemMonitor m_sysMonitor{};
@@ -28,7 +33,7 @@ namespace engine
 		std::shared_ptr<Entity> m_selectedEntity{};
 
 
-
+		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
 		void renderTabAbout();
 		void renderHierarchyWidget();
@@ -50,8 +55,6 @@ namespace engine
 		std::unordered_map< EntityType, GLuint> m_iconMediumTextureCache;
 
 		float itemWidth = 60.0f; // pixels
-
-
 	};
 }
 

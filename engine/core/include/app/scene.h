@@ -64,6 +64,8 @@ namespace engine
         EntityManager m_entityManager{};
 
         unsigned short m_activeCameraIndex{};
+
+        unsigned int m_selectedEntityID{};
     
 
         virtual void before_init_hook() {}; // Overridable by derived classes

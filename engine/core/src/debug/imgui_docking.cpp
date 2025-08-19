@@ -159,7 +159,12 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
 
     // Handle selection
     if (ImGui::IsItemClicked())
+    {
         m_selectedEntity = entity;
+        if (m_onSelectionChanged) {
+            m_onSelectionChanged(m_selectedEntity); // notify parent
+        }
+    }
 
     if (isSelected)
         ImGui::PopStyleColor();

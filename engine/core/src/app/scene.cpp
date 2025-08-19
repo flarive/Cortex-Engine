@@ -85,8 +85,18 @@ void engine::Scene::initialize()
     // renderer setup
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
 
+    // listen for editor selected entity changed
+    m_debug.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
+        {
+            logger.info("Selected entity changed: {} {}", entity->name, entity->id);
+            m_selectedEntityID = entity->id;
+        });
+
     after_init();
 }
+
+
+
 
 void engine::Scene::gameLoop()
 {
@@ -106,10 +116,11 @@ void engine::Scene::gameLoop()
 
     framerate = ImGui::GetIO().Framerate;
 
+    // Editor mode windows
     if (show_window)
         m_debug.renderUIWindow(show_window);
     
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    // Dear ImGui demo windows
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
@@ -145,6 +156,10 @@ void engine::Scene::gameLoop()
 
     // Call the method
     m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
+
+    
+
+
 
     // get opengl stats such as polycount drawn
     endQuery();
@@ -198,11 +213,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     shader.use();
     shader.setMat4("model", entity->worldTransform);
 
-    glm::mat4 projection = glm::perspective(
-        glm::radians(getActiveCamera()->zoom),
-        (float)app->width / (float)app->height,
-        0.1f, 100.0f
-    );
+    glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
     glm::mat4 view = getActiveCamera()->GetViewMatrix();
 
 
@@ -219,7 +230,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-        shader.setFloat("outlineWidth", 0.08f);
+        shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
     }
 
     
@@ -299,10 +310,6 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
         ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
     else
     {
-
-
-
-
         // basic window handling
         switch (key) {
         case GLFW_KEY_ESCAPE:

@@ -40,23 +40,25 @@ namespace engine
 	class Entity
 	{
 	public:
-		
-		//Scene graph
-		std::list<std::shared_ptr<Entity>> children{};
-		
-		
-		Entity* parent{};
-
-		Transform transform{};       // local position/rotation/scale
-		glm::mat4 worldTransform{};  // should be full parent * local
-
 		unsigned int id{};
 		std::string name{};
+		bool visible{ true };
+
 		std::shared_ptr<Model> model{};
 		std::shared_ptr<Primitive> primitive{};
 		std::shared_ptr<Light> light{};
 		std::shared_ptr<Camera> camera{};
 		std::unique_ptr<AABB> boundingVolume{};
+
+		//Scene graph
+		Entity* parent{};
+		std::list<std::shared_ptr<Entity>> children{};
+
+
+
+
+		Transform transform{};       // local position/rotation/scale
+		glm::mat4 worldTransform{};  // should be full parent * local
 
 
 		// constructor, expects just a name
@@ -85,6 +87,7 @@ namespace engine
 
 		EntityType getType();
 		std::string getTypeName();
+		std::string getTypeNameEx();
 	
 
 		// Add child using Entity constructor
@@ -100,8 +103,6 @@ namespace engine
 		void addChild(std::shared_ptr<Entity> entity);
 
 		//Update transform if it was changed
-		//void updateSelfAndChild();
-
 		void updateSelfAndChild(const glm::mat4& parentTransform = glm::mat4(1.0f));
 
 		//Force update of transform even if local space don't change
@@ -110,7 +111,7 @@ namespace engine
 
 	private:
 
-		unsigned int generateID();
+		unsigned int generateUniqueId();
 		AABB getGlobalAABB();
 
 		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);

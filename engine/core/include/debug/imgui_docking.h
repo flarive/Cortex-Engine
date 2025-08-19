@@ -47,14 +47,17 @@ namespace engine
 
 		ImVec4 getEntityColor(const engine::EntityType entityType);
 
+		GLuint getEntityActionIcon(const std::string& key);
+
 		void drawTransformEditor(Transform& transform);
 
 
 	protected:
-		std::unordered_map< EntityType, GLuint> m_iconSmallTextureCache;
-		std::unordered_map< EntityType, GLuint> m_iconMediumTextureCache;
+		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
+		std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache;
+
+		std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
 		float itemWidth = 60.0f; // pixels
 	};
 }
-

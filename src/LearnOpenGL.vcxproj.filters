@@ -648,6 +648,9 @@
     <CopyFileToFolders Include="..\resources\icons\icon_4_16x16.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_hide_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -677,5 +680,10 @@
     <ClInclude Include="app\myscene8.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\icons\icon_show_16x16.png">
+      <Filter>resources\icons</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -129,11 +129,9 @@ void engine::ImGuiDocking::renderTabAbout()
 
 void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& entity)
 {
-    // Check if this entity is selected
     bool isSelected = (m_selectedEntity == entity);
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
-
     if (entity->children.empty())
         flags |= ImGuiTreeNodeFlags_Leaf;
 
@@ -145,40 +143,61 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
         ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType));
     }
 
-    ImGui::PushID(entity.get()); // Unique ID per entity
+    ImGui::PushID(entity.get()); // unique ID per entity
 
     GLuint iconTexture = getEntityTypeSmallIcon(entityType);
 
-    // Start horizontal layout
-    bool nodeOpen = false;
-    ImGui::Image(iconTexture, ImVec2(16, 16));
+    // Row start: small icon
+    ImGui::Image((ImTextureID)(intptr_t)iconTexture, ImVec2(16, 16));
     ImGui::SameLine();
 
-    // Use TreeNodeEx with invisible label (##) to show triangle only
-    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
+    // Tree node
+    bool nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
 
     // Handle selection
     if (ImGui::IsItemClicked())
     {
         m_selectedEntity = entity;
-        if (m_onSelectionChanged) {
-            m_onSelectionChanged(m_selectedEntity); // notify parent
-        }
+
+        if (m_onSelectionChanged)
+            m_onSelectionChanged(m_selectedEntity);
     }
+
+    // Image button at the end of the line
+    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
+    GLuint buttonIcon = entity->visible ? getEntityActionIcon("hide") : getEntityActionIcon("show");
+
+    
+
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.f, 0.f, 0.f, 0.f));
+
+    if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
+    {
+        entity->visible = !entity->visible;
+    }
+
+    ImGui::PopStyleColor(4);
+
+
 
     if (isSelected)
         ImGui::PopStyleColor();
 
+    // Draw children
     if (nodeOpen)
     {
         for (const auto& child : entity->children)
             displayEntityInImGui(child);
-
         ImGui::TreePop();
     }
 
     ImGui::PopID();
 }
+
 
 void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
@@ -202,33 +221,11 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
         ImGui::PopStyleColor();
 
         // Type name directly below
-        ImGui::Text("%s", m_selectedEntity->getTypeName().c_str());
+        ImGui::Text("%s", m_selectedEntity->getTypeNameEx().c_str());
 
         ImGui::EndGroup();
 
         ImGui::Separator();
-
-        //static float posx;
-        //ImGui::InputFloat("aaa", &posx, 0.1f, 0.5f, "%.3f");
-
-
-
-
-        //ImGui::Text("Position = (%.2f, %.2f, %.2f)",
-        //    m_selectedEntity->transform.getLocalPosition().x,
-        //    m_selectedEntity->transform.getLocalPosition().y,
-        //    m_selectedEntity->transform.getLocalPosition().z);
-
-        //ImGui::Text("Rotation = (%.2f, %.2f, %.2f)",
-        //    m_selectedEntity->transform.getLocalRotation().x,
-        //    m_selectedEntity->transform.getLocalRotation().y,
-        //    m_selectedEntity->transform.getLocalRotation().z);
-
-        //ImGui::Text("Scale = (%.2f, %.2f, %.2f)",
-        //    m_selectedEntity->transform.getLocalScale().x,
-        //    m_selectedEntity->transform.getLocalScale().y,
-        //    m_selectedEntity->transform.getLocalScale().z);
-
 
         drawTransformEditor(m_selectedEntity->transform);
     }
@@ -400,4 +397,21 @@ ImVec4 engine::ImGuiDocking::getEntityColor(const engine::EntityType entityType)
     }
 
     return ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+}
+
+GLuint engine::ImGuiDocking::getEntityActionIcon(const std::string& key)
+{
+    auto it = m_iconActionTextureCache.find(key);
+    if (it != m_iconActionTextureCache.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_16x16.png", key);
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
+
+        return iconTexture;
+    }
 }

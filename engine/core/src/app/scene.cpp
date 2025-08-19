@@ -77,9 +77,6 @@ void engine::Scene::initialize()
     if (cameras.size() == 0)
         cameras = m_entityManager.findEntitiesOfType<Camera>();
 
-    //auto primitives = m_entityManager.findEntitiesOfType<Primitive>();
-    //auto models = m_entityManager.findEntitiesOfType<Model>();
-
     assert(cameras.size() > 0 && "Scene has no camera !");
 
     // renderer setup
@@ -88,7 +85,7 @@ void engine::Scene::initialize()
     // listen for editor selected entity changed
     m_debug.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
-            logger.info("Selected entity changed: {} {}", entity->name, entity->id);
+            logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
             m_selectedEntityID = entity->id;
         });
 
@@ -154,12 +151,8 @@ void engine::Scene::gameLoop()
         updateUI();
         };
 
-    // Call the method
+    // Call the renderer loop
     m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
-
-    
-
-
 
     // get opengl stats such as polycount drawn
     endQuery();
@@ -209,13 +202,16 @@ void engine::Scene::drawEntities(Shader& shader)
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
 {
+    if (!entity->visible)
+        return;
+    
+    
+    glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+    glm::mat4 view = getActiveCamera()->GetViewMatrix();
+    
     // Use the precomputed transform
     shader.use();
     shader.setMat4("model", entity->worldTransform);
-
-    glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
-    glm::mat4 view = getActiveCamera()->GetViewMatrix();
-
 
     if (shader.name != "outline")
     {
@@ -232,8 +228,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         shader.setMat4("projection", projection);
         shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
     }
-
-    
 
     if (entity->model)
     {
@@ -271,8 +265,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         drawEntityRecursive(child, shader);
     }
 }
-
-
 
 void engine::Scene::exit()
 {

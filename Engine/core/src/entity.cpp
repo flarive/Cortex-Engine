@@ -1,28 +1,41 @@
 ﻿#include "../include/entity.h"
 
+#include "../include/lights/point_light.h"
+#include "../include/lights/spot_light.h"
+#include "../include/lights/directional_light.h"
+
+#include "../include/primitives/cube.h"
+#include "../include/primitives/sphere.h"
+#include "../include/primitives/plane.h"
+#include "../include/primitives/cone.h"
+#include "../include/primitives/cylinder.h"
+#include "../include/primitives/billboard.h"
+
+#include "../include/cameras/fly_camera.h"
+
 
 
 // constructor, expects just a name
-engine::Entity::Entity(const std::string& _name) : name{ _name }, id { generateID() }
+engine::Entity::Entity(const std::string& _name) : name{ _name }, id { generateUniqueId() }
 {
 }
 
 // constructor, expects a filepath to a 3D model and a transform
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform) : name{ _name }, id{ generateID() }, model{ _model }, transform{ _transform }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform) : name{ _name }, id{ generateUniqueId() }, model{ _model }, transform{ _transform }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_model));
 	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
 }
 
 // constructor, expects a filepath to a 3D model.
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<Model> _model) : name{ _name }, id{ generateID() }, model{ _model }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<Model> _model) : name{ _name }, id{ generateUniqueId() }, model{ _model }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_model));
 	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
 }
 
 // constructor, expects a filepath to a 3D model.
-engine::Entity::Entity(std::shared_ptr<Model> _model) : id{ generateID() }, model{ _model }
+engine::Entity::Entity(std::shared_ptr<Model> _model) : id{ generateUniqueId() }, model{ _model }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_model));
 	//boundingVolume = std::make_unique<Sphere>(generateSphereBV(model));
@@ -30,24 +43,24 @@ engine::Entity::Entity(std::shared_ptr<Model> _model) : id{ generateID() }, mode
 
 
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform) : name{ _name }, id{ generateID() }, primitive{ _primitive }, transform{ _transform }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive, Transform _transform) : name{ _name }, id{ generateUniqueId() }, primitive{ _primitive }, transform{ _transform }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive) : name{ _name }, id{ generateID() }, primitive{ _primitive }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Primitive> _primitive) : name{ _name }, id{ generateUniqueId() }, primitive{ _primitive }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
-engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : id{ generateID() }, primitive{ _primitive }
+engine::Entity::Entity(std::shared_ptr<engine::Primitive> _primitive) : id{ generateUniqueId() }, primitive{ _primitive }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_primitive));
 }
 
 
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light, Transform _transform) : name{ _name }, id{ generateID() }, light{ _light }, transform{ _transform }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light, Transform _transform) : name{ _name }, id{ generateUniqueId() }, light{ _light }, transform{ _transform }
 {
 	// set light position from transform position
 	_light->position = _transform.getLocalPosition();
@@ -55,18 +68,18 @@ engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> 
 	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
 }
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light) : name{ _name }, id{ generateID() }, light{ _light }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Light> _light) : name{ _name }, id{ generateUniqueId() }, light{ _light }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
 }
 
-engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : id{ generateID() }, light{ _light }
+engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : id{ generateUniqueId() }, light{ _light }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_light));
 }
 
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, id{ generateID() }, camera{ _camera }, transform{ _transform }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, id{ generateUniqueId() }, camera{ _camera }, transform{ _transform }
 {
 	// set camera position from transform position
 	_camera->position = _transform.getLocalPosition();
@@ -74,12 +87,12 @@ engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera>
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }
 
-engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera) : name{ _name }, id{ generateID() }, camera{ _camera }
+engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera) : name{ _name }, id{ generateUniqueId() }, camera{ _camera }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }
 
-engine::Entity::Entity(std::shared_ptr<engine::Camera> _camera) : id{ generateID() }, camera{ _camera }
+engine::Entity::Entity(std::shared_ptr<engine::Camera> _camera) : id{ generateUniqueId() }, camera{ _camera }
 {
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }
@@ -110,8 +123,7 @@ engine::AABB engine::Entity::getGlobalAABB()
 	return engine::AABB(globalCenter, newIi, newIj, newIk);
 }
 
-
-unsigned int engine::Entity::generateID()
+unsigned int engine::Entity::generateUniqueId()
 {
 	return rand() % 101;
 }
@@ -144,6 +156,71 @@ std::string engine::Entity::getTypeName()
 	return "";
 }
 
+std::string engine::Entity::getTypeNameEx()
+{
+	if (this->model)
+	{
+		return "Model";
+	}
+	else if (this->primitive)
+	{
+		if (std::dynamic_pointer_cast<engine::Cube>(this->primitive))
+		{
+			return "Cube primitive";
+		}
+		else if (std::dynamic_pointer_cast<engine::Sphere>(this->primitive))
+		{
+			return "Sphere primitive";
+		}
+		else if (std::dynamic_pointer_cast<engine::Plane>(this->primitive))
+		{
+			return "Plane primitive";
+		}
+		else if (std::dynamic_pointer_cast<engine::Cylinder>(this->primitive))
+		{
+			return "Cylinder primitive";
+		}
+		else if (std::dynamic_pointer_cast<engine::Cone>(this->primitive))
+		{
+			return "Cone primitive";
+		}
+		else if (std::dynamic_pointer_cast<engine::Billboard>(this->primitive))
+		{
+			return "Billboard primitive";
+		}
+		
+		return "Primitive";
+	}
+	else if (this->light)
+	{
+		if (std::dynamic_pointer_cast<engine::DirectionalLight>(this->light))
+		{
+			return "Directional Light";
+		}
+		else if (std::dynamic_pointer_cast<engine::SpotLight>(this->light))
+		{
+			return "Spot Light";
+		}
+		else if (std::dynamic_pointer_cast<engine::PointLight>(this->light))
+		{
+			return "Point Light";
+		}
+		
+		return "Light";
+	}
+	else if (this->camera)
+	{
+		if (std::dynamic_pointer_cast<engine::FlyCamera>(this->camera))
+		{
+			return "Fly camera";
+		}
+
+		return "Camera";
+	}
+
+	return "";
+}
+
 // Add a child using an existing Entity instance
 void engine::Entity::addChild(std::shared_ptr<engine::Entity> entity)
 {
@@ -160,8 +237,7 @@ void engine::Entity::addChild(std::shared_ptr<engine::Entity> entity)
 void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 {
 	if (parent == nullptr) {
-		glm::mat4 localModel = transform.getLocalModelMatrix();
-		worldTransform = parentTransform * localModel;
+		worldTransform = parentTransform * transform.getLocalModelMatrix();
 	}
 	else {
 		// Still need to recompute in case parent changed

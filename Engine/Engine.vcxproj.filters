@@ -144,9 +144,6 @@
     <ClCompile Include="core\src\primitives\plane.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\primitives\skybox.cpp">
-      <Filter>Fichiers sources\core\primitives</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\ui\text.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
@@ -273,6 +270,9 @@
     <ClCompile Include="core\src\materials\pbr_material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\primitives\skybox.cpp">
+      <Filter>Fichiers sources\core\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -291,9 +291,6 @@
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
     <ClInclude Include="core\include\primitives\plane.h">
-      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\primitives\skybox.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ui\text.h">
@@ -442,6 +439,9 @@
     </ClInclude>
     <ClInclude Include="core\include\materials\pbr_material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\skybox.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

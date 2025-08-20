@@ -210,6 +210,7 @@
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp" />
     <ClInclude Include="..\libs\imgui\imconfig.h" />
     <ClInclude Include="..\libs\imgui\imgui.h" />
     <ClInclude Include="..\libs\imgui\imgui_internal.h" />

@@ -124,6 +124,9 @@
     <Filter Include="Fichiers d%27en-tête\core\materials\base">
       <UniqueIdentifier>{efdb9ff7-90dd-4a21-995c-3c39901d0e85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\imgui\extensions">
+      <UniqueIdentifier>{49f68057-2170-491f-95df-d8e52f466f91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -442,6 +445,9 @@
     </ClInclude>
     <ClInclude Include="core\include\primitives\skybox.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp">
+      <Filter>Fichiers sources\imgui\extensions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

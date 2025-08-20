@@ -17,7 +17,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene3;
+using MyScene = MyScene7;
 
 
 engine::App* myApp{};

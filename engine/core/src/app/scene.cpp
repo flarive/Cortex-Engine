@@ -1,6 +1,7 @@
 #include "../../include/app/scene.h"
 
-
+#include "extensions/imoguizmo.hpp"
+#include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
 
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), settings(_settings)
@@ -115,11 +116,18 @@ void engine::Scene::gameLoop()
 
     // Editor mode windows
     if (show_window)
+    {
         m_debug.renderUIWindow(show_window);
+        renderGizmo();
+    }
     
     // Dear ImGui demo windows
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
+
+
+    
+
 
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
@@ -164,6 +172,9 @@ void engine::Scene::gameLoop()
     glViewport(0, 0, display_w, display_h);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
+
+
     // Update and Render additional Platform Windows
     // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
     // For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
@@ -175,6 +186,9 @@ void engine::Scene::gameLoop()
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
     }
+
+
+
 
 
     glfwSwapBuffers(app->window);
@@ -207,7 +221,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     
     
     glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
-    glm::mat4 view = getActiveCamera()->GetViewMatrix();
+    glm::mat4 view = getActiveCamera()->getViewMatrix();
     
     // Use the precomputed transform
     shader.use();
@@ -621,4 +635,49 @@ void engine::Scene::renderSphere()
 
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+}
+
+
+void engine::Scene::renderGizmo()
+{
+    // it is recommended to use a separate projection matrix since the values that work best
+    // can be very different from what works well with normal renderings
+    // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
+
+    // optional: configure color, axis length and more
+    ImOGuizmo::config.axisLengthScale = 0.4f;
+    ImOGuizmo::config.lineThicknessScale = 0.027f;
+
+    ImVec2 avail = ImGui::GetContentRegionAvail();
+
+    // Position gizmo in top-right corner of this window
+    ImVec2 windowPos = ImGui::GetWindowPos();
+    ImOGuizmo::SetRect(
+        windowPos.x + avail.x + 440.0f, // stick to top-right
+        windowPos.y - 50.0f,
+        100.0f
+    );
+
+
+    ImOGuizmo::BeginFrame();
+
+    glm::mat4 projMat = glm::perspective(
+        glm::radians(getActiveCamera()->zoom),
+        static_cast<float>(app->width) / static_cast<float>(app->height),
+        0.1f,
+        100.0f
+    );
+    const float* projPtr = glm::value_ptr(projMat);
+
+    glm::mat4 viewMatrix = getActiveCamera()->getViewMatrix();
+    float* viewPtr = glm::value_ptr(viewMatrix);
+
+    float pivotDistance = 1.0f;
+    // optional: set distance to pivot (-> activates interaction)
+    if (ImOGuizmo::DrawGizmo(viewPtr, projPtr, pivotDistance))
+    {
+        // in case of user interaction viewMatrix gets updated
+        // Apply snapped view back to camera
+        getActiveCamera()->setFromViewMatrix(viewMatrix);
+    }
 }

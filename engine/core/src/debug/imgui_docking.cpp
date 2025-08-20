@@ -15,6 +15,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
+//#include "extensions/imoguizmo.hpp"
+//#include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
 
 void engine::ImGuiDocking::setScene(std::shared_ptr<Entity> rootEntity)
 {
@@ -49,6 +51,12 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	ImGui::Begin("DockSpace", &open, window_flags);
+
+
+
+
+
+
 	ImGui::PopStyleVar();
 
 	ImGui::PopStyleVar(2);
@@ -93,6 +101,44 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 	ImGui::Begin("Properties", nullptr, 0);
     renderPropertiesWidget();
 	ImGui::End();
+
+
+
+
+
+
+    //aaaaaaaaaaaaaaaaaaaa
+    // it is recommended to use a separate projection matrix since the values that work best
+    // can be very different from what works well with normal renderings
+    // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
+
+    // optional: configure color, axis length and more
+    //ImOGuizmo::config.axisLengthScale = 1.0f;
+
+    //// specify position and size of gizmo (and its window when using ImOGuizmo::BeginFrame())
+    //ImOGuizmo::SetRect(0.0f /* x */, 0.0f /* y */, 120.0f /* square size */);
+    //ImOGuizmo::BeginFrame(); // to use you own window remove this call 
+    //// and wrap everything in between ImGui::Begin() and ImGui::End() instead
+
+
+
+    //glm::mat4 projMat = glm::perspective(
+    //    glm::radians(cam->zoom),
+    //    static_cast<float>(1280) / static_cast<float>(720),
+    //    0.1f,
+    //    100.0f
+    //);
+    //const float* projPtr = glm::value_ptr(projMat);
+
+    //glm::mat4 viewMatrix = cam->GetViewMatrix();
+    //float* viewPtr = glm::value_ptr(viewMatrix);
+
+    //float pivotDistance = 0.0f;
+    //// optional: set distance to pivot (-> activates interaction)
+    //if (ImOGuizmo::DrawGizmo(viewPtr, projPtr, pivotDistance /* optional: default = 0.0f */))
+    //{
+    //    // in case of user interaction viewMatrix gets updated
+    //}
 }
 
 
@@ -152,7 +198,9 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     ImGui::SameLine();
 
     // Tree node
+    //ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
     bool nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
+    //ImGui::PopStyleVar();
 
     // Handle selection
     if (ImGui::IsItemClicked())
@@ -174,12 +222,16 @@ void engine::ImGuiDocking::displayEntityInImGui(const std::shared_ptr<Entity>& e
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.f, 0.f, 0.f, 0.f));
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.f, 0.f));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.1f, 0.1f));
 
     if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
     {
         entity->visible = !entity->visible;
     }
 
+    ImGui::PopStyleVar(2);
     ImGui::PopStyleColor(4);
 
 

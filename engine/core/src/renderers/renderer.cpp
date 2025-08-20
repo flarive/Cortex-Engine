@@ -250,7 +250,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
 
     
     glm::mat4 projection = glm::perspective(glm::radians(m_camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
-    glm::mat4 view = m_camera->GetViewMatrix();
+    glm::mat4 view = m_camera->getViewMatrix();
 
     shader.use();
     shader.setMat4("projection", projection);

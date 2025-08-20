@@ -58,7 +58,9 @@ namespace engine
         Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch, bool _fps);
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-        glm::mat4 GetViewMatrix();
+        glm::mat4 getViewMatrix();
+
+        void setFromViewMatrix(const glm::mat4& view);
 
 
 

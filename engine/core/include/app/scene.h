@@ -186,5 +186,7 @@ namespace engine
         void endQuery();
 
         void countItems(std::shared_ptr<Entity>& entity);
+
+        void renderGizmo();
     };
 }

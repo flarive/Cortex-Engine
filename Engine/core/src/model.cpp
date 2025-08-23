@@ -16,11 +16,11 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
-//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
+
 
 
 // constructor, expects a filepath to a 3D model.
-engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
+engine::Model::Model(const std::string& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
 {
     assert(!path.empty() && "Model path is empty !");
 
@@ -28,7 +28,7 @@ engine::Model::Model(std::string const& path, bool gamma, bool flipUVs) : gammaC
 }
 
 
-void engine::Model::loadModel(std::string const& path, bool flipUVs)
+void engine::Model::loadModel(const std::string& path, bool flipUVs)
 {
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
@@ -101,13 +101,11 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        engine::Vertex vertex{};
         glm::vec3 vector{}; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+
         // positions
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
-        vertex.position = vector;
+        engine::Vertex vertex(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
+
         // normals
         if (mesh->HasNormals())
         {
@@ -141,7 +139,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.texCoords = glm::vec2(0.0f, 0.0f);
         }
 
-        vertices.push_back(vertex);
+        vertices.emplace_back(std::move(vertex));
     }
 
 
@@ -152,7 +150,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
         aiFace face = mesh->mFaces[i];
         // retrieve all indices of the face and store them in the indices vector
         for (unsigned int j = 0; j < face.mNumIndices; j++)
-            indices.push_back(face.mIndices[j]);
+            indices.emplace_back(face.mIndices[j]);
     }
 
 
@@ -201,7 +199,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     auto meshMaterial = std::make_shared<Material>(textures, shininess);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh{ vertices, indices, meshMaterial };
+    return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
 
 std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)

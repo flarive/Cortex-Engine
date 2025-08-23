@@ -26,6 +26,11 @@ namespace engine
 			m_onSelectionChanged = std::move(callback);
 		}
 
+		// Let parent register a callback
+		void setOnRenderModeSettingChanged(std::function<void(bool)> callback) {
+			m_onRenderModeSettingChanged = std::move(callback);
+		}
+
 
 	private:
 		SystemMonitor m_sysMonitor{};
@@ -36,6 +41,8 @@ namespace engine
 
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
+
+		std::function<void(bool)> m_onRenderModeSettingChanged; // << callback
 
 		void renderTabSettings();
 		void renderTabAbout();
@@ -62,5 +69,8 @@ namespace engine
 		std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
 		float itemWidth = 60.0f; // pixels
+
+
+		bool settings_wireframe{};
 	};
 }

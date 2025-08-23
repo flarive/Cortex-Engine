@@ -4,15 +4,15 @@
 #include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
 
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
-    : title(_title), app(_app), settings(_settings)
+    : title(_title), app(_app), sceneSettings(_settings)
 {
-    if (settings.method == RenderMethod::PBR)
+    if (sceneSettings.method == RenderMethod::PBR)
     {
-        m_renderer = new PbrRenderer(app->window, settings);
+        m_renderer = new PbrRenderer(app->window, sceneSettings, renderSettings);
     }
     else
     {
-        m_renderer = new BlinnPhongRenderer(app->window, settings);
+        m_renderer = new BlinnPhongRenderer(app->window, sceneSettings, renderSettings);
     }
 
     // create scene entities hierarchy
@@ -89,6 +89,13 @@ void engine::Scene::initialize()
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
             m_selectedEntityID = entity->id;
         });
+
+    m_debug.setOnRenderModeSettingChanged([this](bool wireframe)
+        {
+            logger.info("Render mode setting changed: {})", wireframe);
+            renderSettings.wireframe = wireframe;
+        });
+    
 
     after_init();
 }

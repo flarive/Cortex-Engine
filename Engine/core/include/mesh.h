@@ -12,7 +12,7 @@
 
 namespace engine
 {
-	class Mesh// : private NonCopyable
+	class Mesh : private NonCopyableButMovable
     {
     private:
         // render data 
@@ -27,8 +27,12 @@ namespace engine
         std::vector<unsigned int> indices{};
 
         // constructor
-        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::shared_ptr<Material>& material);
+        Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material);
 		~Mesh() = default;
+
+        // override a little NonCopyableButMovable
+        Mesh(Mesh&&) = default;
+
 
         // render the mesh
         void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), float angle = 0.0f, glm::vec3 scale = glm::vec3(1.0f));

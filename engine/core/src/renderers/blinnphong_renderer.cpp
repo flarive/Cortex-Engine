@@ -10,8 +10,8 @@
 
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& settings)
-    : Renderer(window, settings)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
+    : Renderer(window, sceneSettings, renderSettings)
 {
 }
 
@@ -30,8 +30,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-    if (m_settings.enableFaceCulling) enableFaceCulling(true);
-    if (m_settings.enableGammaCorrection) enableGammaCorrection(true);
+    if (m_sceneSettings.enableFaceCulling) enableFaceCulling(true);
+    if (m_sceneSettings.enableGammaCorrection) enableGammaCorrection(true);
 
 
     loadShaders();
@@ -40,7 +40,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
-    blinnPhongShader.setFloat("material.shadowIntensity", m_settings.shadowIntensity);
+    blinnPhongShader.setFloat("material.shadowIntensity", m_sceneSettings.shadowIntensity);
 
     // shader configuration
     // --------------------
@@ -63,8 +63,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -------------------------
     initColorFramebufferMSAA(width, height);
 
-    // uncomment this call to draw in wireframe polygons.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // GL_LINE
+    // solid/wireframe polygons
+    glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -82,6 +82,16 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // make sure we clear the framebuffer's content
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+
+    // solid/wireframe polygons
+    static bool lastRenderModeWireframe = m_renderSettings.wireframe;
+    if (lastRenderModeWireframe != m_renderSettings.wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
+        lastRenderModeWireframe = m_renderSettings.wireframe;
+    }
+
+
 
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();

@@ -58,7 +58,8 @@ namespace engine
         std::string title{};
 
         App* app{};
-        SceneSettings settings{};
+        SceneSettings sceneSettings{};
+        RenderSettings renderSettings{};
 
         Renderer* m_renderer{};
         EntityManager m_entityManager{};
@@ -66,7 +67,6 @@ namespace engine
         unsigned short m_activeCameraIndex{};
 
         unsigned int m_selectedEntityID{};
-    
 
         virtual void before_init_hook() {}; // Overridable by derived classes
         virtual void after_init_hook() {}; // Overridable by derived classes

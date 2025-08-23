@@ -3,8 +3,8 @@
 
 
 
-engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& settings)
-    : m_window(window), m_settings(settings)
+engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
+    : m_window(window), m_sceneSettings(sceneSettings), m_renderSettings(renderSettings)
 {
 }
 

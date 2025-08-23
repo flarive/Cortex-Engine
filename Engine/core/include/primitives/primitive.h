@@ -196,13 +196,13 @@ namespace engine
         bitangent2 = glm::normalize(bitangent2);
 
         // Add vertices with CCW winding
-        vertices.push_back({ pos1, normal, uv1, tangent1, bitangent1 });
-        vertices.push_back({ pos3, normal, uv3, tangent1, bitangent1 });
-        vertices.push_back({ pos2, normal, uv2, tangent1, bitangent1 });
+        vertices.emplace_back(pos1, normal, uv1, tangent1, bitangent1);
+        vertices.emplace_back(pos3, normal, uv3, tangent1, bitangent1);
+        vertices.emplace_back(pos2, normal, uv2, tangent1, bitangent1);
 
-        vertices.push_back({ pos1, normal, uv1, tangent2, bitangent2 });
-        vertices.push_back({ pos4, normal, uv4, tangent2, bitangent2 });
-        vertices.push_back({ pos3, normal, uv3, tangent2, bitangent2 });
+        vertices.emplace_back(pos1, normal, uv1, tangent2, bitangent2);
+        vertices.emplace_back(pos4, normal, uv4, tangent2, bitangent2);
+        vertices.emplace_back(pos3, normal, uv3, tangent2, bitangent2);
 
         return vertices;
     }
@@ -235,14 +235,109 @@ namespace engine
         vertices.reserve(6);
 
         // Triangle 1
-        vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[1], normal, uvs[1], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
+        vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
+        vertices.emplace_back( positions[1], normal, uvs[1], tangent, bitangent );
+        vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
 
         // Triangle 2
-        vertices.emplace_back(engine::Vertex{ positions[0], normal, uvs[0], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[2], normal, uvs[2], tangent, bitangent });
-        vertices.emplace_back(engine::Vertex{ positions[3], normal, uvs[3], tangent, bitangent });
+        vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
+        vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
+        vertices.emplace_back( positions[3], normal, uvs[3], tangent, bitangent );
+
+        return vertices;
+    }
+
+
+    inline std::vector<engine::Vertex> generateCubeVertices()
+    {
+        std::vector<engine::Vertex> vertices{};
+        vertices.reserve(36);
+
+        // Back face
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 0.0f });
+
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 1.0f });
+
+        // Front face
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
+
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
+
+        // Left face
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+
+        // Right face
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+
+        // Bottom face
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+
+        // Top face
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f , 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+
+
+
+        // Compute tangents and bitangents
+        for (size_t i = 0; i < vertices.size(); i += 3) {
+            glm::vec3 edge1 = vertices[i + 1].position - vertices[i].position;
+            glm::vec3 edge2 = vertices[i + 2].position - vertices[i].position;
+            glm::vec2 deltaUV1 = vertices[i + 1].texCoords - vertices[i].texCoords;
+            glm::vec2 deltaUV2 = vertices[i + 2].texCoords - vertices[i].texCoords;
+
+            float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+            glm::vec3 tangent;
+            tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+            tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+            tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+            tangent = glm::normalize(tangent);
+
+            glm::vec3 bitangent;
+            bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+            bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+            bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+            bitangent = glm::normalize(bitangent);
+
+            vertices[i].tangent = tangent;
+            vertices[i + 1].tangent = tangent;
+            vertices[i + 2].tangent = tangent;
+
+            vertices[i].bitangent = bitangent;
+            vertices[i + 1].bitangent = bitangent;
+            vertices[i + 2].bitangent = bitangent;
+        }
 
         return vertices;
     }
@@ -276,14 +371,7 @@ namespace engine
                 glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));
                 glm::vec3 bitangent = glm::normalize(glm::cross(normal, tangent));
 
-                engine::Vertex vertex;
-                vertex.position = position;
-                vertex.normal = normal;
-                vertex.texCoords = texCoord;
-                vertex.tangent = tangent;
-                vertex.bitangent = bitangent;
-
-                vertices.push_back(vertex);
+                vertices.emplace_back(position, normal, texCoord, tangent, bitangent);
             }
         }
 
@@ -310,18 +398,18 @@ namespace engine
 
             // Bottom vertex
             glm::vec2 texCoord(u, 0.0f);
-            vertices.push_back(Vertex{ glm::vec3(radius * x, -halfHeight, radius * z), normal, texCoord });
+            vertices.emplace_back( glm::vec3(radius * x, -halfHeight, radius * z), normal, texCoord );
 
             // Top vertex
             texCoord.y = uvScale;
-            vertices.push_back(Vertex{ glm::vec3(radius * x, halfHeight, radius * z), normal, texCoord });
+            vertices.emplace_back( glm::vec3(radius * x, halfHeight, radius * z), normal, texCoord );
         }
 
         // === Top Cap Center Vertex ===
         glm::vec3 topCenter(0.0f, halfHeight, 0.0f);
         glm::vec3 topNormal(0.0f, 1.0f, 0.0f);
         glm::vec2 topTex(0.5f * uvScale, 0.5f * uvScale);
-        vertices.push_back(Vertex{ topCenter, topNormal, topTex });
+        vertices.emplace_back( topCenter, topNormal, topTex );
 
         // === Top Cap Ring Vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
@@ -332,14 +420,14 @@ namespace engine
             glm::vec3 pos(radius * x, halfHeight, radius * z);
 
             glm::vec2 tex(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
-            vertices.push_back(Vertex{ pos, topNormal, tex });
+            vertices.emplace_back( pos, topNormal, tex );
         }
 
         // === Bottom Cap Center Vertex ===
         glm::vec3 bottomCenter(0.0f, -halfHeight, 0.0f);
         glm::vec3 bottomNormal(0.0f, -1.0f, 0.0f);
         glm::vec2 bottomTex(0.5f * uvScale, 0.5f * uvScale);
-        vertices.push_back(Vertex{ bottomCenter, bottomNormal, bottomTex });
+        vertices.emplace_back( bottomCenter, bottomNormal, bottomTex );
 
         // === Bottom Cap Ring Vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
@@ -350,7 +438,7 @@ namespace engine
             glm::vec3 pos(radius * x, -halfHeight, radius * z);
 
             glm::vec2 tex(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
-            vertices.push_back(Vertex{ pos, bottomNormal, tex });
+            vertices.emplace_back( pos, bottomNormal, tex );
         }
 
         return vertices;
@@ -367,7 +455,7 @@ namespace engine
         // Tip vertex (single)
         glm::vec3 tipNormal(0.0f, 1.0f, 0.0f); // We'll compute actual smooth normals below
         glm::vec2 tipUV(0.5f * uvScale, 1.0f * uvScale);
-        vertices.push_back(Vertex{ tip, tipNormal, tipUV });
+        vertices.emplace_back( tip, tipNormal, tipUV );
 
         for (unsigned int i = 0; i <= sectorCount; ++i)
         {
@@ -379,14 +467,14 @@ namespace engine
             glm::vec3 dir = glm::normalize(glm::vec3(x, radius / height, z)); // Approximate normal
             glm::vec2 uv((1.0f - (float)i / sectorCount) * uvScale, 0.0f); // Flip u so texture isn't mirrored
 
-            vertices.push_back(Vertex{ pos, dir, uv });
+            vertices.emplace_back( pos, dir, uv );
         }
 
         // === Base center vertex ===
         glm::vec3 baseCenter(0.0f, -halfHeight, 0.0f);
         glm::vec3 baseNormal(0.0f, -1.0f, 0.0f);
         glm::vec2 baseUV(0.5f * uvScale, 0.5f * uvScale);
-        vertices.push_back(Vertex{ baseCenter, baseNormal, baseUV });
+        vertices.emplace_back( baseCenter, baseNormal, baseUV );
 
         // === Base ring vertices ===
         for (unsigned int i = 0; i <= sectorCount; ++i)
@@ -397,7 +485,7 @@ namespace engine
 
             glm::vec3 pos(radius * x, -halfHeight, radius * z);
             glm::vec2 uv(0.5f * (x + 1.0f) * uvScale, 0.5f * (z + 1.0f) * uvScale);
-            vertices.push_back(Vertex{ pos, baseNormal, uv });
+            vertices.emplace_back( pos, baseNormal, uv );
         }
 
         return vertices;

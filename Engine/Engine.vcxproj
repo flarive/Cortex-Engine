@@ -158,6 +158,10 @@
   <ItemGroup>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_palette.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_presets.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_renderer.cpp" />
     <ClCompile Include="..\libs\imgui\imgui.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_draw.cpp" />
@@ -210,7 +214,14 @@
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\libs\imgui\extensions\icon\IconsForkAwesome.h" />
     <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_offset_rect.h" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle.h" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle_math.h" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle_palette.h" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle_presets.h" />
+    <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle_renderer.h" />
     <ClInclude Include="..\libs\imgui\imconfig.h" />
     <ClInclude Include="..\libs\imgui\imgui.h" />
     <ClInclude Include="..\libs\imgui\imgui_internal.h" />

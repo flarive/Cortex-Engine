@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "misc/noncopyable.h"
+#include "misc/noncopyable.h"
 #include "common_defines.h"
 
 
@@ -8,8 +8,23 @@
 
 namespace engine
 {
-    struct Vertex// : private NonCopyable
+    struct Vertex : private NonCopyableButMovable
     {
+        Vertex(const glm::vec3& _pos)
+            : Vertex(_pos, glm::vec3(), glm::vec2(), glm::vec3(), glm::vec3())
+        {
+        }
+
+        Vertex(const glm::vec3& _pos, const glm::vec3& _normal, const glm::vec2& _uv)
+            : Vertex(_pos, _normal, _uv, glm::vec3(), glm::vec3())
+        {
+        }
+
+        Vertex(const glm::vec3& _pos, const glm::vec3& _normal, const glm::vec2& _uv, const glm::vec3& _tangent, const glm::vec3& _bitangent)
+            : position(_pos), normal(_normal), texCoords(_uv), tangent(_tangent), bitangent(_bitangent)
+        {
+        }
+
         // position
         glm::vec3 position{};
         // normal

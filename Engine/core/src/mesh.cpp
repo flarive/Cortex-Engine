@@ -2,8 +2,8 @@
 
 #include <memory>
 
-engine::Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::shared_ptr<Material>& material)
-    : vertices(vertices), indices(indices), m_material(material)
+engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material)
+    : vertices(std::move(_vertices)), indices(std::move(_indices)), m_material(std::move((_material)))
 {
     setupMesh();
 }

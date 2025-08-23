@@ -25,4 +25,9 @@ namespace engine
         bool enableGammaCorrection{ false };
         bool enableFaceCulling{ true };
     };
+
+    struct RenderSettings
+    {
+        bool wireframe{};
+    };
 }

@@ -92,15 +92,6 @@ void engine::Material::loadTexturesAsync()
     textures.reserve(7);
 
     // Load textures asynchronously
-    //loadTextureAsync(getDiffuseTexPath());
-    //loadTextureAsync(getSpecularTexPath());
-    //loadTextureAsync(getNormalTexPath());
-    //loadTextureAsync(getMetallicTexPath());
-    //loadTextureAsync(getRoughnessTexPath());
-    //loadTextureAsync(getAoTexPath());
-    //loadTextureAsync(getHeightTexPath());
-    //loadTextureAsync(getEmissiveTexPath());
-
     engine::Texture::loadTextureAsync(getDiffuseTexPath());
     engine::Texture::loadTextureAsync(getSpecularTexPath());
     engine::Texture::loadTextureAsync(getNormalTexPath());

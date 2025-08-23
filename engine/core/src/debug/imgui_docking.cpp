@@ -8,6 +8,10 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "themes/imgui_spectrum.h"
+
+#include "extensions/toggle/imgui_toggle.h"
+#include "extensions/toggle/imgui_toggle_palette.h"
+
 #include "../../include/transform.h"
 
 #include <glm/glm.hpp>
@@ -15,8 +19,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-//#include "extensions/imoguizmo.hpp"
-//#include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
+
+const ImVec4 gray(0.882f, 0.882f, 0.882f, 1.0f);
+const ImVec4 white(0.502f, 0.502f, 0.502f, 1.0f);
+const ImVec4 dark(0.0f, 0.0f, 0.0f, 0.2f);
+const ImVec4 light(1.0f, 1.0f, 1.0f, 0.2f);
+
+
+
 
 void engine::ImGuiDocking::setScene(std::shared_ptr<Entity> rootEntity)
 {
@@ -46,19 +56,9 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 	ImGui::SetNextWindowViewport(viewport->ID);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
-
-
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 	ImGui::Begin("DockSpace", &open, window_flags);
-
-
-
-
-
-
 	ImGui::PopStyleVar();
-
 	ImGui::PopStyleVar(2);
 
 	
@@ -132,6 +132,42 @@ void engine::ImGuiDocking::renderPropertiesWidget()
 void engine::ImGuiDocking::renderTabSettings()
 {
     ImGui::BeginChild("SettingsRegion", ImVec2(0, 0), true);
+
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+    ImGuiTogglePalette material_palette_on;
+    material_palette_on.Frame = dark;
+    material_palette_on.Knob = white;
+    material_palette_on.KnobHover = white;
+    material_palette_on.FrameBorder = light;
+
+    ImGuiTogglePalette material_palette_off;
+    material_palette_off.Frame = dark;
+    material_palette_off.Knob = gray;
+    material_palette_off.KnobHover = white;
+    material_palette_off.FrameBorder = light;
+
+    ImGuiToggleConfig toggle_config;
+    toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
+    toggle_config.Size = ImVec2(30.0f, 18.0f);
+    toggle_config.On.Palette = &material_palette_on;
+    toggle_config.Off.Palette = &material_palette_off;
+
+    ImGui::Spacing();
+
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+    if (ImGui::Toggle("Wireframe", &settings_wireframe, toggle_config))
+    {
+        if (m_onRenderModeSettingChanged)
+            m_onRenderModeSettingChanged(settings_wireframe);
+    }
+
+    ImGui::PopStyleVar();
+
+    ImGui::PopStyleColor();
+
     ImGui::EndChild();
 }
 

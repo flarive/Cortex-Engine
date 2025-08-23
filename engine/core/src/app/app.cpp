@@ -135,9 +135,6 @@ const char* engine::App::initOpenGL()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
-    // MSAA anti aliasing
-    //glfwWindowHint(GLFW_SAMPLES, 4);
-
     return glsl_version;
 }
 
@@ -145,6 +142,8 @@ void engine::App::initWindow()
 {
     GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    
     const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
     if (fullscreen)
     {

@@ -311,36 +311,33 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     UNREFERENCED_PARAMETER(scancode);
     UNREFERENCED_PARAMETER(mods);
 
-
-    if (show_window || show_demo_window)
-        ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
-    else
-    {
-        // basic window handling
-        switch (key) {
-        case GLFW_KEY_ESCAPE:
-            glfwSetWindowShouldClose(app->window, GL_TRUE); break;
-        case GLFW_KEY_ENTER:
-            if (action == GLFW_RELEASE)
-            {
-                app->toggleFullscreen([this]() {
-                    this->refreshFullscreen();
-                    });
-            }
-            break;
-        case GLFW_KEY_W:
-            if (action == GLFW_PRESS && !key_w_pressed)
-            {
-                show_window = !show_window;
-                key_w_pressed = true;
-            }
-            else if (action == GLFW_RELEASE)
-            {
-                key_w_pressed = false;
-            }
-            break;
+    // basic window handling
+    switch (key) {
+    case GLFW_KEY_ESCAPE:
+        glfwSetWindowShouldClose(app->window, GL_TRUE); break;
+    case GLFW_KEY_ENTER:
+        if (action == GLFW_RELEASE)
+        {
+            app->toggleFullscreen([this]() {
+                this->refreshFullscreen();
+                });
         }
+        break;
+    case GLFW_KEY_W:
+        if (action == GLFW_PRESS && !key_w_pressed)
+        {
+            show_window = !show_window;
+            key_w_pressed = true;
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            key_w_pressed = false;
+        }
+        break;
     }
+    
+    // always pass input to ImGui *after*
+    ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -382,7 +379,13 @@ void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)
     {
         //std::cout << "Released" << std::endl;
     }
+}
 
+void engine::Scene::window_refresh_callback()
+{
+    //render();
+    //glfwSwapBuffers(app->window);
+    glFinish(); // important, this waits until rendering result is actually visible, thus making resizing less ugly
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -392,6 +395,8 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, newWidth, newHeight);
+
+    std::cout << "Resize to " << newWidth << "/" << newHeight << std::endl;
 }
 
 void engine::Scene::refreshFullscreen()
@@ -645,7 +650,7 @@ void engine::Scene::renderGizmo()
     // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
 
     // optional: configure color, axis length and more
-    ImOGuizmo::config.axisLengthScale = 0.4f;
+    ImOGuizmo::config.axisLengthScale = 0.33f;
     ImOGuizmo::config.lineThicknessScale = 0.027f;
 
     ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -661,11 +666,7 @@ void engine::Scene::renderGizmo()
 
     ImOGuizmo::BeginFrame();
 
-    glm::mat4 projMat = glm::perspective(
-        glm::radians(getActiveCamera()->zoom),
-        static_cast<float>(app->width) / static_cast<float>(app->height),
-        0.1f,
-        100.0f
+    glm::mat4 projMat = glm::perspective(glm::radians(getActiveCamera()->zoom), static_cast<float>(app->width) / static_cast<float>(app->height), 0.1f, 100.0f
     );
     const float* projPtr = glm::value_ptr(projMat);
 

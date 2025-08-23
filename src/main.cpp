@@ -17,7 +17,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene7;
+using MyScene = MyScene2;
 
 
 engine::App* myApp{};
@@ -39,6 +39,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+static void windowRefreshCallback(GLFWwindow* window);
 static void gamepadUpdate();
 
 
@@ -58,6 +59,7 @@ int main(int, char**)
             glfwSetKeyCallback(myScene->getWindow(), keyCallback);
             glfwSetCursorPosCallback(myScene->getWindow(), mouseCallback);
             glfwSetScrollCallback(myScene->getWindow(), scrollCallback);
+            glfwSetWindowRefreshCallback(myScene->getWindow(), windowRefreshCallback);
 
             int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
             if (present > 0)
@@ -120,6 +122,13 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     UNREFERENCED_PARAMETER(window);
 
     ((MyScene*)myScene)->framebuffer_size_callback(width, height);
+}
+
+static void windowRefreshCallback(GLFWwindow* window)
+{
+    UNREFERENCED_PARAMETER(window);
+
+    ((MyScene*)myScene)->window_refresh_callback();
 }
 
 // Poll gamepad input and forward to MyApp

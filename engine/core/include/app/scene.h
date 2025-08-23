@@ -154,6 +154,8 @@ namespace engine
         // ---------------------------------------------------------------------------------------------
         void framebuffer_size_callback(int newWidth, int newHeight);
 
+        void window_refresh_callback();
+
 
         void refreshFullscreen();
 

@@ -37,6 +37,7 @@ namespace engine
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
+		void renderTabSettings();
 		void renderTabAbout();
 		void renderHierarchyWidget();
 		void renderPropertiesWidget();

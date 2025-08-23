@@ -179,7 +179,7 @@ namespace ImOGuizmo {
 		float axisLengthScale = 0.33f;
 		float positiveRadiusScale = 0.075f;
 		float negativeRadiusScale = 0.05f;
-		float hoverCircleRadiusScale = 0.88f;
+		float hoverCircleRadiusScale = 0.98f;
 		ImU32 xCircleFrontColor = IM_COL32(255, 54, 83, 255);
 		ImU32 xCircleBackColor = IM_COL32(154, 57, 71, 255);
 		ImU32 yCircleFrontColor = IM_COL32(138, 219, 0, 255);
@@ -221,13 +221,32 @@ namespace ImOGuizmo {
 		// correction for non-square aspect ratio
 		{
 			const float aspectRatio = projectionMatrix[5] / projectionMatrix[0];
-			viewProjection[0] *= aspectRatio; viewProjection[8] *= aspectRatio;
+			viewProjection[0] *= aspectRatio;
+            viewProjection[8] *= aspectRatio;
 		}
 		// axis
 		const float axisLength = size * config.axisLengthScale;
-		const ImVec4 xAxis = internal::multiply(viewProjection, ImVec4{ axisLength, 0, 0, 0 });
-		const ImVec4 yAxis = internal::multiply(viewProjection, ImVec4{ 0, axisLength, 0, 0 });
-		const ImVec4 zAxis = internal::multiply(viewProjection, ImVec4{ 0, 0, axisLength, 0 });
+        //const ImVec4 xAxis = internal::multiply(viewProjection, ImVec4{ axisLength, 0, 0, 0 });
+        //const ImVec4 yAxis = internal::multiply(viewProjection, ImVec4{ 0, axisLength, 0, 0 });
+        //const ImVec4 zAxis = internal::multiply(viewProjection, ImVec4{ 0, 0, axisLength, 0 });
+  
+   
+
+        // Project and normalize
+        ImVec4 xAxis = internal::multiply(viewProjection, ImVec4{ 1.0f, 0, 0, 0 });
+        ImVec4 yAxis = internal::multiply(viewProjection, ImVec4{ 0, 1.0f, 0, 0 });
+        //ImVec4 zAxis = internal::multiply(viewProjection, ImVec4{ 0, 0, 1.0f, 0 });
+        const ImVec4 zAxis = internal::multiply(viewProjection, ImVec4{ 0, 0, axisLength, 0 });
+        // Normalize the ImVec3 part
+        internal::ImVec3 xAxisNorm = internal::normalize(internal::ImVec3{ xAxis.x, xAxis.y, xAxis.z });
+        internal::ImVec3 yAxisNorm = internal::normalize(internal::ImVec3{ yAxis.x, yAxis.y, yAxis.z });
+        //internal::ImVec3 zAxisNorm = internal::normalize(internal::ImVec3{ zAxis.x, zAxis.y, zAxis.z });
+        // Scale to desired length and reconstruct ImVec4
+        xAxis = ImVec4{ xAxisNorm[0] * axisLength, xAxisNorm[1] * axisLength, xAxisNorm[2] * axisLength, 0 };
+        yAxis = ImVec4{ yAxisNorm[0] * axisLength, yAxisNorm[1] * axisLength, yAxisNorm[2] * axisLength, 0 };
+        //zAxis = ImVec4{ zAxisNorm[0] * axisLength, zAxisNorm[1] * axisLength, zAxisNorm[2] * axisLength, 0 };
+
+
 
 		const bool interactive = pivotDistance > 0.0f;
 		const ImVec2 mousePos = ImGui::GetIO().MousePos;
@@ -304,7 +323,7 @@ namespace ImOGuizmo {
 			float modelMat[16];
 			internal::invert4x4(viewMatrix, modelMat);
 
-			const internal::ImVec3 pivotPos = internal::ImVec3{ &modelMat[12] } - internal::ImVec3{ &modelMat[8] } *pivotDistance;
+			const internal::ImVec3 pivotPos = internal::ImVec3{ &modelMat[12] } - internal::ImVec3{ &modelMat[8] } * pivotDistance;
 
 			internal::ImVec3 ups[6] = { 
 #ifdef IMOGUIZMO_LEFT_HANDED

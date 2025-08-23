@@ -79,6 +79,7 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.30f, NULL, &dock_main_id);
 
 		ImGui::DockBuilderDockWindow("Scene", dock_id_left);
+        ImGui::DockBuilderDockWindow("Settings", dock_id_left);
 		ImGui::DockBuilderDockWindow("About", dock_id_left);
 
 		ImGui::DockBuilderDockWindow("Properties", dock_id_right);
@@ -94,6 +95,10 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
     renderHierarchyWidget();
 	ImGui::End();
 
+    ImGui::Begin("Settings", nullptr, 0);
+    renderTabSettings();
+    ImGui::End();
+
 	ImGui::Begin("About", nullptr, 0);
     renderTabAbout();
 	ImGui::End();
@@ -101,44 +106,6 @@ void engine::ImGuiDocking::renderUIWindow(bool show)
 	ImGui::Begin("Properties", nullptr, 0);
     renderPropertiesWidget();
 	ImGui::End();
-
-
-
-
-
-
-    //aaaaaaaaaaaaaaaaaaaa
-    // it is recommended to use a separate projection matrix since the values that work best
-    // can be very different from what works well with normal renderings
-    // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
-
-    // optional: configure color, axis length and more
-    //ImOGuizmo::config.axisLengthScale = 1.0f;
-
-    //// specify position and size of gizmo (and its window when using ImOGuizmo::BeginFrame())
-    //ImOGuizmo::SetRect(0.0f /* x */, 0.0f /* y */, 120.0f /* square size */);
-    //ImOGuizmo::BeginFrame(); // to use you own window remove this call 
-    //// and wrap everything in between ImGui::Begin() and ImGui::End() instead
-
-
-
-    //glm::mat4 projMat = glm::perspective(
-    //    glm::radians(cam->zoom),
-    //    static_cast<float>(1280) / static_cast<float>(720),
-    //    0.1f,
-    //    100.0f
-    //);
-    //const float* projPtr = glm::value_ptr(projMat);
-
-    //glm::mat4 viewMatrix = cam->GetViewMatrix();
-    //float* viewPtr = glm::value_ptr(viewMatrix);
-
-    //float pivotDistance = 0.0f;
-    //// optional: set distance to pivot (-> activates interaction)
-    //if (ImOGuizmo::DrawGizmo(viewPtr, projPtr, pivotDistance /* optional: default = 0.0f */))
-    //{
-    //    // in case of user interaction viewMatrix gets updated
-    //}
 }
 
 
@@ -160,6 +127,12 @@ void engine::ImGuiDocking::renderPropertiesWidget()
         displayEntityDetails(m_selectedEntity);
         ImGui::EndChild();
     }
+}
+
+void engine::ImGuiDocking::renderTabSettings()
+{
+    ImGui::BeginChild("SettingsRegion", ImVec2(0, 0), true);
+    ImGui::EndChild();
 }
 
 void engine::ImGuiDocking::renderTabAbout()

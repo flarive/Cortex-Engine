@@ -149,7 +149,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", 0.0f);
+        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
     auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
@@ -184,7 +184,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", 0.0f);
+        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
     shader.setMat4("model", model);

@@ -43,7 +43,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
         
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", 0.0f);
+        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
     // draw mesh
@@ -82,7 +82,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 model)
 
         shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", 0.0f);
+        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
     // draw mesh

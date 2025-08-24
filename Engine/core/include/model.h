@@ -53,6 +53,8 @@ namespace engine
 
         Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
+        bool checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat);
+
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
         std::vector<Texture> loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName);

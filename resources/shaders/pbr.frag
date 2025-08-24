@@ -328,6 +328,7 @@ void main()
     }
     else
     {
+        // 2 distinct textures
         metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
     }

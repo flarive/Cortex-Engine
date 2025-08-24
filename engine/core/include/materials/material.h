@@ -69,12 +69,14 @@ namespace engine
         const virtual float getHeightIntensity() const { return m_heightIntensity; }
         const virtual float getShininessIntensity() const { return m_shininess; }
         const virtual float getAmbientIntensity() const { return m_ambientIntensity; }
+        const virtual float getEmissiveIntensity() const { return m_emissiveIntensity; }
 
 
         virtual void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
         virtual void setHeightIntensity(float height) { m_heightIntensity = height; }
         virtual void setShininessIntensity(float intensity) { m_shininess = intensity; }
         virtual void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
+        virtual void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
 
         const virtual std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
@@ -98,9 +100,9 @@ namespace engine
 
 
         float m_heightIntensity{};
-        float m_normalIntensity{ 0.5f };
+        float m_normalIntensity{ 1.0f };
         float m_ambientIntensity{ 1.0f };
-
+        float m_emissiveIntensity{ 1.0f };
 
         float m_shininess{};
 	};

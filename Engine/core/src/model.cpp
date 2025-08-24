@@ -210,71 +210,23 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
 
-//std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
-//{
-//    std::vector<engine::Texture> textures{};
-//    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-//    {
-//        aiString str{};
-//        mat->GetTexture(type, i, &str);
-//
-//        // Check if texture was already loaded
-//        bool skip = false;
-//        for (const auto& loaded : textures_loaded)
-//        {
-//            if (std::strcmp(loaded.path.c_str(), str.C_Str()) == 0)
-//            {
-//                //textures.push_back(loaded);
-//                engine::Texture texture{ loaded.id, typeName, str.C_Str() };
-//                textures.push_back(std::move(texture));
-//
-//                skip = true;
-//                break;
-//            }
-//        }
-//
-//        if (!skip)
-//        {
-//            engine::Texture texture{ 0, typeName, str.C_Str() };
-//
-//            if (str.C_Str()[0] == '*')
-//            {
-//                // Embedded texture from model
-//                int index = std::atoi(str.C_Str() + 1); // "*0" -> 0
-//                const aiTexture* aiTex = scene->mTextures[index];
-//
-//                if (aiTex->mHeight == 0)
-//                {
-//                    // Compressed texture (e.g., JPEG/PNG blob)
-//                    logger.info("Loading model embedded texture {} ({})", aiTex->mFilename.C_Str(), str.C_Str());
-//                    texture.id = engine::Texture::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth);
-//                }
-//                else
-//                {
-//                    // Uncompressed (e.g., RGBA32 format)
-//                    logger.info("Loading model uncompressed embedded texture {} ({})", aiTex->mFilename.C_Str(), str.C_Str());
-//                    texture.id = engine::Texture::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
-//                }
-//            }
-//            else
-//            {
-//                // Texture from file
-//                logger.info("Loading model texture {}", str.C_Str());
-//                texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->directory);
-//            }
-//
-//            //textures.push_back(texture);
-//            engine::Texture texture2{ texture.id, texture.type, texture.path };
-//            textures.push_back(std::move(texture2));
-//
-//            //textures_loaded.push_back(texture);
-//            engine::Texture texture3{ texture.id, texture.type, texture.path };
-//            textures_loaded.push_back(std::move(texture3));
-//        }
-//    }
-//
-//    return textures;
-//}
+bool engine::Model::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
+{
+    aiString str1{};
+    aiString str2{};
+    
+    for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_METALNESS); i++)
+    {
+        mat->GetTexture(aiTextureType_METALNESS, i, &str1);
+    }
+
+    for (unsigned int j = 0; j < mat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS); j++)
+    {
+        mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, j, &str2);
+    }
+
+    return str1 == str2;
+}
 
 
 std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
@@ -295,11 +247,17 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* 
                 if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
                 {
                     engine::Texture texture{ loaded.id, typeName, str.C_Str() };
-                    // Tag the texture as metallic or roughness
-                    if (type == aiTextureType_METALNESS)
-                        texture.type = "texture_metalness_from_combined";
-                    else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
-                        texture.type = "texture_roughness_from_combined";
+
+                    bool singleTexture = checkMetalnessRoughnessSingleTexture(scene, mat);
+                    if (singleTexture)
+                    {
+                        // Tag the texture as metallic or roughness
+                        if (type == aiTextureType_METALNESS)
+                            texture.type = "texture_metalness_from_combined";
+                        else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
+                            texture.type = "texture_roughness_from_combined";
+                    }
+
                     textures.push_back(std::move(texture));
                 }
                 else
@@ -337,11 +295,18 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* 
                 texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->directory);
             }
 
-            // Tag the texture if it's metallic or roughness
-            if (type == aiTextureType_METALNESS)
-                texture.type = "texture_metalness_from_combined";
-            else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
-                texture.type = "texture_roughness_from_combined";
+            if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
+            {
+                bool singleTexture = checkMetalnessRoughnessSingleTexture(scene, mat);
+                if (singleTexture)
+                {
+                    // Tag the texture if it's metallic or roughness
+                    if (type == aiTextureType_METALNESS)
+                        texture.type = "texture_metalness_from_combined";
+                    else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
+                        texture.type = "texture_roughness_from_combined";
+                }
+            }
 
             textures.emplace_back(texture.id, texture.type, texture.path);
             textures_loaded.emplace_back(texture.id, texture.type, texture.path);

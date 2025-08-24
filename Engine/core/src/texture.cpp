@@ -126,7 +126,7 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
         return 0; // Already loading
     }
 
-    logger.info("Loading texture {}", filename);
+    logger.info("Loading async texture {}", filename);
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = {
@@ -365,6 +365,8 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
+    logger.info("Loading texture {}", filename);
+
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
@@ -407,6 +409,8 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
 {
     std::string filename = directory + '/' + path;
 
+    logger.info("Loading openGL texture {}", filename);
+
     unsigned int textureID = SOIL_load_OGL_texture(
         filename.c_str(),
         SOIL_LOAD_AUTO,
@@ -432,9 +436,11 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
 }
 
 
-unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size)
+unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename)
 {
     int width = 0, height = 0, channels = 0;
+
+    logger.info("Loading memory texture {}", filename);
 
     // Load image from memory buffer using SOIL
     unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);

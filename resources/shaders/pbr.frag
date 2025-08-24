@@ -29,6 +29,9 @@ struct Material {
     sampler2D texture_emissive; // 7
     sampler2D texture_shadowMap; // 10
 
+    sampler2D texture_metalness_from_combined;
+    sampler2D texture_roughness_from_combined;
+
     float heightScale;
     float shadowIntensity; // Adjust to make shadows darker
     float normalMapIntensity;
@@ -50,6 +53,7 @@ struct Material {
     bool has_texture_normal_map;
     bool has_texture_metalness_map;
     bool has_texture_roughness_map;
+    bool has_texture_metalness_from_combined_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
     bool has_texture_emissive_map;
@@ -312,8 +316,25 @@ void main()
 
     // material properties
     vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, texCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
-    float metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
-    float roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
+    float metallic = 0;
+    float roughness = 0;
+
+    if (material.has_texture_metalness_from_combined_map)
+    {
+        // Sample the combined texture
+        vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
+        metallic = metalRoughness.b; // Extract metallic from Blue channel
+        roughness = metalRoughness.g; // Extract roughness from Green channel
+    }
+    else
+    {
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
+        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
+    }
+
+    
+
+
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
 

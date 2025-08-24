@@ -26,7 +26,7 @@ namespace engine
     }
 
     
-    class Texture// : private NonCopyable
+    class Texture : private NonCopyableButMovable
     {
     public:
         unsigned int id{};
@@ -37,6 +37,9 @@ namespace engine
 		Texture() = default;
         Texture(unsigned int id, const std::string& type, const std::string& path);
 		~Texture() = default;
+
+        // override a little NonCopyableButMovable
+        Texture(Texture&&) = default;
 
         static std::tuple<unsigned int, unsigned char*, int, int, int> loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
@@ -53,7 +56,7 @@ namespace engine
 
         static unsigned int loadTextureFromFile(const char* path, const std::string& directory);
         static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory);
-        static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size);
+        static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename);
         static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height);
     };
 }

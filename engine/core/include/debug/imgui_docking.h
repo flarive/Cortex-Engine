@@ -49,7 +49,7 @@ namespace engine
 		void renderHierarchyWidget();
 		void renderPropertiesWidget();
 
-		void displayEntityInImGui(const std::shared_ptr<Entity>& entity);
+		void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
 		GLuint getEntityTypeSmallIcon(const EntityType entityType);
@@ -61,6 +61,8 @@ namespace engine
 
 		void drawTransformEditor(Transform& transform);
 
+		void drawLightEntityDetails(const std::shared_ptr<Entity>& entity);
+
 
 	protected:
 		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
@@ -68,7 +70,7 @@ namespace engine
 
 		std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
-		float itemWidth = 60.0f; // pixels
+		float itemWidth = 40.0f; // pixels
 
 
 		bool settings_wireframe{};

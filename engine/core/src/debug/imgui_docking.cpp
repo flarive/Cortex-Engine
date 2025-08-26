@@ -313,11 +313,11 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
         ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("px", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
         ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("pY", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
         ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("pZ", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
 
         ImGui::TableNextRow();
 
@@ -428,45 +428,98 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
 {
     if (entity && entity->light)
     {
-        //if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-        //{
-        //    // Column 1: Labels
-        //    ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-        //    // Column 2: Controls
-        //    ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+        {
+            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
 
-        //    ImGui::TableNextRow();
-        //    ImGui::TableSetColumnIndex(0);
-        //    ImGui::Text("Intensity");
-        //    ImGui::TableSetColumnIndex(1);
-        //    ImGui::DragFloat("##intensity", &entity->light->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Intensity");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TableSetColumnIndex(80);
+            ImGui::DragFloat("##intensity", &entity->light->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
-        //    ImGui::TableNextRow();
-        //    ImGui::TableSetColumnIndex(0);
-        //    ImGui::Text("Ambient Color");
-        //    ImGui::TableSetColumnIndex(1);
-        //    ImGui::ColorEdit4("##ambientColor", &entity->light->ambientColor.r, ImGuiColorEditFlags_NoLabel);
-
-
-        //    ImGui::TableNextRow();
-        //    ImGui::TableSetColumnIndex(0);
-        //    ImGui::Text("Diffuse Color");
-        //    ImGui::TableSetColumnIndex(1);
-        //    ImGui::ColorEdit4("##diffuseColor", &entity->light->diffuseColor.r, ImGuiColorEditFlags_NoLabel);
-
-        //    ImGui::EndTable();
-        //}
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Ambient Color");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+            ImGui::ColorEdit4("##ambientColor", &entity->light->ambientColor.r, ImGuiColorEditFlags_NoLabel);
 
 
-        ImGui::SetNextItemWidth(itemWidth);
-        ImGui::Text("Diffuse Color");
-        ImGui::SameLine();
-        ImGui::ColorEdit3("##diffuseColor", &entity->light->diffuseColor.r, ImGuiColorEditFlags_NoLabel);
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Diffuse Color");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+            ImGui::ColorEdit4("##diffuseColor", &entity->light->diffuseColor.r, ImGuiColorEditFlags_NoLabel);
 
-        
-        if (std::dynamic_pointer_cast<PointLight>(entity->light))
+            ImGui::EndTable();
+        }
+
+        if (auto pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
         {
 
+        }
+        else if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
+        {
+            
+        }
+        else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
+        {
+            if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
+            {
+                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+                ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+                ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Target");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("X");
+                ImGui::TableSetColumnIndex(2);
+                ImGui::DragFloat("##targetX", &spotLight->target.x, 0.1f);
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::Text("Y");
+                ImGui::TableSetColumnIndex(4);
+                ImGui::DragFloat("##targetY", &spotLight->target.y, 0.1f);
+
+                ImGui::TableSetColumnIndex(5);
+                ImGui::Text("Z");
+                ImGui::TableSetColumnIndex(6);
+                ImGui::DragFloat("##targetZ", &spotLight->target.z, 0.1f);
+
+                ImGui::EndTable();
+            }
+
+            if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+            {
+                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Inner Cutoff");
+                ImGui::TableSetColumnIndex(1);
+                ImGui::TableSetColumnIndex(80);
+                ImGui::DragFloat("##innerCutoff", &spotLight->cutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Outer Cutoff");
+                ImGui::TableSetColumnIndex(1);
+                ImGui::TableSetColumnIndex(80);
+                ImGui::DragFloat("##outerCutoff", &spotLight->outerCutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+            }
         }
     }
 }

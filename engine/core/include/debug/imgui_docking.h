@@ -59,9 +59,10 @@ namespace engine
 
 		GLuint getEntityActionIcon(const std::string& key);
 
-		void drawTransformEditor(Transform& transform);
+		void drawTransformEditor(engine::Transform& transform, bool position = true, bool rotation = true, bool scale = true);
 
 		void drawLightEntityDetails(const std::shared_ptr<Entity>& entity);
+		void drawCameraEntityDetails(const std::shared_ptr<Entity>& entity);
 
 
 	protected:
@@ -70,7 +71,7 @@ namespace engine
 
 		std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
-		float itemWidth = 40.0f; // pixels
+		float itemLabelWidth = 100.0f; // pixels
 
 
 		bool settings_wireframe{};

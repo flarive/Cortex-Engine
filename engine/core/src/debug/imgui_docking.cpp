@@ -295,23 +295,33 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
         ImGui::EndGroup();
 
 
-        drawTransformEditor(entity->transform);
+        
 
         if (entity->getType() == engine::EntityType::light)
         {
+            drawTransformEditor(entity->transform, true, false, false);
             drawLightEntityDetails(entity);
+        }
+        else if (entity->getType() == engine::EntityType::camera)
+        {
+            drawTransformEditor(entity->transform, true, true, true);
+            drawCameraEntityDetails(entity);
+        }
+        else
+        {
+            drawTransformEditor(entity->transform, true, true, true);
         }
     }
 }
 
 // Draw the TRS editor
-void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
+void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, bool position, bool rotation, bool scale)
 {
     ImGui::SeparatorText("Transform");
     
     if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
     {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
         ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
         ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
@@ -319,105 +329,112 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform)
         ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
         ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
 
-        ImGui::TableNextRow();
+        if (position)
+        {
+            ImGui::TableNextRow();
 
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Position");
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Position");
 
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("X");
-        ImGui::TableSetColumnIndex(2);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-        ImGui::DragFloat("##posX", &transform.getLocalPosition().x, 0.1f);
-        ImGui::PopStyleColor(3);
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("X");
+            ImGui::TableSetColumnIndex(2);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+            ImGui::DragFloat("##posX", &transform.getLocalPosition().x, 0.1f);
+            ImGui::PopStyleColor(3);
 
-        ImGui::TableSetColumnIndex(3);
-        ImGui::Text("Y");
-        ImGui::TableSetColumnIndex(4);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-        ImGui::DragFloat("##posY", &transform.getLocalPosition().y, 0.1f);
-        ImGui::PopStyleColor(3);
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("Y");
+            ImGui::TableSetColumnIndex(4);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+            ImGui::DragFloat("##posY", &transform.getLocalPosition().y, 0.1f);
+            ImGui::PopStyleColor(3);
 
-        ImGui::TableSetColumnIndex(5);
-        ImGui::Text("Z");
-        ImGui::TableSetColumnIndex(6);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-        ImGui::DragFloat("##posZ", &transform.getLocalPosition().z, 0.1f);
-        ImGui::PopStyleColor(3);
-
-
-
-        ImGui::TableNextRow();
-
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Rotation");
-
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("X");
-        ImGui::TableSetColumnIndex(2);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-        ImGui::DragFloat("##rotX", &transform.getLocalRotation().x, 0.5f);
-        ImGui::PopStyleColor(3);
-
-        ImGui::TableSetColumnIndex(3);
-        ImGui::Text("Y");
-        ImGui::TableSetColumnIndex(4);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-        ImGui::DragFloat("##rotY", &transform.getLocalRotation().y, 0.5f);
-        ImGui::PopStyleColor(3);
-
-        ImGui::TableSetColumnIndex(5);
-        ImGui::Text("Z");
-        ImGui::TableSetColumnIndex(6);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-        ImGui::DragFloat("##rotZ", &transform.getLocalRotation().z, 0.5f);
-        ImGui::PopStyleColor(3);
+            ImGui::TableSetColumnIndex(5);
+            ImGui::Text("Z");
+            ImGui::TableSetColumnIndex(6);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+            ImGui::DragFloat("##posZ", &transform.getLocalPosition().z, 0.1f);
+            ImGui::PopStyleColor(3);
+        }
 
 
+        if (rotation)
+        {
+            ImGui::TableNextRow();
 
-        ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Rotation");
 
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Scale");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("X");
+            ImGui::TableSetColumnIndex(2);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+            ImGui::DragFloat("##rotX", &transform.getLocalRotation().x, 0.5f);
+            ImGui::PopStyleColor(3);
 
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("X");
-        ImGui::TableSetColumnIndex(2);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-        ImGui::DragFloat("##scaX", &transform.getLocalScale().x, 0.05f);
-        ImGui::PopStyleColor(3);
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("Y");
+            ImGui::TableSetColumnIndex(4);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+            ImGui::DragFloat("##rotY", &transform.getLocalRotation().y, 0.5f);
+            ImGui::PopStyleColor(3);
 
-        ImGui::TableSetColumnIndex(3);
-        ImGui::Text("Y");
-        ImGui::TableSetColumnIndex(4);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-        ImGui::DragFloat("##scaY", &transform.getLocalScale().y, 0.05f);
-        ImGui::PopStyleColor(3);
+            ImGui::TableSetColumnIndex(5);
+            ImGui::Text("Z");
+            ImGui::TableSetColumnIndex(6);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+            ImGui::DragFloat("##rotZ", &transform.getLocalRotation().z, 0.5f);
+            ImGui::PopStyleColor(3);
+        }
 
-        ImGui::TableSetColumnIndex(5);
-        ImGui::Text("Z");
-        ImGui::TableSetColumnIndex(6);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-        ImGui::DragFloat("##scaZ", &transform.getLocalScale().z, 0.05f);
-        ImGui::PopStyleColor(3);
+
+        if (scale)
+        {
+            ImGui::TableNextRow();
+
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Scale");
+
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("X");
+            ImGui::TableSetColumnIndex(2);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
+            ImGui::DragFloat("##scaX", &transform.getLocalScale().x, 0.05f);
+            ImGui::PopStyleColor(3);
+
+            ImGui::TableSetColumnIndex(3);
+            ImGui::Text("Y");
+            ImGui::TableSetColumnIndex(4);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
+            ImGui::DragFloat("##scaY", &transform.getLocalScale().y, 0.05f);
+            ImGui::PopStyleColor(3);
+
+            ImGui::TableSetColumnIndex(5);
+            ImGui::Text("Z");
+            ImGui::TableSetColumnIndex(6);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
+            ImGui::DragFloat("##scaZ", &transform.getLocalScale().z, 0.05f);
+            ImGui::PopStyleColor(3);
+        }
 
         ImGui::EndTable();
     }
@@ -428,49 +445,28 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
 {
     if (entity && entity->light)
     {
-        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-        {
-            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
-            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Intensity");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::TableSetColumnIndex(80);
-            ImGui::DragFloat("##intensity", &entity->light->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Ambient Color");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-            ImGui::ColorEdit4("##ambientColor", &entity->light->ambientColor.r, ImGuiColorEditFlags_NoLabel);
-
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Diffuse Color");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-            ImGui::ColorEdit4("##diffuseColor", &entity->light->diffuseColor.r, ImGuiColorEditFlags_NoLabel);
-
-            ImGui::EndTable();
-        }
-
-        if (auto pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
+        std::shared_ptr<PointLight> pointLight;
+        std::shared_ptr<DirectionalLight> dirLight;
+        std::shared_ptr<SpotLight> spotLight;
+        
+        if (pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
         {
 
         }
-        else if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
+        else if (dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
         {
-            
+
         }
-        else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
+        else if (spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
+        {
+        }
+
+
+        if (dirLight != nullptr || spotLight != nullptr)
         {
             if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
             {
-                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
                 ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
                 ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
                 ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
@@ -500,26 +496,112 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
 
                 ImGui::EndTable();
             }
+        }
+
+        
+        ImGui::SeparatorText("Detail");
+        
+        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+        {
+            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Intensity");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(80);
+            ImGui::DragFloat("##intensity", &entity->light->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Ambient Color");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+            ImGui::ColorEdit3("##ambientColor", glm::value_ptr(entity->light->ambientColor), ImGuiColorEditFlags_NoLabel);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Diffuse Color");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+            ImGui::ColorEdit3("##diffuseColor", glm::value_ptr(entity->light->diffuseColor), ImGuiColorEditFlags_NoLabel);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Specular Color");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+            // Show color preview
+            ImGui::ColorEdit3("##specularColor", glm::value_ptr(entity->light->specularColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+            ImGui::SameLine();
+
+            // Show numeric inputs without labels
+            ImGui::DragFloat3(
+                "##specularColorInputs",
+                glm::value_ptr(entity->light->specularColor),
+                0.01f,
+                0.0f,
+                1.0f
+            );
+
+            ImGui::EndTable();
+        }
+
+        if (auto pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
+        {
+
+        }
+        else if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
+        {
+            
+        }
+        else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
+        {
+            
 
             if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
             {
-                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
                 ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
 
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("Inner Cutoff");
                 ImGui::TableSetColumnIndex(1);
-                ImGui::TableSetColumnIndex(80);
+                ImGui::SetNextItemWidth(80);
                 ImGui::DragFloat("##innerCutoff", &spotLight->cutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("Outer Cutoff");
                 ImGui::TableSetColumnIndex(1);
-                ImGui::TableSetColumnIndex(80);
+                ImGui::SetNextItemWidth(80);
                 ImGui::DragFloat("##outerCutoff", &spotLight->outerCutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+
+                ImGui::EndTable();
             }
+        }
+    }
+}
+
+void engine::ImGuiDocking::drawCameraEntityDetails(const std::shared_ptr<Entity>& entity)
+{
+    if (entity && entity->camera)
+    {
+        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+        {
+            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Zoom");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(80);
+            ImGui::DragFloat("##zoom", &entity->camera->zoom, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+
+            ImGui::EndTable();
         }
     }
 }

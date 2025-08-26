@@ -40,7 +40,7 @@ void MyScene1::init()
     light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
     light1->ambientColor = engine::Color(1.0f);
     light1->diffuseColor = engine::Color(1.0f);
-    light1->specularColor = engine::Color(10.0f);
+    light1->specularColor = engine::Color(1.0f);
 
 
     auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);

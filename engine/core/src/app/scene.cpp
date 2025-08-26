@@ -272,6 +272,10 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
     }
+    else if (entity->camera)
+    {
+        entity->camera->position = entity->transform.getLocalPosition();
+    }
 
     if (shader.name == "outline")
     {

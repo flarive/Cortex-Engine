@@ -436,6 +436,10 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::PopStyleColor(3);
         }
 
+
+        static char buf2[32] = "";
+        ImGui::InputTextHeader("decimal", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_None);
+
         ImGui::EndTable();
     }
 }

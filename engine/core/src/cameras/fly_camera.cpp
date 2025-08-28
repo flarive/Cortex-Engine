@@ -132,3 +132,17 @@ void engine::FlyCamera::processMouseScroll(float yoffset)
     if (zoom > 45.0f)
         zoom = 45.0f;
 }
+
+void engine::FlyCamera::updateCameraVectors()
+{
+    // calculate the new Front vector
+    glm::vec3 new_front;
+    new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    new_front.y = sin(glm::radians(pitch));
+    new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front = glm::normalize(new_front);
+
+    // also re-calculate the Right and Up vector
+    right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    up = glm::normalize(glm::cross(right, new_front));
+}

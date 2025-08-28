@@ -7,7 +7,6 @@
 
 #include "vertex.h"
 #include "materials/material.h"
-#include "texture.h"
 #include "shader.h"
 
 namespace engine

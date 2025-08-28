@@ -45,7 +45,7 @@ namespace engine
         // camera options
         float movementSpeed{};
         float mouseSensitivity{};
-        float zoom{};
+        float zoom{}; // fov
 
         bool fps{ false }; // first person camera ?
 
@@ -80,6 +80,6 @@ namespace engine
 
     protected:
         // calculates the front vector from the Camera's (updated) Euler Angles
-        void updateCameraVectors();
+        virtual void updateCameraVectors() = 0;
     };
 }

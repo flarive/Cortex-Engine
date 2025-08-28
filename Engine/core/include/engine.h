@@ -35,6 +35,7 @@
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"
+#include "cameras/orbit_camera.h"
 
 
 

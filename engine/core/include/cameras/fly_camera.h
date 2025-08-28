@@ -29,5 +29,9 @@ namespace engine
         void processMouseScroll(float yoffset) override;
 
         void processJoystickMovement(const GLFWgamepadstate& state) override;
+
+
+    protected:
+        void updateCameraVectors() override;
     };
 }

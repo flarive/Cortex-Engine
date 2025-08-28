@@ -44,17 +44,9 @@ void engine::Camera::setFromViewMatrix(const glm::mat4& view)
     up = glm::normalize(glm::vec3(view[0][1], view[1][1], view[2][1]));  // up
 }
 
-
 void engine::Camera::updateCameraVectors()
 {
-    // calculate the new Front vector
-    glm::vec3 new_front;
-    new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    new_front.y = sin(glm::radians(pitch));
-    new_front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = glm::normalize(new_front);
 
-    // also re-calculate the Right and Up vector
-    right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    up = glm::normalize(glm::cross(right, new_front));
 }
+
+

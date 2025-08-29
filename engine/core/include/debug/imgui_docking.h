@@ -64,6 +64,9 @@ namespace engine
 		void drawLightEntityDetails(const std::shared_ptr<Entity>& entity);
 		void drawCameraEntityDetails(const std::shared_ptr<Entity>& entity);
 
+		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float& value, float step);
+		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
+
 
 	protected:
 		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
@@ -75,5 +78,8 @@ namespace engine
 
 
 		bool settings_wireframe{};
+
+		const float ROUNDING = 3.0f;
+		const ImVec2 SIZE = ImVec2(21, 21);
 	};
 }

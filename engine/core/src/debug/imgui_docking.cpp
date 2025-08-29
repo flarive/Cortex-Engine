@@ -318,16 +318,18 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
 void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, bool position, bool rotation, bool scale)
 {
     ImGui::SeparatorText("Transform");
+
+    static auto green = ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
+    static auto blue = ImGui::ColorConvertFloat4ToU32(ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
+    static auto red = ImGui::ColorConvertFloat4ToU32(ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
+    static auto white = ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
     
     if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-        ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-        ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-        ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
 
         if (position)
         {
@@ -336,27 +338,24 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Position");
 
+            
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("X");
-            ImGui::TableSetColumnIndex(2);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
             ImGui::DragFloat("##posX", &transform.getLocalPosition().x, 0.1f);
             ImGui::PopStyleColor(3);
 
-            ImGui::TableSetColumnIndex(3);
-            ImGui::Text("Y");
-            ImGui::TableSetColumnIndex(4);
+            
+            ImGui::TableSetColumnIndex(2);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
             ImGui::DragFloat("##posY", &transform.getLocalPosition().y, 0.1f);
             ImGui::PopStyleColor(3);
 
-            ImGui::TableSetColumnIndex(5);
-            ImGui::Text("Z");
-            ImGui::TableSetColumnIndex(6);
+            
+            ImGui::TableSetColumnIndex(3);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
@@ -372,27 +371,24 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Rotation");
 
+            
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("X");
-            ImGui::TableSetColumnIndex(2);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
             ImGui::DragFloat("##rotX", &transform.getLocalRotation().x, 0.5f);
             ImGui::PopStyleColor(3);
 
-            ImGui::TableSetColumnIndex(3);
-            ImGui::Text("Y");
-            ImGui::TableSetColumnIndex(4);
+            
+            ImGui::TableSetColumnIndex(2);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
             ImGui::DragFloat("##rotY", &transform.getLocalRotation().y, 0.5f);
             ImGui::PopStyleColor(3);
 
-            ImGui::TableSetColumnIndex(5);
-            ImGui::Text("Z");
-            ImGui::TableSetColumnIndex(6);
+            
+            ImGui::TableSetColumnIndex(3);
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
             ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
@@ -409,36 +405,14 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::Text("Scale");
 
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("X");
+            drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, transform.getLocalScale().x, 0.05f);
+            
             ImGui::TableSetColumnIndex(2);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-            ImGui::DragFloat("##scaX", &transform.getLocalScale().x, 0.05f);
-            ImGui::PopStyleColor(3);
-
+            drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, transform.getLocalScale().y, 0.05f);
+            
             ImGui::TableSetColumnIndex(3);
-            ImGui::Text("Y");
-            ImGui::TableSetColumnIndex(4);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-            ImGui::DragFloat("##scaY", &transform.getLocalScale().y, 0.05f);
-            ImGui::PopStyleColor(3);
-
-            ImGui::TableSetColumnIndex(5);
-            ImGui::Text("Z");
-            ImGui::TableSetColumnIndex(6);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-            ImGui::DragFloat("##scaZ", &transform.getLocalScale().z, 0.05f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, transform.getLocalScale().z, 0.05f);
         }
-
-
-        static char buf2[32] = "";
-        ImGui::InputTextHeader("decimal", buf2, IM_ARRAYSIZE(buf2), ImGuiInputTextFlags_None);
 
         ImGui::EndTable();
     }
@@ -685,4 +659,50 @@ GLuint engine::ImGuiDocking::getEntityActionIcon(const std::string& key)
 
         return iconTexture;
     }
+}
+
+
+void engine::ImGuiDocking::drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor)
+{
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    ImVec2 min = position;
+    ImVec2 max = ImVec2(position.x + size.x, position.y + size.y);
+
+    // Draw red rectangle with rounded left corners
+    draw_list->AddRectFilled(min, max, backgroundColor, rounding, ImDrawFlags_RoundCornersLeft);
+
+    // Draw text centered
+    ImVec2 text_size = ImGui::CalcTextSize(text);
+    ImVec2 text_pos = ImVec2(
+        position.x + (size.x - text_size.x) * 0.5f,
+        position.y + (size.y - text_size.y) * 0.5f
+    );
+    draw_list->AddText(text_pos, foregroundColor, text);
+}
+
+
+void engine::ImGuiDocking::drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float& value, float step)
+{
+    drawCustomLabel(text, position, size, rounding, backgroundColor, foregroundColor);
+
+    // Move cursor to the end of the label manually
+    ImGui::SetCursorScreenPos(ImVec2(position.x + size.x, position.y));
+
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 size2 = ImVec2(width, ImGui::GetFrameHeight()); // Width can be adjusted
+
+    // Draw background with rounded right corners
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    draw_list->AddRectFilled(pos, ImVec2(pos.x + size2.x, pos.y + size2.y),
+        IM_COL32(50, 50, 50, 255), rounding,
+        ImDrawFlags_RoundCornersRight);
+
+    // Render the DragFloat widget
+    ImGui::SetCursorScreenPos(pos); // Reset cursor to draw over the background
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0)); // Transparent background
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
+    ImGui::SetNextItemWidth(width);
+    ImGui::DragFloat(name, &value, step);
+    ImGui::PopStyleColor(3);
 }

@@ -3926,13 +3926,6 @@ bool ImGui::InputText(const char* label, char* buf, size_t buf_size, ImGuiInputT
     return InputTextEx(label, NULL, buf, (int)buf_size, ImVec2(0, 0), flags, callback, user_data);
 }
 
-// FL !!!!!!!!!!!!!!!!!!!!!!!
-bool ImGui::InputTextHeader(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
-{
-    IM_ASSERT(!(flags & ImGuiInputTextFlags_Multiline)); // call InputTextMultiline()
-    return InputTextEx(label, NULL, buf, (int)buf_size, ImVec2(0, 0), flags, callback, user_data);
-}
-
 bool ImGui::InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 {
     return InputTextEx(label, NULL, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
@@ -6911,7 +6904,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             if (flags & ImGuiTreeNodeFlags_Bullet)
                 RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
-                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x - 4.0, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f); // FL !!!!!!
+                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x - 4.0f, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f); // FL !!!!!!
             if (g.LogEnabled)
                 LogSetNextTextDecoration(">", NULL);
         }
@@ -6925,13 +6918,13 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         else if (!is_leaf)
         {
             // FL !!!!!!!!!!!!!!!!!!
-            ImVec2 p(text_pos.x - 10.0, text_pos.y);
+            ImVec2 p(text_pos.x - 10.0f, text_pos.y);
             RenderText(p, label, label_end, false);
         }
         else if (is_leaf)
         {
             // FL !!!!!!!!!!!!!!!!!!
-            ImVec2 p(text_pos.x - 26.0, text_pos.y);
+            ImVec2 p(text_pos.x - 26.0f, text_pos.y);
             RenderText(p, label, label_end, false);
         }
 

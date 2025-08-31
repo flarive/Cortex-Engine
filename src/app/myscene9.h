@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyScene6 : public engine::Scene
+class MyScene9 : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -19,6 +19,7 @@ private:
     engine::Text ourText{};
     engine::Text ourText2{};
     engine::Sprite ourSprite{};
+    engine::Text textMeshCount{};
 
     
 
@@ -28,13 +29,13 @@ private:
 
 
 public:
-    MyScene6(std::string _title, engine::App* _app)
+    MyScene9(std::string _title, engine::App* _app)
         : engine::Scene(_title, _app, engine::SceneSettings
             {
                 .method = engine::RenderMethod::PBR,
                 .HDRSkyboxHide = false,
                 .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-                .HDRSkyboxBlurStrength = 5.0f,
+                .HDRSkyboxBlurStrength = 0.0f,
                 .shadowIntensity = 1.0f,
                 .iblDiffuseIntensity = 1.0f,
                 .iblSpecularIntensity = 1.0f
@@ -49,11 +50,9 @@ public:
     void init() override
     {
         // cameras
-        auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 8.0f } };
-        auto camera1 = std::make_shared<engine::FlyCamera>(false);
-        camera1->zoom = 100.0f;
+        auto camera1 = std::make_shared<engine::OrbitCamera>(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, 90.0f, 0.0f);
         camera1->movementSpeed = 10.0f;
-        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1);
         getEntityManager().addChild(EntityCamera1);
 
 
@@ -102,7 +101,7 @@ public:
 
         // helmet model
         std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-        auto trsHelmet = engine::Transform(glm::vec3(0.0f, -15.0f, -10.0f), glm::vec3(4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+        auto trsHelmet = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet", helmetModel, trsHelmet);
         getEntityManager().addChild(entityHelmet);
 
@@ -117,6 +116,7 @@ public:
         ourText.setup(app->window, FONT_PATH, 28);
         ourText2.setup(app->window, FONT_PATH, 28);
         ourSprite.setup(app->window, "textures/awesomeface.png");
+        textMeshCount.setup(app->window, FONT_PATH, 28);
     }
 
 
@@ -127,33 +127,33 @@ public:
     {
         engine::Scene::key_callback(key, scancode, action, mods);
 
-        // Detect Shift key state
-        //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+        //// Detect Shift key state
+        ////bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
-        if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
-            getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
-        }
-
-
-
-        if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
-            getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
-        }
+        //if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        //{
+        //    getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
+        //    getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+        //}
 
 
-        if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
-        }
 
-        if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        {
-            getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
-        }
+        //if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        //{
+        //    getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
+        //    getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+        //}
+
+
+        //if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        //{
+        //    getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+        //}
+
+        //if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        //{
+        //    getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+        //}
     }
 
 
@@ -192,23 +192,7 @@ public:
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-        getActiveCamera()->processJoystickMovement(state);
-
-        //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
-        //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
-
-        if (GLFW_PRESS == state.buttons[1])
-        {
-            std::cout << "Pressed" << std::endl;
-        }
-        else if (GLFW_RELEASE == state.buttons[0])
-        {
-            //std::cout << "Released" << std::endl;
-        }
+        
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -239,15 +223,6 @@ private:
     void drawScene(engine::Shader& shader)
     {
         UNREFERENCED_PARAMETER(shader);
-
-        auto MyHelmet = getEntityManager().findEntityByName("MyHelmet");
-        if (MyHelmet)
-        {
-            glm::vec3 zzz = MyHelmet->transform.getLocalRotation();
-            MyHelmet->transform.setLocalRotation(glm::vec3(zzz.x, zzz.y + rotation, zzz.z));
-        }
-
-        rotation += deltaTime * 0.002f;
     }
 
     void drawUI()
@@ -256,5 +231,6 @@ private:
         ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
         ourSprite.draw(glm::vec2(50, app->height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
+        textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     }
 };

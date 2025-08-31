@@ -319,10 +319,10 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
 {
     ImGui::SeparatorText("Transform");
 
-    static auto green = ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-    static auto blue = ImGui::ColorConvertFloat4ToU32(ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-    static auto red = ImGui::ColorConvertFloat4ToU32(ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-    static auto white = ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+    static auto green = IM_COL32(138, 219, 0, 255);
+    static auto blue = IM_COL32(44, 143, 255, 255);
+    static auto red = IM_COL32(255, 54, 83, 255);
+    static auto white = IM_COL32(255, 255, 255, 255);
     
     if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
     {
@@ -338,29 +338,14 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Position");
 
-            
             ImGui::TableSetColumnIndex(1);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-            ImGui::DragFloat("##posX", &transform.getLocalPosition().x, 0.1f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, transform.getLocalPosition().x, 0.1f);
 
-            
             ImGui::TableSetColumnIndex(2);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-            ImGui::DragFloat("##posY", &transform.getLocalPosition().y, 0.1f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, transform.getLocalPosition().y, 0.1f);
 
-            
             ImGui::TableSetColumnIndex(3);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-            ImGui::DragFloat("##posZ", &transform.getLocalPosition().z, 0.1f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, transform.getLocalPosition().z, 0.1f);
         }
 
 
@@ -371,29 +356,14 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Rotation");
 
-            
             ImGui::TableSetColumnIndex(1);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 0.25f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1.0f, 0.25f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(1.0f, 0.25f, 0.25f, 0.7f));
-            ImGui::DragFloat("##rotX", &transform.getLocalRotation().x, 0.5f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, transform.getLocalRotation().x, 0.5f);
 
-            
             ImGui::TableSetColumnIndex(2);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 1.0f, 0.25f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 1.0f, 0.25f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 1.0f, 0.25f, 0.7f));
-            ImGui::DragFloat("##rotY", &transform.getLocalRotation().y, 0.5f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, transform.getLocalRotation().y, 0.5f);
 
-            
             ImGui::TableSetColumnIndex(3);
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.25f, 0.25f, 1.0f, 0.3f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.25f, 0.25f, 1.0f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.25f, 0.25f, 1.0f, 0.7f));
-            ImGui::DragFloat("##rotZ", &transform.getLocalRotation().z, 0.5f);
-            ImGui::PopStyleColor(3);
+            drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, transform.getLocalRotation().z, 0.5f);
         }
 
 

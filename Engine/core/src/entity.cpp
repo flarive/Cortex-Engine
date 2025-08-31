@@ -83,7 +83,7 @@ engine::Entity::Entity(std::shared_ptr<engine::Light> _light) : id{ generateUniq
 engine::Entity::Entity(const std::string& _name, std::shared_ptr<engine::Camera> _camera, Transform _transform) : name{ _name }, id{ generateUniqueId() }, camera{ _camera }, transform{ _transform }
 {
 	// set camera position from transform position
-	_camera->position = _transform.getLocalPosition();
+	//_camera->position = _transform.getLocalPosition();
 
 	boundingVolume = std::make_unique<AABB>(generateAABB(_camera));
 }

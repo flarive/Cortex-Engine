@@ -1,23 +1,23 @@
-#include "../../include/cameras/fly_camera.h"
+#include "../../include/cameras/fps_camera.h"
 
-//engine::FlyCamera::FlyCamera(glm::vec3 _up, float _yaw, float _pitch)
+//engine::FpsCamera::FpsCamera(glm::vec3 _up, float _yaw, float _pitch)
 //    : engine::Camera(_up, _yaw, _pitch)
 //{
 //}
 
-engine::FlyCamera::FlyCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
+engine::FpsCamera::FpsCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
     : engine::Camera(_position, _up, _yaw, _pitch)
 {
 }
 
 // constructor with scalar values
-engine::FlyCamera::FlyCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch)
+engine::FpsCamera::FpsCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch)
     : engine::Camera(_posX, _posY, _posZ, _upX, _upY, _upZ, _yaw, _pitch)
 {
 }
 
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-void engine::FlyCamera::processKeyboard(engine::Camera_Movement direction, float deltaTime, GLboolean constrainPitch)
+void engine::FpsCamera::processKeyboard(engine::Camera_Movement direction, float deltaTime, GLboolean constrainPitch)
 {
     float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)
@@ -52,15 +52,20 @@ void engine::FlyCamera::processKeyboard(engine::Camera_Movement direction, float
             pitch = -89.0f;
     }
 
+    // for FPS camera
+    position.y = 0.0f; // <-- this one-liner keeps the user at the ground level (xz plane)
+
     // update Front, Right and Up Vectors using the updated Euler angles
     updateCameraVectors();
 }
 
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void engine::FpsCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
     xoffset *= mouseSensitivity;
-    yoffset *= mouseSensitivity;
+
+    // fps limitation
+    yoffset = 0;
 
     yaw += xoffset;
     pitch += yoffset;
@@ -78,7 +83,7 @@ void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboo
     updateCameraVectors();
 }
 
-void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
+void engine::FpsCamera::processJoystickMovement(const GLFWgamepadstate& state)
 {
     float deadZone = 0.2f; // Dead zone threshold to prevent drift
 
@@ -113,18 +118,18 @@ void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
 }
 
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-void engine::FlyCamera::processMouseScroll(float yoffset)
+void engine::FpsCamera::processMouseScroll(float yoffset)
 {
     zoom -= (float)yoffset;
 
     if (zoom < 1.0f)
         zoom = 1.0f;
-    
+
     if (zoom > 45.0f)
         zoom = 45.0f;
 }
 
-void engine::FlyCamera::updateCameraVectors()
+void engine::FpsCamera::updateCameraVectors()
 {
     // calculate the new Front vector
     glm::vec3 new_front;

@@ -50,9 +50,15 @@ public:
     void init() override
     {
         // cameras
-        auto camera1 = std::make_shared<engine::OrbitCamera>(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, 90.0f, 0.0f);
+        //auto camera1 = std::make_shared<engine::OrbitCamera>(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, 90.0f, 0.0f);
+        //camera1->movementSpeed = 10.0f;
+        //auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1);
+        //getEntityManager().addChild(EntityCamera1);
+
+        auto trsCamera1 = engine::Transform{ { 0.0f, 5.0f, 3.0f } };
+        auto camera1 = std::make_shared<engine::LegacyCamera>(true);
         camera1->movementSpeed = 10.0f;
-        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1);
+        auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
         getEntityManager().addChild(EntityCamera1);
 
 

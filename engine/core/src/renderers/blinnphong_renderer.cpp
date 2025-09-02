@@ -123,17 +123,17 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     // Because the stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are not drawn, thus only drawing 
     // the objects' size differences, making it look like borders.
     // -----------------------------------------------------------------------------------------------------------------------------
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    /*glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilMask(0x00);
-    //glDisable(GL_DEPTH_TEST);
+    
     outlineColorShader.use();
     outlineColorShader.setMat4("view", view);
     outlineColorShader.setMat4("projection", projection);
     outlineColorShader.setFloat("outlineWidth", 0.08f);
     update(outlineColorShader);
-    //glEnable(GL_DEPTH_TEST);
+    
     glStencilMask(0xFF);
-    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);*/
 
 
 

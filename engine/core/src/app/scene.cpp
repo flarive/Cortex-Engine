@@ -236,13 +236,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
     /*if (show_window)
     {*/
-        if (shader.name != "outline")
-        {
+        //if (shader.name != "outline")
+        //{
             glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
             glStencilMask(0xFF);
-        }
-        else
-        {
+        //}
+        //else
+        //{
             // Only draw outline where stencil != objectID
             //glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
             //glStencilMask(0x00); // disable stencil writes
@@ -250,7 +250,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             //shader.setMat4("view", view);
             //shader.setMat4("projection", projection);
             //shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
-        }
+        //}
     //}
 
     if (entity->model)

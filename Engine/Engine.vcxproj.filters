@@ -258,7 +258,7 @@
     <ClCompile Include="core\src\cameras\camera.cpp">
       <Filter>Fichiers sources\core\cameras\base</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\cameras\fly_camera.cpp">
+    <ClCompile Include="core\src\cameras\legacy_camera.cpp">
       <Filter>Fichiers sources\core\cameras</Filter>
     </ClCompile>
     <ClCompile Include="core\src\debug\imgui_docking.cpp">
@@ -295,6 +295,12 @@
       <Filter>Fichiers sources\imgui\extensions\toggle</Filter>
     </ClCompile>
     <ClCompile Include="core\src\cameras\orbit_camera.cpp">
+      <Filter>Fichiers sources\core\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\cameras\fly_camera.cpp">
+      <Filter>Fichiers sources\core\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\cameras\fps_camera.cpp">
       <Filter>Fichiers sources\core\cameras</Filter>
     </ClCompile>
   </ItemGroup>
@@ -440,7 +446,7 @@
     <ClInclude Include="core\include\cameras\camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras\base</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\cameras\fly_camera.h">
+    <ClInclude Include="core\include\cameras\legacy_camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras</Filter>
     </ClInclude>
     <ClInclude Include="core\include\debug\imgui_docking.h">
@@ -492,6 +498,12 @@
       <Filter>Fichiers sources\imgui\extensions\toggle</Filter>
     </ClInclude>
     <ClInclude Include="core\include\cameras\orbit_camera.h">
+      <Filter>Fichiers d%27en-tête\core\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\cameras\fly_camera.h">
+      <Filter>Fichiers d%27en-tête\core\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\cameras\fps_camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras</Filter>
     </ClInclude>
   </ItemGroup>

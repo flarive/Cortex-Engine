@@ -48,5 +48,3 @@ void engine::Camera::updateCameraVectors()
 {
 
 }
-
-

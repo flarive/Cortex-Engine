@@ -4,20 +4,20 @@
 
 namespace engine
 {
-    // A fly camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
-    class FlyCamera final : public Camera
+    // A FPS camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
+    class FpsCamera final : public Camera
     {
     public:
-        //FlyCamera(glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
-        
+        //FpsCamera(glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+
         // constructor with vectors
-        FlyCamera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+        FpsCamera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
         // constructor with scalar values
-        FlyCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
+        FpsCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
 
 
-        
+
 
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) override;

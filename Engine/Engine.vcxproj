@@ -175,6 +175,8 @@
     <ClCompile Include="core\src\bounding_volume_plane.cpp" />
     <ClCompile Include="core\src\cameras\camera.cpp" />
     <ClCompile Include="core\src\cameras\fly_camera.cpp" />
+    <ClCompile Include="core\src\cameras\fps_camera.cpp" />
+    <ClCompile Include="core\src\cameras\legacy_camera.cpp" />
     <ClCompile Include="core\src\cameras\orbit_camera.cpp" />
     <ClCompile Include="core\src\debug\imgui_debug.cpp" />
     <ClCompile Include="core\src\debug\imgui_docking.cpp" />
@@ -235,6 +237,8 @@
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />
     <ClInclude Include="core\include\cameras\fly_camera.h" />
+    <ClInclude Include="core\include\cameras\fps_camera.h" />
+    <ClInclude Include="core\include\cameras\legacy_camera.h" />
     <ClInclude Include="core\include\cameras\orbit_camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />

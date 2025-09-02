@@ -8,7 +8,6 @@ namespace engine
     {
     public:
         glm::vec3 target{ 0.0f, 0.0f, 0.0f };
-        //float distance{ 10.0f };
 
         // spherical coordinates
         float Radius;
@@ -17,7 +16,7 @@ namespace engine
 
         // constructor
         OrbitCamera(glm::vec3 _target = glm::vec3(0.0f, 0.0f, 0.0f), float _radius = 10.0f, float _theta = 90.0f, float _phi = 0.0f, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f))
-            : engine::Camera(glm::vec3(0.0, 0.0, 0.0), false), target(_target), Radius(_radius), Theta(_theta), Phi(_phi)
+            : engine::Camera(glm::vec3(0.0, 0.0, 0.0), _up), target(_target), Radius(_radius), Theta(_theta), Phi(_phi)
         {
             updateCameraVectors();
         }
@@ -29,7 +28,7 @@ namespace engine
         }
 
         // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-        void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPhi = true)
+        void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPhi = true) override
         {
             xoffset *= mouseSensitivity;
             yoffset *= mouseSensitivity;
@@ -50,7 +49,7 @@ namespace engine
         }
 
         // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-        void processMouseScroll(float yoffset)
+        void processMouseScroll(float yoffset) override
         {
             Radius -= yoffset;
             if (Radius < 1.0f)
@@ -58,13 +57,13 @@ namespace engine
         }
 
 
-        void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true)
+        void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) override
         {
 
         }
 
 
-        void processJoystickMovement(const GLFWgamepadstate& state)
+        void processJoystickMovement(const GLFWgamepadstate& state) override
         {
 
         }
@@ -72,7 +71,7 @@ namespace engine
 
     private:
         // calculates the camera's position and orientation based on spherical coordinates
-        void updateCameraVectors()
+        void updateCameraVectors() override
         {
             // spherical to cartesian coordinates
             position.x = target.x + Radius * sin(glm::radians(Theta)) * cos(glm::radians(Phi));

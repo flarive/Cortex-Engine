@@ -56,7 +56,7 @@ public:
         //getEntityManager().addChild(EntityCamera1);
 
         auto trsCamera1 = engine::Transform{ { 0.0f, 5.0f, 3.0f } };
-        auto camera1 = std::make_shared<engine::LegacyCamera>(true);
+        auto camera1 = std::make_shared<engine::FlyCamera>();
         camera1->movementSpeed = 10.0f;
         auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
         getEntityManager().addChild(EntityCamera1);

@@ -25,11 +25,11 @@ void MyScene1::init()
 {
     // cameras
     auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 3.0f } };
-    auto camera1 = std::make_shared<engine::LegacyCamera>(true);
+    auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
-    auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
-    getEntityManager().addChild(EntityCamera1);
+    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+    getEntityManager().addChild(entityCamera1);
 
 
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
@@ -234,6 +234,14 @@ void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)
 void MyScene1::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
+
+
+    //auto camera1 = getEntityManager().findEntityByName("Camera1");
+    //if (camera1)
+    //{
+    //    camera1->transform.setLocalPosition(camera1->camera->position);
+    //}
+
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)

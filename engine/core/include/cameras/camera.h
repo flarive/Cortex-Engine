@@ -47,15 +47,15 @@ namespace engine
         float mouseSensitivity{};
         float zoom{}; // fov
 
-        bool fps{ false }; // first person camera ?
+        //bool fps{ false }; // first person camera ?
 
-        Camera(bool _fps = false, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+        //Camera(glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
         // constructor with vectors
-        Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), bool _fps = false, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+        Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
         // constructor with scalar values
-        Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch, bool _fps);
+        Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch);
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
         glm::mat4 getViewMatrix();

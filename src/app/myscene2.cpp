@@ -19,8 +19,8 @@ MyScene2::MyScene2(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene2::init()
 {
     // cameras
-    auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 3.0f } };
-    auto camera1 = std::make_shared<engine::LegacyCamera>(false);
+    auto trsCamera1 = engine::Transform{ { 0.0f, 3.0f, -3.0f } };
+    auto camera1 = std::make_shared<engine::FlyCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
     auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
@@ -107,7 +107,7 @@ void MyScene2::mouse_callback(double xposIn, double yposIn)
     UNREFERENCED_PARAMETER(xposIn);
     UNREFERENCED_PARAMETER(yposIn);
 
-    //engine::Scene::mouse_callback(xposIn, yposIn);
+    engine::Scene::mouse_callback(xposIn, yposIn);
 
     //if (show_window)
     //    return;
@@ -137,7 +137,7 @@ void MyScene2::scroll_callback(double xoffset, double yoffset)
     UNREFERENCED_PARAMETER(yoffset);
 
 
-    //engine::Scene::scroll_callback(xoffset, yoffset);
+    engine::Scene::scroll_callback(xoffset, yoffset);
 
     //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
@@ -156,6 +156,12 @@ void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
 void MyScene2::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
+
+    //auto camera1 = getEntityManager().findEntityByName("Camera1");
+    //if (camera1)
+    //{
+    //    camera1->transform.setLocalPosition(camera1->camera->position);
+    //}
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)

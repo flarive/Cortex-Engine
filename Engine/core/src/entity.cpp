@@ -11,10 +11,10 @@
 #include "../include/primitives/cylinder.h"
 #include "../include/primitives/billboard.h"
 
-#include "../include/cameras/legacy_camera.h"
-//#include "../include/cameras/fly_camera.h"
-//#include "../include/cameras/fps_camera.h"
-//#include "../include/cameras/orbit_camera.h"
+//#include "../include/cameras/legacy_camera.h"
+#include "../include/cameras/fly_camera.h"
+#include "../include/cameras/fps_camera.h"
+#include "../include/cameras/orbit_camera.h"
 
 
 
@@ -213,23 +213,23 @@ std::string engine::Entity::getTypeNameEx()
 	}
 	else if (this->camera)
 	{
-		if (std::dynamic_pointer_cast<engine::LegacyCamera>(this->camera))
-		{
-			return "Legacy camera";
-		}
+		//if (std::dynamic_pointer_cast<engine::LegacyCamera>(this->camera))
+		//{
+		//	return "Legacy camera";
+		//}
 
-		/*if (std::dynamic_pointer_cast<engine::FlyCamera>(this->camera))
+		if (std::dynamic_pointer_cast<engine::FlyCamera>(this->camera))
 		{
 			return "Fly camera";
-		}*/
-		//else if (std::dynamic_pointer_cast<engine::FpsCamera>(this->camera))
-		//{
-		//	return "FPS camera";
-		//}
-		//else if (std::dynamic_pointer_cast<engine::OrbitCamera>(this->camera))
-		//{
-		//	return "Orbit camera";
-		//}
+		}
+		else if (std::dynamic_pointer_cast<engine::FpsCamera>(this->camera))
+		{
+			return "FPS camera";
+		}
+		else if (std::dynamic_pointer_cast<engine::OrbitCamera>(this->camera))
+		{
+			return "Orbit camera";
+		}
 
 		return "Camera";
 	}

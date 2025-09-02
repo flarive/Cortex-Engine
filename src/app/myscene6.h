@@ -50,7 +50,7 @@ public:
     {
         // cameras
         auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 8.0f } };
-        auto camera1 = std::make_shared<engine::LegacyCamera>(false);
+        auto camera1 = std::make_shared<engine::FlyCamera>();
         camera1->zoom = 100.0f;
         camera1->movementSpeed = 10.0f;
         auto EntityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);

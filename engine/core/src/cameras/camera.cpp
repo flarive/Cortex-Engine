@@ -1,16 +1,16 @@
 ﻿#include "../../include/cameras/camera.h"
 
-engine::Camera::Camera(bool _fps, glm::vec3 _up, float _yaw, float _pitch)
-    : fps(_fps), front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
-{
-    worldUp = _up;
-    yaw = _yaw;
-    pitch = _pitch;
-    updateCameraVectors();
-}
+//engine::Camera::Camera(bool _fps, glm::vec3 _up, float _yaw, float _pitch)
+//    : fps(_fps), front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
+//{
+//    worldUp = _up;
+//    yaw = _yaw;
+//    pitch = _pitch;
+//    updateCameraVectors();
+//}
 
-engine::Camera::Camera(glm::vec3 _position, bool _fps, glm::vec3 _up, float _yaw, float _pitch)
-    : fps(_fps), front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
+engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
+    : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
 {
     position = _position;
     worldUp = _up;
@@ -20,8 +20,8 @@ engine::Camera::Camera(glm::vec3 _position, bool _fps, glm::vec3 _up, float _yaw
 }
 
 // constructor with scalar values
-engine::Camera::Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch, bool _fps)
-    : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM), fps(_fps)
+engine::Camera::Camera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch)
+    : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
 {
     position = glm::vec3(_posX, _posY, _posZ);
     worldUp = glm::vec3(_upX, _upY, _upZ);

@@ -12,29 +12,13 @@
 #include "../frustrum.h"
 #include "../bounding_volume.h"
 #include "../aabb.h"
+#include "../ecs/component.h"
 
 #include <list>
 #include <memory>
 
 namespace engine
 {
-	//inline Frustum createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar)
-	//{
-	//	Frustum     frustum;
-	//	const float halfVSide = zFar * tanf(fovY * .5f);
-	//	const float halfHSide = halfVSide * aspect;
-	//	const glm::vec3 frontMultFar = zFar * cam.Front;
-
-	//	frustum.nearFace = { cam.Position + zNear * cam.Front, cam.Front };
-	//	frustum.farFace = { cam.Position + frontMultFar, -cam.Front };
-	//	frustum.rightFace = { cam.Position, glm::cross(frontMultFar - cam.Right * halfHSide, cam.Up) };
-	//	frustum.leftFace = { cam.Position, glm::cross(cam.Up, frontMultFar + cam.Right * halfHSide) };
-	//	frustum.topFace = { cam.Position, glm::cross(cam.Right, frontMultFar - cam.Up * halfVSide) };
-	//	frustum.bottomFace = { cam.Position, glm::cross(frontMultFar + cam.Up * halfVSide, cam.Right) };
-	//	return frustum;
-	//}
-
-
 	enum class EntityType { undefined = 0, model = 1, primitive = 2, light = 3, camera = 4 };
 
 	class Entity
@@ -44,19 +28,21 @@ namespace engine
 		std::string name{};
 		bool visible{ true };
 
+		// To remove
 		std::shared_ptr<Model> model{};
 		std::shared_ptr<Primitive> primitive{};
 		std::shared_ptr<Light> light{};
 		std::shared_ptr<Camera> camera{};
 		std::unique_ptr<AABB> boundingVolume{};
 
-		//Scene graph
+		// Scene graph
 		Entity* parent{};
 		std::list<std::shared_ptr<Entity>> children{};
 
+		// Components
+		std::unordered_map<uint32_t, std::shared_ptr<Component>> components;
 
-
-
+		// To remove
 		Transform transform{};       // local position/rotation/scale
 		glm::mat4 worldTransform{};  // should be full parent * local
 

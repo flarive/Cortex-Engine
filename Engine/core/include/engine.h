@@ -29,6 +29,7 @@
 #include "renderers/pbr_renderer.h"
 
 #include "ecs/entity.h"
+#include "ecs/component.h"
 
 
 #include "model.h"

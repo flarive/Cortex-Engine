@@ -284,9 +284,9 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
     else if (entity->camera)
     {
-        //entity->camera->position = entity->transform.getLocalPosition();
+        entity->camera->position = entity->transform.getLocalPosition();
 
-        entity->camera->draw(entity->transform.getLocalPosition());
+        //entity->camera->draw(entity->transform.getLocalPosition());
     }
 
     /*if (show_window)

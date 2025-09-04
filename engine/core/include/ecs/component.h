@@ -2,7 +2,7 @@
 
 namespace engine
 {
-	class component
+	class Component
 	{
 	};
 }

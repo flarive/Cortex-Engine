@@ -157,12 +157,6 @@ void MyScene2::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
 
-    //auto camera1 = getEntityManager().findEntityByName("Camera1");
-    //if (camera1)
-    //{
-    //    camera1->transform.setLocalPosition(camera1->camera->position);
-    //}
-
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {

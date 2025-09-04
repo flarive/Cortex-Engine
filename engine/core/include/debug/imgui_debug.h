@@ -2,7 +2,7 @@
 
 #include "../tools/system_monitor.h"
 
-#include "../entity.h"
+#include "../ecs/entity.h"
 
 namespace engine
 {

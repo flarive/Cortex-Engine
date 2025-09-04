@@ -1,19 +1,19 @@
-﻿#include "../include/entity.h"
+﻿#include "../../include/ecs/entity.h"
 
-#include "../include/lights/point_light.h"
-#include "../include/lights/spot_light.h"
-#include "../include/lights/directional_light.h"
+#include "../../include/lights/point_light.h"
+#include "../../include/lights/spot_light.h"
+#include "../../include/lights/directional_light.h"
 
-#include "../include/primitives/cube.h"
-#include "../include/primitives/sphere.h"
-#include "../include/primitives/plane.h"
-#include "../include/primitives/cone.h"
-#include "../include/primitives/cylinder.h"
-#include "../include/primitives/billboard.h"
+#include "../../include/primitives/cube.h"
+#include "../../include/primitives/sphere.h"
+#include "../../include/primitives/plane.h"
+#include "../../include/primitives/cone.h"
+#include "../../include/primitives/cylinder.h"
+#include "../../include/primitives/billboard.h"
 
-#include "../include/cameras/fly_camera.h"
-#include "../include/cameras/fps_camera.h"
-#include "../include/cameras/orbit_camera.h"
+#include "../../include/cameras/fly_camera.h"
+#include "../../include/cameras/fps_camera.h"
+#include "../../include/cameras/orbit_camera.h"
 
 
 
@@ -225,10 +225,10 @@ std::string engine::Entity::getTypeNameEx()
 		{
 			return "FPS camera";
 		}
-		else if (std::dynamic_pointer_cast<engine::OrbitCamera>(this->camera))
-		{
-			return "Orbit camera";
-		}
+		//else if (std::dynamic_pointer_cast<engine::OrbitCamera>(this->camera))
+		//{
+		//	return "Orbit camera";
+		//}
 
 		return "Camera";
 	}

@@ -3,6 +3,13 @@
 #include "../misc/noncopyable.h"
 #include "../common_defines.h"
 
+#include "../transform.h"
+
+//#ifdef _WIN32
+//#include "windows.h" // for UNREFERENCED_PARAMETER
+//#endif
+
+
 namespace engine
 {
     // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
@@ -68,6 +75,8 @@ namespace engine
 
         virtual void processJoystickMovement(const GLFWgamepadstate& state) = 0;
 
+
+        void draw(const glm::vec3& _position);
 
 
 

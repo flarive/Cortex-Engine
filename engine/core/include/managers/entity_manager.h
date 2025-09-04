@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common_defines.h"
-#include "../entity.h"
+#include "../ecs/entity.h"
 
 
 #include <unordered_map>

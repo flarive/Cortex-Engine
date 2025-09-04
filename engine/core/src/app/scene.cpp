@@ -234,14 +234,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     if (!entity->visible)
         return;
 
-    //aaaaaaaaaaaaa
-    //auto camera1 = getEntityManager().findEntityByName("Camera1");
-    //if (camera1)
-    //{
-    //    camera1->transform.setLocalPosition(camera1->camera->position);
-    //}
-
-
     glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
     glm::mat4 view = getActiveCamera()->getViewMatrix();
     
@@ -292,7 +284,9 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
     else if (entity->camera)
     {
-        entity->camera->position = entity->transform.getLocalPosition();
+        //entity->camera->position = entity->transform.getLocalPosition();
+
+        entity->camera->draw(entity->transform.getLocalPosition());
     }
 
     /*if (show_window)

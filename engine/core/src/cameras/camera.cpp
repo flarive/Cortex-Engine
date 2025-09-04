@@ -24,6 +24,13 @@ void engine::Camera::setFromViewMatrix(const glm::mat4& view)
     up = glm::normalize(glm::vec3(view[0][1], view[1][1], view[2][1]));  // up
 }
 
+void engine::Camera::draw(const glm::vec3& _position)
+{
+    //position = glm::vec3(_position);
+
+    //updateCameraVectors();
+}
+
 void engine::Camera::updateCameraVectors()
 {
 }

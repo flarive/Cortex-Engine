@@ -1,17 +1,17 @@
 #pragma once
 
-#include "common_defines.h"
+#include "../common_defines.h"
 
-#include "misc/noncopyable.h"
+#include "../misc/noncopyable.h"
 
-#include "model.h"
-#include "primitives/primitive.h"
-#include "lights/light.h"
-#include "cameras/camera.h"
-#include "transform.h"
-#include "frustrum.h"
-#include "bounding_volume.h"
-#include "aabb.h"
+#include "../model.h"
+#include "../primitives/primitive.h"
+#include "../lights/light.h"
+#include "../cameras/camera.h"
+#include "../transform.h"
+#include "../frustrum.h"
+#include "../bounding_volume.h"
+#include "../aabb.h"
 
 #include <list>
 #include <memory>

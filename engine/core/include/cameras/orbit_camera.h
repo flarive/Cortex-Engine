@@ -59,13 +59,15 @@ namespace engine
 
         void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) override
         {
-
+            /*UNREFERENCED_PARAMETER(direction);
+            UNREFERENCED_PARAMETER(deltaTime);
+            UNREFERENCED_PARAMETER(constrainPitch);*/
         }
 
 
         void processJoystickMovement(const GLFWgamepadstate& state) override
         {
-
+            //UNREFERENCED_PARAMETER(state);
         }
 
 

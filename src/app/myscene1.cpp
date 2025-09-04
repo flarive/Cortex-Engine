@@ -24,7 +24,7 @@ MyScene1::MyScene1(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene1::init()
 {
     // cameras
-    auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 3.0f } };
+    auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 5.0f } };
     auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
@@ -234,14 +234,6 @@ void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)
 void MyScene1::update(engine::Shader& shader)
 {
     UNREFERENCED_PARAMETER(shader);
-
-
-    //auto camera1 = getEntityManager().findEntityByName("Camera1");
-    //if (camera1)
-    //{
-    //    camera1->transform.setLocalPosition(camera1->camera->position);
-    //}
-
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)

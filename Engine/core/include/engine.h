@@ -28,7 +28,7 @@
 #include "renderers/blinnphong_renderer.h"
 #include "renderers/pbr_renderer.h"
 
-#include "entity.h"
+#include "ecs/entity.h"
 
 
 #include "model.h"

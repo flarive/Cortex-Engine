@@ -133,6 +133,12 @@
     <Filter Include="Fichiers sources\imgui\extensions\toggle">
       <UniqueIdentifier>{ae41996f-a4ac-4bf3-8046-314e2d71c5ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\ecs">
+      <UniqueIdentifier>{7ebd757f-0692-4ae8-82b5-c248ce52d85e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\ecs">
+      <UniqueIdentifier>{4bac33ba-6857-45ec-81d3-761d46c35645}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -212,9 +218,6 @@
     </ClCompile>
     <ClCompile Include="core\src\ui\sprite.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\entity.cpp">
-      <Filter>Fichiers sources\core</Filter>
     </ClCompile>
     <ClCompile Include="core\src\transform.cpp">
       <Filter>Fichiers sources\core</Filter>
@@ -299,6 +302,12 @@
     </ClCompile>
     <ClCompile Include="core\src\cameras\fps_camera.cpp">
       <Filter>Fichiers sources\core\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\entity.cpp">
+      <Filter>Fichiers sources\core\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\component.cpp">
+      <Filter>Fichiers sources\core\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,9 +400,6 @@
     </ClInclude>
     <ClInclude Include="core\include\ui\sprite.h">
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\entity.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\app\scene.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
@@ -499,6 +505,12 @@
     </ClInclude>
     <ClInclude Include="core\include\cameras\fps_camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\entity.h">
+      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

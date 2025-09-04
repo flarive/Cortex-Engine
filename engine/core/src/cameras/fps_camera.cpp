@@ -1,18 +1,7 @@
 #include "../../include/cameras/fps_camera.h"
 
-//engine::FpsCamera::FpsCamera(glm::vec3 _up, float _yaw, float _pitch)
-//    : engine::Camera(_up, _yaw, _pitch)
-//{
-//}
-
 engine::FpsCamera::FpsCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
     : engine::Camera(_position, _up, _yaw, _pitch)
-{
-}
-
-// constructor with scalar values
-engine::FpsCamera::FpsCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch)
-    : engine::Camera(_posX, _posY, _posZ, _upX, _upY, _upZ, _yaw, _pitch)
 {
 }
 

@@ -1,18 +1,7 @@
 #include "../../include/cameras/fly_camera.h"
 
-//engine::FlyCamera::FlyCamera(glm::vec3 _up, float _yaw, float _pitch)
-//    : engine::Camera(_up, _yaw, _pitch)
-//{
-//}
-
 engine::FlyCamera::FlyCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
     : engine::Camera(_position, _up, _yaw, _pitch)
-{
-}
-
-// constructor with scalar values
-engine::FlyCamera::FlyCamera(float _posX, float _posY, float _posZ, float _upX, float _upY, float _upZ, float _yaw, float _pitch)
-    : engine::Camera(_posX, _posY, _posZ, _upX, _upY, _upZ, _yaw, _pitch)
 {
 }
 

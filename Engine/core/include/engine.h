@@ -34,7 +34,6 @@
 #include "model.h"
 
 #include "cameras/camera.h"
-//#include "cameras/legacy_camera.h"
 #include "cameras/fly_camera.h"
 #include "cameras/fps_camera.h"
 #include "cameras/orbit_camera.h"

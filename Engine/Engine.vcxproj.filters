@@ -258,9 +258,6 @@
     <ClCompile Include="core\src\cameras\camera.cpp">
       <Filter>Fichiers sources\core\cameras\base</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\cameras\legacy_camera.cpp">
-      <Filter>Fichiers sources\core\cameras</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\debug\imgui_docking.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
@@ -445,9 +442,6 @@
     </ClInclude>
     <ClInclude Include="core\include\cameras\camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras\base</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\cameras\legacy_camera.h">
-      <Filter>Fichiers d%27en-tête\core\cameras</Filter>
     </ClInclude>
     <ClInclude Include="core\include\debug\imgui_docking.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>

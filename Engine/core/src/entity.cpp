@@ -11,7 +11,6 @@
 #include "../include/primitives/cylinder.h"
 #include "../include/primitives/billboard.h"
 
-//#include "../include/cameras/legacy_camera.h"
 #include "../include/cameras/fly_camera.h"
 #include "../include/cameras/fps_camera.h"
 #include "../include/cameras/orbit_camera.h"

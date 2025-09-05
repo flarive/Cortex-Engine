@@ -7,6 +7,8 @@
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"
 
+#include "../ecs/component.h"
+
 namespace engine
 {
     /// <summary>
@@ -33,7 +35,6 @@ namespace engine
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
         virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
-
         virtual void draw(Shader& shader, const glm::mat4 model) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose

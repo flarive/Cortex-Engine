@@ -14,6 +14,14 @@ namespace engine
     public:
         Transform(glm::vec3 pos = { 0,0,0 }, glm::vec3 scale = { 1,1,1 }, glm::vec3 rot = { 0,0,0 });
 
+
+        //Transform(const Transform&) = default;
+        //Transform& operator=(const Transform&) = default;
+
+        //Transform(Transform&&) = default;
+        //Transform& operator=(Transform&&) = default;
+
+
         // Build TRS matrix from local values
         glm::mat4 getLocalModelMatrix() const;
 

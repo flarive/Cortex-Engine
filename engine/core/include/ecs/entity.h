@@ -39,8 +39,11 @@ namespace engine
 		Entity* parent{};
 		std::list<std::shared_ptr<Entity>> children{};
 
+
+		//std::shared_ptr<Component> transformComponent{};
+
 		// Components
-		std::unordered_map<uint32_t, std::shared_ptr<Component>> components;
+		std::unordered_map<unsigned int, std::shared_ptr<Component>> components{};
 
 		// To remove
 		Transform transform{};       // local position/rotation/scale
@@ -74,7 +77,8 @@ namespace engine
 		EntityType getType();
 		std::string getTypeName();
 		std::string getTypeNameEx();
-	
+
+#pragma region Entities
 
 		// Add child using Entity constructor
 		// Argument input is argument of any constructor that you create. By default you can use the default constructor and don't put argument input.
@@ -93,6 +97,55 @@ namespace engine
 
 		//Force update of transform even if local space don't change
 		void forceUpdateSelfAndChild();
+
+#pragma endregion
+
+
+
+#pragma region Components
+
+		//template<typename T, typename... Args>
+		//	requires std::derived_from<T, Component>
+		//T* addComponent(Args&&... args) {
+		//	auto component = std::make_shared<T>(std::forward<Args>(args)...);
+		//	unsigned int typeID = component.getTypeID();
+		//	components[typeID] = component;
+		//	return static_cast<T*>(component.get());
+		//}
+
+		//template<typename T>
+		//	requires std::derived_from<T, Component>
+		//T* getComponent() {
+		//	unsigned int typeID = T::getTypeID();
+		//	auto it = components.find(typeID);
+		//	if (it != components.end()) {
+		//		return static_cast<T*>(it->second.get());
+		//	}
+		//	return nullptr;
+		//}
+
+
+		template<typename T, typename... Args>
+			requires std::derived_from<T, ComponentBase<T>>
+		T* addComponent(Args&&... args) {
+			auto component = std::make_shared<T>(std::forward<Args>(args)...);
+			unsigned int typeID = T::getStaticTypeID(); // Static call
+			components[typeID] = component;
+			return static_cast<T*>(component.get());
+		}
+
+		template<typename T>
+			requires std::derived_from<T, ComponentBase<T>>
+		T* getComponent() {
+			unsigned int typeID = T::getStaticTypeID(); // Static call
+			auto it = components.find(typeID);
+			if (it != components.end()) {
+				return static_cast<T*>(it->second.get());
+			}
+			return nullptr;
+		}
+
+#pragma endregion
 
 
 	private:

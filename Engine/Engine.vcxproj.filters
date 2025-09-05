@@ -309,6 +309,12 @@
     <ClCompile Include="core\src\ecs\component.cpp">
       <Filter>Fichiers sources\core\ecs</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\ecs\transform_component.cpp">
+      <Filter>Fichiers sources\core\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\camera_component.cpp">
+      <Filter>Fichiers sources\core\ecs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -510,6 +516,12 @@
       <Filter>Fichiers d%27en-tête\core\ecs</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\transform_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\camera_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs</Filter>
     </ClInclude>
   </ItemGroup>

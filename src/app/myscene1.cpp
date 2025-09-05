@@ -23,14 +23,23 @@ MyScene1::MyScene1(std::string _title, engine::App* _app) : engine::Scene(_title
 
 void MyScene1::init()
 {
+    //// cameras
+    //auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 5.0f } };
+    //auto camera1 = std::make_shared<engine::FpsCamera>();
+    //camera1->zoom = 25.0f;
+    //camera1->movementSpeed = 10.0f;
+    //auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+    //getEntityManager().addChild(entityCamera1);
+
     // cameras
-    auto trsCamera1 = engine::Transform{ { 0.0f, 0.0f, 5.0f } };
+    
     auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
+    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
+    
+    entityCamera1->addComponent<engine::TransformComponent>(engine::Transform{ { 0.0f, 0.0f, 5.0f } });
     getEntityManager().addChild(entityCamera1);
-
 
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);

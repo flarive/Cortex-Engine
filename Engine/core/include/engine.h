@@ -30,6 +30,8 @@
 
 #include "ecs/entity.h"
 #include "ecs/component.h"
+#include "ecs/transform_component.h"
+#include "ecs/camera_component.h"
 
 
 #include "model.h"

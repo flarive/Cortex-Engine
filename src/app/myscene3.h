@@ -283,8 +283,8 @@ public:
 
     void mouse_callback(double xposIn, double yposIn)
     {
-        //UNREFERENCED_PARAMETER(xposIn);
-        //UNREFERENCED_PARAMETER(yposIn);
+        //(void)xposIn;   //Do nothing
+        //(void)yposIn;   //Do nothing
 
         engine::Scene::mouse_callback(xposIn, yposIn);
 
@@ -357,7 +357,7 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        UNREFERENCED_PARAMETER(shader);
+        (void)shader;   //Do nothing
 
         rotation += deltaTime * 10.0f;
     }

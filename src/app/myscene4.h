@@ -172,7 +172,7 @@ public:
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-        UNREFERENCED_PARAMETER(state);
+        (void)state;   //Do nothing
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -203,7 +203,7 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        UNREFERENCED_PARAMETER(shader);
+        (void)shader;   //Do nothing
 
         auto myCushion = getEntityManager().findEntityByName("MyCushion");
         if (myCushion)

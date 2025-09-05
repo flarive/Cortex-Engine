@@ -41,6 +41,7 @@ void MyScene1::init()
     entityCamera1->addComponent<engine::TransformComponent>(engine::Transform{ { 0.0f, 0.0f, 5.0f } });
     getEntityManager().addChild(entityCamera1);
 
+
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
     light1->intensity = 2.0f;
@@ -242,7 +243,7 @@ void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)
 
 void MyScene1::update(engine::Shader& shader)
 {
-    UNREFERENCED_PARAMETER(shader);
+    (void)shader;   //Do nothing
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)

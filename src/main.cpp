@@ -93,7 +93,7 @@ int main(int, char**)
 // -----------------------------------------------------------------
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    UNREFERENCED_PARAMETER(window);
+    (void)window;   //Do nothing
 
     ((MyScene*)myScene)->key_callback(key, scancode, action, mods);
 }
@@ -102,7 +102,7 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 // -------------------------------------------------------
 static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    UNREFERENCED_PARAMETER(window);
+    (void)window;   //Do nothing
 
     ((MyScene*)myScene)->mouse_callback(xposIn, yposIn);
 }
@@ -111,7 +111,7 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 // ----------------------------------------------------------------------
 static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    UNREFERENCED_PARAMETER(window);
+    (void)window;   //Do nothing
 
     ((MyScene*)myScene)->scroll_callback(xoffset, yoffset);
 }
@@ -120,14 +120,14 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 // ---------------------------------------------------------------------------------------------
 static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    UNREFERENCED_PARAMETER(window);
+    (void)window;   //Do nothing
 
     ((MyScene*)myScene)->framebuffer_size_callback(width, height);
 }
 
 static void windowRefreshCallback(GLFWwindow* window)
 {
-    UNREFERENCED_PARAMETER(window);
+    (void)window;   //Do nothing
 
     ((MyScene*)myScene)->window_refresh_callback();
 }

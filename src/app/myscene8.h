@@ -223,7 +223,7 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        UNREFERENCED_PARAMETER(shader);
+        (void)shader;   //Do nothing
     }
 
     void drawUI()

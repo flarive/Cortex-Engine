@@ -238,7 +238,7 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        UNREFERENCED_PARAMETER(shader);
+        (void)shader;   //Do nothing
 
         auto MyHelmet = getEntityManager().findEntityByName("MyHelmet");
         if (MyHelmet)

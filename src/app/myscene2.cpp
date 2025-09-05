@@ -104,8 +104,8 @@ void MyScene2::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene2::mouse_callback(double xposIn, double yposIn)
 {
-    UNREFERENCED_PARAMETER(xposIn);
-    UNREFERENCED_PARAMETER(yposIn);
+    (void)xposIn;   //Do nothing
+    (void)yposIn;   //Do nothing
 
     engine::Scene::mouse_callback(xposIn, yposIn);
 
@@ -133,8 +133,8 @@ void MyScene2::mouse_callback(double xposIn, double yposIn)
 
 void MyScene2::scroll_callback(double xoffset, double yoffset)
 {
-    UNREFERENCED_PARAMETER(xoffset);
-    UNREFERENCED_PARAMETER(yoffset);
+    (void)xoffset;   //Do nothing
+    (void)yoffset;   //Do nothing
 
 
     engine::Scene::scroll_callback(xoffset, yoffset);
@@ -144,7 +144,7 @@ void MyScene2::scroll_callback(double xoffset, double yoffset)
 
 void MyScene2::gamepad_callback(const GLFWgamepadstate& state)
 {
-    UNREFERENCED_PARAMETER(state);
+    (void)state;   //Do nothing
 }
 
 void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
@@ -155,7 +155,7 @@ void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
 
 void MyScene2::update(engine::Shader& shader)
 {
-    UNREFERENCED_PARAMETER(shader);
+    (void)shader;   //Do nothing
 
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)

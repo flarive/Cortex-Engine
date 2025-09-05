@@ -111,7 +111,7 @@ namespace engine
 
         GLFWwindow* getWindow();
         Renderer* getRenderer() { return m_renderer; };
-        EntityManager getEntityManager() { return m_entityManager; };
+        EntityManager getEntityManager() { return m_entityManager; }; // call it entity root may be ?
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {

@@ -334,8 +334,8 @@ GLFWwindow* engine::Scene::getWindow()
 
 void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 {
-    UNREFERENCED_PARAMETER(scancode);
-    UNREFERENCED_PARAMETER(mods);
+    (void)scancode;   //Do nothing
+    (void)mods;   //Do nothing
 
     // basic window handling
     switch (key) {
@@ -378,8 +378,8 @@ void engine::Scene::mouse_callback(double xposIn, double yposIn)
 // ----------------------------------------------------------------------
 void engine::Scene::scroll_callback(double xoffset, double yoffset)
 {
-    UNREFERENCED_PARAMETER(xoffset);
-    UNREFERENCED_PARAMETER(yoffset);
+    (void)xoffset;   //Do nothing
+    (void)yoffset;   //Do nothing
 
     if (show_window || show_demo_window)
         ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????

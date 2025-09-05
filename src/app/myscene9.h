@@ -198,7 +198,7 @@ public:
 
     void gamepad_callback(const GLFWgamepadstate& state)
     {
-        
+        (void)state;   //Do nothing
     }
 
     void framebuffer_size_callback(int newWidth, int newHeight)
@@ -228,7 +228,7 @@ public:
 private:
     void drawScene(engine::Shader& shader)
     {
-        UNREFERENCED_PARAMETER(shader);
+        (void)shader;   //Do nothing
     }
 
     void drawUI()

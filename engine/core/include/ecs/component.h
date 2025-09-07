@@ -11,8 +11,6 @@ namespace engine
         virtual void init() = 0;
         virtual void update() = 0;
         virtual void draw() = 0;
-
-        //virtual unsigned int getTypeID() = 0;
 	};
 
     /// <summary>
@@ -34,8 +32,7 @@ namespace engine
         {
             static unsigned int typeID = []()
                 {
-                static unsigned int counter = 0;
-                return counter++;
+                return 99;
                 }();
             return typeID;
         }

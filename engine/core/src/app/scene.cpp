@@ -75,6 +75,8 @@ void engine::Scene::initialize()
     if (lights.size() == 0)
         lights = m_entityManager.findEntitiesOfType<Light>();
 
+    assert(lights.size() > 0 && "Scene has no light !");
+
     if (cameras.size() == 0)
         cameras = m_entityManager.findEntitiesOfType<Camera>();
 
@@ -241,26 +243,25 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     shader.use();
     shader.setMat4("model", entity->worldTransform);
 
-    /*if (show_window)
-    {*/
-        //if (shader.name != "outline")
-        //{
-            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
-            glStencilMask(0xFF);
-        //}
-        //else
-        //{
-            // Only draw outline where stencil != objectID
-            //glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
-            //glStencilMask(0x00); // disable stencil writes
 
-            //shader.setMat4("view", view);
-            //shader.setMat4("projection", projection);
-            //shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
-        //}
-    //}
+    if (shader.name != "outline")
+    {
+        glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+        glStencilMask(0xFF);
+    }
+    else
+    {
+        // Only draw outline where stencil != objectID
+        glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+        glStencilMask(0x00); // disable stencil writes
 
-    if (entity->model)
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
+        shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
+    }
+
+    // old way
+    /*if (entity->model)
     {
         entity->model->draw(shader, entity->worldTransform);
     }
@@ -281,23 +282,34 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->light->target,
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
-    }
-    else if (entity->camera)
+    }*/
+    /*else if (entity->camera)
     {
         entity->camera->position = entity->transform.getLocalPosition();
+    }*/
 
-        //entity->camera->draw(entity->transform.getLocalPosition());
+    // new way
+    for (const auto& [typeID, component] : entity->components)
+    {
+        if (typeID == 0)
+        {
+            // transform
+        }
+        else if (typeID == 1)
+        {
+            // camera
+        }
+
     }
 
-    /*if (show_window)
-    {*/
-        //if (shader.name == "outline")
-        //{
-        //    // Restore state
-        //    glStencilMask(0xFF);
-        //    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        //}
-    //}
+
+    if (shader.name == "outline")
+    {
+        // Restore state
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    }
+
 
     // Draw children
     for (const auto& child : entity->children)

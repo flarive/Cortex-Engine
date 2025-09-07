@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef _WIN32
-#include "windows.h" // to avoid warning C4005: 'APIENTRY' : redefinition de macro
-#endif
+//#ifdef _WIN32
+//#include "windows.h" // to avoid warning C4005: 'APIENTRY' : redefinition de macro
+//#endif
 
 #include "common_defines.h"
 
@@ -32,6 +32,9 @@
 #include "ecs/component.h"
 #include "ecs/transform_component.h"
 #include "ecs/camera_component.h"
+#include "ecs/primitive_component.h"
+#include "ecs/light_component.h"
+#include "ecs/model_component.h"
 
 
 #include "model.h"

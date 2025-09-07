@@ -4,6 +4,12 @@
 #include "../ecs/entity.h"
 
 
+#include "../ecs/camera_component.h"
+#include "../ecs/light_component.h"
+#include "../ecs/primitive_component.h"
+#include "../ecs/model_component.h"
+
+
 #include <unordered_map>
 #include <memory>
 
@@ -81,7 +87,7 @@ namespace engine
 
 			// Try casting the entity to the desired type
 			std::shared_ptr<T> casted{};
-			if (entity->primitive && typeid(std::dynamic_pointer_cast<T>(entity->primitive)) == typeid(entity->primitive))
+			/*if (entity->primitive && typeid(std::dynamic_pointer_cast<T>(entity->primitive)) == typeid(entity->primitive))
 			{
 				casted = std::dynamic_pointer_cast<T>(entity->primitive);
 			}
@@ -96,7 +102,31 @@ namespace engine
 			else if (entity->camera && typeid(std::dynamic_pointer_cast<T>(entity->camera)) == typeid(entity->camera))
 			{
 				casted = std::dynamic_pointer_cast<T>(entity->camera);
+			}*/
+
+			//auto primitiveComponent = entity->getComponent<PrimitiveComponent>();
+			//auto modelComponent = entity->getComponent<ModelComponent>();
+			//auto lightComponent = entity->getComponent<LightComponent>();
+			//auto cameraComponent = entity->getComponent<CameraComponent>();
+
+			if (auto primitiveComponent = entity->getComponent<PrimitiveComponent>())
+			{
+				casted = std::reinterpret_pointer_cast<T>(primitiveComponent->getPrimitive());
 			}
+			else if (auto modelComponent = entity->getComponent<ModelComponent>())
+			{
+				casted = std::reinterpret_pointer_cast<T>(modelComponent->getModel());
+			}
+			else if (auto lightComponent = entity->getComponent<LightComponent>())
+			{
+				casted = std::reinterpret_pointer_cast<T>(lightComponent->getLight());
+			}
+			else if (auto cameraComponent = entity->getComponent<CameraComponent>())
+			{
+				casted = std::reinterpret_pointer_cast<T>(cameraComponent->getCamera());
+			}
+
+
 
 			if (casted)
 			{

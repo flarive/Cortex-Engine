@@ -40,8 +40,6 @@ namespace engine
 		std::list<std::shared_ptr<Entity>> children{};
 
 
-		//std::shared_ptr<Component> transformComponent{};
-
 		// Components
 		std::unordered_map<unsigned int, std::shared_ptr<Component>> components{};
 
@@ -104,27 +102,6 @@ namespace engine
 
 #pragma region Components
 
-		//template<typename T, typename... Args>
-		//	requires std::derived_from<T, Component>
-		//T* addComponent(Args&&... args) {
-		//	auto component = std::make_shared<T>(std::forward<Args>(args)...);
-		//	unsigned int typeID = component.getTypeID();
-		//	components[typeID] = component;
-		//	return static_cast<T*>(component.get());
-		//}
-
-		//template<typename T>
-		//	requires std::derived_from<T, Component>
-		//T* getComponent() {
-		//	unsigned int typeID = T::getTypeID();
-		//	auto it = components.find(typeID);
-		//	if (it != components.end()) {
-		//		return static_cast<T*>(it->second.get());
-		//	}
-		//	return nullptr;
-		//}
-
-
 		template<typename T, typename... Args>
 			requires std::derived_from<T, ComponentBase<T>>
 		T* addComponent(Args&&... args) {
@@ -134,13 +111,24 @@ namespace engine
 			return static_cast<T*>(component.get());
 		}
 
+		//template<typename T>
+		//	requires std::derived_from<T, ComponentBase<T>>
+		//T* getComponent() {
+		//	unsigned int typeID = T::getStaticTypeID(); // Static call
+		//	auto it = components.find(typeID);
+		//	if (it != components.end()) {
+		//		return static_cast<T*>(it->second.get());
+		//	}
+		//	return nullptr;
+		//}
+
 		template<typename T>
 			requires std::derived_from<T, ComponentBase<T>>
-		T* getComponent() {
+		std::shared_ptr<T> getComponent() {
 			unsigned int typeID = T::getStaticTypeID(); // Static call
 			auto it = components.find(typeID);
 			if (it != components.end()) {
-				return static_cast<T*>(it->second.get());
+				return std::static_pointer_cast<T>(it->second);
 			}
 			return nullptr;
 		}

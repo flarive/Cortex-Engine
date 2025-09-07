@@ -19,11 +19,10 @@ namespace engine
 		void update() override;
 		void draw() override;
 
+		static unsigned int getStaticTypeID() {
+			return 0; // Ensure this is the smallest TypeID
+		}
 
-		//unsigned int getTypeID() override
-		//{
-		//	return 1; // Unique ID for TransformComponent
-		//}
 
 	private:
 		Transform m_transform{};       // local position/rotation/scale

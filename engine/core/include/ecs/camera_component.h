@@ -3,7 +3,9 @@
 
 #include "component.h"
 
-#include "../transform.h"
+#include "../cameras/fly_camera.h"
+#include "../cameras/fps_camera.h"
+#include "../cameras/orbit_camera.h"
 
 namespace engine
 {
@@ -12,19 +14,26 @@ namespace engine
 	public:
 
 		CameraComponent() = default;
+		CameraComponent(std::shared_ptr<Camera> camera);
 		~CameraComponent() = default;
 
 		void init() override;
 		void update() override;
 		void draw() override;
 
+		std::shared_ptr<Camera> getCamera()
+		{
+			return m_camera;
+		}
 
-		//unsigned int getTypeID() override
-		//{
-		//	return 2; // Unique ID for TransformComponent
-		//}
+
+		static unsigned int getStaticTypeID() {
+			return 1;
+		}
 
 	private:
+
+		std::shared_ptr<Camera> m_camera{};
 		
 	};
 }

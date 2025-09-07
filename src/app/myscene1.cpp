@@ -31,17 +31,29 @@ void MyScene1::init()
     //auto entityCamera1 = std::make_shared<engine::Entity>("Camera1", camera1, trsCamera1);
     //getEntityManager().addChild(entityCamera1);
 
-    // cameras
-    
+    // camera
     auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    
     entityCamera1->addComponent<engine::TransformComponent>(engine::Transform{ { 0.0f, 0.0f, 5.0f } });
+    entityCamera1->addComponent<engine::CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
+    /*auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
+    auto light1 = std::make_shared<engine::SpotLight>(0);
+    light1->intensity = 2.0f;
+    light1->cutoff = 12.0f;
+    light1->outerCutoff = 48.0f;
+    light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
+    light1->ambientColor = engine::Color(1.0f);
+    light1->diffuseColor = engine::Color(1.0f);
+    light1->specularColor = engine::Color(1.0f);
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+    getEntityManager().addChild(entityLight1);*/
+
+    // light
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
     light1->intensity = 2.0f;
@@ -51,9 +63,9 @@ void MyScene1::init()
     light1->ambientColor = engine::Color(1.0f);
     light1->diffuseColor = engine::Color(1.0f);
     light1->specularColor = engine::Color(1.0f);
-
-
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", light1, trsLight1);
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
+    entityLight1->addComponent<engine::TransformComponent>(engine::Transform{ { 0.5f, 1.5f, 3.0f } });
+    entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
@@ -73,61 +85,70 @@ void MyScene1::init()
 
 
     // ground
+    //auto myPlane = std::make_shared<engine::Plane>();
+    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
+    //auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    //auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+    //getEntityManager().addChild(entityPlane);
+
+    // ground
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane", myPlane, trsPlane);
+    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
+    entityPlane->addComponent<engine::TransformComponent>(trsPlane);
+    entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
 
     // billboard
-    auto myBillboard = std::make_shared<engine::Billboard>();
-    myBillboard->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
+    //auto myBillboard = std::make_shared<engine::Billboard>();
+    //myBillboard->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/grass.png"), engine::UvMapping(1.0f));
 
-    auto trsBillboard = engine::Transform(glm::vec3(0.0f, -0.15f, -3.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
-    getEntityManager().addChild(entityBillboard);
-
-
-    // cube
-    auto myCube = std::make_shared<engine::Cube>();
-    myCube->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
-
-    auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
-    getEntityManager().addChild(entityCube);
+    //auto trsBillboard = engine::Transform(glm::vec3(0.0f, -0.15f, -3.0f), glm::vec3(0.35f), glm::vec3(90.0f, 0.0f, 0.0f));
+    //auto entityBillboard = std::make_shared<engine::Entity>("MyBillboard", myBillboard, trsBillboard);
+    //getEntityManager().addChild(entityBillboard);
 
 
-    // cylinder
-    auto myCylinder = std::make_shared<engine::Cylinder>();
-    myCylinder->radius = 0.1f;
-    myCylinder->height = 0.3f;
-    myCylinder->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    //// cube
+    //auto myCube = std::make_shared<engine::Cube>();
+    //myCube->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
 
-    auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder", myCylinder, trsCylinder);
-    getEntityManager().addChild(entityCylinder);
+    //auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
+    //auto entityCube = std::make_shared<engine::Entity>("MyCube", myCube, trsCube);
+    //getEntityManager().addChild(entityCube);
 
 
-    // cone
-    auto myCone = std::make_shared<engine::Cone>();
-    myCone->radius = 0.1f;
-    myCone->height = 0.3f;
-    myCone->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    //// cylinder
+    //auto myCylinder = std::make_shared<engine::Cylinder>();
+    //myCylinder->radius = 0.1f;
+    //myCylinder->height = 0.3f;
+    //myCylinder->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
-    auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCone = std::make_shared<engine::Entity>("MyCone", myCone, trsCone);
-    getEntityManager().addChild(entityCone);
+    //auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    //auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder", myCylinder, trsCylinder);
+    //getEntityManager().addChild(entityCylinder);
 
 
-    // sphere
-    auto mySphere = std::make_shared<engine::Sphere>();
-    mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+    //// cone
+    //auto myCone = std::make_shared<engine::Cone>();
+    //myCone->radius = 0.1f;
+    //myCone->height = 0.3f;
+    //myCone->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
 
-    auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
-    getEntityManager().addChild(entitySphere);
+    //auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    //auto entityCone = std::make_shared<engine::Entity>("MyCone", myCone, trsCone);
+    //getEntityManager().addChild(entityCone);
+
+
+    //// sphere
+    //auto mySphere = std::make_shared<engine::Sphere>();
+    //mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
+
+    //auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
+    //auto entitySphere = std::make_shared<engine::Entity>("MySphere", mySphere, trsSphere);
+    //getEntityManager().addChild(entitySphere);
 
 
 
@@ -137,17 +158,25 @@ void MyScene1::init()
 
 
     // cushion model
+    //std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb");
+    //auto trsCushion = engine::Transform(glm::vec3(-0.5f, -0.35f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
+    //auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
+    //getEntityManager().addChild(entityCushion);
+
+    // cushion model
     std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb");
     auto trsCushion = engine::Transform(glm::vec3(-0.5f, -0.35f, 0.0f), glm::vec3(0.10f), glm::vec3(0.0f, 45.0f, 0.0f));
-    auto entityCushion = std::make_shared<engine::Entity>("MyCushion", cushionModel, trsCushion);
+    auto entityCushion = std::make_shared<engine::Entity>("MyCushion");
+    entityCushion->addComponent<engine::TransformComponent>(trsCushion);
+    entityCushion->addComponent<engine::ModelComponent>(cushionModel);
     getEntityManager().addChild(entityCushion);
 
 
     // backpack model
-    std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>("models/backpack/backpack.glb");
-    auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.12f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
-    getEntityManager().addChild(entityBackpack);
+    //std::shared_ptr<engine::Model> backpackModel = std::make_shared<engine::Model>("models/backpack/backpack.glb");
+    //auto trsBackpack = engine::Transform(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.12f), glm::vec3(90.0f, 0.0f, 0.0f));
+    //auto entityBackpack = std::make_shared<engine::Entity>("MyBackpack", backpackModel, trsBackpack);
+    //getEntityManager().addChild(entityBackpack);
 
 
 

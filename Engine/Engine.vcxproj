@@ -182,6 +182,9 @@
     <ClCompile Include="core\src\ecs\camera_component.cpp" />
     <ClCompile Include="core\src\ecs\component.cpp" />
     <ClCompile Include="core\src\ecs\entity.cpp" />
+    <ClCompile Include="core\src\ecs\light_component.cpp" />
+    <ClCompile Include="core\src\ecs\model_component.cpp" />
+    <ClCompile Include="core\src\ecs\primitive_component.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
     <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
@@ -247,6 +250,9 @@
     <ClInclude Include="core\include\debug\imgui_docking.h" />
     <ClInclude Include="core\include\ecs\camera_component.h" />
     <ClInclude Include="core\include\ecs\component.h" />
+    <ClInclude Include="core\include\ecs\light_component.h" />
+    <ClInclude Include="core\include\ecs\model_component.h" />
+    <ClInclude Include="core\include\ecs\primitive_component.h" />
     <ClInclude Include="core\include\ecs\transform_component.h" />
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\ecs\entity.h" />

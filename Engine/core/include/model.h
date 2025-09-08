@@ -19,7 +19,14 @@
 
 namespace engine
 {
-	class Model : private NonCopyable
+    // just to have std::ynamic_pointer_cast working on Model class
+    class IModel : private NonCopyable {
+    public:
+        virtual ~IModel() = default;
+    };
+
+
+    class Model : public IModel
     {
     public:
         // model data 

@@ -80,53 +80,74 @@ namespace engine
 		
 		std::shared_ptr<engine::Entity> findEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::string& name);
 
+		//template<typename T>
+		//void findEntitiesOfTypeRecursive(const std::shared_ptr<engine::Entity>& entity, std::vector<std::shared_ptr<T>>& result)
+		//{
+		//	if (!entity) return;
+
+		//	// Try casting the entity to the desired type
+		//	std::shared_ptr<T> casted{};
+
+		//	if (auto primitiveComponent = entity->getComponent<PrimitiveComponent>())
+		//	{
+		//		casted = std::reinterpret_pointer_cast<T>(primitiveComponent->getPrimitive());
+		//	}
+		//	else if (auto modelComponent = entity->getComponent<ModelComponent>())
+		//	{
+		//		casted = std::reinterpret_pointer_cast<T>(modelComponent->getModel());
+		//	}
+		//	else if (auto lightComponent = entity->getComponent<LightComponent>())
+		//	{
+		//		if (typeid(std::dynamic_pointer_cast<T>(lightComponent->getLight())) == typeid(std::shared_ptr<T>))
+		//		{
+		//			casted = std::reinterpret_pointer_cast<T>(lightComponent->getLight());
+		//		}
+		//	}
+		//	else if (auto cameraComponent = entity->getComponent<CameraComponent>())
+		//	{
+		//		if (typeid(std::dynamic_pointer_cast<T>(cameraComponent->getCamera())) == typeid(std::shared_ptr<T>))
+		//		{
+		//			casted = std::reinterpret_pointer_cast<T>(cameraComponent->getCamera());
+		//		}
+		//	}
+
+
+
+		//	if (casted)
+		//	{
+		//		result.push_back(casted);
+		//	}
+
+		//	for (const auto& child : entity->children)
+		//	{
+		//		findEntitiesOfTypeRecursive<T>(child, result);
+		//	}
+		//}
+
+
 		template<typename T>
 		void findEntitiesOfTypeRecursive(const std::shared_ptr<engine::Entity>& entity, std::vector<std::shared_ptr<T>>& result)
 		{
 			if (!entity) return;
 
-			// Try casting the entity to the desired type
-			std::shared_ptr<T> casted{};
-			/*if (entity->primitive && typeid(std::dynamic_pointer_cast<T>(entity->primitive)) == typeid(entity->primitive))
-			{
-				casted = std::dynamic_pointer_cast<T>(entity->primitive);
-			}
-			else if (entity->model && typeid(std::dynamic_pointer_cast<T>(entity->model)) == typeid(entity->model))
-			{
-				casted = std::reinterpret_pointer_cast<T>(entity->model);
-			}
-			else if (entity->light && typeid(std::dynamic_pointer_cast<T>(entity->light)) == typeid(entity->light))
-			{
-				casted = std::dynamic_pointer_cast<T>(entity->light);
-			}
-			else if (entity->camera && typeid(std::dynamic_pointer_cast<T>(entity->camera)) == typeid(entity->camera))
-			{
-				casted = std::dynamic_pointer_cast<T>(entity->camera);
-			}*/
+			std::shared_ptr<T> casted;
 
-			//auto primitiveComponent = entity->getComponent<PrimitiveComponent>();
-			//auto modelComponent = entity->getComponent<ModelComponent>();
-			//auto lightComponent = entity->getComponent<LightComponent>();
-			//auto cameraComponent = entity->getComponent<CameraComponent>();
-
-			if (auto primitiveComponent = entity->getComponent<PrimitiveComponent>())
+			if (auto lightComponent = entity->getComponent<LightComponent>())
 			{
-				casted = std::reinterpret_pointer_cast<T>(primitiveComponent->getPrimitive());
-			}
-			else if (auto modelComponent = entity->getComponent<ModelComponent>())
-			{
-				casted = std::reinterpret_pointer_cast<T>(modelComponent->getModel());
-			}
-			else if (auto lightComponent = entity->getComponent<LightComponent>())
-			{
-				casted = std::reinterpret_pointer_cast<T>(lightComponent->getLight());
+				casted = std::dynamic_pointer_cast<T>(lightComponent->getLight());
 			}
 			else if (auto cameraComponent = entity->getComponent<CameraComponent>())
 			{
-				casted = std::reinterpret_pointer_cast<T>(cameraComponent->getCamera());
+				casted = std::dynamic_pointer_cast<T>(cameraComponent->getCamera());
 			}
-
-
+			else if (auto primitiveComponent = entity->getComponent<PrimitiveComponent>())
+			{
+				casted = std::dynamic_pointer_cast<T>(primitiveComponent->getPrimitive());
+			}
+			else if (auto modelComponent = entity->getComponent<ModelComponent>())
+			{
+				casted = std::dynamic_pointer_cast<T>(modelComponent->getModel());
+			}
 
 			if (casted)
 			{
@@ -138,6 +159,7 @@ namespace engine
 				findEntitiesOfTypeRecursive<T>(child, result);
 			}
 		}
+
 
 
 

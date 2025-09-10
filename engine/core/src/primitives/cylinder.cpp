@@ -170,7 +170,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::vec3& position, const glm
 }
 
 
-void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
+void engine::Cylinder::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
     shader.use();
     if (m_material)
@@ -187,8 +187,8 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 model)
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
-    shader.setMat4("model", model);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setMat4("model", transformMatrix);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);

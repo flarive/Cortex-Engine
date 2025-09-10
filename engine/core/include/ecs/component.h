@@ -1,5 +1,9 @@
 #pragma once
 
+#include "../common_defines.h"
+
+#include "../shader.h"
+
 namespace engine
 {
 	class Component
@@ -10,7 +14,7 @@ namespace engine
 
         virtual void init() = 0;
         virtual void update() = 0;
-        virtual void draw() = 0;
+        virtual void draw(Shader& shader, const glm::mat4& transform) = 0;
 	};
 
     /// <summary>

@@ -7,7 +7,6 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 {
 }
 
-
 void engine::PrimitiveComponent::init()
 {
 
@@ -18,7 +17,7 @@ void engine::PrimitiveComponent::update()
 
 }
 
-void engine::PrimitiveComponent::draw()
+void engine::PrimitiveComponent::draw(Shader& shader, const glm::mat4& transform)
 {
 
 }

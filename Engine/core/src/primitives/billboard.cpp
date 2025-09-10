@@ -103,7 +103,7 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
-void engine::Billboard::draw(Shader& shader, const glm::mat4 model)
+void engine::Billboard::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
 
 }

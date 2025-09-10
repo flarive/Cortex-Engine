@@ -18,7 +18,7 @@ void engine::LightComponent::update()
 
 }
 
-void engine::LightComponent::draw()
+void engine::LightComponent::draw(Shader& shader, const glm::mat4& transform)
 {
 
 }

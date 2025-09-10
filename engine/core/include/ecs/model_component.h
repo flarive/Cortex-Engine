@@ -17,7 +17,7 @@ namespace engine
 
 		void init() override;
 		void update() override;
-		void draw() override;
+		void draw(Shader& shader, const glm::mat4& transform) override;
 
 		std::shared_ptr<Model> getModel()
 		{

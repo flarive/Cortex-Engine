@@ -20,7 +20,7 @@ namespace engine
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
 
-        void draw(Shader& shader, const glm::mat4 model) override;
+        void draw(Shader& shader, const glm::mat4 transformMatrix) override;
 
     private:
         void setup();

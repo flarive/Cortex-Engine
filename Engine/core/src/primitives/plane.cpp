@@ -105,7 +105,7 @@ void engine::Plane::draw(Shader& shader, const glm::vec3& position, const glm::v
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
-void engine::Plane::draw(Shader& shader, const glm::mat4 model)
+void engine::Plane::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
     shader.use();
 
@@ -126,8 +126,8 @@ void engine::Plane::draw(Shader& shader, const glm::mat4 model)
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
-    shader.setMat4("model", model);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setMat4("model", transformMatrix);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
     // Render plane

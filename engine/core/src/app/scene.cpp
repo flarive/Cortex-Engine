@@ -261,7 +261,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
 
     // old way
-    /*if (entity->model)
+    if (entity->model)
     {
         entity->model->draw(shader, entity->worldTransform);
     }
@@ -282,37 +282,37 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             entity->light->target,
             entity->transform.getLocalScale(),
             entity->transform.getLocalRotation());
-    }*/
-    /*else if (entity->camera)
+    }
+    else if (entity->camera)
     {
         entity->camera->position = entity->transform.getLocalPosition();
-    }*/
+    }
 
     // new way
-    for (const auto& [typeID, component] : entity->components)
-    {
-        if (typeID == 1)
-        {
-            // transform
-        }
-        else if (typeID == 2)
-        {
-            // camera
-        }
-        else if (typeID == 3)
-        {
-            // primitive
-            component->draw(shader, entity->worldTransform);
-        }
-        else if (typeID == 4)
-        {
-            // model
-        }
-        else if (typeID == 5)
-        {
-            // light
-        }
-    }
+    //for (const auto& [typeID, component] : entity->components)
+    //{
+    //    if (typeID == 1)
+    //    {
+    //        // transform
+    //    }
+    //    else if (typeID == 2)
+    //    {
+    //        // camera
+    //    }
+    //    else if (typeID == 3)
+    //    {
+    //        // primitive
+    //        component->draw(shader, entity->worldTransform);
+    //    }
+    //    else if (typeID == 4)
+    //    {
+    //        // model
+    //    }
+    //    else if (typeID == 5)
+    //    {
+    //        // light
+    //    }
+    //}
 
 
     if (shader.name == "outline")

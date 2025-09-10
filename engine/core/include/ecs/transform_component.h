@@ -17,7 +17,7 @@ namespace engine
 
 		void init() override;
 		void update() override;
-		void draw() override;
+		void draw(Shader& shader, const glm::mat4& transform) override;
 
 		static unsigned int getStaticTypeID() {
 			return 1; // Ensure this is the smallest TypeID

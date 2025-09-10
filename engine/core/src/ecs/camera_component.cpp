@@ -18,7 +18,7 @@ void engine::CameraComponent::update()
 
 }
 
-void engine::CameraComponent::draw()
+void engine::CameraComponent::draw(Shader& shader, const glm::mat4& transform)
 {
 
 }

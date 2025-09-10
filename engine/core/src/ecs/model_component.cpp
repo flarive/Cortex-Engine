@@ -18,7 +18,7 @@ void engine::ModelComponent::update()
 
 }
 
-void engine::ModelComponent::draw()
+void engine::ModelComponent::draw(Shader& shader, const glm::mat4& transform)
 {
 
 }

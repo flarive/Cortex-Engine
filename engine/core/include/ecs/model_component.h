@@ -26,7 +26,7 @@ namespace engine
 
 
 		static unsigned int getStaticTypeID() {
-			return 5;
+			return 4;
 		}
 
 	private:

@@ -291,15 +291,27 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     // new way
     for (const auto& [typeID, component] : entity->components)
     {
-        if (typeID == 0)
+        if (typeID == 1)
         {
             // transform
         }
-        else if (typeID == 1)
+        else if (typeID == 2)
         {
             // camera
         }
-
+        else if (typeID == 3)
+        {
+            // primitive
+            component->draw(shader, entity->worldTransform);
+        }
+        else if (typeID == 4)
+        {
+            // model
+        }
+        else if (typeID == 5)
+        {
+            // light
+        }
     }
 
 

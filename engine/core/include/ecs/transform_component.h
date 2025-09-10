@@ -20,7 +20,7 @@ namespace engine
 		void draw() override;
 
 		static unsigned int getStaticTypeID() {
-			return 0; // Ensure this is the smallest TypeID
+			return 1; // Ensure this is the smallest TypeID
 		}
 
 

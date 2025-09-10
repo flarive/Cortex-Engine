@@ -31,12 +31,11 @@ namespace engine
 
 
 		static unsigned int getStaticTypeID() {
-			return 2;
+			return 3;
 		}
 
 	private:
 
 		std::shared_ptr<Primitive> m_primitive{};
-
 	};
 }

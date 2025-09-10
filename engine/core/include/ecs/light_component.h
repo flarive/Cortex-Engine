@@ -19,7 +19,7 @@ namespace engine
 
 		void init() override;
 		void update() override;
-		void draw(Shader& shader, const glm::mat4& transform) override;
+		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 
 		std::shared_ptr<Light> getLight()
 		{

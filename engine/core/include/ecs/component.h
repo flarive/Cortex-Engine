@@ -14,7 +14,7 @@ namespace engine
 
         virtual void init() = 0;
         virtual void update() = 0;
-        virtual void draw(Shader& shader, const glm::mat4& transform) = 0;
+        virtual void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) = 0;
 	};
 
     /// <summary>

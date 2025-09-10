@@ -50,6 +50,7 @@ namespace engine
 
 		// constructor, expects just a name
 		Entity(const std::string& _name);
+		Entity(const std::string& _name, Transform _transform);
 
 
 		Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform);
@@ -110,17 +111,6 @@ namespace engine
 			components[typeID] = component;
 			return static_cast<T*>(component.get());
 		}
-
-		//template<typename T>
-		//	requires std::derived_from<T, ComponentBase<T>>
-		//T* getComponent() {
-		//	unsigned int typeID = T::getStaticTypeID(); // Static call
-		//	auto it = components.find(typeID);
-		//	if (it != components.end()) {
-		//		return static_cast<T*>(it->second.get());
-		//	}
-		//	return nullptr;
-		//}
 
 		template<typename T>
 			requires std::derived_from<T, ComponentBase<T>>

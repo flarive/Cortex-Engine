@@ -93,6 +93,8 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
     if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
     model = glm::scale(model, size);
     shader.setMat4("model", model);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+    shader.setBool("hasTangents", true);
 
     // Render billboard
     glBindVertexArray(m_VAO);
@@ -105,5 +107,34 @@ void engine::Billboard::draw(Shader& shader, const glm::vec3& position, const gl
 
 void engine::Billboard::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
+    shader.use();
 
+    if (m_material)
+    {
+        m_material->bind(shader);
+        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+
+        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+
+        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+    }
+
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+
+  
+    shader.setMat4("model", transformMatrix);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+    shader.setBool("hasTangents", true);
+
+    // Render billboard
+    glBindVertexArray(m_VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindVertexArray(0);
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }

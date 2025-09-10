@@ -18,7 +18,14 @@
 
 
 // constructor, expects just a name
-engine::Entity::Entity(const std::string& _name) : name{ _name }, id { generateUniqueId() }
+engine::Entity::Entity(const std::string& _name)
+	: name{ _name }, id { generateUniqueId() }
+{
+}
+
+// constructor, expects just a name and a transform (TEMP)
+engine::Entity::Entity(const std::string& _name, Transform _transform)
+	: name{ _name }, id{ generateUniqueId() }, transform{ _transform }
 {
 }
 

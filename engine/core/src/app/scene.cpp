@@ -241,7 +241,10 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     
     // Use the precomputed transform
     shader.use();
+
+    // usefull ??????????????????????????????????????????????????
     shader.setMat4("model", entity->worldTransform);
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->worldTransform))));
 
 
     if (shader.name != "outline")
@@ -261,7 +264,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
 
     // old way
-    if (entity->model)
+    /*if (entity->model)
     {
         entity->model->draw(shader, entity->worldTransform);
     }
@@ -286,33 +289,37 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     else if (entity->camera)
     {
         entity->camera->position = entity->transform.getLocalPosition();
-    }
+    }*/
 
     // new way
-    //for (const auto& [typeID, component] : entity->components)
-    //{
-    //    if (typeID == 1)
-    //    {
-    //        // transform
-    //    }
-    //    else if (typeID == 2)
-    //    {
-    //        // camera
-    //    }
-    //    else if (typeID == 3)
-    //    {
-    //        // primitive
-    //        component->draw(shader, entity->worldTransform);
-    //    }
-    //    else if (typeID == 4)
-    //    {
-    //        // model
-    //    }
-    //    else if (typeID == 5)
-    //    {
-    //        // light
-    //    }
-    //}
+    for (const auto& [typeID, component] : entity->components)
+    {
+        if (typeID == 1)
+        {
+            // transform
+        }
+        else if (typeID == 2)
+        {
+            // camera
+        }
+        else if (typeID == 3)
+        {
+            // primitive
+            component->draw(projection, view, shader, entity->worldTransform);
+        }
+        else if (typeID == 4)
+        {
+            // model
+            component->draw(projection, view, shader, entity->worldTransform);
+        }
+        else if (typeID == 5)
+        {
+            // light
+
+            // set light position from transform position
+            component->draw(projection, view, shader, entity->worldTransform);
+        }
+    }
 
 
     if (shader.name == "outline")

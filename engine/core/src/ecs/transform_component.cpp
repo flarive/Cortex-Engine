@@ -17,7 +17,7 @@ void engine::TransformComponent::update()
 
 }
 
-void engine::TransformComponent::draw(Shader& shader, const glm::mat4& transform)
+void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
 {
 
 }

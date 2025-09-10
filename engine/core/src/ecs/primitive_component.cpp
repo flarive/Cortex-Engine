@@ -17,7 +17,7 @@ void engine::PrimitiveComponent::update()
 
 }
 
-void engine::PrimitiveComponent::draw(Shader& shader, const glm::mat4& transform)
+void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
 {
-
+    m_primitive->draw(shader, transform);
 }

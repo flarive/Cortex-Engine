@@ -3,9 +3,7 @@
 
 #include "component.h"
 
-#include "../lights/point_light.h"
-#include "../lights/directional_light.h"
-#include "../lights/spot_light.h"
+#include "../lights/light.h"
 
 namespace engine
 {
@@ -34,6 +32,5 @@ namespace engine
 	private:
 
 		std::shared_ptr<Light> m_light{};
-
 	};
 }

@@ -103,6 +103,21 @@
     <ClCompile Include="app\myscene2.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>
+    <ClCompile Include="app\myscene3.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene4.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene5.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene6.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene7.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">

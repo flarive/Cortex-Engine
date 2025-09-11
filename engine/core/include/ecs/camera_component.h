@@ -3,9 +3,7 @@
 
 #include "component.h"
 
-#include "../cameras/fly_camera.h"
-#include "../cameras/fps_camera.h"
-#include "../cameras/orbit_camera.h"
+#include "../cameras/camera.h"
 
 namespace engine
 {

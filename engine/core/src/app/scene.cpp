@@ -315,8 +315,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 5)
         {
             // light
-
-            // set light position from transform position
             component->draw(projection, view, shader, entity->worldTransform);
         }
     }

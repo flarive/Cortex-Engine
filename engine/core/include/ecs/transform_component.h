@@ -34,5 +34,7 @@ namespace engine
 	private:
 		Transform m_transform{};       // local position/rotation/scale
 		glm::mat4 m_worldTransform{};  // should be full parent * local
+
+		std::unique_ptr<AABB> getBoundingVolume() override;
 	};
 }

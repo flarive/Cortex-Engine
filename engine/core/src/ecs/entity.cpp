@@ -17,8 +17,13 @@
 
 
 #include "../../include/ecs/transform_component.h"
+#include "../../include/ecs/primitive_component.h"
+#include "../../include/ecs/model_component.h"
+#include "../../include/ecs/camera_component.h"
+#include "../../include/ecs/light_component.h"
 
 #include "../../include/aabb.h"
+#include "../../include/misc/log_manager.h"
 
 
 // constructor, expects just a name
@@ -69,95 +74,113 @@ unsigned int engine::Entity::generateUniqueId()
 
 engine::EntityType engine::Entity::getType()
 {
-	if (this->model)
+	if (auto modelComponent = getComponent<ModelComponent>())
+	{
 		return engine::EntityType::model;
-	else if (this->primitive)
+	}
+	else if (auto primitiveComponent = getComponent<PrimitiveComponent>())
+	{
 		return engine::EntityType::primitive;
-	else if (this->light)
+	}
+	else if (auto lightComponent = getComponent<LightComponent>())
+	{
 		return engine::EntityType::light;
-	else if (this->camera)
+	}
+	else if (auto cameraComponent = getComponent<CameraComponent>())
+	{
 		return engine::EntityType::camera;
+	}
 
 	return engine::EntityType::undefined;
 }
 
 std::string engine::Entity::getTypeName()
 {
-	if (this->model)
+	auto entityType = getType();
+	
+	if (entityType == engine::EntityType::model)
+	{
 		return "Model";
-	else if (this->primitive)
+	}
+	else if (entityType == engine::EntityType::primitive)
+	{
 		return "Primitive";
-	else if (this->light)
+	}
+	else if (entityType == engine::EntityType::light)
+	{
 		return "Light";
-	else if (this->camera)
+	}
+	else if (entityType == engine::EntityType::camera)
+	{
 		return "Camera";
-
+	}
+	
 	return "";
 }
 
 std::string engine::Entity::getTypeNameEx()
 {
-	if (this->model)
+	if (auto modelComponent = getComponent<ModelComponent>())
 	{
 		return "Model";
 	}
-	else if (this->primitive)
+	else if (auto primitiveComponent = getComponent<PrimitiveComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::Cube>(this->primitive))
+		if (std::dynamic_pointer_cast<engine::Cube>(primitiveComponent->getPrimitive()))
 		{
 			return "Cube primitive";
 		}
-		else if (std::dynamic_pointer_cast<engine::Sphere>(this->primitive))
+		else if (std::dynamic_pointer_cast<engine::Sphere>(primitiveComponent->getPrimitive()))
 		{
 			return "Sphere primitive";
 		}
-		else if (std::dynamic_pointer_cast<engine::Plane>(this->primitive))
+		else if (std::dynamic_pointer_cast<engine::Plane>(primitiveComponent->getPrimitive()))
 		{
 			return "Plane primitive";
 		}
-		else if (std::dynamic_pointer_cast<engine::Cylinder>(this->primitive))
+		else if (std::dynamic_pointer_cast<engine::Cylinder>(primitiveComponent->getPrimitive()))
 		{
 			return "Cylinder primitive";
 		}
-		else if (std::dynamic_pointer_cast<engine::Cone>(this->primitive))
+		else if (std::dynamic_pointer_cast<engine::Cone>(primitiveComponent->getPrimitive()))
 		{
 			return "Cone primitive";
 		}
-		else if (std::dynamic_pointer_cast<engine::Billboard>(this->primitive))
+		else if (std::dynamic_pointer_cast<engine::Billboard>(primitiveComponent->getPrimitive()))
 		{
 			return "Billboard primitive";
 		}
 		
 		return "Primitive";
 	}
-	else if (this->light)
+	else if (auto lightComponent = getComponent<LightComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::DirectionalLight>(this->light))
+		if (std::dynamic_pointer_cast<engine::DirectionalLight>(lightComponent->getLight()))
 		{
 			return "Directional Light";
 		}
-		else if (std::dynamic_pointer_cast<engine::SpotLight>(this->light))
+		else if (std::dynamic_pointer_cast<engine::SpotLight>(lightComponent->getLight()))
 		{
 			return "Spot Light";
 		}
-		else if (std::dynamic_pointer_cast<engine::PointLight>(this->light))
+		else if (std::dynamic_pointer_cast<engine::PointLight>(lightComponent->getLight()))
 		{
 			return "Point Light";
 		}
 		
 		return "Light";
 	}
-	else if (this->camera)
+	else if (auto cameraComponent = getComponent<CameraComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::FlyCamera>(this->camera))
+		if (std::dynamic_pointer_cast<engine::FlyCamera>(cameraComponent->getCamera()))
 		{
 			return "Fly camera";
 		}
-		else if (std::dynamic_pointer_cast<engine::FpsCamera>(this->camera))
+		else if (std::dynamic_pointer_cast<engine::FpsCamera>(cameraComponent->getCamera()))
 		{
 			return "FPS camera";
 		}
-		else if (std::dynamic_pointer_cast<engine::OrbitCamera>(this->camera))
+		else if (std::dynamic_pointer_cast<engine::OrbitCamera>(cameraComponent->getCamera()))
 		{
 			return "Orbit camera";
 		}
@@ -215,7 +238,13 @@ void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader,
 	if (boundingVolume->isOnFrustum(frustum, worldTransform))
 	{
 		ourShader.setMat4("model", worldTransform);
-		if (model) model->draw(ourShader);
+
+		if (auto modelComponent = getComponent<ModelComponent>())
+		{
+			if (auto model = modelComponent->getModel())
+				model->draw(ourShader);
+		}
+
 		display++;
 	}
 	total++;
@@ -251,37 +280,65 @@ engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 
 engine::Transform engine::Entity::getTransform()
 {
+	if (name == "Root")
+		return Transform{};
+	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
 		return trsComponent->getTransform();
 	}
+
+	logger.warn("Entity getTransform() error, entity {} has no transform component", this->name);
+
+	return Transform{};
 }
 
 void engine::Entity::setTransform(const engine::Transform& transform)
 {
+	if (name == "Root")
+		return;
+	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
 		trsComponent->setTransform(transform);
 	}
+	else
+	{
+		logger.warn("Entity setTransform() error, entity {} has no transform component", this->name);
+	}
 }
 
 glm::mat4 engine::Entity::getWorldTransform()
 {
+	if (name == "Root")
+		return glm::mat4{};
+	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
 		return trsComponent->getWorldTransformMatrix();
 	}
+
+	logger.warn("Entity getWorldTransform() error, entity {} has no transform component", this->name);
+
+	return glm::mat4{};
 }
 
 void engine::Entity::setWorldTransform(const glm::mat4& worldTransform)
 {
+	if (name == "Root")
+		return;
+	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
 		trsComponent->setWorldTransformMatrix(worldTransform);
+	}
+	else
+	{
+		logger.warn("Entity setWorldTransform() error, entity {} has no transform component", this->name);
 	}
 }
 

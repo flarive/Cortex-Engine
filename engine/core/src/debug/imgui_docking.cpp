@@ -19,6 +19,11 @@
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/directional_light.h"
 
+#include "../../include/ecs/light_component.h"
+#include "../../include/ecs/camera_component.h"
+#include "../../include/ecs/model_component.h"
+#include "../../include/ecs/primitive_component.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -391,21 +396,23 @@ void engine::ImGuiDocking::drawTransformEditor(engine::Transform& transform, boo
 
 void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>& entity)
 {
-    if (entity && entity->light)
+    if (!entity)
+        return;
+
+    if (auto lightComponent = entity->getComponent<LightComponent>())
     {
         std::shared_ptr<PointLight> pointLight;
         std::shared_ptr<DirectionalLight> dirLight;
         std::shared_ptr<SpotLight> spotLight;
-        
-        if (pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
+
+        if (pointLight = std::dynamic_pointer_cast<PointLight>(lightComponent->getLight()))
+        {
+        }
+        else if (dirLight = std::dynamic_pointer_cast<DirectionalLight>(lightComponent->getLight()))
         {
 
         }
-        else if (dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
-        {
-
-        }
-        else if (spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
+        else if (spotLight = std::dynamic_pointer_cast<SpotLight>(lightComponent->getLight()))
         {
         }
 
@@ -446,9 +453,9 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
             }
         }
 
-        
+
         ImGui::SeparatorText("Detail");
-        
+
         if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
         {
             ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
@@ -459,21 +466,21 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
             ImGui::Text("Intensity");
             ImGui::TableSetColumnIndex(1);
             ImGui::SetNextItemWidth(80);
-            ImGui::DragFloat("##intensity", &entity->light->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+            ImGui::DragFloat("##intensity", &lightComponent->getLight()->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Ambient Color");
             ImGui::TableSetColumnIndex(1);
             ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-            ImGui::ColorEdit3("##ambientColor", glm::value_ptr(entity->light->ambientColor), ImGuiColorEditFlags_NoLabel);
+            ImGui::ColorEdit3("##ambientColor", glm::value_ptr(lightComponent->getLight()->ambientColor), ImGuiColorEditFlags_NoLabel);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Diffuse Color");
             ImGui::TableSetColumnIndex(1);
             ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-            ImGui::ColorEdit3("##diffuseColor", glm::value_ptr(entity->light->diffuseColor), ImGuiColorEditFlags_NoLabel);
+            ImGui::ColorEdit3("##diffuseColor", glm::value_ptr(lightComponent->getLight()->diffuseColor), ImGuiColorEditFlags_NoLabel);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
@@ -481,13 +488,13 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
             ImGui::TableSetColumnIndex(1);
             ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
             // Show color preview
-            ImGui::ColorEdit3("##specularColor", glm::value_ptr(entity->light->specularColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+            ImGui::ColorEdit3("##specularColor", glm::value_ptr(lightComponent->getLight()->specularColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
             ImGui::SameLine();
 
             // Show numeric inputs without labels
             ImGui::DragFloat3(
                 "##specularColorInputs",
-                glm::value_ptr(entity->light->specularColor),
+                glm::value_ptr(lightComponent->getLight()->specularColor),
                 0.01f,
                 0.0f,
                 1.0f
@@ -496,18 +503,16 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
             ImGui::EndTable();
         }
 
-        if (auto pointLight = std::dynamic_pointer_cast<PointLight>(entity->light))
+        if (auto pointLight = std::dynamic_pointer_cast<PointLight>(lightComponent->getLight()))
         {
 
         }
-        else if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(entity->light))
+        else if (auto dirLight = std::dynamic_pointer_cast<DirectionalLight>(lightComponent->getLight()))
         {
-            
-        }
-        else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(entity->light))
-        {
-            
 
+        }
+        else if (auto spotLight = std::dynamic_pointer_cast<SpotLight>(lightComponent->getLight()))
+        {
             if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
             {
                 ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
@@ -535,7 +540,10 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
 
 void engine::ImGuiDocking::drawCameraEntityDetails(const std::shared_ptr<Entity>& entity)
 {
-    if (entity && entity->camera)
+    if (!entity)
+        return;
+
+    if (auto cameraComponent = entity->getComponent<CameraComponent>())
     {
         if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
         {
@@ -547,7 +555,7 @@ void engine::ImGuiDocking::drawCameraEntityDetails(const std::shared_ptr<Entity>
             ImGui::Text("Zoom");
             ImGui::TableSetColumnIndex(1);
             ImGui::SetNextItemWidth(80);
-            ImGui::DragFloat("##zoom", &entity->camera->zoom, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+            ImGui::DragFloat("##zoom", &cameraComponent->getCamera()->zoom, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
             ImGui::EndTable();
         }
@@ -561,7 +569,8 @@ GLuint engine::ImGuiDocking::getEntityTypeSmallIcon(const engine::EntityType ent
     {
         return it->second;
     }
-    else {
+    else
+    {
         auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
         GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
 

@@ -38,7 +38,7 @@ namespace engine
 		std::shared_ptr<Light> m_light{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		engine::AABB generateAABB(const std::shared_ptr<Light> light);
+		AABB generateAABB(const std::shared_ptr<Light> light);
 		
 		std::unique_ptr<AABB> getBoundingVolume() override;
 	};

@@ -3,9 +3,6 @@
 
 std::unique_ptr<engine::AABB> engine::Component::getBoundingVolume()
 {
-    glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-    glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-
-    return engine::AABB(minAABB, maxAABB);
+    auto aabb = engine::AABB(glm::vec3(), glm::vec3());
+    return std::make_unique<AABB>(aabb);
 }
-

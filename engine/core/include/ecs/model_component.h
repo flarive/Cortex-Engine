@@ -38,8 +38,8 @@ namespace engine
 		std::unique_ptr<AABB> m_boundingVolume{};
 
 
-		engine::AABB generateAABB(const std::shared_ptr<Model> model);
+		AABB generateAABB(const std::shared_ptr<Model> model);
 
-		std::unique_ptr<engine::AABB> getBoundingVolume();
+		std::unique_ptr<AABB> getBoundingVolume() override;
 	};
 }

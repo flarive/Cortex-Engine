@@ -36,7 +36,7 @@ namespace engine
 		std::shared_ptr<Camera> m_camera{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		engine::AABB generateAABB(const std::shared_ptr<Camera> camera);
+		AABB generateAABB(const std::shared_ptr<Camera> camera);
 
 
 		std::unique_ptr<AABB> getBoundingVolume() override;

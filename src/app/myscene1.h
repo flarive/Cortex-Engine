@@ -15,7 +15,10 @@ private:
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
 
-    engine::Text ourText{};
+    engine::Text textFPSCount{};
+    engine::Text textPolyCount{};
+    engine::Text textMeshCount{};
+    engine::Text textPrimitiveCount{};
 
     float rotation{};
 

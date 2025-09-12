@@ -40,8 +40,8 @@ namespace engine
 		std::shared_ptr<Primitive> m_primitive{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		engine::AABB generateAABB(const std::shared_ptr<Primitive> primitive);
+		AABB generateAABB(const std::shared_ptr<Primitive> primitive);
 
-		std::unique_ptr<engine::AABB> getBoundingVolume();
+		std::unique_ptr<AABB> getBoundingVolume() override;
 	};
 }

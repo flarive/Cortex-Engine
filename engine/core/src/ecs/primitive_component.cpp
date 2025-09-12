@@ -44,5 +44,5 @@ engine::AABB engine::PrimitiveComponent::generateAABB(const std::shared_ptr<Prim
 
 std::unique_ptr<engine::AABB> engine::PrimitiveComponent::getBoundingVolume()
 {
-	return m_boundingVolume;
+	return std::move(m_boundingVolume);
 }

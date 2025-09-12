@@ -51,5 +51,5 @@ engine::AABB engine::ModelComponent::generateAABB(const std::shared_ptr<Model> m
 
 std::unique_ptr<engine::AABB> engine::ModelComponent::getBoundingVolume()
 {
-	return m_boundingVolume;
+	return std::move(m_boundingVolume);
 }

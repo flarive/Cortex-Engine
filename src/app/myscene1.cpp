@@ -429,7 +429,10 @@ void MyScene1::init()
 
 
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    textFPSCount.setup(app->window, FONT_PATH, 28);
+    textPolyCount.setup(app->window, FONT_PATH, 28);
+    textMeshCount.setup(app->window, FONT_PATH, 28);
+    textPrimitiveCount.setup(app->window, FONT_PATH, 28);
 }
 
 
@@ -503,7 +506,11 @@ void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)
 {
     engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    // render HUD / UI
+    textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
 }
 
 
@@ -529,7 +536,10 @@ void MyScene1::update(engine::Shader& shader)
 void MyScene1::updateUI()
 {
     // render HUD / UI
-    ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+    textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
 }
 
 void MyScene1::clean()

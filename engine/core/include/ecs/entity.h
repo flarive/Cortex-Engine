@@ -29,10 +29,10 @@ namespace engine
 		bool visible{ true };
 
 		// To remove
-		std::shared_ptr<Model> model{};
-		std::shared_ptr<Primitive> primitive{};
-		std::shared_ptr<Light> light{};
-		std::shared_ptr<Camera> camera{};
+		//std::shared_ptr<Model> model{};
+		//std::shared_ptr<Primitive> primitive{};
+		//std::shared_ptr<Light> light{};
+		//std::shared_ptr<Camera> camera{};
 		std::unique_ptr<AABB> boundingVolume{};
 
 		// Scene graph
@@ -113,6 +113,8 @@ namespace engine
 			}
 			return nullptr;
 		}
+
+
 
 #pragma endregion
 

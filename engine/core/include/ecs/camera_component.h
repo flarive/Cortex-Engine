@@ -1,9 +1,11 @@
 #pragma once
 
-
 #include "component.h"
 
 #include "../cameras/camera.h"
+//#include "../frustrum.h"
+//#include "../bounding_volume.h"
+//#include "../aabb.h"
 
 namespace engine
 {
@@ -16,7 +18,7 @@ namespace engine
 		~CameraComponent() = default;
 
 		void init() override;
-		void update() override;
+		void update(Transform& transform) override;
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 
 		std::shared_ptr<Camera> getCamera()
@@ -32,6 +34,11 @@ namespace engine
 	private:
 
 		std::shared_ptr<Camera> m_camera{};
-		
+		std::unique_ptr<AABB> m_boundingVolume{};
+
+		engine::AABB generateAABB(const std::shared_ptr<Camera> camera);
+
+
+		std::unique_ptr<AABB> getBoundingVolume() override;
 	};
 }

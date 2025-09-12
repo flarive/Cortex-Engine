@@ -3,6 +3,8 @@
 #include "../common_defines.h"
 
 #include "../shader.h"
+#include "../transform.h"
+#include "../aabb.h"
 
 namespace engine
 {
@@ -13,8 +15,10 @@ namespace engine
         virtual ~Component() = default;
 
         virtual void init() = 0;
-        virtual void update() = 0;
+        virtual void update(Transform& transform) = 0;
         virtual void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) = 0;
+
+        virtual std::unique_ptr<AABB> getBoundingVolume();
 	};
 
     /// <summary>

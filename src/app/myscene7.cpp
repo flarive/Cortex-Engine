@@ -101,7 +101,7 @@ void MyScene7::init()
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
 
-        std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", i), trs); // TODO remove transform
+        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i), trs); // TODO remove transform
         entity->addComponent<engine::TransformComponent>(trs);
         entity->addComponent<engine::ModelComponent>(model);
         getEntityManager().addChild(entity);
@@ -134,7 +134,7 @@ void MyScene7::init()
             trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
         }
 
-        std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i), trs); // TODO remove transform
+        auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i), trs); // TODO remove transform
         entity->addComponent<engine::TransformComponent>(trs);
         entity->addComponent<engine::ModelComponent>(model);
         getEntityManager().addChild(lastEntity, entity);
@@ -244,8 +244,8 @@ void MyScene7::key_callback(int key, int scancode, int action, int mods)
         trs.setLocalScale(glm::vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-        std::shared_ptr<engine::Model> model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-        std::shared_ptr<engine::Entity> entity = std::make_shared<engine::Entity>(std::format("Child{}", 88), model, trs);
+        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
+        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", 88), trs);
         getEntityManager().addChild(entity);
 
         offset_dynamic += 5.0f;

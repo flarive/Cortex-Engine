@@ -4,7 +4,9 @@
 #include "component.h"
 
 #include "../primitives/primitive.h"
-
+#include "../frustrum.h"
+#include "../bounding_volume.h"
+#include "../aabb.h"
 
 namespace engine
 {
@@ -18,7 +20,7 @@ namespace engine
 
 
 		void init() override;
-		void update() override;
+		void update(Transform& transform) override;
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 
 		
@@ -36,5 +38,10 @@ namespace engine
 	private:
 
 		std::shared_ptr<Primitive> m_primitive{};
+		std::unique_ptr<AABB> m_boundingVolume{};
+
+		engine::AABB generateAABB(const std::shared_ptr<Primitive> primitive);
+
+		std::unique_ptr<engine::AABB> getBoundingVolume();
 	};
 }

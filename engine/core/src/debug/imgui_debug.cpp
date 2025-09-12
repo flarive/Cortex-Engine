@@ -112,19 +112,22 @@ void engine::ImGuiDebug::displayEntityDetails(const std::shared_ptr<Entity>& ent
         ImGui::Text("%s",
             m_selectedEntity->name.c_str());
 
+
+        auto transform = m_selectedEntity->getTransform();
+
         ImGui::Text("Position = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalPosition().x,
-            m_selectedEntity->transform.getLocalPosition().y,
-            m_selectedEntity->transform.getLocalPosition().z);
+            transform.getLocalPosition().x,
+            transform.getLocalPosition().y,
+            transform.getLocalPosition().z);
 
         ImGui::Text("Rotation = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalRotation().x,
-            m_selectedEntity->transform.getLocalRotation().y,
-            m_selectedEntity->transform.getLocalRotation().z);
+            transform.getLocalRotation().x,
+            transform.getLocalRotation().y,
+            transform.getLocalRotation().z);
 
         ImGui::Text("Scale = (%.2f, %.2f, %.2f)",
-            m_selectedEntity->transform.getLocalScale().x,
-            m_selectedEntity->transform.getLocalScale().y,
-            m_selectedEntity->transform.getLocalScale().z);
+            transform.getLocalScale().x,
+            transform.getLocalScale().y,
+            transform.getLocalScale().z);
     }
 }

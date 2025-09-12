@@ -4,6 +4,10 @@
 #include "component.h"
 
 #include "../lights/light.h"
+#include "../frustrum.h"
+#include "../bounding_volume.h"
+#include "../aabb.h"
+
 
 namespace engine
 {
@@ -16,7 +20,7 @@ namespace engine
 		~LightComponent() = default;
 
 		void init() override;
-		void update() override;
+		void update(Transform& transform) override;
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 
 		std::shared_ptr<Light> getLight()
@@ -32,5 +36,10 @@ namespace engine
 	private:
 
 		std::shared_ptr<Light> m_light{};
+		std::unique_ptr<AABB> m_boundingVolume{};
+
+		engine::AABB generateAABB(const std::shared_ptr<Light> light);
+		
+		std::unique_ptr<AABB> getBoundingVolume() override;
 	};
 }

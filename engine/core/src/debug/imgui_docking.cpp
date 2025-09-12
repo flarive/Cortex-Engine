@@ -295,21 +295,21 @@ void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& e
         ImGui::EndGroup();
 
 
-        
+        auto transform = entity->getTransform();
 
         if (entity->getType() == engine::EntityType::light)
         {
-            drawTransformEditor(entity->transform, true, false, false);
+            drawTransformEditor(transform, true, false, false);
             drawLightEntityDetails(entity);
         }
         else if (entity->getType() == engine::EntityType::camera)
         {
-            drawTransformEditor(entity->transform, true, true, true);
+            drawTransformEditor(transform, true, true, true);
             drawCameraEntityDetails(entity);
         }
         else
         {
-            drawTransformEditor(entity->transform, true, true, true);
+            drawTransformEditor(transform, true, true, true);
         }
     }
 }

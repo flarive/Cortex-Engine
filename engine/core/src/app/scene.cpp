@@ -243,8 +243,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     shader.use();
 
     // usefull ??????????????????????????????????????????????????
-    shader.setMat4("model", entity->worldTransform);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->worldTransform))));
+    shader.setMat4("model", entity->getWorldTransform());
+    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->getWorldTransform()))));
 
 
     if (shader.name != "outline")
@@ -301,21 +301,23 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 2)
         {
             // camera
+            auto trs = entity->getTransform();
+            component->update(trs);
         }
         else if (typeID == 3)
         {
             // primitive
-            component->draw(projection, view, shader, entity->worldTransform);
+            component->draw(projection, view, shader, entity->getWorldTransform());
         }
         else if (typeID == 4)
         {
             // model
-            component->draw(projection, view, shader, entity->worldTransform);
+            component->draw(projection, view, shader, entity->getWorldTransform());
         }
         else if (typeID == 5)
         {
             // light
-            component->draw(projection, view, shader, entity->worldTransform);
+            component->draw(projection, view, shader, entity->getWorldTransform());
         }
     }
 

@@ -192,6 +192,8 @@
     <ClCompile Include="app\myscene5.cpp" />
     <ClCompile Include="app\myscene6.cpp" />
     <ClCompile Include="app\myscene7.cpp" />
+    <ClCompile Include="app\myscene8.cpp" />
+    <ClCompile Include="app\myscene9.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="..\libs\glad\src\glad.c" />
   </ItemGroup>

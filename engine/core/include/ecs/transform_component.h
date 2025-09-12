@@ -16,12 +16,19 @@ namespace engine
 		~TransformComponent() = default;
 
 		void init() override;
-		void update() override;
+		void update(Transform& transform) override;
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 
 		static unsigned int getStaticTypeID() {
 			return 1; // Ensure this is the smallest TypeID
 		}
+
+		Transform getTransform() { return m_transform; }
+		glm::mat4 getWorldTransformMatrix() { return m_worldTransform; }
+
+
+		void setTransform(const Transform& transform) { m_transform = transform; }
+		void setWorldTransformMatrix(const glm::mat4& worldTransform) { m_worldTransform = worldTransform; }
 
 
 	private:

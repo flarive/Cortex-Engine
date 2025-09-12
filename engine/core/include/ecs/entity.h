@@ -2,7 +2,7 @@
 
 #include "../common_defines.h"
 
-#include "../misc/noncopyable.h"
+//#include "../misc/noncopyable.h"
 
 #include "../model.h"
 #include "../primitives/primitive.h"
@@ -44,8 +44,8 @@ namespace engine
 		std::unordered_map<unsigned int, std::shared_ptr<Component>> components{};
 
 		// To remove
-		Transform transform{};       // local position/rotation/scale
-		glm::mat4 worldTransform{};  // should be full parent * local
+		//Transform transform{};       // local position/rotation/scale
+		//glm::mat4 worldTransform{};  // should be full parent * local
 
 
 		// constructor, expects just a name
@@ -53,29 +53,20 @@ namespace engine
 		Entity(const std::string& _name, Transform _transform);
 
 
-		Entity(const std::string& _name, std::shared_ptr<Model> _model, Transform _transform);
-		Entity(const std::string& _name, std::shared_ptr<Model> _model);
-		Entity(std::shared_ptr<Model> _model);
-
-		
-
-		Entity(const std::string& _name, std::shared_ptr<Primitive> _primitive, Transform _transform);
-		Entity(const std::string& _name, std::shared_ptr<Primitive> _primitive);
-		Entity(std::shared_ptr<Primitive> _primitive);
-
-
-		Entity(const std::string& _name, std::shared_ptr<Light> _light, Transform _transform);
-		Entity(const std::string& _name, std::shared_ptr<Light> _light);
-		Entity(std::shared_ptr<Light> _light);
-
-		
-		Entity(const std::string& _name, std::shared_ptr<Camera> _camera, Transform _transform);
-		Entity(const std::string& _name, std::shared_ptr<Camera> _camera);
-		Entity(std::shared_ptr<Camera> _camera);
 
 		EntityType getType();
 		std::string getTypeName();
 		std::string getTypeNameEx();
+
+
+		Transform getTransform();
+		void setTransform(const engine::Transform& transform);
+		
+		glm::mat4 getWorldTransform();
+		void setWorldTransform(const glm::mat4& worldTransform);
+
+		
+		
 
 #pragma region Entities
 
@@ -133,11 +124,8 @@ namespace engine
 
 		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
 
-		AABB generateAABB(const std::shared_ptr<Model> model);
-		AABB generateAABB(const std::shared_ptr<Primitive> primitive);
-		AABB generateAABB(const std::shared_ptr<Light> light);
-		AABB generateAABB(const std::shared_ptr<Camera> camera);
-
 		SphereVolume generateSphereBV(const Model& model);
+
+		//std::unique_ptr<AABB> getBoundingVolume();
 	};
 }

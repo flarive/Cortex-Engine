@@ -202,7 +202,7 @@ void MyScene5::drawScene(engine::Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        myCushion->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        myCushion->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
     }
 
     rotation += deltaTime * 10.0f;

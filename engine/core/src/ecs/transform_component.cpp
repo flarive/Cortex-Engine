@@ -21,6 +21,11 @@ void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 
 }
 
+void engine::TransformComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+{
+
+}
+
 std::unique_ptr<engine::AABB> engine::TransformComponent::getBoundingVolume()
 {
     auto aabb = engine::AABB(glm::vec3(), glm::vec3());

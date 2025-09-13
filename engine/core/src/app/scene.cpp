@@ -297,6 +297,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         if (typeID == 1)
         {
             // transform
+            int a = 0;
         }
         else if (typeID == 2)
         {
@@ -307,17 +308,40 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 3)
         {
             // primitive
-            component->draw(projection, view, shader, entity->getWorldTransform());
+            //component->draw(projection, view, shader, entity->getWorldTransform());
+            auto trs = entity->getTransform();
+            component->draw(shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 4)
         {
             // model
-            component->draw(projection, view, shader, entity->getWorldTransform());
+            //component->draw(projection, view, shader, entity->getWorldTransform());
+            auto trs = entity->getTransform();
+            component->draw(shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 5)
         {
             // light
-            component->draw(projection, view, shader, entity->getWorldTransform());
+            //component->draw(projection, view, shader, entity->getWorldTransform());
+
+            if (auto lightComponent = std::dynamic_pointer_cast<LightComponent>(component))
+            {
+                if (auto light = lightComponent->getLight())
+                {
+                    auto trs = entity->getTransform();
+                    lightComponent->draw(shader,
+                        projection,
+                        view,
+                        light->ambientColor,
+                        light->diffuseColor,
+                        light->specularColor,
+                        light->intensity,
+                        trs.getLocalPosition(),
+                        light->target,
+                        trs.getLocalScale(),
+                        trs.getLocalRotation());
+                }
+            }
         }
     }
 

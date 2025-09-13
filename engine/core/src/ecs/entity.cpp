@@ -42,6 +42,8 @@ engine::AABB engine::Entity::getGlobalAABB()
 {
 	auto transform = getTransform();
 	auto worldTransform = getWorldTransform();
+
+	auto boundingVolume = getBoundingVolume();
 	
 	// Transform local center into world space
 	const glm::vec3 globalCenter{ worldTransform * glm::vec4(boundingVolume->center, 1.f) };
@@ -206,10 +208,6 @@ void engine::Entity::addChild(std::shared_ptr<engine::Entity> entity)
 // Recursively update world transforms
 void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 {
-	//Transform transform = getTransform();
-	//glm::mat4 worldTransform = getWorldTransform();
-	
-	
 	if (parent == nullptr) {
 		setWorldTransform(parentTransform * getTransform().getLocalModelMatrix());
 	}
@@ -231,29 +229,29 @@ void engine::Entity::forceUpdateSelfAndChild()
 		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
 }
 
-void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)
-{
-	auto worldTransform = getWorldTransform();
-
-	if (boundingVolume->isOnFrustum(frustum, worldTransform))
-	{
-		ourShader.setMat4("model", worldTransform);
-
-		if (auto modelComponent = getComponent<ModelComponent>())
-		{
-			if (auto model = modelComponent->getModel())
-				model->draw(ourShader);
-		}
-
-		display++;
-	}
-	total++;
-
-	for (auto& child : children)
-	{
-		child->drawSelfAndChild(frustum, ourShader, display, total);
-	}
-}
+//void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)
+//{
+//	auto worldTransform = getWorldTransform();
+//
+//	if (getBoundingVolume()->isOnFrustum(frustum, worldTransform))
+//	{
+//		ourShader.setMat4("model", worldTransform);
+//
+//		if (auto modelComponent = getComponent<ModelComponent>())
+//		{
+//			if (auto model = modelComponent->getModel())
+//				model->draw(ourShader);
+//		}
+//
+//		display++;
+//	}
+//	total++;
+//
+//	for (auto& child : children)
+//	{
+//		child->drawSelfAndChild(frustum, ourShader, display, total);
+//	}
+//}
 
 engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 {
@@ -342,10 +340,22 @@ void engine::Entity::setWorldTransform(const glm::mat4& worldTransform)
 	}
 }
 
-//std::unique_ptr<engine::AABB> engine::Entity::getBoundingVolume()
-//{
-//	if (auto trsComponent = getComponent<engine::PrimitiveComponent>())
-//	{
-//		return trsComponent->getWorldTransformMatrix();
-//	}
-//}
+std::unique_ptr<engine::AABB> engine::Entity::getBoundingVolume()
+{
+	if (auto primitiveComponent = getComponent<engine::PrimitiveComponent>())
+	{
+		return primitiveComponent->getBoundingVolume();
+	}
+	else if (auto modelComponent = getComponent<engine::ModelComponent>())
+	{
+		return modelComponent->getBoundingVolume();
+	}
+	else if (auto cameraComponent = getComponent<engine::CameraComponent>())
+	{
+		return cameraComponent->getBoundingVolume();
+	}
+	else if (auto lightComponent = getComponent<engine::LightComponent>())
+	{
+		return lightComponent->getBoundingVolume();
+	}
+}

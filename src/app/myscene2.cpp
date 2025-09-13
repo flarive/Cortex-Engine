@@ -298,42 +298,41 @@ void MyScene2::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene2::mouse_callback(double xposIn, double yposIn)
 {
-    (void)xposIn;   //Do nothing
-    (void)yposIn;   //Do nothing
+    //(void)xposIn;   //Do nothing
+    //(void)yposIn;   //Do nothing
 
     engine::Scene::mouse_callback(xposIn, yposIn);
 
-    //if (show_window)
-    //    return;
+    if (show_window)
+        return;
 
-    //float xpos{ static_cast<float>(xposIn) };
-    //float ypos{ static_cast<float>(yposIn) };
+    float xpos{ static_cast<float>(xposIn) };
+    float ypos{ static_cast<float>(yposIn) };
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset{ xpos - lastX };
-    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    float xoffset{ xpos - lastX };
+    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene2::scroll_callback(double xoffset, double yoffset)
 {
-    (void)xoffset;   //Do nothing
-    (void)yoffset;   //Do nothing
-
+    //(void)xoffset;   //Do nothing
+    //(void)yoffset;   //Do nothing
 
     engine::Scene::scroll_callback(xoffset, yoffset);
 
-    //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
 
 void MyScene2::gamepad_callback(const GLFWgamepadstate& state)

@@ -16,7 +16,9 @@ namespace engine
 
         virtual void init() = 0;
         virtual void update(Transform& transform) = 0;
+
         virtual void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) = 0;
+        virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) = 0;
 
         virtual std::unique_ptr<AABB> getBoundingVolume();
 	};
@@ -30,6 +32,8 @@ namespace engine
     public:
         ComponentBase() = default;
         virtual ~ComponentBase() = default;
+
+        
 
         virtual unsigned int getTypeID() const final
         {

@@ -33,7 +33,7 @@ namespace engine
 		//std::shared_ptr<Primitive> primitive{};
 		//std::shared_ptr<Light> light{};
 		//std::shared_ptr<Camera> camera{};
-		std::unique_ptr<AABB> boundingVolume{};
+		//std::unique_ptr<AABB> boundingVolume{};
 
 		// Scene graph
 		Entity* parent{};
@@ -59,6 +59,7 @@ namespace engine
 		std::string getTypeNameEx();
 
 
+		// fast helpers
 		Transform getTransform();
 		void setTransform(const engine::Transform& transform);
 		
@@ -114,8 +115,6 @@ namespace engine
 			return nullptr;
 		}
 
-
-
 #pragma endregion
 
 
@@ -124,10 +123,10 @@ namespace engine
 		unsigned int generateUniqueId();
 		AABB getGlobalAABB();
 
-		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
+		//void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
 
 		SphereVolume generateSphereBV(const Model& model);
 
-		//std::unique_ptr<AABB> getBoundingVolume();
+		std::unique_ptr<AABB> getBoundingVolume();
 	};
 }

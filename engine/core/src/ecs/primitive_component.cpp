@@ -3,7 +3,7 @@
 engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primitive)
     : m_primitive(primitive)
 {
-	m_boundingVolume = std::make_unique<AABB>(generateAABB(primitive));
+	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 }
 
 void engine::PrimitiveComponent::init()
@@ -18,10 +18,15 @@ void engine::PrimitiveComponent::update(Transform& transform)
 
 void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
 {
-    m_primitive->draw(shader, transform);
+	m_primitive->draw(shader, transform);
 }
 
-engine::AABB engine::PrimitiveComponent::generateAABB(const std::shared_ptr<Primitive> primitive)
+void engine::PrimitiveComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+{
+	m_primitive->draw(shader, position, size, rotation);
+}
+
+engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)
 {
 	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::lowest()); // Use lowest(), not min()

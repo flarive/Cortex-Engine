@@ -19,7 +19,9 @@ namespace engine
 
 		void init() override;
 		void update(Transform& transform) override;
+
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
+		void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
 
 		std::shared_ptr<Camera> getCamera()
 		{
@@ -31,14 +33,13 @@ namespace engine
 			return 2;
 		}
 
+		std::unique_ptr<AABB> getBoundingVolume() override;
+
 	private:
 
 		std::shared_ptr<Camera> m_camera{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		AABB generateAABB(const std::shared_ptr<Camera> camera);
-
-
-		std::unique_ptr<AABB> getBoundingVolume() override;
+		AABB generateBoundingVolume(const std::shared_ptr<Camera> camera);
 	};
 }

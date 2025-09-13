@@ -5,7 +5,7 @@
 engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
     : m_model(model)
 {
-	m_boundingVolume = std::make_unique<AABB>(generateAABB(model));
+	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(model));
 }
 
 
@@ -24,8 +24,12 @@ void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
     m_model->draw(shader, transform);
 }
 
+void engine::ModelComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+{
+	m_model->draw(shader, position, size, rotation);
+}
 
-engine::AABB engine::ModelComponent::generateAABB(const std::shared_ptr<Model> model)
+engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_ptr<Model> model)
 {
 	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
 	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());

@@ -6,7 +6,7 @@ engine::TransformComponent::TransformComponent(const Transform& transform) : m_t
 }
 
 
-void engine::TransformComponent::init()
+void engine::TransformComponent::init(Transform& transform)
 {
 
 }
@@ -21,7 +21,7 @@ void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 
 }
 
-void engine::TransformComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
 
 }

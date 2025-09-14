@@ -7,14 +7,14 @@ engine::CameraComponent::CameraComponent(std::shared_ptr<Camera> camera)
 }
 
 
-void engine::CameraComponent::init()
+void engine::CameraComponent::init(Transform& transform)
 {
-
+	m_camera->position = transform.getLocalPosition();
 }
 
 void engine::CameraComponent::update(Transform& transform)
 {
-	m_camera->position = transform.getLocalPosition();
+	//m_camera->position = transform.getLocalPosition();
 }
 
 void engine::CameraComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
@@ -22,7 +22,7 @@ void engine::CameraComponent::draw(glm::mat4 projection, glm::mat4 view, Shader&
 
 }
 
-void engine::CameraComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::CameraComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
 
 }

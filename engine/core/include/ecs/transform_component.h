@@ -15,11 +15,11 @@ namespace engine
 		TransformComponent(const Transform& transform);
 		~TransformComponent() = default;
 
-		void init() override;
+		void init(Transform& transform) override;
 		void update(Transform& transform) override;
 
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
-		void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
+		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
 
 		static unsigned int getStaticTypeID() {
 			return 1; // Ensure this is the smallest TypeID

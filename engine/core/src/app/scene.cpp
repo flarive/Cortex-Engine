@@ -39,6 +39,7 @@ void engine::Scene::before_init_internal()
 void engine::Scene::after_init_internal()
 {
     // Always run this code
+    initEntities();
     
     // Counters
     unsigned short spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
@@ -97,6 +98,8 @@ void engine::Scene::initialize()
             logger.info("Render mode setting changed: {})", wireframe);
             renderSettings.wireframe = wireframe;
         });
+
+
     
 
     after_init();
@@ -220,6 +223,38 @@ void engine::Scene::gameLoop()
     }
 }
 
+void engine::Scene::initEntities()
+{
+    // Init using stored world transforms
+    initEntityRecursive(m_entityManager.getRootEntity());
+}
+
+void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& entity)
+{
+    // new way
+    for (const auto& [typeID, component] : entity->components)
+    {
+        auto trs = entity->getTransform();
+        
+        if (typeID == 1)
+        {
+            // transform
+            int a = 0;
+        }
+        else
+        {
+            // camera
+            component->init(trs);
+        }
+    }
+
+    // init children
+    for (const auto& child : entity->children)
+    {
+        initEntityRecursive(child);
+    }
+}
+
 void engine::Scene::drawEntities(Shader& shader)
 {
     // draw flat and nested entity hierarchy
@@ -294,6 +329,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     // new way
     for (const auto& [typeID, component] : entity->components)
     {
+        auto trs = entity->getTransform();
+
         if (typeID == 1)
         {
             // transform
@@ -302,46 +339,25 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 2)
         {
             // camera
-            auto trs = entity->getTransform();
             component->update(trs);
         }
         else if (typeID == 3)
         {
             // primitive
             //component->draw(projection, view, shader, entity->getWorldTransform());
-            auto trs = entity->getTransform();
-            component->draw(shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
+            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 4)
         {
             // model
             //component->draw(projection, view, shader, entity->getWorldTransform());
-            auto trs = entity->getTransform();
-            component->draw(shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
+            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 5)
         {
             // light
             //component->draw(projection, view, shader, entity->getWorldTransform());
-
-            if (auto lightComponent = std::dynamic_pointer_cast<LightComponent>(component))
-            {
-                if (auto light = lightComponent->getLight())
-                {
-                    auto trs = entity->getTransform();
-                    lightComponent->draw(shader,
-                        projection,
-                        view,
-                        light->ambientColor,
-                        light->diffuseColor,
-                        light->specularColor,
-                        light->intensity,
-                        trs.getLocalPosition(),
-                        light->target,
-                        trs.getLocalScale(),
-                        trs.getLocalRotation());
-                }
-            }
+            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
     }
 

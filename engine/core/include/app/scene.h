@@ -124,7 +124,9 @@ namespace engine
         {
             m_activeCameraIndex = index;
         }
-        
+
+        void initEntities();
+        void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
         void drawEntities(Shader& shader);
         void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);

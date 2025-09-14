@@ -272,6 +272,60 @@ void engine::ImGuiDocking::displayEntityHierarchy(const std::shared_ptr<Entity>&
     ImGui::PopID();
 }
 
+//void engine::ImGuiDocking::displayEntityHierarchy(const std::shared_ptr<Entity>& entity)
+//{
+//    // Check if this entity is selected
+//    bool isSelected = (m_selectedEntity == entity);
+//
+//    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
+//
+//    if (entity->children.empty())
+//        flags |= ImGuiTreeNodeFlags_Leaf;
+//
+//    auto entityType = entity->getType();
+//
+//    if (isSelected)
+//    {
+//        flags |= ImGuiTreeNodeFlags_Selected;
+//        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType));
+//    }
+//
+//    ImGui::PushID(entity.get()); // Unique ID per entity
+//
+//    GLuint iconTexture = getEntityTypeSmallIcon(entityType);
+//
+//    // Start horizontal layout
+//    bool nodeOpen = false;
+//    ImGui::Image(iconTexture, ImVec2(16, 16));
+//    ImGui::SameLine();
+//
+//    // Use TreeNodeEx with invisible label (##) to show triangle only
+//    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
+//
+//    // Handle selection
+//    if (ImGui::IsItemClicked())
+//    {
+//        m_selectedEntity = entity;
+//        if (m_onSelectionChanged) {
+//            m_onSelectionChanged(m_selectedEntity); // notify parent
+//        }
+//    }
+//
+//    if (isSelected)
+//        ImGui::PopStyleColor();
+//
+//    if (nodeOpen)
+//    {
+//        for (const auto& child : entity->children)
+//            displayEntityHierarchy(child);
+//
+//        ImGui::TreePop();
+//    }
+//
+//    ImGui::PopID();
+//}
+
+
 
 void engine::ImGuiDocking::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
@@ -417,7 +471,7 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
         }
 
 
-        if (dirLight != nullptr || spotLight != nullptr)
+        if (spotLight != nullptr)
         {
             if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
             {
@@ -448,6 +502,41 @@ void engine::ImGuiDocking::drawLightEntityDetails(const std::shared_ptr<Entity>&
                 ImGui::Text("Z");
                 ImGui::TableSetColumnIndex(6);
                 ImGui::DragFloat("##targetZ", &spotLight->target.z, 0.1f);
+
+                ImGui::EndTable();
+            }
+        }
+        else if (dirLight != nullptr)
+        {
+            if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
+            {
+                ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+                ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+                ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+                ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+                ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Target");
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("X");
+                ImGui::TableSetColumnIndex(2);
+                ImGui::DragFloat("##targetX", &dirLight->target.x, 0.1f);
+
+                ImGui::TableSetColumnIndex(3);
+                ImGui::Text("Y");
+                ImGui::TableSetColumnIndex(4);
+                ImGui::DragFloat("##targetY", &dirLight->target.y, 0.1f);
+
+                ImGui::TableSetColumnIndex(5);
+                ImGui::Text("Z");
+                ImGui::TableSetColumnIndex(6);
+                ImGui::DragFloat("##targetZ", &dirLight->target.z, 0.1f);
 
                 ImGui::EndTable();
             }

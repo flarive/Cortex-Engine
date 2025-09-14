@@ -6,7 +6,7 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 }
 
-void engine::PrimitiveComponent::init()
+void engine::PrimitiveComponent::init(Transform& transform)
 {
 
 }
@@ -21,7 +21,7 @@ void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 	m_primitive->draw(shader, transform);
 }
 
-void engine::PrimitiveComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
 	m_primitive->draw(shader, position, size, rotation);
 }

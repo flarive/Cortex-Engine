@@ -8,14 +8,14 @@ engine::LightComponent::LightComponent(std::shared_ptr<Light> light)
     m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(light));
 }
 
-void engine::LightComponent::init()
+void engine::LightComponent::init(Transform& transform)
 {
 
 }
 
 void engine::LightComponent::update(Transform& transform)
 {
-
+    //m_light->position = transform.getLocalPosition();
 }
 
 void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
@@ -31,22 +31,17 @@ void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
         transform);
 }
 
-void engine::LightComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
-{
-
-}
-
-void engine::LightComponent::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
     m_light->draw(shader,
         projection,
         view,
-        ambient,
-        diffuse,
-        specular,
-        intensity,
+        m_light->ambientColor,
+        m_light->diffuseColor,
+        m_light->specularColor,
+        m_light->intensity,
         position,
-        target,
+        m_light->target,
         size,
         rotation);
 }

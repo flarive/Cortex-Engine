@@ -9,7 +9,7 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 }
 
 
-void engine::ModelComponent::init()
+void engine::ModelComponent::init(Transform& transform)
 {
 
 }
@@ -24,7 +24,7 @@ void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
     m_model->draw(shader, transform);
 }
 
-void engine::ModelComponent::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
 	m_model->draw(shader, position, size, rotation);
 }

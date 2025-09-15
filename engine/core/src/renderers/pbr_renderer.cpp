@@ -29,9 +29,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     // enable objects outlining
-    //enableStencilTest(true);
-    //glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    //glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    enableStencilTest(true);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     // avoid computing back faces not visible by camera
     if (m_sceneSettings.enableFaceCulling) enableFaceCulling(true);
     if (m_sceneSettings.enableGammaCorrection) enableGammaCorrection(true);

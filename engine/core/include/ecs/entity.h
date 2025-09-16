@@ -28,12 +28,6 @@ namespace engine
 		std::string name{};
 		bool visible{ true };
 
-		// To remove
-		//std::shared_ptr<Model> model{};
-		//std::shared_ptr<Primitive> primitive{};
-		//std::shared_ptr<Light> light{};
-		//std::shared_ptr<Camera> camera{};
-		//std::unique_ptr<AABB> boundingVolume{};
 
 		// Scene graph
 		Entity* parent{};
@@ -43,15 +37,9 @@ namespace engine
 		// Components
 		std::unordered_map<unsigned int, std::shared_ptr<Component>> components{};
 
-		// To remove
-		//Transform transform{};       // local position/rotation/scale
-		//glm::mat4 worldTransform{};  // should be full parent * local
-
 
 		// constructor, expects just a name
 		Entity(const std::string& _name);
-		Entity(const std::string& _name, Transform _transform);
-
 
 
 		EntityType getType();

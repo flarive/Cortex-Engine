@@ -33,10 +33,10 @@ engine::Entity::Entity(const std::string& _name)
 }
 
 // constructor, expects just a name and a transform (TEMP)
-engine::Entity::Entity(const std::string& _name, Transform _transform)
-	: name{ _name }, id{ generateUniqueId() }//, transform{ _transform }
-{
-}
+//engine::Entity::Entity(const std::string& _name, Transform _transform)
+//	: name{ _name }, id{ generateUniqueId() }//, transform{ _transform }
+//{
+//}
 
 engine::AABB engine::Entity::getGlobalAABB()
 {
@@ -208,16 +208,21 @@ void engine::Entity::addChild(std::shared_ptr<engine::Entity> entity)
 // Recursively update world transforms
 void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 {
+	glm::mat4 worldTrandform{};
+	
 	if (parent == nullptr) {
-		setWorldTransform(parentTransform * getTransform().getLocalModelMatrix());
+		
+		worldTrandform = parentTransform * getTransform().getLocalModelMatrix();
+		setWorldTransform(worldTrandform);
 	}
 	else {
 		// Still need to recompute in case parent changed
-		setWorldTransform(parentTransform * getTransform().getLocalModelMatrix());
+		worldTrandform = parentTransform * getTransform().getLocalModelMatrix();
+		setWorldTransform(worldTrandform);
 	}
 
 	for (auto& child : children) {
-		child->updateSelfAndChild(getWorldTransform()); // here problem !!!!!!!!!
+		child->updateSelfAndChild(worldTrandform);
 	}
 }
 
@@ -278,9 +283,6 @@ engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 
 engine::Transform engine::Entity::getTransform()
 {
-	if (name == "Root")
-		return Transform{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f} }; // ???????????????????
-	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
@@ -294,9 +296,6 @@ engine::Transform engine::Entity::getTransform()
 
 void engine::Entity::setTransform(const engine::Transform& transform)
 {
-	if (name == "Root")
-		return;
-	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
@@ -310,9 +309,6 @@ void engine::Entity::setTransform(const engine::Transform& transform)
 
 glm::mat4 engine::Entity::getWorldTransform()
 {
-	if (name == "Root")
-		return glm::mat4{};
-	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
@@ -326,9 +322,6 @@ glm::mat4 engine::Entity::getWorldTransform()
 
 void engine::Entity::setWorldTransform(const glm::mat4& worldTransform)
 {
-	if (name == "Root")
-		return;
-	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{

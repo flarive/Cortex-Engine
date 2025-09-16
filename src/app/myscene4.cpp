@@ -49,7 +49,7 @@ void MyScene4::init()
     light1->outerCutoff = 17.5f;
     light1->target = glm::vec3(0.0f, 0.0f, -5.0f);
     light1->ambientColor = engine::Color(0.1f, 0.1f, 0.1f, 1.0f);
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", trsLight1);
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);

@@ -28,8 +28,10 @@ void MyScene1::init()
 
     // light
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
-    auto light1 = std::make_shared<engine::DirectionalLight>(0);
-    light1->intensity = 1.0f;
+    auto light1 = std::make_shared<engine::SpotLight>(0);
+    light1->intensity = 2.0f;
+    light1->cutoff = 12.0f;
+    light1->outerCutoff = 48.0f;
     light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
     light1->ambientColor = engine::Color(1.0f);
     light1->diffuseColor = engine::Color(1.0f);

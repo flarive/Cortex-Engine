@@ -243,7 +243,6 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
         }
         else
         {
-            // camera
             component->init(trs);
         }
     }
@@ -298,35 +297,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
     }
 
-    // old way
-    /*if (entity->model)
-    {
-        entity->model->draw(shader, entity->worldTransform);
-    }
-    else if (entity->primitive)
-    {
-        entity->primitive->draw(shader, entity->worldTransform);
-    }
-    else if (entity->light)
-    {
-        entity->light->draw(shader,
-            projection,
-            view,
-            entity->light->ambientColor,
-            entity->light->diffuseColor,
-            entity->light->specularColor,
-            entity->light->intensity,
-            entity->transform.getLocalPosition(),
-            entity->light->target,
-            entity->transform.getLocalScale(),
-            entity->transform.getLocalRotation());
-    }
-    else if (entity->camera)
-    {
-        entity->camera->position = entity->transform.getLocalPosition();
-    }*/
-
-    // new way
+    // looping over entity components
     for (const auto& [typeID, component] : entity->components)
     {
         auto trs = entity->getTransform();
@@ -344,20 +315,17 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 3)
         {
             // primitive
-            //component->draw(projection, view, shader, entity->getWorldTransform());
-            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
+            component->draw(projection, view, shader, entity->getWorldTransform());
         }
         else if (typeID == 4)
         {
             // model
             component->draw(projection, view, shader, entity->getWorldTransform());
-            //component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 5)
         {
             // light
-            //component->draw(projection, view, shader, entity->getWorldTransform());
-            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
+            component->draw(projection, view, shader, entity->getWorldTransform());
         }
     }
 

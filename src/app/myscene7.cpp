@@ -241,7 +241,7 @@ void MyScene7::key_callback(int key, int scancode, int action, int mods)
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
         auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", 88), trs);
+        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", 88));
         getEntityManager().addChild(entity);
 
         offset_dynamic += 5.0f;
@@ -319,18 +319,18 @@ void MyScene7::update(engine::Shader& shader)
     (void)shader;   //Do nothing
 
 
-    //auto child2 = getEntityManager().findEntityByName("Child2");
-    //if (child2)
-    //{
-    //    child2->transform.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
-    //}
+    auto child2 = getEntityManager().findEntityByName("Child2");
+    if (child2)
+    {
+        child2->getTransform().setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+    }
 
 
-    //auto mySphere = getEntityManager().findEntityByName("MySphere");
-    //if (mySphere)
-    //{
-    //    mySphere->transform.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
-    //}
+    auto mySphere = getEntityManager().findEntityByName("MySphere");
+    if (mySphere)
+    {
+        mySphere->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+    }
 
 
     rotation += deltaTime * 10.0f;

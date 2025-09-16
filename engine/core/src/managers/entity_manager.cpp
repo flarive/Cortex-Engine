@@ -1,8 +1,15 @@
 #include "../../include/managers/entity_manager.h"
 
+
+#include "../../include/ecs/transform_component.h"
+
 void engine::EntityManager::create()
 {
     m_rootEntity = std::make_shared<engine::Entity>(ROOT_ENTITY_NAME);
+
+    // root entity should have at least one transform
+    auto trs = engine::Transform{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f} };
+    m_rootEntity->addComponent<TransformComponent>(trs);
 }
 
 void engine::EntityManager::set(std::shared_ptr<engine::Entity> rootEntity)

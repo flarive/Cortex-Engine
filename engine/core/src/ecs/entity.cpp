@@ -217,7 +217,7 @@ void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 	}
 
 	for (auto& child : children) {
-		child->updateSelfAndChild(getWorldTransform());
+		child->updateSelfAndChild(getWorldTransform()); // here problem !!!!!!!!!
 	}
 }
 
@@ -279,7 +279,7 @@ engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 engine::Transform engine::Entity::getTransform()
 {
 	if (name == "Root")
-		return Transform{};
+		return Transform{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f} }; // ???????????????????
 	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)

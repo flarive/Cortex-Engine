@@ -1,9 +1,5 @@
 #include "myscene7.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene7::MyScene7(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::PBR,
@@ -44,7 +40,7 @@ void MyScene7::init()
     auto trsLight1 = engine::Transform{ { -10.0f, -5.0f, -10.0f } };
     auto light1 = std::make_shared<engine::PointLight>(0);
     light1->intensity = 40.0f;
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", trsLight1); // TODO remove transform
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
@@ -53,7 +49,7 @@ void MyScene7::init()
     auto trsLight2 = engine::Transform{ { 10.0f, -5.0f, -10.0f } };
     auto light2 = std::make_shared<engine::PointLight>(1);
     light2->intensity = 40.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2", trsLight2); // TODO remove transform
+    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
     entityLight2->addComponent<engine::TransformComponent>(trsLight2);
     entityLight2->addComponent<engine::LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
@@ -63,7 +59,7 @@ void MyScene7::init()
     auto trsLight3 = engine::Transform{ { -10.0f, -25.0f, -10.0f } };
     auto light3 = std::make_shared<engine::PointLight>(2);
     light3->intensity = 40.0f;
-    auto entityLight3 = std::make_shared<engine::Entity>("Light3", trsLight3); // TODO remove transform
+    auto entityLight3 = std::make_shared<engine::Entity>("Light3");
     entityLight3->addComponent<engine::TransformComponent>(trsLight3);
     entityLight3->addComponent<engine::LightComponent>(light3);
     getEntityManager().addChild(entityLight3);
@@ -73,7 +69,7 @@ void MyScene7::init()
     auto trsLight4 = engine::Transform{ { 10.0f, -25.0f, -10.0f } };
     auto light4 = std::make_shared<engine::PointLight>(3);
     light4->intensity = 40.0f;
-    auto entityLight4 = std::make_shared<engine::Entity>("Light4", trsLight4); // TODO remove transform
+    auto entityLight4 = std::make_shared<engine::Entity>("Light4");
     entityLight4->addComponent<engine::TransformComponent>(trsLight4);
     entityLight4->addComponent<engine::LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
@@ -101,7 +97,7 @@ void MyScene7::init()
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
 
-        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i), trs); // TODO remove transform
+        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i));
         entity->addComponent<engine::TransformComponent>(trs);
         entity->addComponent<engine::ModelComponent>(model);
         getEntityManager().addChild(entity);
@@ -134,7 +130,7 @@ void MyScene7::init()
             trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
         }
 
-        auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i), trs); // TODO remove transform
+        auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i));
         entity->addComponent<engine::TransformComponent>(trs);
         entity->addComponent<engine::ModelComponent>(model);
         getEntityManager().addChild(lastEntity, entity);
@@ -155,7 +151,7 @@ void MyScene7::init()
         "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane", trsPlane); // TODO remove transform
+    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
@@ -168,7 +164,7 @@ void MyScene7::init()
         "textures/container2_specular.png"));
 
     auto trsCube = engine::Transform(glm::vec3(-3.0f, -17.0f, -10.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityCube = std::make_shared<engine::Entity>("MyCube", trsCube); // TODO remove transform
+    auto entityCube = std::make_shared<engine::Entity>("MyCube");
     entityCube->addComponent<engine::TransformComponent>(trsCube);
     entityCube->addComponent<engine::PrimitiveComponent>(myCube);
     getEntityManager().addChild(entityCube);
@@ -180,7 +176,7 @@ void MyScene7::init()
         "textures/uv_mapper.jpg"));
 
     auto trsSphere = engine::Transform(glm::vec3(3.0f, -17.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere = std::make_shared<engine::Entity>("MySphere", trsSphere); // TODO remove transform
+    auto entitySphere = std::make_shared<engine::Entity>("MySphere");
     entitySphere->addComponent<engine::TransformComponent>(trsSphere);
     entitySphere->addComponent<engine::PrimitiveComponent>(mySphere);
     getEntityManager().addChild(entitySphere);

@@ -1,9 +1,5 @@
 #include "myscene5.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene5::MyScene5(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::PBR,
@@ -44,7 +40,7 @@ void MyScene5::init()
     light1->outerCutoff = 17.5f;
     light1->target = glm::vec3(0.0f, 0.0f, -5.0f);
     light1->ambientColor = engine::Color(0.1f, 0.1f, 0.1f, 1.0f);
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", trsLight1); // TODO remove transform
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
@@ -64,7 +60,7 @@ void MyScene5::init()
         ""), engine::UvMapping(1.0f));
 
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane", trsPlane);  // TODO remove transform
+    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
@@ -73,7 +69,7 @@ void MyScene5::init()
     // buddha model
     std::shared_ptr<engine::Model> buddhaModel = std::make_shared<engine::Model>("models/buddha/buddha1.obj");
     auto trsBuddha = engine::Transform(glm::vec3(0.0f, -11.0f + 1.0f, -10.0f), glm::vec3(0.5f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityBuddha = std::make_shared<engine::Entity>("MyBuddha", trsBuddha); // TODO remove transform
+    auto entityBuddha = std::make_shared<engine::Entity>("MyBuddha");
     entityBuddha->addComponent<engine::TransformComponent>(trsBuddha);
     entityBuddha->addComponent<engine::ModelComponent>(buddhaModel);
     getEntityManager().addChild(entityBuddha);

@@ -30,7 +30,10 @@ namespace engine
 
 
 		void setTransform(const Transform& transform) { m_transform = transform; }
-		void setWorldTransformMatrix(const glm::mat4& worldTransform) { m_worldTransform = worldTransform; }
+		void setWorldTransformMatrix(const glm::mat4& worldTransform)
+		{
+			m_worldTransform = worldTransform;
+		}
 
 
 	private:

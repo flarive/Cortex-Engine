@@ -1,9 +1,5 @@
 #include "myscene3.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene3::MyScene3(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::PBR,
@@ -42,7 +38,7 @@ void MyScene3::init()
     light5->cutoff = 12.5f;
     light5->outerCutoff = 27.5f;
     light5->target = glm::vec3(0.0f, 0.0f, -4.0f);
-    auto entityLight5 = std::make_shared<engine::Entity>("Light5", trsLight5); // TODO remove transform
+    auto entityLight5 = std::make_shared<engine::Entity>("Light5");
     entityLight5->addComponent<engine::TransformComponent>(trsLight5);
     entityLight5->addComponent<engine::LightComponent>(light5);
     getEntityManager().addChild(entityLight5);
@@ -52,7 +48,7 @@ void MyScene3::init()
     auto trsLight1 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light1 = std::make_shared<engine::PointLight>(0);
     light1->intensity = 50.0f;
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", trsLight1); // TODO remove transform
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
@@ -62,7 +58,7 @@ void MyScene3::init()
     auto trsLight2 = engine::Transform{ { 10.0f, 10.0f, 10.0f } };
     auto light2 = std::make_shared<engine::PointLight>(1);
     light2->intensity = 50.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2", trsLight2); // TODO remove transform
+    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
     entityLight2->addComponent<engine::TransformComponent>(trsLight2);
     entityLight2->addComponent<engine::LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
@@ -72,7 +68,7 @@ void MyScene3::init()
     auto trsLight3 = engine::Transform{ { -10.0f, -10.0f, 10.0f } };
     auto light3 = std::make_shared<engine::PointLight>(2);
     light3->intensity = 50.0f;
-    auto entityLight3 = std::make_shared<engine::Entity>("Light3", trsLight3); // TODO remove transform
+    auto entityLight3 = std::make_shared<engine::Entity>("Light3");
     entityLight3->addComponent<engine::TransformComponent>(trsLight3);
     entityLight3->addComponent<engine::LightComponent>(light3);
     getEntityManager().addChild(entityLight3);
@@ -82,7 +78,7 @@ void MyScene3::init()
     auto trsLight4 = engine::Transform{ { 10.0f, -10.0f, 10.0f } };
     auto light4 = std::make_shared<engine::PointLight>(3);
     light4->intensity = 50.0f;
-    auto entityLight4 = std::make_shared<engine::Entity>("Light4", trsLight4);
+    auto entityLight4 = std::make_shared<engine::Entity>("Light4");
     entityLight4->addComponent<engine::TransformComponent>(trsLight4);
     entityLight4->addComponent<engine::LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
@@ -103,7 +99,7 @@ void MyScene3::init()
     matPlane->setNormalIntensity(1.0f);
     myPlane->setup(matPlane, engine::UvMapping(2.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane", trsPlane); // TODO remove transform
+    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
@@ -126,7 +122,7 @@ void MyScene3::init()
     redSciFiMetalSphere->setup(matSphere1, engine::UvMapping(2.0f));
 
     auto trsSphere1 = engine::Transform(glm::vec3(-5.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere1 = std::make_shared<engine::Entity>("MySphere1", trsSphere1); // TODO remove transform
+    auto entitySphere1 = std::make_shared<engine::Entity>("MySphere1");
     entitySphere1->addComponent<engine::TransformComponent>(trsSphere1);
     entitySphere1->addComponent<engine::PrimitiveComponent>(redSciFiMetalSphere);
     getEntityManager().addChild(entitySphere1);
@@ -145,7 +141,7 @@ void MyScene3::init()
         "textures/pbr/rusted_iron/height.png"));
 
     auto trsSphere2 = engine::Transform(glm::vec3(-3.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere2 = std::make_shared<engine::Entity>("MySphere2", trsSphere2); // TODO remove transform
+    auto entitySphere2 = std::make_shared<engine::Entity>("MySphere2");
     entitySphere2->addComponent<engine::TransformComponent>(trsSphere2);
     entitySphere2->addComponent<engine::PrimitiveComponent>(rustedIronSphere);
     getEntityManager().addChild(entitySphere2);
@@ -162,7 +158,7 @@ void MyScene3::init()
         "textures/pbr/gold/ao.png"));
 
     auto trsSphere3 = engine::Transform(glm::vec3(-1.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere3 = std::make_shared<engine::Entity>("MySphere3", trsSphere3); // TODO remove transform
+    auto entitySphere3 = std::make_shared<engine::Entity>("MySphere3");
     entitySphere3->addComponent<engine::TransformComponent>(trsSphere3);
     entitySphere3->addComponent<engine::PrimitiveComponent>(goldSphere);
     getEntityManager().addChild(entitySphere3);
@@ -179,7 +175,7 @@ void MyScene3::init()
         "textures/pbr/grass/ao.png"));
 
     auto trsSphere4 = engine::Transform(glm::vec3(1.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere4 = std::make_shared<engine::Entity>("MySphere4", trsSphere4); // TODO remove transform
+    auto entitySphere4 = std::make_shared<engine::Entity>("MySphere4");
     entitySphere4->addComponent<engine::TransformComponent>(trsSphere4);
     entitySphere4->addComponent<engine::PrimitiveComponent>(grassSphere);
     getEntityManager().addChild(entitySphere4);
@@ -196,7 +192,7 @@ void MyScene3::init()
         "textures/pbr/plastic/ao.png", "", 1.0f));
 
     auto trsSphere5 = engine::Transform(glm::vec3(3.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere5 = std::make_shared<engine::Entity>("MySphere5", trsSphere5); // TODO remove transform
+    auto entitySphere5 = std::make_shared<engine::Entity>("MySphere5");
     entitySphere5->addComponent<engine::TransformComponent>(trsSphere5);
     entitySphere5->addComponent<engine::PrimitiveComponent>(plasticSphere);
     getEntityManager().addChild(entitySphere5);
@@ -213,7 +209,7 @@ void MyScene3::init()
         "textures/pbr/wall/ao.png"), engine::UvMapping(1.0f));
 
     auto trsSphere6 = engine::Transform(glm::vec3(5.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere6 = std::make_shared<engine::Entity>("MySphere6", trsSphere6); // TODO remove transform
+    auto entitySphere6 = std::make_shared<engine::Entity>("MySphere6");
     entitySphere6->addComponent<engine::TransformComponent>(trsSphere6);
     entitySphere6->addComponent<engine::PrimitiveComponent>(wallSphere);
     getEntityManager().addChild(entitySphere6);
@@ -237,7 +233,7 @@ void MyScene3::init()
         "textures/pbr/bronze/ao.png"), engine::UvMapping(1.0f));
 
     auto trsSphere7 = engine::Transform(glm::vec3(7.0f, -14.0f, -10.0f), glm::vec3(1.0f));
-    auto entitySphere7 = std::make_shared<engine::Entity>("MySphere6", trsSphere7); // TODO remove transform
+    auto entitySphere7 = std::make_shared<engine::Entity>("MySphere6");
     entitySphere7->addComponent<engine::TransformComponent>(trsSphere7);
     entitySphere7->addComponent<engine::PrimitiveComponent>(bronzeSphere);
     getEntityManager().addChild(entitySphere7);

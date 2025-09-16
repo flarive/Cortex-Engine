@@ -1,9 +1,5 @@
 #include "myscene8.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene8::MyScene8(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::BlinnPhong,
@@ -38,7 +34,7 @@ void MyScene8::init()
     auto light1 = std::make_shared<engine::PointLight>(0);
     light1->intensity = 1.0f;
     light1->ambientColor = engine::Color(0.5f);
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1",  trsLight1);  // TODO remove transform
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
@@ -57,7 +53,7 @@ void MyScene8::init()
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane", trsPlane); // TODO remove transform
+    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
@@ -68,7 +64,7 @@ void MyScene8::init()
     auto myCube1 = std::make_shared<engine::Cube>();
     myCube1->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube1 = engine::Transform(glm::vec3(-1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCube1 = std::make_shared<engine::Entity>("MyCube1", trsCube1); // TODO remove transform
+    auto entityCube1 = std::make_shared<engine::Entity>("MyCube1");
     entityCube1->addComponent<engine::TransformComponent>(trsCube1);
     entityCube1->addComponent<engine::PrimitiveComponent>(myCube1);
     getEntityManager().addChild(entityCube1);
@@ -79,7 +75,7 @@ void MyScene8::init()
     myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
 
     auto trsCube2 = engine::Transform(glm::vec3(1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCube2 = std::make_shared<engine::Entity>("MyCube2", trsCube2); // TODO remove transform
+    auto entityCube2 = std::make_shared<engine::Entity>("MyCube2");
     entityCube2->addComponent<engine::TransformComponent>(trsCube2);
     entityCube2->addComponent<engine::PrimitiveComponent>(myCube2);
     getEntityManager().addChild(entityCube2);
@@ -89,7 +85,7 @@ void MyScene8::init()
     auto myCube3 = std::make_shared<engine::Cube>();
     myCube3->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube3 = engine::Transform(glm::vec3(1.0f, -0.35f, -1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCube3 = std::make_shared<engine::Entity>("MyCube3", trsCube3); // TODO remove transform
+    auto entityCube3 = std::make_shared<engine::Entity>("MyCube3");
     entityCube3->addComponent<engine::TransformComponent>(trsCube3);
     entityCube3->addComponent<engine::PrimitiveComponent>(myCube3);
     getEntityManager().addChild(entityCube3);
@@ -100,7 +96,7 @@ void MyScene8::init()
     myCube4->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
 
     auto trsCube4 = engine::Transform(glm::vec3(-1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCube4 = std::make_shared<engine::Entity>("MyCube4", trsCube4); // TODO remove transform
+    auto entityCube4 = std::make_shared<engine::Entity>("MyCube4");
     entityCube4->addComponent<engine::TransformComponent>(trsCube4);
     entityCube4->addComponent<engine::PrimitiveComponent>(myCube4);
     getEntityManager().addChild(entityCube4);
@@ -111,7 +107,7 @@ void MyScene8::init()
     mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
 
     auto trsSphere = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere = std::make_shared<engine::Entity>("MySphere", trsSphere); // TODO remove transform
+    auto entitySphere = std::make_shared<engine::Entity>("MySphere");
     entitySphere->addComponent<engine::TransformComponent>(trsSphere);
     entitySphere->addComponent<engine::PrimitiveComponent>(mySphere);
     getEntityManager().addChild(entitySphere);

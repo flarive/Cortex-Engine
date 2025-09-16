@@ -1,9 +1,5 @@
 #include "myscene9.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene9::MyScene9(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::PBR,
@@ -43,7 +39,7 @@ void MyScene9::init()
     trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
     auto light1 = std::make_shared<engine::PointLight>(0);
     light1->intensity = 50.0f;
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1", trsLight1); // TODO remove transform
+    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
@@ -53,7 +49,7 @@ void MyScene9::init()
     trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
     auto light2 = std::make_shared<engine::PointLight>(1);
     light2->intensity = 50.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2", trsLight2); // TODO remove transform
+    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
     entityLight2->addComponent<engine::TransformComponent>(trsLight2);
     entityLight2->addComponent<engine::LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
@@ -64,7 +60,7 @@ void MyScene9::init()
     trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
     auto light3 = std::make_shared<engine::PointLight>(2);
     light3->intensity = 50.0f;
-    auto entityLight3 = std::make_shared<engine::Entity>("Light3", trsLight3); // TODO remove transform
+    auto entityLight3 = std::make_shared<engine::Entity>("Light3");
     entityLight3->addComponent<engine::TransformComponent>(trsLight3);
     entityLight3->addComponent<engine::LightComponent>(light3);
     getEntityManager().addChild(entityLight3);
@@ -75,7 +71,7 @@ void MyScene9::init()
     trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
     auto light4 = std::make_shared<engine::PointLight>(3);
     light4->intensity = 50.0f;
-    auto entityLight4 = std::make_shared<engine::Entity>("Light4", trsLight4); // TODO remove transform
+    auto entityLight4 = std::make_shared<engine::Entity>("Light4");
     entityLight4->addComponent<engine::TransformComponent>(trsLight4);
     entityLight4->addComponent<engine::LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
@@ -85,7 +81,7 @@ void MyScene9::init()
     // helmet model
     std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
     auto trsHelmet = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(4.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet", trsHelmet); // TODO remove transform
+    auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet");
     entityHelmet->addComponent<engine::TransformComponent>(trsHelmet);
     entityHelmet->addComponent<engine::ModelComponent>(helmetModel);
     getEntityManager().addChild(entityHelmet);

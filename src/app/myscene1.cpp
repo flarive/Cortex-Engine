@@ -1,9 +1,5 @@
 #include "myscene1.h"
 
-#include "../../engine/core/include/app/app.h"
-#include "../../engine/core/include/app/scene.h"
-
-
 MyScene1::MyScene1(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
         {
             .method = engine::RenderMethod::BlinnPhong,

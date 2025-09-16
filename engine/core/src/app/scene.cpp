@@ -350,8 +350,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         else if (typeID == 4)
         {
             // model
-            //component->draw(projection, view, shader, entity->getWorldTransform());
-            component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
+            component->draw(projection, view, shader, entity->getWorldTransform());
+            //component->draw(projection, view, shader, trs.getLocalPosition(), trs.getLocalScale(), trs.getLocalRotation());
         }
         else if (typeID == 5)
         {

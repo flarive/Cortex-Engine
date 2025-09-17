@@ -21,8 +21,9 @@ namespace engine
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
 
-		static unsigned int getStaticTypeID() {
-			return 1; // Ensure this is the smallest TypeID
+		static ComponentType getStaticTypeID()
+		{
+			return ComponentType::transform;
 		}
 
 		Transform getTransform() { return m_transform; }

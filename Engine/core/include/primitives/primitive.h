@@ -7,7 +7,7 @@
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"
 
-#include "../ecs/component.h"
+//#include "../ecs/component.h"
 
 namespace engine
 {

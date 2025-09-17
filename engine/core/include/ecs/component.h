@@ -8,7 +8,15 @@
 
 namespace engine
 {
-	class Component
+    enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5 };
+
+    // faster
+    constexpr unsigned int toInt(ComponentType type) {
+        return static_cast<unsigned int>(type);
+    }
+
+    
+    class Component
 	{
     public:
         Component() = default;
@@ -35,16 +43,16 @@ namespace engine
 
         
 
-        virtual unsigned int getTypeID() const final
+        virtual ComponentType getTypeID() const final
         {
             return getStaticTypeID();
         }
 
-        static unsigned int getStaticTypeID()
+        static ComponentType getStaticTypeID()
         {
-            static unsigned int typeID = []()
+            static ComponentType typeID = []()
                 {
-                return 99;
+                return ComponentType::undefined;
                 }();
             return typeID;
         }

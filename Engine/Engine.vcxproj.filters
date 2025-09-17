@@ -79,12 +79,6 @@
     <Filter Include="Fichiers sources\core\misc">
       <UniqueIdentifier>{a0f18bd0-79b9-4e11-84f4-2b0a901ecf76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\core\debug">
-      <UniqueIdentifier>{a89033c0-cccd-46f0-9776-f1df86ca8bf4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\core\debug">
-      <UniqueIdentifier>{b902bccc-eff1-42ea-857b-13a570bdc636}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Fichiers sources\app">
       <UniqueIdentifier>{49036efb-f28c-49f2-ab7d-b9d1ade26ea3}</UniqueIdentifier>
     </Filter>
@@ -138,6 +132,24 @@
     </Filter>
     <Filter Include="Fichiers sources\core\ecs">
       <UniqueIdentifier>{4bac33ba-6857-45ec-81d3-761d46c35645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\ecs\entity">
+      <UniqueIdentifier>{d96e1916-a47d-4eb4-ab24-6b24e1b292c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\ecs\component">
+      <UniqueIdentifier>{080299a3-9e03-4df5-8edc-569c344b0586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\ecs\entity">
+      <UniqueIdentifier>{e3d208da-55d0-43e7-80e0-b4e05126e14e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\ecs\component">
+      <UniqueIdentifier>{f15b8c31-9d8f-4ad6-89de-f634d55bfc2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor">
+      <UniqueIdentifier>{b902bccc-eff1-42ea-857b-13a570bdc636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\editor">
+      <UniqueIdentifier>{a89033c0-cccd-46f0-9776-f1df86ca8bf4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +240,6 @@
     <ClCompile Include="core\src\misc\log_manager.cpp">
       <Filter>Fichiers sources\core\misc</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\debug\imgui_debug.cpp">
-      <Filter>Fichiers sources\core\debug</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\app\app.cpp">
       <Filter>Fichiers sources\app</Filter>
     </ClCompile>
@@ -261,8 +270,8 @@
     <ClCompile Include="core\src\cameras\camera.cpp">
       <Filter>Fichiers sources\core\cameras\base</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\debug\imgui_docking.cpp">
-      <Filter>Fichiers sources\core\debug</Filter>
+    <ClCompile Include="core\src\editor\imgui_editor.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
     <ClCompile Include="core\src\primitives\cylinder.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
@@ -304,25 +313,25 @@
       <Filter>Fichiers sources\core\cameras</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\entity.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\ecs\component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\ecs\transform_component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
+      <Filter>Fichiers sources\core\ecs\entity</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\camera_component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
+      <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\ecs\primitive_component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
+    <ClCompile Include="core\src\ecs\component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\light_component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
+      <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\model_component.cpp">
-      <Filter>Fichiers sources\core\ecs</Filter>
+      <Filter>Fichiers sources\core\ecs\component</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\primitive_component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\transform_component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,9 +440,6 @@
     <ClInclude Include="core\include\misc\log_manager.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\debug\imgui_debug.h">
-      <Filter>Fichiers d%27en-tête\core\debug</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h">
       <Filter>Fichiers d%27en-tête\core\renderers</Filter>
     </ClInclude>
@@ -464,8 +470,8 @@
     <ClInclude Include="core\include\cameras\camera.h">
       <Filter>Fichiers d%27en-tête\core\cameras\base</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\debug\imgui_docking.h">
-      <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    <ClInclude Include="core\include\editor\imgui_editor.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
     <ClInclude Include="core\include\primitives\cylinder.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
@@ -522,25 +528,25 @@
       <Filter>Fichiers d%27en-tête\core\cameras</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\entity.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\ecs\component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\ecs\transform_component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+      <Filter>Fichiers d%27en-tête\core\ecs\entity</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\camera_component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\ecs\primitive_component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+    <ClInclude Include="core\include\ecs\component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\light_component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\model_component.h">
-      <Filter>Fichiers d%27en-tête\core\ecs</Filter>
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\primitive_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\transform_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

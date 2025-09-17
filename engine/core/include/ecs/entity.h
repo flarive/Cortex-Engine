@@ -2,8 +2,6 @@
 
 #include "../common_defines.h"
 
-//#include "../misc/noncopyable.h"
-
 #include "../model.h"
 #include "../primitives/primitive.h"
 #include "../lights/light.h"
@@ -29,13 +27,12 @@ namespace engine
 		bool visible{ true };
 
 
-		// Scene graph
+		// Entities
 		Entity* parent{};
 		std::list<std::shared_ptr<Entity>> children{};
 
-
 		// Components
-		std::unordered_map<unsigned int, std::shared_ptr<Component>> components{};
+		std::unordered_map<ComponentType, std::shared_ptr<Component>> components{};
 
 
 		// constructor, expects just a name
@@ -54,7 +51,7 @@ namespace engine
 		glm::mat4 getWorldTransform();
 		void setWorldTransform(const glm::mat4& worldTransform);
 
-		
+		//Frustum createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar);
 		
 
 #pragma region Entities
@@ -77,6 +74,9 @@ namespace engine
 		//Force update of transform even if local space don't change
 		void forceUpdateSelfAndChild();
 
+
+		
+
 #pragma endregion
 
 
@@ -87,7 +87,7 @@ namespace engine
 			requires std::derived_from<T, ComponentBase<T>>
 		T* addComponent(Args&&... args) {
 			auto component = std::make_shared<T>(std::forward<Args>(args)...);
-			unsigned int typeID = T::getStaticTypeID(); // Static call
+			ComponentType typeID = T::getStaticTypeID(); // Static call
 			components[typeID] = component;
 			return static_cast<T*>(component.get());
 		}
@@ -95,7 +95,7 @@ namespace engine
 		template<typename T>
 			requires std::derived_from<T, ComponentBase<T>>
 		std::shared_ptr<T> getComponent() {
-			unsigned int typeID = T::getStaticTypeID(); // Static call
+			ComponentType typeID = T::getStaticTypeID(); // Static call
 			auto it = components.find(typeID);
 			if (it != components.end()) {
 				return std::static_pointer_cast<T>(it->second);
@@ -108,10 +108,15 @@ namespace engine
 
 	private:
 
+		
+
 		unsigned int generateUniqueId();
 		AABB getGlobalAABB();
 
-		//void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
+		
+
+		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
+		
 
 		SphereVolume generateSphereBV(const Model& model);
 

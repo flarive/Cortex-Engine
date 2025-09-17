@@ -26,8 +26,8 @@ namespace engine
 		}
 
 
-		static unsigned int getStaticTypeID() {
-			return 2;
+		static ComponentType getStaticTypeID() {
+			return ComponentType::camera;
 		}
 
 		std::unique_ptr<AABB> getBoundingVolume() override;

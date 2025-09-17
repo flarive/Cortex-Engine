@@ -60,9 +60,10 @@ void engine::Scene::after_init_internal()
     m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount);
 
     // Fill imGui debug window with current scene hierarchy
+    //#ifdef EDITOR_MODE
     m_debug.setScene(m_entityManager.getRootEntity());
+    //#endif
     
-
     // count all items in the scene
     countItems(m_entityManager.getRootEntity());
 }
@@ -87,6 +88,16 @@ void engine::Scene::initialize()
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
 
     // listen for editor selected entity changed
+    //#ifdef EDITOR_MODE
+    listenForEditorChanges();
+    //#endif
+
+    after_init();
+}
+
+//#ifdef EDITOR_MODE
+void engine::Scene::listenForEditorChanges()
+{
     m_debug.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
@@ -98,15 +109,8 @@ void engine::Scene::initialize()
             logger.info("Render mode setting changed: {})", wireframe);
             renderSettings.wireframe = wireframe;
         });
-
-
-    
-
-    after_init();
 }
-
-
-
+//#endif
 
 void engine::Scene::gameLoop()
 {
@@ -131,15 +135,18 @@ void engine::Scene::gameLoop()
 
 
     // Editor mode windows
-    if (show_window)
+    //#ifdef EDITOR_MODE
+    if (is_editor_mode)
     {
-        m_debug.renderUIWindow(show_window);
+        app->setWindowTitle("EDITOR");
+        m_debug.renderUIWindow(is_editor_mode);
         renderGizmo();
     }
     
     // Dear ImGui demo windows
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    //if (show_demo_window)
+    //    ImGui::ShowDemoWindow(&show_demo_window);
+    //#endif
 
 
     
@@ -155,6 +162,12 @@ void engine::Scene::gameLoop()
     {
         start_time = std::chrono::high_resolution_clock::now();
     }
+
+    // move that somewhere else !!!
+    auto cam = getActiveCamera();
+    const Frustum camFrustum = cam->createFrustumFromCamera((float)app->width / (float)app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
+
+    
 
 
     // get opengl stats such as polycount drawn
@@ -236,7 +249,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
     {
         auto trs = entity->getTransform();
         
-        if (typeID == 1)
+        if (typeID == ComponentType::transform)
         {
             // transform
             int a = 0;
@@ -300,29 +313,28 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     // looping over entity components
     for (const auto& [typeID, component] : entity->components)
     {
-        auto trs = entity->getTransform();
-
-        if (typeID == 1)
+        if (typeID == ComponentType::transform)
         {
             // transform
             int a = 0;
         }
-        else if (typeID == 2)
+        else if (typeID == ComponentType::camera)
         {
             // camera
+            auto trs = entity->getTransform();
             component->update(trs);
         }
-        else if (typeID == 3)
+        else if (typeID == ComponentType::primitive)
         {
             // primitive
             component->draw(projection, view, shader, entity->getWorldTransform());
         }
-        else if (typeID == 4)
+        else if (typeID == ComponentType::model)
         {
             // model
             component->draw(projection, view, shader, entity->getWorldTransform());
         }
-        else if (typeID == 5)
+        else if (typeID == ComponentType::light)
         {
             // light
             component->draw(projection, view, shader, entity->getWorldTransform());
@@ -391,7 +403,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     case GLFW_KEY_W:
         if (action == GLFW_PRESS && !key_w_pressed)
         {
-            show_window = !show_window;
+            is_editor_mode = !is_editor_mode;
             key_w_pressed = true;
         }
         else if (action == GLFW_RELEASE)
@@ -409,7 +421,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 // -------------------------------------------------------
 void engine::Scene::mouse_callback(double xposIn, double yposIn)
 {
-    if (show_window || show_demo_window)
+    if (is_editor_mode)// || show_demo_window)
         ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
 }
 
@@ -420,7 +432,7 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
     (void)xoffset;   //Do nothing
     (void)yoffset;   //Do nothing
 
-    if (show_window || show_demo_window)
+    if (is_editor_mode)// || show_demo_window)
         ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????
 }
 
@@ -707,7 +719,7 @@ void engine::Scene::renderSphere()
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
 }
 
-
+//#ifdef EDITOR_MODE
 void engine::Scene::renderGizmo()
 {
     // it is recommended to use a separate projection matrix since the values that work best
@@ -747,3 +759,4 @@ void engine::Scene::renderGizmo()
         getActiveCamera()->setFromViewMatrix(viewMatrix);
     }
 }
+//#endif

@@ -10,8 +10,7 @@
 
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
-#include "../debug/imgui_debug.h"
-#include "../debug/imgui_docking.h"
+#include "../editor/imgui_editor.h"
 
 #include "../managers/entity_manager.h"
 
@@ -31,8 +30,9 @@ namespace engine
     private:
         bool key_w_pressed{ false };
 
-        //ImGuiDebug m_debug{};
-        ImGuiDocking m_debug{};
+        //#ifdef EDITOR_MODE
+        ImGuiEditor m_debug{};
+        //#endif
 
         GLuint query{};
 
@@ -72,8 +72,8 @@ namespace engine
         virtual void after_init_hook() {}; // Overridable by derived classes
 
     public:
-        bool show_window{ false };
-        bool show_demo_window{ false };
+        bool is_editor_mode{ false };
+        //bool show_demo_window{ false };
         
 
         
@@ -191,6 +191,9 @@ namespace engine
 
         void countItems(std::shared_ptr<Entity>& entity);
 
+        #ifdef EDITOR_MODE
         void renderGizmo();
+        void listenForEditorChanges();
+        #endif
     };
 }

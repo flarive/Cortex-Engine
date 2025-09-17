@@ -1,5 +1,11 @@
 ﻿#include "../../include/cameras/camera.h"
 
+
+#include <glm/glm.hpp> //glm::mat4
+#include <list> //std::list
+#include <array> //std::array
+#include <memory> //std::unique_ptr
+
 engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
     : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
 {
@@ -33,4 +39,21 @@ void engine::Camera::draw(const glm::vec3& _position)
 
 void engine::Camera::updateCameraVectors()
 {
+}
+
+// https://learnopengl.com/code_viewer_gh.php?code=src/8.guest/2021/1.scene/2.frustum_culling/frustum_culling.cpp
+engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar)
+{
+    engine::Frustum     frustum;
+	const float halfVSide = zFar * tanf(fovY * .5f);
+	const float halfHSide = halfVSide * aspect;
+	const glm::vec3 frontMultFar = zFar * front;
+
+	frustum.nearFace = { position + zNear * front, front };
+	frustum.farFace = { position + frontMultFar, -front };
+	frustum.rightFace = { position, glm::cross(frontMultFar - right * halfHSide, up) };
+	frustum.leftFace = { position, glm::cross(up, frontMultFar + right * halfHSide) };
+	frustum.topFace = { position, glm::cross(right, frontMultFar - up * halfVSide) };
+	frustum.bottomFace = { position, glm::cross(frontMultFar + up * halfVSide, right) };
+	return frustum;
 }

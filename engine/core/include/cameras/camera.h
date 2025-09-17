@@ -5,6 +5,8 @@
 
 #include "../transform.h"
 
+#include "../frustrum.h"
+
 namespace engine
 {
     // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
@@ -72,6 +74,8 @@ namespace engine
 
 
         void draw(const glm::vec3& _position);
+
+        engine::Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
 
 
 

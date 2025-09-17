@@ -53,6 +53,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="GlobalDefines.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
@@ -177,8 +178,7 @@
     <ClCompile Include="core\src\cameras\fly_camera.cpp" />
     <ClCompile Include="core\src\cameras\fps_camera.cpp" />
     <ClCompile Include="core\src\cameras\orbit_camera.cpp" />
-    <ClCompile Include="core\src\debug\imgui_debug.cpp" />
-    <ClCompile Include="core\src\debug\imgui_docking.cpp" />
+    <ClCompile Include="core\src\editor\imgui_editor.cpp" />
     <ClCompile Include="core\src\ecs\camera_component.cpp" />
     <ClCompile Include="core\src\ecs\component.cpp" />
     <ClCompile Include="core\src\ecs\entity.cpp" />
@@ -246,8 +246,7 @@
     <ClInclude Include="core\include\cameras\orbit_camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
-    <ClInclude Include="core\include\debug\imgui_debug.h" />
-    <ClInclude Include="core\include\debug\imgui_docking.h" />
+    <ClInclude Include="core\include\editor\imgui_editor.h" />
     <ClInclude Include="core\include\ecs\camera_component.h" />
     <ClInclude Include="core\include\ecs\component.h" />
     <ClInclude Include="core\include\ecs\light_component.h" />

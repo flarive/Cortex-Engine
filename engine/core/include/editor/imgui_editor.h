@@ -3,19 +3,22 @@
 #include "../tools/system_monitor.h"
 
 #include "../ecs/entity.h"
+#include "../ecs/light_component.h"
+#include "../ecs/camera_component.h"
+#include "../ecs/model_component.h"
+#include "../ecs/primitive_component.h"
 
 #include <imgui.h>
-#include <imgui_internal.h>
 
-
+//#ifdef EDITOR_MODE
 
 namespace engine
 {
-	class ImGuiDocking
+	class ImGuiEditor
 	{
 	public:
-		ImGuiDocking() = default;
-		~ImGuiDocking() = default;
+		ImGuiEditor() = default;
+		~ImGuiEditor() = default;
 
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
@@ -59,27 +62,32 @@ namespace engine
 
 		GLuint getEntityActionIcon(const std::string& key);
 
-		void drawTransformEditor(engine::Transform& transform, bool position = true, bool rotation = true, bool scale = true);
+		void renderComponents(const std::shared_ptr<Entity>& entity);
 
-		void drawLightEntityDetails(const std::shared_ptr<Entity>& entity);
-		void drawCameraEntityDetails(const std::shared_ptr<Entity>& entity);
+
+		void renderTransformComponent(engine::Transform& transform, bool position = true, bool rotation = true, bool scale = true);
+
+		void renderLightComponent(const std::shared_ptr<LightComponent>& component);
+		void renderCameraComponent(const std::shared_ptr<CameraComponent>& component);
 
 		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float& value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
 
 	protected:
-		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
-		std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache;
+		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache{};
+		std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache{};
 
-		std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
+		std::unordered_map<std::string, GLuint> m_iconActionTextureCache{};
 
-		float itemLabelWidth = 100.0f; // pixels
+		float itemLabelWidth{ 100.0f }; // pixels
 
 
-		bool settings_wireframe{};
+		bool settings_wireframe{ false };
 
-		const float ROUNDING = 3.0f;
-		const ImVec2 SIZE = ImVec2(21, 21);
+		const float ROUNDING{ 3.0f };
+		const ImVec2 SIZE{ ImVec2(21, 21) };
 	};
 }
+
+//#endif

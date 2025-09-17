@@ -3,6 +3,7 @@
 #include "core/include/misc/log_manager.h"
 
 
+
 #include "app/myapp1.h"
 
 #include "app/myscene1.h"
@@ -16,9 +17,14 @@
 #include "app/myscene9.h"
 
 
+
+
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene2;
+using MyScene = MyScene7;
+
+#define EDITOR_MODE true
+
 
 
 engine::App* myApp{};

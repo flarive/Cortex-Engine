@@ -31,8 +31,8 @@ namespace engine
 		}
 
 
-		static unsigned int getStaticTypeID() {
-			return 3;
+		static ComponentType getStaticTypeID() {
+			return ComponentType::primitive;
 		}
 
 		std::unique_ptr<AABB> getBoundingVolume() override;

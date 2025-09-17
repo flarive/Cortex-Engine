@@ -21,16 +21,16 @@ void MyScene4::init()
     // cameras
     auto trsCamera1 = engine::Transform{ {0.0f, -8.0f, 2.0f } };
     auto camera1 = std::make_shared<engine::FlyCamera>();
-    camera1->zoom = 25.0f;
+    camera1->zoom = 45.0f;
     camera1->movementSpeed = 10.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
     entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
     entityCamera1->addComponent<engine::CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
-    auto trsCamera2 = engine::Transform{ { 0.0f, -10.0f, 2.0f } };
+    auto trsCamera2 = engine::Transform{ { 0.0f, -9.0f, 2.0f } };
     auto camera2 = std::make_shared<engine::FlyCamera>();
-    camera2->zoom = 15.0f;
+    camera2->zoom = 20.0f;
     camera2->movementSpeed = 10.0f;
     auto entityCamera2 = std::make_shared<engine::Entity>("Camera2");
     entityCamera2->addComponent<engine::TransformComponent>(trsCamera2);
@@ -76,7 +76,7 @@ void MyScene4::init()
 
     // cushion model
     std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
-    auto trsCushion = engine::Transform(glm::vec3(0.0f, -9.85f + 2.0f, -10.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCushion = engine::Transform(glm::vec3(0.0f, -9.85f + 1.0f, -10.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCushion = std::make_shared<engine::Entity>("MyCushion");
     entityCushion->addComponent<engine::TransformComponent>(trsCushion);
     entityCushion->addComponent<engine::ModelComponent>(cushionModel);
@@ -188,7 +188,9 @@ void MyScene4::drawScene(engine::Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        myCushion->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto trs = myCushion->getTransform();
+        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        myCushion->setTransform(trs);
     }
 
     rotation += deltaTime * 10.0f;

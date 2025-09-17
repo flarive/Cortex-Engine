@@ -217,11 +217,13 @@ void MyScene6::drawScene(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
 
-    auto MyHelmet = getEntityManager().findEntityByName("MyHelmet");
-    if (MyHelmet)
+    auto myHelmet = getEntityManager().findEntityByName("MyHelmet");
+    if (myHelmet)
     {
-        glm::vec3 zzz = MyHelmet->getTransform().getLocalRotation();
-        MyHelmet->getTransform().setLocalRotation(glm::vec3(zzz.x, zzz.y + rotation, zzz.z));
+        auto trs = myHelmet->getTransform();
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rot.y + rotation, rot.z));
+        myHelmet->setTransform(trs);
     }
 
     rotation += deltaTime * 0.002f;

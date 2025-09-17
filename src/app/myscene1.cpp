@@ -241,13 +241,17 @@ void MyScene1::update(engine::Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        myCushion->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto trs = myCushion->getTransform();
+        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        myCushion->setTransform(trs);
     }
 
     auto myBackpack = getEntityManager().findEntityByName("MyBackpack");
     if (myBackpack)
     {
-        myBackpack->getTransform().setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+        auto trs = myBackpack->getTransform();
+        trs.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+        myBackpack->setTransform(trs);
     }
 
     rotation += deltaTime * 10.0f;

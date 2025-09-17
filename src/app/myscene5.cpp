@@ -195,10 +195,12 @@ void MyScene5::drawScene(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
 
-    auto myCushion = getEntityManager().findEntityByName("MyCushion");
-    if (myCushion)
+    auto myBuddha = getEntityManager().findEntityByName("MyBuddha");
+    if (myBuddha)
     {
-        myCushion->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto trs = myBuddha->getTransform();
+        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        myBuddha->setTransform(trs);
     }
 
     rotation += deltaTime * 10.0f;

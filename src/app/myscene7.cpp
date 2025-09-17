@@ -318,20 +318,22 @@ void MyScene7::update(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
 
-
     auto child2 = getEntityManager().findEntityByName("Child2");
     if (child2)
     {
-        child2->getTransform().setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        auto trs = child2->getTransform();
+        trs.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        child2->setTransform(trs);
     }
 
 
     auto mySphere = getEntityManager().findEntityByName("MySphere");
     if (mySphere)
     {
-        mySphere->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto trs = mySphere->getTransform();
+        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        mySphere->setTransform(trs);
     }
-
 
     rotation += deltaTime * 10.0f;
 }

@@ -26,6 +26,8 @@ void MyScene2::init()
     getEntityManager().addChild(entityCamera1);
 
 
+
+
     // light
     auto trsLight1 = engine::Transform{ {0.0f, 1.0f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
@@ -164,7 +166,9 @@ void MyScene2::update(engine::Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        myCushion->getTransform().setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto trs = myCushion->getTransform();
+        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        myCushion->setTransform(trs);
     }
 
     rotation += deltaTime * 10.0f;

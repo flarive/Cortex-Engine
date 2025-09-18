@@ -54,6 +54,11 @@ namespace engine
         GLint meshcount{};
         GLint primitivecount{};
 
+        GLint inFrustrumCount{};
+        GLint totalFrustrumCount{};
+
+
+
         // settings
         std::string title{};
 
@@ -129,7 +134,7 @@ namespace engine
         void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
         void drawEntities(Shader& shader);
-        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum);
 
 
 

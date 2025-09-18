@@ -163,11 +163,6 @@ void engine::Scene::gameLoop()
         start_time = std::chrono::high_resolution_clock::now();
     }
 
-    // move that somewhere else !!!
-    auto cam = getActiveCamera();
-    const Frustum camFrustum = cam->createFrustumFromCamera((float)app->width / (float)app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
-
-    
 
 
     // get opengl stats such as polycount drawn
@@ -269,91 +264,126 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
 void engine::Scene::drawEntities(Shader& shader)
 {
+    //inFrustrumCount = 0;
+    totalFrustrumCount = 0;
+    
     // draw flat and nested entity hierarchy
     // Precompute transforms for all entities before drawing
     if (shader.name != "outline")
         m_entityManager.getRootEntity()->updateSelfAndChild();
 
+
+    auto cam = getActiveCamera();
+    glm::mat4 projection = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+    glm::mat4 view = cam->getViewMatrix();
+    const Frustum camFrustum = cam->createFrustumFromCamera((float)app->width / (float)app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
+
+
     // Draw using stored world transforms
-    drawEntityRecursive(m_entityManager.getRootEntity(), shader);
+    drawEntityRecursive(m_entityManager.getRootEntity(), shader, projection, view, camFrustum);
 }
 
-void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader)
+
+
+
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum)
 {
     if (!entity->visible)
         return;
 
-    glm::mat4 projection = glm::perspective(glm::radians(getActiveCamera()->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
-    glm::mat4 view = getActiveCamera()->getViewMatrix();
-    
-    // Use the precomputed transform
-    shader.use();
+    bool shouldTestFrustrum = false;
+    bool frustrumOk = false;
 
-    // usefull ??????????????????????????????????????????????????
-    shader.setMat4("model", entity->getWorldTransform());
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->getWorldTransform()))));
-
-
-    if (shader.name != "outline")
+    if (auto boundingVolume = entity->getBoundingVolume())
     {
-        glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
-        glStencilMask(0xFF);
-    }
-    else
-    {
-        // Only draw outline where stencil != objectID
-        glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
-        glStencilMask(0x00); // disable stencil writes
+        if (boundingVolume != nullptr)
+        {
+            shouldTestFrustrum = true;
+        }
 
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
-        shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
-    }
-
-    // looping over entity components
-    for (const auto& [typeID, component] : entity->components)
-    {
-        if (typeID == ComponentType::transform)
+        if (shouldTestFrustrum && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
         {
-            // transform
-            int a = 0;
-        }
-        else if (typeID == ComponentType::camera)
-        {
-            // camera
-            auto trs = entity->getTransform();
-            component->update(trs);
-        }
-        else if (typeID == ComponentType::primitive)
-        {
-            // primitive
-            component->draw(projection, view, shader, entity->getWorldTransform());
-        }
-        else if (typeID == ComponentType::model)
-        {
-            // model
-            component->draw(projection, view, shader, entity->getWorldTransform());
-        }
-        else if (typeID == ComponentType::light)
-        {
-            // light
-            component->draw(projection, view, shader, entity->getWorldTransform());
+            frustrumOk = true;
         }
     }
 
-
-    if (shader.name == "outline")
+    if (!shouldTestFrustrum || (shouldTestFrustrum  && frustrumOk))
     {
-        // Restore state
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
-    }
+        // Use the precomputed transform
+        shader.use();
+
+        // usefull ??????????????????????????????????????????????????
+        /*shader.setMat4("model", entity->getWorldTransform());
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->getWorldTransform()))));*/
 
 
-    // Draw children
-    for (const auto& child : entity->children)
-    {
-        drawEntityRecursive(child, shader);
+        if (shader.name != "outline")
+        {
+            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+            glStencilMask(0xFF);
+        }
+        else
+        {
+            // Only draw outline where stencil != objectID
+            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+            glStencilMask(0x00); // disable stencil writes
+
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+            shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
+        }
+
+        // looping over entity components
+        for (const auto& [typeID, component] : entity->components)
+        {
+            if (typeID == ComponentType::transform)
+            {
+                // transform
+                int a = 0;
+            }
+            else if (typeID == ComponentType::camera)
+            {
+                // camera
+                auto trs = entity->getTransform();
+                component->update(trs);
+            }
+            else if (typeID == ComponentType::primitive)
+            {
+                // primitive
+                component->draw(projection, view, shader, entity->getWorldTransform());
+                totalFrustrumCount++;
+
+                if (frustrumOk)
+                    inFrustrumCount++;
+            }
+            else if (typeID == ComponentType::model)
+            {
+                // model
+                component->draw(projection, view, shader, entity->getWorldTransform());
+                totalFrustrumCount++;
+
+                if (frustrumOk)
+                    inFrustrumCount++;
+            }
+            else if (typeID == ComponentType::light)
+            {
+                // light
+                component->draw(projection, view, shader, entity->getWorldTransform());
+            }
+        }
+
+        if (shader.name == "outline")
+        {
+            // Restore state
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        }
+
+        // Draw children
+        for (const auto& child : entity->children)
+        {
+            drawEntityRecursive(child, shader, projection, view, camFrustum);
+        }
     }
 }
 

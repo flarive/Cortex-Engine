@@ -18,7 +18,7 @@ void MyScene1::init()
     // camera
     auto trsCamera1 = engine::Transform{ {0.0f, 0.0f, 5.0f} };
     auto camera1 = std::make_shared<engine::FpsCamera>();
-    camera1->zoom = 25.0f;// 110.0f;
+    camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
     entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
@@ -140,6 +140,16 @@ void MyScene1::init()
     getEntityManager().addChild(entityBackpack);
 
 
+    // cube outside camera frustrum
+    auto myCube2 = std::make_shared<engine::Cube>();
+    myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
+    auto trsCube2 = engine::Transform(glm::vec3(50.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto entityCube2 = std::make_shared<engine::Entity>("MyCube2");
+    entityCube2->addComponent<engine::TransformComponent>(trsCube2);
+    entityCube2->addComponent<engine::PrimitiveComponent>(myCube2);
+    getEntityManager().addChild(entityCube2);
+
+
     // skybox
     auto renderer = dynamic_cast<engine::BlinnPhongRenderer*>(getRenderer());
     if (renderer)
@@ -153,6 +163,9 @@ void MyScene1::init()
     textPolyCount.setup(app->window, FONT_PATH, 28);
     textMeshCount.setup(app->window, FONT_PATH, 28);
     textPrimitiveCount.setup(app->window, FONT_PATH, 28);
+
+    textDrawnCount.setup(app->window, FONT_PATH, 28);
+    textTotalCount.setup(app->window, FONT_PATH, 28);
 }
 
 
@@ -225,14 +238,7 @@ void MyScene1::gamepad_callback(const GLFWgamepadstate& state)
 void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)
 {
     engine::Scene::framebuffer_size_callback(newWidth, newHeight);
-
-    // render HUD / UI
-    textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
 }
-
 
 void MyScene1::update(engine::Shader& shader)
 {
@@ -264,6 +270,9 @@ void MyScene1::updateUI()
     textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+
+    textDrawnCount.draw(std::format("{} drawn", (int)inFrustrumCount), 25.0f, 120.0f, 1.0f, glm::vec3(1.0f));
+    textTotalCount.draw(std::format("{} total", (int)totalFrustrumCount), 25.0f, 160.0f, 1.0f, glm::vec3(1.0f));
 }
 
 void MyScene1::clean()

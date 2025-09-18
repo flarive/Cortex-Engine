@@ -51,8 +51,6 @@ namespace engine
 		glm::mat4 getWorldTransform();
 		void setWorldTransform(const glm::mat4& worldTransform);
 
-		//Frustum createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar);
-		
 
 #pragma region Entities
 
@@ -74,8 +72,7 @@ namespace engine
 		//Force update of transform even if local space don't change
 		void forceUpdateSelfAndChild();
 
-
-		
+		std::unique_ptr<AABB> getBoundingVolume();
 
 #pragma endregion
 
@@ -105,21 +102,10 @@ namespace engine
 
 #pragma endregion
 
-
 	private:
-
-		
-
 		unsigned int generateUniqueId();
 		AABB getGlobalAABB();
 
-		
-
-		void drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total);
-		
-
 		SphereVolume generateSphereBV(const Model& model);
-
-		std::unique_ptr<AABB> getBoundingVolume();
 	};
 }

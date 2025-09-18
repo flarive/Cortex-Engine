@@ -20,6 +20,10 @@ private:
     engine::Text textMeshCount{};
     engine::Text textPrimitiveCount{};
 
+
+    engine::Text textDrawnCount{};
+    engine::Text textTotalCount{};
+
     float rotation{};
 
 public:

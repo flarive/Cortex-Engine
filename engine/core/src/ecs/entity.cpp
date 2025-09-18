@@ -218,53 +218,6 @@ void engine::Entity::forceUpdateSelfAndChild()
 		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
 }
 
-//engine::Frustum engine::Entity::createFrustumFromCamera(const Camera& cam, float aspect, float fovY, float zNear, float zFar)
-//{
-//	Frustum     frustum;
-//	const float halfVSide = zFar * tanf(fovY * .5f);
-//	const float halfHSide = halfVSide * aspect;
-//	const glm::vec3 frontMultFar = zFar * cam.front;
-//
-//	frustum.nearFace = { cam.position + zNear * cam.front, cam.front };
-//	frustum.farFace = { cam.position + frontMultFar, -cam.front };
-//	frustum.rightFace = { cam.position, glm::cross(frontMultFar - cam.right * halfHSide, cam.up) };
-//	frustum.leftFace = { cam.position, glm::cross(cam.up, frontMultFar + cam.right * halfHSide) };
-//	frustum.topFace = { cam.position, glm::cross(cam.right, frontMultFar - cam.up * halfVSide) };
-//	frustum.bottomFace = { cam.position, glm::cross(frontMultFar + cam.up * halfVSide, cam.right) };
-//	return frustum;
-//}
-
-/// <summary>
-/// ???????????????????????????????????????
-/// </summary>
-/// <param name="frustum"></param>
-/// <param name="ourShader"></param>
-/// <param name="display"></param>
-/// <param name="total"></param>
-void engine::Entity::drawSelfAndChild(const Frustum& frustum, Shader& ourShader, unsigned int& display, unsigned int& total)
-{
-	auto worldTransform = getWorldTransform();
-
-	if (getBoundingVolume()->isOnFrustum(frustum, worldTransform))
-	{
-		ourShader.setMat4("model", worldTransform);
-
-		if (auto modelComponent = getComponent<ModelComponent>())
-		{
-			if (auto model = modelComponent->getModel())
-				model->draw(ourShader);
-		}
-
-		display++;
-	}
-	total++;
-
-	for (auto& child : children)
-	{
-		child->drawSelfAndChild(frustum, ourShader, display, total);
-	}
-}
-
 engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 {
 	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
@@ -350,17 +303,6 @@ std::unique_ptr<engine::AABB> engine::Entity::getBoundingVolume()
 	{
 		return modelComponent->getBoundingVolume();
 	}
-	else if (auto cameraComponent = getComponent<engine::CameraComponent>())
-	{
-		return cameraComponent->getBoundingVolume();
-	}
-	else if (auto lightComponent = getComponent<engine::LightComponent>())
-	{
-		return lightComponent->getBoundingVolume();
-	}
 
-	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-
-	return std::make_unique<engine::AABB>(minAABB, maxAABB);
+	return nullptr;
 }

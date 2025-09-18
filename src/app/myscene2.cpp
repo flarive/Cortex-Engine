@@ -3,7 +3,7 @@
 MyScene2::MyScene2(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::BlinnPhong,
-        .shadowIntensity = 1.0f
+        .shadowIntensity = 2.0f
     })
 {
     // my application specific state gets initialized here
@@ -16,32 +16,32 @@ MyScene2::MyScene2(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene2::init()
 {
     // camera
-    auto trsCamera1 = engine::Transform{ {0.0f, 3.0f, 3.0f} };
+    auto trsCamera1 = engine::Transform{ {0.0f, 0.0f, 5.0f} };
     auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
-    camera1->movementSpeed = 10.0f;
+    camera1->movementSpeed = 1.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
     entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
     entityCamera1->addComponent<engine::CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
-
-
     // light
-    auto trsLight1 = engine::Transform{ {0.0f, 1.0f, 3.0f} };
+    auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = std::make_shared<engine::SpotLight>(0);
-    light1->intensity = 2.5f;
+    light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
-    light1->outerCutoff = 18.0f;
+    light1->outerCutoff = 48.0f;
     light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
     light1->ambientColor = engine::Color(1.0f);
     light1->diffuseColor = engine::Color(1.0f);
-    light1->specularColor = engine::Color(10.0f);
+    light1->specularColor = engine::Color(1.0f);
     auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
+
+
 
 
 
@@ -59,11 +59,9 @@ void MyScene2::init()
 
 
 
-
-
     // cushion model
-    auto cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb", true);
-    auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 45.0f, 0.0f));
+    auto cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb");
+    auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.25f, 0.0f), glm::vec3(0.5f), glm::vec3(0.0f, 45.0f, 0.0f));
     auto entityCushion = std::make_shared<engine::Entity>("MyCushion");
     entityCushion->addComponent<engine::TransformComponent>(trsCushion);
     entityCushion->addComponent<engine::ModelComponent>(cushionModel);
@@ -72,10 +70,15 @@ void MyScene2::init()
 
 
 
+
+
     textFPSCount.setup(app->window, FONT_PATH, 28);
     textPolyCount.setup(app->window, FONT_PATH, 28);
     textMeshCount.setup(app->window, FONT_PATH, 28);
     textPrimitiveCount.setup(app->window, FONT_PATH, 28);
+
+    textDrawnCount.setup(app->window, FONT_PATH, 28);
+    textTotalCount.setup(app->window, FONT_PATH, 28);
 }
 
 
@@ -96,8 +99,6 @@ void MyScene2::key_callback(int key, int scancode, int action, int mods)
     else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
 
-
-
     if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
         getActiveCamera()->processKeyboard(engine::PITCH_UP, deltaTime);
     else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
@@ -111,53 +112,46 @@ void MyScene2::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene2::mouse_callback(double xposIn, double yposIn)
 {
-    (void)xposIn;   //Do nothing
-    (void)yposIn;   //Do nothing
+    engine::Scene::mouse_callback(xposIn, yposIn);
 
-    //engine::Scene::mouse_callback(xposIn, yposIn);
+    if (is_editor_mode)
+        return;
 
-    //if (is_editor_mode)
-    //    return;
+    float xpos{ static_cast<float>(xposIn) };
+    float ypos{ static_cast<float>(yposIn) };
 
-    //float xpos{ static_cast<float>(xposIn) };
-    //float ypos{ static_cast<float>(yposIn) };
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    float xoffset{ xpos - lastX };
+    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    //float xoffset{ xpos - lastX };
-    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    lastX = xpos;
+    lastY = ypos;
 
-    //lastX = xpos;
-    //lastY = ypos;
-
-    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene2::scroll_callback(double xoffset, double yoffset)
 {
-    (void)xoffset;   //Do nothing
-    (void)yoffset;   //Do nothing
+    engine::Scene::scroll_callback(xoffset, yoffset);
 
-    //engine::Scene::scroll_callback(xoffset, yoffset);
-
-    //getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
 
 void MyScene2::gamepad_callback(const GLFWgamepadstate& state)
 {
-    (void)state;   //Do nothing
+    engine::Scene::gamepad_callback(state);
 }
 
 void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
 {
     engine::Scene::framebuffer_size_callback(newWidth, newHeight);
 }
-
 
 void MyScene2::update(engine::Shader& shader)
 {
@@ -181,13 +175,13 @@ void MyScene2::updateUI()
     textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+
+    textDrawnCount.draw(std::format("{} drawn", (int)inFrustrumCount), 25.0f, 120.0f, 1.0f, glm::vec3(1.0f));
+    textTotalCount.draw(std::format("{} total", (int)totalFrustrumCount), 25.0f, 160.0f, 1.0f, glm::vec3(1.0f));
 }
 
 void MyScene2::clean()
 {
     // clean up any resources
-    //ourCube1.clean();
-    ////ourSphere1.clean();
-    //ourPlane.clean();
 }
 

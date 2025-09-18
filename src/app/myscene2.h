@@ -11,12 +11,18 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
+
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+
 
     engine::Text textFPSCount{};
     engine::Text textPolyCount{};
     engine::Text textMeshCount{};
     engine::Text textPrimitiveCount{};
+
+
+    engine::Text textDrawnCount{};
+    engine::Text textTotalCount{};
 
     float rotation{};
 

@@ -143,7 +143,7 @@ void MyScene1::init()
     // cube outside camera frustrum
     auto myCube2 = std::make_shared<engine::Cube>();
     myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
-    auto trsCube2 = engine::Transform(glm::vec3(50.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube2 = engine::Transform(glm::vec3(-3.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCube2 = std::make_shared<engine::Entity>("MyCube2");
     entityCube2->addComponent<engine::TransformComponent>(trsCube2);
     entityCube2->addComponent<engine::PrimitiveComponent>(myCube2);

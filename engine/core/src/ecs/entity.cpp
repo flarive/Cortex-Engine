@@ -210,13 +210,13 @@ void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 	}
 }
 
-void engine::Entity::forceUpdateSelfAndChild()
-{
-	if (parent)
-		updateSelfAndChild(parent->getWorldTransform());
-	else
-		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
-}
+//void engine::Entity::forceUpdateSelfAndChild()
+//{
+//	if (parent)
+//		updateSelfAndChild(parent->getWorldTransform());
+//	else
+//		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
+//}
 
 engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 {

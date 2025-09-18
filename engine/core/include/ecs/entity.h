@@ -69,9 +69,6 @@ namespace engine
 		//Update transform if it was changed
 		void updateSelfAndChild(const glm::mat4& parentTransform = glm::mat4(1.0f));
 
-		//Force update of transform even if local space don't change
-		//void forceUpdateSelfAndChild();
-
 		std::unique_ptr<AABB> getBoundingVolume();
 
 #pragma endregion
@@ -106,6 +103,6 @@ namespace engine
 		unsigned int generateUniqueId();
 		AABB getGlobalAABB();
 
-		SphereVolume generateSphereBV(const Model& model);
+		//SphereVolume generateSphereBV(const Model& model);
 	};
 }

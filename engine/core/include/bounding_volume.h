@@ -17,16 +17,16 @@ namespace engine
         virtual bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const = 0;
     };
 
-    struct SphereVolume : public BoundingVolume
-    {
-        glm::vec3 center{ 0.f, 0.f, 0.f }; // local center
-        float radius{ 0.f };                // local radius
+    //struct SphereVolume : public BoundingVolume
+    //{
+    //    glm::vec3 center{ 0.f, 0.f, 0.f }; // local center
+    //    float radius{ 0.f };                // local radius
 
-        SphereVolume(const glm::vec3& inCenter, float inRadius);
+    //    SphereVolume(const glm::vec3& inCenter, float inRadius);
 
-        // Test in local/object space
-        bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const final;
+    //    // Test in local/object space
+    //    bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const final;
 
-        bool isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const;
-    };
+    //    bool isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const;
+    //};
 }

@@ -210,35 +210,27 @@ void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 	}
 }
 
-//void engine::Entity::forceUpdateSelfAndChild()
+//engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
 //{
-//	if (parent)
-//		updateSelfAndChild(parent->getWorldTransform());
-//	else
-//		updateSelfAndChild(glm::mat4(1.0f)); // root starts with identity
+//	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+//	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+//
+//	for (auto&& mesh : model.meshes)
+//	{
+//		for (auto&& vertex : mesh.vertices)
+//		{
+//			minAABB.x = std::min(minAABB.x, vertex.position.x);
+//			minAABB.y = std::min(minAABB.y, vertex.position.y);
+//			minAABB.z = std::min(minAABB.z, vertex.position.z);
+//
+//			maxAABB.x = std::max(maxAABB.x, vertex.position.x);
+//			maxAABB.y = std::max(maxAABB.y, vertex.position.y);
+//			maxAABB.z = std::max(maxAABB.z, vertex.position.z);
+//		}
+//	}
+//
+//	return engine::SphereVolume((maxAABB + minAABB) * 0.5f, glm::length(minAABB - maxAABB));
 //}
-
-engine::SphereVolume engine::Entity::generateSphereBV(const Model& model)
-{
-	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
-
-	for (auto&& mesh : model.meshes)
-	{
-		for (auto&& vertex : mesh.vertices)
-		{
-			minAABB.x = std::min(minAABB.x, vertex.position.x);
-			minAABB.y = std::min(minAABB.y, vertex.position.y);
-			minAABB.z = std::min(minAABB.z, vertex.position.z);
-
-			maxAABB.x = std::max(maxAABB.x, vertex.position.x);
-			maxAABB.y = std::max(maxAABB.y, vertex.position.y);
-			maxAABB.z = std::max(maxAABB.z, vertex.position.z);
-		}
-	}
-
-	return engine::SphereVolume((maxAABB + minAABB) * 0.5f, glm::length(minAABB - maxAABB));
-}
 
 
 engine::Transform engine::Entity::getTransform()

@@ -60,43 +60,43 @@ bool engine::AABB::isOnFrustum(const Frustum& camFrustum, const glm::mat4& world
 }
 
 
-
-engine::SquareAABB::SquareAABB(const glm::vec3& inCenter, float inExtent)
-    : BoundingVolume{}, center{ inCenter }, extent{ inExtent }
-{
-}
-
-
-bool engine::SquareAABB::isOnOrForwardPlane(const BoundingVolumePlane& plane) const
-{
-    const float r = extent * (std::abs(plane.normal.x) +
-        std::abs(plane.normal.y) +
-        std::abs(plane.normal.z));
-    return -r <= plane.getSignedDistanceToPlane(center);
-}
-
-bool  engine::SquareAABB::isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const
-{
-    glm::vec3 globalCenter = glm::vec3(worldTransform * glm::vec4(center, 1.f));
-
-    glm::vec3 right = glm::vec3(worldTransform[0]) * extent;
-    glm::vec3 up = glm::vec3(worldTransform[1]) * extent;
-    glm::vec3 forward = glm::vec3(worldTransform[2]) * extent;
-
-    auto checkPlane = [&](const BoundingVolumePlane& plane) -> bool
-        {
-            float r = std::abs(glm::dot(plane.normal, right)) +
-                std::abs(glm::dot(plane.normal, up)) +
-                std::abs(glm::dot(plane.normal, forward));
-
-            float d = plane.getSignedDistanceToPlane(globalCenter);
-            return (d + r >= 0.f);
-        };
-
-    return checkPlane(frustum.leftFace) &&
-        checkPlane(frustum.rightFace) &&
-        checkPlane(frustum.topFace) &&
-        checkPlane(frustum.bottomFace) &&
-        checkPlane(frustum.nearFace) &&
-        checkPlane(frustum.farFace);
-}
+//
+//engine::SquareAABB::SquareAABB(const glm::vec3& inCenter, float inExtent)
+//    : BoundingVolume{}, center{ inCenter }, extent{ inExtent }
+//{
+//}
+//
+//
+//bool engine::SquareAABB::isOnOrForwardPlane(const BoundingVolumePlane& plane) const
+//{
+//    const float r = extent * (std::abs(plane.normal.x) +
+//        std::abs(plane.normal.y) +
+//        std::abs(plane.normal.z));
+//    return -r <= plane.getSignedDistanceToPlane(center);
+//}
+//
+//bool engine::SquareAABB::isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const
+//{
+//    glm::vec3 globalCenter = glm::vec3(worldTransform * glm::vec4(center, 1.f));
+//
+//    glm::vec3 right = glm::vec3(worldTransform[0]) * extent;
+//    glm::vec3 up = glm::vec3(worldTransform[1]) * extent;
+//    glm::vec3 forward = glm::vec3(worldTransform[2]) * extent;
+//
+//    auto checkPlane = [&](const BoundingVolumePlane& plane) -> bool
+//        {
+//            float r = std::abs(glm::dot(plane.normal, right)) +
+//                std::abs(glm::dot(plane.normal, up)) +
+//                std::abs(glm::dot(plane.normal, forward));
+//
+//            float d = plane.getSignedDistanceToPlane(globalCenter);
+//            return (d + r >= 0.f);
+//        };
+//
+//    return checkPlane(frustum.leftFace) &&
+//        checkPlane(frustum.rightFace) &&
+//        checkPlane(frustum.topFace) &&
+//        checkPlane(frustum.bottomFace) &&
+//        checkPlane(frustum.nearFace) &&
+//        checkPlane(frustum.farFace);
+//}

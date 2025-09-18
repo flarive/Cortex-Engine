@@ -304,6 +304,26 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         if (shouldTestFrustrum && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
         {
             frustrumOk = true;
+            std::cout << "Entity " << entity->id << " is inside frustum." << std::endl;
+        }
+        else if (shouldTestFrustrum)
+        {
+            std::cout << "Entity " << entity->id << " is OUTSIDE frustum." << std::endl;
+
+            // Log which planes failed
+            if (boundingVolume) {
+                // boundingVolume is already a unique_ptr<AABB>, so you can use it directly
+                std::cout << "Entity " << entity->id << " is being tested as AABB." << std::endl;
+                std::cout << "Near plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.nearFace) << std::endl;
+                std::cout << "Far plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.farFace) << std::endl;
+                std::cout << "Left plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.leftFace) << std::endl;
+                std::cout << "Right plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.rightFace) << std::endl;
+                std::cout << "Top plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.topFace) << std::endl;
+                std::cout << "Bottom plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.bottomFace) << std::endl;
+            }
+            else {
+                std::cout << "Entity " << entity->id << " does not have a bounding volume." << std::endl;
+            }
         }
     }
 
@@ -311,11 +331,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     {
         // Use the precomputed transform
         shader.use();
-
-        // usefull ??????????????????????????????????????????????????
-        /*shader.setMat4("model", entity->getWorldTransform());
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(entity->getWorldTransform()))));*/
-
 
         if (shader.name != "outline")
         {

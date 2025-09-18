@@ -3,21 +3,23 @@
 #include "common_defines.h"
 #include "bounding_volume.h"
 
+#include "transform.h"
+
 #include <array>
 
 namespace engine
 {
-    struct SquareAABB : public BoundingVolume
-    {
-        glm::vec3 center{ 0.f, 0.f, 0.f };
-        float extent{ 0.f };
+    //struct SquareAABB : public BoundingVolume
+    //{
+    //    glm::vec3 center{ 0.f, 0.f, 0.f };
+    //    float extent{ 0.f };
 
-        SquareAABB(const glm::vec3& inCenter, float inExtent);
-        
-        bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const final;
+    //    SquareAABB(const glm::vec3& inCenter, float inExtent);
+    //    
+    //    bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const final;
 
-        bool isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const final;
-    };
+    //    bool isOnFrustum(const Frustum& frustum, const glm::mat4& worldTransform) const final;
+    //};
 
     struct AABB : public BoundingVolume
     {

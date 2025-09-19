@@ -285,8 +285,10 @@ void engine::Entity::setWorldTransform(const glm::mat4& worldTransform)
 	}
 }
 
-std::unique_ptr<engine::AABB> engine::Entity::getBoundingVolume()
+engine::AABB* engine::Entity::getBoundingVolume()
 {
+	auto nnn = this->name;
+	
 	if (auto primitiveComponent = getComponent<engine::PrimitiveComponent>())
 	{
 		return primitiveComponent->getBoundingVolume();

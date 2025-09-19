@@ -69,7 +69,7 @@ namespace engine
 		//Update transform if it was changed
 		void updateSelfAndChild(const glm::mat4& parentTransform = glm::mat4(1.0f));
 
-		std::unique_ptr<AABB> getBoundingVolume();
+		engine::AABB* getBoundingVolume();
 
 #pragma endregion
 

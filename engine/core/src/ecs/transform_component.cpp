@@ -26,8 +26,9 @@ void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 
 }
 
-std::unique_ptr<engine::AABB> engine::TransformComponent::getBoundingVolume()
+engine::AABB* engine::TransformComponent::getBoundingVolume()
 {
     auto aabb = engine::AABB(glm::vec3(), glm::vec3());
-    return std::make_unique<AABB>(aabb);
+    auto zzz = std::make_unique<AABB>(aabb);
+    return zzz.get();
 }

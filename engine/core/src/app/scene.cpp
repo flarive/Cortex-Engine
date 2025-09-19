@@ -264,7 +264,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
 void engine::Scene::drawEntities(Shader& shader)
 {
-    //inFrustrumCount = 0;
+    inFrustrumCount = 0;
     totalFrustrumCount = 0;
     
     // draw flat and nested entity hierarchy
@@ -294,12 +294,9 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     bool shouldTestFrustrum = false;
     bool frustrumOk = false;
 
-    if (auto boundingVolume = entity->getBoundingVolume())
+    if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
     {
-        if (boundingVolume != nullptr)
-        {
-            shouldTestFrustrum = true;
-        }
+        shouldTestFrustrum = true;
 
         if (shouldTestFrustrum && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
         {
@@ -311,8 +308,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             std::cout << "Entity " << entity->id << " is OUTSIDE frustum." << std::endl;
 
             // Log which planes failed
-            if (boundingVolume) {
-                // boundingVolume is already a unique_ptr<AABB>, so you can use it directly
+            if (boundingVolume)
+            {
                 std::cout << "Entity " << entity->id << " is being tested as AABB." << std::endl;
                 std::cout << "Near plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.nearFace) << std::endl;
                 std::cout << "Far plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.farFace) << std::endl;
@@ -322,9 +319,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 std::cout << "Bottom plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.bottomFace) << std::endl;
             }
             else {
-                std::cout << "Entity " << entity->id << " does not have a bounding volume." << std::endl;
+                std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
             }
         }
+    }
+    else
+    {
+        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
     }
 
     if (!shouldTestFrustrum || (shouldTestFrustrum  && frustrumOk))

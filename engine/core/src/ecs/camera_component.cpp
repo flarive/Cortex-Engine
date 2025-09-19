@@ -35,7 +35,7 @@ engine::AABB engine::CameraComponent::generateBoundingVolume(const std::shared_p
 	return engine::AABB(minAABB, maxAABB);
 }
 
-std::unique_ptr<engine::AABB> engine::CameraComponent::getBoundingVolume()
+engine::AABB* engine::CameraComponent::getBoundingVolume()
 {
-	return std::move(m_boundingVolume);
+	return m_boundingVolume.get();
 }

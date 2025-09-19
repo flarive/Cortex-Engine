@@ -35,7 +35,7 @@ namespace engine
 			return ComponentType::primitive;
 		}
 
-		std::unique_ptr<AABB> getBoundingVolume() override;
+		engine::AABB* getBoundingVolume() override;
 
 	private:
 

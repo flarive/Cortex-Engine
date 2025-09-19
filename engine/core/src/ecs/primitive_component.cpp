@@ -47,7 +47,7 @@ engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::share
 	return engine::AABB(minAABB, maxAABB);
 }
 
-std::unique_ptr<engine::AABB> engine::PrimitiveComponent::getBoundingVolume()
+engine::AABB* engine::PrimitiveComponent::getBoundingVolume()
 {
-	return std::move(m_boundingVolume);
+	return m_boundingVolume.get();
 }

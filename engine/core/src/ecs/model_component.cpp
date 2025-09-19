@@ -53,7 +53,7 @@ engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_pt
 	return engine::AABB(minAABB, maxAABB);
 }
 
-std::unique_ptr<engine::AABB> engine::ModelComponent::getBoundingVolume()
+engine::AABB* engine::ModelComponent::getBoundingVolume()
 {
-	return std::move(m_boundingVolume);
+	return m_boundingVolume.get();
 }

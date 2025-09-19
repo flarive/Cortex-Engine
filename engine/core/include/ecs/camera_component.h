@@ -30,7 +30,7 @@ namespace engine
 			return ComponentType::camera;
 		}
 
-		std::unique_ptr<AABB> getBoundingVolume() override;
+		engine::AABB* getBoundingVolume() override;
 
 	private:
 

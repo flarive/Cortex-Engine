@@ -19,8 +19,6 @@
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/directional_light.h"
 
-
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -220,9 +218,9 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     ImGui::SameLine();
 
     // Tree node
-    //ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(11.f, 0.f));
     bool nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
-    //ImGui::PopStyleVar();
+    ImGui::PopStyleVar(1);
 
     // Handle selection
     if (ImGui::IsItemClicked())
@@ -246,14 +244,13 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.f, 0.f, 0.f, 0.f));
     
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.f, 0.f));
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.1f, 0.1f));
 
     if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
     {
         entity->visible = !entity->visible;
     }
 
-    ImGui::PopStyleVar(2);
+    ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(4);
 
 
@@ -271,61 +268,6 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     ImGui::PopID();
 }
-
-//void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& entity)
-//{
-//    // Check if this entity is selected
-//    bool isSelected = (m_selectedEntity == entity);
-//
-//    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
-//
-//    if (entity->children.empty())
-//        flags |= ImGuiTreeNodeFlags_Leaf;
-//
-//    auto entityType = entity->getType();
-//
-//    if (isSelected)
-//    {
-//        flags |= ImGuiTreeNodeFlags_Selected;
-//        ImGui::PushStyleColor(ImGuiCol_Text, getEntityColor(entityType));
-//    }
-//
-//    ImGui::PushID(entity.get()); // Unique ID per entity
-//
-//    GLuint iconTexture = getEntityTypeSmallIcon(entityType);
-//
-//    // Start horizontal layout
-//    bool nodeOpen = false;
-//    ImGui::Image(iconTexture, ImVec2(16, 16));
-//    ImGui::SameLine();
-//
-//    // Use TreeNodeEx with invisible label (##) to show triangle only
-//    nodeOpen = ImGui::TreeNodeEx("##tree", flags, "%s", entity->name.c_str());
-//
-//    // Handle selection
-//    if (ImGui::IsItemClicked())
-//    {
-//        m_selectedEntity = entity;
-//        if (m_onSelectionChanged) {
-//            m_onSelectionChanged(m_selectedEntity); // notify parent
-//        }
-//    }
-//
-//    if (isSelected)
-//        ImGui::PopStyleColor();
-//
-//    if (nodeOpen)
-//    {
-//        for (const auto& child : entity->children)
-//            displayEntityHierarchy(child);
-//
-//        ImGui::TreePop();
-//    }
-//
-//    ImGui::PopID();
-//}
-
-
 
 void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
@@ -353,26 +295,7 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
 
         ImGui::EndGroup();
 
-
-        
         renderComponents(entity);
-
-        /*auto transform = entity->getTransform();
-
-        if (entity->getType() == engine::EntityType::light)
-        {
-            renderTransformComponent(transform, true, false, false);
-            drawLightEntityDetails(entity);
-        }
-        else if (entity->getType() == engine::EntityType::camera)
-        {
-            renderTransformComponent(transform, true, true, true);
-            drawCameraEntityDetails(entity);
-        }
-        else
-        {
-            renderTransformComponent(transform, true, true, true);
-        }*/
     }
 }
 
@@ -380,18 +303,25 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
 void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity)
 {
     // looping over entity components
-    for (const auto& [typeID, component] : entity->components)
+    for (auto& [typeID, component] : entity->components)
     {
         if (typeID == ComponentType::transform)
         {
             // transform component
-            //auto transform = entity->getTransform();
-            //drawTransformEditor(transform, true, true, true);
+            auto transform = entity->getTransform();
+            renderTransformComponent(transform, true, true, true);
         }
         else if (typeID == ComponentType::camera)
         {
             // camera component
-            //renderCameraComponent(component);
+            auto cameraComponent = dynamic_pointer_cast<CameraComponent>(component);
+            if (cameraComponent) renderCameraComponent(cameraComponent);
+        }
+        else if (typeID == ComponentType::light)
+        {
+            // camera component
+            auto lightComponent = dynamic_pointer_cast<LightComponent>(component);
+            if (lightComponent) renderLightComponent(lightComponent);
         }
     }
 }
@@ -406,7 +336,7 @@ void engine::ImGuiEditor::renderTransformComponent(engine::Transform& transform,
     static auto red = IM_COL32(255, 54, 83, 255);
     static auto white = IM_COL32(255, 255, 255, 255);
     
-    if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
+    if (ImGui::BeginTable("MyTable", 4, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
@@ -471,7 +401,7 @@ void engine::ImGuiEditor::renderTransformComponent(engine::Transform& transform,
 }
 
 
-void engine::ImGuiEditor::renderLightComponent(const std::shared_ptr<LightComponent>& component)
+void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& component)
 {
     if (!component)
         return;
@@ -648,7 +578,7 @@ void engine::ImGuiEditor::renderLightComponent(const std::shared_ptr<LightCompon
     
 }
 
-void engine::ImGuiEditor::renderCameraComponent(const std::shared_ptr<CameraComponent>& component)
+void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component)
 {
     if (!component)
         return;

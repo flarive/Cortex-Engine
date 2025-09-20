@@ -67,8 +67,8 @@ namespace engine
 
 		void renderTransformComponent(engine::Transform& transform, bool position = true, bool rotation = true, bool scale = true);
 
-		void renderLightComponent(const std::shared_ptr<LightComponent>& component);
-		void renderCameraComponent(const std::shared_ptr<CameraComponent>& component);
+		void renderLightComponent(std::shared_ptr<LightComponent>& component);
+		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
 
 		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float& value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);

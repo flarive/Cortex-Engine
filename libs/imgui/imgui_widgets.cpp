@@ -6904,7 +6904,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             if (flags & ImGuiTreeNodeFlags_Bullet)
                 RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
-                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x - 4.0f, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f); // FL !!!!!!
+                RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x + 0.0f, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 0.70f); // FL !!!!!!
             if (g.LogEnabled)
                 LogSetNextTextDecoration(">", NULL);
         }
@@ -6918,7 +6918,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         else if (!is_leaf)
         {
             // FL !!!!!!!!!!!!!!!!!!
-            ImVec2 p(text_pos.x - 10.0f, text_pos.y);
+            ImVec2 p(text_pos.x - 5.0f, text_pos.y);
             RenderText(p, label, label_end, false);
         }
         else if (is_leaf)

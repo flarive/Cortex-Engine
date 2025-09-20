@@ -350,27 +350,19 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         // looping over entity components
         for (const auto& [typeID, component] : entity->components)
         {
-            if (typeID == ComponentType::camera)
+            if (typeID == ComponentType::primitive || typeID == ComponentType::model)
+            {
+                // primitive and model
+                component->draw(projection, view, shader, entity->getWorldTransform());
+
+                if (frustrumOk)
+                    inFrustrumCount++;
+            }
+            else if (typeID == ComponentType::camera)
             {
                 // camera
                 auto trs = entity->getTransform();
                 component->update(trs);
-            }
-            else if (typeID == ComponentType::primitive)
-            {
-                // primitive
-                component->draw(projection, view, shader, entity->getWorldTransform());
-
-                if (frustrumOk)
-                    inFrustrumCount++;
-            }
-            else if (typeID == ComponentType::model)
-            {
-                // model
-                component->draw(projection, view, shader, entity->getWorldTransform());
-
-                if (frustrumOk)
-                    inFrustrumCount++;
             }
             else if (typeID == ComponentType::light)
             {

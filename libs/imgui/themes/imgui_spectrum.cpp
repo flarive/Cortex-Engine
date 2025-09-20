@@ -18,16 +18,29 @@ namespace ImGui {
             ImGuiStyle* style = &ImGui::GetStyle();
             style->GrabRounding = 4.0f;
 
-            //style->FrameBorderSize = 1.0f;
-            //style->WindowRounding = 0.0f;
+            style->FrameBorderSize = 1.0f;
+            style->WindowRounding = 0.0f;
 
-            style->WindowPadding = ImVec2(6, 6);
-            style->WindowRounding = 5.0f;
             style->FramePadding = ImVec2(2, 2);
+
+ /*           style->WindowPadding = ImVec2(6, 6);
+            style->WindowRounding = 5.0f;
+            
             style->FrameRounding = 4.0f;
             style->ItemSpacing = ImVec2(12, 8);
             style->ItemInnerSpacing = ImVec2(8, 6);
             style->IndentSpacing = 25.0f;
+
+            style->FrameBorderSize = 1.0f;
+            style->WindowRounding = 0.0f;*/
+
+            //style->WindowPadding = ImVec2(12, 12);
+            style->WindowRounding = 5.0f;
+            //style->FramePadding = ImVec2(5, 5);
+            style->FrameRounding = 4.0f;
+            //style->ItemSpacing = ImVec2(12, 8);
+            //style->ItemInnerSpacing = ImVec2(8, 6);
+            //style->IndentSpacing = 25.0f;
             //style->ScrollbarSize = 15.0f;
             //style->ScrollbarRounding = 9.0f;
             //style->GrabMinSize = 5.0f;

@@ -70,47 +70,20 @@ unsigned int engine::Entity::generateUniqueId()
 
 engine::EntityType engine::Entity::getType()
 {
-	if (auto modelComponent = getComponent<ModelComponent>())
-	{
-		return engine::EntityType::model;
-	}
-	else if (auto primitiveComponent = getComponent<PrimitiveComponent>())
-	{
-		return engine::EntityType::primitive;
-	}
-	else if (auto lightComponent = getComponent<LightComponent>())
-	{
-		return engine::EntityType::light;
-	}
-	else if (auto cameraComponent = getComponent<CameraComponent>())
-	{
-		return engine::EntityType::camera;
-	}
-
+	if (auto component = getComponent<ModelComponent>()) return engine::EntityType::model;
+	if (auto component = getComponent<PrimitiveComponent>()) return engine::EntityType::primitive;
+	if (auto component = getComponent<LightComponent>()) return engine::EntityType::light;
+	if (auto component = getComponent<CameraComponent>()) return engine::EntityType::camera;
 	return engine::EntityType::undefined;
 }
 
 std::string engine::Entity::getTypeName()
 {
 	auto entityType = getType();
-	
-	if (entityType == engine::EntityType::model)
-	{
-		return "Model";
-	}
-	else if (entityType == engine::EntityType::primitive)
-	{
-		return "Primitive";
-	}
-	else if (entityType == engine::EntityType::light)
-	{
-		return "Light";
-	}
-	else if (entityType == engine::EntityType::camera)
-	{
-		return "Camera";
-	}
-	
+	if (entityType == engine::EntityType::model) return "Model";
+	if (entityType == engine::EntityType::primitive) return "Primitive";
+	if (entityType == engine::EntityType::light) return "Light";
+	if (entityType == engine::EntityType::camera) return "Camera";
 	return "";
 }
 

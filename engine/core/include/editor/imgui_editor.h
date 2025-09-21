@@ -3,6 +3,7 @@
 #include "../tools/system_monitor.h"
 
 #include "../ecs/entity.h"
+#include "../ecs/transform_component.h"
 #include "../ecs/light_component.h"
 #include "../ecs/camera_component.h"
 #include "../ecs/model_component.h"
@@ -65,12 +66,13 @@ namespace engine
 		void renderComponents(const std::shared_ptr<Entity>& entity);
 
 
-		void renderTransformComponent(engine::Transform& transform, bool position = true, bool rotation = true, bool scale = true);
-
+		void renderTransformComponent(std::shared_ptr<TransformComponent>& component, bool displayPosition = true, bool displayRotation = true, bool displayScale = true);
 		void renderLightComponent(std::shared_ptr<LightComponent>& component);
 		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
+		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
+		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 
-		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float& value, float step);
+		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
 

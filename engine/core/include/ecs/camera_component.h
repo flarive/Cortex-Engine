@@ -30,6 +30,11 @@ namespace engine
 			return ComponentType::camera;
 		}
 
+		std::string getName() override
+		{
+			return "Camera";
+		}
+
 		engine::AABB* getBoundingVolume() override;
 
 	private:

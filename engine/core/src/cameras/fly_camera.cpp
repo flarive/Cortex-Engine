@@ -106,11 +106,11 @@ void engine::FlyCamera::processMouseScroll(float yoffset)
 {
     zoom -= (float)yoffset;
 
-    if (zoom < 1.0f)
-        zoom = 1.0f;
-    
-    if (zoom > 45.0f)
-        zoom = 45.0f;
+    //if (zoom < 1.0f)
+    //    zoom = 1.0f;
+    //
+    //if (zoom > 45.0f)
+    //    zoom = 45.0f;
 }
 
 void engine::FlyCamera::updateCameraVectors()

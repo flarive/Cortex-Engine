@@ -36,6 +36,11 @@ namespace engine
 			return ComponentType::light;
 		}
 
+		std::string getName() override
+		{
+			return "Light";
+		}
+
 		engine::AABB* getBoundingVolume() override;
 
 	private:

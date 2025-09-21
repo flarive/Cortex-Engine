@@ -26,6 +26,11 @@ namespace engine
 			return ComponentType::transform;
 		}
 
+		std::string getName() override
+		{
+			return "Transform";
+		}
+
 		Transform getTransform() { return m_transform; }
 		glm::mat4 getWorldTransformMatrix() { return m_worldTransform; }
 
@@ -35,6 +40,8 @@ namespace engine
 		{
 			m_worldTransform = worldTransform;
 		}
+
+
 
 
 	private:

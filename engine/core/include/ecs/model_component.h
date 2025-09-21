@@ -29,9 +29,13 @@ namespace engine
 			return m_model;
 		}
 
-
 		static ComponentType getStaticTypeID() {
 			return ComponentType::model;
+		}
+
+		std::string getName() override
+		{
+			return "Model";
 		}
 
 		engine::AABB* getBoundingVolume() override;

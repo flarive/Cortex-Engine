@@ -295,6 +295,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     {
         shouldTestFrustrum = true;
 
+        // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
         if (shouldTestFrustrum && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
         {
             frustrumOk = true;

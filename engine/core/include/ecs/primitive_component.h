@@ -35,6 +35,11 @@ namespace engine
 			return ComponentType::primitive;
 		}
 
+		std::string getName() override
+		{
+			return "Primitive";
+		}
+
 		engine::AABB* getBoundingVolume() override;
 
 	private:

@@ -111,11 +111,11 @@ void engine::FpsCamera::processMouseScroll(float yoffset)
 {
     zoom -= (float)yoffset;
 
-    if (zoom < 1.0f)
-        zoom = 1.0f;
+    //if (zoom < 1.0f)
+    //    zoom = 1.0f;
 
-    if (zoom > 45.0f)
-        zoom = 45.0f;
+    //if (zoom > 100.0f)
+    //    zoom = 100.0f;
 }
 
 void engine::FpsCamera::updateCameraVectors()

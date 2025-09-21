@@ -67,42 +67,42 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
     return generateCubeVertices();
 }
 
-void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
-{
-    shader.use();
-
-    if (m_material) {
-        m_material->bind(shader);
-        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        shader.setVec3("material.specular_color", m_material->getSpecularColor());
-
-        shader.setFloat("material.shininess", m_material->getShininessIntensity());
-
-        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        
-
-        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
-        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-    }
-
-    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
-    model = glm::scale(model, size);
-    shader.setMat4("model", model);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-    shader.setBool("hasTangents", true);
-
-    glBindVertexArray(m_VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-
-    m_material->unbind();
-}
+//void engine::Cube::draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
+//{
+//    shader.use();
+//
+//    if (m_material) {
+//        m_material->bind(shader);
+//        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+//        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+//        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+//
+//        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+//
+//        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+//        
+//
+//        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+//        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+//        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+//    }
+//
+//    auto normalizedRotation = engine::Helpers::normalizeRotation(rotation);
+//
+//    glm::mat4 model = glm::mat4(1.0f);
+//    model = glm::translate(model, position);
+//    if (normalizedRotation.angle != 0) model = glm::rotate(model, glm::radians(normalizedRotation.angle), normalizedRotation.axis);
+//    model = glm::scale(model, size);
+//    shader.setMat4("model", model);
+//    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+//    shader.setBool("hasTangents", true);
+//
+//    glBindVertexArray(m_VAO);
+//    glDrawArrays(GL_TRIANGLES, 0, 36);
+//    glBindVertexArray(0);
+//
+//    m_material->unbind();
+//}
 
 void engine::Cube::draw(Shader& shader, const glm::mat4 transformMatrix)
 {

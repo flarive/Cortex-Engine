@@ -244,12 +244,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
     {
         auto trs = entity->getTransform();
         
-        if (typeID == ComponentType::transform)
-        {
-            // transform
-            int a = 0;
-        }
-        else
+        if (typeID != ComponentType::transform)
         {
             component->init(trs);
         }

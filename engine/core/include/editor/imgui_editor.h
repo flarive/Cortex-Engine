@@ -66,13 +66,13 @@ namespace engine
 		void renderComponents(const std::shared_ptr<Entity>& entity);
 
 
-		void renderTransformComponent(std::shared_ptr<TransformComponent>& component, bool displayPosition = true, bool displayRotation = true, bool displayScale = true);
+		void renderTransformComponent(const std::shared_ptr<Entity>& entity, bool displayPosition = true, bool displayRotation = true, bool displayScale = true);
 		void renderLightComponent(std::shared_ptr<LightComponent>& component);
 		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
 		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 
-		void drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
+		bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
 

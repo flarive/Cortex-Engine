@@ -32,37 +32,6 @@ engine::Entity::Entity(const std::string& _name)
 {
 }
 
-engine::AABB engine::Entity::getGlobalAABB()
-{
-	auto transform = getTransform();
-	auto worldTransform = getWorldTransform();
-
-	auto boundingVolume = getBoundingVolume();
-	
-	// Transform local center into world space
-	const glm::vec3 globalCenter{ worldTransform * glm::vec4(boundingVolume->center, 1.f) };
-
-	// Get scaled orientation axes from world transform
-	const glm::vec3 right = transform.getRight(worldTransform) * boundingVolume->extents.x;
-	const glm::vec3 up = transform.getUp(worldTransform) * boundingVolume->extents.y;
-	const glm::vec3 forward = transform.getForward(worldTransform) * boundingVolume->extents.z;
-
-	// Project onto global axes
-	const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
-		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
-		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
-
-	const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
-		std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
-		std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
-
-	const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
-		std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
-		std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
-
-	return engine::AABB(globalCenter, newIi, newIj, newIk);
-}
-
 unsigned int engine::Entity::generateUniqueId()
 {
 	return rand() % 101;
@@ -272,4 +241,36 @@ engine::AABB* engine::Entity::getBoundingVolume()
 	}
 
 	return nullptr;
+}
+
+
+engine::AABB engine::Entity::getGlobalAABB()
+{
+	auto transform = getTransform();
+	auto worldTransform = getWorldTransform();
+
+	auto boundingVolume = getBoundingVolume();
+
+	// Transform local center into world space
+	const glm::vec3 globalCenter{ worldTransform * glm::vec4(boundingVolume->center, 1.f) };
+
+	// Get scaled orientation axes from world transform
+	const glm::vec3 right = transform.getRight(worldTransform) * boundingVolume->extents.x;
+	const glm::vec3 up = transform.getUp(worldTransform) * boundingVolume->extents.y;
+	const glm::vec3 forward = transform.getForward(worldTransform) * boundingVolume->extents.z;
+
+	// Project onto global axes
+	const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
+		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
+		std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
+
+	const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
+		std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
+		std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
+
+	const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
+		std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
+		std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
+
+	return engine::AABB(globalCenter, newIi, newIj, newIk);
 }

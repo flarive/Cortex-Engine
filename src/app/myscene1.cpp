@@ -16,7 +16,7 @@ MyScene1::MyScene1(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene1::init()
 {
     // camera
-    auto trsCamera1 = engine::Transform{ {0.0f, 0.0f, 5.0f} };
+    auto trsCamera1 = engine::Transform{ {0.0f, 0.1f, 5.0f} };
     auto camera1 = std::make_shared<engine::FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 10.0f;

@@ -308,8 +308,8 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
         if (typeID == ComponentType::transform)
         {
             // transform component
-            auto transformComponent = dynamic_pointer_cast<TransformComponent>(component);
-            renderTransformComponent(transformComponent, true, true, true);
+            //auto transformComponent = dynamic_pointer_cast<TransformComponent>(component);
+            renderTransformComponent(entity, true, true, true);
         }
         else if (typeID == ComponentType::camera)
         {
@@ -339,11 +339,16 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
 }
 
 
-void engine::ImGuiEditor::renderTransformComponent(std::shared_ptr<TransformComponent>& component, bool displayPosition, bool displayRotation, bool displayScale)
+void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>& entity, bool displayPosition, bool displayRotation, bool displayScale)
 {
-    ImGui::SeparatorText(component->getName().c_str());
+    auto transformComponent = entity->getComponent<TransformComponent>();
 
-    if (!component)
+    
+    
+    
+    ImGui::SeparatorText(transformComponent->getName().c_str());
+
+    if (!transformComponent)
         return;
 
     static auto green = IM_COL32(138, 219, 0, 255);
@@ -351,11 +356,24 @@ void engine::ImGuiEditor::renderTransformComponent(std::shared_ptr<TransformComp
     static auto red = IM_COL32(255, 54, 83, 255);
     static auto white = IM_COL32(255, 255, 255, 255);
 
-    auto transform = component->getTransform();
+    //auto transform = transformComponent->getTransform();
 
-    glm::vec3 position = transform.getLocalPosition();
-    glm::vec3 rotation = transform.getLocalRotation();
-    glm::vec3 scale = transform.getLocalScale();
+    glm::vec3 position{};// = transform.getLocalPosition();
+    glm::vec3 rotation{};// = transform.getLocalRotation();
+    glm::vec3 scale{};// = transform.getLocalScale();
+
+    std::shared_ptr<CameraComponent> cameraComponent{};
+    std::shared_ptr<LightComponent> lightComponent{};
+    std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+
+    auto t = entity->getType();
+    if (cameraComponent = entity->getComponent<CameraComponent>()) {
+        position = cameraComponent->getCamera()->position;
+    } else if (lightComponent = entity->getComponent<LightComponent>()) {
+        position = lightComponent->getLight()->position;
+    } else if (primitiveComponent = entity->getComponent<PrimitiveComponent>()) {
+        position = primitiveComponent->getPrimitive()->position;
+    }
 
     // Local variables for ImGui
     float posX = position.x;
@@ -386,13 +404,19 @@ void engine::ImGuiEditor::renderTransformComponent(std::shared_ptr<TransformComp
             ImGui::Text("Position");
 
             ImGui::TableSetColumnIndex(1);
-            drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &posX, 0.1f);
+            if (drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &posX, 0.1f)) {
+                position.x = posX;
+            }
 
             ImGui::TableSetColumnIndex(2);
-            drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &posY, 0.1f);
+            if (drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &posY, 0.1f)) {
+                position.y = posY;
+            }
 
             ImGui::TableSetColumnIndex(3);
-            drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &posZ, 0.1f);
+            if (drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &posZ, 0.1f)) {
+                position.z = posZ;
+            }
         }
 
 
@@ -432,22 +456,11 @@ void engine::ImGuiEditor::renderTransformComponent(std::shared_ptr<TransformComp
         }*/
 
         ImGui::EndTable();
+    }
 
-        // Sync back to the transform
-        position.x = posX;
-        position.y = posY;
-        position.z = posZ;
-        transform.setLocalPosition(position);
-
-        rotation.x = rotX;
-        rotation.y = rotY;
-        rotation.z = rotZ;
-        transform.setLocalRotation(rotation);
-
-        scale.x = scaX;
-        scale.y = scaY;
-        scale.z = scaZ;
-        transform.setLocalScale(scale);
+    if (cameraComponent)
+    {
+        cameraComponent->getCamera()->position = position;
     }
 }
 
@@ -533,13 +546,6 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     }
     else if (dirLight)
     {
-        glm::vec3 target = dirLight->target;
-
-        // Local variables for ImGui
-        float tarX = target.x;
-        float tarY = target.y;
-        float tarZ = target.z;
-        
         if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
         {
             ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
@@ -558,25 +564,19 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("X");
             ImGui::TableSetColumnIndex(2);
-            ImGui::DragFloat("##targetX", &tarX, 0.1f);
+            ImGui::DragFloat("##targetX", &dirLight->target.x, 0.1f);
 
             ImGui::TableSetColumnIndex(3);
             ImGui::Text("Y");
             ImGui::TableSetColumnIndex(4);
-            ImGui::DragFloat("##targetY", &tarY, 0.1f);
+            ImGui::DragFloat("##targetY", &dirLight->target.y, 0.1f);
 
             ImGui::TableSetColumnIndex(5);
             ImGui::Text("Z");
             ImGui::TableSetColumnIndex(6);
-            ImGui::DragFloat("##targetZ", &tarZ, 0.1f);
+            ImGui::DragFloat("##targetZ", &dirLight->target.z, 0.1f);
 
             ImGui::EndTable();
-
-            // Sync back to the transform
-            target.x = tarX;
-            target.y = tarY;
-            target.z = tarZ;
-            dirLight->target = target;
         }
     }
 
@@ -639,6 +639,10 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     // Use a temporary variable to hold the zoom value
     float zoom = component->getCamera()->zoom;
 
+    //glm::vec3 position = component->getCamera()->position;
+    
+
+
     if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
@@ -657,6 +661,11 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
 
         ImGui::EndTable();
     }
+
+    //if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
+    //{
+    //    component->getCamera()->position = position;
+    //}
 }
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
@@ -773,7 +782,7 @@ void engine::ImGuiEditor::drawCustomLabel(const char* text, const ImVec2& positi
 }
 
 
-void engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step)
+bool engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step)
 {
     drawCustomLabel(text, position, size, rounding, backgroundColor, foregroundColor);
 
@@ -795,8 +804,10 @@ void engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
     ImGui::SetNextItemWidth(width);
-    ImGui::DragFloat(name, value, step);
+    bool res = ImGui::DragFloat(name, value, step);
     ImGui::PopStyleColor(3);
+
+    return res;
 }
 
 //#endif

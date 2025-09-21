@@ -27,14 +27,19 @@ namespace engine
 
         float m_uvScale{ 1.0f };
 
+        
+
     public:
+        
+        glm::vec3 position{};
+        
         Primitive() = default;
         virtual ~Primitive() = default;
 
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
-        virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
+        //virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
         virtual void draw(Shader& shader, const glm::mat4 transformMatrix) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose

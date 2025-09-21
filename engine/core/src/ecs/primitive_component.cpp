@@ -23,7 +23,7 @@ void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 
 void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
 {
-	m_primitive->draw(shader, position, size, rotation);
+	//m_primitive->draw(shader, position, size, rotation);
 }
 
 engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)

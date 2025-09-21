@@ -32,9 +32,7 @@ void engine::Camera::setFromViewMatrix(const glm::mat4& view)
 
 void engine::Camera::draw(const glm::vec3& _position)
 {
-    //position = glm::vec3(_position);
-
-    //updateCameraVectors();
+    // to display a camera cube gizmo one day
 }
 
 void engine::Camera::updateCameraVectors()

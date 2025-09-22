@@ -359,8 +359,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::camera)
             {
                 // camera
-                auto trs = entity->getTransform();
-                component->update(trs);
             }
             else if (typeID == ComponentType::light)
             {

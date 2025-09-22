@@ -356,11 +356,9 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     static auto red = IM_COL32(255, 54, 83, 255);
     static auto white = IM_COL32(255, 255, 255, 255);
 
-    //auto transform = transformComponent->getTransform();
-
-    glm::vec3 position{};// = transform.getLocalPosition();
-    glm::vec3 rotation{};// = transform.getLocalRotation();
-    glm::vec3 scale{};// = transform.getLocalScale();
+    glm::vec3 position{};
+    glm::vec3 rotation{};
+    glm::vec3 scale{};
 
     std::shared_ptr<CameraComponent> cameraComponent{};
     std::shared_ptr<LightComponent> lightComponent{};
@@ -372,9 +370,9 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     } else if (lightComponent = entity->getComponent<LightComponent>()) {
         position = lightComponent->getLight()->position;
     } else if (primitiveComponent = entity->getComponent<PrimitiveComponent>()) {
-        position = primitiveComponent->getPrimitive()->getLocalPosition();
-        scale = primitiveComponent->getPrimitive()->getLocalScale();
-        rotation = primitiveComponent->getPrimitive()->getLocalRotation();
+        position = primitiveComponent->getPrimitive()->position;
+        scale = primitiveComponent->getPrimitive()->rotation;
+        rotation = primitiveComponent->getPrimitive()->scale;
     }
 
     // Local variables for ImGui
@@ -430,13 +428,19 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Rotation");
 
             ImGui::TableSetColumnIndex(1);
-            drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 0.5f);
+            if (drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 0.5f)) {
+                rotation.x = rotX;
+            }
 
             ImGui::TableSetColumnIndex(2);
-            drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 0.5f);
+            if (drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 0.5f)) {
+                rotation.y = rotY;
+            }
 
             ImGui::TableSetColumnIndex(3);
-            drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 0.5f);
+            if (drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 0.5f)) {
+                rotation.z = rotZ;
+            }
         }
 
 
@@ -448,22 +452,30 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Scale");
 
             ImGui::TableSetColumnIndex(1);
-            drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.05f);
+            if (drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.05f)) {
+                scale.x = scaX;
+            }
             
             ImGui::TableSetColumnIndex(2);
-            drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.05f);
+            if (drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.05f)) {
+                scale.y = scaY;
+            }
             
             ImGui::TableSetColumnIndex(3);
-            drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.05f);
+            if (drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.05f)) {
+                scale.z = scaZ;
+            }
         }
 
         ImGui::EndTable();
     }
 
     if (cameraComponent)
-    {
         cameraComponent->getCamera()->position = position;
-    }
+    else if (lightComponent)
+        lightComponent->getLight()->position = position;
+    else if (primitiveComponent)
+        primitiveComponent->getPrimitive()->position = position;
 }
 
 
@@ -487,7 +499,6 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     else if (spotLight = std::dynamic_pointer_cast<SpotLight>(component->getLight()))
     {
     }
-
 
     if (spotLight)
     {
@@ -641,10 +652,6 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     // Use a temporary variable to hold the zoom value
     float zoom = component->getCamera()->zoom;
 
-    //glm::vec3 position = component->getCamera()->position;
-    
-
-
     if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
@@ -663,11 +670,6 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
 
         ImGui::EndTable();
     }
-
-    //if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
-    //{
-    //    component->getCamera()->position = position;
-    //}
 }
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)

@@ -29,12 +29,15 @@ namespace engine
 
         float m_uvScale{ 1.0f };
 
-        glm::vec3 m_position{};
-        glm::vec3 m_rotation{};
-        glm::vec3 m_scale{};
+        
         
 
     public:
+        
+        glm::vec3 position{};
+        glm::vec3 rotation{};
+        glm::vec3 scale{};
+        
         Primitive() = default;
         virtual ~Primitive() = default;
 
@@ -51,9 +54,9 @@ namespace engine
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
 
-        glm::vec3 getLocalPosition() { return m_position; }
-        glm::vec3 getLocalScale() { return m_scale; }
-        glm::vec3 getLocalRotation() { return m_rotation; }
+        //glm::vec3 getLocalPosition() { return m_position; }
+        //glm::vec3 getLocalScale() { return m_scale; }
+        //glm::vec3 getLocalRotation() { return m_rotation; }
 
 
         static float* getScaledPlaneVertices(float uvScale)

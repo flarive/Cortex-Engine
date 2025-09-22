@@ -2,11 +2,11 @@
 
 #include "../../include/transform.h"
 
-engine::Light::Light() : m_index(0)
+engine::Light::Light(unsigned int index) : position(glm::vec3()), m_index(index)
 {
 }
 
-engine::Light::Light(unsigned int index) : m_index(index)
+engine::Light::Light(glm::vec3 _position, unsigned int index) : position(_position), m_index(index)
 {
 }
 

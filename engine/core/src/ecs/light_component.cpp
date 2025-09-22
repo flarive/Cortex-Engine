@@ -10,12 +10,12 @@ engine::LightComponent::LightComponent(std::shared_ptr<Light> light)
 
 void engine::LightComponent::init(Transform& transform)
 {
-
+    m_light->position = transform.getLocalPosition();
 }
 
 void engine::LightComponent::update(Transform& transform)
 {
-    //m_light->position = transform.getLocalPosition();
+
 }
 
 void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)

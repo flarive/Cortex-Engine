@@ -160,9 +160,9 @@ void engine::Cone::draw(Shader& shader, const glm::mat4 transformMatrix, Transfo
 {
     shader.use();
 
-    m_position = localTransform.getLocalPosition();
-    m_rotation = localTransform.getLocalRotation();
-    m_scale = localTransform.getLocalScale();
+    position = localTransform.getLocalPosition();
+    rotation = localTransform.getLocalRotation();
+    scale = localTransform.getLocalScale();
 
     if (m_material)
     {

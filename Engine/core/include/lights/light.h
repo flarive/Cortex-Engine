@@ -26,21 +26,14 @@ namespace engine
 
         glm::vec3 target{};
         
-        Light();
         Light(unsigned int index);
+        Light(glm::vec3 _position, unsigned int index);
         virtual ~Light() = default;
-
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
 
         virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix) = 0;
 
         virtual void clean() = 0;
 
-
-
-        //glm::vec3 getLocalPosition() { return m_position; }
-        //glm::vec3 getLocalScale() { return m_scale; }
-        //glm::vec3 getLocalRotation() { return m_rotation; }
 
 
     private:
@@ -51,8 +44,6 @@ namespace engine
         unsigned int VBO{}, VAO{};
 
         unsigned int m_index{};
-
-        
 
         Shader m_lightDebugShader{};
 

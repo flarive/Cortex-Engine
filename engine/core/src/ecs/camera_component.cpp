@@ -14,7 +14,7 @@ void engine::CameraComponent::init(Transform& transform)
 
 void engine::CameraComponent::update(Transform& transform)
 {
-	//m_camera->position = transform.getLocalPosition();
+
 }
 
 void engine::CameraComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)

@@ -21,6 +21,9 @@ namespace engine
 
 
         glm::vec3 position{};
+        glm::vec3 scale{};
+        glm::vec3 rotation{};
+
         glm::vec3 target{};
         
         Light();
@@ -34,6 +37,12 @@ namespace engine
         virtual void clean() = 0;
 
 
+
+        //glm::vec3 getLocalPosition() { return m_position; }
+        //glm::vec3 getLocalScale() { return m_scale; }
+        //glm::vec3 getLocalRotation() { return m_rotation; }
+
+
     private:
         virtual void setup() = 0;
 
@@ -42,6 +51,8 @@ namespace engine
         unsigned int VBO{}, VAO{};
 
         unsigned int m_index{};
+
+        
 
         Shader m_lightDebugShader{};
 

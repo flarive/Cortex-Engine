@@ -170,9 +170,14 @@ std::vector<engine::Vertex> engine::Cylinder::generateVertices()
 //}
 
 
-void engine::Cylinder::draw(Shader& shader, const glm::mat4 transformMatrix)
+void engine::Cylinder::draw(Shader& shader, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     shader.use();
+
+    m_position = localTransform.getLocalPosition();
+    m_rotation = localTransform.getLocalRotation();
+    m_scale = localTransform.getLocalScale();
+
     if (m_material)
     {
         m_material->bind(shader);

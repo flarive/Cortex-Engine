@@ -372,7 +372,9 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     } else if (lightComponent = entity->getComponent<LightComponent>()) {
         position = lightComponent->getLight()->position;
     } else if (primitiveComponent = entity->getComponent<PrimitiveComponent>()) {
-        position = primitiveComponent->getPrimitive()->position;
+        position = primitiveComponent->getPrimitive()->getLocalPosition();
+        scale = primitiveComponent->getPrimitive()->getLocalScale();
+        rotation = primitiveComponent->getPrimitive()->getLocalRotation();
     }
 
     // Local variables for ImGui
@@ -420,7 +422,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         }
 
 
-        /*if (displayRotation)
+        if (displayRotation)
         {
             ImGui::TableNextRow();
 
@@ -428,13 +430,13 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Rotation");
 
             ImGui::TableSetColumnIndex(1);
-            drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, transform.getLocalRotation().x, 0.5f);
+            drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 0.5f);
 
             ImGui::TableSetColumnIndex(2);
-            drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, transform.getLocalRotation().y, 0.5f);
+            drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 0.5f);
 
             ImGui::TableSetColumnIndex(3);
-            drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, transform.getLocalRotation().z, 0.5f);
+            drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 0.5f);
         }
 
 
@@ -446,14 +448,14 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Scale");
 
             ImGui::TableSetColumnIndex(1);
-            drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, transform.getLocalScale().x, 0.05f);
+            drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.05f);
             
             ImGui::TableSetColumnIndex(2);
-            drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, transform.getLocalScale().y, 0.05f);
+            drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.05f);
             
             ImGui::TableSetColumnIndex(3);
-            drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, transform.getLocalScale().z, 0.05f);
-        }*/
+            drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.05f);
+        }
 
         ImGui::EndTable();
     }

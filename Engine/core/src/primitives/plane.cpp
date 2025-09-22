@@ -105,9 +105,13 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
 //    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 //}
 
-void engine::Plane::draw(Shader& shader, const glm::mat4 transformMatrix)
+void engine::Plane::draw(Shader& shader, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     shader.use();
+
+    m_position = localTransform.getLocalPosition();
+    m_rotation = localTransform.getLocalRotation();
+    m_scale = localTransform.getLocalScale();
 
     if (m_material)
     {

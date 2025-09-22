@@ -22,8 +22,7 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(Transform& transform) override;
 
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform) override;
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation) override;
+		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform) override;
 
 		std::shared_ptr<Primitive> getPrimitive()
 		{

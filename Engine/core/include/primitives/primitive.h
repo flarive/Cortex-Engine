@@ -7,7 +7,9 @@
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"
 
-//#include "../ecs/component.h"
+
+#include "../transform.h"
+
 
 namespace engine
 {
@@ -27,20 +29,19 @@ namespace engine
 
         float m_uvScale{ 1.0f };
 
+        glm::vec3 m_position{};
+        glm::vec3 m_rotation{};
+        glm::vec3 m_scale{};
         
 
     public:
-        
-        glm::vec3 position{};
-        
         Primitive() = default;
         virtual ~Primitive() = default;
 
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
-        //virtual void draw(Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation = glm::vec3(0.0f, 0.0f, 0.0f)) = 0;
-        virtual void draw(Shader& shader, const glm::mat4 transformMatrix) = 0;
+        virtual void draw(Shader& shader, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean();
@@ -48,6 +49,11 @@ namespace engine
         virtual std::vector<Vertex> generateVertices() = 0;
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
+
+
+        glm::vec3 getLocalPosition() { return m_position; }
+        glm::vec3 getLocalScale() { return m_scale; }
+        glm::vec3 getLocalRotation() { return m_rotation; }
 
 
         static float* getScaledPlaneVertices(float uvScale)
@@ -85,6 +91,8 @@ namespace engine
 
 
     private:
+        
+
         virtual void setup() = 0;
     };
 

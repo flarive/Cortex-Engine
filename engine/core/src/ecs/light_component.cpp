@@ -18,7 +18,7 @@ void engine::LightComponent::update(Transform& transform)
     //m_light->position = transform.getLocalPosition();
 }
 
-void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
+void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)
 {
     m_light->draw(shader,
         projection,
@@ -28,22 +28,7 @@ void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
         m_light->specularColor,
         m_light->intensity,
         m_light->target,
-        transform);
-}
-
-void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
-{
-    m_light->draw(shader,
-        projection,
-        view,
-        m_light->ambientColor,
-        m_light->diffuseColor,
-        m_light->specularColor,
-        m_light->intensity,
-        position,
-        m_light->target,
-        size,
-        rotation);
+        worldTransformMatrix);
 }
 
 engine::AABB engine::LightComponent::generateBoundingVolume(const std::shared_ptr<Light> light)

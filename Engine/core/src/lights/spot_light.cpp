@@ -69,7 +69,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         m_lightDebugShader.setVec4("customColor", m_debug_cone.getMaterial()->getAmbientColor());
 
         // You can pass glm::vec3(0) for rotation since model is already transformed
-        m_debug_cone.draw(m_lightDebugShader, model);
+        //m_debug_cone.draw(m_lightDebugShader, model);
     }
 }
 
@@ -121,7 +121,8 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         m_lightDebugShader.setVec4("customColor", m_debug_cone.getMaterial()->getAmbientColor());
 
         // You can pass glm::vec3(0) for rotation since model is already transformed
-        m_debug_cone.draw(m_lightDebugShader, model);
+        auto localTransform = Transform(position, glm::vec3(0.0f), glm::vec3(1.0f));
+        m_debug_cone.draw(m_lightDebugShader, model, localTransform);
     }
 }
 

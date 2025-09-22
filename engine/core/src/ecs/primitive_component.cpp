@@ -16,14 +16,9 @@ void engine::PrimitiveComponent::update(Transform& transform)
 
 }
 
-void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& transform)
+void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)
 {
-	m_primitive->draw(shader, transform);
-}
-
-void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::vec3& position, const glm::vec3& size, const glm::vec3& rotation)
-{
-	//m_primitive->draw(shader, position, size, rotation);
+	m_primitive->draw(shader, worldTransformMatrix, localTransform);
 }
 
 engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)

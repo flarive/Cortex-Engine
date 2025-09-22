@@ -343,13 +343,15 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
         }
 
+        auto transform = entity->getTransform();
+
         // looping over entity components
         for (const auto& [typeID, component] : entity->components)
         {
             if (typeID == ComponentType::primitive || typeID == ComponentType::model)
             {
                 // primitive and model
-                component->draw(projection, view, shader, entity->getWorldTransform());
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform);
 
                 if (frustrumOk)
                     inFrustrumCount++;
@@ -363,7 +365,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::light)
             {
                 // light
-                component->draw(projection, view, shader, entity->getWorldTransform());
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform);
             }
         }
 

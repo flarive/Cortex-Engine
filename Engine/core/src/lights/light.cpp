@@ -1,5 +1,7 @@
 #include "../../include/lights/light.h"
 
+#include "../../include/transform.h"
+
 engine::Light::Light() : m_index(0)
 {
 }

@@ -104,11 +104,16 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
 //    m_material->unbind();
 //}
 
-void engine::Cube::draw(Shader& shader, const glm::mat4 transformMatrix)
+void engine::Cube::draw(Shader& shader, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     shader.use();
 
-    if (m_material) {
+    m_position = localTransform.getLocalPosition();
+    m_rotation = localTransform.getLocalRotation();
+    m_scale = localTransform.getLocalScale();
+
+    if (m_material)
+    {
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());

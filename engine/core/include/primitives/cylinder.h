@@ -15,7 +15,7 @@ namespace engine
         float radius{ 1.0f };
         float height{ 2.0f };
 
-        Cylinder() = default;
+        Cylinder(const glm::vec3& _position = glm::vec3());
         ~Cylinder() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

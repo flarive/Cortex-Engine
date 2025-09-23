@@ -9,7 +9,7 @@ namespace engine
     class Plane final : public Primitive
     {
     public:
-        Plane() = default;
+        Plane(const glm::vec3& _position = glm::vec3());
         ~Plane() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

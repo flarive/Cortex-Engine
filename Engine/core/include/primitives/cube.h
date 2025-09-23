@@ -9,7 +9,7 @@ namespace engine
     class Cube final : public Primitive
     {
     public:
-        Cube() = default;
+        Cube(const glm::vec3& _position = glm::vec3());
         ~Cube() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

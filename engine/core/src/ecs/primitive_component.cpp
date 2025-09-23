@@ -8,7 +8,7 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 
 void engine::PrimitiveComponent::init(Transform& transform)
 {
-
+	m_primitive->position = transform.getLocalPosition();
 }
 
 void engine::PrimitiveComponent::update(Transform& transform)

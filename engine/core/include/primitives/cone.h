@@ -15,7 +15,7 @@ namespace engine
         float radius{ 1.0f };
         float height{ 2.0f };
 
-        Cone() = default;
+        Cone(const glm::vec3& _position = glm::vec3());
         ~Cone() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

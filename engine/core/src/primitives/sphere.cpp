@@ -3,6 +3,10 @@
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
+engine::Sphere::Sphere(const glm::vec3& _position) : Primitive(_position)
+{
+}
+
 void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
@@ -168,7 +172,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4 transformMatrix, Trans
 {
     shader.use();
 
-    position = localTransform.getLocalPosition();
+    //position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

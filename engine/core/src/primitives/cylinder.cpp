@@ -3,6 +3,10 @@
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
+engine::Cylinder::Cylinder(const glm::vec3& _position) : Primitive(_position)
+{
+}
+
 void engine::Cylinder::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
@@ -174,7 +178,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4 transformMatrix, Tra
 {
     shader.use();
 
-    position = localTransform.getLocalPosition();
+    //position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

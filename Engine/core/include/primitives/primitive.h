@@ -38,7 +38,7 @@ namespace engine
         glm::vec3 rotation{};
         glm::vec3 scale{};
         
-        Primitive() = default;
+        Primitive(const glm::vec3& _position = glm::vec3());
         virtual ~Primitive() = default;
 
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
@@ -54,9 +54,6 @@ namespace engine
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
 
-        //glm::vec3 getLocalPosition() { return m_position; }
-        //glm::vec3 getLocalScale() { return m_scale; }
-        //glm::vec3 getLocalRotation() { return m_rotation; }
 
 
         static float* getScaledPlaneVertices(float uvScale)

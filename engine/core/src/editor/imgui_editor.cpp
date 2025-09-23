@@ -363,17 +363,29 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     std::shared_ptr<CameraComponent> cameraComponent{};
     std::shared_ptr<LightComponent> lightComponent{};
     std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+    std::shared_ptr<ModelComponent> modelComponent{};
 
     auto t = entity->getType();
-    if (cameraComponent = entity->getComponent<CameraComponent>()) {
+    if (cameraComponent = entity->getComponent<CameraComponent>())
+    {
         position = cameraComponent->getCamera()->position;
-    } else if (lightComponent = entity->getComponent<LightComponent>()) {
+    }
+    else if (lightComponent = entity->getComponent<LightComponent>())
+    {
         position = lightComponent->getLight()->position;
-    } else if (primitiveComponent = entity->getComponent<PrimitiveComponent>()) {
+    }
+    else if (primitiveComponent = entity->getComponent<PrimitiveComponent>())
+    {
         position = primitiveComponent->getPrimitive()->position;
         scale = primitiveComponent->getPrimitive()->rotation;
         rotation = primitiveComponent->getPrimitive()->scale;
     }
+    //else if (modelComponent = entity->getComponent<ModelComponent>())
+    //{
+    //    position = modelComponent->getModel()->position;
+    //    scale = modelComponent->getModel()->rotation;
+    //    rotation = modelComponent->getModel()->scale;
+    //}
 
     // Local variables for ImGui
     float posX = position.x;
@@ -419,7 +431,6 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             }
         }
 
-
         if (displayRotation)
         {
             ImGui::TableNextRow();
@@ -442,7 +453,6 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
                 rotation.z = rotZ;
             }
         }
-
 
         if (displayScale)
         {
@@ -678,6 +688,15 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
 
     if (!component)
         return;
+
+
+    glm::vec3 position = component->getPrimitive()->position;
+
+    if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
+    {
+        component->getPrimitive()->position = position;
+    }
+
 }
 
 void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& component)

@@ -5,6 +5,9 @@
 #include "../../include/primitives/primitive.h"
 #include "../../include/tools/helpers.h"
 
+engine::Plane::Plane(const glm::vec3& _position) : Primitive(_position)
+{
+}
 
 void engine::Plane::setup(const std::shared_ptr<Material>& material)
 {
@@ -109,7 +112,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4 transformMatrix, Transf
 {
     shader.use();
 
-    position = localTransform.getLocalPosition();
+    //position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

@@ -1,5 +1,9 @@
 #include "../../include/primitives/primitive.h"
 
+engine::Primitive::Primitive(const glm::vec3& _position) : position(_position)
+{
+}
+
 void engine::Primitive::clean()
 {
     glDeleteVertexArrays(1, &m_VAO);

@@ -3,7 +3,9 @@
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
-
+engine::Cone::Cone(const glm::vec3& _position) : Primitive(_position)
+{
+}
 
 void engine::Cone::setup(const std::shared_ptr<Material>& material)
 {
@@ -160,7 +162,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4 transformMatrix, Transfo
 {
     shader.use();
 
-    position = localTransform.getLocalPosition();
+    //position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

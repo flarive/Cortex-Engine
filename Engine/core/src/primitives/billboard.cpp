@@ -4,6 +4,9 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
+engine::Billboard::Billboard(const glm::vec3& _position) : Primitive(_position)
+{
+}
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
@@ -109,7 +112,7 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4 transformMatrix, Tr
 {
     shader.use();
 
-    position = localTransform.getLocalPosition();
+    //position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

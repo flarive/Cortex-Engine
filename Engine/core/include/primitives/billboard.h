@@ -11,7 +11,7 @@ namespace engine
     class Billboard final : public Primitive
     {
     public:
-        Billboard() = default;
+        Billboard(const glm::vec3& _position = glm::vec3());
         ~Billboard() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

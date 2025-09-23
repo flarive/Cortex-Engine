@@ -14,7 +14,7 @@ namespace engine
     public:
         float radius{ 1.0f };
 
-        Sphere() = default;
+        Sphere(const glm::vec3& _position = glm::vec3());
         ~Sphere() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;

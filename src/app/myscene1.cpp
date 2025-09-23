@@ -81,7 +81,7 @@ void MyScene1::init()
     // cube
     auto myCube = std::make_shared<engine::Cube>();
     myCube->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
-    auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f));
     auto entityCube = std::make_shared<engine::Entity>("MyCube");
     entityCube->addComponent<engine::TransformComponent>(trsCube);
     entityCube->addComponent<engine::PrimitiveComponent>(myCube);
@@ -93,7 +93,7 @@ void MyScene1::init()
     myCylinder->radius = 0.1f;
     myCylinder->height = 0.3f;
     myCylinder->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
-    auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCylinder = engine::Transform(glm::vec3(0.5f, -0.35f, 0.0f));
     auto entityCylinder = std::make_shared<engine::Entity>("MyCylinder");
     entityCylinder->addComponent<engine::TransformComponent>(trsCylinder);
     entityCylinder->addComponent<engine::PrimitiveComponent>(myCylinder);
@@ -105,7 +105,7 @@ void MyScene1::init()
     myCone->radius = 0.1f;
     myCone->height = 0.3f;
     myCone->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
-    auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCone = engine::Transform(glm::vec3(1.0f, -0.35f, 0.0f));
     auto entityCone = std::make_shared<engine::Entity>("MyCone");
     entityCone->addComponent<engine::TransformComponent>(trsCone);
     entityCone->addComponent<engine::PrimitiveComponent>(myCone);
@@ -115,7 +115,7 @@ void MyScene1::init()
     // sphere
     auto mySphere = std::make_shared<engine::Sphere>();
     mySphere->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(1.0f));
-    auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsSphere = engine::Transform(glm::vec3(1.5f, -0.35f, 0.0f), glm::vec3(0.2f));
     auto entitySphere = std::make_shared<engine::Entity>("MySphere");
     entitySphere->addComponent<engine::TransformComponent>(trsSphere);
     entitySphere->addComponent<engine::PrimitiveComponent>(mySphere);
@@ -143,7 +143,7 @@ void MyScene1::init()
     // cube outside camera frustrum
     auto myCube2 = std::make_shared<engine::Cube>();
     myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
-    auto trsCube2 = engine::Transform(glm::vec3(-3.0f, -0.35f, 0.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube2 = engine::Transform(glm::vec3(-3.0f, -0.35f, 0.0f), glm::vec3(0.15f));
     auto entityCube2 = std::make_shared<engine::Entity>("MyCube2");
     entityCube2->addComponent<engine::TransformComponent>(trsCube2);
     entityCube2->addComponent<engine::PrimitiveComponent>(myCube2);
@@ -258,6 +258,14 @@ void MyScene1::update(engine::Shader& shader)
         auto trs = myBackpack->getTransform();
         trs.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
         myBackpack->setTransform(trs);
+    }
+
+    auto myCylinder = getEntityManager().findEntityByName("MyCylinder");
+    if (myCylinder)
+    {
+        auto trs = myCylinder->getTransform();
+        trs.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+        myCylinder->setTransform(trs);
     }
 
     rotation += deltaTime * 10.0f;

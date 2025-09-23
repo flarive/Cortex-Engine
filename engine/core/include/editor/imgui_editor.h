@@ -69,11 +69,13 @@ namespace engine
 		void renderTransformComponent(const std::shared_ptr<Entity>& entity, bool displayPosition = true, bool displayRotation = true, bool displayScale = true);
 		void renderLightComponent(std::shared_ptr<LightComponent>& component);
 		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
-		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
+		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent);
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 
 		bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
+
+		void updateTransformComponentPosition(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position);
 
 
 	protected:

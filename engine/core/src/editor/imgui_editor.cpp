@@ -302,13 +302,15 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
 
 void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity)
 {
+    std::shared_ptr<TransformComponent> transformComponent{};
+
     // looping over entity components
     for (auto& [typeID, component] : entity->components)
     {
         if (typeID == ComponentType::transform)
         {
             // transform component
-            //auto transformComponent = dynamic_pointer_cast<TransformComponent>(component);
+            transformComponent = std::reinterpret_pointer_cast<TransformComponent>(component);
             renderTransformComponent(entity, true, true, true);
         }
         else if (typeID == ComponentType::camera)
@@ -333,7 +335,7 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
         {
             // primitive component
             auto primitiveComponent = dynamic_pointer_cast<PrimitiveComponent>(component);
-            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent);
+            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent, transformComponent);
         }
     }
 }
@@ -380,12 +382,12 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         scale = primitiveComponent->getPrimitive()->rotation;
         rotation = primitiveComponent->getPrimitive()->scale;
     }
-    //else if (modelComponent = entity->getComponent<ModelComponent>())
-    //{
-    //    position = modelComponent->getModel()->position;
-    //    scale = modelComponent->getModel()->rotation;
-    //    rotation = modelComponent->getModel()->scale;
-    //}
+    else if (modelComponent = entity->getComponent<ModelComponent>())
+    {
+        //position = modelComponent->getModel()->position;
+        //scale = modelComponent->getModel()->rotation;
+        //rotation = modelComponent->getModel()->scale;
+    }
 
     // Local variables for ImGui
     float posX = position.x;
@@ -481,11 +483,19 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     }
 
     if (cameraComponent)
+    {
         cameraComponent->getCamera()->position = position;
+    }
     else if (lightComponent)
+    {
         lightComponent->getLight()->position = position;
+    }
     else if (primitiveComponent)
+    {
         primitiveComponent->getPrimitive()->position = position;
+    }
+
+    updateTransformComponentPosition(transformComponent, position); // dirty
 }
 
 
@@ -682,7 +692,7 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     }
 }
 
-void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
+void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)
 {
     ImGui::SeparatorText(component->getName().c_str());
 
@@ -690,13 +700,20 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
         return;
 
 
-    glm::vec3 position = component->getPrimitive()->position;
+    //glm::vec3 position = component->getPrimitive()->position;
 
-    if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
-    {
-        component->getPrimitive()->position = position;
-    }
+    //if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
+    //{
+    //    component->getPrimitive()->position = position;
+    //    updateTransformComponentPosition(transformComponent, position);
+    //}
+}
 
+void engine::ImGuiEditor::updateTransformComponentPosition(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position)
+{
+    auto trs = transformComponent->getTransform();
+    trs.setLocalPosition(position);
+    transformComponent->setTransform(trs);
 }
 
 void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& component)

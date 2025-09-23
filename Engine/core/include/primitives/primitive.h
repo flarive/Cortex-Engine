@@ -44,7 +44,7 @@ namespace engine
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
-        virtual void draw(Shader& shader, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
+        virtual void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean();

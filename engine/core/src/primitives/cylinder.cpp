@@ -141,7 +141,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& transformMatrix, Tr
 {
     shader.use();
 
-    //position = localTransform.getLocalPosition();
+    position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

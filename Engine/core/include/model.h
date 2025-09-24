@@ -4,7 +4,7 @@
 #include "texture.h"
 #include "mesh.h"
 #include "shader.h"
-
+#include "transform.h"
 
 
 #include <assimp/importer.hpp>
@@ -35,18 +35,20 @@ namespace engine
         std::string directory{};
         bool gammaCorrection{};
 
+        glm::vec3 position{};
+        glm::vec3 rotation{};
+        glm::vec3 scale{};
+
         unsigned int numberOfMeshes{};
 
         Model() = default;
 		~Model() = default;
 
         // constructor, expects a filepath to a 3D model.
-        Model(const std::string& path, bool gamma = false, bool flipUVs = false);
+        Model(const std::string& path, bool gamma = false, bool flipUVs = false, const glm::vec3& _position = glm::vec3());
 
         // draws the model, and thus all its meshes
-        void draw(Shader& shader, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotation = glm::vec3(0.0f));
-
-        void draw(Shader& shader, const glm::mat4& worldTransform);
+        void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform);
 
         void clean();
 

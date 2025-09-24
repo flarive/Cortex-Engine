@@ -135,7 +135,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& transformMatrix, Tran
 {
     shader.use();
 
-    //position = localTransform.getLocalPosition();
+    position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

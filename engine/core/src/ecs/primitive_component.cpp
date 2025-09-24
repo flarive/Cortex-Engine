@@ -9,6 +9,8 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 void engine::PrimitiveComponent::init(Transform& transform)
 {
 	m_primitive->position = transform.getLocalPosition();
+	m_primitive->rotation = transform.getLocalRotation();
+	m_primitive->scale = transform.getLocalScale();
 }
 
 void engine::PrimitiveComponent::update(Transform& transform)

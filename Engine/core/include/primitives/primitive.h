@@ -29,8 +29,6 @@ namespace engine
 
         float m_uvScale{ 1.0f };
 
-        
-        //glm::vec3 m_position{};
 
     public:
         
@@ -52,17 +50,6 @@ namespace engine
         virtual std::vector<Vertex> generateVertices() = 0;
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
-
-        //void setPosition(const glm::vec3& pos)
-        //{
-        //    m_position = pos;
-        //}
-
-        //glm::vec3 getPosition() const
-        //{
-        //    return m_position;
-        //}
-
 
 
         static float* getScaledPlaneVertices(float uvScale)

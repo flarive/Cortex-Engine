@@ -11,7 +11,9 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 
 void engine::ModelComponent::init(Transform& transform)
 {
-
+	m_model->position = transform.getLocalPosition();
+	m_model->rotation = transform.getLocalRotation();
+	m_model->scale = transform.getLocalScale();
 }
 
 void engine::ModelComponent::update(Transform& transform)
@@ -21,7 +23,7 @@ void engine::ModelComponent::update(Transform& transform)
 
 void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)
 {
-    m_model->draw(shader, localTransform.getLocalPosition(), localTransform.getLocalScale(), localTransform.getLocalRotation());
+    m_model->draw(shader, worldTransformMatrix, localTransform);
 }
 
 engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_ptr<Model> model)

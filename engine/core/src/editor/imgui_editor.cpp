@@ -358,9 +358,9 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     static auto red = IM_COL32(255, 54, 83, 255);
     static auto white = IM_COL32(255, 255, 255, 255);
 
-    glm::vec3 position{};
-    glm::vec3 rotation{};
-    glm::vec3 scale{};
+    glm::vec3 position{0,0,0};
+    glm::vec3 rotation{0,0,0};
+    glm::vec3 scale{1,1,1};
 
     std::shared_ptr<CameraComponent> cameraComponent{};
     std::shared_ptr<LightComponent> lightComponent{};
@@ -379,14 +379,14 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     else if (primitiveComponent = entity->getComponent<PrimitiveComponent>())
     {
         position = primitiveComponent->getPrimitive()->position;
-        scale = primitiveComponent->getPrimitive()->rotation;
-        rotation = primitiveComponent->getPrimitive()->scale;
+        scale = primitiveComponent->getPrimitive()->scale;
+        rotation = primitiveComponent->getPrimitive()->rotation;
     }
     else if (modelComponent = entity->getComponent<ModelComponent>())
     {
-        //position = modelComponent->getModel()->position;
-        //scale = modelComponent->getModel()->rotation;
-        //rotation = modelComponent->getModel()->scale;
+        position = modelComponent->getModel()->position;
+        scale = modelComponent->getModel()->scale;
+        rotation = modelComponent->getModel()->rotation;
     }
 
     // Local variables for ImGui
@@ -418,17 +418,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Position");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &posX, 0.1f)) {
+            if (drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &posX, 0.01f)) {
                 position.x = posX;
             }
 
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &posY, 0.1f)) {
+            if (drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &posY, 0.01f)) {
                 position.y = posY;
             }
 
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &posZ, 0.1f)) {
+            if (drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &posZ, 0.01f)) {
                 position.z = posZ;
             }
         }
@@ -441,17 +441,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Rotation");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 0.5f)) {
+            if (drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 1.0f)) {
                 rotation.x = rotX;
             }
 
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 0.5f)) {
+            if (drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 1.0f)) {
                 rotation.y = rotY;
             }
 
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 0.5f)) {
+            if (drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 1.0f)) {
                 rotation.z = rotZ;
             }
         }
@@ -464,17 +464,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Scale");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.05f)) {
+            if (drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.01f)) {
                 scale.x = scaX;
             }
             
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.05f)) {
+            if (drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.01f)) {
                 scale.y = scaY;
             }
             
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.05f)) {
+            if (drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.01f)) {
                 scale.z = scaZ;
             }
         }
@@ -492,10 +492,20 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     }
     else if (primitiveComponent)
     {
-        primitiveComponent->getPrimitive()->position = position;
+        auto p = primitiveComponent->getPrimitive();
+        p->position = position;
+        p->rotation = rotation;
+        p->scale = scale;
+    }
+    else if (modelComponent)
+    {
+        auto p = modelComponent->getModel();
+        p->position = position;
+        p->rotation = rotation;
+        p->scale = scale;
     }
 
-    updateTransformComponentPosition(transformComponent, position); // dirty
+    updateTransformComponent(transformComponent, position, rotation, scale); // dirty
 }
 
 
@@ -709,10 +719,12 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     //}
 }
 
-void engine::ImGuiEditor::updateTransformComponentPosition(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position)
+void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
 {
     auto trs = transformComponent->getTransform();
     trs.setLocalPosition(position);
+    trs.setLocalRotation(rotation);
+    trs.setLocalScale(scale);
     transformComponent->setTransform(trs);
 }
 
@@ -844,7 +856,7 @@ bool engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
     ImGui::SetNextItemWidth(width);
-    bool res = ImGui::DragFloat(name, value, step);
+    bool res = ImGui::DragFloat(name, value, step, 0.0f, 0.0f, "%.2f");
     ImGui::PopStyleColor(3);
 
     return res;

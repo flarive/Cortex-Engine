@@ -244,11 +244,18 @@ void MyScene1::update(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
 
+    // Normalize rotation to [0, 360)
+    rotation = fmod(rotation, 360.0f);
+    if (rotation < 0) {
+        rotation += 360.0f;
+    }
+
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
         auto trs = myCushion->getTransform();
-        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         myCushion->setTransform(trs);
     }
 
@@ -256,7 +263,8 @@ void MyScene1::update(engine::Shader& shader)
     if (myBackpack)
     {
         auto trs = myBackpack->getTransform();
-        trs.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         myBackpack->setTransform(trs);
     }
 
@@ -264,7 +272,8 @@ void MyScene1::update(engine::Shader& shader)
     if (myCylinder)
     {
         auto trs = myCylinder->getTransform();
-        trs.setLocalRotation(glm::vec3(90.0f, rotation, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         myCylinder->setTransform(trs);
     }
 

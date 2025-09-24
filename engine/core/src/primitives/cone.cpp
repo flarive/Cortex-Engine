@@ -126,7 +126,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& transformMatrix, Transf
 {
     shader.use();
 
-    //position = localTransform.getLocalPosition();
+    position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 

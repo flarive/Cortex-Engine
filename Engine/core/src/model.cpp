@@ -20,7 +20,7 @@
 
 
 // constructor, expects a filepath to a 3D model.
-engine::Model::Model(const std::string& path, bool gamma, bool flipUVs) : gammaCorrection(gamma)
+engine::Model::Model(const std::string& path, bool gamma, bool flipUVs, const glm::vec3& _position) : gammaCorrection(gamma), position(_position)
 {
     assert(!path.empty() && "Model path is empty !");
 
@@ -315,34 +315,16 @@ std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* 
     return textures;
 }
 
-
-
-
 // draws the model, and thus all its meshes
-void engine::Model::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
+void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    // Compute quaternion from Euler rotation
-    glm::quat quaternion = glm::quat(glm::radians(rotation)); // Euler (XYZ) -> quaternion
-    quaternion = glm::normalize(quaternion);
-
-    // Compose model matrix
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-    model *= glm::mat4_cast(quaternion); // apply rotation
-    model = glm::scale(model, scale);
-
-    for (unsigned int i = 0; i < meshes.size(); i++)
-    {
-        meshes[i].draw(shader, model);
-    }
-}
-
-
-// draws the model, and thus all its meshes
-void engine::Model::draw(Shader& shader, const glm::mat4& worldTransform)
-{
+    position = localTransform.getLocalPosition();
+    rotation = localTransform.getLocalRotation();
+    scale = localTransform.getLocalScale();
+    
     for (auto& mesh : meshes)
     {
-        mesh.draw(shader, worldTransform);
+        mesh.draw(shader, transformMatrix);
     }
 }
 

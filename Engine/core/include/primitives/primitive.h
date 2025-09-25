@@ -51,6 +51,11 @@ namespace engine
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
+		float getUvScale() const { return m_uvScale; }
+        void setUvScale(float uvScale) { m_uvScale = uvScale; }
+
+        void reSetup() { setup(); };
+
 
         static float* getScaledPlaneVertices(float uvScale)
         {
@@ -404,7 +409,8 @@ namespace engine
             glm::vec3 normal(x, 0.0f, z);
 
             // FIX: Flip U coordinate to correct horizontal texture orientation
-            float u = (1.0f - (float)i / sectorCount) * uvScale;
+            //float u = (1.0f - (float)i / sectorCount) * uvScale;
+            float u = ((float)i / sectorCount) * uvScale;
 
             // Bottom vertex
             glm::vec2 texCoord(u, 0.0f);
@@ -414,6 +420,8 @@ namespace engine
             texCoord.y = uvScale;
             vertices.emplace_back( glm::vec3(radius * x, halfHeight, radius * z), normal, texCoord );
         }
+
+
 
         // === Top Cap Center Vertex ===
         glm::vec3 topCenter(0.0f, halfHeight, 0.0f);

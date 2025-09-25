@@ -710,13 +710,15 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
         return;
 
 
-    //glm::vec3 position = component->getPrimitive()->position;
+    auto primitive = component->getPrimitive();
+    if (!primitive)
+		return;
 
-    //if (ImGui::DragFloat3("Position888", &position[0], 0.1f))
-    //{
-    //    component->getPrimitive()->position = position;
-    //    updateTransformComponentPosition(transformComponent, position);
-    //}
+	float uvScale = primitive->getUvScale();
+	if (ImGui::DragFloat("UV", &uvScale, 0.01f, 0.0f, 10.0f, "%.01f", ImGuiSliderFlags_None)) {
+		primitive->setUvScale(uvScale);
+        primitive->reSetup();
+	}
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)

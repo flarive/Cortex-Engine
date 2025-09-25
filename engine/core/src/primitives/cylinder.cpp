@@ -164,7 +164,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& transformMatrix, Tr
     shader.setBool("hasTangents", true);
 
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
     m_material->unbind();

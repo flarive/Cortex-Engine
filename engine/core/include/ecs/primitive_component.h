@@ -41,6 +41,8 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
+		std::vector<std::string> getPublicProperties() override;
+
 	private:
 
 		std::shared_ptr<Primitive> m_primitive{};

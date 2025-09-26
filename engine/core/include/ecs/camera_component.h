@@ -36,6 +36,8 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
+		std::vector<std::string> getPublicProperties() override;
+
 	private:
 
 		std::shared_ptr<Camera> m_camera{};

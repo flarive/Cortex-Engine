@@ -13,6 +13,8 @@
 
 namespace engine
 {
+    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6 };
+    
     /// <summary>
     /// Abstract class for primitives
     /// </summary>
@@ -55,6 +57,11 @@ namespace engine
         void setUvScale(float uvScale) { m_uvScale = uvScale; }
 
         void reSetup() { setup(); };
+
+        virtual PrimitiveType getTypeID() const
+        {
+            return PrimitiveType::undefined;
+        }
 
 
         static float* getScaledPlaneVertices(float uvScale)

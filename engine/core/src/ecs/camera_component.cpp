@@ -34,3 +34,8 @@ engine::AABB* engine::CameraComponent::getBoundingVolume()
 {
 	return m_boundingVolume.get();
 }
+
+std::vector<std::string> engine::CameraComponent::getPublicProperties()
+{
+	return{ "x", "y" };
+}

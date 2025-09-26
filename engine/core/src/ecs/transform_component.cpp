@@ -27,3 +27,8 @@ engine::AABB* engine::TransformComponent::getBoundingVolume()
     auto zzz = std::make_unique<AABB>(aabb);
     return zzz.get();
 }
+
+std::vector<std::string> engine::TransformComponent::getPublicProperties()
+{
+    return{ "x", "y" };
+}

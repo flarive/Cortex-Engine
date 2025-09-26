@@ -48,3 +48,15 @@ engine::AABB* engine::PrimitiveComponent::getBoundingVolume()
 {
 	return m_boundingVolume.get();
 }
+
+std::vector<std::string> engine::PrimitiveComponent::getPublicProperties()
+{
+	auto primitiveType = m_primitive->getTypeID();
+
+	if (primitiveType == PrimitiveType::cylinder)
+	{
+		return{ "radius", "height"};
+	}
+	
+	return{};
+}

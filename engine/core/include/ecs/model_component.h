@@ -39,6 +39,8 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
+		std::vector<std::string> getPublicProperties() override;
+
 	private:
 
 		std::shared_ptr<Model> m_model{};

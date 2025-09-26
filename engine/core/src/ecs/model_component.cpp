@@ -54,3 +54,8 @@ engine::AABB* engine::ModelComponent::getBoundingVolume()
 {
 	return m_boundingVolume.get();
 }
+
+std::vector<std::string> engine::ModelComponent::getPublicProperties()
+{
+	return{ "x", "y" };
+}

@@ -19,6 +19,14 @@
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/directional_light.h"
 
+#include "../../include/primitives/primitive.h"
+#include "../../include/primitives/sphere.h"
+#include "../../include/primitives/cube.h"
+#include "../../include/primitives/plane.h"
+#include "../../include/primitives/cylinder.h"
+#include "../../include/primitives/cone.h"
+
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -715,10 +723,83 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
 		return;
 
 	float uvScale = primitive->getUvScale();
-	if (ImGui::DragFloat("UV", &uvScale, 0.01f, 0.0f, 10.0f, "%.01f", ImGuiSliderFlags_None)) {
-		primitive->setUvScale(uvScale);
-        primitive->reSetup();
-	}
+
+    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    {
+        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::Text("UV");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::SetNextItemWidth(80);
+        if (ImGui::DragFloat("##priUV", &uvScale, 0.1f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+        {
+            primitive->setUvScale(uvScale);
+            primitive->reSetup();
+        }
+
+        ImGui::EndTable();
+    }
+
+
+    std::shared_ptr<Sphere> spherePrimitive;
+    std::shared_ptr<Plane> planePrimitive;
+    std::shared_ptr<Cube> cubePrimitive;
+    std::shared_ptr<Cylinder> cylinderPrimitive;
+
+    if (spherePrimitive = std::dynamic_pointer_cast<Sphere>(component->getPrimitive()))
+    {
+    }
+    else if (planePrimitive = std::dynamic_pointer_cast<Plane>(component->getPrimitive()))
+    {
+    }
+    else if (cubePrimitive = std::dynamic_pointer_cast<Cube>(component->getPrimitive()))
+    {
+    }
+    else if (cylinderPrimitive = std::dynamic_pointer_cast<Cylinder>(component->getPrimitive()))
+    {
+    }
+
+    if (cylinderPrimitive)
+    {
+        auto properties = component->getPublicProperties();
+        
+        
+        float radius = cylinderPrimitive->radius;
+        float height = cylinderPrimitive->height;
+        
+        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+        {
+            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Radius");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(80);
+            if (ImGui::DragFloat("##priCylRadius", &radius, 0.01f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+            {
+                cylinderPrimitive->radius = radius;
+                cylinderPrimitive->reSetup();
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Height");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(80);
+            if (ImGui::DragFloat("##priCylHeight", &height, 0.01f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+            {
+                cylinderPrimitive->height = height;
+                cylinderPrimitive->reSetup();
+            }
+
+            ImGui::EndTable();
+        }
+    }
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)

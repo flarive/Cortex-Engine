@@ -26,6 +26,11 @@ namespace engine
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform) override;
 
+        PrimitiveType getTypeID() const override
+        {
+            return PrimitiveType::cylinder;
+        }
+
 
         
 

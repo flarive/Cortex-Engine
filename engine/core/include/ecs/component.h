@@ -6,6 +6,8 @@
 #include "../transform.h"
 #include "../aabb.h"
 
+#include <vector>
+
 namespace engine
 {
     enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5 };
@@ -30,6 +32,10 @@ namespace engine
         virtual engine::AABB* getBoundingVolume();
 
         virtual std::string getName() = 0;
+
+
+        virtual std::vector<std::string> getPublicProperties() = 0;
+
 	};
 
     /// <summary>

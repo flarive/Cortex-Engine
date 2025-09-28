@@ -1,9 +1,24 @@
 #include "../../include/ecs/primitive_component.h"
 
+#include "../../include/primitives/cylinder.h"
+
 engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primitive)
     : m_primitive(primitive)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
+
+	// Initialize property setters based on primitive type
+	auto primitiveType = m_primitive->getTypeID();
+	if (primitiveType == PrimitiveType::cylinder)
+	{
+		if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
+		{
+			m_propertySetters = {
+				{"radius", [cylinder](float value) { cylinder->radius = value; }},
+				{"height", [cylinder](float value) { cylinder->height = value; }}
+			};
+		}
+	}
 }
 
 void engine::PrimitiveComponent::init(Transform& transform)
@@ -49,14 +64,30 @@ engine::AABB* engine::PrimitiveComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-std::vector<std::string> engine::PrimitiveComponent::getPublicProperties()
+std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicProperties()
 {
 	auto primitiveType = m_primitive->getTypeID();
 
 	if (primitiveType == PrimitiveType::cylinder)
 	{
-		return{ "radius", "height"};
+		if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "radius", cylinder->radius },
+				engine::KeyValuePair{ "height", cylinder->height }
+			};
+		}
 	}
 	
 	return{};
+}
+
+void engine::PrimitiveComponent::setProperty(const std::string& key, float value)
+{
+	auto it = m_propertySetters.find(key);
+	if (it != m_propertySetters.end())
+	{
+		it->second(value);
+		m_primitive->reSetup(); // Assuming all primitives have a reSetup() method
+	}
 }

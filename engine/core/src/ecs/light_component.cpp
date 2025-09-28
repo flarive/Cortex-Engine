@@ -44,7 +44,7 @@ engine::AABB* engine::LightComponent::getBoundingVolume()
     return m_boundingVolume.get();
 }
 
-std::vector<std::string> engine::LightComponent::getPublicProperties()
+std::vector<engine::KeyValuePair> engine::LightComponent::getPublicProperties()
 {
-    return{ "x", "y" };
+    return std::vector<engine::KeyValuePair>{};
 }

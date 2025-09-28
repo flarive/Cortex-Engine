@@ -33,6 +33,10 @@
 
 #include <imgui_internal.h>
 
+#include <format>
+#include <unordered_map>
+#include <functional>
+
 //#ifdef EDITOR_MODE
 
 
@@ -765,38 +769,26 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (cylinderPrimitive)
     {
         auto properties = component->getPublicProperties();
-        
-        
-        float radius = cylinderPrimitive->radius;
-        float height = cylinderPrimitive->height;
-        
+
         if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
         {
             ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
             ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Radius");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(80);
-            if (ImGui::DragFloat("##priCylRadius", &radius, 0.01f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+            for (auto& kvPair : properties)
             {
-                cylinderPrimitive->radius = radius;
-                cylinderPrimitive->reSetup();
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text(kvPair.key.c_str());
+                ImGui::TableSetColumnIndex(1);
+                ImGui::SetNextItemWidth(80);
+                if (auto pValue = std::get_if<float>(&kvPair.value))
+                {
+                    if (ImGui::DragFloat(std::format("##priCyl{}", kvPair.key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
+                    {
+                        component->setProperty(kvPair.key, *pValue);
+                    }
+                }
             }
-
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Height");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(80);
-            if (ImGui::DragFloat("##priCylHeight", &height, 0.01f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
-            {
-                cylinderPrimitive->height = height;
-                cylinderPrimitive->reSetup();
-            }
-
             ImGui::EndTable();
         }
     }

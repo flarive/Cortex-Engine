@@ -41,13 +41,17 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
-		std::vector<std::string> getPublicProperties() override;
+		std::vector<KeyValuePair> getPublicProperties() override;
+		void setProperty(const std::string& key, float value);
 
 	private:
 
 		std::shared_ptr<Primitive> m_primitive{};
 		std::unique_ptr<AABB> m_boundingVolume{};
+		std::unordered_map<std::string, std::function<void(float)>> m_propertySetters{};
 
 		AABB generateBoundingVolume(const std::shared_ptr<Primitive> primitive);
+
+		
 	};
 }

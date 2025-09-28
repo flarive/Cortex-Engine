@@ -28,7 +28,7 @@ engine::AABB* engine::TransformComponent::getBoundingVolume()
     return zzz.get();
 }
 
-std::vector<std::string> engine::TransformComponent::getPublicProperties()
+std::vector<engine::KeyValuePair> engine::TransformComponent::getPublicProperties()
 {
-    return{ "x", "y" };
+    return std::vector<engine::KeyValuePair>{};
 }

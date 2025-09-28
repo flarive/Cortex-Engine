@@ -41,7 +41,7 @@ namespace engine
 		}
 
 
-		std::vector<std::string> getPublicProperties() override;
+		std::vector<KeyValuePair> getPublicProperties() override;
 
 	private:
 		Transform m_transform{};       // local position/rotation/scale

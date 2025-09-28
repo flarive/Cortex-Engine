@@ -39,7 +39,7 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
-		std::vector<std::string> getPublicProperties() override;
+		std::vector<KeyValuePair> getPublicProperties() override;
 
 	private:
 

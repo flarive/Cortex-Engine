@@ -1,6 +1,11 @@
 #include "../../include/ecs/primitive_component.h"
 
+#include "../../include/primitives/cube.h"
+#include "../../include/primitives/sphere.h"
+#include "../../include/primitives/plane.h"
 #include "../../include/primitives/cylinder.h"
+#include "../../include/primitives/cone.h"
+#include "../../include/primitives/billboard.h"
 
 engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primitive)
     : m_primitive(primitive)
@@ -8,17 +13,39 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 
 	// Initialize property setters based on primitive type
-	auto primitiveType = m_primitive->getTypeID();
-	if (primitiveType == PrimitiveType::cylinder)
+	if (auto sphere = std::static_pointer_cast<Sphere>(m_primitive))
 	{
-		if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
-		{
-			m_propertySetters = {
-				{"radius", [cylinder](float value) { cylinder->radius = value; }},
-				{"height", [cylinder](float value) { cylinder->height = value; }}
-			};
-		}
+		m_propertySetters = {
+			{"radius", [sphere](float value) { sphere->radius = value; }},
+		};
 	}
+	else if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
+	{
+		m_propertySetters = {
+			{"radius", [cylinder](float value) { cylinder->radius = value; }},
+			{"height", [cylinder](float value) { cylinder->height = value; }}
+		};
+	}
+	else if (auto cone = std::static_pointer_cast<Cone>(m_primitive))
+	{
+		m_propertySetters = {
+			{"radius", [cone](float value) { cone->radius = value; }},
+			{"height", [cone](float value) { cone->height = value; }}
+		};
+
+		std::function<void(float)> func = [cone](float value) { cone->radius = value; };
+	}
+
+
+	
+	
+
+	//m_propertySetters.emplace("pppp", &m_primitive{
+	//m_primitive->uvScale = value;
+	//	});
+
+
+
 }
 
 void engine::PrimitiveComponent::init(Transform& transform)
@@ -68,13 +95,32 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 {
 	auto primitiveType = m_primitive->getTypeID();
 
-	if (primitiveType == PrimitiveType::cylinder)
+	if (primitiveType == PrimitiveType::sphere)
+	{
+		if (auto sphere = std::static_pointer_cast<Sphere>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "radius", sphere->radius }
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::cylinder)
 	{
 		if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
 		{
 			return {
 				engine::KeyValuePair{ "radius", cylinder->radius },
 				engine::KeyValuePair{ "height", cylinder->height }
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::cone)
+	{
+		if (auto cone = std::static_pointer_cast<Cone>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "radius", cone->radius },
+				engine::KeyValuePair{ "height", cone->height }
 			};
 		}
 	}

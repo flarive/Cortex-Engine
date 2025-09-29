@@ -726,71 +726,52 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (!primitive)
 		return;
 
-	float uvScale = primitive->getUvScale();
+	//float uvScale = primitive->getUvScale();
+
+ //   if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+ //   {
+ //       ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+ //       ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+
+ //       ImGui::TableNextRow();
+ //       ImGui::TableSetColumnIndex(0);
+ //       ImGui::Text("UV");
+ //       ImGui::TableSetColumnIndex(1);
+ //       ImGui::SetNextItemWidth(80);
+ //       if (ImGui::DragFloat("##priUV", &uvScale, 0.1f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+ //       {
+ //           primitive->setUvScale(uvScale);
+ //           primitive->reSetup();
+ //       }
+
+ //       ImGui::EndTable();
+ //   }
+
+    // draw component properties dynamically
+    auto properties = component->getPublicProperties();
+    auto componentType = to_string(component->getPrimitive()->getTypeID());
+    auto componentName = component->getName();
 
     if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("UV");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::SetNextItemWidth(80);
-        if (ImGui::DragFloat("##priUV", &uvScale, 0.1f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
+        for (auto& kvPair : properties)
         {
-            primitive->setUvScale(uvScale);
-            primitive->reSetup();
-        }
-
-        ImGui::EndTable();
-    }
-
-
-    std::shared_ptr<Sphere> spherePrimitive;
-    std::shared_ptr<Plane> planePrimitive;
-    std::shared_ptr<Cube> cubePrimitive;
-    std::shared_ptr<Cylinder> cylinderPrimitive;
-
-    if (spherePrimitive = std::dynamic_pointer_cast<Sphere>(component->getPrimitive()))
-    {
-    }
-    else if (planePrimitive = std::dynamic_pointer_cast<Plane>(component->getPrimitive()))
-    {
-    }
-    else if (cubePrimitive = std::dynamic_pointer_cast<Cube>(component->getPrimitive()))
-    {
-    }
-    else if (cylinderPrimitive = std::dynamic_pointer_cast<Cylinder>(component->getPrimitive()))
-    {
-    }
-
-    if (cylinderPrimitive)
-    {
-        auto properties = component->getPublicProperties();
-
-        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-        {
-            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-            for (auto& kvPair : properties)
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text(kvPair.key.c_str());
+            ImGui::TableSetColumnIndex(1);
+            ImGui::SetNextItemWidth(80);
+            if (auto pValue = std::get_if<float>(&kvPair.value))
             {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::Text(kvPair.key.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SetNextItemWidth(80);
-                if (auto pValue = std::get_if<float>(&kvPair.value))
+                if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, kvPair.key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
                 {
-                    if (ImGui::DragFloat(std::format("##priCyl{}", kvPair.key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
-                    {
-                        component->setProperty(kvPair.key, *pValue);
-                    }
+                    component->setProperty(kvPair.key, *pValue);
                 }
             }
-            ImGui::EndTable();
         }
+        ImGui::EndTable();
     }
 }
 

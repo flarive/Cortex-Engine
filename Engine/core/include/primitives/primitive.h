@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "../common_defines.h"
 #include "../vertex.h"
 #include "../shader.h"
@@ -14,6 +16,23 @@
 namespace engine
 {
     enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6 };
+
+
+    const std::unordered_map<PrimitiveType, std::string> PrimitiveTypeNames = {
+        {PrimitiveType::undefined, "undefined"},
+        {PrimitiveType::cube, "cube"},
+        {PrimitiveType::sphere, "sphere"},
+        {PrimitiveType::plane, "plane"},
+        {PrimitiveType::cylinder, "cylinder"},
+        {PrimitiveType::cone, "cone"},
+        {PrimitiveType::billboard, "billboard"}
+    };
+
+    inline std::string to_string(PrimitiveType type) {
+        auto it = PrimitiveTypeNames.find(type);
+        return it != PrimitiveTypeNames.end() ? it->second : "unknown";
+    }
+
     
     /// <summary>
     /// Abstract class for primitives
@@ -171,12 +190,6 @@ namespace engine
         glm::vec2 uv2(0.0f, uvScale);       // Bottom-left (now at v=uvScale)
         glm::vec2 uv3(uvScale, uvScale);    // Bottom-right
         glm::vec2 uv4(uvScale, 0.0f);       // Top-right
-
-        
-        //glm::vec2 uv1(0.0f, uvScale);
-        //glm::vec2 uv2(0.0f, 0.0f);
-        //glm::vec2 uv3(uvScale, 0.0f);
-        //glm::vec2 uv4(uvScale, uvScale);
 
         // Normal vector (facing +Z)
         glm::vec3 normal(0.0f, 0.0f, 1.0f);

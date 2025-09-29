@@ -33,7 +33,7 @@ void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapp
 
 void engine::Cube::setup()
 {
-    std::vector<Vertex> vertices = generateCubeVertices();
+    std::vector<Vertex> vertices = generateVertices();
 
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -67,7 +67,7 @@ void engine::Cube::setup()
 
 std::vector<engine::Vertex> engine::Cube::generateVertices()
 {
-    return generateCubeVertices();
+    return generateCubeVertices(m_uvScale);
 }
 
 void engine::Cube::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)

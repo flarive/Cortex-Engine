@@ -72,7 +72,7 @@ namespace engine
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
-		float getUvScale() const { return m_uvScale; }
+		float& getUvScale() { return m_uvScale; }
         void setUvScale(float uvScale) { m_uvScale = uvScale; }
 
         void reSetup() { setup(); };
@@ -283,66 +283,157 @@ namespace engine
     }
 
 
-    inline std::vector<engine::Vertex> generateCubeVertices()
+    //inline std::vector<engine::Vertex> generateCubeVertices(float uvScale)
+    //{
+    //    std::vector<engine::Vertex> vertices{};
+    //    vertices.reserve(36);
+
+    //    // Back face
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 0.0f });
+
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 1.0f });
+
+    //    // Front face
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
+
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
+
+    //    // Left face
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+
+    //    // Right face
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+
+    //    // Bottom face
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+
+    //    vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+
+    //    // Top face
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f , 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+
+    //    vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+    //    vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+
+
+
+    //    // Compute tangents and bitangents
+    //    for (size_t i = 0; i < vertices.size(); i += 3) {
+    //        glm::vec3 edge1 = vertices[i + 1].position - vertices[i].position;
+    //        glm::vec3 edge2 = vertices[i + 2].position - vertices[i].position;
+    //        glm::vec2 deltaUV1 = vertices[i + 1].texCoords - vertices[i].texCoords;
+    //        glm::vec2 deltaUV2 = vertices[i + 2].texCoords - vertices[i].texCoords;
+
+    //        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+    //        glm::vec3 tangent;
+    //        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+    //        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+    //        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+    //        tangent = glm::normalize(tangent);
+
+    //        glm::vec3 bitangent;
+    //        bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+    //        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+    //        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+    //        bitangent = glm::normalize(bitangent);
+
+    //        vertices[i].tangent = tangent;
+    //        vertices[i + 1].tangent = tangent;
+    //        vertices[i + 2].tangent = tangent;
+
+    //        vertices[i].bitangent = bitangent;
+    //        vertices[i + 1].bitangent = bitangent;
+    //        vertices[i + 2].bitangent = bitangent;
+    //    }
+
+    //    return vertices;
+    //}
+
+    inline std::vector<engine::Vertex> generateCubeVertices(float uvScale)
     {
         std::vector<engine::Vertex> vertices{};
         vertices.reserve(36);
 
-        // Back face
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 0.0f });
+        // Helper lambda to scale UVs
+        auto scaleUV = [uvScale](glm::vec2 uv) {
+            return glm::vec2{ uv.x * uvScale, uv.y * uvScale };
+            };
 
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 1.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, glm::vec2{ 0.0f, 1.0f });
+        // Back face
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 0.0f, -1.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
 
         // Front face
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
-
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
 
         // Left face
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ -1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
 
         // Right face
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 1.0f, 0.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
 
         // Bottom face
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-
-        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f, -1.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
 
         // Top face
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f , 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-
-        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1.0f, 0.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 1.0f });
-        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 0.0f, 0.0f });
-
-
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f , 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ 1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 1.0f, 0.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f, -1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 1.0f }));
+        vertices.emplace_back(glm::vec3{ -1.0f,  1.0f,  1.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, scaleUV(glm::vec2{ 0.0f, 0.0f }));
 
         // Compute tangents and bitangents
         for (size_t i = 0; i < vertices.size(); i += 3) {
@@ -350,32 +441,27 @@ namespace engine
             glm::vec3 edge2 = vertices[i + 2].position - vertices[i].position;
             glm::vec2 deltaUV1 = vertices[i + 1].texCoords - vertices[i].texCoords;
             glm::vec2 deltaUV2 = vertices[i + 2].texCoords - vertices[i].texCoords;
-
             float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
             glm::vec3 tangent;
             tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
             tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
             tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
             tangent = glm::normalize(tangent);
-
             glm::vec3 bitangent;
             bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
             bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
             bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
             bitangent = glm::normalize(bitangent);
-
             vertices[i].tangent = tangent;
             vertices[i + 1].tangent = tangent;
             vertices[i + 2].tangent = tangent;
-
             vertices[i].bitangent = bitangent;
             vertices[i + 1].bitangent = bitangent;
             vertices[i + 2].bitangent = bitangent;
         }
-
         return vertices;
     }
+
 
 
     inline std::vector<engine::Vertex> generateSphereVertices(float radius = 1.0f, float uvScale = 1.0f)

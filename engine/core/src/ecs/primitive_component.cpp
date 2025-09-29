@@ -13,39 +13,69 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 
 	// Initialize property setters based on primitive type
-	if (auto sphere = std::static_pointer_cast<Sphere>(m_primitive))
+
+	// usefull to have static_pointer_cast to work
+	auto primitiveType = m_primitive->getTypeID();
+
+	if (primitiveType == PrimitiveType::sphere)
 	{
-		m_propertySetters = {
-			{"radius", [sphere](float value) { sphere->radius = value; }},
-		};
+		if (auto sphere = std::static_pointer_cast<Sphere>(m_primitive))
+		{
+			m_propertySetters = {
+				{"radius", [sphere](float value) { sphere->radius = value; }},
+				{"uvscale", [sphere](float value) { sphere->getUvScale() = value; }}
+			};
+		}
 	}
-	else if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
+	else if (primitiveType == PrimitiveType::cube)
 	{
-		m_propertySetters = {
-			{"radius", [cylinder](float value) { cylinder->radius = value; }},
-			{"height", [cylinder](float value) { cylinder->height = value; }}
-		};
+		if (auto cube = std::static_pointer_cast<Cube>(m_primitive))
+		{
+			m_propertySetters = {
+				{"uvscale", [cube](float value) { cube->getUvScale() = value; }}
+			};
+		}
 	}
-	else if (auto cone = std::static_pointer_cast<Cone>(m_primitive))
+	else if (primitiveType == PrimitiveType::plane)
 	{
-		m_propertySetters = {
-			{"radius", [cone](float value) { cone->radius = value; }},
-			{"height", [cone](float value) { cone->height = value; }}
-		};
-
-		std::function<void(float)> func = [cone](float value) { cone->radius = value; };
+		if (auto plane = std::static_pointer_cast<Plane>(m_primitive))
+		{
+			m_propertySetters = {
+				{"uvscale", [plane](float value) { plane->getUvScale() = value; }}
+			};
+		}
 	}
-
-
-	
-	
-
-	//m_propertySetters.emplace("pppp", &m_primitive{
-	//m_primitive->uvScale = value;
-	//	});
-
-
-
+	else if (primitiveType == PrimitiveType::cylinder)
+	{
+		if (auto cylinder = std::static_pointer_cast<Cylinder>(m_primitive))
+		{
+			m_propertySetters = {
+				{"radius", [cylinder](float value) { cylinder->radius = value; }},
+				{"height", [cylinder](float value) { cylinder->height = value; }},
+				{"uvscale", [cylinder](float value) { cylinder->getUvScale() = value; }}
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::cone)
+	{
+		if (auto cone = std::static_pointer_cast<Cone>(m_primitive))
+		{
+			m_propertySetters = {
+				{"radius", [cone](float value) { cone->radius = value; }},
+				{"height", [cone](float value) { cone->height = value; }},
+				{"uvscale", [cone](float value) { cone->getUvScale() = value; }}
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::billboard)
+	{
+		if (auto billboard = std::static_pointer_cast<Billboard>(m_primitive))
+		{
+			m_propertySetters = {
+				{"uvscale", [billboard](float value) { billboard->getUvScale() = value; }}
+			};
+		}
+	}
 }
 
 void engine::PrimitiveComponent::init(Transform& transform)
@@ -93,6 +123,7 @@ engine::AABB* engine::PrimitiveComponent::getBoundingVolume()
 
 std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicProperties()
 {
+	// usefull to have static_pointer_cast to work
 	auto primitiveType = m_primitive->getTypeID();
 
 	if (primitiveType == PrimitiveType::sphere)
@@ -100,7 +131,26 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 		if (auto sphere = std::static_pointer_cast<Sphere>(m_primitive))
 		{
 			return {
-				engine::KeyValuePair{ "radius", sphere->radius }
+				engine::KeyValuePair{ "radius", sphere->radius },
+				engine::KeyValuePair{ "uvscale", sphere->getUvScale() }
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::cube)
+	{
+		if (auto cube = std::static_pointer_cast<Cube>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "uvscale", cube->getUvScale() }
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::plane)
+	{
+		if (auto plane = std::static_pointer_cast<Plane>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "uvscale", plane->getUvScale() }
 			};
 		}
 	}
@@ -110,7 +160,8 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 		{
 			return {
 				engine::KeyValuePair{ "radius", cylinder->radius },
-				engine::KeyValuePair{ "height", cylinder->height }
+				engine::KeyValuePair{ "height", cylinder->height },
+				engine::KeyValuePair{ "uvscale", cylinder->getUvScale() }
 			};
 		}
 	}
@@ -120,7 +171,17 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 		{
 			return {
 				engine::KeyValuePair{ "radius", cone->radius },
-				engine::KeyValuePair{ "height", cone->height }
+				engine::KeyValuePair{ "height", cone->height },
+				engine::KeyValuePair{ "uvscale", cone->getUvScale() }
+			};
+		}
+	}
+	else if (primitiveType == PrimitiveType::billboard)
+	{
+		if (auto billboard = std::static_pointer_cast<Billboard>(m_primitive))
+		{
+			return {
+				engine::KeyValuePair{ "uvscale", billboard->getUvScale() }
 			};
 		}
 	}

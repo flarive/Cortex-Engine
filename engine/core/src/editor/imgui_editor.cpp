@@ -726,26 +726,6 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (!primitive)
 		return;
 
-	//float uvScale = primitive->getUvScale();
-
- //   if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
- //   {
- //       ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
- //       ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-
- //       ImGui::TableNextRow();
- //       ImGui::TableSetColumnIndex(0);
- //       ImGui::Text("UV");
- //       ImGui::TableSetColumnIndex(1);
- //       ImGui::SetNextItemWidth(80);
- //       if (ImGui::DragFloat("##priUV", &uvScale, 0.1f, 0.0f, 10.0f, "%.001f", ImGuiSliderFlags_None))
- //       {
- //           primitive->setUvScale(uvScale);
- //           primitive->reSetup();
- //       }
-
- //       ImGui::EndTable();
- //   }
 
     // draw component properties dynamically
     auto properties = component->getPublicProperties();

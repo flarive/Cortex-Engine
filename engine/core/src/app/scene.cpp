@@ -71,7 +71,7 @@ void engine::Scene::after_init_internal()
 
     // Fill imGui debug window with current scene hierarchy
     //#ifdef EDITOR_MODE
-    m_debug.setScene(m_entityManager.getRootEntity());
+    m_editor.setScene(m_entityManager.getRootEntity());
     //#endif
     
     // count all items in the scene
@@ -112,7 +112,7 @@ void engine::Scene::initialize()
 //#ifdef EDITOR_MODE
 void engine::Scene::listenForEditorChanges()
 {
-    m_debug.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
+    m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
             m_selectedEntityID = entity->id;
@@ -120,7 +120,7 @@ void engine::Scene::listenForEditorChanges()
 
 
 
-    m_debug.setOnSceneSettingChanged([this](std::string key, bool value)
+    m_editor.setOnSceneSettingChanged([this](std::string key, bool value)
         {
             logger.info("{} setting changed: {})", key, value);
 
@@ -132,6 +132,10 @@ void engine::Scene::listenForEditorChanges()
             {
                 sceneSettings.enableFaceCulling = value;
             }
+            else if (key == "enable_camera_frustrum_culling")
+            {
+                sceneSettings.enableCameraFrustrumCulling = value;
+			}
         });
 
 }
@@ -169,7 +173,7 @@ void engine::Scene::gameLoop()
     if (is_editor_mode)
     {
         app->setWindowTitle("EDITOR");
-        m_debug.renderUIWindow(is_editor_mode);
+        m_editor.renderUIWindow(is_editor_mode);
         renderGizmo();
     }
     
@@ -355,10 +359,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             //    }
             //}
         }
-        else
-        {
-            std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
-        }
+        //else
+        //{
+        //    if (entity->getType() == EntityType::primitive || entity->getType() == EntityType::model)
+        //    {
+        //        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
+        //    }
+        //}
     }
 
     if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
@@ -391,9 +398,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             {
                 // primitive and model
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
-
-                if (frustrumOk)
-                    inFrustrumCount++;
+                inFrustrumCount++;
             }
             else if (typeID == ComponentType::camera)
             {

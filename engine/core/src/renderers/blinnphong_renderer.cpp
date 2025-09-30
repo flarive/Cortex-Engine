@@ -10,7 +10,7 @@
 
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
     : Renderer(window, sceneSettings, renderSettings)
 {
 }
@@ -23,19 +23,22 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     
     // configure global opengl state
     // -----------------------------
+    // enable depth testing
     enableDepthTest(true);
-
+    // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     // enable objects outlining
     enableStencilTest(true);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    // avoid computing back faces not visible by camera
+    enableFaceCulling(m_sceneSettings.enableFaceCulling);
+    // automatic color correction
+    enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
 
-    if (m_sceneSettings.enableFaceCulling) enableFaceCulling(true);
-    if (m_sceneSettings.enableGammaCorrection) enableGammaCorrection(true);
-
-
+    // build and compile shaders
+    // -------------------------
     loadShaders();
-
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
@@ -84,12 +87,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-    // solid/wireframe polygons
-    static bool lastRenderModeWireframe = m_renderSettings.wireframe;
-    if (lastRenderModeWireframe != m_renderSettings.wireframe) {
-        glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
-        lastRenderModeWireframe = m_renderSettings.wireframe;
-    }
+    updateSettings();
 
 
 

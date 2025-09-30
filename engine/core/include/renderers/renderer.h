@@ -33,7 +33,7 @@ namespace engine
 		
 
 		
-		Renderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings);
+		Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings);
 		virtual ~Renderer() = default;
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
@@ -52,7 +52,7 @@ namespace engine
 
 		std::shared_ptr<Camera> m_camera{};
 
-		SceneSettings m_sceneSettings{};
+		SceneSettings& m_sceneSettings;
 		RenderSettings& m_renderSettings;
 
 		std::vector<std::shared_ptr<Light>> m_lights{};
@@ -115,6 +115,8 @@ namespace engine
 		
 
 		void computeColorFramebuffer();
+
+		void updateSettings();
 
 
 		// renderCube() renders a 1x1 3D cube in NDC.

@@ -87,8 +87,8 @@ namespace engine
 		float itemLabelWidth{ 100.0f }; // pixels
 
 		bool scene_setting_draw_wireframe{ false };
-		bool scene_setting_enable_face_culling{ false };
-		bool scene_setting_enable_camera_frustrum_culling{ false };
+		bool scene_setting_enable_face_culling{ true };
+		bool scene_setting_enable_camera_frustrum_culling{ true };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

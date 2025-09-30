@@ -3,7 +3,7 @@
 
 
 
-engine::Renderer::Renderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
+engine::Renderer::Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
     : m_window(window), m_sceneSettings(sceneSettings), m_renderSettings(renderSettings)
 {
 }
@@ -360,6 +360,33 @@ void engine::Renderer::computeColorFramebuffer()
     glDrawArrays(GL_TRIANGLES, 0, 6);
     renderQuad();
 }
+
+void engine::Renderer::updateSettings()
+{
+    // solid/wireframe polygons
+    static bool lastRenderModeWireframe = m_renderSettings.wireframe;
+    if (lastRenderModeWireframe != m_renderSettings.wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
+        lastRenderModeWireframe = m_renderSettings.wireframe;
+    }
+    
+    // enable/disable back face culling
+    static bool lastEnableFaceCulling = m_sceneSettings.enableFaceCulling;
+    if (lastEnableFaceCulling != m_sceneSettings.enableFaceCulling)
+    {
+        enableFaceCulling(m_sceneSettings.enableFaceCulling);
+        lastEnableFaceCulling = m_sceneSettings.enableFaceCulling;
+    }
+
+    // enable/disable camera frustrum culling
+    static bool lastEnableCameraFrustrumCulling = m_sceneSettings.enableCameraFrustrumCulling;
+    if (lastEnableCameraFrustrumCulling != m_sceneSettings.enableCameraFrustrumCulling)
+    {
+        enableFaceCulling(m_sceneSettings.enableCameraFrustrumCulling);
+        lastEnableCameraFrustrumCulling = m_sceneSettings.enableCameraFrustrumCulling;
+    }
+}
+
 
 void engine::Renderer::renderCube()
 {

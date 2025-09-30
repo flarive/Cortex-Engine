@@ -41,8 +41,8 @@
 
 
 
-const ImVec4 gray(0.882f, 0.882f, 0.882f, 1.0f);
-const ImVec4 white(0.502f, 0.502f, 0.502f, 1.0f);
+const ImVec4 white(0.882f, 0.882f, 0.882f, 1.0f);
+const ImVec4 gray(0.502f, 0.502f, 0.502f, 1.0f);
 const ImVec4 dark(0.0f, 0.0f, 0.0f, 0.2f);
 const ImVec4 light(1.0f, 1.0f, 1.0f, 0.2f);
 
@@ -167,7 +167,7 @@ void engine::ImGuiEditor::renderTabSettings()
     ImGuiTogglePalette material_palette_off;
     material_palette_off.Frame = dark;
     material_palette_off.Knob = gray;
-    material_palette_off.KnobHover = white;
+    material_palette_off.KnobHover = gray;
     material_palette_off.FrameBorder = light;
 
     ImGuiToggleConfig toggle_config;
@@ -181,16 +181,35 @@ void engine::ImGuiEditor::renderTabSettings()
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
+
+    static bool lastDrawWireframe = false;
     if (ImGui::Toggle("Wireframe", &scene_setting_draw_wireframe, toggle_config))
     {
-        if (m_onSceneSettingChanged)
+        if (m_onSceneSettingChanged && lastDrawWireframe != scene_setting_draw_wireframe)
+        {
             m_onSceneSettingChanged("draw_wireframe", scene_setting_draw_wireframe);
+            lastDrawWireframe = scene_setting_draw_wireframe;
+        }
     }
 
+    static bool lastEnableFaceCulling = true;
     if (ImGui::Toggle("Face culling", &scene_setting_enable_face_culling, toggle_config))
     {
-        if (m_onSceneSettingChanged)
+        if (m_onSceneSettingChanged && lastEnableFaceCulling != scene_setting_enable_face_culling)
+        {
             m_onSceneSettingChanged("enable_face_culling", scene_setting_enable_face_culling);
+			lastEnableFaceCulling = scene_setting_enable_face_culling;
+        }
+    }
+
+    static bool lastEnableCameraFrustrumCulling = true;
+    if (ImGui::Toggle("Camera frustrum culling", &scene_setting_enable_camera_frustrum_culling, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastEnableCameraFrustrumCulling != scene_setting_enable_camera_frustrum_culling)
+        {
+            m_onSceneSettingChanged("enable_camera_frustrum_culling", scene_setting_enable_camera_frustrum_culling);
+            lastEnableCameraFrustrumCulling = scene_setting_enable_camera_frustrum_culling;
+        }
     }
 
     ImGui::PopStyleVar();

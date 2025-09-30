@@ -32,7 +32,7 @@ namespace engine
         bool key_w_pressed{ false };
 
         //#ifdef EDITOR_MODE
-        ImGuiEditor m_debug{};
+        ImGuiEditor m_editor{};
         //#endif
 
         ImGuiPerfOverlay m_perfOverlay{};

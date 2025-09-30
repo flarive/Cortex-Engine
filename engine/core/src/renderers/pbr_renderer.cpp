@@ -10,7 +10,7 @@
 
 
 
-engine::PbrRenderer::PbrRenderer(GLFWwindow* window, const engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
+engine::PbrRenderer::PbrRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
     : Renderer(window, sceneSettings, renderSettings)
 {
 }
@@ -33,8 +33,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     // avoid computing back faces not visible by camera
-    if (m_sceneSettings.enableFaceCulling) enableFaceCulling(true);
-    if (m_sceneSettings.enableGammaCorrection) enableGammaCorrection(true);
+    enableFaceCulling(m_sceneSettings.enableFaceCulling);
+    // automatic color correction
+    enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
 
     // build and compile shaders
     // -------------------------
@@ -293,12 +294,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
 
-    // solid/wireframe polygons
-    static bool lastRenderModeWireframe = m_renderSettings.wireframe;
-    if (lastRenderModeWireframe != m_renderSettings.wireframe) {
-        glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
-        lastRenderModeWireframe = m_renderSettings.wireframe;
-    }
+    updateSettings();
 
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();

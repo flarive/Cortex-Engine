@@ -4,11 +4,6 @@
 #include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
 
 
-
-#include <unordered_map>
-#include <functional>
-
-
 using Clock = std::chrono::high_resolution_clock;
 
 
@@ -400,14 +395,14 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
                 inFrustrumCount++;
             }
-            else if (typeID == ComponentType::camera)
-            {
-                // camera
-            }
             else if (typeID == ComponentType::light)
             {
                 // light
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+            }
+            else if (typeID == ComponentType::camera)
+            {
+                // camera
             }
         }
 

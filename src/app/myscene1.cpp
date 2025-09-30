@@ -160,6 +160,7 @@ void MyScene1::init()
 
 
     textFPSCount.setup(app->window, FONT_PATH, 28);
+
     textPolyCount.setup(app->window, FONT_PATH, 28);
     textMeshCount.setup(app->window, FONT_PATH, 28);
     textPrimitiveCount.setup(app->window, FONT_PATH, 28);
@@ -284,6 +285,7 @@ void MyScene1::updateUI()
 {
     // render HUD / UI
     textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+
     textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
     textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));

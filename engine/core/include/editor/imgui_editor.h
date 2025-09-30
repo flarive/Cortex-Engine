@@ -31,8 +31,8 @@ namespace engine
 		}
 
 		// Let parent register a callback
-		void setOnRenderModeSettingChanged(std::function<void(bool)> callback) {
-			m_onRenderModeSettingChanged = std::move(callback);
+		void setOnSceneSettingChanged(std::function<void(std::string, bool)> callback) {
+			m_onSceneSettingChanged = std::move(callback);
 		}
 
 
@@ -46,7 +46,7 @@ namespace engine
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
-		std::function<void(bool)> m_onRenderModeSettingChanged; // << callback
+		std::function<void(std::string, bool)> m_onSceneSettingChanged; // << callback
 
 		void renderTabSettings();
 		void renderTabAbout();
@@ -86,8 +86,9 @@ namespace engine
 
 		float itemLabelWidth{ 100.0f }; // pixels
 
-
-		bool settings_wireframe{ false };
+		bool scene_setting_draw_wireframe{ false };
+		bool scene_setting_enable_face_culling{ false };
+		bool scene_setting_enable_camera_frustrum_culling{ false };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

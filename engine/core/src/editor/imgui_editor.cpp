@@ -181,10 +181,16 @@ void engine::ImGuiEditor::renderTabSettings()
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-    if (ImGui::Toggle("Wireframe", &settings_wireframe, toggle_config))
+    if (ImGui::Toggle("Wireframe", &scene_setting_draw_wireframe, toggle_config))
     {
-        if (m_onRenderModeSettingChanged)
-            m_onRenderModeSettingChanged(settings_wireframe);
+        if (m_onSceneSettingChanged)
+            m_onSceneSettingChanged("draw_wireframe", scene_setting_draw_wireframe);
+    }
+
+    if (ImGui::Toggle("Face culling", &scene_setting_enable_face_culling, toggle_config))
+    {
+        if (m_onSceneSettingChanged)
+            m_onSceneSettingChanged("enable_face_culling", scene_setting_enable_face_culling);
     }
 
     ImGui::PopStyleVar();

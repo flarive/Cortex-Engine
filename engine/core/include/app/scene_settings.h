@@ -24,6 +24,7 @@ namespace engine
 
         bool enableGammaCorrection{ false };
         bool enableFaceCulling{ true };
+        bool enableCameraFrustrumCulling{ true };
     };
 
     struct RenderSettings

@@ -16,6 +16,9 @@ private:
 
 
     engine::Text textFPSCount{};
+
+    
+
     engine::Text textPolyCount{};
     engine::Text textMeshCount{};
     engine::Text textPrimitiveCount{};

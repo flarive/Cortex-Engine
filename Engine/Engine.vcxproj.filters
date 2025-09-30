@@ -151,6 +151,12 @@
     <Filter Include="Fichiers sources\core\editor">
       <UniqueIdentifier>{a89033c0-cccd-46f0-9776-f1df86ca8bf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\debug">
+      <UniqueIdentifier>{46cf555e-7c5f-45b0-b3fd-4f89adf41aca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\debug">
+      <UniqueIdentifier>{d1f8f3fa-a447-484c-8b79-c1dcaa78f88b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -332,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="core\src\ecs\transform_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -547,6 +556,9 @@
     </ClInclude>
     <ClInclude Include="core\include\ecs\transform_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\imgui_perf_overlay.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

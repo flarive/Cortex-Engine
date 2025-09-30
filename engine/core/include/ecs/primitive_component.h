@@ -51,7 +51,5 @@ namespace engine
 		std::unordered_map<std::string, std::function<void(float)>> m_propertySetters{};
 
 		AABB generateBoundingVolume(const std::shared_ptr<Primitive> primitive);
-
-		
 	};
 }

@@ -3,6 +3,16 @@
 #include "extensions/imoguizmo.hpp"
 #include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
 
+
+
+#include <unordered_map>
+#include <functional>
+
+
+using Clock = std::chrono::high_resolution_clock;
+
+
+
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), sceneSettings(_settings)
 {
@@ -66,6 +76,10 @@ void engine::Scene::after_init_internal()
     
     // count all items in the scene
     countItems(m_entityManager.getRootEntity());
+
+
+    // GPU timer
+    glGenQueries(1, &m_timerQuery);
 }
 
 void engine::Scene::initialize()
@@ -104,16 +118,31 @@ void engine::Scene::listenForEditorChanges()
             m_selectedEntityID = entity->id;
         });
 
-    m_debug.setOnRenderModeSettingChanged([this](bool wireframe)
+
+
+    m_debug.setOnSceneSettingChanged([this](std::string key, bool value)
         {
-            logger.info("Render mode setting changed: {})", wireframe);
-            renderSettings.wireframe = wireframe;
+            logger.info("{} setting changed: {})", key, value);
+
+            if (key == "draw_wireframe")
+            {
+                renderSettings.wireframe = value;
+            }
+            else if (key == "enable_face_culling")
+            {
+                sceneSettings.enableFaceCulling = value;
+            }
         });
+
 }
 //#endif
 
 void engine::Scene::gameLoop()
 {
+    // Start CPU timer
+    auto cpuFrameStart = Clock::now();
+
+
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
@@ -123,15 +152,16 @@ void engine::Scene::gameLoop()
         return;
     }
 
+
+    // Start UI profiling
+    auto uiStart = Clock::now();
+
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     framerate = ImGui::GetIO().Framerate;
-
-
-
 
 
     // Editor mode windows
@@ -143,13 +173,20 @@ void engine::Scene::gameLoop()
         renderGizmo();
     }
     
+    if (show_perf_overlay)
+        m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
+
     // Dear ImGui demo windows
-    //if (show_demo_window)
-    //    ImGui::ShowDemoWindow(&show_demo_window);
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
     //#endif
 
 
-    
+
+    auto uiEnd = Clock::now();
+    std::chrono::duration<double, std::milli> uiDuration = uiEnd - uiStart;
+    uiTime = uiDuration.count();
+
 
 
     float currentFrame = static_cast<float>(glfwGetTime());
@@ -160,12 +197,12 @@ void engine::Scene::gameLoop()
     std::chrono::steady_clock::time_point start_time{};
     if (app->capFramerate())
     {
-        start_time = std::chrono::high_resolution_clock::now();
+        start_time = Clock::now();
     }
 
 
 
-    // get opengl stats such as polycount drawn
+    // get opengl stats such as polycount drawn, GPU timer...
     beginQuery();
 
     // Lambda to update
@@ -186,10 +223,10 @@ void engine::Scene::gameLoop()
     // Call the renderer loop
     m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
 
-    // get opengl stats such as polycount drawn
+    // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
 
-
+    
 
 
 
@@ -215,20 +252,20 @@ void engine::Scene::gameLoop()
         glfwMakeContextCurrent(backup_current_context);
     }
 
-
-
-
-
     glfwSwapBuffers(app->window);
 
-    // Poll and handle events (inputs, window resize, etc.)
-    //glfwPollEvents();
 
     if (app->capFramerate())
     {
-        auto end_time = std::chrono::high_resolution_clock::now();
+        auto end_time = Clock::now();
         std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
     }
+
+
+    // End CPU timer
+    auto cpuFrameEnd = Clock::now();
+    std::chrono::duration<double, std::milli> cpuFrameDuration = cpuFrameEnd - cpuFrameStart;
+    cpuTime = cpuFrameDuration.count();
 }
 
 void engine::Scene::initEntities()
@@ -283,46 +320,48 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     if (!entity->visible)
         return;
 
-    bool shouldTestFrustrum = false;
+    bool shouldTestFrustrumForEntity = false;
     bool frustrumOk = false;
 
-    if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
+    if (sceneSettings.enableCameraFrustrumCulling)
     {
-        shouldTestFrustrum = true;
-
-        // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
-        if (shouldTestFrustrum && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
+        if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
         {
-            frustrumOk = true;
-            //std::cout << "Entity " << entity->id << " is inside frustum." << std::endl;
+            shouldTestFrustrumForEntity = true; //enableCameraFrustrumCulling
+
+            // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
+            if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
+            {
+                frustrumOk = true;
+                //std::cout << "Entity " << entity->id << " is inside frustum." << std::endl;
+            }
+            //else if (shouldTestFrustrum)
+            //{
+            //    std::cout << "Entity " << entity->id << " is OUTSIDE frustum." << std::endl;
+
+            //    // Log which planes failed
+            //    if (boundingVolume)
+            //    {
+            //        std::cout << "Entity " << entity->id << " is being tested as AABB." << std::endl;
+            //        std::cout << "Near plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.nearFace) << std::endl;
+            //        std::cout << "Far plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.farFace) << std::endl;
+            //        std::cout << "Left plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.leftFace) << std::endl;
+            //        std::cout << "Right plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.rightFace) << std::endl;
+            //        std::cout << "Top plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.topFace) << std::endl;
+            //        std::cout << "Bottom plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.bottomFace) << std::endl;
+            //    }
+            //    else {
+            //        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
+            //    }
+            //}
         }
-        //else if (shouldTestFrustrum)
-        //{
-        //    std::cout << "Entity " << entity->id << " is OUTSIDE frustum." << std::endl;
-
-        //    // Log which planes failed
-        //    if (boundingVolume)
-        //    {
-        //        std::cout << "Entity " << entity->id << " is being tested as AABB." << std::endl;
-        //        std::cout << "Near plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.nearFace) << std::endl;
-        //        std::cout << "Far plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.farFace) << std::endl;
-        //        std::cout << "Left plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.leftFace) << std::endl;
-        //        std::cout << "Right plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.rightFace) << std::endl;
-        //        std::cout << "Top plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.topFace) << std::endl;
-        //        std::cout << "Bottom plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.bottomFace) << std::endl;
-        //    }
-        //    else {
-        //        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
-        //    }
-        //}
+        else
+        {
+            std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
+        }
     }
-    //else
-    //{
-    //    std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
-    //}
 
-
-    if (!shouldTestFrustrum || (shouldTestFrustrum  && frustrumOk))
+    if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
     {
         // Use the precomputed transform
         shader.use();
@@ -452,7 +491,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 // -------------------------------------------------------
 void engine::Scene::mouse_callback(double xposIn, double yposIn)
 {
-    if (is_editor_mode)// || show_demo_window)
+    if (is_editor_mode || show_demo_window)
         ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
 }
 
@@ -463,7 +502,7 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
     (void)xoffset;   //Do nothing
     (void)yoffset;   //Do nothing
 
-    if (is_editor_mode)// || show_demo_window)
+    if (is_editor_mode || show_demo_window)
         ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????
 }
 
@@ -522,18 +561,32 @@ void engine::Scene::glfw_error_callback(int error, const char* description)
 // Function to count vertices and polygons
 void engine::Scene::beginQuery()
 {
-    glGenQueries(1, &query);
-    glBeginQuery(GL_PRIMITIVES_GENERATED, query);
+    glGenQueries(1, &m_primitiveQuery);
+    glGenQueries(2, &m_timerQuery);
+    glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery); // Count primitives
+    glBeginQuery(GL_TIME_ELAPSED, m_timerQuery); // GPU timer
 }
 
 // Function to count vertices and polygons
 void engine::Scene::endQuery()
 {
     glEndQuery(GL_PRIMITIVES_GENERATED);
+    glEndQuery(GL_TIME_ELAPSED); // GPU timer
 
-    glGetQueryObjectiv(query, GL_QUERY_RESULT, &polycount);
+    // get primitive count
+    glGetQueryObjectiv(m_primitiveQuery, GL_QUERY_RESULT, &polycount);
 
-    glDeleteQueries(1, &query);
+    // get GPU time
+    GLint available = 0;
+    glGetQueryObjectiv(m_timerQuery, GL_QUERY_RESULT_AVAILABLE, &available);
+    if (available) {
+        GLuint64 elapsedTime;
+        glGetQueryObjectui64v(m_timerQuery, GL_QUERY_RESULT, &elapsedTime);
+        gpuTime = elapsedTime / 1e6; // convert to ms
+    }
+
+    glDeleteQueries(1, &m_primitiveQuery);
+    glDeleteQueries(2, &m_timerQuery);
 }
 
 void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
@@ -791,3 +844,4 @@ void engine::Scene::renderGizmo()
     }
 }
 //#endif
+

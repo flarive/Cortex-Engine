@@ -11,6 +11,7 @@
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../editor/imgui_editor.h"
+#include "../debug/imgui_perf_overlay.h"
 
 #include "../managers/entity_manager.h"
 
@@ -34,7 +35,9 @@ namespace engine
         ImGuiEditor m_debug{};
         //#endif
 
-        GLuint query{};
+        ImGuiPerfOverlay m_perfOverlay{};
+
+        
 
         void before_init_internal();
         void after_init_internal();
@@ -50,12 +53,19 @@ namespace engine
         float deltaTime{}; // time between current frame and last frame
         float lastFrame{};
 
+        GLdouble cpuTime{};
+        GLdouble gpuTime{};
+        GLdouble uiTime{};
+
         GLint polycount{};
         GLint meshcount{};
         GLint primitivecount{};
 
+        // camera frustrum culling
         GLint inFrustrumCount{};
         GLint totalFrustrumCount{};
+
+        
 
 
 
@@ -78,7 +88,8 @@ namespace engine
 
     public:
         bool is_editor_mode{ false };
-        //bool show_demo_window{ false };
+        bool show_demo_window{ false };
+        bool show_perf_overlay{ true };
         
 
         
@@ -184,21 +195,27 @@ namespace engine
         unsigned int sphereVAO{};
         GLsizei indexCount{};
         void renderSphere();
+        
 
     private:
+        
+        GLuint m_timerQuery{}; // for GL_TIME_ELAPSED
+        GLuint m_primitiveQuery{}; // for GL_PRIMITIVES_GENERATED
+
+        
         static void glfw_error_callback(int error, const char* description);
 
-        // Function to count vertices and polygons
+        // Function to get opengl performance counters
         void beginQuery();
 
-        // Function to count vertices and polygons
+        // Function to get opengl performance counters
         void endQuery();
 
         void countItems(std::shared_ptr<Entity>& entity);
 
-        #ifdef EDITOR_MODE
+        //#ifdef EDITOR_MODE
         void renderGizmo();
         void listenForEditorChanges();
-        #endif
+        //#endif
     };
 }

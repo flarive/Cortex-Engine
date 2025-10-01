@@ -1,21 +1,5 @@
 ﻿#include "../../include/ecs/entity.h"
 
-#include "../../include/lights/point_light.h"
-#include "../../include/lights/spot_light.h"
-#include "../../include/lights/directional_light.h"
-
-#include "../../include/primitives/cube.h"
-#include "../../include/primitives/sphere.h"
-#include "../../include/primitives/plane.h"
-#include "../../include/primitives/cone.h"
-#include "../../include/primitives/cylinder.h"
-#include "../../include/primitives/billboard.h"
-
-#include "../../include/cameras/fly_camera.h"
-#include "../../include/cameras/fps_camera.h"
-#include "../../include/cameras/orbit_camera.h"
-
-
 #include "../../include/ecs/transform_component.h"
 #include "../../include/ecs/primitive_component.h"
 #include "../../include/ecs/model_component.h"
@@ -24,6 +8,7 @@
 
 #include "../../include/aabb.h"
 #include "../../include/misc/log_manager.h"
+
 
 
 // constructor, expects just a name
@@ -43,6 +28,7 @@ engine::EntityType engine::Entity::getType()
 	if (auto component = getComponent<PrimitiveComponent>()) return engine::EntityType::primitive;
 	if (auto component = getComponent<LightComponent>()) return engine::EntityType::light;
 	if (auto component = getComponent<CameraComponent>()) return engine::EntityType::camera;
+
 	return engine::EntityType::undefined;
 }
 
@@ -53,6 +39,7 @@ std::string engine::Entity::getTypeName()
 	if (entityType == engine::EntityType::primitive) return "Primitive";
 	if (entityType == engine::EntityType::light) return "Light";
 	if (entityType == engine::EntityType::camera) return "Camera";
+
 	return "";
 }
 
@@ -64,63 +51,75 @@ std::string engine::Entity::getTypeNameEx()
 	}
 	else if (auto primitiveComponent = getComponent<PrimitiveComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::Cube>(primitiveComponent->getPrimitive()))
+		auto primitive = primitiveComponent->getPrimitive();
+		if (primitive)
 		{
-			return "Cube primitive";
+			if (primitive->getTypeID() == PrimitiveType::cube)
+			{
+				return "Cube primitive";
+			}
+			else if (primitive->getTypeID() == PrimitiveType::sphere)
+			{
+				return "Sphere primitive";
+			}
+			else if (primitive->getTypeID() == PrimitiveType::plane)
+			{
+				return "Plane primitive";
+			}
+			else if (primitive->getTypeID() == PrimitiveType::cylinder)
+			{
+				return "Cylinder primitive";
+			}
+			else if (primitive->getTypeID() == PrimitiveType::cone)
+			{
+				return "Cone primitive";
+			}
+			else if (primitive->getTypeID() == PrimitiveType::billboard)
+			{
+				return "Billboard primitive";
+			}
 		}
-		else if (std::dynamic_pointer_cast<engine::Sphere>(primitiveComponent->getPrimitive()))
-		{
-			return "Sphere primitive";
-		}
-		else if (std::dynamic_pointer_cast<engine::Plane>(primitiveComponent->getPrimitive()))
-		{
-			return "Plane primitive";
-		}
-		else if (std::dynamic_pointer_cast<engine::Cylinder>(primitiveComponent->getPrimitive()))
-		{
-			return "Cylinder primitive";
-		}
-		else if (std::dynamic_pointer_cast<engine::Cone>(primitiveComponent->getPrimitive()))
-		{
-			return "Cone primitive";
-		}
-		else if (std::dynamic_pointer_cast<engine::Billboard>(primitiveComponent->getPrimitive()))
-		{
-			return "Billboard primitive";
-		}
-		
+
 		return "Primitive";
 	}
 	else if (auto lightComponent = getComponent<LightComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::DirectionalLight>(lightComponent->getLight()))
+		auto light = lightComponent->getLight();
+		if (light)
 		{
-			return "Directional Light";
-		}
-		else if (std::dynamic_pointer_cast<engine::SpotLight>(lightComponent->getLight()))
-		{
-			return "Spot Light";
-		}
-		else if (std::dynamic_pointer_cast<engine::PointLight>(lightComponent->getLight()))
-		{
-			return "Point Light";
+			if (light->getTypeID() == LightType::directional)
+			{
+				return "Directional Light";
+			}
+			else if (light->getTypeID() == LightType::spot)
+			{
+				return "Spot Light";
+			}
+			if (light->getTypeID() == LightType::point)
+			{
+				return "Point Light";
+			}
 		}
 		
 		return "Light";
 	}
 	else if (auto cameraComponent = getComponent<CameraComponent>())
 	{
-		if (std::dynamic_pointer_cast<engine::FlyCamera>(cameraComponent->getCamera()))
+		auto camera = cameraComponent->getCamera();
+		if (camera)
 		{
-			return "Fly camera";
-		}
-		else if (std::dynamic_pointer_cast<engine::FpsCamera>(cameraComponent->getCamera()))
-		{
-			return "FPS camera";
-		}
-		else if (std::dynamic_pointer_cast<engine::OrbitCamera>(cameraComponent->getCamera()))
-		{
-			return "Orbit camera";
+			if (camera->getTypeID() == CameraType::fly)
+			{
+				return "Fly camera";
+			}
+			else if (camera->getTypeID() == CameraType::fps)
+			{
+				return "FPS camera";
+			}
+			else if (camera->getTypeID() == CameraType::orbit)
+			{
+				return "Orbit camera";
+			}
 		}
 
 		return "Camera";

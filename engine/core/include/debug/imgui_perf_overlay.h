@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 namespace engine
 {
 	class ImGuiPerfOverlay
@@ -13,4 +11,3 @@ namespace engine
 		void renderPerfOverlay(bool* p_open, const float& fps, const double& cpuTime, const double& gpuTime, const double& uiTime);
 	};
 }
-

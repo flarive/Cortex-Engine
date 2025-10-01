@@ -399,3 +399,8 @@ engine::Shader& engine::PbrRenderer::getShader()
 {
     return pbrShader;
 }
+
+void engine::PbrRenderer::clean()
+{
+    // TODO
+}

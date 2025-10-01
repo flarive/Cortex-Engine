@@ -1,12 +1,13 @@
 #include "../../include/debug/imgui_perf_overlay.h"
 
-#include <imgui_internal.h>
+#include <imgui.h>
 
 void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps, const double& cpuTime, const double& gpuTime, const double& uiTime)
 {
     static int location = -2;
     ImGuiIO& io = ImGui::GetIO();
-    static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+    static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoSavedSettings
+        | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (location >= 0)
     {
         const float PAD = 10.0f;
@@ -26,7 +27,7 @@ void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps,
     {
         // Center window
         ImVec2 zzz = ImGui::GetMainViewport()->GetCenter();
-        zzz.y = 240.0f;
+        zzz.y += ImGui::GetMainViewport()->Size.y / 3.0f;
         ImGui::SetNextWindowPos(zzz, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         window_flags |= ImGuiWindowFlags_NoMove;
     }

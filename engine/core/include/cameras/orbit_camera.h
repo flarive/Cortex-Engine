@@ -21,6 +21,11 @@ namespace engine
             updateCameraVectors();
         }
 
+        CameraType getTypeID() const override
+        {
+            return CameraType::orbit;
+        }
+
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
         glm::mat4 getViewMatrix()
         {

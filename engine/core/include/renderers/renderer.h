@@ -47,6 +47,8 @@ namespace engine
 
 		virtual Shader& getShader() = 0;
 
+		virtual void clean() = 0;
+
 	protected:
 		GLFWwindow* m_window{};
 
@@ -99,6 +101,8 @@ namespace engine
 
 
 		virtual void loadShaders() = 0;
+		
+		
 
 
 		void enableDepthTest(bool enable);

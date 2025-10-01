@@ -25,6 +25,8 @@ namespace engine
 
 		void setSkybox(const std::vector<std::string>& faces);
 
+		void clean() override;
+
 	private:
 		void loadShaders() override;
 

@@ -12,6 +12,12 @@ namespace engine
         DirectionalLight(unsigned int index);
         DirectionalLight(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), unsigned int index = 0);
 
+
+        LightType getTypeID() const override
+        {
+            return LightType::directional;
+        }
+
         void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix) override;
 
 

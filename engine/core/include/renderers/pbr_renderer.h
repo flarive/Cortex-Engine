@@ -24,6 +24,8 @@ namespace engine
 
 		Shader& getShader() override;
 
+		void clean() override;
+
 	private:
 		void loadShaders() override;
 

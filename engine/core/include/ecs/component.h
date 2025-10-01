@@ -40,7 +40,6 @@ namespace engine
 
         virtual std::string getName() = 0;
 
-
         virtual std::vector<KeyValuePair> getPublicProperties() = 0;
 
 

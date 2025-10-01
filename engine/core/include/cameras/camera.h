@@ -30,6 +30,8 @@ namespace engine
     const float SENSITIVITY{ 0.3f };
     const float ZOOM{ 45.0f };
 
+    enum class CameraType { undefined = 0, fps = 1, fly = 2, orbit = 3 };
+
 
     // A fly/fps camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
     class Camera// : private NonCopyable
@@ -54,12 +56,15 @@ namespace engine
         // constructor with vectors
         Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
+        virtual CameraType getTypeID() const
+        {
+            return CameraType::undefined;
+        }
+
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
         glm::mat4 getViewMatrix();
 
         void setFromViewMatrix(const glm::mat4& view);
-
-
 
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         virtual void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) = 0;

@@ -199,17 +199,19 @@ namespace engine
 
     private:
         
-        GLuint m_timerQuery{}; // for GL_TIME_ELAPSED
-        GLuint m_primitiveQuery{}; // for GL_PRIMITIVES_GENERATED
+        int m_queryFrameIndex = 0; // toggles between 0 and 1
+        //GLuint m_timerQuery{}; // for GL_TIME_ELAPSED
+        //GLuint m_primitiveQuery{}; // for GL_PRIMITIVES_GENERATED
+        GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
+        GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 
         
         static void glfw_error_callback(int error, const char* description);
 
-        // Function to get opengl performance counters
+        void initQueries();
         void beginQuery();
-
-        // Function to get opengl performance counters
         void endQuery();
+        void cleanupQueries();
 
         void countItems(std::shared_ptr<Entity>& entity);
 

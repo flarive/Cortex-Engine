@@ -11,6 +11,11 @@ namespace engine
         // constructor with vectors
         FpsCamera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
 
+        CameraType getTypeID() const override
+        {
+            return CameraType::fps;
+        }
+
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) override;
 

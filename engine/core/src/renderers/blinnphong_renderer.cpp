@@ -161,3 +161,8 @@ engine::Shader& engine::BlinnPhongRenderer::getShader()
 {
     return blinnPhongShader;
 }
+
+void engine::BlinnPhongRenderer::clean()
+{
+    // TODO
+}

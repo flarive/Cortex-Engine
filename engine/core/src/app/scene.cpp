@@ -72,9 +72,7 @@ void engine::Scene::after_init_internal()
     // count all items in the scene
     countItems(m_entityManager.getRootEntity());
 
-
-    // GPU timer
-    glGenQueries(1, &m_timerQuery);
+    initQueries();
 }
 
 void engine::Scene::initialize()
@@ -141,7 +139,6 @@ void engine::Scene::gameLoop()
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
-
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
@@ -151,9 +148,8 @@ void engine::Scene::gameLoop()
         return;
     }
 
-
-    // Start UI profiling
-    auto uiStart = Clock::now();
+    // measure ui time (part 1 begin)
+    auto uiStart1 = Clock::now();
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -161,7 +157,6 @@ void engine::Scene::gameLoop()
     ImGui::NewFrame();
 
     framerate = ImGui::GetIO().Framerate;
-
 
     // Editor mode windows
     //#ifdef EDITOR_MODE
@@ -181,25 +176,21 @@ void engine::Scene::gameLoop()
     //#endif
 
 
-
-    auto uiEnd = Clock::now();
-    std::chrono::duration<double, std::milli> uiDuration = uiEnd - uiStart;
-    uiTime = uiDuration.count();
-
-
+    // measure ui time (part 1 end)
+    auto uiEnd1 = Clock::now();
+    std::chrono::duration<double, std::milli> uiDuration1 = uiEnd1 - uiStart1;
+    uiTime = uiDuration1.count();
 
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
-
+    // fps capping (begin)
     std::chrono::steady_clock::time_point start_time{};
     if (app->capFramerate())
     {
         start_time = Clock::now();
     }
-
-
 
     // get opengl stats such as polycount drawn, GPU timer...
     beginQuery();
@@ -225,9 +216,8 @@ void engine::Scene::gameLoop()
     // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
 
-    
-
-
+    // measure ui time (part 2 begin)
+    auto uiStart2 = Clock::now();
 
     // ImGUI rendering
     ImGui::Render();
@@ -235,9 +225,6 @@ void engine::Scene::gameLoop()
     glfwGetFramebufferSize(app->window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-
 
     // Update and Render additional Platform Windows
     // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
@@ -253,13 +240,17 @@ void engine::Scene::gameLoop()
 
     glfwSwapBuffers(app->window);
 
+    // measure ui time (part 2 end)
+    auto uiEnd2 = Clock::now();
+    std::chrono::duration<double, std::milli> uiDuration2 = uiEnd2 - uiStart2;
+    uiTime += uiDuration2.count();
 
+    // fps capping (end)
     if (app->capFramerate())
     {
         auto end_time = Clock::now();
         std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
     }
-
 
     // End CPU timer
     auto cpuFrameEnd = Clock::now();
@@ -420,8 +411,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         }
     }
 
-    auto zzz = entity->getType(); // could be optimized/avoided
-    if (zzz == EntityType::primitive || zzz == EntityType::model)
+    auto entityType = entity->getType(); // could be optimized/avoided
+    if (entityType == EntityType::primitive || entityType == EntityType::model)
     {
         totalFrustrumCount++;
     }
@@ -443,9 +434,12 @@ void engine::Scene::exit()
     //skyboxReflectShader.clean();
 
     //TODO implement renderer clean & exit !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    m_renderer->clean();
 
     // clean user stuffs
     clean();
+
+    cleanupQueries(); // called ? to test !!!!!
 }
 
 GLFWwindow* engine::Scene::getWindow()
@@ -558,36 +552,73 @@ void engine::Scene::glfw_error_callback(int error, const char* description)
     std::exit(EXIT_FAILURE);
 }
 
-// Function to count vertices and polygons
-void engine::Scene::beginQuery()
+void engine::Scene::initQueries()
 {
-    glGenQueries(1, &m_primitiveQuery);
-    glGenQueries(2, &m_timerQuery);
-    glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery); // Count primitives
-    glBeginQuery(GL_TIME_ELAPSED, m_timerQuery); // GPU timer
+    glGenQueries(2, m_timerQuery);       // double-buffered GPU timer
+    glGenQueries(2, m_primitiveQuery);   // double-buffered primitive count
 }
 
-// Function to count vertices and polygons
+void engine::Scene::beginQuery()
+{
+    //glGenQueries(1, &m_primitiveQuery);
+    //glGenQueries(2, &m_timerQuery);
+    //glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery); // Count primitives
+    //glBeginQuery(GL_TIME_ELAPSED, m_timerQuery); // GPU timer
+
+
+    glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery[m_queryFrameIndex]);
+    glBeginQuery(GL_TIME_ELAPSED, m_timerQuery[m_queryFrameIndex]);
+
+}
+
 void engine::Scene::endQuery()
 {
+    //glEndQuery(GL_PRIMITIVES_GENERATED);
+    //glEndQuery(GL_TIME_ELAPSED); // GPU timer
+
+    //// get primitive count
+    //glGetQueryObjectiv(m_primitiveQuery, GL_QUERY_RESULT, &polycount);
+
+    //// get GPU time
+    //GLint available = 0;
+    //glGetQueryObjectiv(m_timerQuery, GL_QUERY_RESULT_AVAILABLE, &available);
+    //if (available) {
+    //    GLuint64 elapsedTime;
+    //    glGetQueryObjectui64v(m_timerQuery, GL_QUERY_RESULT, &elapsedTime);
+    //    gpuTime = elapsedTime / 1e6; // convert to ms
+    //}
+
+    //glDeleteQueries(1, &m_primitiveQuery);
+    //glDeleteQueries(2, &m_timerQuery);
+
+
     glEndQuery(GL_PRIMITIVES_GENERATED);
-    glEndQuery(GL_TIME_ELAPSED); // GPU timer
+    glEndQuery(GL_TIME_ELAPSED);
 
-    // get primitive count
-    glGetQueryObjectiv(m_primitiveQuery, GL_QUERY_RESULT, &polycount);
+    int prevIndex = 1 - m_queryFrameIndex;
 
-    // get GPU time
+    // Get primitive count from previous frame
+    glGetQueryObjectiv(m_primitiveQuery[prevIndex], GL_QUERY_RESULT, &polycount);
+
+    // Get GPU time from previous frame
     GLint available = 0;
-    glGetQueryObjectiv(m_timerQuery, GL_QUERY_RESULT_AVAILABLE, &available);
+    glGetQueryObjectiv(m_timerQuery[prevIndex], GL_QUERY_RESULT_AVAILABLE, &available);
     if (available) {
         GLuint64 elapsedTime;
-        glGetQueryObjectui64v(m_timerQuery, GL_QUERY_RESULT, &elapsedTime);
+        glGetQueryObjectui64v(m_timerQuery[prevIndex], GL_QUERY_RESULT, &elapsedTime);
         gpuTime = elapsedTime / 1e6; // convert to ms
     }
 
-    glDeleteQueries(1, &m_primitiveQuery);
-    glDeleteQueries(2, &m_timerQuery);
+    // Swap index for next frame
+    m_queryFrameIndex = prevIndex;
 }
+
+void engine::Scene::cleanupQueries()
+{
+    glDeleteQueries(2, m_timerQuery);
+    glDeleteQueries(2, m_primitiveQuery);
+}
+
 
 void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
 {

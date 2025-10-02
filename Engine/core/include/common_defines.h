@@ -12,6 +12,8 @@
 #include <iostream>
 
 
+#define EDITOR_MODE true
+
 
 namespace engine
 {

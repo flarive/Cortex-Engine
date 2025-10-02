@@ -383,7 +383,7 @@ void engine::PbrRenderer::loadShaders()
     Renderer::loadShaders();
 }
 
-void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount)
+void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {
     m_pointLightCount = pointLightCount;
     m_dirLightCount = dirLightCount;

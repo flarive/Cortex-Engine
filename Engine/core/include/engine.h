@@ -50,6 +50,7 @@
 #include "lights/point_light.h"
 #include "lights/directional_light.h"
 #include "lights/spot_light.h"
+#include "lights/area_light.h"
 
 
 #include "ui/text.h"

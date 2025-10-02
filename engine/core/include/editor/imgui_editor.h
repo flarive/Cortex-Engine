@@ -11,8 +11,7 @@
 
 #include <imgui.h>
 
-//#ifdef EDITOR_MODE
-
+#if EDITOR_MODE
 namespace engine
 {
 	class ImGuiEditor
@@ -94,5 +93,4 @@ namespace engine
 		const ImVec2 SIZE{ ImVec2(21, 21) };
 	};
 }
-
-//#endif
+#endif

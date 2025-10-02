@@ -7,7 +7,7 @@
 
 namespace engine
 {
-    enum class LightType { undefined = 0, point = 1, directional = 2, spot = 3 };
+    enum class LightType { undefined = 0, point = 1, directional = 2, spot = 3, area = 4 };
     
     /// <summary>
     /// Abstract class for lights

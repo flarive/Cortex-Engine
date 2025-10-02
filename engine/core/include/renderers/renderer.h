@@ -43,7 +43,7 @@ namespace engine
 		void initColorFramebufferMSAA(int width, int height);
 
 
-		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) = 0;
+		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
 
 		virtual Shader& getShader() = 0;
 
@@ -98,7 +98,7 @@ namespace engine
 		unsigned short m_spotLightCount{};
 		unsigned short m_dirLightCount{};
 		unsigned short m_pointLightCount{};
-
+		unsigned short m_areaLightCount{};
 
 		virtual void loadShaders() = 0;
 		

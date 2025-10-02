@@ -30,7 +30,7 @@ namespace engine
 	private:
 		void loadShaders() override;
 
-		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount) override;
+		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount);
 
 
 	protected:

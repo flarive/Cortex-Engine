@@ -14,7 +14,6 @@ in VS_OUT {
     vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;
-
 } fs_in;
 
 // material parameters
@@ -100,6 +99,22 @@ struct SpotLight {
     vec3 specular;       
 };
 
+struct AreaLight {
+    bool use;
+    
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;       
+};
 
 uniform Material material;
 
@@ -109,10 +124,12 @@ uniform Material material;
 uniform int pointLightsCount;
 uniform int dirLightsCount;
 uniform int spotLightsCount;
+uniform int areaLightsCount;
 
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
 uniform DirLight dirLights[NBR_MAX_LIGHTS];
 uniform SpotLight spotLights[NBR_MAX_LIGHTS];
+uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 
@@ -151,6 +168,7 @@ const vec2 poissonDisk[16] = vec2[](
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 
 
 // ----------------------------------------------------------------------------
@@ -364,6 +382,12 @@ void main()
             Lo += CalcDirLight(dirLights[i], normal, fs_in.FragPos, V, vec3(1.0));
     }
 
+    for (int i = 0; i < areaLightsCount; i++)
+    {
+        if (areaLights[i].use)
+            Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, V, vec3(1.0));
+    }
+
 
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
@@ -478,7 +502,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
-
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
 {
     vec3 L = normalize(-light.direction);
@@ -506,3 +529,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     return (kD * color / PI + specular) * radiance * NdotL;
 }
 
+vec3 CalcAreaLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+{
+    vec3 lighting = vec3(0.0);
+    return vec3(lighting);
+}

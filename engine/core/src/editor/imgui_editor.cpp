@@ -37,16 +37,12 @@
 #include <unordered_map>
 #include <functional>
 
-//#ifdef EDITOR_MODE
-
-
+#if EDITOR_MODE
 
 const ImVec4 white(0.882f, 0.882f, 0.882f, 1.0f);
 const ImVec4 gray(0.502f, 0.502f, 0.502f, 1.0f);
 const ImVec4 dark(0.0f, 0.0f, 0.0f, 0.2f);
 const ImVec4 light(1.0f, 1.0f, 1.0f, 0.2f);
-
-
 
 
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
@@ -922,5 +918,4 @@ bool engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name
 
     return res;
 }
-
-//#endif
+#endif

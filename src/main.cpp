@@ -23,8 +23,6 @@
 using MyApp = MyApp1;
 using MyScene = MyScene1;
 
-#define EDITOR_MODE true
-
 
 
 engine::App* myApp{};

@@ -342,6 +342,9 @@
     <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\lights\area_light.cpp">
+      <Filter>Fichiers sources\core\lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -559,6 +562,9 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\imgui_perf_overlay.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\lights\area_light.h">
+      <Filter>Fichiers d%27en-tête\core\lights</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

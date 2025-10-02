@@ -71,6 +71,22 @@ struct SpotLight {
     vec3 specular;       
 };
 
+struct AreaLight {
+    bool use;
+    
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;       
+};
 
 
 // coming from vertex shader
@@ -104,10 +120,12 @@ out vec4 FragColor;
 uniform int pointLightsCount;
 uniform int dirLightsCount;
 uniform int spotLightsCount;
+uniform int areaLightsCount;
 
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
 uniform DirLight dirLights[NBR_MAX_LIGHTS];
 uniform SpotLight spotLights[NBR_MAX_LIGHTS];
+uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
 
 
@@ -115,6 +133,7 @@ uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 
 const vec2 poissonDisk[16] = vec2[](
@@ -435,6 +454,12 @@ void main()
         if (spotLights[i].use)
             result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
     }
+
+    for (int i = 0; i < areaLightsCount; i++)
+    {
+        if (areaLights[i].use)
+            result += CalcAreaLight(areaLights[i], norm, fs_in.FragPos, viewDir);
+    }
     
     // Sample the alpha value from the diffuse texture
     float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
@@ -579,5 +604,12 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // debug shadows
     //FragColor = vec4(vec3(shadow), 1.0);
 
+    return vec3(lighting);
+}
+
+// Calculates the color when using an area light.
+vec3 CalcAreaLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lighting = vec3(0.0);
     return vec3(lighting);
 }

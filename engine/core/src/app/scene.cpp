@@ -1,22 +1,23 @@
 #include "../../include/app/scene.h"
 
 #include "extensions/imoguizmo.hpp"
-#include <glm/gtc/type_ptr.hpp> // for glm::value_ptr
+
+#include <glm/gtc/type_ptr.hpp>
 
 
 using Clock = std::chrono::high_resolution_clock;
 
 
 
+
+
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), sceneSettings(_settings)
 {
-    if (sceneSettings.method == RenderMethod::PBR)
-    {
+    if (sceneSettings.method == RenderMethod::PBR) {
         m_renderer = new PbrRenderer(app->window, sceneSettings, renderSettings);
     }
-    else
-    {
+    else {
         m_renderer = new BlinnPhongRenderer(app->window, sceneSettings, renderSettings);
     }
 
@@ -47,7 +48,7 @@ void engine::Scene::after_init_internal()
     initEntities();
     
     // Counters
-    unsigned short spotLightCount = 0, dirLightCount = 0, pointLightCount = 0;
+    unsigned short spotLightCount = 0, dirLightCount = 0, pointLightCount = 0, areaLightCount = 0;
 
     // Count each type using dynamic_pointer_cast
     for (const auto& light : lights) {
@@ -60,14 +61,17 @@ void engine::Scene::after_init_internal()
         else if (std::dynamic_pointer_cast<PointLight>(light)) {
             ++pointLightCount;
         }
+        else if (std::dynamic_pointer_cast<AreaLight>(light)) {
+            ++areaLightCount;
+        }
     }
 
-    m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount);
+    m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount, areaLightCount);
 
     // Fill imGui debug window with current scene hierarchy
-    //#ifdef EDITOR_MODE
+    #if EDITOR_MODE
     m_editor.setScene(m_entityManager.getRootEntity());
-    //#endif
+    #endif
     
     // count all items in the scene
     countItems(m_entityManager.getRootEntity());
@@ -95,14 +99,14 @@ void engine::Scene::initialize()
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
 
     // listen for editor selected entity changed
-    //#ifdef EDITOR_MODE
+    #if EDITOR_MODE
     listenForEditorChanges();
-    //#endif
+    #endif
 
     after_init();
 }
 
-//#ifdef EDITOR_MODE
+#if EDITOR_MODE
 void engine::Scene::listenForEditorChanges()
 {
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
@@ -110,8 +114,6 @@ void engine::Scene::listenForEditorChanges()
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
             m_selectedEntityID = entity->id;
         });
-
-
 
     m_editor.setOnSceneSettingChanged([this](std::string key, bool value)
         {
@@ -132,7 +134,7 @@ void engine::Scene::listenForEditorChanges()
         });
 
 }
-//#endif
+#endif
 
 void engine::Scene::gameLoop()
 {
@@ -159,13 +161,14 @@ void engine::Scene::gameLoop()
     framerate = ImGui::GetIO().Framerate;
 
     // Editor mode windows
-    //#ifdef EDITOR_MODE
+    #if EDITOR_MODE
     if (is_editor_mode)
     {
         app->setWindowTitle("EDITOR");
         m_editor.renderUIWindow(is_editor_mode);
         renderGizmo();
     }
+    #endif
     
     if (show_perf_overlay)
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
@@ -173,7 +176,7 @@ void engine::Scene::gameLoop()
     // Dear ImGui demo windows
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
-    //#endif
+    
 
 
     // measure ui time (part 1 end)
@@ -537,6 +540,8 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, newWidth, newHeight);
 
+    logger.info("Resize to {}/{}", newWidth, newHeight);
+
     std::cout << "Resize to " << newWidth << "/" << newHeight << std::endl;
 }
 
@@ -834,7 +839,7 @@ void engine::Scene::renderSphere()
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
 }
 
-//#ifdef EDITOR_MODE
+#if EDITOR_MODE
 void engine::Scene::renderGizmo()
 {
     // it is recommended to use a separate projection matrix since the values that work best
@@ -858,8 +863,7 @@ void engine::Scene::renderGizmo()
 
     ImOGuizmo::BeginFrame();
 
-    glm::mat4 projMat = glm::perspective(glm::radians(getActiveCamera()->zoom), static_cast<float>(app->width) / static_cast<float>(app->height), 0.1f, 100.0f
-    );
+    glm::mat4 projMat = glm::perspective(glm::radians(getActiveCamera()->zoom), static_cast<float>(app->width) / static_cast<float>(app->height), 0.1f, 100.0f);
     const float* projPtr = glm::value_ptr(projMat);
 
     glm::mat4 viewMatrix = getActiveCamera()->getViewMatrix();
@@ -874,5 +878,4 @@ void engine::Scene::renderGizmo()
         getActiveCamera()->setFromViewMatrix(viewMatrix);
     }
 }
-//#endif
-
+#endif

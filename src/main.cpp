@@ -15,6 +15,7 @@
 #include "app/myscene7.h"
 #include "app/myscene8.h"
 #include "app/myscene9.h"
+#include "app/myscene10.h" // area lights demo
 
 
 

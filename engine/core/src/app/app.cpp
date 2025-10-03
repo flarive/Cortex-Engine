@@ -101,25 +101,15 @@ void engine::App::setup()
 
     initGLAD();
 
-
-
-    //glEnable(GL_MULTISAMPLE);
-
     initImGUI(glsl_version);
-
-    //int samples = 0;
-    //glGetIntegerv(GL_SAMPLES, &samples);
-    //std::cout << "MSAA Samples: " << samples << std::endl;
 }
-
-
 
 void engine::App::initGLFW()
 {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
     {
-        std::cerr << "GLFW init failed" << std::endl;
+        logger.error("GLFW init failed");
         std::exit(EXIT_FAILURE);
     }
 
@@ -130,10 +120,17 @@ const char* engine::App::initOpenGL()
 {
     // GL 3.3 + GLSL 130
     const char* glsl_version = "#version 130";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    
+    // opengl 3.3
+    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);*/
+
+    // opengl 4.6
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // 3.0+ only and macOS
 
     return glsl_version;
 }
@@ -155,7 +152,7 @@ void engine::App::initWindow()
     window = glfwCreateWindow(width, height, "Cortex engine", fullscreen ? myMonitor : NULL, nullptr);
     if (window == NULL)
     {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        logger.error("Failed to create GLFW window");
         glfwTerminate();
         std::exit(EXIT_FAILURE);
     }
@@ -169,7 +166,7 @@ void engine::App::initGLAD()
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+        logger.error("Failed to initialize GLAD");
         std::exit(EXIT_FAILURE);
     }
 }
@@ -188,10 +185,6 @@ void engine::App::initImGUI(const char* glsl_version)
     ////ImGuiIO& io = ImGui::GetIO();
     //ImFont* defaultFont = io.Fonts->AddFontDefault(); // Default
     //ImFont* largeFont = io.Fonts->AddFontFromFileTTF("fonts/Raleway-Medium.ttf", 20.0f); // Larger font
-
-
-
-
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
@@ -221,7 +214,6 @@ void engine::App::initImGUI(const char* glsl_version)
     ImGui::Spectrum::StyleColorsSpectrum();
     ImGui::Spectrum::LoadFont(17.0f);
 
-
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
@@ -242,7 +234,7 @@ void engine::App::enableMouseCapture(bool enable)
 
 void engine::App::glfw_error_callback(int error, const char* description)
 {
-    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+    logger.error("GLFW Error {}: {}", error, description);
     std::exit(EXIT_FAILURE);
 }
 

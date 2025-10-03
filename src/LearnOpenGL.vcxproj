@@ -186,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="app\myscene1.cpp" />
+    <ClCompile Include="app\myscene10.cpp" />
     <ClCompile Include="app\myscene2.cpp" />
     <ClCompile Include="app\myscene3.cpp" />
     <ClCompile Include="app\myscene4.cpp" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="app\myapp1.h" />
     <ClInclude Include="app\myscene1.h" />
+    <ClInclude Include="app\myscene10.h" />
     <ClInclude Include="app\myscene2.h" />
     <ClInclude Include="app\myscene3.h" />
     <ClInclude Include="app\myscene4.h" />

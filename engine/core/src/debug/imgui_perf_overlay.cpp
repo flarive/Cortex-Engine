@@ -26,9 +26,9 @@ void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps,
     else if (location == -2)
     {
         // Center window
-        ImVec2 zzz = ImGui::GetMainViewport()->GetCenter();
-        zzz.y += ImGui::GetMainViewport()->Size.y / 3.0f;
-        ImGui::SetNextWindowPos(zzz, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        ImVec2 pos = ImGui::GetMainViewport()->GetCenter();
+        pos.y -= ImGui::GetMainViewport()->Size.y / 2.5f;
+        ImGui::SetNextWindowPos(pos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         window_flags |= ImGuiWindowFlags_NoMove;
     }
 

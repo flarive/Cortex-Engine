@@ -1,6 +1,7 @@
 #include "../../include/app/scene.h"
 
 #include "extensions/imoguizmo.hpp"
+#include "../../Include/misc/log_manager.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -132,7 +133,6 @@ void engine::Scene::listenForEditorChanges()
                 sceneSettings.enableCameraFrustrumCulling = value;
 			}
         });
-
 }
 #endif
 
@@ -541,8 +541,6 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
     glViewport(0, 0, newWidth, newHeight);
 
     logger.info("Resize to {}/{}", newWidth, newHeight);
-
-    std::cout << "Resize to " << newWidth << "/" << newHeight << std::endl;
 }
 
 void engine::Scene::refreshFullscreen()
@@ -553,7 +551,7 @@ void engine::Scene::refreshFullscreen()
 
 void engine::Scene::glfw_error_callback(int error, const char* description)
 {
-    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+    logger.error("GLFW Error {}: {}\n", error, description);
     std::exit(EXIT_FAILURE);
 }
 

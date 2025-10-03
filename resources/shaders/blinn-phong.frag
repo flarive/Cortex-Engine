@@ -608,7 +608,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 }
 
 // Calculates the color when using an area light.
-vec3 CalcAreaLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lighting = vec3(0.0);
     return vec3(lighting);

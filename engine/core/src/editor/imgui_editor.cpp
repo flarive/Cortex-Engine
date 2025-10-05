@@ -124,7 +124,6 @@ void engine::ImGuiEditor::renderUIWindow(bool show)
 	ImGui::End();
 }
 
-
 void engine::ImGuiEditor::renderHierarchyWidget()
 {
     if (m_rootEntity)
@@ -378,9 +377,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
 {
     auto transformComponent = entity->getComponent<TransformComponent>();
 
-    
-    
-    
+
     ImGui::SeparatorText(transformComponent->getName().c_str());
 
     if (!transformComponent)
@@ -400,7 +397,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     std::shared_ptr<PrimitiveComponent> primitiveComponent{};
     std::shared_ptr<ModelComponent> modelComponent{};
 
-    auto t = entity->getType();
+    //auto t = entity->getType();
     if (cameraComponent = entity->getComponent<CameraComponent>())
     {
         position = cameraComponent->getCamera()->position;

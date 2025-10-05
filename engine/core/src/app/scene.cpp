@@ -633,8 +633,11 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
             {
                 if (auto modelComponent = child->getComponent<ModelComponent>())
                 {
-                    meshcount += modelComponent->getModel()->numberOfMeshes;
-                    countItems(child);
+                    if (auto model = modelComponent->getModel())
+                    {
+                        meshcount += model->getNumberOfMeshes();
+                        countItems(child);
+					}
                 }
                 else if (child->getComponent<PrimitiveComponent>())
                 {

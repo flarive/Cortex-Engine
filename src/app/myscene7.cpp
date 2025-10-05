@@ -83,8 +83,9 @@ void MyScene7::init()
 
 
 
+    //auto sharedModel = std::make_shared<engine::IModel>("models/helmet/DamagedHelmet.glTF", false, true);
 
-    auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
+    
 
 
     // sample flat entity hierarchy
@@ -96,6 +97,8 @@ void MyScene7::init()
         trs.setLocalScale(glm::vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
+        //auto model = std::make_shared<engine::Model>(sharedModel);
+        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
 
         auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i));
         entity->addComponent<engine::TransformComponent>(trs);
@@ -129,6 +132,9 @@ void MyScene7::init()
             trs.setLocalScale(glm::vec3(1.0f));
             trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
         }
+
+        //auto model = std::make_shared<engine::Model>(sharedModel);
+        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
 
         auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i));
         entity->addComponent<engine::TransformComponent>(trs);
@@ -318,6 +324,12 @@ void MyScene7::update(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
 
+    // Normalize rotation to [0, 360)
+    rotation = fmod(rotation, 360.0f);
+    if (rotation < 0) {
+        rotation += 360.0f;
+    }
+
     auto child2 = getEntityManager().findEntityByName("Child2");
     if (child2)
     {
@@ -334,6 +346,28 @@ void MyScene7::update(engine::Shader& shader)
         trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
         mySphere->setTransform(trs);
     }
+
+
+    
+
+    //auto child2 = getEntityManager().findEntityByName("Child2");
+    //if (child2)
+    //{
+    //    auto trs = child2->getTransform();
+    //    auto rot = trs.getLocalRotation();
+    //    trs.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+    //    child2->setTransform(trs);
+    //}
+
+
+    //auto mySphere = getEntityManager().findEntityByName("MySphere");
+    //if (mySphere)
+    //{
+    //    auto trs = mySphere->getTransform();
+    //    auto rot = trs.getLocalRotation();
+    //    trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
+    //    mySphere->setTransform(trs);
+    //}
 
     rotation += deltaTime * 10.0f;
 }

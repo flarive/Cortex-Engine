@@ -18,21 +18,35 @@
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
 
+engine::IModel::IModel(bool gamma, bool flipUVs)
+{
 
-// constructor, expects a filepath to a 3D model.
-engine::Model::Model(const std::string& path, bool gamma, bool flipUVs, const glm::vec3& _position) : gammaCorrection(gamma), position(_position)
+}
+
+engine::IModel::IModel(const std::string& path, bool gamma, bool flipUVs)
 {
     assert(!path.empty() && "Model path is empty !");
 
     loadModel(path, flipUVs);
 }
 
+// constructor, expects a filepath to a 3D model.
+engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : IModel(_path, _gamma, _flipUVs), position(_position)
+{
+}
 
-void engine::Model::loadModel(const std::string& path, bool flipUVs)
+// constructor, expects a model (for sharing)
+engine::Model::Model(const std::shared_ptr<IModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : IModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
+{
+}
+
+void engine::IModel::loadModel(const std::string& path, bool flipUVs)
 {
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
-    
+
     // read file via ASSIMP
     Assimp::Importer importer;
 
@@ -44,10 +58,11 @@ void engine::Model::loadModel(const std::string& path, bool flipUVs)
 
 
     const aiScene* scene = importer.ReadFile(path, flags);
+
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
-        std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+        logger.error("Model loading error : {}", importer.GetErrorString());
         return;
     }
     // retrieve the directory path of the filepath
@@ -56,8 +71,7 @@ void engine::Model::loadModel(const std::string& path, bool flipUVs)
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    //numberOfMeshes += scene->mRootNode->mNumMeshes;
-    numberOfMeshes += scene->mNumMeshes;
+    m_numberOfMeshes += scene->mNumMeshes;
 
     // Stop the timer
     auto end = std::chrono::high_resolution_clock::now();
@@ -70,7 +84,7 @@ void engine::Model::loadModel(const std::string& path, bool flipUVs)
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void engine::Model::processNode(aiNode* node, const aiScene* scene)
+void engine::IModel::processNode(aiNode* node, const aiScene* scene)
 {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -87,7 +101,7 @@ void engine::Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
+engine::Mesh engine::IModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // Data to fill
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space
@@ -210,7 +224,7 @@ engine::Mesh engine::Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
 
-bool engine::Model::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
+bool engine::IModel::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
 {
     aiString str1{};
     aiString str2{};
@@ -229,7 +243,7 @@ bool engine::Model::checkMetalnessRoughnessSingleTexture(const aiScene* scene, a
 }
 
 
-std::vector<engine::Texture> engine::Model::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
+std::vector<engine::Texture> engine::IModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
     std::vector<engine::Texture> textures{};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -322,9 +336,20 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
     
-    for (auto& mesh : meshes)
+    if (!m_shared_model)
     {
-        mesh.draw(shader, transformMatrix);
+        for (auto& mesh : meshes)
+        {
+            mesh.draw(shader, transformMatrix);
+        }
+    }
+    else
+    {
+		// shared model, loaded one time, drawn multiple times
+        for (auto& mesh : m_shared_model->meshes)
+        {
+            mesh.draw(shader, transformMatrix);
+        }
     }
 }
 
@@ -337,4 +362,21 @@ void engine::Model::clean()
 
     textures_loaded.clear();
     meshes.clear();
+}
+
+unsigned int engine::IModel::getNumberOfMeshes() const
+{
+    return m_numberOfMeshes;
+}
+
+unsigned int engine::Model::getNumberOfMeshes() const
+{
+    if (!m_shared_model)
+    {
+        return m_numberOfMeshes;
+    }
+    else
+    {
+        return m_shared_model->getNumberOfMeshes();
+    }
 }

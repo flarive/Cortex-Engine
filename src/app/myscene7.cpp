@@ -83,7 +83,7 @@ void MyScene7::init()
 
 
 
-    //auto sharedModel = std::make_shared<engine::IModel>("models/helmet/DamagedHelmet.glTF", false, true);
+    auto sharedModel = std::make_shared<engine::SharedModel>("models/helmet/DamagedHelmet.glTF", false, true);
 
     
 
@@ -97,8 +97,7 @@ void MyScene7::init()
         trs.setLocalScale(glm::vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-        //auto model = std::make_shared<engine::Model>(sharedModel);
-        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
+        auto model = std::make_shared<engine::Model>(sharedModel);
 
         auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i));
         entity->addComponent<engine::TransformComponent>(trs);
@@ -133,8 +132,7 @@ void MyScene7::init()
             trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
         }
 
-        //auto model = std::make_shared<engine::Model>(sharedModel);
-        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
+        auto model = std::make_shared<engine::Model>(sharedModel);
 
         auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i));
         entity->addComponent<engine::TransformComponent>(trs);

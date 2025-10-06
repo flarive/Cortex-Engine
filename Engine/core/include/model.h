@@ -20,7 +20,7 @@
 namespace engine
 {
     // just to have std::dynamic_pointer_cast working on Model class
-    class IModel : private NonCopyable {
+    class SharedModel : private NonCopyable {
     public:
 		// model data (TODO : make private with getters)
         std::vector<Texture> textures_loaded{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
@@ -30,13 +30,14 @@ namespace engine
 
         
         
+        
 		// at least one virtual method to make it base class
-        virtual ~IModel() = default;
+        virtual ~SharedModel() = default;
 
-        IModel(bool gamma, bool flipUVs);
+        SharedModel(bool gamma, bool flipUVs);
 
         // constructor, expects a filepath to a 3D model.
-        IModel(const std::string& path, bool gamma = false, bool flipUVs = false);
+        SharedModel(const std::string& path, bool gamma = false, bool flipUVs = false);
 
 
         unsigned int getNumberOfMeshes() const;
@@ -60,6 +61,8 @@ namespace engine
 
         unsigned int m_numberOfMeshes{};
 
+        
+
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
 
@@ -67,7 +70,7 @@ namespace engine
     };
 
 
-    class Model : public IModel
+    class Model : public SharedModel
     {
     public:
         glm::vec3 position{};
@@ -75,7 +78,7 @@ namespace engine
         glm::vec3 scale{};
 
 		// for shared model only (loaded one time, drawn multiple times)
-        std::shared_ptr<IModel> m_shared_model{};
+        std::shared_ptr<SharedModel> m_shared_model{};
 
 
 
@@ -85,7 +88,7 @@ namespace engine
         // constructor, expects a filepath to a 3D model.
         Model(const std::string& _path, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
-        Model(const std::shared_ptr<IModel>& _shared_model, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform);

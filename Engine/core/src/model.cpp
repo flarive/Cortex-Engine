@@ -18,12 +18,12 @@
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
 
-engine::IModel::IModel(bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(bool gamma, bool flipUVs)
 {
 
 }
 
-engine::IModel::IModel(const std::string& path, bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipUVs)
 {
     assert(!path.empty() && "Model path is empty !");
 
@@ -32,17 +32,17 @@ engine::IModel::IModel(const std::string& path, bool gamma, bool flipUVs)
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : IModel(_path, _gamma, _flipUVs), position(_position)
+    : SharedModel(_path, _gamma, _flipUVs), position(_position)
 {
 }
 
 // constructor, expects a model (for sharing)
-engine::Model::Model(const std::shared_ptr<IModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : IModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
+engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
 {
 }
 
-void engine::IModel::loadModel(const std::string& path, bool flipUVs)
+void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
 {
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
@@ -65,6 +65,7 @@ void engine::IModel::loadModel(const std::string& path, bool flipUVs)
         logger.error("Model loading error : {}", importer.GetErrorString());
         return;
     }
+
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
@@ -84,7 +85,7 @@ void engine::IModel::loadModel(const std::string& path, bool flipUVs)
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-void engine::IModel::processNode(aiNode* node, const aiScene* scene)
+void engine::SharedModel::processNode(aiNode* node, const aiScene* scene)
 {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -101,7 +102,7 @@ void engine::IModel::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-engine::Mesh engine::IModel::processMesh(aiMesh* mesh, const aiScene* scene)
+engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // Data to fill
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space
@@ -224,7 +225,7 @@ engine::Mesh engine::IModel::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
 
-bool engine::IModel::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
+bool engine::SharedModel::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
 {
     aiString str1{};
     aiString str2{};
@@ -243,7 +244,7 @@ bool engine::IModel::checkMetalnessRoughnessSingleTexture(const aiScene* scene, 
 }
 
 
-std::vector<engine::Texture> engine::IModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
+std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
     std::vector<engine::Texture> textures{};
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -364,7 +365,7 @@ void engine::Model::clean()
     meshes.clear();
 }
 
-unsigned int engine::IModel::getNumberOfMeshes() const
+unsigned int engine::SharedModel::getNumberOfMeshes() const
 {
     return m_numberOfMeshes;
 }

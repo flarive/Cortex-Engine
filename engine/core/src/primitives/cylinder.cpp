@@ -40,7 +40,7 @@ void engine::Cylinder::setup()
     std::vector<unsigned int> indices;
     const unsigned int sectorCount = 36;
 
-    // Side indices
+    // Side indices (CCW)
     for (unsigned int i = 0; i < sectorCount; ++i)
     {
         unsigned int k1 = i * 2;
@@ -48,12 +48,14 @@ void engine::Cylinder::setup()
         unsigned int k3 = ((i + 1) % sectorCount) * 2;
         unsigned int k4 = k3 + 1;
 
+        // First triangle (bottom-left, top-left, bottom-right)
         indices.push_back(k1);
-        indices.push_back(k3);
         indices.push_back(k2);
+        indices.push_back(k3);
 
-        indices.push_back(k2);
+        // Second triangle (bottom-right, top-left, top-right)
         indices.push_back(k3);
+        indices.push_back(k2);
         indices.push_back(k4);
     }
 
@@ -62,8 +64,8 @@ void engine::Cylinder::setup()
     for (unsigned int i = 0; i < sectorCount; ++i)
     {
         indices.push_back(topCenterIndex);
+        indices.push_back(topCenterIndex + i + 2); // Swap i+1 and i+2
         indices.push_back(topCenterIndex + i + 1);
-        indices.push_back(topCenterIndex + i + 2);
     }
 
     // Bottom cap indices
@@ -71,8 +73,8 @@ void engine::Cylinder::setup()
     for (unsigned int i = 0; i < sectorCount; ++i)
     {
         indices.push_back(bottomCenterIndex);
+        indices.push_back(bottomCenterIndex + i + 1); // Swap i+2 and i+1
         indices.push_back(bottomCenterIndex + i + 2);
-        indices.push_back(bottomCenterIndex + i + 1);
     }
 
     indexCount = static_cast<unsigned int>(indices.size());

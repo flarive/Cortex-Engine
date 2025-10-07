@@ -12,6 +12,16 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 
+	// load light cube debug shader
+	m_lightDebugShader.init("primitive_boundingbox_debug", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+
+	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
+
+	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
+	m_debug_boundingBox = std::make_unique<Cube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	m_debug_boundingBox->setup(matDebugLight);
+
+
 	// Initialize property setters based on primitive type
 
 	// usefull to have static_pointer_cast to work
@@ -90,9 +100,19 @@ void engine::PrimitiveComponent::update(Transform& transform)
 
 }
 
-void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)
+void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	m_primitive->draw(shader, worldTransformMatrix, localTransform);
+
+	if (DISPLAY_DEBUG_BOUNDING_BOX)
+	{
+		// Pass model matrix to shader
+		m_lightDebugShader.use();
+		m_lightDebugShader.setMat4("projection", projection);
+		m_lightDebugShader.setMat4("view", view);
+		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
+		m_debug_boundingBox->draw(m_lightDebugShader, worldTransformMatrix, localTransform);
+	}
 }
 
 engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)

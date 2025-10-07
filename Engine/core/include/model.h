@@ -77,8 +77,7 @@ namespace engine
         glm::vec3 rotation{};
         glm::vec3 scale{};
 
-		// for shared model only (loaded one time, drawn multiple times)
-        std::shared_ptr<SharedModel> m_shared_model{};
+		
 
 
 
@@ -96,5 +95,10 @@ namespace engine
         void clean();
 
         unsigned int getNumberOfMeshes() const;
+
+
+    private:
+        // for shared model only (loaded one time, drawn multiple times)
+        std::shared_ptr<SharedModel> m_shared_model{};
     };
 }

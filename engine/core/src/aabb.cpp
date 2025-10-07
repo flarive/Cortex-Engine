@@ -1,6 +1,8 @@
 #include "../include/aabb.h"
 
 
+
+
 engine::AABB::AABB(const glm::vec3& min, const glm::vec3& max)
     : BoundingVolume{}, center{ (max + min) * 0.5f }, extents{ (max - min) * 0.5f }
 {
@@ -57,6 +59,17 @@ bool engine::AABB::isOnFrustum(const Frustum& camFrustum, const glm::mat4& world
         globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
         globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
         globalAABB.isOnOrForwardPlane(camFrustum.farFace));
+}
+
+std::tuple<float, float, float> engine::AABB::getAABBDimensions()
+{
+    // Calculate width, height, and depth
+    // extents is half of the total size, so multiply by 2
+    float width = extents.x * 2.0f;
+    float height = extents.y * 2.0f;
+    float depth = extents.z * 2.0f;
+
+    return std::make_tuple(width, height, depth);
 }
 
 

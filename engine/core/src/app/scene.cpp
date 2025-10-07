@@ -320,7 +320,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     {
         if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
         {
-            shouldTestFrustrumForEntity = true; //enableCameraFrustrumCulling
+            shouldTestFrustrumForEntity = true;
 
             // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
             if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
@@ -386,7 +386,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             if (typeID == ComponentType::primitive || typeID == ComponentType::model)
             {
                 // primitive and model
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;
             }
             else if (typeID == ComponentType::light)
@@ -576,25 +576,6 @@ void engine::Scene::beginQuery()
 
 void engine::Scene::endQuery()
 {
-    //glEndQuery(GL_PRIMITIVES_GENERATED);
-    //glEndQuery(GL_TIME_ELAPSED); // GPU timer
-
-    //// get primitive count
-    //glGetQueryObjectiv(m_primitiveQuery, GL_QUERY_RESULT, &polycount);
-
-    //// get GPU time
-    //GLint available = 0;
-    //glGetQueryObjectiv(m_timerQuery, GL_QUERY_RESULT_AVAILABLE, &available);
-    //if (available) {
-    //    GLuint64 elapsedTime;
-    //    glGetQueryObjectui64v(m_timerQuery, GL_QUERY_RESULT, &elapsedTime);
-    //    gpuTime = elapsedTime / 1e6; // convert to ms
-    //}
-
-    //glDeleteQueries(1, &m_primitiveQuery);
-    //glDeleteQueries(2, &m_timerQuery);
-
-
     glEndQuery(GL_PRIMITIVES_GENERATED);
     glEndQuery(GL_TIME_ELAPSED);
 

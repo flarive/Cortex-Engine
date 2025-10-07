@@ -8,7 +8,18 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-engine::Cube::Cube(const glm::vec3& _position) : Primitive(_position)
+engine::Cube::Cube(const glm::vec3& _position)
+    : Primitive(_position)
+{
+}
+
+engine::Cube::Cube(const float& _size, const glm::vec3& _position)
+    : Primitive(_position), m_width(_size), m_height(_size), m_depth(_size)
+{
+}
+
+engine::Cube::Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position)
+    : Primitive(_position), m_width(_width), m_height(_height), m_depth(_depth)
 {
 }
 
@@ -67,7 +78,7 @@ void engine::Cube::setup()
 
 std::vector<engine::Vertex> engine::Cube::generateVertices()
 {
-    return generateCubeVertices(m_uvScale);
+    return generateCuboidVertices(m_width, m_height, m_depth, m_uvScale);
 }
 
 void engine::Cube::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)

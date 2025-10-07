@@ -79,7 +79,7 @@ void MyScene1::init()
 
 
     // cube
-    auto myCube = std::make_shared<engine::Cube>();
+    auto myCube = std::make_shared<engine::Cube>(2.0f);
     myCube->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"));
     auto trsCube = engine::Transform(glm::vec3(0.0f, -0.35f, 0.0f), glm::vec3(0.15f));
     auto entityCube = std::make_shared<engine::Entity>("MyCube");

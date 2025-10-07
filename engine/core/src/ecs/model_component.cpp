@@ -6,6 +6,15 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
     : m_model(model)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(model));
+
+	// load light cube debug shader
+	m_lightDebugShader.init("model_boundingbox_debug", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+
+	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
+
+	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
+	m_debug_boundingBox = std::make_unique<Cube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	m_debug_boundingBox->setup(matDebugLight);
 }
 
 
@@ -21,9 +30,19 @@ void engine::ModelComponent::update(Transform& transform)
 
 }
 
-void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform)
+void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
     m_model->draw(shader, worldTransformMatrix, localTransform);
+
+	if (DISPLAY_DEBUG_BOUNDING_BOX)
+	{
+		// Pass model matrix to shader
+		m_lightDebugShader.use();
+		m_lightDebugShader.setMat4("projection", projection);
+		m_lightDebugShader.setMat4("view", view);
+		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
+		m_debug_boundingBox->draw(m_lightDebugShader, worldTransformMatrix, localTransform);
+	}
 }
 
 engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_ptr<Model> model)

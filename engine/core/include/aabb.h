@@ -6,6 +6,7 @@
 #include "transform.h"
 
 #include <array>
+#include <tuple>
 
 namespace engine
 {
@@ -36,5 +37,7 @@ namespace engine
         bool isOnOrForwardPlane(const BoundingVolumePlane& plane) const final;
 
         bool isOnFrustum(const Frustum& camFrustum, const glm::mat4& worldTransform) const final;
+
+        std::tuple<float, float, float> getAABBDimensions();
     };
 }

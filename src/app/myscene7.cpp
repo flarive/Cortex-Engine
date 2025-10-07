@@ -162,7 +162,7 @@ void MyScene7::init()
 
 
     // cube
-    auto myCube = std::make_shared<engine::Cube>();
+    auto myCube = std::make_shared<engine::Cube>(2.0f);
     myCube->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/container2_diffuse.png",
         "textures/container2_specular.png"));

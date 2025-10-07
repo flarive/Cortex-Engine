@@ -17,7 +17,7 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(Transform& transform) override;
 
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform) override;
+		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
 		std::shared_ptr<Camera> getCamera()
 		{

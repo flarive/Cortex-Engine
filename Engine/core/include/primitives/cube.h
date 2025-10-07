@@ -9,7 +9,12 @@ namespace engine
     class Cube final : public Primitive
     {
     public:
+        
+        
+        
         Cube(const glm::vec3& _position = glm::vec3());
+        Cube(const float& _size, const glm::vec3& _position = glm::vec3());
+        Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position = glm::vec3());
         ~Cube() = default;
 
         void setup(const std::shared_ptr<Material>& material) override;
@@ -26,6 +31,11 @@ namespace engine
         }
 
     private:
+        
+        float m_width{ 1.0f };
+        float m_height{ 1.0f };
+        float m_depth{ 1.0f };
+        
         void setup();
 
         unsigned int indexCount{};

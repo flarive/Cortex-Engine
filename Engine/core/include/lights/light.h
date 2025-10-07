@@ -47,9 +47,6 @@ namespace engine
         virtual void setup() = 0;
 
     protected:
-        // render data 
-        unsigned int VBO{}, VAO{};
-
         unsigned int m_index{};
 
         Shader m_lightDebugShader{};

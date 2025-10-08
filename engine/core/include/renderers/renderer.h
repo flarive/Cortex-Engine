@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "../app/scene_settings.h"
 
 #include "../shader.h"
@@ -33,7 +32,7 @@ namespace engine
 		
 
 		
-		Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings);
+		Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings);
 		virtual ~Renderer() = default;
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
@@ -55,7 +54,6 @@ namespace engine
 		std::shared_ptr<Camera> m_camera{};
 
 		SceneSettings& m_sceneSettings;
-		RenderSettings& m_renderSettings;
 
 		std::vector<std::shared_ptr<Light>> m_lights{};
 

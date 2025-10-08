@@ -178,34 +178,55 @@ void engine::ImGuiEditor::renderTabSettings()
 
 
     static bool lastDrawWireframe = false;
-    if (ImGui::Toggle("Wireframe", &scene_setting_draw_wireframe, toggle_config))
+    if (ImGui::Toggle("Wireframe", &sceneSetting_drawAsWireframe, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastDrawWireframe != scene_setting_draw_wireframe)
+        if (m_onSceneSettingChanged && lastDrawWireframe != sceneSetting_drawAsWireframe)
         {
-            m_onSceneSettingChanged("draw_wireframe", scene_setting_draw_wireframe);
-            lastDrawWireframe = scene_setting_draw_wireframe;
+            m_onSceneSettingChanged("draw_wireframe", sceneSetting_drawAsWireframe);
+            lastDrawWireframe = sceneSetting_drawAsWireframe;
         }
     }
 
     static bool lastEnableFaceCulling = true;
-    if (ImGui::Toggle("Face culling", &scene_setting_enable_face_culling, toggle_config))
+    if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableFaceCulling != scene_setting_enable_face_culling)
+        if (m_onSceneSettingChanged && lastEnableFaceCulling != sceneSetting_enableFaceCulling)
         {
-            m_onSceneSettingChanged("enable_face_culling", scene_setting_enable_face_culling);
-			lastEnableFaceCulling = scene_setting_enable_face_culling;
+            m_onSceneSettingChanged("enable_face_culling", sceneSetting_enableFaceCulling);
+			lastEnableFaceCulling = sceneSetting_enableFaceCulling;
         }
     }
 
     static bool lastEnableCameraFrustrumCulling = true;
-    if (ImGui::Toggle("Camera frustrum culling", &scene_setting_enable_camera_frustrum_culling, toggle_config))
+    if (ImGui::Toggle("Camera frustrum culling", &sceneSetting_enableCameraFrustrumCulling, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableCameraFrustrumCulling != scene_setting_enable_camera_frustrum_culling)
+        if (m_onSceneSettingChanged && lastEnableCameraFrustrumCulling != sceneSetting_enableCameraFrustrumCulling)
         {
-            m_onSceneSettingChanged("enable_camera_frustrum_culling", scene_setting_enable_camera_frustrum_culling);
-            lastEnableCameraFrustrumCulling = scene_setting_enable_camera_frustrum_culling;
+            m_onSceneSettingChanged("enable_camera_frustrum_culling", sceneSetting_enableCameraFrustrumCulling);
+            lastEnableCameraFrustrumCulling = sceneSetting_enableCameraFrustrumCulling;
         }
     }
+
+    static bool lastDrawLightsVisualHelpers = true;
+    if (ImGui::Toggle("Lights visual helpers", &sceneSetting_drawLightsVisualHelpers, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastDrawLightsVisualHelpers != sceneSetting_drawLightsVisualHelpers)
+        {
+            m_onSceneSettingChanged("draw_lights_visual_helpers", sceneSetting_drawLightsVisualHelpers);
+            lastDrawLightsVisualHelpers = sceneSetting_drawLightsVisualHelpers;
+        }
+    }
+
+    static bool lastDrawBoundingBoxesVisualHelpers = true;
+    if (ImGui::Toggle("Bounding boxes visual helpers", &sceneSetting_drawBoundingBoxesVisualHelpers, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastDrawBoundingBoxesVisualHelpers != sceneSetting_drawBoundingBoxesVisualHelpers)
+        {
+            m_onSceneSettingChanged("draw_bounding_boxes_visual_helpers", sceneSetting_drawBoundingBoxesVisualHelpers);
+            lastDrawBoundingBoxesVisualHelpers = sceneSetting_drawBoundingBoxesVisualHelpers;
+        }
+    }
+
 
     ImGui::PopStyleVar();
 

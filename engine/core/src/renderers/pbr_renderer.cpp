@@ -10,8 +10,8 @@
 
 
 
-engine::PbrRenderer::PbrRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
-    : Renderer(window, sceneSettings, renderSettings)
+engine::PbrRenderer::PbrRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
+    : Renderer(window, sceneSettings)
 {
 }
 
@@ -71,7 +71,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     initColorFramebufferMSAA(width, height);
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
 
 
     int vsize{ 512 };

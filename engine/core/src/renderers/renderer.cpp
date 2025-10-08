@@ -3,8 +3,8 @@
 
 
 
-engine::Renderer::Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
-    : m_window(window), m_sceneSettings(sceneSettings), m_renderSettings(renderSettings)
+engine::Renderer::Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
+    : m_window(window), m_sceneSettings(sceneSettings)
 {
 }
 
@@ -364,10 +364,10 @@ void engine::Renderer::computeColorFramebuffer()
 void engine::Renderer::updateSettings()
 {
     // solid/wireframe polygons
-    static bool lastRenderModeWireframe = m_renderSettings.wireframe;
-    if (lastRenderModeWireframe != m_renderSettings.wireframe) {
-        glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
-        lastRenderModeWireframe = m_renderSettings.wireframe;
+    static bool lastRenderModeWireframe = m_sceneSettings.drawAsWireframe;
+    if (lastRenderModeWireframe != m_sceneSettings.drawAsWireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
+        lastRenderModeWireframe = m_sceneSettings.drawAsWireframe;
     }
     
     // enable/disable back face culling

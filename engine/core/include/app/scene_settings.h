@@ -25,10 +25,9 @@ namespace engine
         bool enableGammaCorrection{ false };
         bool enableFaceCulling{ true };
         bool enableCameraFrustrumCulling{ true };
-    };
+        bool drawAsWireframe{ false };
 
-    struct RenderSettings
-    {
-        bool wireframe{};
+        bool drawLightsVisualHelpers{ false };
+        bool drawBoundingBoxesVisualHelpers{ false };
     };
 }

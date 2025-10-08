@@ -345,6 +345,9 @@
     <ClCompile Include="core\src\lights\area_light.cpp">
       <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\singleton.cpp">
+      <Filter>Fichiers sources\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -565,6 +568,9 @@
     </ClInclude>
     <ClInclude Include="core\include\lights\area_light.h">
       <Filter>Fichiers d%27en-tête\core\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\singleton.h">
+      <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

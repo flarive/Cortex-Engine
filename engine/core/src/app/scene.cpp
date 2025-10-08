@@ -1,7 +1,8 @@
 #include "../../include/app/scene.h"
 
 #include "extensions/imoguizmo.hpp"
-#include "../../Include/misc/log_manager.h"
+#include "../../include/misc/log_manager.h"
+#include "../../include/singleton.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -9,21 +10,21 @@
 using Clock = std::chrono::high_resolution_clock;
 
 
-
-
-
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app), sceneSettings(_settings)
 {
     if (sceneSettings.method == RenderMethod::PBR) {
-        m_renderer = new PbrRenderer(app->window, sceneSettings, renderSettings);
+        m_renderer = new PbrRenderer(app->window, sceneSettings);
     }
     else {
-        m_renderer = new BlinnPhongRenderer(app->window, sceneSettings, renderSettings);
+        m_renderer = new BlinnPhongRenderer(app->window, sceneSettings);
     }
 
     // create scene entities hierarchy
     m_entityManager.create();
+
+    // store SceneSettings in a singleton for easy access everywhere
+    auto singleton_ = new engine::Singleton(_settings);
 }
 
 void engine::Scene::before_init()
@@ -120,18 +121,21 @@ void engine::Scene::listenForEditorChanges()
         {
             logger.info("{} setting changed: {})", key, value);
 
-            if (key == "draw_wireframe")
-            {
-                renderSettings.wireframe = value;
+            if (key == "draw_wireframe") {
+                sceneSettings.drawAsWireframe = value;
             }
-            else if (key == "enable_face_culling")
-            {
+            else if (key == "enable_face_culling") {
                 sceneSettings.enableFaceCulling = value;
             }
-            else if (key == "enable_camera_frustrum_culling")
-            {
+            else if (key == "enable_camera_frustrum_culling") {
                 sceneSettings.enableCameraFrustrumCulling = value;
 			}
+            else if (key == "draw_lights_visual_helpers") {
+                sceneSettings.drawLightsVisualHelpers = value;
+            }
+            else if (key == "draw_bounding_boxes_visual_helpers") {
+                sceneSettings.drawBoundingBoxesVisualHelpers = value;
+            }
         });
 }
 #endif

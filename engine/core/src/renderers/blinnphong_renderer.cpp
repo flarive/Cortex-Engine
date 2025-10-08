@@ -1,7 +1,8 @@
 ﻿#include "../../include/renderers/blinnphong_renderer.h"
 
-#include "../../include/tools/file_system.h"
+#include "../../include/singleton.h"
 
+#include "../../include/tools/file_system.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -10,8 +11,8 @@
 
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings, engine::RenderSettings& renderSettings)
-    : Renderer(window, sceneSettings, renderSettings)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
+    : Renderer(window, sceneSettings)
 {
 }
 
@@ -31,10 +32,18 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     enableStencilTest(true);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    // avoid computing back faces not visible by camera
-    enableFaceCulling(m_sceneSettings.enableFaceCulling);
-    // automatic color correction
-    enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
+
+
+    /*auto* singleton = engine::Singleton::getInstance();
+    if (singleton)
+    {*/
+        // avoid computing back faces not visible by camera
+        enableFaceCulling(m_sceneSettings.enableFaceCulling);
+        // automatic color correction
+        enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
+    //}
+
+    
 
     // build and compile shaders
     // -------------------------
@@ -67,7 +76,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     initColorFramebufferMSAA(width, height);
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, m_renderSettings.wireframe ? GL_LINE : GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)

@@ -74,7 +74,6 @@ namespace engine
 
         App* app{};
         SceneSettings sceneSettings{};
-        RenderSettings renderSettings{};
 
         Renderer* m_renderer{};
         EntityManager m_entityManager{};

@@ -77,10 +77,6 @@ namespace engine
         glm::vec3 rotation{};
         glm::vec3 scale{};
 
-		
-
-
-
         Model() = default;
 		~Model() = default;
 

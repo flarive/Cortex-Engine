@@ -11,20 +11,20 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
-    : title(_title), app(_app), sceneSettings(_settings)
+    : title(_title), app(_app)
 {
-    if (sceneSettings.method == RenderMethod::PBR) {
-        m_renderer = new PbrRenderer(app->window, sceneSettings);
+    if (_settings.method == RenderMethod::PBR) {
+        m_renderer = new PbrRenderer(app->window);
     }
     else {
-        m_renderer = new BlinnPhongRenderer(app->window, sceneSettings);
+        m_renderer = new BlinnPhongRenderer(app->window);
     }
 
     // create scene entities hierarchy
     m_entityManager.create();
 
     // store SceneSettings in a singleton for easy access everywhere
-    auto singleton_ = new engine::Singleton(_settings);
+    engine::Singleton::initialize(_settings);
 }
 
 void engine::Scene::before_init()
@@ -111,6 +111,8 @@ void engine::Scene::initialize()
 #if EDITOR_MODE
 void engine::Scene::listenForEditorChanges()
 {
+    
+    
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
@@ -120,6 +122,10 @@ void engine::Scene::listenForEditorChanges()
     m_editor.setOnSceneSettingChanged([this](std::string key, bool value)
         {
             logger.info("{} setting changed: {})", key, value);
+
+            auto* singleton = engine::Singleton::getInstance();
+            assert(singleton != nullptr && "Singleton not initialized !");
+            SceneSettings& sceneSettings = singleton->sceneSettings();
 
             if (key == "draw_wireframe") {
                 sceneSettings.drawAsWireframe = value;
@@ -319,6 +325,10 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
     bool shouldTestFrustrumForEntity = false;
     bool frustrumOk = false;
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& sceneSettings = singleton->sceneSettings();
 
     if (sceneSettings.enableCameraFrustrumCulling)
     {

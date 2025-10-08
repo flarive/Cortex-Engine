@@ -1,5 +1,7 @@
 #include "../../include/renderers/pbr_renderer.h"
 
+#include "../../include/singleton.h"
+
 #include "../../include/tools/file_system.h"
 
 #include "../../include/lights/spot_light.h"
@@ -10,8 +12,8 @@
 
 
 
-engine::PbrRenderer::PbrRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
-    : Renderer(window, sceneSettings)
+engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
+    : Renderer(window)
 {
 }
 
@@ -19,6 +21,10 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 {
     m_lights = lights;
     m_camera = camera;
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
     
     // configure global opengl state
     // -----------------------------
@@ -33,9 +39,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     // avoid computing back faces not visible by camera
-    enableFaceCulling(m_sceneSettings.enableFaceCulling);
+    enableFaceCulling(settings.enableFaceCulling);
     // automatic color correction
-    enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
+    enableGammaCorrection(settings.enableGammaCorrection);
 
     // build and compile shaders
     // -------------------------
@@ -48,14 +54,14 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setInt("material.texture_irradiance", 7);
     pbrShader.setInt("material.texture_prefilter", 8);
     pbrShader.setInt("material.texture_brdfLUT", 9);
-    pbrShader.setFloat("material.shadowIntensity", m_sceneSettings.shadowIntensity);
-    pbrShader.setFloat("material.iblDiffuseIntensity", m_sceneSettings.iblDiffuseIntensity); // [0.0, 2.0]
-    pbrShader.setFloat("material.iblSpecularIntensity", m_sceneSettings.iblSpecularIntensity); // [0.0, 5.0]
+    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
     backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
-    backgroundShader.setFloat("blurStrength", m_sceneSettings.HDRSkyboxBlurStrength);
+    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
@@ -71,7 +77,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     initColorFramebufferMSAA(width, height);
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
 
 
     int vsize{ 512 };
@@ -96,7 +102,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: load the HDR environment map
     // ---------------------------------
-    unsigned int hdrTexture = !m_sceneSettings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(m_sceneSettings.HDRSkyboxFilePath)) : 0;
+    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.HDRSkyboxFilePath)) : 0;
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------
@@ -330,7 +336,11 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
     //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
 
-    if (!m_sceneSettings.HDRSkyboxHide)
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
+    if (!settings.HDRSkyboxHide)
         renderCube();
 
     // render BRDF map to screen

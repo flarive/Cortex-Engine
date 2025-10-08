@@ -2,7 +2,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/misc/log_manager.h"
 
-
+#include "core/include/singleton.h"
 
 #include "app/myapp1.h"
 
@@ -22,7 +22,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene7;
+using MyScene = MyScene1;
 
 
 

@@ -11,8 +11,8 @@
 
 
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
-    : Renderer(window, sceneSettings)
+engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
+    : Renderer(window)
 {
 }
 
@@ -34,16 +34,15 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 
-    /*auto* singleton = engine::Singleton::getInstance();
-    if (singleton)
-    {*/
-        // avoid computing back faces not visible by camera
-        enableFaceCulling(m_sceneSettings.enableFaceCulling);
-        // automatic color correction
-        enableGammaCorrection(m_sceneSettings.enableGammaCorrection);
-    //}
+    auto* singleton = engine::Singleton::getInstance();
+	assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
 
-    
+    // avoid computing back faces not visible by camera
+    enableFaceCulling(settings.enableFaceCulling);
+    // automatic color correction
+    enableGammaCorrection(settings.enableGammaCorrection);
+   
 
     // build and compile shaders
     // -------------------------
@@ -52,7 +51,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
-    blinnPhongShader.setFloat("material.shadowIntensity", m_sceneSettings.shadowIntensity);
+    blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
 
     // shader configuration
     // --------------------
@@ -76,7 +75,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     initColorFramebufferMSAA(width, height);
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)

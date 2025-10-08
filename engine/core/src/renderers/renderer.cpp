@@ -1,10 +1,10 @@
 #include "../../include/renderers/renderer.h"
 
+#include "../../include/singleton.h"
 
 
-
-engine::Renderer::Renderer(GLFWwindow* window, engine::SceneSettings& sceneSettings)
-    : m_window(window), m_sceneSettings(sceneSettings)
+engine::Renderer::Renderer(GLFWwindow* window)
+    : m_window(window)
 {
 }
 
@@ -363,27 +363,33 @@ void engine::Renderer::computeColorFramebuffer()
 
 void engine::Renderer::updateSettings()
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+    
+    
     // solid/wireframe polygons
-    static bool lastRenderModeWireframe = m_sceneSettings.drawAsWireframe;
-    if (lastRenderModeWireframe != m_sceneSettings.drawAsWireframe) {
-        glPolygonMode(GL_FRONT_AND_BACK, m_sceneSettings.drawAsWireframe ? GL_LINE : GL_FILL);
-        lastRenderModeWireframe = m_sceneSettings.drawAsWireframe;
+    static bool lastRenderModeWireframe = settings.drawAsWireframe;
+    if (lastRenderModeWireframe != settings.drawAsWireframe)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+        lastRenderModeWireframe = settings.drawAsWireframe;
     }
     
     // enable/disable back face culling
-    static bool lastEnableFaceCulling = m_sceneSettings.enableFaceCulling;
-    if (lastEnableFaceCulling != m_sceneSettings.enableFaceCulling)
+    static bool lastEnableFaceCulling = settings.enableFaceCulling;
+    if (lastEnableFaceCulling != settings.enableFaceCulling)
     {
-        enableFaceCulling(m_sceneSettings.enableFaceCulling);
-        lastEnableFaceCulling = m_sceneSettings.enableFaceCulling;
+        enableFaceCulling(settings.enableFaceCulling);
+        lastEnableFaceCulling = settings.enableFaceCulling;
     }
 
     // enable/disable camera frustrum culling
-    static bool lastEnableCameraFrustrumCulling = m_sceneSettings.enableCameraFrustrumCulling;
-    if (lastEnableCameraFrustrumCulling != m_sceneSettings.enableCameraFrustrumCulling)
+    static bool lastEnableCameraFrustrumCulling = settings.enableCameraFrustrumCulling;
+    if (lastEnableCameraFrustrumCulling != settings.enableCameraFrustrumCulling)
     {
-        enableFaceCulling(m_sceneSettings.enableCameraFrustrumCulling);
-        lastEnableCameraFrustrumCulling = m_sceneSettings.enableCameraFrustrumCulling;
+        enableFaceCulling(settings.enableCameraFrustrumCulling);
+        lastEnableCameraFrustrumCulling = settings.enableCameraFrustrumCulling;
     }
 }
 

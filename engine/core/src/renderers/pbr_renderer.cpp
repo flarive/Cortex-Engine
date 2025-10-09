@@ -398,11 +398,13 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
     m_pointLightCount = pointLightCount;
     m_dirLightCount = dirLightCount;
     m_spotLightCount = spotLightCount;
+    m_areaLightCount = areaLightCount;
 
     pbrShader.use();
     pbrShader.setInt("pointLightsCount", m_pointLightCount);
     pbrShader.setInt("dirLightsCount", m_dirLightCount);
     pbrShader.setInt("spotLightsCount", m_spotLightCount);
+    pbrShader.setInt("areaLightsCount", m_areaLightCount);
 }
 
 engine::Shader& engine::PbrRenderer::getShader()

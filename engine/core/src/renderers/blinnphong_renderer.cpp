@@ -164,6 +164,7 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
     blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
     blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
+    blinnPhongShader.setInt("areaLightsCount", m_areaLightCount);
 }
 
 engine::Shader& engine::BlinnPhongRenderer::getShader()

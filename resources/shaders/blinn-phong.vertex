@@ -7,8 +7,8 @@ layout (location = 3) in vec3 aTangents; // the tangent variable has attribute p
 layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
 
 out VS_OUT {
-    vec3 FragPos;
-    vec3 Normal;
+    vec3 FragPos; // vertex position in world space, same as worldPosition
+    vec3 Normal; // vertex normal in world space, same as worldNormal
     vec2 TexCoords;
     vec3 Tangent;
     vec3 Bitangent;

@@ -1,14 +1,19 @@
 #pragma once
 
 #include "light.h"
-#include "../primitives/cylinder.h"
-
 
 namespace engine
 {
     class AreaLight final : public Light
     {
     public:
+        glm::vec3 offset;
+        float yRotation;
+
+        glm::vec3 color;
+        float intensity = 4.0f;
+        bool twoSided = true;
+        
         AreaLight(unsigned int index);
         AreaLight(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), unsigned int index = 0);
 
@@ -22,7 +27,21 @@ namespace engine
         void clean() override;
 
     private:
-        Cylinder m_debug_cylinder{};
+
+        GLuint areaLightVBO, areaLightVAO;
+
+        // SHADERS
+        engine::Shader shaderLightPlane;
+
+
+        VertexAL areaLightVertices[6] = {
+    { {-8.0f, 2.4f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f} }, // 0 1 5 4
+    { {-8.0f, 2.4f,  1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f} },
+    { {-8.0f, 0.4f,  1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f} },
+    { {-8.0f, 2.4f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f} },
+    { {-8.0f, 0.4f,  1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f} },
+    { {-8.0f, 0.4f, -1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f} }
+        };
 
         void setup() override;
     };

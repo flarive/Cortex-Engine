@@ -111,8 +111,6 @@ void engine::Scene::initialize()
 #if EDITOR_MODE
 void engine::Scene::listenForEditorChanges()
 {
-    
-    
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);

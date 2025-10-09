@@ -1,5 +1,7 @@
 #include "../../include/ecs/model_component.h"
 
+#include "../../include/singleton.h"
+
 
 
 engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
@@ -34,7 +36,11 @@ void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
 {
     m_model->draw(shader, worldTransformMatrix, localTransform);
 
-	if (DISPLAY_DEBUG_BOUNDING_BOX)
+	auto* singleton = engine::Singleton::getInstance();
+	assert(singleton != nullptr && "Singleton not initialized !");
+	SceneSettings& sceneSettings = singleton->sceneSettings();
+
+	if (sceneSettings.drawBoundingBoxesVisualHelpers)
 	{
 		// Pass model matrix to shader
 		m_lightDebugShader.use();

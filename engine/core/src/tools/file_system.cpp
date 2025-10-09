@@ -1,12 +1,12 @@
 #include "../../include/tools/file_system.h"
 
-std::string engine::file_system::getPath(const std::string& path)
+std::string engine::FileSystem::getPath(const std::string& path)
 {
     static Builder pathBuilder = getPathBuilder();
     return (*pathBuilder)(path);
 }
 
-const std::string& engine::file_system::getRoot()
+const std::string& engine::FileSystem::getRoot()
 {
     std::filesystem::path dir(std::filesystem::current_path());
     std::string logl_root = dir.generic_string();
@@ -17,20 +17,20 @@ const std::string& engine::file_system::getRoot()
     return root;
 }
 
-engine::file_system::Builder engine::file_system::getPathBuilder()
+engine::FileSystem::Builder engine::FileSystem::getPathBuilder()
 {
     if (!getRoot().empty())
-        return &file_system::getPathRelativeRoot;
+        return &FileSystem::getPathRelativeRoot;
     else
-        return &file_system::getPathRelativeBinary;
+        return &FileSystem::getPathRelativeBinary;
 }
 
-std::string engine::file_system::getPathRelativeRoot(const std::string& path)
+std::string engine::FileSystem::getPathRelativeRoot(const std::string& path)
 {
     return getRoot() + "/" + path;
 }
 
-std::string engine::file_system::getPathRelativeBinary(const std::string& path)
+std::string engine::FileSystem::getPathRelativeBinary(const std::string& path)
 {
     return "../../../" + path;
 }

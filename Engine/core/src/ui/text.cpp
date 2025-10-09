@@ -29,7 +29,7 @@ void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fo
     }
 
     // find path to font
-    std::string font_name = file_system::getPath(fontPath);
+    std::string font_name = FileSystem::getPath(fontPath);
     if (font_name.empty())
     {
         std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;

@@ -1,5 +1,6 @@
 #include "../../include/lights/area_light.h"
 
+#include "../../include/singleton.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
@@ -42,7 +43,11 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
 
 
-    if (DISPLAY_DEBUG_LIGHT)
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawLightsVisualHelpers)
     {
         glm::vec3 direction = glm::normalize(target - position);
         glm::vec3 defaultAxis = glm::vec3(0.0f, 1.0f, 0.0f); // cylinder points up
@@ -72,5 +77,4 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
 
 void engine::AreaLight::clean()
 {
-    //glDeleteVertexArrays(1, &VAO);
 }

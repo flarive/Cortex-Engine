@@ -1,10 +1,11 @@
 #include "../../include/lights/spot_light.h"
 
+#include "../../include/singleton.h"
+
 #include <format>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
-//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
 
 engine::SpotLight::SpotLight(unsigned int index) : Light(glm::vec3(), index)
 {
@@ -45,7 +46,11 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(cutoff)));
     shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(outerCutoff)));
 
-    if (DISPLAY_DEBUG_LIGHT)
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawLightsVisualHelpers)
     {
         glm::vec3 direction = glm::normalize(target - position);
         glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
@@ -74,10 +79,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
     }
 }
 
-
-
-
 void engine::SpotLight::clean()
 {
-    //glDeleteVertexArrays(1, &VAO);
+    m_debug_cone.clean();
 }

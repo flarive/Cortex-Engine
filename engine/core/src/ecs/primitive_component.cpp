@@ -1,5 +1,7 @@
 #include "../../include/ecs/primitive_component.h"
 
+#include "../../include/singleton.h"
+
 #include "../../include/primitives/cube.h"
 #include "../../include/primitives/sphere.h"
 #include "../../include/primitives/plane.h"
@@ -104,7 +106,11 @@ void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 {
 	m_primitive->draw(shader, worldTransformMatrix, localTransform);
 
-	if (DISPLAY_DEBUG_BOUNDING_BOX)
+	auto* singleton = engine::Singleton::getInstance();
+	assert(singleton != nullptr && "Singleton not initialized !");
+	SceneSettings& sceneSettings = singleton->sceneSettings();
+
+	if (sceneSettings.drawBoundingBoxesVisualHelpers)
 	{
 		// Pass model matrix to shader
 		m_lightDebugShader.use();

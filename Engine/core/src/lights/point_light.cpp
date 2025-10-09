@@ -1,9 +1,9 @@
 #include "../../include/lights/point_light.h"
 
+#include "../../include/singleton.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
-//#include <glm/gtx/transform.hpp>   // Optional: glm::translate, rotate, scale
-
 
 #include "../../include/transform.h"
 
@@ -59,7 +59,11 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
     shader.setFloat(std::format("{}.quadratic", base), 0.032f); // 0.032, 0.0075, 0.000007
 
 
-    if (DISPLAY_DEBUG_LIGHT)
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawLightsVisualHelpers)
     {
         glm::vec3 direction = glm::normalize(target - position);
         glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
@@ -88,5 +92,5 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
 
 void engine::PointLight::clean()
 {
-    //glDeleteVertexArrays(1, &VAO);
+    m_debug_sphere.clean();
 }

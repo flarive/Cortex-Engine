@@ -89,6 +89,9 @@
     <Filter Include="resources\icons">
       <UniqueIdentifier>{71d8d761-eb92-4eda-9955-007f9d6610e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\shaders\test">
+      <UniqueIdentifier>{0b3d657f-07be-4ccc-bb8c-054a2951a6b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -678,6 +681,18 @@
     <CopyFileToFolders Include="..\resources\icons\icon_show_16x16.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\area_light.frag">
+      <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\area_light.vertex">
+      <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\light_plane.frag">
+      <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\light_plane.vertex">
+      <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -713,5 +728,7 @@
     <ClInclude Include="app\myscene10.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="ltc_matrix.hpp" />
+    <ClInclude Include="colors.hpp" />
   </ItemGroup>
 </Project>

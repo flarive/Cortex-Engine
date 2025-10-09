@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class file_system : private NonCopyable
+    class FileSystem : private NonCopyable
     {
     private:
         using Builder = std::string(*)(const std::string& path);

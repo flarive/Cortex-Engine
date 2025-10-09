@@ -102,7 +102,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: load the HDR environment map
     // ---------------------------------
-    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(file_system::getPath(settings.HDRSkyboxFilePath)) : 0;
+    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(FileSystem::getPath(settings.HDRSkyboxFilePath)) : 0;
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------

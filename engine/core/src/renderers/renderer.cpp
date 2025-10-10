@@ -467,7 +467,7 @@ void engine::Renderer::renderCube()
         glBindVertexArray(0);
     }
 
-    // render Cube
+    // Send to GPU
     glBindVertexArray(m_cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
@@ -496,6 +496,7 @@ void engine::Renderer::renderQuad()
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     }
 
+    // Send to GPU
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
@@ -590,6 +591,7 @@ void engine::Renderer::renderSphere()
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
     }
 
+    // Send to GPU
     glBindVertexArray(m_sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, m_indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

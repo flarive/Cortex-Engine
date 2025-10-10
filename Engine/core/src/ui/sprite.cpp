@@ -61,6 +61,7 @@ void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm:
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
+    // Send to GPU
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
@@ -95,6 +96,7 @@ void engine::Sprite::initRenderData()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    // Send to GPU
     glBindVertexArray(m_quadVAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);

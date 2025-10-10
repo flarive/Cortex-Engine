@@ -128,6 +128,8 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
 
     glUniform3f(glGetUniformLocation(m_textShader.ID, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
+    
+    // Send to GPU
     glBindVertexArray(m_VAO);
 
     glEnable(GL_BLEND);

@@ -1,25 +1,22 @@
 #include "../../include/lights/area_light.h"
 
-#include "../../include/singleton.h"
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
 #include <format>
 
 
-engine::AreaLight::AreaLight(unsigned int index) : AreaLight(glm::vec3(), index)
+engine::AreaLight::AreaLight() : AreaLight(glm::vec3())
 {
 }
 
-engine::AreaLight::AreaLight(glm::vec3 _position, unsigned int index) : Light(_position, index)
+engine::AreaLight::AreaLight(glm::vec3 _position) : Light(_position)
 {
     setup();
 }
 
 void engine::AreaLight::setup()
 {
-    // SHADERS
     shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
 
 
@@ -28,7 +25,7 @@ void engine::AreaLight::setup()
     mLTC.mat1 = Texture::loadMTexture();
     mLTC.mat2 = Texture::loadLUTTexture();
 
-    // SEND TO GPU
+    // Send to GPU
     glGenVertexArrays(1, &areaLightVAO);
     glBindVertexArray(areaLightVAO);
 
@@ -56,11 +53,8 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
 {
     std::string base = std::format("areaLights[{}]", m_index);
 
-    // area light
-    shader.setBool(std::format("{}.use", base), true);
-
-    // SHADER CONFIGURATION
     shader.use();
+    shader.setBool(std::format("{}.use", base), true);
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, offset);
@@ -87,10 +81,10 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
 
     shader.setInt("LTC1", 0);
     shader.setInt("LTC2", 1);
-    //shader.setInt("material.texture_diffuse", 0); // ??????????????????
-    //incrementRoughness(0.0f);
-    //incrementLightIntensity(0.0f);
-    //switchTwoSided(false);
+    
+    
+    
+    shader.setVec4("material.albedoRoughness", glm::vec4(color, roughness));
     glUseProgram(0); // ??????????
 
     shaderLightPlane.use();
@@ -100,6 +94,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     }
 
     shaderLightPlane.setVec3("lightColor", glm::vec3(1.0f, 0.5f, 0.0f));
+    
     glUseProgram(0); // ??????????
 
 
@@ -107,11 +102,10 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
-    /*glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, concreteTexture);*/
+    
 
 
-    glUseProgram(0);
+    glUseProgram(0); // ??????????
 
     // draw area light planes
     shaderLightPlane.use();
@@ -126,14 +120,13 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shaderLightPlane.setMat4("model", model);
     shaderLightPlane.setVec3("lightColor", color);
         
+    // send to GPU
     glBindVertexArray(areaLightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
     
-    glUseProgram(0);
-
-    
+    glUseProgram(0); // ??????????
 }
 
 void engine::AreaLight::clean()

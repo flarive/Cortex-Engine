@@ -49,6 +49,7 @@ void engine::Cube::setup()
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
 
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
@@ -110,6 +111,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& transformMatrix, Transf
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

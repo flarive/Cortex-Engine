@@ -9,11 +9,11 @@
 #include <format>
 
 
-engine::DirectionalLight::DirectionalLight(unsigned int index) : DirectionalLight(glm::vec3(), index)
+engine::DirectionalLight::DirectionalLight() : DirectionalLight(glm::vec3())
 {
 }
 
-engine::DirectionalLight::DirectionalLight(glm::vec3 _position, unsigned int index) : Light(_position, index)
+engine::DirectionalLight::DirectionalLight(glm::vec3 _position) : Light(_position)
 {
     setup();
 }
@@ -32,7 +32,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 {
     std::string base = std::format("dirLights[{}]", m_index);
 
-    // directional light
+    shader.use();
     shader.setBool(std::format("{}.use", base), true);
 
     shader.setVec3(std::format("{}.position", base), position);

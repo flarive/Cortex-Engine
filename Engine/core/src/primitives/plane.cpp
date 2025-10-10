@@ -35,6 +35,8 @@ void engine::Plane::setup()
     // configure plane VAO
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
+    
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         
@@ -95,7 +97,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
-    // Render plane
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);

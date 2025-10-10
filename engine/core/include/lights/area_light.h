@@ -19,10 +19,11 @@ namespace engine
 
         glm::vec3 color{};
         float intensity{ 4.0f };
+        float roughness{ 0.5f };
         bool twoSided{ true };
         
-        AreaLight(unsigned int index);
-        AreaLight(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), unsigned int index = 0);
+        AreaLight();
+        AreaLight(glm::vec3 _position);
 
         LightType getTypeID() const override
         {

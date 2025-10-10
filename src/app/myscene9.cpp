@@ -37,7 +37,7 @@ void MyScene9::init()
     // lights
     auto trsLight1 = engine::Transform{};
     trsLight1.setLocalPosition({ -10.0f, 10.0f, 10.0f });
-    auto light1 = std::make_shared<engine::PointLight>(0);
+    auto light1 = std::make_shared<engine::PointLight>();
     light1->intensity = 50.0f;
     auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
@@ -47,7 +47,7 @@ void MyScene9::init()
 
     auto trsLight2 = engine::Transform{};
     trsLight2.setLocalPosition({ 10.0f, 10.0f, 10.0f });
-    auto light2 = std::make_shared<engine::PointLight>(1);
+    auto light2 = std::make_shared<engine::PointLight>();
     light2->intensity = 50.0f;
     auto entityLight2 = std::make_shared<engine::Entity>("Light2");
     entityLight2->addComponent<engine::TransformComponent>(trsLight2);
@@ -58,7 +58,7 @@ void MyScene9::init()
 
     auto trsLight3 = engine::Transform{};
     trsLight3.setLocalPosition({ -10.0f, -10.0f, 10.0f });
-    auto light3 = std::make_shared<engine::PointLight>(2);
+    auto light3 = std::make_shared<engine::PointLight>();
     light3->intensity = 50.0f;
     auto entityLight3 = std::make_shared<engine::Entity>("Light3");
     entityLight3->addComponent<engine::TransformComponent>(trsLight3);
@@ -69,7 +69,7 @@ void MyScene9::init()
 
     auto trsLight4 = engine::Transform{};
     trsLight4.setLocalPosition({ 10.0f, -10.0f, 10.0f });
-    auto light4 = std::make_shared<engine::PointLight>(3);
+    auto light4 = std::make_shared<engine::PointLight>();
     light4->intensity = 50.0f;
     auto entityLight4 = std::make_shared<engine::Entity>("Light4");
     entityLight4->addComponent<engine::TransformComponent>(trsLight4);

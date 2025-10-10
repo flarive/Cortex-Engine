@@ -10,11 +10,11 @@
 #include <format>
 
 
-engine::PointLight::PointLight(unsigned int index) : PointLight(glm::vec3(), index)
+engine::PointLight::PointLight() : PointLight(glm::vec3())
 {
 }
 
-engine::PointLight::PointLight(glm::vec3 _position, unsigned int index) : Light(_position, index)
+engine::PointLight::PointLight(glm::vec3 _position) : Light(_position)
 {
     setup();
 }

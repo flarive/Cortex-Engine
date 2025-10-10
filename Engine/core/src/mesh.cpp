@@ -17,7 +17,7 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
     shader.use();
     m_material->bind(shader); // Bind material textures
 
-    // Draw mesh
+    // send to GPU
     glBindVertexArray(VAO);
 
     // calculate the model matrix for each object and pass it to shader before drawing
@@ -61,6 +61,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
     shader.use();
     m_material->bind(shader); // Bind material textures
 
+    // send to GPU
     glBindVertexArray(VAO);
 
     //std::cout << "engine::Mesh::draw " << model[3].x << "/" << model[3].y << "/" << model[3].z << std::endl;
@@ -99,6 +100,7 @@ void engine::Mesh::setupMesh()
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
+    // send to GPU
     glBindVertexArray(VAO);
     // load data into vertex buffers
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

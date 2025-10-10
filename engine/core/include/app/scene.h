@@ -73,7 +73,6 @@ namespace engine
         std::string title{};
 
         App* app{};
-        //SceneSettings sceneSettings{};
 
         Renderer* m_renderer{};
         EntityManager m_entityManager{};

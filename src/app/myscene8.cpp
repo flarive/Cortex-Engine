@@ -31,7 +31,7 @@ void MyScene8::init()
 
     // light
     auto trsLight1 = engine::Transform{ {0.0f, 1.5f, 0.0f} };
-    auto light1 = std::make_shared<engine::PointLight>(0);
+    auto light1 = std::make_shared<engine::PointLight>();
     light1->intensity = 1.0f;
     light1->ambientColor = engine::Color(0.5f);
     auto entityLight1 = std::make_shared<engine::Entity>("Light1");

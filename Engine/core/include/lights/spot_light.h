@@ -11,8 +11,8 @@ namespace engine
         float cutoff = 12.5f;
         float outerCutoff = 15.0f;
         
-        SpotLight(unsigned int index);
-        SpotLight(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), unsigned int index = 0);
+        SpotLight();
+        SpotLight(glm::vec3 _position);
 
         LightType getTypeID() const override
         {

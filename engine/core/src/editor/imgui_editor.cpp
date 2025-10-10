@@ -207,7 +207,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastDrawLightsVisualHelpers = true;
+    static bool lastDrawLightsVisualHelpers = false;
     if (ImGui::Toggle("Lights visual helpers", &sceneSetting_drawLightsVisualHelpers, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawLightsVisualHelpers != sceneSetting_drawLightsVisualHelpers)
@@ -217,7 +217,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastDrawBoundingBoxesVisualHelpers = true;
+    static bool lastDrawBoundingBoxesVisualHelpers = false;
     if (ImGui::Toggle("Bounding boxes visual helpers", &sceneSetting_drawBoundingBoxesVisualHelpers, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawBoundingBoxesVisualHelpers != sceneSetting_drawBoundingBoxesVisualHelpers)

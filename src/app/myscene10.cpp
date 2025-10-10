@@ -39,13 +39,14 @@ void MyScene10::init()
         float z = fn(); z = (z > 0.5f) ? z : -z;
 
         auto trsLight = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
-        auto light = std::make_shared<engine::AreaLight>(i);
+        auto light = std::make_shared<engine::AreaLight>();
         light->offset = glm::vec3(x, 0.0f, z) * 8.f;
         light->yRotation = fn() * glm::two_pi<float>();
         light->color = glm::vec3(fn(), fn(), fn());
+        light->roughness = 2.0f;
         light->intensity = 100.0f;
         light->twoSided = true;
-        auto entityLight = std::make_shared<engine::Entity>(std::format("Light{}", i + 1));
+        auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);
         entityLight->addComponent<engine::LightComponent>(light);
         getEntityManager().addChild(entityLight);

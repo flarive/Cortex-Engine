@@ -87,7 +87,7 @@ void engine::Cone::setup()
         data.push_back(v.bitangent.z);
     }
 
-    // === Step 4: Upload to OpenGL ===
+    // === Step 4: Send to GPU ===
     glBindVertexArray(m_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -151,6 +151,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& transformMatrix, Transf
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

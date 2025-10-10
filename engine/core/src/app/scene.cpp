@@ -87,14 +87,48 @@ void engine::Scene::initialize()
 
     init();
 
-    if (lights.size() == 0)
-        lights = m_entityManager.findEntitiesOfType<Light>();
-
+    
+    lights = m_entityManager.findEntitiesOfType<Light>();
     assert(lights.size() > 0 && "Scene has no light !");
 
-    if (cameras.size() == 0)
-        cameras = m_entityManager.findEntitiesOfType<Camera>();
+    // assign light indexes
+    unsigned int nextPointLightIndex = 0;
+    unsigned int nextDirLightIndex = 0;
+    unsigned int nextSpotLightIndex = 0;
+    unsigned int nextAreaLightIndex = 0;
+    
+    for (const auto& light : lights)
+    {
+        if (light)
+        {
+            if (light->getTypeID() == LightType::point)
+            {
+                light->setIndex(nextPointLightIndex);
+                nextPointLightIndex++;
+            }
+            else if (light->getTypeID() == LightType::directional)
+            {
+                light->setIndex(nextDirLightIndex);
+                nextDirLightIndex++;
+            }
+            else if (light->getTypeID() == LightType::spot)
+            {
+                light->setIndex(nextSpotLightIndex);
+                nextSpotLightIndex++;
+            }
+            else if (light->getTypeID() == LightType::area)
+            {
+                light->setIndex(nextAreaLightIndex);
+                nextAreaLightIndex++;
+            }
+        }
+    }
 
+
+    
+
+    
+    cameras = m_entityManager.findEntitiesOfType<Camera>();
     assert(cameras.size() > 0 && "Scene has no camera !");
 
     // renderer setup
@@ -706,7 +740,8 @@ void engine::Scene::renderCube()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
-    // render Cube
+    
+    // Send to GPU
     glBindVertexArray(cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
@@ -724,6 +759,7 @@ void engine::Scene::renderQuad()
              1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
              1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
         };
+
         // setup plane VAO
         glGenVertexArrays(1, &quadVAO);
         glGenBuffers(1, &quadVBO);
@@ -735,6 +771,8 @@ void engine::Scene::renderQuad()
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     }
+
+    // send to GPU
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
@@ -815,6 +853,8 @@ void engine::Scene::renderSphere()
                 data.push_back(uv[i].y);
             }
         }
+        
+        // setup sphere VAO
         glBindVertexArray(sphereVAO);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
@@ -829,6 +869,7 @@ void engine::Scene::renderSphere()
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
     }
 
+    // Send to GPU
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
 }

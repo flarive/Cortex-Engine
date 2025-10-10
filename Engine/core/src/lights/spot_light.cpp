@@ -7,11 +7,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
-engine::SpotLight::SpotLight(unsigned int index) : SpotLight(glm::vec3(), index)
+engine::SpotLight::SpotLight() : SpotLight(glm::vec3())
 {
 }
 
-engine::SpotLight::SpotLight(glm::vec3 _position, unsigned int index) : Light(_position, index)
+engine::SpotLight::SpotLight(glm::vec3 _position) : Light(_position)
 {
     setup();
 }
@@ -29,6 +29,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
 {
     std::string base = std::format("spotLights[{}]", m_index);
 
+    shader.use();
     shader.setBool(std::format("{}.use", base), true);
 
     shader.setVec3(std::format("{}.position", base), position);

@@ -32,6 +32,7 @@ void engine::Billboard::setup()
     glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO
 
+    // Send to GPU
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(m_VAO);
 
@@ -94,7 +95,7 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& transformMatrix, T
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
 
-    // Render billboard
+    // Send to GPU
     glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 

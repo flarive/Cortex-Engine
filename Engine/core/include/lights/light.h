@@ -28,14 +28,16 @@ namespace engine
 
         glm::vec3 target{};
         
-        Light(unsigned int index);
-        Light(glm::vec3 _position, unsigned int index);
+        Light();
+        Light(glm::vec3 _position);
         virtual ~Light() = default;
 
         virtual LightType getTypeID() const
         {
             return LightType::undefined;
         }
+
+        virtual void setIndex(unsigned int index) { m_index = index; }
 
         virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix) = 0;
 

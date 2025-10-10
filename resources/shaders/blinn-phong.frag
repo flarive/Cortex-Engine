@@ -104,28 +104,25 @@ in VS_OUT {
 uniform vec3 viewPos;
 uniform float far_plane;
 uniform bool enableShadows;
+uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
-
+uniform mat4 lightSpaceMatrix;
 
 // shader output
 out vec4 FragColor;
 
-
 // lights
-#define NBR_MAX_LIGHTS 10
+#define NBR_MAX_LIGHTS 16
 
 uniform int pointLightsCount;
 uniform int dirLightsCount;
 uniform int spotLightsCount;
 uniform int areaLightsCount;
 
-
-
-
 uniform PointLight pointLights[NBR_MAX_LIGHTS];
 uniform DirLight dirLights[NBR_MAX_LIGHTS];
 uniform SpotLight spotLights[NBR_MAX_LIGHTS];
-uniform AreaLight areaLights[32];
+uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
 
 // area light only

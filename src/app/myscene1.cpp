@@ -28,7 +28,7 @@ void MyScene1::init()
 
     // light
     auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
-    auto light1 = std::make_shared<engine::SpotLight>(0);
+    auto light1 = std::make_shared<engine::SpotLight>();
     light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;

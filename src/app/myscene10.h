@@ -14,7 +14,7 @@ private:
 
     const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
 
-    
+    const int NUM_AREA_LIGHTS = 16;
 
     float rotation{};
 

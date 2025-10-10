@@ -58,5 +58,8 @@ namespace engine
         static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory);
         static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename);
         static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height);
+
+        static GLuint loadMTexture();
+        static GLuint loadLUTTexture();
     };
 }

@@ -3,8 +3,6 @@
 #include "light.h"
 #include "../primitives/sphere.h"
 
-#include <format>
-
 namespace engine
 {
     class PointLight final : public Light

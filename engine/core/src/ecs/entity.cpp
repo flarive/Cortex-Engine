@@ -54,28 +54,22 @@ std::string engine::Entity::getTypeNameEx()
 		auto primitive = primitiveComponent->getPrimitive();
 		if (primitive)
 		{
-			if (primitive->getTypeID() == PrimitiveType::cube)
-			{
+			if (primitive->getTypeID() == PrimitiveType::cube) {
 				return "Cube primitive";
 			}
-			else if (primitive->getTypeID() == PrimitiveType::sphere)
-			{
+			else if (primitive->getTypeID() == PrimitiveType::sphere) {
 				return "Sphere primitive";
 			}
-			else if (primitive->getTypeID() == PrimitiveType::plane)
-			{
+			else if (primitive->getTypeID() == PrimitiveType::plane) {
 				return "Plane primitive";
 			}
-			else if (primitive->getTypeID() == PrimitiveType::cylinder)
-			{
+			else if (primitive->getTypeID() == PrimitiveType::cylinder) {
 				return "Cylinder primitive";
 			}
-			else if (primitive->getTypeID() == PrimitiveType::cone)
-			{
+			else if (primitive->getTypeID() == PrimitiveType::cone) {
 				return "Cone primitive";
 			}
-			else if (primitive->getTypeID() == PrimitiveType::billboard)
-			{
+			else if (primitive->getTypeID() == PrimitiveType::billboard) {
 				return "Billboard primitive";
 			}
 		}
@@ -87,17 +81,17 @@ std::string engine::Entity::getTypeNameEx()
 		auto light = lightComponent->getLight();
 		if (light)
 		{
-			if (light->getTypeID() == LightType::directional)
-			{
+			if (light->getTypeID() == LightType::directional) {
 				return "Directional Light";
 			}
-			else if (light->getTypeID() == LightType::spot)
-			{
+			else if (light->getTypeID() == LightType::spot) {
 				return "Spot Light";
 			}
-			if (light->getTypeID() == LightType::point)
-			{
+			else if (light->getTypeID() == LightType::point) {
 				return "Point Light";
+			}
+			else if (light->getTypeID() == LightType::area) {
+				return "Area Light";
 			}
 		}
 		
@@ -108,16 +102,13 @@ std::string engine::Entity::getTypeNameEx()
 		auto camera = cameraComponent->getCamera();
 		if (camera)
 		{
-			if (camera->getTypeID() == CameraType::fly)
-			{
+			if (camera->getTypeID() == CameraType::fly) {
 				return "Fly camera";
 			}
-			else if (camera->getTypeID() == CameraType::fps)
-			{
+			else if (camera->getTypeID() == CameraType::fps) {
 				return "FPS camera";
 			}
-			else if (camera->getTypeID() == CameraType::orbit)
-			{
+			else if (camera->getTypeID() == CameraType::orbit) {
 				return "Orbit camera";
 			}
 		}

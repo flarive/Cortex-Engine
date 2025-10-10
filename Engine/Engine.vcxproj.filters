@@ -572,5 +572,11 @@
     <ClInclude Include="core\include\singleton.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\misc\ltc_matrix.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\misc\colors.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

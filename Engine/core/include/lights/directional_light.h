@@ -3,7 +3,6 @@
 #include "light.h"
 #include "../primitives/cylinder.h"
 
-
 namespace engine
 {
     class DirectionalLight final : public Light

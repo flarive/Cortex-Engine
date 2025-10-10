@@ -6,7 +6,7 @@
 // Color values found at:
 // https://www.rapidtables.com/web/color/RGB_Color.html
 
-class PredefinedColor
+class Colors
 {
 public:
 	static inline glm::vec3 Maroon = glm::vec3(0.501961f, 0.0f, 0.0f);

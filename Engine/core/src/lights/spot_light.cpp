@@ -7,7 +7,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
-engine::SpotLight::SpotLight(unsigned int index) : Light(glm::vec3(), index)
+engine::SpotLight::SpotLight(unsigned int index) : SpotLight(glm::vec3(), index)
 {
 }
 

@@ -9,7 +9,7 @@
 #include <format>
 
 
-engine::DirectionalLight::DirectionalLight(unsigned int index) : Light(glm::vec3(), index)
+engine::DirectionalLight::DirectionalLight(unsigned int index) : DirectionalLight(glm::vec3(), index)
 {
 }
 

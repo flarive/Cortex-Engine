@@ -6,11 +6,9 @@
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
 #include <format>
-#include <random>
-#include <chrono>
 
 
-engine::AreaLight::AreaLight(unsigned int index) : Light(glm::vec3(), index)
+engine::AreaLight::AreaLight(unsigned int index) : AreaLight(glm::vec3(), index)
 {
 }
 
@@ -21,27 +19,14 @@ engine::AreaLight::AreaLight(glm::vec3 _position, unsigned int index) : Light(_p
 
 void engine::AreaLight::setup()
 {
-    // load light cube debug shader
-    //m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+    // SHADERS
+    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
 
 
-    //auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 1.0f, 1.0f, 0.2f));
-    //m_debug_cylinder.setup(matDebugLight);
-
-
-    // CONFIGURE AREA LIGHT
-    std::uniform_real_distribution<GLfloat> random_floats(0.0f, 1.0f);
-    typedef std::chrono::high_resolution_clock myclock;
-    unsigned seed = myclock::now().time_since_epoch().count();
-    std::default_random_engine generator(seed);
-    std::function<float(void)> fn = [&random_floats, &generator] { return random_floats(generator); };
-
-    float x = fn(); x = (x > 0.5f) ? x : -x;
-    float z = fn(); z = (z > 0.5f) ? z : -z;
-    offset = glm::vec3(x, 0.0f, z) * 8.f;
-    yRotation = fn() * glm::two_pi<float>();
-    color = glm::vec3(fn(), fn(), fn());
-
+    // LUT textures
+    LTC_matrices mLTC;
+    mLTC.mat1 = Texture::loadMTexture();
+    mLTC.mat2 = Texture::loadLUTTexture();
 
     // SEND TO GPU
     glGenVertexArrays(1, &areaLightVAO);
@@ -65,23 +50,13 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 
     glBindVertexArray(0);
-
-
-    // SHADERS
-    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
-
-
-
-
-
-    
 }
 
 void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix)
 {
     std::string base = std::format("areaLights[{}]", m_index);
 
-    // directional light
+    // area light
     shader.setBool(std::format("{}.use", base), true);
 
     // SHADER CONFIGURATION
@@ -107,16 +82,16 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3((str_pos + "[2]").c_str(), p2);
     shader.setVec3((str_pos + "[3]").c_str(), p3);
     shader.setVec3(str_col.c_str(), color);
-    shader.setFloat(str_int.c_str(), 2.0f);
-    shader.setInt(str_two.c_str(), 1);
+    shader.setFloat(str_int.c_str(), intensity);
+    shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
 
     shader.setInt("LTC1", 0);
     shader.setInt("LTC2", 1);
-    shader.setInt("material.texture_diffuse", 0); // ??????????????????
+    //shader.setInt("material.texture_diffuse", 0); // ??????????????????
     //incrementRoughness(0.0f);
     //incrementLightIntensity(0.0f);
     //switchTwoSided(false);
-    //glUseProgram(0);
+    glUseProgram(0); // ??????????
 
     shaderLightPlane.use();
     {
@@ -125,7 +100,40 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     }
 
     shaderLightPlane.setVec3("lightColor", glm::vec3(1.0f, 0.5f, 0.0f));
+    glUseProgram(0); // ??????????
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+    /*glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, concreteTexture);*/
+
+
     glUseProgram(0);
+
+    // draw area light planes
+    shaderLightPlane.use();
+    shaderLightPlane.setMat4("view", view);
+    shaderLightPlane.setMat4("projection", projection);
+    
+    
+    
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, offset);
+    model = glm::rotate(model, yRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+    shaderLightPlane.setMat4("model", model);
+    shaderLightPlane.setVec3("lightColor", color);
+        
+    glBindVertexArray(areaLightVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    
+    glUseProgram(0);
+
+    
 }
 
 void engine::AreaLight::clean()

@@ -2,37 +2,44 @@
 
 #include "light.h"
 
+#include "../misc/ltc_matrix.h"
+
 namespace engine
 {
+    // Implementing Areal Lights with Linearly Transformed Cosines.
+    //
+    // Inspiration:
+    // https://advances.realtimerendering.com/s2016/s2016_ltc_rnd.pdf
+    // https://eheitzresearch.wordpress.com/415-2/
     class AreaLight final : public Light
     {
     public:
-        glm::vec3 offset;
-        float yRotation;
+        glm::vec3 offset{};
+        float yRotation{};
 
-        glm::vec3 color;
-        float intensity = 4.0f;
-        bool twoSided = true;
+        glm::vec3 color{};
+        float intensity{ 4.0f };
+        bool twoSided{ true };
         
         AreaLight(unsigned int index);
         AreaLight(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), unsigned int index = 0);
 
-
         LightType getTypeID() const override
         {
-            return LightType::directional;
+            return LightType::area;
         }
+
         void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix) override;
 
         void clean() override;
 
     private:
 
-        GLuint areaLightVBO, areaLightVAO;
+        GLuint areaLightVBO{}, areaLightVAO{};
 
-        // SHADERS
-        engine::Shader shaderLightPlane;
+        Shader shaderLightPlane{};
 
+        LTC_matrices mLTC{};
 
         VertexAL areaLightVertices[6] = {
     { {-8.0f, 2.4f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f} }, // 0 1 5 4

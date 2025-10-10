@@ -210,8 +210,6 @@
     <ClInclude Include="app\myscene7.h" />
     <ClInclude Include="app\myscene8.h" />
     <ClInclude Include="app\myscene9.h" />
-    <ClInclude Include="colors.hpp" />
-    <ClInclude Include="ltc_matrix.hpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">
@@ -1465,6 +1463,14 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)shaders\test</DestinationFolders>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)shaders\test</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\textures\concreteTexture.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures</DestinationFolders>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

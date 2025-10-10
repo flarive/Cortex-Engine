@@ -693,6 +693,9 @@
     <CopyFileToFolders Include="..\resources\shaders\test\light_plane.vertex">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\concreteTexture.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -728,7 +731,5 @@
     <ClInclude Include="app\myscene10.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="ltc_matrix.hpp" />
-    <ClInclude Include="colors.hpp" />
   </ItemGroup>
 </Project>

@@ -7,8 +7,10 @@
 
 #include "../../include/transform.h"
 
+#include <format>
 
-engine::PointLight::PointLight(unsigned int index) : Light(glm::vec3(), index)
+
+engine::PointLight::PointLight(unsigned int index) : PointLight(glm::vec3(), index)
 {
 }
 

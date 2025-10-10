@@ -264,8 +264,10 @@
     <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\materials\blinnphong_material.h" />
     <ClInclude Include="core\include\materials\pbr_material.h" />
+    <ClInclude Include="core\include\misc\colors.h" />
     <ClInclude Include="core\include\misc\color_manager.h" />
     <ClInclude Include="core\include\misc\log_manager.h" />
+    <ClInclude Include="core\include\misc\ltc_matrix.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />

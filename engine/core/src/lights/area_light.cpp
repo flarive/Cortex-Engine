@@ -78,55 +78,28 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3(str_col.c_str(), color);
     shader.setFloat(str_int.c_str(), intensity);
     shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
-
     shader.setInt("LTC1", 0);
     shader.setInt("LTC2", 1);
-    
-    
-    
     shader.setVec4("material.albedoRoughness", glm::vec4(color, roughness));
-    glUseProgram(0); // ??????????
-
-    shaderLightPlane.use();
-    {
-        glm::mat4 model(1.0f);
-        shaderLightPlane.setMat4("model", model);
-    }
-
-    shaderLightPlane.setVec3("lightColor", glm::vec3(1.0f, 0.5f, 0.0f));
-    
-    glUseProgram(0); // ??????????
-
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
-    
 
 
-    glUseProgram(0); // ??????????
 
-    // draw area light planes
+
     shaderLightPlane.use();
-    shaderLightPlane.setMat4("view", view);
-    shaderLightPlane.setMat4("projection", projection);
-    
-    
-    
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, offset);
-    model = glm::rotate(model, yRotation, glm::vec3(0.0f, 1.0f, 0.0f));
     shaderLightPlane.setMat4("model", model);
     shaderLightPlane.setVec3("lightColor", color);
+    shaderLightPlane.setMat4("view", view);
+    shaderLightPlane.setMat4("projection", projection);
         
     // send to GPU
     glBindVertexArray(areaLightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
-
-    
-    glUseProgram(0); // ??????????
 }
 
 void engine::AreaLight::clean()

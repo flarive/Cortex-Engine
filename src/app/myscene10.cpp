@@ -4,7 +4,13 @@
 
 MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
-        .method = engine::RenderMethod::BlinnPhong
+        .method = engine::RenderMethod::PBR,
+        .HDRSkyboxHide = true,
+        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        .HDRSkyboxBlurStrength = 0.0f,
+        .shadowIntensity = 1.0f,
+        .iblDiffuseIntensity = 0.0f,
+        .iblSpecularIntensity = 0.0f
     })
 {
     // my application specific state gets initialized here
@@ -43,9 +49,9 @@ void MyScene10::init()
         light->offset = glm::vec3(x, 0.0f, z) * 8.f;
         light->yRotation = fn() * glm::two_pi<float>();
         light->color = glm::vec3(fn(), fn(), fn());
-        light->roughness = 2.0f;
-        light->intensity = 100.0f;
-        light->twoSided = true;
+        light->roughness = 0.5f;
+        light->intensity = 10.0f;
+        light->twoSided = false;
         auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);
         entityLight->addComponent<engine::LightComponent>(light);
@@ -79,14 +85,11 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
         getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
     }
 
-
-
     if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
         getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
         getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
     }
-
 
     if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
@@ -98,7 +101,6 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
         getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
     }
 }
-
 
 void MyScene10::mouse_callback(double xposIn, double yposIn)
 {

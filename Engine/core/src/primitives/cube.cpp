@@ -23,6 +23,11 @@ engine::Cube::Cube(const float& _width, const float& _height, const float& _dept
 {
 }
 
+void engine::Cube::setup()
+{
+    geometrySetup(); // Geometry setup
+}
+
 void engine::Cube::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material; // Store material reference
@@ -36,13 +41,13 @@ void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapp
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup(); // Geometry setup
+    geometrySetup(); // Geometry setup
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
 }
 
-void engine::Cube::setup()
+void engine::Cube::geometrySetup()
 {
     std::vector<Vertex> vertices = generateVertices();
 

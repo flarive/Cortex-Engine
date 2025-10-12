@@ -8,6 +8,11 @@ engine::Billboard::Billboard(const glm::vec3& _position) : Primitive(_position)
 {
 }
 
+void engine::Billboard::setup()
+{
+    geometrySetup(); // Geometry setup
+}
+
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material; // Store material reference
@@ -21,13 +26,13 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material, const U
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup(); // Geometry setup
+    geometrySetup(); // Geometry setup
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
 }
 
-void engine::Billboard::setup()
+void engine::Billboard::geometrySetup()
 {
     glGenVertexArrays(1, &m_VAO);  // 1 is the uniqueID of the VAO
     glGenBuffers(1, &m_VBO);  // 1 is the uniqueID of the VBO

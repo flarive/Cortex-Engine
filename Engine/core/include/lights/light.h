@@ -39,7 +39,7 @@ namespace engine
 
         virtual void setIndex(unsigned int index) { m_index = index; }
 
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix) = 0;
+        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
 
         virtual void clean() = 0;
 

@@ -87,16 +87,36 @@ void engine::Scene::initialize()
 
     init();
 
-    
     lights = m_entityManager.findEntitiesOfType<Light>();
-    assert(lights.size() > 0 && "Scene has no light !");
+	if (lights.size() == 0) logger.warn("Scene has no light !");
+    //assert(lights.size() > 0 && "Scene has no light !");
 
     // assign light indexes
+    computeLightsIndexes();
+
+    cameras = m_entityManager.findEntitiesOfType<Camera>();
+    if (cameras.size() == 0) logger.warn("Scene has no camera !");
+    //assert(cameras.size() > 0 && "Scene has no camera !");
+
+    // renderer setup
+    m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
+
+    // listen for editor selected entity changed
+    #if EDITOR_MODE
+    listenForEditorChanges();
+    #endif
+
+    after_init();
+}
+
+
+void engine::Scene::computeLightsIndexes()
+{
     unsigned int nextPointLightIndex = 0;
     unsigned int nextDirLightIndex = 0;
     unsigned int nextSpotLightIndex = 0;
     unsigned int nextAreaLightIndex = 0;
-    
+
     for (const auto& light : lights)
     {
         if (light)
@@ -123,23 +143,6 @@ void engine::Scene::initialize()
             }
         }
     }
-
-
-    
-
-    
-    cameras = m_entityManager.findEntitiesOfType<Camera>();
-    assert(cameras.size() > 0 && "Scene has no camera !");
-
-    // renderer setup
-    m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
-
-    // listen for editor selected entity changed
-    #if EDITOR_MODE
-    listenForEditorChanges();
-    #endif
-
-    after_init();
 }
 
 #if EDITOR_MODE

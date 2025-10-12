@@ -7,11 +7,16 @@ engine::Sphere::Sphere(const glm::vec3& _position) : Primitive(_position)
 {
 }
 
+void engine::Sphere::setup()
+{
+    geometrySetup(); // Geometry setup
+}
+
 void engine::Sphere::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
-    const UvMapping uv{};
 
+    const UvMapping uv{};
     setup(material, uv);
 }
 
@@ -20,13 +25,13 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMa
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup();
+    geometrySetup();
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 
-void engine::Sphere::setup()
+void engine::Sphere::geometrySetup()
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);

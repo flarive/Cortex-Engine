@@ -28,7 +28,7 @@ void engine::PointLight::setup()
     m_debug_sphere.setup(matDebugLight);
 }
 
-void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix)
+void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     std::string base = std::format("pointLights[{}]", m_index);
 

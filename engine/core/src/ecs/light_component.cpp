@@ -28,7 +28,8 @@ void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
         m_light->specularColor,
         m_light->intensity,
         m_light->target,
-        worldTransformMatrix);
+        worldTransformMatrix,
+        localTransform);
 }
 
 engine::AABB engine::LightComponent::generateBoundingVolume(const std::shared_ptr<Light> light)

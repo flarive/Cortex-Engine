@@ -5,6 +5,7 @@
 //#endif
 
 #include "common_defines.h"
+#include "misc/colors.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"

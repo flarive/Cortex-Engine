@@ -146,10 +146,8 @@ static void gamepadUpdate()
 
 
 
-
-
-
-// GLAD, GLFW, STB-IMAGE
+//
+//// GLAD, GLFW, STB-IMAGE
 //#include <glad/glad.h>
 //#include <GLFW/glfw3.h>
 //#include <stb_image.h>
@@ -193,7 +191,7 @@ static void gamepadUpdate()
 //// SETTINGS AND GLOBALS
 //const unsigned int SCR_WIDTH = 1280;
 //const unsigned int SCR_HEIGHT = 720;
-//const glm::vec3 LIGHT_COLOR = Colors::BurlyWood; // CHANGE AREA LIGHT COLOR HERE!
+//const glm::vec3 LIGHT_COLOR = engine::Colors::BurlyWood; // CHANGE AREA LIGHT COLOR HERE!
 //bool keys[1024]; // activated keys
 //const int NUM_AREA_LIGHTS = 16;
 //engine::Shader* ltcShaderPtr;
@@ -210,7 +208,16 @@ static void gamepadUpdate()
 //
 //
 //
-//engine::AreaLight areaLights[NUM_AREA_LIGHTS];
+//struct AreaLight {
+//    glm::vec3 offset;
+//    float yRotation;
+//
+//    glm::vec3 color;
+//    float intensity = 4.0f;
+//    bool twoSided = true;
+//};
+//
+//AreaLight areaLights[NUM_AREA_LIGHTS];
 //
 //
 ////
@@ -372,18 +379,16 @@ static void gamepadUpdate()
 //    return texture;
 //}
 //
-//
-//
 //void incrementRoughness(float step)
 //{
-//    static glm::vec3 color = Colors::SlateGray;
+//    static glm::vec3 color = engine::Colors::SlateGray;
 //    static float roughness = 0.5f;
 //    roughness += step;
 //    roughness = glm::clamp(roughness, 0.0f, 1.0f);
-//    //std::cout << "roughness: " << roughness << '\n';
+//    std::cout << "roughness: " << roughness << '\n';
 //    ltcShaderPtr->use();
 //    ltcShaderPtr->setVec4("material.albedoRoughness", glm::vec4(color, roughness));
-//    glUseProgram(0);
+//    //glUseProgram(0);
 //}
 //
 //void incrementLightIntensity(float step)
@@ -414,8 +419,8 @@ static void gamepadUpdate()
 //    // glfw: initialize and configure
 //    // ------------------------------
 //    glfwInit();
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 //    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 //
 //#ifdef __APPLE__
@@ -471,11 +476,10 @@ static void gamepadUpdate()
 //
 //
 //    // TEXTURES
-//    unsigned int concreteTexture = loadTexture(
-//        engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
+//    //unsigned int concreteTexture = loadTexture(engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
 //
 //    // 3D OBJECTS
-//    //configurePlane();
+//    configurePlane();
 //    configureAreaLights();
 //
 //    // SHADER CONFIGURATION
@@ -508,8 +512,8 @@ static void gamepadUpdate()
 //    shaderLTC.setInt("LTC2", 1);
 //    shaderLTC.setInt("material.texture_diffuse", 2);
 //    incrementRoughness(0.0f);
-//    //incrementLightIntensity(0.0f);
-//    //switchTwoSided(false);
+//    incrementLightIntensity(0.0f);
+//    switchTwoSided(false);
 //    glUseProgram(0);
 //
 //    shaderLightPlane.use();
@@ -556,12 +560,12 @@ static void gamepadUpdate()
 //        glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
 //        glActiveTexture(GL_TEXTURE1);
 //        glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
-//        glActiveTexture(GL_TEXTURE2);
-//        glBindTexture(GL_TEXTURE_2D, concreteTexture);
+//        //glActiveTexture(GL_TEXTURE2);
+//        //glBindTexture(GL_TEXTURE_2D, concreteTexture);
 //
 //        // measure time
 //        //glBeginQuery(GL_TIME_ELAPSED, timeQuery);
-//        //renderPlane();
+//        renderPlane();
 //        //glEndQuery(GL_TIME_ELAPSED);
 //
 //        glUseProgram(0);
@@ -632,10 +636,10 @@ static void gamepadUpdate()
 //        else incrementRoughness(-0.01f);
 //    }
 //
-//    // if (keys[GLFW_KEY_I]) {
-//    //     if (keys[GLFW_KEY_LEFT_SHIFT]) incrementLightIntensity(0.025f);
-//    //     else incrementLightIntensity(-0.025f);
-//    // }
+//     if (keys[GLFW_KEY_I]) {
+//         if (keys[GLFW_KEY_LEFT_SHIFT]) incrementLightIntensity(0.025f);
+//         else incrementLightIntensity(-0.025f);
+//     }
 //}
 //
 //void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -649,9 +653,9 @@ static void gamepadUpdate()
 //        case GLFW_KEY_ESCAPE:
 //            glfwSetWindowShouldClose(window, GL_TRUE);
 //            return;
-//            // case GLFW_KEY_B:
-//            //     switchTwoSided(true);
-//            //     break;
+//             case GLFW_KEY_B:
+//                 switchTwoSided(true);
+//                 break;
 //        default:
 //            keys[key] = true;
 //            break;

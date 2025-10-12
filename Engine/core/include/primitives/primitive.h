@@ -60,6 +60,7 @@ namespace engine
         Primitive(const glm::vec3& _position = glm::vec3());
         virtual ~Primitive() = default;
 
+        virtual void setup() = 0;
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
@@ -118,9 +119,7 @@ namespace engine
 
 
     private:
-        
-
-        virtual void setup() = 0;
+        virtual void geometrySetup() = 0;
     };
 
 

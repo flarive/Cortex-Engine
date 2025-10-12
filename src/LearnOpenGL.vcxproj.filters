@@ -681,12 +681,6 @@
     <CopyFileToFolders Include="..\resources\icons\icon_show_16x16.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\test\area_light.frag">
-      <Filter>resources\shaders\test</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\test\area_light.vertex">
-      <Filter>resources\shaders\test</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\test\light_plane.frag">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
@@ -695,6 +689,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\concreteTexture.png">
       <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\area_light.vertex">
+      <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\test\area_light.frag">
+      <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

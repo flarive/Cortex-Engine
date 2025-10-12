@@ -1,5 +1,7 @@
 #include "../../include/lights/area_light.h"
 
+#include "../../include/misc/colors.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
@@ -15,15 +17,29 @@ engine::AreaLight::AreaLight(glm::vec3 _position) : Light(_position)
     setup();
 }
 
+engine::AreaLight::AreaLight(const std::shared_ptr<engine::Primitive>& primitive, glm::vec3 _position) : m_primitive(primitive), Light(_position)
+{
+    setup();
+}
+
 void engine::AreaLight::setup()
 {
     shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
 
 
     // LUT textures
-    LTC_matrices mLTC;
-    mLTC.mat1 = Texture::loadMTexture();
-    mLTC.mat2 = Texture::loadLUTTexture();
+    //mLTC.mat1 = Texture::loadMTexture();
+    //mLTC.mat2 = Texture::loadLUTTexture();
+
+    // Check for OpenGL errors
+    //GLenum err;
+    //while ((err = glGetError()) != GL_NO_ERROR) {
+    //    std::cerr << "OpenGL error after loading LTC1: " << err << std::endl;
+    //}
+
+
+    //if (m_primitive)
+    //    m_primitive->setup();
 
     // Send to GPU
     glGenVertexArrays(1, &areaLightVAO);
@@ -49,21 +65,31 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 }
 
-void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix)
+void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     std::string base = std::format("areaLights[{}]", m_index);
 
     shader.use();
     shader.setBool(std::format("{}.use", base), true);
 
-    glm::mat4 model(1.0f);
-    model = glm::translate(model, offset);
-    model = glm::rotate(model, yRotation, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    glm::vec3 p0 = glm::vec3(model * glm::vec4(areaLightVertices[0].position, 1.0f));
-    glm::vec3 p1 = glm::vec3(model * glm::vec4(areaLightVertices[1].position, 1.0f));
-    glm::vec3 p2 = glm::vec3(model * glm::vec4(areaLightVertices[4].position, 1.0f));
-    glm::vec3 p3 = glm::vec3(model * glm::vec4(areaLightVertices[5].position, 1.0f));
+
+
+    //glm::mat4 model(1.0f);
+    //model = glm::translate(model, offset);
+    //model = glm::rotate(model, yRotation, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    //glActiveTexture(GL_TEXTURE + mLTC.mat1);
+    //glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
+    //glActiveTexture(GL_TEXTURE + mLTC.mat2);
+    //glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+
+
+
+    glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
+    glm::vec3 p1 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[1].position, 1.0f));
+    glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
+    glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
 
 
     std::string str_pos = std::format("{}.points", base);
@@ -78,23 +104,26 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3(str_col.c_str(), color);
     shader.setFloat(str_int.c_str(), intensity);
     shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
-    shader.setInt("LTC1", 0);
-    shader.setInt("LTC2", 1);
-    shader.setVec4("material.albedoRoughness", glm::vec4(color, roughness));
+    //shader.setInt("material.LTC1", 15);
+    //shader.setInt("material.LTC2", 16);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
+    glm::vec3 temp = Colors::SlateGray;
+    shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+
+
+
+
 
 
 
 
     shaderLightPlane.use();
-    shaderLightPlane.setMat4("model", model);
-    shaderLightPlane.setVec3("lightColor", color);
+    shaderLightPlane.setMat4("model", transformMatrix);
     shaderLightPlane.setMat4("view", view);
     shaderLightPlane.setMat4("projection", projection);
+    shaderLightPlane.setVec3("lightColor", color);
+
+	//m_primitive->draw(shader, transformMatrix, localTransform);
         
     // send to GPU
     glBindVertexArray(areaLightVAO);

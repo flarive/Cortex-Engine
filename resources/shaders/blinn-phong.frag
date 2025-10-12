@@ -594,6 +594,8 @@ void main()
     // gamma correct
     //mDiffuse = pow(mDiffuse, vec3(1.0/2.2));
 
+    // SHOULD APPLY GAMMA !!!!
+
     // Set the fragment color with the alpha channel
     FragColor = vec4(result, alpha);
 

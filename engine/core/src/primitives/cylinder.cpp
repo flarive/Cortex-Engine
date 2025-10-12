@@ -7,12 +7,16 @@ engine::Cylinder::Cylinder(const glm::vec3& _position) : Primitive(_position)
 {
 }
 
+void engine::Cylinder::setup()
+{
+    geometrySetup(); // Geometry setup
+}
+
 void engine::Cylinder::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material;
 
     const UvMapping uv{};
-
     setup(material, uv);
 }
 
@@ -21,13 +25,13 @@ void engine::Cylinder::setup(const std::shared_ptr<Material>& material, const Uv
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup();
+    geometrySetup();
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 
-void engine::Cylinder::setup()
+void engine::Cylinder::geometrySetup()
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);

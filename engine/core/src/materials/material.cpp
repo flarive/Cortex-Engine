@@ -39,6 +39,8 @@ void engine::Material::bind(engine::Shader& shader) const
         shader.setInt("material." + texture.type, textureUnit);
         shader.setBool("material.has_" + texture.type + "_map", texture.id > 0);
 
+		//std::cout << "binding texture: " << texture.path << " to unit " << textureUnit << " as " << texture.type << " with ID " << texture.id << std::endl;
+
         textureUnit++;
     }
 

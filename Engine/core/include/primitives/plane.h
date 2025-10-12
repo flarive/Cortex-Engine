@@ -12,6 +12,7 @@ namespace engine
         Plane(const glm::vec3& _position = glm::vec3());
         ~Plane() = default;
 
+        void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
@@ -26,7 +27,7 @@ namespace engine
         }
 
     private:
-        void setup();
+        void geometrySetup();
 
         unsigned int indexCount{};
     };

@@ -3,8 +3,14 @@
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
+
 engine::Cone::Cone(const glm::vec3& _position) : Primitive(_position)
 {
+}
+
+void engine::Cone::setup()
+{
+    geometrySetup(); // Geometry setup
 }
 
 void engine::Cone::setup(const std::shared_ptr<Material>& material)
@@ -12,7 +18,6 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material)
     m_material = material;
 
     const UvMapping uv{};
-
     setup(material, uv);
 }
 
@@ -21,13 +26,13 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapp
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup();
+    geometrySetup();
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync();
 }
 
-void engine::Cone::setup()
+void engine::Cone::geometrySetup()
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);

@@ -17,6 +17,7 @@ namespace engine
         Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position = glm::vec3());
         ~Cube() = default;
 
+		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
@@ -36,7 +37,7 @@ namespace engine
         float m_height{ 1.0f };
         float m_depth{ 1.0f };
         
-        void setup();
+        void geometrySetup();
 
         unsigned int indexCount{};
     };

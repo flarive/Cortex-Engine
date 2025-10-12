@@ -46,5 +46,9 @@ public:
 private:
     void drawScene(engine::Shader& shader);
 
+    void incrementRoughness(float step);
+    void incrementLightIntensity(float step);
+    void switchTwoSided(bool doSwitch);
+
     void drawUI();
 };

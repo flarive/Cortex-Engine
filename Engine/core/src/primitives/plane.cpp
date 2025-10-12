@@ -9,6 +9,11 @@ engine::Plane::Plane(const glm::vec3& _position) : Primitive(_position)
 {
 }
 
+void engine::Plane::setup()
+{
+    geometrySetup(); // Geometry setup
+}
+
 void engine::Plane::setup(const std::shared_ptr<Material>& material)
 {
     m_material = material; // Store material reference
@@ -22,13 +27,13 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
     m_material = material;
     m_uvScale = uv.getUvScale();
 
-    setup(); // Geometry setup
+    geometrySetup(); // Geometry setup
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
 }
 
-void engine::Plane::setup()
+void engine::Plane::geometrySetup()
 {
     std::vector<Vertex> vertices = generatePlaneVertices(m_uvScale);
 

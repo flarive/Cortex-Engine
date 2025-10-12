@@ -44,13 +44,18 @@ void MyScene10::init()
         float x = fn(); x = (x > 0.5f) ? x : -x;
         float z = fn(); z = (z > 0.5f) ? z : -z;
 
-        auto trsLight = engine::Transform{ { 0.0f, 0.0f, 0.0f } };
-        auto light = std::make_shared<engine::AreaLight>();
-        light->offset = glm::vec3(x, 0.0f, z) * 8.f;
-        light->yRotation = fn() * glm::two_pi<float>();
+
+        // plane
+        //auto myPlane = std::make_shared<engine::Plane>();
+        //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), engine::Colors::YellowGreen, engine::Colors::Crimson));
+
+        auto trsLight = engine::Transform{ { glm::vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
+        auto light = std::make_shared<engine::AreaLight>(); //myPlane
+        //light->offset = glm::vec3(x, 0.0f, z) * 8.f;
+        //light->yRotation = fn() * glm::two_pi<float>();
         light->color = glm::vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
-        light->intensity = 10.0f;
+        light->intensity = 1.0f;
         light->twoSided = false;
         auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);
@@ -60,8 +65,9 @@ void MyScene10::init()
 
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(16.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
+    //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), engine::Colors::DarkGrey, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(16.0f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
@@ -76,8 +82,8 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
 {
     engine::Scene::key_callback(key, scancode, action, mods);
 
-    //// Detect Shift key state
-    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    // Detect Shift key state
+    bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
@@ -100,6 +106,21 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
     {
         getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
     }
+
+    if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementRoughness(-0.1f);
+    else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementRoughness(0.1f);
+
+    if (shiftPressed && key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementLightIntensity(-0.1f);
+    else if (key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementLightIntensity(0.1f);
+
+    if (shiftPressed && key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        switchTwoSided(false);
+    else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        switchTwoSided(true);
 }
 
 void MyScene10::mouse_callback(double xposIn, double yposIn)
@@ -150,6 +171,57 @@ void MyScene10::update(engine::Shader& shader)
     // draw scene and UI in framebuffer
     drawScene(shader);
 }
+
+void MyScene10::incrementRoughness(float step)
+{
+    static glm::vec3 color = engine::Colors::SlateGray;
+    static float roughness = 0.5f;
+    roughness += step;
+    roughness = glm::clamp(roughness, 0.0f, 1.0f);
+
+    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    if (areaLights.size() > 0)
+    {
+        for (const auto& areaLight : areaLights)
+        {
+            areaLight->roughness = roughness;
+        }
+    }
+}
+
+void MyScene10::incrementLightIntensity(float step)
+{
+    static float intensity = 1.0f;
+    intensity += step;
+    intensity = glm::clamp(intensity, 0.0f, 100.0f);
+
+    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    if (areaLights.size() > 0)
+    {
+        for (const auto& areaLight : areaLights)
+        {
+            areaLight->intensity = intensity;
+        }
+    }
+}
+
+void MyScene10::switchTwoSided(bool doSwitch)
+{
+    static bool twoSided = true;
+    //if (doSwitch) twoSided = !twoSided;
+
+    twoSided = doSwitch;
+
+    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    if (areaLights.size() > 0)
+    {
+        for (const auto& areaLight : areaLights)
+        {
+            areaLight->twoSided = twoSided;
+        }
+    }
+}
+
 
 void MyScene10::updateUI()
 {

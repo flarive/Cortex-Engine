@@ -58,6 +58,15 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
+
+
+    // LUT textures
+    LTC1Map = Texture::loadMTexture();
+    LTC2Map = Texture::loadLUTTexture();
+
+    pbrShader.setInt("material.LTC1", LTC1Map);
+    pbrShader.setInt("material.LTC2", LTC2Map);
+
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
     backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
@@ -315,12 +324,18 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // bind pre-computed IBL data
-    glActiveTexture(GL_TEXTURE7);
+    glActiveTexture(GL_TEXTURE + irradianceMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-    glActiveTexture(GL_TEXTURE8);
+    glActiveTexture(GL_TEXTURE + prefilterMap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-    glActiveTexture(GL_TEXTURE9);
+    glActiveTexture(GL_TEXTURE + brdfLUTTexture);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+	// bind pre-computed area light LTC data
+    glActiveTexture(GL_TEXTURE + LTC1Map);
+    glBindTexture(GL_TEXTURE_2D, LTC1Map);
+    glActiveTexture(GL_TEXTURE + LTC2Map);
+    glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 
     // update user stuffs

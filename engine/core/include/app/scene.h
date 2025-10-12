@@ -201,6 +201,8 @@ namespace engine
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 
+
+        void computeLightsIndexes();
         
         static void glfw_error_callback(int error, const char* description);
 

@@ -6,6 +6,8 @@
 #include "../lights/light.h"
 #include "../cameras/camera.h"
 
+#include "../misc/ltc_matrix.h"
+
 
 namespace engine
 {
@@ -81,6 +83,8 @@ namespace engine
 		Shader prefilterShader{};
 		Shader brdfShader{};
 
+		//LTC_matrices mLTC{};
+
 		Shader outlineColorShader{};
 
 
@@ -88,6 +92,10 @@ namespace engine
 		unsigned int prefilterMap{};
 		unsigned int brdfLUTTexture{};
 		unsigned int envCubemap{};
+
+
+		unsigned int LTC1Map{};
+		unsigned int LTC2Map{};
 
 
 

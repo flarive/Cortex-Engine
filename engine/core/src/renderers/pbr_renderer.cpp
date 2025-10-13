@@ -60,12 +60,11 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
 
 
-    // LUT textures
-    LTC1Map = Texture::loadMTexture();
-    LTC2Map = Texture::loadLUTTexture();
-
-    pbrShader.setInt("material.LTC1", LTC1Map);
-    pbrShader.setInt("material.LTC2", LTC2Map);
+    // LUT textures for area lights
+    //LTC1Map = Texture::loadMTexture();
+    //LTC2Map = Texture::loadLUTTexture();
+    //pbrShader.setInt("material.LTC1", LTC1Map);
+    //pbrShader.setInt("material.LTC2", LTC2Map);
 
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
@@ -280,14 +279,23 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-
     // initialize static shader uniforms before rendering
     // --------------------------------------------------
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
+
+    checkGLError("CCCCCCCCCCCC");
+
+    LTC1Map = Texture::loadMTexture();
+    LTC2Map = Texture::loadLUTTexture();
+    pbrShader.setInt("material.LTC1", LTC1Map);
+    pbrShader.setInt("material.LTC2", LTC2Map);
+
+
+    checkGLError("DDDDDDDDDDDDDD");
+
 
     backgroundShader.use();
     backgroundShader.setMat4("projection", projection);
@@ -324,18 +332,24 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // bind pre-computed IBL data
-    glActiveTexture(GL_TEXTURE + irradianceMap);
+    glActiveTexture(GL_TEXTURE7);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-    glActiveTexture(GL_TEXTURE + prefilterMap);
+    glActiveTexture(GL_TEXTURE8);
     glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-    glActiveTexture(GL_TEXTURE + brdfLUTTexture);
+    glActiveTexture(GL_TEXTURE9);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
+    checkGLError("AAAAAAAA");
+
 	// bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE + LTC1Map);
+    glActiveTexture(GL_TEXTURE0 + LTC1Map);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE + LTC2Map);
+    glActiveTexture(GL_TEXTURE0 + LTC2Map);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
+
+
+
+    checkGLError("BBBBBBBB");
 
 
     // update user stuffs

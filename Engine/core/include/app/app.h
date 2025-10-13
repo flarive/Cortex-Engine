@@ -59,6 +59,9 @@ namespace engine
         void initWindow();
         void initGLAD();
         void initImGUI(const char* glsl_version);
+        
+        static void GLAPIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+
   
 
         void enableVerticalSync(bool enable);

@@ -74,6 +74,8 @@ namespace engine
 
 		// texture ID that holds depth map framebuffer
 		unsigned int textureDepthMapBuffer{};
+
+		void checkGLError(const char* label);
 		
 
 		// internal shaders (not accessible)
@@ -83,8 +85,6 @@ namespace engine
 		Shader prefilterShader{};
 		Shader brdfShader{};
 
-		//LTC_matrices mLTC{};
-
 		Shader outlineColorShader{};
 
 
@@ -93,7 +93,7 @@ namespace engine
 		unsigned int brdfLUTTexture{};
 		unsigned int envCubemap{};
 
-
+		// for area lights
 		unsigned int LTC1Map{};
 		unsigned int LTC2Map{};
 

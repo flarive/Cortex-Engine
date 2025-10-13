@@ -598,3 +598,10 @@ void engine::Renderer::renderSphere()
 }
 
 
+void engine::Renderer::checkGLError(const char* label)
+{
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        std::cerr << "OpenGL error at " << label << ": " << std::hex << err << std::endl;
+    }
+}

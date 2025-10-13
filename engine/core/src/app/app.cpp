@@ -98,6 +98,19 @@ void engine::App::setup()
     initGLAD();
 
     initImGUI(glsl_version);
+
+    // check opengl context is valid
+    int flags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        // enable openGL debut ouput
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(openglDebugCallback, nullptr);
+    }
+    else {
+        logger.warn("OpenGL debug context not available.");
+    }
 }
 
 void engine::App::initGLFW()
@@ -110,6 +123,8 @@ void engine::App::initGLFW()
     }
 
     glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
+
+    //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
 }
 
 const char* engine::App::initOpenGL()
@@ -131,11 +146,19 @@ const char* engine::App::initOpenGL()
     return glsl_version;
 }
 
+void GLAPIENTRY engine::App::openglDebugCallback(GLenum source, GLenum type, GLuint id,
+    GLenum severity, GLsizei length,
+    const GLchar* message, const void* userParam)
+{
+    logger.error("OpenGL Debug Message[{}]: {}", id, message);
+}
+
 void engine::App::initWindow()
 {
     GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
 
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
     
     const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
     if (fullscreen)

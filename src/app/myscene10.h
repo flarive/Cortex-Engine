@@ -51,4 +51,20 @@ private:
     void switchTwoSided(bool doSwitch);
 
     void drawUI();
+
+
+    GLuint planeVBO, planeVAO;
+    void configurePlane();
+    void renderPlane();
+
+    const GLfloat psize = 10.0f;
+    engine::VertexAL planeVertices[6] = {
+        { {-psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f} },
+        { {-psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f} },
+        { { psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f} },
+        { {-psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f} },
+        { { psize, 0.0f,  psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f} },
+        { { psize, 0.0f, -psize}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f} }
+    };
+
 };

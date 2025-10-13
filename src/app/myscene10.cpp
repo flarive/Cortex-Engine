@@ -64,12 +64,14 @@ void MyScene10::init()
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
-    //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), engine::Colors::DarkGrey, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
+    //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(16.0f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
+
+    //configurePlane();
 }
 
 
@@ -234,9 +236,48 @@ void MyScene10::clean()
 void MyScene10::drawScene(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
+
+    //shader.use();
+
+    //renderPlane();
 }
 
 void MyScene10::drawUI()
 {
     // render HUD / UI
 }
+
+
+void MyScene10::configurePlane()
+{
+    glGenVertexArrays(1, &planeVAO);
+    glGenBuffers(1, &planeVBO);
+
+    glBindVertexArray(planeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+
+    // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+        (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+        (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    // texcoord
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+        (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+    glBindVertexArray(0);
+}
+
+void MyScene10::renderPlane()
+{
+    glBindVertexArray(planeVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+}
+

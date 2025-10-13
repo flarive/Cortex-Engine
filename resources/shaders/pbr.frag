@@ -57,8 +57,8 @@ struct Material {
     bool has_texture_emissive_map;
 
     // area light only
-    sampler2D LTC1; // for inverse M
-    sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+//    sampler2D LTC1; // for inverse M
+//    sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 };
@@ -121,6 +121,9 @@ uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
 uniform mat4 lightSpaceMatrix;
+
+uniform sampler2D LTC1; // for inverse M
+uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 
 // shader output
 out vec4 FragColor;
@@ -245,7 +248,7 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
     uv = uv * LUT_SCALE + LUT_BIAS;
 
     // Fetch the form factor for horizon clipping
-    float scale = texture(material.LTC2, uv).w;
+    float scale = texture(LTC2, uv).w;
 
     float sum = len*scale;
     if (!behind && !twoSided)
@@ -480,10 +483,10 @@ void main()
     uv = uv * LUT_SCALE + LUT_BIAS;
 
     // get 4 parameters for inverse_M
-    vec4 t1 = texture(material.LTC1, uv);
+    vec4 t1 = texture(LTC1, uv);
 
     // Get 2 parameters for Fresnel calculation
-    vec4 t2 = texture(material.LTC2, uv);
+    vec4 t2 = texture(LTC2, uv);
 
     mat3 Minv = mat3(
         vec3(t1.x, 0, t1.y),

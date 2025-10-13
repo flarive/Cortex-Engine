@@ -282,8 +282,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
-    pbrShader.setInt("material.LTC1", LTC1Map);
-    pbrShader.setInt("material.LTC2", LTC2Map);
+    pbrShader.setInt("LTC1", LTC1Map);
+    pbrShader.setInt("LTC2", LTC2Map);
 
     //glm::vec3 temp = Colors::SlateGray;
     //float roughness = 0.0f;

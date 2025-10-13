@@ -142,10 +142,10 @@ static void gamepadUpdate()
         }
     }
 }
-
-
-
-
+//
+//
+//
+//
 //
 //// GLAD, GLFW, STB-IMAGE
 //#include <glad/glad.h>
@@ -476,7 +476,7 @@ static void gamepadUpdate()
 //
 //
 //    // TEXTURES
-//    //unsigned int concreteTexture = loadTexture(engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
+//    unsigned int concreteTexture = loadTexture(engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
 //
 //    // 3D OBJECTS
 //    configurePlane();

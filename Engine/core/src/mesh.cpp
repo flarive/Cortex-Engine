@@ -61,8 +61,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
     shader.use();
     m_material->bind(shader); // Bind material textures
 
-    // send to GPU
-    glBindVertexArray(VAO);
+
 
     //std::cout << "engine::Mesh::draw " << model[3].x << "/" << model[3].y << "/" << model[3].z << std::endl;
         
@@ -86,7 +85,8 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
-    // draw mesh
+    // send to GPU
+    glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 

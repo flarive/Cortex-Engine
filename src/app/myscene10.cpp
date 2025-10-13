@@ -51,8 +51,6 @@ void MyScene10::init()
 
         auto trsLight = engine::Transform{ { glm::vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
         auto light = std::make_shared<engine::AreaLight>(); //myPlane
-        //light->offset = glm::vec3(x, 0.0f, z) * 8.f;
-        //light->yRotation = fn() * glm::two_pi<float>();
         light->color = glm::vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
         light->intensity = 1.0f;

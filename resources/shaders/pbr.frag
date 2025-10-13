@@ -241,8 +241,8 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
     if (behind)
         z = -z;
 
-    vec2 uv = vec2(z*0.5f + 0.5f, len); // range [0, 1]
-    uv = uv*LUT_SCALE + LUT_BIAS;
+    vec2 uv = vec2(z * 0.5f + 0.5f, len); // range [0, 1]
+    uv = uv * LUT_SCALE + LUT_BIAS;
 
     // Fetch the form factor for horizon clipping
     float scale = texture(material.LTC2, uv).w;
@@ -557,9 +557,9 @@ void main()
     
 
     // Debug: Output the roughness value directly
-    //float roughness2 = material.albedoRoughness.w;
-    //FragColor = vec4(vec3(roughness2), 1.0);
-    //FragColor = texture(material.texture_diffuse, vec2(0.5, 0.5));
+//    float roughness2 = material.albedoRoughness.w;
+//    FragColor = vec4(vec3(roughness2), 1.0);
+
 
     FragColor = vec4(color, 1.0);
 }
@@ -678,7 +678,6 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
 
 	// Add contribution
 	lighting = light.color * light.intensity * (specular + mDiffuse * diffuse);
-	//lighting += vec3(0.5, 0.5, 0.5);
 
     return vec3(lighting);
 }

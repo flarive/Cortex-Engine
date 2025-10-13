@@ -197,7 +197,7 @@ namespace engine
 
     private:
         
-        int m_queryFrameIndex = 0; // toggles between 0 and 1
+        int m_queryFrameIndex{ 0 }; // toggles between 0 and 1
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 

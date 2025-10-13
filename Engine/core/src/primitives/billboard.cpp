@@ -103,7 +103,6 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& transformMatrix, T
     // Send to GPU
     glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
     glBindVertexArray(0);
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention

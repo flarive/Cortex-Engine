@@ -150,6 +150,10 @@ void GLAPIENTRY engine::App::openglDebugCallback(GLenum source, GLenum type, GLu
     GLenum severity, GLsizei length,
     const GLchar* message, const void* userParam)
 {
+    // Ignore informational messages
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+        return;
+    
     logger.error("OpenGL Debug Message[{}]: {}", id, message);
 }
 

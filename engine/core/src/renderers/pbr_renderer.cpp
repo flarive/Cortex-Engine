@@ -9,7 +9,7 @@
 #include "../../include/lights/directional_light.h"
 
 
-
+#include "../../include/misc/colors.h"
 
 
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
@@ -59,12 +59,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
 
-
-    // LUT textures for area lights
-    //LTC1Map = Texture::loadMTexture();
-    //LTC2Map = Texture::loadLUTTexture();
-    //pbrShader.setInt("material.LTC1", LTC1Map);
-    //pbrShader.setInt("material.LTC2", LTC2Map);
 
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0);
@@ -286,15 +280,14 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
 
-    checkGLError("CCCCCCCCCCCC");
-
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
     pbrShader.setInt("material.LTC1", LTC1Map);
     pbrShader.setInt("material.LTC2", LTC2Map);
 
-
-    checkGLError("DDDDDDDDDDDDDD");
+    //glm::vec3 temp = Colors::SlateGray;
+    //float roughness = 0.0f;
+    //pbrShader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
 
 
     backgroundShader.use();
@@ -304,6 +297,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
+
+
+    checkGLError("END OF PBR RENDERER SETUP");
 }
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
@@ -339,17 +335,17 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glActiveTexture(GL_TEXTURE9);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-    checkGLError("AAAAAAAA");
+    
 
 	// bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE0 + LTC1Map);
+    glActiveTexture(GL_TEXTURE15);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE0 + LTC2Map);
+    glActiveTexture(GL_TEXTURE16);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 
 
-    checkGLError("BBBBBBBB");
+    
 
 
     // update user stuffs
@@ -402,6 +398,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
+
+
+    checkGLError("END OF PBR RENDERER LOOP");
 }
 
 

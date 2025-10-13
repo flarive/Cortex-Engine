@@ -606,37 +606,48 @@ void engine::Scene::glfw_error_callback(int error, const char* description)
 
 void engine::Scene::initQueries()
 {
-    glGenQueries(2, m_timerQuery);       // double-buffered GPU timer
     glGenQueries(2, m_primitiveQuery);   // double-buffered primitive count
+    glGenQueries(2, m_timerQuery);       // double-buffered GPU timer
 }
 
 void engine::Scene::beginQuery()
 {
-    //glGenQueries(1, &m_primitiveQuery);
-    //glGenQueries(2, &m_timerQuery);
-    //glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery); // Count primitives
-    //glBeginQuery(GL_TIME_ELAPSED, m_timerQuery); // GPU timer
-
-
     glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery[m_queryFrameIndex]);
     glBeginQuery(GL_TIME_ELAPSED, m_timerQuery[m_queryFrameIndex]);
-
 }
 
 void engine::Scene::endQuery()
 {
-    glEndQuery(GL_PRIMITIVES_GENERATED);
     glEndQuery(GL_TIME_ELAPSED);
+    glEndQuery(GL_PRIMITIVES_GENERATED);
 
     int prevIndex = 1 - m_queryFrameIndex;
 
-    // Get primitive count from previous frame
-    glGetQueryObjectiv(m_primitiveQuery[prevIndex], GL_QUERY_RESULT, &polycount);
+    // Check if the primitive query object is valid
+    //if (glIsQuery(m_primitiveQuery[prevIndex]) == GL_FALSE) {
+    //    //std::cerr << "Error: m_primitiveQuery[" << prevIndex << "] is invalid! Regenerating..." << std::endl;
+    //    // Regenerate the invalid query object
+    //    glGenQueries(1, &m_primitiveQuery[prevIndex]);
+    //}
 
-    // Get GPU time from previous frame
-    GLint available = 0;
-    glGetQueryObjectiv(m_timerQuery[prevIndex], GL_QUERY_RESULT_AVAILABLE, &available);
-    if (available) {
+    //// Check if the timer query object is valid
+    //if (glIsQuery(m_timerQuery[prevIndex]) == GL_FALSE) {
+    //    //std::cerr << "Error: m_timerQuery[" << prevIndex << "] is invalid! Regenerating..." << std::endl;
+    //    // Regenerate the invalid query object
+    //    glGenQueries(1, &m_timerQuery[prevIndex]);
+    //}
+
+    // Check if primitive count result is available
+    GLint primitiveAvailable = 0;
+    glGetQueryObjectiv(m_primitiveQuery[prevIndex], GL_QUERY_RESULT_AVAILABLE, &primitiveAvailable);
+    if (primitiveAvailable) {
+        glGetQueryObjectiv(m_primitiveQuery[prevIndex], GL_QUERY_RESULT, &polycount);
+    }
+
+    // Check if timer result is available
+    GLint timerAvailable = 0;
+    glGetQueryObjectiv(m_timerQuery[prevIndex], GL_QUERY_RESULT_AVAILABLE, &timerAvailable);
+    if (timerAvailable) {
         GLuint64 elapsedTime;
         glGetQueryObjectui64v(m_timerQuery[prevIndex], GL_QUERY_RESULT, &elapsedTime);
         gpuTime = elapsedTime / 1e6; // convert to ms
@@ -645,6 +656,7 @@ void engine::Scene::endQuery()
     // Swap index for next frame
     m_queryFrameIndex = prevIndex;
 }
+
 
 void engine::Scene::cleanupQueries()
 {
@@ -875,6 +887,7 @@ void engine::Scene::renderSphere()
     // Send to GPU
     glBindVertexArray(sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 #if EDITOR_MODE

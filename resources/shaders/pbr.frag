@@ -60,7 +60,7 @@ struct Material {
 //    sampler2D LTC1; // for inverse M
 //    sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
 
-    vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+    
 };
 
 struct DirLight {
@@ -124,6 +124,7 @@ uniform mat4 lightSpaceMatrix;
 
 uniform sampler2D LTC1; // for inverse M
 uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+//vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
 // shader output
 out vec4 FragColor;
@@ -424,7 +425,7 @@ void main()
     
 	
 
-
+    vec4 albedoRoughness = vec4(0.5f);
 
 
     vec2 texCoords = fs_in.TexCoords;
@@ -479,7 +480,7 @@ void main()
 
     // BEGIN area light only
     // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
+    vec2 uv = vec2(albedoRoughness.w, sqrt(1.0f - dotNV));
     uv = uv * LUT_SCALE + LUT_BIAS;
 
     // get 4 parameters for inverse_M
@@ -548,13 +549,13 @@ void main()
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
-    color = color / (color + vec3(1.0));
+    //color = color / (color + vec3(1.0));
 
     // Add emissive contribution before gamma correction
-    color += emissive;
+    //color += emissive;
 
     // gamma correct
-    color = pow(color, vec3(1.0/2.2));
+    //color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
 
     
@@ -680,7 +681,7 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
 	specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
 
 	// Add contribution
-	lighting = light.color * light.intensity * (specular + mDiffuse * diffuse);
+	lighting = vec3(1.0f, 0.0f, 0.0f);// light.color * light.intensity * (specular + mDiffuse * diffuse);
 
-    return vec3(lighting);
+    return lighting;
 }

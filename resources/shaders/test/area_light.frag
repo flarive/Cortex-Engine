@@ -170,4 +170,6 @@ void main()
 	}
 
 	fragColor = vec4(ToSRGB(result), 1.0f);
+
+    //fragColor = texture(LTC1, texcoord);
 }

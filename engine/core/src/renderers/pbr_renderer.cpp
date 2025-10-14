@@ -299,7 +299,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 
 
-    checkGLError("END OF PBR RENDERER SETUP");
+    //checkGLError("END OF PBR RENDERER SETUP");
 }
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
@@ -338,9 +338,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     
 
 	// bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE15);
+    glActiveTexture(GL_TEXTURE10);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE16);
+    glActiveTexture(GL_TEXTURE11);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 
@@ -400,7 +400,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     updateUI();
 
 
-    checkGLError("END OF PBR RENDERER LOOP");
+    //checkGLError("END OF PBR RENDERER LOOP");
 }
 
 

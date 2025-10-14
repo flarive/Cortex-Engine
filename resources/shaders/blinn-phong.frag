@@ -599,6 +599,8 @@ void main()
     // Set the fragment color with the alpha channel
     FragColor = vec4(result, alpha);
 
+    //FragColor = texture(LTC1, fs_in.TexCoords);
+
     //FragColor = texture(material.texture_shadowMapCube, fs_in.TexCoords);
 
     // Discard transparent fragments (optional)
@@ -748,12 +750,11 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
 	// GGX BRDF shadowing and Fresnel
 	// t2.x: shadowedF90 (F90 normally it should be 1.0)
 	// t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-    
+  
 	specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
 
 	// Add contribution
 	lighting = light.color * light.intensity * (specular + mDiffuse * diffuse);
-	//lighting += vec3(0.5, 0.5, 0.5);
 
     return vec3(lighting);
 }

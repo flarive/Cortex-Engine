@@ -4,13 +4,13 @@
 
 MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
-        .method = engine::RenderMethod::PBR,
-        .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-        .HDRSkyboxBlurStrength = 0.0f,
-        .shadowIntensity = 1.0f,
-        .iblDiffuseIntensity = 0.0f,
-        .iblSpecularIntensity = 0.0f
+        .method = engine::RenderMethod::BlinnPhong,
+        //.HDRSkyboxHide = true,
+        //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        //.HDRSkyboxBlurStrength = 0.0f,
+        //.shadowIntensity = 1.0f,
+        //.iblDiffuseIntensity = 0.0f,
+        //.iblSpecularIntensity = 0.0f
     })
 {
     // my application specific state gets initialized here
@@ -63,7 +63,11 @@ void MyScene10::init()
 
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
+
+    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(1.0f));
+    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
+
+    //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
     //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(16.0f), glm::vec3(90.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");

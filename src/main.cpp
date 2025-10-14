@@ -142,10 +142,10 @@ static void gamepadUpdate()
         }
     }
 }
-//
-//
-//
-//
+
+
+
+
 //
 //// GLAD, GLFW, STB-IMAGE
 //#include <glad/glad.h>
@@ -185,7 +185,7 @@ static void gamepadUpdate()
 //void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 //void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 //void do_movement(GLfloat deltaTime);
-//unsigned int loadTexture(const char* path, bool gammaCorrection);
+////unsigned int loadTexture(const char* path, bool gammaCorrection);
 //
 //
 //// SETTINGS AND GLOBALS
@@ -265,8 +265,6 @@ static void gamepadUpdate()
 //        areaLights[i].offset = glm::vec3(x, 0.0f, z) * 8.f;
 //        areaLights[i].yRotation = fn() * glm::two_pi<float>();
 //        areaLights[i].color = glm::vec3(fn(), fn(), fn());
-//        // color
-//        // intensity
 //    }
 //
 //    // SEND TO GPU
@@ -476,7 +474,7 @@ static void gamepadUpdate()
 //
 //
 //    // TEXTURES
-//    unsigned int concreteTexture = loadTexture(engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
+//    unsigned int concreteTexture = engine::Texture::loadTexture(engine::FileSystem::getPath("textures/concreteTexture.png").c_str(), true);
 //
 //    // 3D OBJECTS
 //    configurePlane();
@@ -508,13 +506,13 @@ static void gamepadUpdate()
 //        shaderLTC.setInt(str_two.c_str(), 1);
 //    }
 //    shaderLTC.setInt("numAreaLights", NUM_AREA_LIGHTS);
-//    shaderLTC.setInt("LTC1", 0);
-//    shaderLTC.setInt("LTC2", 1);
-//    shaderLTC.setInt("material.texture_diffuse", 2);
-//    incrementRoughness(0.0f);
+//    shaderLTC.setInt("LTC1", 15);
+//    shaderLTC.setInt("LTC2", 16);
+//    //shaderLTC.setInt("material.texture_diffuse", 23);
+//    /*incrementRoughness(0.0f);
 //    incrementLightIntensity(0.0f);
 //    switchTwoSided(false);
-//    glUseProgram(0);
+//    glUseProgram(0);*/
 //
 //    shaderLightPlane.use();
 //    {
@@ -522,7 +520,7 @@ static void gamepadUpdate()
 //        shaderLightPlane.setMat4("model", model);
 //    }
 //    shaderLightPlane.setVec3("lightColor", LIGHT_COLOR);
-//    glUseProgram(0);
+//    //glUseProgram(0);
 //
 //    // TIME MEASUREMENT
 //    //GLuint timeQuery;
@@ -556,9 +554,9 @@ static void gamepadUpdate()
 //        shaderLTC.setMat4("projection", projection);
 //        shaderLTC.setVec3("viewPosition", camera.position);
 //
-//        glActiveTexture(GL_TEXTURE0);
+//        glActiveTexture(GL_TEXTURE15);
 //        glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-//        glActiveTexture(GL_TEXTURE1);
+//        glActiveTexture(GL_TEXTURE16);
 //        glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
 //        //glActiveTexture(GL_TEXTURE2);
 //        //glBindTexture(GL_TEXTURE_2D, concreteTexture);
@@ -568,7 +566,7 @@ static void gamepadUpdate()
 //        renderPlane();
 //        //glEndQuery(GL_TIME_ELAPSED);
 //
-//        glUseProgram(0);
+//        //glUseProgram(0);
 //
 //        // draw area light planes
 //        shaderLightPlane.use();
@@ -584,7 +582,7 @@ static void gamepadUpdate()
 //            shaderLightPlane.setVec3("lightColor", areaLights[i].color);
 //            renderAreaLight();
 //        }
-//        glUseProgram(0);
+//        //glUseProgram(0);
 //
 //        // fetch timestamp
 //        //GLuint64 elapsed = 0; // will be in nanoseconds
@@ -720,9 +718,9 @@ static void gamepadUpdate()
 //{
 //    camera.processMouseScroll(static_cast<float>(yoffset));
 //}
-//
-//// utility function for loading a 2D texture from file
-//// ---------------------------------------------------
+
+// utility function for loading a 2D texture from file
+// ---------------------------------------------------
 //unsigned int loadTexture(char const* path, bool gammaCorrection)
 //{
 //    unsigned int textureID;

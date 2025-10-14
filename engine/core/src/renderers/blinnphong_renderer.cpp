@@ -8,7 +8,7 @@
 #include "../../include/lights/point_light.h"
 #include "../../include/lights/directional_light.h"
 
-
+#include "../../include/misc/colors.h"
 
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
@@ -53,6 +53,18 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.use();
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
 
+
+
+    LTC1Map = Texture::loadMTexture();
+    LTC2Map = Texture::loadLUTTexture();
+    blinnPhongShader.setInt("LTC1", 15);
+    blinnPhongShader.setInt("LTC2", 16);
+
+    glm::vec3 temp = Colors::Yellow;
+    float roughness = 1.0f;
+    blinnPhongShader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+
+
     // shader configuration
     // --------------------
     screenShader.use();
@@ -60,7 +72,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
-    
     if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
@@ -114,6 +125,13 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setMat4("projection", projection);
     blinnPhongShader.setMat4("view", view);
     blinnPhongShader.setVec3("viewPos", camera->position);
+
+    // bind pre-computed area light LTC data
+    glActiveTexture(GL_TEXTURE15);
+    glBindTexture(GL_TEXTURE_2D, LTC1Map);
+    glActiveTexture(GL_TEXTURE16);
+    glBindTexture(GL_TEXTURE_2D, LTC2Map);
+
 
     // update user stuffs
     update(blinnPhongShader);

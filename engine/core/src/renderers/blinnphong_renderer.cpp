@@ -61,17 +61,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     //blinnPhongShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
     //std::cout << "BBBBBBBBBBBBBBBBBBBBBBB " << glGetError() << std::endl; // returns 1281 (invalid value)
 
-    // Activate texture unit 20, bind LTC1Map, and set shader uniform
-    glActiveTexture(GL_TEXTURE20);
-    glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
 
-    // Activate texture unit 21, bind LTC2Map, and set shader uniform
-    glActiveTexture(GL_TEXTURE21);
-    glBindTexture(GL_TEXTURE_2D, LTC2Map);
-    blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
-
-    std::cout << "After binding textures: " << glGetError() << std::endl;
 
 
 
@@ -153,12 +143,17 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setVec3("viewPos", camera->position);
 
     // bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE20);
+    glActiveTexture(GL_TEXTURE0 + 20);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE21);
+    glActiveTexture(GL_TEXTURE0 + 21);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
     //std::cout << "DDDDDDDDDDDDDDDDDDDDDDD " << glGetError() << std::endl; // returns 1281 (invalid value)
 
+
+    blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
+    blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
+
+    //std::cout << "After binding textures: " << glGetError() << std::endl;
 
     // update user stuffs
     update(blinnPhongShader);

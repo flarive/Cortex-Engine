@@ -72,26 +72,16 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.use();
     shader.setBool(std::format("{}.use", base), true);
 
-
-
-
-    //glm::mat4 model(1.0f);
-    //model = glm::translate(model, offset);
-    //model = glm::rotate(model, yRotation, glm::vec3(0.0f, 1.0f, 0.0f));
-
-    //glActiveTexture(GL_TEXTURE + mLTC.mat1);
-    //glBindTexture(GL_TEXTURE_2D, mLTC.mat1);
-    //glActiveTexture(GL_TEXTURE + mLTC.mat2);
-    //glBindTexture(GL_TEXTURE_2D, mLTC.mat2);
-
-
-
+    // Calculate the light's points
     glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
     glm::vec3 p1 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[1].position, 1.0f));
     glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
     glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
 
 
+
+
+    // Send the light's points to the shader
     std::string str_pos = std::format("{}.points", base);
     std::string str_col = std::format("{}.color", base);
     std::string str_int = std::format("{}.intensity", base);
@@ -104,8 +94,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3(str_col.c_str(), color);
     shader.setFloat(str_int.c_str(), intensity);
     shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
-    //shader.setInt("material.LTC1", 15);
-    //shader.setInt("material.LTC2", 16);
+
 
     glm::vec3 temp = Colors::SlateGray;
     shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));

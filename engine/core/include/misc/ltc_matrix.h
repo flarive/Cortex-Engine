@@ -14,6 +14,9 @@ namespace engine
         GLuint mat2;
     };
 
+    /// <summary>
+    /// Contains the inverse matrix parameters for the LTC approximation.
+    /// </summary>
     const float LTC1[] = {
         1.0f, 0.0f, 0.0f, 2e-05f,
         1.0f, 0.0f, 0.0f, 0.000503905f,
@@ -4114,6 +4117,9 @@ namespace engine
     };
 
 
+    /// <summary>
+    /// Contains the GGX BRDF and Fresnel terms.
+    /// </summary>
     const float LTC2[] = {
         1.0f, 0.0f, 0.0f, 0.0f,
         1.0f, 7.91421e-31f, 0.0f, 0.0f,

@@ -5,6 +5,7 @@
 MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::BlinnPhong,
+        .enableFaceCulling = false
         //.HDRSkyboxHide = true,
         //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         //.HDRSkyboxBlurStrength = 0.0f,
@@ -53,7 +54,7 @@ void MyScene10::init()
         auto light = std::make_shared<engine::AreaLight>(); //myPlane
         light->color = glm::vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
-        light->intensity = 0.5f;
+        light->intensity = 10.0f;
         light->twoSided = false;
         auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);
@@ -64,7 +65,7 @@ void MyScene10::init()
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
 
-    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(1.0f));
+    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), engine::UvMapping(1.0f));
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
 
     //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));

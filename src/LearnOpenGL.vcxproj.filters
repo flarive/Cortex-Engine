@@ -687,7 +687,7 @@
     <CopyFileToFolders Include="..\resources\shaders\test\light_plane.vertex">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\concreteTexture.png">
+    <CopyFileToFolders Include="..\resources\textures\concrete_diffuse.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\test\area_light.vertex">
@@ -695,6 +695,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\test\area_light.frag">
       <Filter>resources\shaders\test</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\concrete_specular.png">
+      <Filter>resources\textures</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -731,5 +734,10 @@
     <ClInclude Include="app\myscene10.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\concrete_normal.png">
+      <Filter>resources\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

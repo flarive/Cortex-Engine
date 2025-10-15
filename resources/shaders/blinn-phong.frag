@@ -281,7 +281,6 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
 //    vec3 Lo_i = vec3(sum, sum, sum);
 //    return Lo_i;
 
-    // Inside LTC_Evaluate:
     vec3 Lo_i = vec3(sum, sum, sum) * mDiffuse; // Apply diffuse albedo here
     return Lo_i;
 }
@@ -525,10 +524,6 @@ void main()
 
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 
-//    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
-//    vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // gamma correction
-
-
     
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
@@ -542,17 +537,20 @@ void main()
     // BEGIN area light only
 	// gamma correction
     vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb; //vec3(0.7f, 0.8f, 0.96f)
-    vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // mDiffuse
+    vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
 
 
 	vec3 N = normalize(fs_in.worldNormal);
 	vec3 V = normalize(viewPos - fs_in.worldPosition);
 	vec3 P = fs_in.worldPosition;
-	float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+	float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
     // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
+    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
     uv = uv * LUT_SCALE + LUT_BIAS;
+
+
+
 
     // get 4 parameters for inverse_M
     vec4 t1 = texture(LTC1, uv);
@@ -571,25 +569,25 @@ void main()
 
 
 
-
     // Lighting
-//    for (int i = 0; i < pointLightsCount; i++)
-//    {
-//        if (pointLights[i].use)
-//            result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
-//    }
-//
-//    for (int i = 0; i < dirLightsCount; i++)
-//    {
-//        if (dirLights[i].use)
-//            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir);
-//    }
-//
-//    for (int i = 0; i < spotLightsCount; i++)
-//    {
-//        if (spotLights[i].use)
-//            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
-//    }
+    for (int i = 0; i < pointLightsCount; i++)
+    {
+        if (pointLights[i].use)
+            result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
+    }
+
+    for (int i = 0; i < dirLightsCount; i++)
+    {
+        if (dirLights[i].use)
+            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir);
+    }
+
+    for (int i = 0; i < spotLightsCount; i++)
+    {
+        if (spotLights[i].use)
+            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
+    }
+
 
     for (int i = 0; i < areaLightsCount; i++)
     {
@@ -605,7 +603,7 @@ void main()
             // GGX BRDF shadowing and Fresnel
             // t2.x: shadowedF90 (F90 normally it should be 1.0)
             // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-            specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
+            specular *= mSpecular*t2.x + (1.0 - mSpecular) * t2.y;
 
             // Add contribution
             //result += areaLights[i].color * areaLights[i].intensity * (specular + mDiffuse * diffuse);
@@ -630,11 +628,27 @@ void main()
 
     //FragColor = texture(material.texture_diffuse, fs_in.TexCoords);
 
-    FragColor = vec4(ToSRGB(result), 1.0f);
+    //FragColor = vec4(normalize(N) * 0.5 + 0.5, 1.0); // Surface normal
+
+
+
+    FragColor = vec4(ToSRGB(result), 1.0);
+
+    //FragColor = vec4(uv, 0.0, 1.0);
+
+
+    //FragColor = vec4(normalize(lightNormal) * 0.5 + 0.5, 1.0);
+
+    // Visualize the surface normal
+    //FragColor = vec4(normalize(N) * 0.5 + 0.5, 1.0);
+
+
+    // Visualize the diffuse value
+    //FragColor = vec4(diffuse, 1.0);
 
     // Discard transparent fragments (optional)
-    if (alpha < 0.1)
-        discard;
+//    if (alpha < 0.1)
+//        discard;
 }
 
 
@@ -784,7 +798,7 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
 	// t2.x: shadowedF90 (F90 normally it should be 1.0)
 	// t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
   
-	specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
+	specular *= mSpecular*t2.x + (1.0 - mSpecular) * t2.y;
 
 	// Add contribution
 	//lighting = light.color * light.intensity * (specular + mDiffuse * diffuse);

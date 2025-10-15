@@ -222,7 +222,7 @@ vec3 IntegrateEdgeVec(vec3 v1, vec3 v2)
 }
 
 // P is fragPos in world space (LTC distribution)
-vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSided)
+vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSided, vec3 mDiffuse)
 {
     // construct orthonormal basis around N
     vec3 T1, T2;
@@ -539,10 +539,9 @@ void main()
 
     vec3 result = vec3(0.0);
 
-
     // BEGIN area light only
 	// gamma correction
-    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;// * vec3(0.7f, 0.8f, 0.96f);
+    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb; //vec3(0.7f, 0.8f, 0.96f)
     vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // mDiffuse
 
 
@@ -600,8 +599,8 @@ void main()
         if (areaLights[i].use)
         {
             // Evaluate LTC shading
-            vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided);
-            vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided);
+            vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided, mDiffuse);
+            vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided, mDiffuse);
 
             // GGX BRDF shadowing and Fresnel
             // t2.x: shadowedF90 (F90 normally it should be 1.0)
@@ -611,7 +610,7 @@ void main()
             // Add contribution
             //result += areaLights[i].color * areaLights[i].intensity * (specular + mDiffuse * diffuse);
 
-            result += areaLights[i].color * areaLights[i].intensity * (specular + mDiffuse * diffuse);
+            result += areaLights[i].color * areaLights[i].intensity * (specular + diffuse);
         }
     }
 
@@ -629,7 +628,7 @@ void main()
 
     //FragColor = texture(LTC1, fs_in.TexCoords);
 
-    //FragColor = texture(material.texture_shadowMapCube, fs_in.TexCoords);
+    //FragColor = texture(material.texture_diffuse, fs_in.TexCoords);
 
     FragColor = vec4(ToSRGB(result), 1.0f);
 
@@ -774,8 +773,8 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     vec3 lighting = vec3(0.0);
     
     // Evaluate LTC shading
-	vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided);
-	vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided);
+	vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided, mDiffuse);
+	vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided, mDiffuse);
 
     //vec3 diffuse = material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)) : vec3(0.0, 1.0, 0.0);
     //vec3 specular = material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color;

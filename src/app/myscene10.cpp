@@ -53,7 +53,7 @@ void MyScene10::init()
         auto light = std::make_shared<engine::AreaLight>(); //myPlane
         light->color = glm::vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
-        light->intensity = 0.1f;
+        light->intensity = 0.5f;
         light->twoSided = false;
         auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);

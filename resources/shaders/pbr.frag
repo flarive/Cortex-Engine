@@ -549,13 +549,13 @@ void main()
     vec3 color = ambient + Lo;
 
     // HDR tonemapping
-    //color = color / (color + vec3(1.0));
+    color = color / (color + vec3(1.0));
 
     // Add emissive contribution before gamma correction
-    //color += emissive;
+    color += emissive;
 
     // gamma correct
-    //color = pow(color, vec3(1.0/2.2));
+    color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
 
     

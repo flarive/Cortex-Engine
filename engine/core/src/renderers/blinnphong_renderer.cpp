@@ -54,16 +54,42 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
 
 
-
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
-    blinnPhongShader.setInt("LTC1", 15);
-    blinnPhongShader.setInt("LTC2", 16);
+
+    //blinnPhongShader.setInt("LTC1", 20); // Should be texture unit, not texture ID
+    //blinnPhongShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
+    //std::cout << "BBBBBBBBBBBBBBBBBBBBBBB " << glGetError() << std::endl; // returns 1281 (invalid value)
+
+    // Activate texture unit 20, bind LTC1Map, and set shader uniform
+    glActiveTexture(GL_TEXTURE20);
+    glBindTexture(GL_TEXTURE_2D, LTC1Map);
+    blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
+
+    // Activate texture unit 21, bind LTC2Map, and set shader uniform
+    glActiveTexture(GL_TEXTURE21);
+    glBindTexture(GL_TEXTURE_2D, LTC2Map);
+    blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
+
+    std::cout << "After binding textures: " << glGetError() << std::endl;
+
+
+
+
+    // After loading the textures, check if they are valid
+    //GLint width2, height2, internalFormat;
+    //glBindTexture(GL_TEXTURE_2D, LTC2Map);
+    //glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width2);
+    //glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height2);
+    //glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
+    //std::cout << "LTC1Map: " << LTC2Map << ", width: " << width2 << ", height: " << height2 << ", format: " << internalFormat << std::endl;
+
+
 
     glm::vec3 temp = Colors::Yellow;
-    float roughness = 1.0f;
+    float roughness = 0.5f;
     blinnPhongShader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
-
+    //std::cout << "CCCCCCCCCCCCCCCCCCCCCC " << glGetError() << std::endl; // returns 1281 (invalid value)
 
     // shader configuration
     // --------------------
@@ -127,10 +153,11 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setVec3("viewPos", camera->position);
 
     // bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE15);
+    glActiveTexture(GL_TEXTURE20);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE16);
+    glActiveTexture(GL_TEXTURE21);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
+    //std::cout << "DDDDDDDDDDDDDDDDDDDDDDD " << glGetError() << std::endl; // returns 1281 (invalid value)
 
 
     // update user stuffs

@@ -51,9 +51,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // shader configuration
     // --------------------
     pbrShader.use();
-    pbrShader.setInt("material.texture_irradiance", 7);
-    pbrShader.setInt("material.texture_prefilter", 8);
-    pbrShader.setInt("material.texture_brdfLUT", 9);
+    pbrShader.setInt("material.texture_irradiance", 7); // Should be texture unit, not texture ID
+    pbrShader.setInt("material.texture_prefilter", 8); // Should be texture unit, not texture ID
+    pbrShader.setInt("material.texture_brdfLUT", 9); // Should be texture unit, not texture ID
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
@@ -61,12 +61,12 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
 
     backgroundShader.use();
-    backgroundShader.setInt("environmentMap", 0);
+    backgroundShader.setInt("environmentMap", 0); // Should be texture unit, not texture ID
     backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
     backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
     screenShader.use();
-    screenShader.setInt("screenTexture", 0);
+    screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
     
 
@@ -250,7 +250,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // pbr: generate a 2D LUT from the BRDF equations used.
     // ----------------------------------------------------
     glGenTextures(1, &brdfLUTTexture);
-
     // pre-allocate enough memory for the LUT texture.
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, vsize, vsize, 0, GL_RG, GL_FLOAT, 0);
@@ -282,12 +281,11 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
-    pbrShader.setInt("LTC1", LTC1Map);
-    pbrShader.setInt("LTC2", LTC2Map);
+    pbrShader.setInt("LTC1", 20); // Should be texture unit, not texture ID
+    pbrShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
+    std::cout << "AAAAAAAAAAAAAAAAAA " << glGetError() << std::endl; // returns 1281 (invalid value)
 
-    //glm::vec3 temp = Colors::SlateGray;
-    //float roughness = 0.0f;
-    //pbrShader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+
 
 
     backgroundShader.use();
@@ -297,6 +295,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
+
+
+ 
 
 
     //checkGLError("END OF PBR RENDERER SETUP");
@@ -338,9 +339,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     
 
 	// bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE10);
+    glActiveTexture(GL_TEXTURE20);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE11);
+    glActiveTexture(GL_TEXTURE21);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 

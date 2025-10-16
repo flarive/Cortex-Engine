@@ -4,6 +4,8 @@
 #include "../materials/material.h"
 #include "../primitives/primitive.h"
 
+#include "../debug/debug_draw_line.h"
+
 namespace engine
 {
     class Plane final : public Primitive
@@ -19,7 +21,7 @@ namespace engine
         std::vector<Vertex> generateVertices() override;
 
         // draws the model, and thus all its meshes
-        void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform) override;
+        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
 
         PrimitiveType getTypeID() const override
         {
@@ -29,6 +31,8 @@ namespace engine
     private:
         void geometrySetup();
 
-        unsigned int indexCount{};
+        void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
+
+        DebugDraw m_debugDrawLine{};
     };
 }

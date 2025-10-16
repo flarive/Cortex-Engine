@@ -5,8 +5,6 @@
 
 #include "../debug/debug_draw_line.h"
 
-//#include "../misc/ltc_matrix.h"
-
 namespace engine
 {
     // Implementing Areal Lights with Linearly Transformed Cosines.
@@ -40,8 +38,6 @@ namespace engine
 
         Shader shaderLightPlane{};
 
-        //LTC_matrices mLTC{};
-
         DebugDraw m_debugDrawLine{};
 
 		std::shared_ptr<engine::Primitive> m_primitive{};
@@ -56,5 +52,7 @@ namespace engine
         };
 
         void setup() override;
+
+        void drawDebugNormals(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
     };
 }

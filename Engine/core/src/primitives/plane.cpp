@@ -3,7 +3,9 @@
 #include "../../include/vertex.h"
 #include "../../include/uvmapping.h"
 #include "../../include/primitives/primitive.h"
-#include "../../include/tools/helpers.h"
+
+#include "../../include/singleton.h"
+
 
 engine::Plane::Plane(const glm::vec3& _position) : Primitive(_position)
 {
@@ -31,6 +33,14 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        m_debugDrawLine.init();
+    }
 }
 
 void engine::Plane::geometrySetup()
@@ -73,7 +83,7 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
     return generatePlaneVertices(m_uvScale);
 }
 
-void engine::Plane::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     shader.use();
 
@@ -107,5 +117,33 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        drawDebugNormals(projection, view, transformMatrix);
+    }
+
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+}
+
+void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
+{
+    // Compute the center of the plane in world space
+    glm::vec3 center = glm::vec3(transformMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+    // Compute the normal in world space
+    glm::vec3 localNormal = glm::vec3(0.0f, 1.0f, 0.0f); // Assuming plane normal is +Y in local space
+    glm::vec3 worldNormal = glm::normalize(glm::mat3(transformMatrix) * localNormal);
+
+    // Compute the end point of the normal line
+    glm::vec3 end = center + worldNormal * 0.5f; // Scale for visibility
+
+    // Add the debug line
+    m_debugDrawLine.addLine(center, end, glm::vec3(1.0f, 0.0f, 0.0f)); // Red color for normal
+
+    m_debugDrawLine.render(view, projection);
+    m_debugDrawLine.clear();
 }

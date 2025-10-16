@@ -1,6 +1,9 @@
 ﻿#include "../../include/lights/area_light.h"
 
+#include "../../include/singleton.h"
 #include "../../include/misc/colors.h"
+
+
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
@@ -27,10 +30,6 @@ void engine::AreaLight::setup()
 {
     shaderLightPlane.init("light_plane", "shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
 
-
-    // LUT textures
-    //mLTC.mat1 = Texture::loadMTexture();
-    //mLTC.mat2 = Texture::loadLUTTexture();
 
     // Check for OpenGL errors
     //GLenum err;
@@ -65,8 +64,13 @@ void engine::AreaLight::setup()
 
     glBindVertexArray(0);
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
 
-    m_debugDrawLine.init();
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        m_debugDrawLine.init();
+    }
 }
 
 void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -82,12 +86,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
     glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
 
-    glm::vec3 center = 0.25f * (p0 + p1 + p2 + p3);
-    glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p3 - p0));
-    glm::vec3 end = center + normal * 0.5f;
-
-    // draw a debug line from center -> end
-    m_debugDrawLine.addLine(center, end, glm::vec3(0, 1, 0));
+   
 
 
     // Send the light's points to the shader
@@ -110,13 +109,6 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glm::vec3 temp = Colors::SlateGray;
     shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
 
-
-
-
-
-
-
-
     shaderLightPlane.use();
     shaderLightPlane.setMat4("model", transformMatrix);
     shaderLightPlane.setMat4("view", view);
@@ -131,6 +123,24 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glBindVertexArray(0);
 
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        drawDebugNormals(p0, p1, p2, p3, projection, view, transformMatrix);
+    }
+}
+
+
+void engine::AreaLight::drawDebugNormals(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
+{
+    glm::vec3 center = 0.25f * (p0 + p1 + p2 + p3);
+    glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p3 - p0));
+    glm::vec3 end = center + normal * 0.5f;
+
+    // draw a debug line from center -> end
+    m_debugDrawLine.addLine(center, end, glm::vec3(0, 1, 0));
 
     m_debugDrawLine.render(view, projection);
     m_debugDrawLine.clear();

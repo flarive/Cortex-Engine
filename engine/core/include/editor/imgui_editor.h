@@ -90,6 +90,7 @@ namespace engine
 		bool sceneSetting_enableCameraFrustrumCulling{ true };
 		bool sceneSetting_drawLightsVisualHelpers{ false };
 		bool sceneSetting_drawBoundingBoxesVisualHelpers{ false };
+		bool sceneSetting_drawDebugNormalsVisualHelpers{ false };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

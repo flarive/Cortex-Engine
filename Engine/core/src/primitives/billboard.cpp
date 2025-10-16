@@ -71,7 +71,7 @@ std::vector<engine::Vertex> engine::Billboard::generateVertices()
     return generateBillboardVertices(m_uvScale);
 }
 
-void engine::Billboard::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     shader.use();
 

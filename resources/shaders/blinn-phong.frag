@@ -278,8 +278,8 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
         sum = 0.0;
 
     // Outgoing radiance (solid angle) for the entire polygon
-//    vec3 Lo_i = vec3(sum, sum, sum);
-//    return Lo_i;
+    // vec3 Lo_i = vec3(sum, sum, sum);
+    // return Lo_i;
 
     vec3 Lo_i = vec3(sum, sum, sum) * mDiffuse; // Apply diffuse albedo here
     return Lo_i;
@@ -585,7 +585,6 @@ void main()
             result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
     }
 
-
     for (int i = 0; i < areaLightsCount; i++)
     {
 //        if (areaLights[i].use)
@@ -595,16 +594,14 @@ void main()
         {
             // Evaluate LTC shading
             vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided, mDiffuse);
-            vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided, mDiffuse);
+            vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided, vec3(1.0));
 
             // GGX BRDF shadowing and Fresnel
             // t2.x: shadowedF90 (F90 normally it should be 1.0)
             // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-            specular *= mSpecular*t2.x + (1.0 - mSpecular) * t2.y;
+            specular *= mSpecular * t2.x + (1.0 - mSpecular) * t2.y;
 
             // Add contribution
-            //result += areaLights[i].color * areaLights[i].intensity * (specular + mDiffuse * diffuse);
-
             result += areaLights[i].color * areaLights[i].intensity * (specular + diffuse);
         }
     }

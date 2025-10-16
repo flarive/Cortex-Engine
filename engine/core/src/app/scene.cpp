@@ -177,6 +177,9 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "draw_bounding_boxes_visual_helpers") {
                 sceneSettings.drawBoundingBoxesVisualHelpers = value;
             }
+            else if (key == "draw_debug_normals_visual_helpers") {
+                sceneSettings.drawNormalsVisualHelpers = value;
+            }
         });
 }
 #endif

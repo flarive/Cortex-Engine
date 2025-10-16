@@ -47,7 +47,7 @@ void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
 		m_lightDebugShader.setMat4("projection", projection);
 		m_lightDebugShader.setMat4("view", view);
 		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
-		m_debug_boundingBox->draw(m_lightDebugShader, worldTransformMatrix, localTransform);
+		m_debug_boundingBox->draw(m_lightDebugShader, projection, view, worldTransformMatrix, localTransform);
 	}
 }
 

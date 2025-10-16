@@ -127,7 +127,7 @@ std::vector<engine::Vertex> engine::Cone::generateVertices()
     return generateConeVertices(36, height, radius, m_uvScale);
 }
 
-void engine::Cone::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     shader.use();
 

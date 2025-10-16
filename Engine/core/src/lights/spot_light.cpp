@@ -76,7 +76,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
 
         // You can pass glm::vec3(0) for rotation since model is already transformed
         auto localTransform = Transform(position, glm::vec3(0.0f), glm::vec3(1.0f));
-        m_debug_cone.draw(m_lightDebugShader, model, localTransform);
+        m_debug_cone.draw(m_lightDebugShader, projection, view, model, localTransform);
     }
 }
 

@@ -227,6 +227,16 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
+    static bool lastDrawDebugNormalsVisualHelpers = false;
+    if (ImGui::Toggle("Normals visual helpers", &sceneSetting_drawDebugNormalsVisualHelpers, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastDrawDebugNormalsVisualHelpers != sceneSetting_drawDebugNormalsVisualHelpers)
+        {
+            m_onSceneSettingChanged("draw_debug_normals_visual_helpers", sceneSetting_drawDebugNormalsVisualHelpers);
+            lastDrawDebugNormalsVisualHelpers = sceneSetting_drawDebugNormalsVisualHelpers;
+        }
+    }
+
 
     ImGui::PopStyleVar();
 

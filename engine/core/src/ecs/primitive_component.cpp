@@ -104,7 +104,7 @@ void engine::PrimitiveComponent::update(Transform& transform)
 
 void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	m_primitive->draw(shader, worldTransformMatrix, localTransform);
+	m_primitive->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
 	auto* singleton = engine::Singleton::getInstance();
 	assert(singleton != nullptr && "Singleton not initialized !");
@@ -117,7 +117,7 @@ void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 		m_lightDebugShader.setMat4("projection", projection);
 		m_lightDebugShader.setMat4("view", view);
 		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
-		m_debug_boundingBox->draw(m_lightDebugShader, worldTransformMatrix, localTransform);
+		m_debug_boundingBox->draw(m_lightDebugShader, projection, view, worldTransformMatrix, localTransform);
 	}
 }
 

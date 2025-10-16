@@ -136,7 +136,7 @@ std::vector<engine::Vertex> engine::Sphere::generateVertices()
     return generateSphereVertices(radius, m_uvScale);
 }
 
-void engine::Sphere::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     shader.use();
 

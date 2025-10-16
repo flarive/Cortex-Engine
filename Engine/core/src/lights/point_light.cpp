@@ -88,7 +88,7 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
 
         auto localTransform = Transform(position, glm::vec3(0.0f), glm::vec3(1.0f));
-        m_debug_sphere.draw(m_lightDebugShader, model, localTransform);
+        m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);
     }
 }
 

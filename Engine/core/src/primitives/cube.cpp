@@ -87,7 +87,7 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
     return generateCuboidVertices(m_width, m_height, m_depth, m_uvScale);
 }
 
-void engine::Cube::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     shader.use();
 

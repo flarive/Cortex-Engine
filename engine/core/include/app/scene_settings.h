@@ -29,5 +29,6 @@ namespace engine
 
         bool drawLightsVisualHelpers{ false };
         bool drawBoundingBoxesVisualHelpers{ false };
+        bool drawNormalsVisualHelpers{ false };
     };
 }

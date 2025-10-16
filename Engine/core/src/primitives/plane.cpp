@@ -33,19 +33,11 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
 
     if (material && material->hasDiffuseMap())
         material->loadTexturesAsync(); // Let material handle texture loading
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
-
-    if (sceneSettings.drawNormalsVisualHelpers) {
-        m_debugDrawLine.init();
-    }
 }
 
 void engine::Plane::geometrySetup()
 {
-    std::vector<Vertex> vertices = generatePlaneVertices(m_uvScale);
+    std::vector<Vertex> vertices = generateVertices();
 
     // configure plane VAO
     glGenVertexArrays(1, &m_VAO);
@@ -131,6 +123,8 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
+    m_debugDrawLine.init();
+    
     // Compute the center of the plane in world space
     glm::vec3 center = glm::vec3(transformMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 

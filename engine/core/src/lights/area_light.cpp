@@ -63,14 +63,6 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 
     glBindVertexArray(0);
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
-
-    if (sceneSettings.drawNormalsVisualHelpers) {
-        m_debugDrawLine.init();
-    }
 }
 
 void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -78,7 +70,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     std::string base = std::format("areaLights[{}]", m_index);
 
     shader.use();
-    shader.setBool(std::format("{}.use", base), true);
+    shader.setBool(std::format("{}.use", base), m_enabled);
 
     // Calculate the light's points
     glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
@@ -135,6 +127,8 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
 
 void engine::AreaLight::drawDebugNormals(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
+    m_debugDrawLine.init();
+
     glm::vec3 center = 0.25f * (p0 + p1 + p2 + p3);
     glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p3 - p0));
     glm::vec3 end = center + normal * 0.5f;

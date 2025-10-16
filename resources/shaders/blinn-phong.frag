@@ -587,62 +587,18 @@ void main()
 
     for (int i = 0; i < areaLightsCount; i++)
     {
-//        if (areaLights[i].use)
-//            result += CalcAreaLight(areaLights[i], norm, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
-
         if (areaLights[i].use)
-        {
-            // Evaluate LTC shading
-            vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), areaLights[i].points, areaLights[i].twoSided, mDiffuse);
-            vec3 specular = LTC_Evaluate(N, V, P, Minv, areaLights[i].points, areaLights[i].twoSided, vec3(1.0));
-
-            // GGX BRDF shadowing and Fresnel
-            // t2.x: shadowedF90 (F90 normally it should be 1.0)
-            // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-            specular *= mSpecular * t2.x + (1.0 - mSpecular) * t2.y;
-
-            // Add contribution
-            result += areaLights[i].color * areaLights[i].intensity * (specular + diffuse);
-        }
+            result += CalcAreaLight(areaLights[i], norm, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
     }
 
-    
     // Sample the alpha value from the diffuse texture
     float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
 
-    // gamma correct
-    //mDiffuse = pow(mDiffuse, vec3(1.0/2.2));
-
-    // SHOULD APPLY GAMMA !!!!
-
-    // Set the fragment color with the alpha channel
-    //FragColor = vec4(result, alpha);
-
-    //FragColor = texture(LTC1, fs_in.TexCoords);
-
-    //FragColor = texture(material.texture_diffuse, fs_in.TexCoords);
-
-    //FragColor = vec4(normalize(N) * 0.5 + 0.5, 1.0); // Surface normal
-
-
-
-    FragColor = vec4(ToSRGB(result), 1.0);
-
-    //FragColor = vec4(uv, 0.0, 1.0);
-
-
-    //FragColor = vec4(normalize(lightNormal) * 0.5 + 0.5, 1.0);
-
-    // Visualize the surface normal
-    //FragColor = vec4(normalize(N) * 0.5 + 0.5, 1.0);
-
-
-    // Visualize the diffuse value
-    //FragColor = vec4(diffuse, 1.0);
+    FragColor = vec4(ToSRGB(result), alpha);
 
     // Discard transparent fragments (optional)
-//    if (alpha < 0.1)
-//        discard;
+    if (alpha < 0.1)
+        discard;
 }
 
 
@@ -772,32 +728,23 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // debug shadows
     //FragColor = vec4(vec3(shadow), 1.0);
 
-    return vec3(lighting);
+    return lighting;
 }
 
 // Calculates the color when using an area light.
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular)
 {
-    vec3 lighting = vec3(0.0);
-    
     // Evaluate LTC shading
-	vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided, mDiffuse);
-	vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided, mDiffuse);
+    vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided, mDiffuse);
+    vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided, vec3(1.0));
 
-    //vec3 diffuse = material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)) : vec3(0.0, 1.0, 0.0);
-    //vec3 specular = material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color;
+    // GGX BRDF shadowing and Fresnel
+    // t2.x: shadowedF90 (F90 normally it should be 1.0)
+    // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
+    specular *= mSpecular * t2.x + (1.0 - mSpecular) * t2.y;
 
-
-	// GGX BRDF shadowing and Fresnel
-	// t2.x: shadowedF90 (F90 normally it should be 1.0)
-	// t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-  
-	specular *= mSpecular*t2.x + (1.0 - mSpecular) * t2.y;
-
-	// Add contribution
-	//lighting = light.color * light.intensity * (specular + mDiffuse * diffuse);
-
-    lighting = light.color * light.intensity * (specular + diffuse);
+    // Add contribution
+    vec3 lighting = light.color * light.intensity * (specular + diffuse);
 
     return lighting;
 }

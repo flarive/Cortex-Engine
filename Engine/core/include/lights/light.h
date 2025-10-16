@@ -51,6 +51,8 @@ namespace engine
     protected:
         unsigned int m_index{};
 
+		bool m_enabled{ true };
+
         Shader m_lightDebugShader{};
 
         const float LIGHT_CUBE_SIZE{ 0.82f };

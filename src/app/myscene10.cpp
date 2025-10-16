@@ -5,7 +5,6 @@
 MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
     {
         .method = engine::RenderMethod::BlinnPhong,
-        .enableFaceCulling = false
         //.HDRSkyboxHide = true,
         //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         //.HDRSkyboxBlurStrength = 0.0f,
@@ -25,7 +24,7 @@ MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_tit
 void MyScene10::init()
 {
     // camera
-    auto trsCamera1 = engine::Transform{ { 0.0f, 5.0f, 3.0f } };
+    auto trsCamera1 = engine::Transform{ { 0.0f, 1.0f, 0.0f } };
     auto camera1 = std::make_shared<engine::FlyCamera>();
     camera1->movementSpeed = 10.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
@@ -51,10 +50,10 @@ void MyScene10::init()
         //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), engine::Colors::YellowGreen, engine::Colors::Crimson));
 
         auto trsLight = engine::Transform{ { glm::vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
-        auto light = std::make_shared<engine::AreaLight>(); //myPlane
+        auto light = std::make_shared<engine::AreaLight>();
         light->color = glm::vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
-        light->intensity = 10.0f;
+        light->intensity = 0.25f;
         light->twoSided = false;
         auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
         entityLight->addComponent<engine::TransformComponent>(trsLight);
@@ -66,12 +65,12 @@ void MyScene10::init()
     auto myPlane = std::make_shared<engine::Plane>();
 
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), engine::UvMapping(1.0f));
-    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png"), engine::UvMapping(1.0f));
-    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
+    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png"), engine::UvMapping(6.0f));
+    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f));
 
     //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
     //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f), engine::UvMapping(6.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(16.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
@@ -114,9 +113,9 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
     }
 
     if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        incrementRoughness(-0.1f);
+        incrementRoughness(-0.01f);
     else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        incrementRoughness(0.1f);
+        incrementRoughness(0.01f);
 
     if (shiftPressed && key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
         incrementLightIntensity(-0.1f);
@@ -197,7 +196,7 @@ void MyScene10::incrementRoughness(float step)
 
 void MyScene10::incrementLightIntensity(float step)
 {
-    static float intensity = 1.0f;
+    static float intensity = 0.25f;
     intensity += step;
     intensity = glm::clamp(intensity, 0.0f, 100.0f);
 
@@ -242,48 +241,9 @@ void MyScene10::clean()
 void MyScene10::drawScene(engine::Shader& shader)
 {
     (void)shader;   //Do nothing
-
-    //shader.use();
-
-    //renderPlane();
 }
 
 void MyScene10::drawUI()
 {
     // render HUD / UI
 }
-
-
-void MyScene10::configurePlane()
-{
-    glGenVertexArrays(1, &planeVAO);
-    glGenBuffers(1, &planeVBO);
-
-    glBindVertexArray(planeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-        (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-
-    // normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-        (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    // texcoord
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-        (GLvoid*)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
-    glBindVertexArray(0);
-}
-
-void MyScene10::renderPlane()
-{
-    glBindVertexArray(planeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
-}
-

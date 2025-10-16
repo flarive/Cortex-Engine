@@ -33,7 +33,7 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
     std::string base = std::format("pointLights[{}]", m_index);
 
     shader.use();
-    shader.setBool(std::format("{}.use", base), true);
+    shader.setBool(std::format("{}.use", base), m_enabled);
 
     shader.setVec3(std::format("{}.position", base), position);
 

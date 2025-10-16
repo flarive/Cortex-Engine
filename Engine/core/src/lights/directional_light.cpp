@@ -21,7 +21,7 @@ engine::DirectionalLight::DirectionalLight(glm::vec3 _position) : Light(_positio
 void engine::DirectionalLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+    m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
 
     auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 1.0f, 1.0f, 0.2f));

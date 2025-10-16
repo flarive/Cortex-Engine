@@ -549,9 +549,6 @@ void main()
     vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
     uv = uv * LUT_SCALE + LUT_BIAS;
 
-
-
-
     // get 4 parameters for inverse_M
     vec4 t1 = texture(LTC1, uv);
 

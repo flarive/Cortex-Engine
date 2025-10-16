@@ -348,6 +348,9 @@
     <ClCompile Include="core\src\singleton.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\debug\debug_draw_line.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -577,6 +580,9 @@
     </ClInclude>
     <ClInclude Include="core\include\misc\colors.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\debug_draw_line.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

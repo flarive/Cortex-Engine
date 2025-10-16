@@ -12,21 +12,21 @@ engine::Renderer::Renderer(GLFWwindow* window)
 void engine::Renderer::loadShaders()
 {
     // color framebuffer to screen shader
-    screenShader.init("screen", "shaders/framebuffers_screen.vertex", "shaders/framebuffers_screen.frag");
+    screenShader.init("screen", "shaders/framebuffers_screen.vert", "shaders/framebuffers_screen.frag");
 
     // for spot lights or directional lights
-    directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vertex", "shaders/shadow_mapping_depth.frag");
+    directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vert", "shaders/shadow_mapping_depth.frag");
 
     // for point lights
-    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vertex", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geometry");
+    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geometry");
 
 
     // debug only
-    depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vertex", "shaders/debug/debug_quad_depth.frag");
-    cubeFaceDebugShader.init("debugDepthCube", "shaders/debug/cube_face_debugger.vertex", "shaders/debug/cube_face_debugger.frag");
+    depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vert", "shaders/debug/debug_quad_depth.frag");
+    cubeFaceDebugShader.init("debugDepthCube", "shaders/debug/cube_face_debugger.vert", "shaders/debug/cube_face_debugger.frag");
 
     // Editor mode outline shader
-    outlineColorShader.init("outline", "shaders/debug/stencil_testing.vertex", "shaders/debug/stencil_testing.frag");
+    outlineColorShader.init("outline", "shaders/debug/stencil_testing.vert", "shaders/debug/stencil_testing.frag");
 }
 
 

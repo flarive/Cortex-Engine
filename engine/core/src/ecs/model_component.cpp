@@ -10,7 +10,7 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(model));
 
 	// load light cube debug shader
-	m_lightDebugShader.init("model_boundingbox_debug", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+	m_lightDebugShader.init("model_boundingbox_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
 	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
 

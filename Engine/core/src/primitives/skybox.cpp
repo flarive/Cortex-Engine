@@ -5,7 +5,7 @@
 
 void engine::Skybox::setup(const std::vector<std::string>& faces)
 {
-    m_skyboxShader.init("skybox", "shaders/skybox.vertex", "shaders/skybox.frag");
+    m_skyboxShader.init("skybox", "shaders/skybox.vert", "shaders/skybox.frag");
 
 
     // skybox VAO

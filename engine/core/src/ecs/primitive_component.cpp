@@ -15,7 +15,7 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 
 	// load light cube debug shader
-	m_lightDebugShader.init("primitive_boundingbox_debug", "shaders/debug/debug_light.vertex", "shaders/debug/debug_light.frag");
+	m_lightDebugShader.init("primitive_boundingbox_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
 	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
 

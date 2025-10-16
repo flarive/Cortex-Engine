@@ -409,14 +409,14 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
-    pbrShader.init("pbr", "shaders/pbr.vertex", "shaders/pbr.frag");
-    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vertex", "shaders/equirectangular_to_cubemap.frag");
-    irradianceShader.init("irradianceShader", "shaders/cubemap2.vertex", "shaders/irradiance_convolution.frag");
-    prefilterShader.init("prefilterShader", "shaders/cubemap2.vertex", "shaders/prefilter.frag");
-    brdfShader.init("brdfShader", "shaders/brdf.vertex", "shaders/brdf.frag");
+    pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
+    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
+    irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");
+    prefilterShader.init("prefilterShader", "shaders/cubemap2.vert", "shaders/prefilter.frag");
+    brdfShader.init("brdfShader", "shaders/brdf.vert", "shaders/brdf.frag");
 
     // HDR skybox shader
-    backgroundShader.init("background", "shaders/background.vertex", "shaders/background.frag");
+    backgroundShader.init("background", "shaders/background.vert", "shaders/background.frag");
 
     // shared shaders
     Renderer::loadShaders();

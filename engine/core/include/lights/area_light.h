@@ -2,6 +2,9 @@
 
 #include "light.h"
 
+
+#include "../debug/debug_draw_line.h"
+
 //#include "../misc/ltc_matrix.h"
 
 namespace engine
@@ -38,6 +41,8 @@ namespace engine
         Shader shaderLightPlane{};
 
         //LTC_matrices mLTC{};
+
+        DebugDraw m_debugDrawLine{};
 
 		std::shared_ptr<engine::Primitive> m_primitive{};
 

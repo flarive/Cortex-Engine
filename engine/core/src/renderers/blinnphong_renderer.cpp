@@ -184,10 +184,10 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vertex", "shaders/blinn-phong.frag");
+    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
 
     // skybox reflection shader
-    skyboxShader.init("cubemap", "shaders/cubemap.vertex", "shaders/cubemap.frag");
+    skyboxShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
 
     // shared shaders
     Renderer::loadShaders();

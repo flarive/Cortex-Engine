@@ -11,7 +11,7 @@ void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fo
     glfwGetWindowSize(m_window, &width, &height);
 
     
-    m_textShader.init("UITextShader", "shaders/text.vertex", "shaders/text.frag");
+    m_textShader.init("UITextShader", "shaders/text.vert", "shaders/text.frag");
 
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));

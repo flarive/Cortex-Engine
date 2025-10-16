@@ -465,11 +465,11 @@ static void gamepadUpdate()
 //
 //    // SHADERS
 //    engine::Shader shaderLTC;
-//    shaderLTC.init("area_light", "shaders/test/area_light.vertex", "shaders/test/area_light.frag");
+//    shaderLTC.init("area_light", "shaders/test/area_light.vert", "shaders/test/area_light.frag");
 //    ltcShaderPtr = &shaderLTC;
 //
 //    engine::Shader shaderLightPlane;
-//    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
+//    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
 //
 //
 //

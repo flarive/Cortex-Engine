@@ -1,9 +1,10 @@
-#include "../../include/lights/area_light.h"
+﻿#include "../../include/lights/area_light.h"
 
 #include "../../include/misc/colors.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+
 
 #include <format>
 
@@ -24,7 +25,7 @@ engine::AreaLight::AreaLight(const std::shared_ptr<engine::Primitive>& primitive
 
 void engine::AreaLight::setup()
 {
-    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vertex", "shaders/test/light_plane.frag");
+    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
 
 
     // LUT textures
@@ -63,6 +64,9 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 
     glBindVertexArray(0);
+
+
+    m_debugDrawLine.init();
 }
 
 void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -78,7 +82,12 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
     glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
 
+    glm::vec3 center = 0.25f * (p0 + p1 + p2 + p3);
+    glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p3 - p0));
+    glm::vec3 end = center + normal * 0.5f;
 
+    // draw a debug line from center -> end
+    m_debugDrawLine.addLine(center, end, glm::vec3(0, 1, 0));
 
 
     // Send the light's points to the shader
@@ -91,6 +100,8 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shader.setVec3((str_pos + "[1]").c_str(), p1);
     shader.setVec3((str_pos + "[2]").c_str(), p2);
     shader.setVec3((str_pos + "[3]").c_str(), p3);
+
+
     shader.setVec3(str_col.c_str(), color);
     shader.setFloat(str_int.c_str(), intensity);
     shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
@@ -118,6 +129,11 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glBindVertexArray(areaLightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
+
+
+
+    m_debugDrawLine.render(view, projection);
+    m_debugDrawLine.clear();
 }
 
 void engine::AreaLight::clean()

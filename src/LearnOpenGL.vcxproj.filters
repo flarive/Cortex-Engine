@@ -189,7 +189,7 @@
     <CopyFileToFolders Include="..\resources\fonts\Antonio-Regular.ttf">
       <Filter>resources\fonts</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\text.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\text.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal_diffuse.jpg">
@@ -204,10 +204,10 @@
     <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\framebuffers_screen.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\skybox.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\skybox.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\skybox.frag">
@@ -231,7 +231,7 @@
     <CopyFileToFolders Include="..\resources\textures\skybox\top.jpg">
       <Filter>resources\textures\skybox</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\cubemap.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\cubemap.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\cubemap.frag">
@@ -240,7 +240,7 @@
     <CopyFileToFolders Include="..\resources\shaders\blinn-phong.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\blinn-phong.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\blinn-phong.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal_specular.jpg">
@@ -255,7 +255,7 @@
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\container2_normal.png">
@@ -264,7 +264,7 @@
     <CopyFileToFolders Include="..\resources\shaders\pbr.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\pbr.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\pbr.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\background.frag">
@@ -339,16 +339,16 @@
     <CopyFileToFolders Include="..\resources\shaders\irradiance_convolution.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\cubemap2.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\cubemap2.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\equirectangular_to_cubemap.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\background.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\background.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\brdf.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\brdf.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\grass\ao.png">
@@ -390,7 +390,7 @@
     <CopyFileToFolders Include="..\resources\textures\hdr\photo_studio_loft_hall_2k.hdr">
       <Filter>resources\textures\hdr</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.frag">
@@ -402,13 +402,13 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_depth_buffer.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug\debug_depth_buffer.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_depth_buffer.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_quad_depth.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\sphere\red-scifi-metal\albedo.png">
@@ -582,7 +582,7 @@
     <CopyFileToFolders Include="..\resources\shaders\sprite.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\sprite.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\sprite.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_AO2.jpg">
@@ -612,7 +612,7 @@
     <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geometry">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\earth_specular.jpg">
@@ -624,7 +624,7 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\cube_face_debugger.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug\cube_face_debugger.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug\cube_face_debugger.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.glb">
@@ -660,7 +660,7 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\icons\icon_1_16x16.png">
@@ -684,13 +684,13 @@
     <CopyFileToFolders Include="..\resources\shaders\test\light_plane.frag">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\test\light_plane.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\test\light_plane.vert">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\concrete_diffuse.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\test\area_light.vertex">
+    <CopyFileToFolders Include="..\resources\shaders\test\area_light.vert">
       <Filter>resources\shaders\test</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\test\area_light.frag">
@@ -698,6 +698,16 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\concrete_specular.png">
       <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\concrete_normal.png" />
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_line.frag">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_line.vert">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
+      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -736,8 +746,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\resources\textures\concrete_normal.png">
-      <Filter>resources\textures</Filter>
-    </Image>
+    <None Include="..\resources\shaders\parallax_mapping.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\phong.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\phong.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

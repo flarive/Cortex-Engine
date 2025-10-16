@@ -17,7 +17,7 @@ void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
     
-    m_spriteShader.init("UISpriteShader", "shaders/sprite.vertex", "shaders/sprite.frag");
+    m_spriteShader.init("UISpriteShader", "shaders/sprite.vert", "shaders/sprite.frag");
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_spriteShader.use();

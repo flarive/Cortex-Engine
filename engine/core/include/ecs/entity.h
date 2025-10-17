@@ -24,7 +24,7 @@ namespace engine
 	public:
 		unsigned int id{};
 		std::string name{};
-		bool visible{ true };
+		bool enabled { true };
 
 
 		// Entities
@@ -71,6 +71,8 @@ namespace engine
 
 		engine::AABB* getBoundingVolume();
 
+		void setEnabled(bool _enabled);
+
 #pragma endregion
 
 
@@ -104,5 +106,7 @@ namespace engine
 		AABB getGlobalAABB();
 
 		//SphereVolume generateSphereBV(const Model& model);
+
+		
 	};
 }

@@ -88,10 +88,8 @@ struct AreaLight
 
 // coming from vertex shader
 in VS_OUT {
-    vec3 FragPos; // worldPosition ?
-    vec3 worldPosition;
-    vec3 Normal; // worldNormal ?
-    vec3 worldNormal;
+    vec3 FragPos; // same as worldPosition
+    vec3 Normal; // same as worldNormal
     vec2 TexCoords;
     vec3 Tangent;
     vec3 Bitangent;
@@ -128,8 +126,8 @@ uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
 
 // area light only
-uniform sampler2D LTC1; // for inverse M
-uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
+uniform sampler2D LTC1; // 20 (for inverse M)
+uniform sampler2D LTC2; // 21 (GGX norm, fresnel, 0(unused), sphere)
 
 const float LUT_SIZE  = 64.0; // ltc_texture size
 const float LUT_SCALE = (LUT_SIZE - 1.0)/LUT_SIZE;
@@ -534,15 +532,20 @@ void main()
 
     vec3 result = vec3(0.0);
 
-    // BEGIN area light only
-	// gamma correction
-    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb; //vec3(0.7f, 0.8f, 0.96f)
-    vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
+    
+	
+    // Lighting calculations must be done in linear space for physical correctness.
+    // Most image formats (like PNG, JPEG) store colors in sRGB, so you need to linearize them before use.
+    //vec3 mDiffuse = ToLinear(texture(material.texture_diffuse, fs_in.TexCoords).rgb); // gamma correction
+    //vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
+    
+    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
+    vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
 
-	vec3 N = normalize(fs_in.worldNormal);
-	vec3 V = normalize(viewPos - fs_in.worldPosition);
-	vec3 P = fs_in.worldPosition;
+	vec3 N = normalize(fs_in.Normal);
+	vec3 V = normalize(viewPos - fs_in.FragPos);
+	vec3 P = fs_in.FragPos;
 	float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
     // use roughness and sqrt(1-cos_theta) to sample M_texture
@@ -560,11 +563,6 @@ void main()
         vec3(  0,  1,    0),
         vec3(t1.z, 0, t1.w)
     );
-    // END area light only
-
-
-
-
 
     // Lighting
     for (int i = 0; i < pointLightsCount; i++)
@@ -594,7 +592,8 @@ void main()
     // Sample the alpha value from the diffuse texture
     float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
 
-    FragColor = vec4(ToSRGB(result), alpha);
+    //FragColor = vec4(ToSRGB(result), alpha);
+    FragColor = vec4(result, alpha);
 
     // Discard transparent fragments (optional)
     if (alpha < 0.1)

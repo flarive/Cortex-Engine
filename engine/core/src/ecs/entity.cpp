@@ -7,9 +7,7 @@
 #include "../../include/ecs/light_component.h"
 
 #include "../../include/aabb.h"
-#include "../../include/misc/log_manager.h"
-
-
+#include "../../include/misc/log_manager.h">
 
 // constructor, expects just a name
 engine::Entity::Entity(const std::string& _name)
@@ -263,4 +261,24 @@ engine::AABB engine::Entity::getGlobalAABB()
 		std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
 
 	return engine::AABB(globalCenter, newIi, newIj, newIk);
+}
+
+void engine::Entity::setEnabled(bool _enabled)
+{
+	if (this->getType() == EntityType::light)
+	{
+		auto component = getComponent<LightComponent>();
+		if (component)
+		{
+			auto light = component->getLight();
+			if (light)
+			{
+				// disable light
+				light->setEnabled(_enabled);
+			}
+		}
+	}
+	
+	// disable entity
+	this->enabled = _enabled;
 }

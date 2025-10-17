@@ -187,6 +187,16 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
+    static bool lastEnableGammaCorection = false;
+    if (ImGui::Toggle("Gamma correction", &sceneSetting_enableGammaCorrection, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastEnableGammaCorection != sceneSetting_enableGammaCorrection)
+        {
+            m_onSceneSettingChanged("enable_gamma_correction", sceneSetting_enableGammaCorrection);
+            lastEnableGammaCorection = sceneSetting_enableGammaCorrection;
+        }
+    }
+
     static bool lastEnableFaceCulling = true;
     if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))
     {
@@ -236,6 +246,8 @@ void engine::ImGuiEditor::renderTabSettings()
             lastDrawDebugNormalsVisualHelpers = sceneSetting_drawDebugNormalsVisualHelpers;
         }
     }
+
+    
 
 
     ImGui::PopStyleVar();
@@ -296,7 +308,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     // Image button at the end of the line
     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
-    GLuint buttonIcon = entity->visible ? getEntityActionIcon("hide") : getEntityActionIcon("show");
+    GLuint buttonIcon = entity->enabled ? getEntityActionIcon("hide") : getEntityActionIcon("show");
 
     
 
@@ -310,7 +322,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
     {
-        entity->visible = !entity->visible;
+        entity->setEnabled(!entity->enabled);
     }
 
     ImGui::PopStyleVar(1);

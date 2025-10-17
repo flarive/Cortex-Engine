@@ -98,7 +98,7 @@ void MyScene3::init()
         "models/sphere/cliff/height.jpg");
     matPlane->setNormalIntensity(1.0f);
     myPlane->setup(matPlane, engine::UvMapping(2.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -15.0f, -15.0f), glm::vec3(12.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

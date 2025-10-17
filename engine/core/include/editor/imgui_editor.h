@@ -86,6 +86,7 @@ namespace engine
 		float itemLabelWidth{ 100.0f }; // pixels
 
 		bool sceneSetting_drawAsWireframe{ false };
+		bool sceneSetting_enableGammaCorrection{ false };
 		bool sceneSetting_enableFaceCulling{ true };
 		bool sceneSetting_enableCameraFrustrumCulling{ true };
 		bool sceneSetting_drawLightsVisualHelpers{ false };

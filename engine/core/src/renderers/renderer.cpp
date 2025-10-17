@@ -374,6 +374,14 @@ void engine::Renderer::updateSettings()
         glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
         lastRenderModeWireframe = settings.drawAsWireframe;
     }
+
+    // enable gamma correction
+    static bool lastEnableGammaCorrection = settings.enableGammaCorrection;
+    if (lastEnableGammaCorrection != settings.enableGammaCorrection)
+    {
+        enableGammaCorrection(settings.enableGammaCorrection);
+        lastEnableGammaCorrection = settings.enableGammaCorrection;
+    }
     
     // enable/disable back face culling
     static bool lastEnableFaceCulling = settings.enableFaceCulling;
@@ -596,7 +604,10 @@ void engine::Renderer::renderSphere()
     glBindVertexArray(0);
 }
 
-
+/// <summary>
+/// //std::cout << "MY MESSAGE " << glGetError() << std::endl; // returns 1281 (invalid value)
+/// </summary>
+/// <param name="label"></param>
 void engine::Renderer::checkGLError(const char* label)
 {
     GLenum err;

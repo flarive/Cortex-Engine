@@ -46,6 +46,8 @@ struct Material {
     samplerCube texture_prefilter; // 8
     sampler2D texture_brdfLUT; // 9
 
+    vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
@@ -55,12 +57,6 @@ struct Material {
     bool has_texture_ao_map;
     bool has_texture_height_map;
     bool has_texture_emissive_map;
-
-    // area light only
-//    sampler2D LTC1; // for inverse M
-//    sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
-
-    
 };
 
 struct DirLight {
@@ -104,8 +100,7 @@ struct SpotLight {
     vec3 specular;       
 };
 
-struct AreaLight
-{
+struct AreaLight {
     bool use;
 
     float intensity;
@@ -122,9 +117,13 @@ uniform bool hasTangents; // does the primitive to render has tangents and bitan
 uniform Material material;
 uniform mat4 lightSpaceMatrix;
 
-uniform sampler2D LTC1; // for inverse M
-uniform sampler2D LTC2; // GGX norm, fresnel, 0(unused), sphere
-//vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+// area light only
+uniform sampler2D LTC1; // 20 (for inverse M)
+uniform sampler2D LTC2; // 21 (GGX norm, fresnel, 0(unused), sphere)
+
+const float LUT_SIZE  = 64.0; // ltc_texture size
+const float LUT_SCALE = (LUT_SIZE - 1.0)/LUT_SIZE;
+const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 // shader output
 out vec4 FragColor;
@@ -142,11 +141,6 @@ uniform PointLight pointLights[NBR_MAX_LIGHTS];
 uniform DirLight dirLights[NBR_MAX_LIGHTS];
 uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 uniform AreaLight areaLights[NBR_MAX_LIGHTS];
-
-// area light only
-const float LUT_SIZE  = 64.0; // ltc_texture size
-const float LUT_SCALE = (LUT_SIZE - 1.0)/LUT_SIZE;
-const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 
 
@@ -200,7 +194,7 @@ vec3 IntegrateEdgeVec(vec3 v1, vec3 v2)
 }
 
 // P is fragPos in world space (LTC distribution)
-vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSided)
+vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSided, vec3 mDiffuse)
 {
     // construct orthonormal basis around N
     vec3 T1, T2;
@@ -245,8 +239,8 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
     if (behind)
         z = -z;
 
-    vec2 uv = vec2(z * 0.5f + 0.5f, len); // range [0, 1]
-    uv = uv * LUT_SCALE + LUT_BIAS;
+    vec2 uv = vec2(z*0.5f + 0.5f, len); // range [0, 1]
+    uv = uv*LUT_SCALE + LUT_BIAS;
 
     // Fetch the form factor for horizon clipping
     float scale = texture(LTC2, uv).w;
@@ -256,7 +250,10 @@ vec3 LTC_Evaluate(vec3 N, vec3 V, vec3 P, mat3 Minv, vec3 points[4], bool twoSid
         sum = 0.0;
 
     // Outgoing radiance (solid angle) for the entire polygon
-    vec3 Lo_i = vec3(sum, sum, sum);
+    // vec3 Lo_i = vec3(sum, sum, sum);
+    // return Lo_i;
+
+    vec3 Lo_i = vec3(sum, sum, sum) * mDiffuse; // Apply diffuse albedo here
     return Lo_i;
 }
 
@@ -417,17 +414,12 @@ void main()
 {		
     // input lighting data
     vec3 normal = getNormalFromMap();
-    vec3 N = normalize(fs_in.Normal); // same as normal ???????????????
+    vec3 N = normalize(fs_in.Normal);
     vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
     vec3 R = reflect(-V, normal);
     vec3 P = fs_in.FragPos;
     float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
     
-	
-
-    vec4 albedoRoughness = vec4(0.5f);
-
-
     vec2 texCoords = fs_in.TexCoords;
 
     // offset texture coordinates with Parallax Mapping
@@ -440,16 +432,13 @@ void main()
 //        discard;
 
 
-    // TEST ????????????????????
-    // gamma correction
-    vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;// * vec3(0.7f, 0.8f, 0.96f);
-    vec3 mSpecular = ToLinear(vec3(0.23f, 0.23f, 0.23f)); // gamma correction
+    // still usefull ??????????
+    vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
+    vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? pow(texture(material.texture_diffuse, texCoords).rgb, vec3(2.2)) : vec3(0.5); // A neutral gray color
+    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5); // A neutral gray color
 
-    
-    
     float metallic = 0;
     float roughness = 0;
 
@@ -480,7 +469,7 @@ void main()
 
     // BEGIN area light only
     // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(albedoRoughness.w, sqrt(1.0f - dotNV));
+    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV)); // use roughness instead ?
     uv = uv * LUT_SCALE + LUT_BIAS;
 
     // get 4 parameters for inverse_M
@@ -548,22 +537,15 @@ void main()
     // add light and shadow contribution
     vec3 color = ambient + Lo;
 
-    // HDR tonemapping
-    color = color / (color + vec3(1.0));
-
     // Add emissive contribution before gamma correction
     color += emissive;
 
-    // gamma correct
-    color = pow(color, vec3(1.0/2.2));
+    // HDR tonemapping
+    //color = color / (color + vec3(1.0));
+
+    // gamma correction
+    //color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
-
-    
-
-    // Debug: Output the roughness value directly
-//    float roughness2 = material.albedoRoughness.w;
-//    FragColor = vec4(vec3(roughness2), 1.0);
-
 
     FragColor = vec4(color, 1.0);
 }
@@ -669,19 +651,17 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
 // Calculates the color when using an area light.
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular)
 {
-    vec3 lighting = vec3(0.0);
-    
     // Evaluate LTC shading
-	vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided);
-	vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided);
+    vec3 diffuse = LTC_Evaluate(N, V, P, mat3(1), light.points, light.twoSided, mDiffuse);
+    vec3 specular = LTC_Evaluate(N, V, P, Minv, light.points, light.twoSided, vec3(1.0));
 
-	// GGX BRDF shadowing and Fresnel
-	// t2.x: shadowedF90 (F90 normally it should be 1.0)
-	// t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
-	specular *= mSpecular*t2.x + (1.0f - mSpecular) * t2.y;
+    // GGX BRDF shadowing and Fresnel
+    // t2.x: shadowedF90 (F90 normally it should be 1.0)
+    // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
+    specular *= mSpecular * t2.x + (1.0 - mSpecular) * t2.y;
 
-	// Add contribution
-	lighting = vec3(1.0f, 0.0f, 0.0f);// light.color * light.intensity * (specular + mDiffuse * diffuse);
+    // Add contribution
+    vec3 lighting = light.color * light.intensity * (specular + diffuse);
 
     return lighting;
 }

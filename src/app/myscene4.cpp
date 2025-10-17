@@ -67,7 +67,7 @@ void MyScene4::init()
         "textures/pbr/planks/roughness.jpg",
         "textures/pbr/planks/ao.jpg",
         ""), engine::UvMapping(1.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(8.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

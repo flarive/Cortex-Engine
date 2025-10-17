@@ -8,7 +8,8 @@ MyScene7::MyScene7(std::string _title, engine::App* _app) : engine::Scene(_title
         .HDRSkyboxBlurStrength = 0.0f,
         .shadowIntensity = 1.0f,
         .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f
+        .iblSpecularIntensity = 1.0f,
+        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here
@@ -154,7 +155,7 @@ void MyScene7::init()
         "textures/rusted_metal_diffuse.jpg",
         "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
 
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(-90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

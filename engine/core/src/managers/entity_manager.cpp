@@ -62,28 +62,6 @@ void engine::EntityManager::addChild(std::shared_ptr<engine::Entity> child)
 {
     if (child)
     {
-        //if (child->getType() == EntityType::light)
-        //{
-        //    
-        //    
-        //    // compute light index
-
-
-        //    auto lights = m_entityManager.findEntitiesOfType<Light>();
-
-
-        //    auto lightComponent = child->getComponent<LightComponent>();
-        //    if (lightComponent)
-        //    {
-        //        auto light = lightComponent->getLight();
-        //        if (light)
-        //        {
-        //            light->setIndex(8);
-        //        }
-        //    }
-        //}
-        
-        
         m_rootEntity->addChild(child);
 
         // add to cache

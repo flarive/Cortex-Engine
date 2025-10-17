@@ -8,9 +8,7 @@ layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribu
 
 out VS_OUT {
     vec3 FragPos; // vertex position in world space, same as worldPosition
-    vec3 worldPosition;
-    vec3 Normal;
-    vec3 worldNormal;
+    vec3 Normal; // same as worldNormal when reverse_normals is false
     vec2 TexCoords;
     vec3 Tangent;
     vec3 Bitangent;
@@ -37,16 +35,10 @@ void main()
 {
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
 
-
-    vs_out.worldPosition = vec3(model * vec4(aPos, 1.0));
-
-
     if (reverse_normals) // a slight hack to make sure the outer large cube displays lighting from the 'inside' instead of the default 'outside'.
         vs_out.Normal = transpose(inverse(mat3(model))) * (-1.0 * aNormal);
     else
         vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
-
-    vs_out.worldNormal = normalMatrix * aNormal;
 
     vs_out.TexCoords = aTexCoords;
     vs_out.Tangent = aTangents;

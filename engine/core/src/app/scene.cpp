@@ -165,6 +165,9 @@ void engine::Scene::listenForEditorChanges()
             if (key == "draw_wireframe") {
                 sceneSettings.drawAsWireframe = value;
             }
+            else if (key == "enable_gamma_correction") {
+                sceneSettings.enableGammaCorrection = value;
+            }
             else if (key == "enable_face_culling") {
                 sceneSettings.enableFaceCulling = value;
             }
@@ -358,7 +361,7 @@ void engine::Scene::drawEntities(Shader& shader)
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum)
 {
-    if (!entity->visible)
+    if (!entity->enabled)
         return;
 
     bool shouldTestFrustrumForEntity = false;

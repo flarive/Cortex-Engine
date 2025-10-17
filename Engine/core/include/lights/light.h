@@ -43,6 +43,8 @@ namespace engine
 
         virtual void clean() = 0;
 
+        void setEnabled(bool _enabled) { m_enabled = _enabled; }
+
 
 
     private:

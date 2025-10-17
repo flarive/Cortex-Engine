@@ -1,9 +1,9 @@
 #include "myscene1.h"
 
 MyScene1::MyScene1(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
-        {
-            .method = engine::RenderMethod::BlinnPhong,
-            .shadowIntensity = 2.0f
+    {
+        .method = engine::RenderMethod::BlinnPhong,
+        .shadowIntensity = 2.0f
         })
 {
     // my application specific state gets initialized here
@@ -61,7 +61,7 @@ void MyScene1::init()
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/uv_mapper.jpg"), engine::UvMapping(6.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(8.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

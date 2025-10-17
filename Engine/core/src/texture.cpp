@@ -217,7 +217,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
 
-            //SOIL_free_image_data(data);  // Free after OpenGL upload
+            SOIL_free_image_data(data);  // Free after OpenGL upload
 
             return textureID;
         });
@@ -529,7 +529,7 @@ GLuint engine::Texture::loadMTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    //glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture;
 }
@@ -547,8 +547,19 @@ GLuint engine::Texture::loadLUTTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    //glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     return texture;
+}
+
+void engine::Texture::CheckTextureIsValid(unsigned int textureID)
+{
+    // After loading the textures, check if they are valid
+    GLint width2, height2, internalFormat;
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width2);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height2);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
+    std::cout << "textureID: " << textureID << ", width: " << width2 << ", height: " << height2 << ", format: " << internalFormat << std::endl;
 }
 

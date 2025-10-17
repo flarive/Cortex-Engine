@@ -58,6 +58,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
+    pbrShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
+    pbrShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
 
 
     backgroundShader.use();
@@ -338,11 +340,13 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     
 
-	// bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE20);
+    // should be moved in init !!!!!!!!!!!!!!!!!!!!!!
+    // bind pre-computed area light LTC data
+    glActiveTexture(GL_TEXTURE0 + 20);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE21);
+    glActiveTexture(GL_TEXTURE0 + 21);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
+
 
 
 

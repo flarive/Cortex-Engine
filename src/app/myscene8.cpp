@@ -52,7 +52,7 @@ void MyScene8::init()
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), engine::UvMapping(6.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

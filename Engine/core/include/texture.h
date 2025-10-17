@@ -61,5 +61,7 @@ namespace engine
 
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();
+
+        static void CheckTextureIsValid(unsigned int textureID);
     };
 }

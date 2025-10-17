@@ -50,7 +50,7 @@ void MyScene2::init()
     myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f),
         "textures/wood_diffuse.png",
         "textures/wood_specular.png"), engine::UvMapping(2.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(10.0f), glm::vec3(90.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

@@ -203,5 +203,11 @@ engine::Shader& engine::BlinnPhongRenderer::getShader()
 
 void engine::BlinnPhongRenderer::clean()
 {
-    // TODO
+    Renderer::clean();
+    
+    // delete shaders
+    blinnPhongShader.clean();
+    skyboxShader.clean();
+
+	m_skybox->clean();
 }

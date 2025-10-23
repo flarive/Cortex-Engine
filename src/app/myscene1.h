@@ -3,6 +3,7 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
 
+using namespace std;
 using namespace engine;
 
 
@@ -15,7 +16,7 @@ private:
     float lastY{ 0.0f };
 
 
-    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
+    const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
     Text textFPSCount{};
@@ -33,7 +34,7 @@ private:
     float rotation{};
 
 public:
-    MyScene1(std::string _title, App* _app);
+    MyScene1(string _title, App* _app);
 
     void init() override;
     void update(Shader& shader) override;

@@ -441,5 +441,9 @@ engine::Shader& engine::PbrRenderer::getShader()
 
 void engine::PbrRenderer::clean()
 {
-    // TODO
+	Renderer::clean();
+    
+    // delete shaders
+    pbrShader.clean();
+    backgroundShader.clean();
 }

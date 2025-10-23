@@ -493,6 +493,8 @@ void engine::Scene::exit()
 
     //TODO implement renderer clean & exit !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     m_renderer->clean();
+	m_entityManager.clean();
+    m_audioManager.clean();
 
     // clean user stuffs
     clean();

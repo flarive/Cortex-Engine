@@ -15,12 +15,14 @@
 #include "app/myscene9.h"
 #include "app/myscene10.h" // area lights demo
 
+using namespace engine;
+
 // make it easier to switch between apps
 using MyApp = MyApp1;
 using MyScene = MyScene1;
 
-engine::App* myApp{};
-engine::Scene* myScene{};
+App* myApp{};
+Scene* myScene{};
 
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
@@ -63,7 +65,7 @@ int main(int, char**)
             if (present > 0)
             {
                 const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-                engine::logger.info("Joystick present {}", name);
+                logger.info("Joystick present {}", name);
             }
 
             // start game loop
@@ -78,13 +80,13 @@ int main(int, char**)
         }
         else
         {
-            engine::logger.error("Failed to create the scene");
+            logger.error("Failed to create the scene");
             return -1;
         }
     }
     else
     {
-        engine::logger.error("Failed to create application");
+        logger.error("Failed to create application");
         return -1;
     }
 

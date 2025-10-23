@@ -154,3 +154,8 @@ void engine::EntityManager::updateSelfAndChild()
 {
     m_rootEntity->updateSelfAndChild(glm::mat4(1.0f));
 }
+
+void engine::EntityManager::clean()
+{
+    this->~EntityManager();
+}

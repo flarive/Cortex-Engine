@@ -1,8 +1,12 @@
 #include "myscene2.h"
 
-MyScene2::MyScene2(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
+using namespace std;
+using namespace glm;
+using namespace engine;
+
+MyScene2::MyScene2(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = engine::RenderMethod::BlinnPhong,
+        .method = RenderMethod::BlinnPhong,
         .shadowIntensity = 2.0f
     })
 {
@@ -16,29 +20,29 @@ MyScene2::MyScene2(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene2::init()
 {
     // camera
-    auto trsCamera1 = engine::Transform{ {0.0f, 0.0f, 5.0f} };
-    auto camera1 = std::make_shared<engine::FpsCamera>();
+    auto trsCamera1 = Transform{ {0.0f, 0.0f, 5.0f} };
+    auto camera1 = make_shared<FpsCamera>();
     camera1->zoom = 25.0f;
     camera1->movementSpeed = 1.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
-    entityCamera1->addComponent<engine::CameraComponent>(camera1);
+    auto entityCamera1 = make_shared<Entity>("Camera1");
+    entityCamera1->addComponent<TransformComponent>(trsCamera1);
+    entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
     // light
-    auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
-    auto light1 = std::make_shared<engine::SpotLight>();
+    auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
+    auto light1 = make_shared<SpotLight>();
     light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
-    light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-    light1->ambientColor = engine::Color(1.0f);
-    light1->diffuseColor = engine::Color(1.0f);
-    light1->specularColor = engine::Color(1.0f);
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
-    entityLight1->addComponent<engine::TransformComponent>(trsLight1);
-    entityLight1->addComponent<engine::LightComponent>(light1);
+    light1->target = vec3(0.0f, 0.0f, 0.0f);
+    light1->ambientColor = Color(1.0f);
+    light1->diffuseColor = Color(1.0f);
+    light1->specularColor = Color(1.0f);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
@@ -46,25 +50,25 @@ void MyScene2::init()
 
 
     // ground
-    auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f),
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f),
         "textures/wood_diffuse.png",
-        "textures/wood_specular.png"), engine::UvMapping(2.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -0.5f, -6.0f), glm::vec3(10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
-    entityPlane->addComponent<engine::TransformComponent>(trsPlane);
-    entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
+        "textures/wood_specular.png"), UvMapping(2.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, -6.0f), vec3(10.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
 
 
     // cushion model
-    auto cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.glb");
-    auto trsCushion = engine::Transform(glm::vec3(0.0f, 0.25f, 0.0f), glm::vec3(0.5f), glm::vec3(0.0f, 45.0f, 0.0f));
-    auto entityCushion = std::make_shared<engine::Entity>("MyCushion");
-    entityCushion->addComponent<engine::TransformComponent>(trsCushion);
-    entityCushion->addComponent<engine::ModelComponent>(cushionModel);
+    auto cushionModel = make_shared<Model>("models/cushion/cushion.glb");
+    auto trsCushion = Transform(vec3(0.0f, 0.25f, 0.0f), vec3(0.5f), vec3(0.0f, 45.0f, 0.0f));
+    auto entityCushion = make_shared<Entity>("MyCushion");
+    entityCushion->addComponent<TransformComponent>(trsCushion);
+    entityCushion->addComponent<ModelComponent>(cushionModel);
     getEntityManager().addChild(entityCushion);
 
 
@@ -84,35 +88,35 @@ void MyScene2::init()
 
 void MyScene2::key_callback(int key, int scancode, int action, int mods)
 {
-    engine::Scene::key_callback(key, scancode, action, mods);
+    Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
     bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
     else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
+        getActiveCamera()->processKeyboard(LEFT, deltaTime);
 
     if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
+        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
 
     if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::PITCH_UP, deltaTime);
+        getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
     else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
 
     if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::PITCH_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
     else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
 }
 
 void MyScene2::mouse_callback(double xposIn, double yposIn)
 {
-    engine::Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
@@ -138,22 +142,22 @@ void MyScene2::mouse_callback(double xposIn, double yposIn)
 
 void MyScene2::scroll_callback(double xoffset, double yoffset)
 {
-    engine::Scene::scroll_callback(xoffset, yoffset);
+    Scene::scroll_callback(xoffset, yoffset);
 
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
 
 void MyScene2::gamepad_callback(const GLFWgamepadstate& state)
 {
-    engine::Scene::gamepad_callback(state);
+    Scene::gamepad_callback(state);
 }
 
 void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
 {
-    engine::Scene::framebuffer_size_callback(newWidth, newHeight);
+    Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene2::update(engine::Shader& shader)
+void MyScene2::update(Shader& shader)
 {
     (void)shader;   //Do nothing
 
@@ -161,7 +165,7 @@ void MyScene2::update(engine::Shader& shader)
     if (myCushion)
     {
         auto trs = myCushion->getTransform();
-        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        trs.setLocalRotation(vec3(0.0f, rotation, 0.0f));
         myCushion->setTransform(trs);
     }
 
@@ -171,13 +175,13 @@ void MyScene2::update(engine::Shader& shader)
 void MyScene2::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    textFPSCount.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPolyCount.draw(format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPrimitiveCount.draw(format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    textDrawnCount.draw(std::format("{} drawn", (int)inFrustrumCount), 25.0f, 120.0f, 1.0f, glm::vec3(1.0f));
-    textTotalCount.draw(std::format("{} total", (int)totalFrustrumCount), 25.0f, 160.0f, 1.0f, glm::vec3(1.0f));
+    textDrawnCount.draw(format("{} drawn", (int)inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
+    textTotalCount.draw(format("{} total", (int)totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
 }
 
 void MyScene2::clean()

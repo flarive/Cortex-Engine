@@ -176,7 +176,7 @@ namespace engine
 
     
 
-    inline std::vector<Vertex> generatePlaneVertices(float uvScale, bool flipNormal = true)
+    inline std::vector<Vertex> generatePlaneVertices(float uvScale, bool flipNormal = false)
     {
         std::vector<Vertex> vertices;
 

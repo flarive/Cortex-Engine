@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <memory>
 
-
 namespace engine
 {
 	/// <summary>
@@ -72,6 +71,8 @@ namespace engine
 
 
 		void updateSelfAndChild();
+
+		void clean();
 
 	private:
 		std::shared_ptr<Entity> m_rootEntity{};

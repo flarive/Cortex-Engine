@@ -90,3 +90,8 @@ void engine::AudioManager::play(const std::string& id)
         logger.warn("Audio ID not found:{}", id);
     }
 }
+
+void engine::AudioManager::clean()
+{
+    this->~AudioManager(); // Explicitly call the destructor
+}

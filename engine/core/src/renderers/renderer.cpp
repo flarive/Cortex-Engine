@@ -615,3 +615,35 @@ void engine::Renderer::checkGLError(const char* label)
         std::cerr << "OpenGL error at " << label << ": " << std::hex << err << std::endl;
     }
 }
+
+void engine::Renderer::clean()
+{
+    // delete shaders
+    screenShader.clean();
+	directionalDepthMapShader.clean();
+    pointDepthMapShader.clean();
+    depthMapToQuadShader.clean();
+    cubeFaceDebugShader.clean();
+
+    // delete framebuffers
+    glDeleteFramebuffers(1, &depthMapFramebuffer);
+    glDeleteFramebuffers(1, &colorFramebuffer);
+
+    // delete textures
+    glDeleteTextures(1, &textureDepthMapBuffer);
+    glDeleteTextures(1, &textureColorBuffer);
+
+    // delete renderbuffer
+    glDeleteRenderbuffers(1, &rbo);
+
+    // delete cube VAO/VBO
+    glDeleteVertexArrays(1, &m_cubeVAO);
+    glDeleteBuffers(1, &m_cubeVBO);
+
+    // delete quad VAO/VBO
+    glDeleteVertexArrays(1, &m_quadVAO);
+    glDeleteBuffers(1, &m_quadVBO);
+
+    // delete sphere VAO/VBO/IBO
+    glDeleteVertexArrays(1, &m_sphereVAO);
+}

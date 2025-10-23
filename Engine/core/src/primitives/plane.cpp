@@ -136,7 +136,7 @@ void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat
     glm::vec3 end = center + worldNormal * 0.5f; // Scale for visibility
 
     // Add the debug line
-    m_debugDrawLine.addLine(center, end, glm::vec3(1.0f, 0.0f, 0.0f)); // Red color for normal
+    m_debugDrawLine.addLine(center, end, glm::vec3(1.0f, 0.0f, 0.0f), true, 0.25f); // Red color for normal
 
     m_debugDrawLine.render(view, projection);
     m_debugDrawLine.clear();

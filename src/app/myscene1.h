@@ -3,7 +3,10 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
 
-class MyScene1 : public engine::Scene
+using namespace engine;
+
+
+class MyScene1 final : public Scene
 {
 private:
     bool firstMouse{ true };
@@ -12,28 +15,28 @@ private:
     float lastY{ 0.0f };
 
 
-    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    engine::Text textFPSCount{};
+    Text textFPSCount{};
 
     
 
-    engine::Text textPolyCount{};
-    engine::Text textMeshCount{};
-    engine::Text textPrimitiveCount{};
+    Text textPolyCount{};
+    Text textMeshCount{};
+    Text textPrimitiveCount{};
 
 
-    engine::Text textDrawnCount{};
-    engine::Text textTotalCount{};
+    Text textDrawnCount{};
+    Text textTotalCount{};
 
     float rotation{};
 
 public:
-    MyScene1(std::string _title, engine::App* _app);
+    MyScene1(std::string _title, App* _app);
 
     void init() override;
-    void update(engine::Shader& shader) override;
+    void update(Shader& shader) override;
     void updateUI() override;
     void clean() override;
 

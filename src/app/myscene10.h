@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyScene10 : public engine::Scene
+class MyScene10 final : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -12,9 +12,9 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
-    const int NUM_AREA_LIGHTS = 16;
+    const int NUM_AREA_LIGHTS{ 16 };
 
     float rotation{};
 
@@ -49,6 +49,8 @@ private:
     void incrementRoughness(float step);
     void incrementLightIntensity(float step);
     void switchTwoSided(bool doSwitch);
+
+    void playOggFile();
 
     void drawUI();
 };

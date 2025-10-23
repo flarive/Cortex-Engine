@@ -2,7 +2,7 @@
 
 namespace engine
 {
-	class ImGuiPerfOverlay
+	class ImGuiPerfOverlay final
 	{
 	public:
 		ImGuiPerfOverlay() = default;

@@ -11,7 +11,7 @@
 
 namespace engine
 {
-	class LightComponent : public ComponentBase<LightComponent>
+	class LightComponent final : public ComponentBase<LightComponent>
 	{
 	public:
 

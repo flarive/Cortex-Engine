@@ -70,7 +70,7 @@ namespace engine
     };
 
 
-    class Model : public SharedModel
+    class Model final : public SharedModel
     {
     public:
         glm::vec3 position{};

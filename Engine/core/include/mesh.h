@@ -11,7 +11,7 @@
 
 namespace engine
 {
-	class Mesh : private NonCopyableButMovable
+	class Mesh final : private NonCopyableButMovable
     {
     public:
         

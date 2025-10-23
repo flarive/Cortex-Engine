@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    struct Transform// : private NonCopyableButMovable
+    struct Transform final// : private NonCopyableButMovable
     {
     public:
         Transform(glm::vec3 pos = { 0,0,0 }, glm::vec3 scale = { 1,1,1 }, glm::vec3 rot = { 0,0,0 });

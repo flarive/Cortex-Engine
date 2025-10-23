@@ -243,8 +243,8 @@
     <ClCompile Include="core\src\bounding_volume_plane.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\misc\log_manager.cpp">
-      <Filter>Fichiers sources\core\misc</Filter>
+    <ClCompile Include="core\src\managers\log_manager.cpp">
+      <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
     <ClCompile Include="core\src\app\app.cpp">
       <Filter>Fichiers sources\app</Filter>
@@ -294,7 +294,7 @@
     <ClCompile Include="core\src\materials\pbr_material.cpp">
       <Filter>Fichiers sources\core\materials</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\primitives\skybox.cpp">
+    <ClCompile Include="core\src\misc\skybox.cpp">
       <Filter>Fichiers sources\core\misc</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle.cpp">
@@ -350,6 +350,9 @@
     </ClCompile>
     <ClCompile Include="core\src\debug\debug_draw_line.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\managers\audio_manager.cpp">
+      <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -455,8 +458,8 @@
     <ClInclude Include="core\include\misc\noncopyable.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\misc\log_manager.h">
-      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    <ClInclude Include="core\include\managers\log_manager.h">
+      <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h">
       <Filter>Fichiers d%27en-tête\core\renderers</Filter>
@@ -497,9 +500,6 @@
     <ClInclude Include="core\include\primitives\cone.h">
       <Filter>Fichiers d%27en-tête\core\primitives</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\misc\color_manager.h">
-      <Filter>Fichiers d%27en-tête\core\misc</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\materials\blinnphong_material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
@@ -509,7 +509,7 @@
     <ClInclude Include="core\include\materials\pbr_material.h">
       <Filter>Fichiers d%27en-tête\core\materials</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\primitives\skybox.h">
+    <ClInclude Include="core\include\misc\skybox.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp">
@@ -583,6 +583,9 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\debug_draw_line.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\managers\audio_manager.h">
+      <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

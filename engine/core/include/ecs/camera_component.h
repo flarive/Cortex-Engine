@@ -6,7 +6,7 @@
 
 namespace engine
 {
-	class CameraComponent : public ComponentBase<CameraComponent>
+	class CameraComponent final : public ComponentBase<CameraComponent>
 	{
 	public:
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderer.h"
-#include "../primitives/skybox.h"
+#include "../misc/skybox.h"
 
 #include "../shader.h"
 

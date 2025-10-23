@@ -40,7 +40,7 @@ void MyScene8::init()
     getEntityManager().addChild(entityLight1);
 
 
-    auto zzz = engine::ColorManager::hexToNormalizedRGB("#FFF1AD");
+    auto zzz = engine::Colors::hexToNormalizedRGB("#FFF1AD");
     auto zzz2 = engine::Color(0.5f);
     auto zzz3 = engine::Color(0.5f);
 

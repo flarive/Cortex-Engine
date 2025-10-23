@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class Shader : private NonCopyable
+    class Shader final : private NonCopyable
     {
     public:
 		unsigned int ID{};

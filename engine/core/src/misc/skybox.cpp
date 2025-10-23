@@ -1,4 +1,4 @@
-#include "../../include/primitives/skybox.h"
+#include "../../include/misc/skybox.h"
 
 #include "../../include/texture.h"
 #include "../../include/primitives/primitive.h"

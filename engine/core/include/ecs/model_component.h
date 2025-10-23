@@ -13,7 +13,7 @@
 
 namespace engine
 {
-	class ModelComponent : public ComponentBase<ModelComponent>
+	class ModelComponent final : public ComponentBase<ModelComponent>
 	{
 	public:
 

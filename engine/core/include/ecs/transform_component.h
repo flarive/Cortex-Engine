@@ -7,7 +7,7 @@
 
 namespace engine
 {
-	class TransformComponent : public ComponentBase<TransformComponent>
+	class TransformComponent final : public ComponentBase<TransformComponent>
 	{
 	public:
 		

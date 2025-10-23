@@ -9,9 +9,6 @@ namespace engine
     class Cube final : public Primitive
     {
     public:
-        
-        
-        
         Cube(const glm::vec3& _position = glm::vec3());
         Cube(const float& _size, const glm::vec3& _position = glm::vec3());
         Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position = glm::vec3());

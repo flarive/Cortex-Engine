@@ -1,7 +1,7 @@
 #include "../../include/app/scene.h"
 
 #include "extensions/imoguizmo.hpp"
-#include "../../include/misc/log_manager.h"
+#include "../../include/managers/log_manager.h"
 #include "../../include/singleton.h"
 
 #include <glm/gtc/type_ptr.hpp>

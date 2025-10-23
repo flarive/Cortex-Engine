@@ -1,6 +1,7 @@
 #pragma once
 
-// GLM
+#include "../common_defines.h"
+
 #include <glm/glm.hpp>
 
 // Color values found at:
@@ -8,7 +9,7 @@
 
 namespace engine
 {
-	class Colors
+	class Colors final
 	{
 	public:
 		static inline glm::vec4 Maroon = glm::vec4(0.501961f, 0.0f, 0.0f, 1.0f);
@@ -150,5 +151,29 @@ namespace engine
 		static inline glm::vec4 Gainsboro = glm::vec4(0.862745f, 0.862745f, 0.862745f, 1.0f);
 		static inline glm::vec4 WhiteSmoke = glm::vec4(0.960784f, 0.960784f, 0.960784f, 1.0f);
 		static inline glm::vec4 White = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+		// Converts a hex string like "#FF5733" or "FF5733" to normalized RGB
+		static Color hexToNormalizedRGB(const std::string& hex)
+		{
+			std::string cleanHex = hex;
+			if (cleanHex[0] == '#') {
+				cleanHex = cleanHex.substr(1);
+			}
+
+			if (cleanHex.length() != 6) {
+				throw std::invalid_argument("Hex color must be 6 characters long.");
+			}
+
+			int r = std::stoi(cleanHex.substr(0, 2), nullptr, 16);
+			int g = std::stoi(cleanHex.substr(2, 2), nullptr, 16);
+			int b = std::stoi(cleanHex.substr(4, 2), nullptr, 16);
+
+			return Color{
+				r / 255.0f,
+				g / 255.0f,
+				b / 255.0f,
+				1.0f
+			};
+		}
 	};
 }

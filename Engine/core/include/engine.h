@@ -1,11 +1,6 @@
 #pragma once
 
-//#ifdef _WIN32
-//#include "windows.h" // to avoid warning C4005: 'APIENTRY' : redefinition de macro
-//#endif
-
 #include "common_defines.h"
-#include "misc/colors.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -13,7 +8,8 @@
 #include "themes/imgui_spectrum.h"
 
 #include "misc/noncopyable.h"
-
+#include "misc/colors.h"
+#include "misc/skybox.h"
 
 #include "app/scene_settings.h"
 
@@ -65,10 +61,8 @@
 #include "primitives/plane.h"
 #include "primitives/billboard.h"
 
-#include "primitives/skybox.h"
 
 
-#include "misc/log_manager.h"
-#include "misc/color_manager.h"
 
-//inline auto& logger = engine::LogManager::getInstance();
+#include "managers/log_manager.h"
+#include "managers/audio_manager.h"

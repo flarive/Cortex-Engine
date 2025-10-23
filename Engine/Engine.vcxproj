@@ -188,11 +188,12 @@
     <ClCompile Include="core\src\ecs\model_component.cpp" />
     <ClCompile Include="core\src\ecs\primitive_component.cpp" />
     <ClCompile Include="core\src\lights\area_light.cpp" />
+    <ClCompile Include="core\src\managers\audio_manager.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
     <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
-    <ClCompile Include="core\src\misc\log_manager.cpp" />
+    <ClCompile Include="core\src\managers\log_manager.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
     <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
@@ -210,7 +211,7 @@
     <ClCompile Include="core\src\primitives\cube.cpp" />
     <ClCompile Include="core\src\primitives\plane.cpp" />
     <ClCompile Include="core\src\primitives\primitive.cpp" />
-    <ClCompile Include="core\src\primitives\skybox.cpp" />
+    <ClCompile Include="core\src\misc\skybox.cpp" />
     <ClCompile Include="core\src\primitives\sphere.cpp" />
     <ClCompile Include="core\src\shader.cpp" />
     <ClCompile Include="core\src\texture.cpp" />
@@ -263,12 +264,12 @@
     <ClInclude Include="core\include\ecs\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
     <ClInclude Include="core\include\lights\area_light.h" />
+    <ClInclude Include="core\include\managers\audio_manager.h" />
     <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\materials\blinnphong_material.h" />
     <ClInclude Include="core\include\materials\pbr_material.h" />
     <ClInclude Include="core\include\misc\colors.h" />
-    <ClInclude Include="core\include\misc\color_manager.h" />
-    <ClInclude Include="core\include\misc\log_manager.h" />
+    <ClInclude Include="core\include\managers\log_manager.h" />
     <ClInclude Include="core\include\misc\ltc_matrix.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
@@ -287,7 +288,7 @@
     <ClInclude Include="core\include\primitives\cube.h" />
     <ClInclude Include="core\include\primitives\plane.h" />
     <ClInclude Include="core\include\primitives\primitive.h" />
-    <ClInclude Include="core\include\primitives\skybox.h" />
+    <ClInclude Include="core\include\misc\skybox.h" />
     <ClInclude Include="core\include\primitives\sphere.h" />
     <ClInclude Include="core\include\primitives\cone.h" />
     <ClInclude Include="core\include\shader.h" />

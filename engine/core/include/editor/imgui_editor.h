@@ -14,7 +14,7 @@
 #if EDITOR_MODE
 namespace engine
 {
-	class ImGuiEditor
+	class ImGuiEditor final
 	{
 	public:
 		ImGuiEditor() = default;

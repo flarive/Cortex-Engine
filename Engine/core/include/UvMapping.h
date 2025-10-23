@@ -4,7 +4,7 @@
 
 namespace engine
 {
-	class UvMapping : private NonCopyable
+	class UvMapping final : private NonCopyable
     {
     public:
         UvMapping() = default;
@@ -14,6 +14,6 @@ namespace engine
         float getUvScale() const { return m_uvScale; }
 
     private:
-        float m_uvScale = 1.0f;
+        float m_uvScale{ 1.0f };
     };
 }

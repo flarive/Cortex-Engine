@@ -6,8 +6,7 @@
 #include "../../include/ecs/camera_component.h"
 #include "../../include/ecs/light_component.h"
 
-#include "../../include/aabb.h"
-#include "../../include/misc/log_manager.h">
+#include "../../include/managers/log_manager.h"
 
 // constructor, expects just a name
 engine::Entity::Entity(const std::string& _name)

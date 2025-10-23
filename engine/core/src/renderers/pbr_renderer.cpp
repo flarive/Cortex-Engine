@@ -285,9 +285,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     LTC2Map = Texture::loadLUTTexture();
     pbrShader.setInt("LTC1", 20); // Should be texture unit, not texture ID
     pbrShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
-    std::cout << "AAAAAAAAAAAAAAAAAA " << glGetError() << std::endl; // returns 1281 (invalid value)
-
-
 
 
     backgroundShader.use();
@@ -299,10 +296,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 
 
- 
-
-
-    //checkGLError("END OF PBR RENDERER SETUP");
+    checkGLError("END OF PBR RENDERER SETUP");
 }
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)

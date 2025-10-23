@@ -14,6 +14,7 @@
 #include "../debug/imgui_perf_overlay.h"
 
 #include "../managers/entity_manager.h"
+#include "../managers/audio_manager.h"
 
 #include <iostream>
 #include <chrono>
@@ -76,6 +77,7 @@ namespace engine
 
         Renderer* m_renderer{};
         EntityManager m_entityManager{};
+        AudioManager m_audioManager{};
 
         unsigned short m_activeCameraIndex{};
 
@@ -126,6 +128,7 @@ namespace engine
         GLFWwindow* getWindow();
         Renderer* getRenderer() { return m_renderer; };
         EntityManager getEntityManager() { return m_entityManager; }; // call it entity root may be ?
+        AudioManager getAudioManager() { return m_audioManager; };
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {

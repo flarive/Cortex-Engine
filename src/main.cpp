@@ -1,6 +1,6 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
-#include "core/include/misc/log_manager.h"
+#include "core/include/managers/log_manager.h"
 
 #include "app/myapp1.h"
 
@@ -17,7 +17,7 @@
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene10;
+using MyScene = MyScene1;
 
 engine::App* myApp{};
 engine::Scene* myScene{};

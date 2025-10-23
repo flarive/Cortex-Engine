@@ -1,6 +1,6 @@
 #include "../../include/editor/imgui_editor.h"
 
-#include "../../include/misc/color_manager.h"
+#include "../../include/misc/colors.h"
 
 #include <string>
 #include <format>
@@ -872,22 +872,22 @@ ImVec4 engine::ImGuiEditor::getEntityColor(const engine::EntityType entityType)
 {
     if (entityType == engine::EntityType::model)
     {
-        auto purple = engine::ColorManager::hexToNormalizedRGB("#d478ff");
+        auto purple = engine::Colors::hexToNormalizedRGB("#d478ff");
         return ImVec4(purple.r, purple.g, purple.b, purple.a);
     }
     else if (entityType == engine::EntityType::primitive)
     {
-        auto green = engine::ColorManager::hexToNormalizedRGB("#abff78");
+        auto green = engine::Colors::hexToNormalizedRGB("#abff78");
         return ImVec4(green.r, green.g, green.b, green.a);
     }
     else if (entityType == engine::EntityType::light)
     {
-        auto yellow = engine::ColorManager::hexToNormalizedRGB("#ffd83b");
+        auto yellow = engine::Colors::hexToNormalizedRGB("#ffd83b");
         return ImVec4(yellow.r, yellow.g, yellow.b, yellow.a);
     }
     else if (entityType == engine::EntityType::camera)
     {
-        auto blue = engine::ColorManager::hexToNormalizedRGB("#0f9cff");
+        auto blue = engine::Colors::hexToNormalizedRGB("#0f9cff");
         return ImVec4(blue.r, blue.g, blue.b, blue.a);
     }
 

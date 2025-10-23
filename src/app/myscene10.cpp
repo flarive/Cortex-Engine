@@ -36,7 +36,7 @@ void MyScene10::init()
     // lights
     std::uniform_real_distribution<GLfloat> random_floats(0.0f, 1.0f);
     typedef std::chrono::high_resolution_clock myclock;
-    auto seed = myclock::now().time_since_epoch().count();
+    auto seed = static_cast<unsigned int>(myclock::now().time_since_epoch().count());
     std::default_random_engine generator(seed);
     std::function<float(void)> fn = [&random_floats, &generator] { return random_floats(generator); };
     for (int i = 0; i < NUM_AREA_LIGHTS; i++)
@@ -66,7 +66,7 @@ void MyScene10::init()
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), engine::UvMapping(1.0f));
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(10.0f), "textures/concrete_diffuse.png"), engine::UvMapping(6.0f));
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f));
-    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(10.0f), "textures/concreteTexture.png"), engine::UvMapping(6.0f));
+    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(10.0f), "textures/concrete_diffuse.png"), engine::UvMapping(6.0f));
     auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(16.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
@@ -121,7 +121,11 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
         switchTwoSided(false);
     else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
         switchTwoSided(true);
+
+    if (key == GLFW_KEY_O && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        playOggFile();
 }
+    
 
 void MyScene10::mouse_callback(double xposIn, double yposIn)
 {
@@ -220,6 +224,13 @@ void MyScene10::switchTwoSided(bool doSwitch)
             areaLight->twoSided = twoSided;
         }
     }
+}
+
+void MyScene10::playOggFile()
+{
+    auto audioManager = getAudioManager();
+    audioManager.loadOgg("ogg1", "sounds/Example.ogg");
+    audioManager.play("ogg1");
 }
 
 

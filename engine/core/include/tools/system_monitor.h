@@ -4,7 +4,7 @@
 #include <string>
 #include <deque>
 
-class SystemMonitor
+class SystemMonitor final
 {
 public:
     SystemMonitor();

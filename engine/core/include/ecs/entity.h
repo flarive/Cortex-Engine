@@ -3,12 +3,7 @@
 #include "../common_defines.h"
 
 #include "../model.h"
-#include "../primitives/primitive.h"
-#include "../lights/light.h"
-#include "../cameras/camera.h"
 #include "../transform.h"
-#include "../frustrum.h"
-#include "../bounding_volume.h"
 #include "../aabb.h"
 #include "../ecs/component.h"
 
@@ -19,12 +14,12 @@ namespace engine
 {
 	enum class EntityType { undefined = 0, model = 1, primitive = 2, light = 3, camera = 4 };
 
-	class Entity
+	class Entity final
 	{
 	public:
 		unsigned int id{};
 		std::string name{};
-		bool enabled { true };
+		bool enabled{ true };
 
 
 		// Entities

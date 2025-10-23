@@ -7,7 +7,7 @@
 
 namespace engine
 {
-    class DebugDraw
+    class DebugDraw final
     {
     public:
         DebugDraw();

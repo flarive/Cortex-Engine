@@ -11,7 +11,7 @@
 
 namespace engine
 {
-    class LogManager
+    class LogManager final
     {
     public:
         static LogManager& getInstance();

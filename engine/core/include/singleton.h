@@ -5,7 +5,7 @@
 
 namespace engine
 {
-    class Singleton
+    class Singleton final
     {
     private:
         Singleton(const SceneSettings value) : sceneSettings_(value) {}

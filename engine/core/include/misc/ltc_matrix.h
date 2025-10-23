@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    struct LTC_matrices {
+    struct LTC_matrices final {
         GLuint mat1;
         GLuint mat2;
     };

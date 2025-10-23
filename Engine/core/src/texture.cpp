@@ -1,6 +1,6 @@
 ﻿#include "../include/texture.h"
 
-#include "../include/misc/log_manager.h"
+#include "../include/managers/log_manager.h"
 #include "../include/common_defines.h"
 
 #include "../include/misc/ltc_matrix.h"

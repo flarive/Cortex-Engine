@@ -5,7 +5,7 @@
 namespace engine
 {
     /// Holds all state information relevant to a character as loaded using FreeType
-    struct Character
+    struct Character final
     {
         unsigned int TextureID{}; // ID handle of the glyph texture
         glm::ivec2   Size{};      // Size of glyph

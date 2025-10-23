@@ -4,7 +4,7 @@
 #include "core/include/engine.h"
 
 
-class MyApp1 : public engine::App
+class MyApp1 final : public engine::App
 {
 
 public:

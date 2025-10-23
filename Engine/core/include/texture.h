@@ -11,7 +11,7 @@
 
 namespace engine
 {
-    struct TextureLoadResult {
+    struct TextureLoadResult final {
         std::future<std::tuple<unsigned char*, int, int, int>> future;
         bool ready = false;
         std::tuple<unsigned char*, int, int, int> result;
@@ -26,7 +26,7 @@ namespace engine
     }
 
     
-    class Texture : private NonCopyableButMovable
+    class Texture final : private NonCopyableButMovable
     {
     public:
         unsigned int id{};

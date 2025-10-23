@@ -176,7 +176,7 @@ namespace engine
 
     
 
-    inline std::vector<Vertex> generatePlaneVertices(float uvScale)
+    inline std::vector<Vertex> generatePlaneVertices(float uvScale, bool flipNormal = true)
     {
         std::vector<Vertex> vertices;
 
@@ -193,7 +193,7 @@ namespace engine
         glm::vec2 uv4(0.0f, uvScale);
 
         // Normal vector (facing up)
-        glm::vec3 normal(0.0f, 1.0f, 0.0f);
+        glm::vec3 normal = flipNormal ? glm::vec3(0.0f, -1.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
 
         // --- Compute tangent and bitangent for the first triangle ---
         glm::vec3 edge1 = pos2 - pos1;
@@ -233,14 +233,13 @@ namespace engine
         bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
         bitangent2 = glm::normalize(bitangent2);
 
-        //// Add vertices with counter-clockwise winding (viewed from above)
-        //vertices.emplace_back(pos1, normal, uv1, tangent1, bitangent1);
-        //vertices.emplace_back(pos2, normal, uv2, tangent1, bitangent1);
-        //vertices.emplace_back(pos4, normal, uv4, tangent1, bitangent1);
 
-        //vertices.emplace_back(pos2, normal, uv2, tangent2, bitangent2);
-        //vertices.emplace_back(pos3, normal, uv3, tangent2, bitangent2);
-        //vertices.emplace_back(pos4, normal, uv4, tangent2, bitangent2);
+        if (flipNormal) {
+            tangent1 = -tangent1;
+            bitangent1 = -bitangent1;
+            tangent2 = -tangent2;
+            bitangent2 = -bitangent2;
+        }
 
         // Corrected CCW winding for upward (+Y) facing plane
         vertices.emplace_back(pos1, normal, uv1, tangent1, bitangent1);
@@ -253,6 +252,9 @@ namespace engine
 
         return vertices;
     }
+
+
+
 
 
 

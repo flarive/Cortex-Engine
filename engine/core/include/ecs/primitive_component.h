@@ -13,7 +13,7 @@
 
 namespace engine
 {
-	class PrimitiveComponent : public ComponentBase<PrimitiveComponent>
+	class PrimitiveComponent final : public ComponentBase<PrimitiveComponent>
 	{
 	public:
 

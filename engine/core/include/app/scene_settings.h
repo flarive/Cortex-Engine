@@ -10,7 +10,7 @@ namespace engine
         PBR = 1 // mainstream
     };
 
-    struct SceneSettings
+    struct SceneSettings final
     {
         RenderMethod method{};
 

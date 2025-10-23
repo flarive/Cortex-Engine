@@ -20,7 +20,7 @@ namespace engine
 	/// ECS (Entity Component System)
 	/// https://en.wikipedia.org/wiki/Entity_component_system
 	/// </summary>
-	class EntityManager
+	class EntityManager final
 	{
 	public:
 		

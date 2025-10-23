@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    class Sprite
+    class Sprite final
     {
     public:
         

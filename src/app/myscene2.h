@@ -3,7 +3,7 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
 
-class MyScene2 : public engine::Scene
+class MyScene2 final : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -12,7 +12,7 @@ private:
     float lastY{ 0.0f };
 
 
-    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
     engine::Text textFPSCount{};

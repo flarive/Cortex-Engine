@@ -13,7 +13,7 @@
 
 namespace engine
 {
-    class Text : private NonCopyable
+    class Text final : private NonCopyable
     {
     private:
         GLFWwindow* m_window{};

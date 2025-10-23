@@ -4,7 +4,7 @@
 
 namespace engine
 {
-    class OrbitCamera : public Camera
+    class OrbitCamera final : public Camera
     {
     public:
         glm::vec3 target{ 0.0f, 0.0f, 0.0f };

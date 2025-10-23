@@ -8,15 +8,15 @@
 
 namespace engine
 {
-    struct VertexAL {
-        glm::vec3 position;
-        glm::vec3 normal;
-        glm::vec2 texcoord;
+    struct VertexAL final {
+        glm::vec3 position{};
+        glm::vec3 normal{};
+        glm::vec2 texcoord{};
     };
 
 
     
-    struct Vertex : private NonCopyableButMovable
+    struct Vertex final : private NonCopyableButMovable
     {
         Vertex(const glm::vec3& _pos)
             : Vertex(_pos, glm::vec3(), glm::vec2(), glm::vec3(), glm::vec3())

@@ -92,6 +92,9 @@
     <Filter Include="resources\shaders\test">
       <UniqueIdentifier>{0b3d657f-07be-4ccc-bb8c-054a2951a6b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\sounds">
+      <UniqueIdentifier>{b9186b90-b130-4d7d-81ed-b253786fed2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -129,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="app\myscene10.cpp">
       <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\stb\stb_vorbis.c">
+      <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -699,7 +705,6 @@
     <CopyFileToFolders Include="..\resources\textures\concrete_specular.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\concrete_normal.png" />
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_line.frag">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
@@ -707,6 +712,21 @@
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\phong.vertex">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\concrete_normal.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\sounds\Example.ogg">
+      <Filter>resources\sounds</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\phong.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
@@ -744,16 +764,5 @@
     <ClInclude Include="app\myscene10.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\parallax_mapping.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="..\resources\shaders\phong.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="..\resources\shaders\phong.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

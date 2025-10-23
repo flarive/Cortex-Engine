@@ -4,7 +4,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyScene4 : public engine::Scene
+class MyScene4 final : public engine::Scene
 {
 private:
     bool firstMouse{ true };
@@ -12,7 +12,7 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    const std::string FONT_PATH = "fonts/Antonio-Regular.ttf";
+    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
     engine::Text ourText{};
 

@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "../include/common_defines.h"
-#include "../include/misc/log_manager.h"
+#include "../include/managers/log_manager.h"
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------

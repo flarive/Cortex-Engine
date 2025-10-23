@@ -5,6 +5,7 @@
 	"spdlog",
 	"freetype",
 	"assimp",
-	"fmt"
+	"fmt",
+	"openal-soft"
 	]
 }

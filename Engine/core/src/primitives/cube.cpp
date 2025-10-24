@@ -123,3 +123,8 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
 
     m_material->unbind();
 }
+
+void engine::Cube::clean()
+{
+
+}

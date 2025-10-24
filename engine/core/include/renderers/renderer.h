@@ -13,6 +13,19 @@ namespace engine
 {
 	/// <summary>
 	/// Abstract class for renderers
+	/// In the learnopengl.com tutorials and in most OpenGL contexts by convention:
+
+	// + Y points up(toward the top of the screen).
+	// - Y points down(toward the bottom of the screen).
+
+	// This is the standard coordinate system used in OpenGL and many 3D graphics applications :
+
+	// + X : Right
+	// - X : Left
+	// + Y : Up
+	// - Y : Down
+	// + Z : Out of the screen(toward the viewer)
+	// - Z : Into the screen(away from the viewer)
 	/// </summary>
 	class Renderer
 	{

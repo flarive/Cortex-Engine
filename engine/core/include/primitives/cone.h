@@ -32,6 +32,8 @@ namespace engine
             return PrimitiveType::cone;
         }
 
+		void clean() override;
+
     private:
         void geometrySetup();
 

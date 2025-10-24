@@ -67,7 +67,7 @@ namespace engine
         virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) = 0;
 
         // optional: de-allocate all resources once they've outlived their purpose
-        virtual void clean();
+        virtual void clean() = 0;
 
         virtual std::vector<Vertex> generateVertices() = 0;
 
@@ -87,8 +87,8 @@ namespace engine
         static float* getScaledPlaneVertices(float uvScale)
         {
             float* planeVertices = new float[84] {
-            // Positions          // Normals       // TexCoords      // Tangents       // Bitangents
-            1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, uvScale, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                // Positions          // Normals       // TexCoords      // Tangents       // Bitangents
+                1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, uvScale, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
                 -1.0f, -0.01f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, uvScale, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
                 -1.0f, -0.01f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 

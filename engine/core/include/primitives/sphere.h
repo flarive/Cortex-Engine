@@ -31,6 +31,8 @@ namespace engine
             return PrimitiveType::sphere;
         }
 
+        void clean() override;
+
     private:
         void geometrySetup();
 

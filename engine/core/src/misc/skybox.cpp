@@ -55,6 +55,7 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 // optional: de-allocate all resources once they've outlived their purpose
 void engine::Skybox::clean()
 {
+    // CRASH !!!!!!!!!!!!
     glDeleteVertexArrays(1, &m_skyboxVAO);
     glDeleteBuffers(1, &m_skyboxVBO);
 }

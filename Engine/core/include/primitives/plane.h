@@ -28,6 +28,8 @@ namespace engine
             return PrimitiveType::plane;
         }
 
+        void clean() override;
+
     private:
         void geometrySetup();
 

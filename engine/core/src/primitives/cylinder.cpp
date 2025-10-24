@@ -175,3 +175,8 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
 
     m_material->unbind();
 }
+
+void engine::Cylinder::clean()
+{
+
+}

@@ -107,3 +107,8 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
+
+void engine::Billboard::clean()
+{
+
+}

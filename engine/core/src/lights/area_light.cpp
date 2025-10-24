@@ -134,7 +134,7 @@ void engine::AreaLight::drawDebugNormals(const glm::vec3& p0, const glm::vec3& p
     glm::vec3 end = center + normal * 0.5f;
 
     // draw a debug line from center -> end
-    m_debugDrawLine.addLine(center, end, glm::vec3(0, 1, 0));
+    m_debugDrawLine.addLine(center, end, glm::vec3(0.0f, 1.0f, 0.0f), true, 0.06f);
 
     m_debugDrawLine.render(view, projection);
     m_debugDrawLine.clear();

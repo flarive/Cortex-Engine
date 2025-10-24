@@ -28,6 +28,8 @@ namespace engine
             return PrimitiveType::cube;
         }
 
+        void clean() override;
+
     private:
         
         float m_width{ 1.0f };

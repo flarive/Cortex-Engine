@@ -32,7 +32,7 @@ namespace engine
             return PrimitiveType::cylinder;
         }
 
-
+        void clean() override;
         
 
     private:

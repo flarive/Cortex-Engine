@@ -172,3 +172,8 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
     m_material->unbind();
 }
+
+void engine::Sphere::clean()
+{
+
+}

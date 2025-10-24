@@ -29,6 +29,8 @@ namespace engine
             return PrimitiveType::billboard;
         }
 
+        void clean() override;
+
     private:
         void geometrySetup();
     };

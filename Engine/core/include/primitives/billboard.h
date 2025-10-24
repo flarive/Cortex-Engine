@@ -11,7 +11,7 @@ namespace engine
     class Billboard final : public Primitive
     {
     public:
-        Billboard(const glm::vec3& _position = glm::vec3());
+        Billboard(bool _flipNormals = true, const glm::vec3& _position = glm::vec3());
         ~Billboard() = default;
 
 		void setup() override;
@@ -32,6 +32,8 @@ namespace engine
         void clean() override;
 
     private:
+        bool m_flipNormals{ true };
+        
         void geometrySetup();
     };
 }

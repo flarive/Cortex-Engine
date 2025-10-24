@@ -62,7 +62,7 @@ void MyScene10::init()
     }
 
     // ground
-    auto myPlane = std::make_shared<engine::Plane>();
+    auto myPlane = std::make_shared<engine::Plane>(false);
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), engine::UvMapping(1.0f));
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(10.0f), "textures/concrete_diffuse.png"), engine::UvMapping(6.0f));
     //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f));

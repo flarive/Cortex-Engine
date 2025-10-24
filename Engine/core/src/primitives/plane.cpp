@@ -7,7 +7,7 @@
 #include "../../include/singleton.h"
 
 
-engine::Plane::Plane(const glm::vec3& _position) : Primitive(_position)
+engine::Plane::Plane(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
 }
 
@@ -72,7 +72,7 @@ void engine::Plane::geometrySetup()
 
 std::vector<engine::Vertex> engine::Plane::generateVertices()
 {
-    return generatePlaneVertices(m_uvScale);
+    return generatePlaneVertices(m_uvScale, m_flipNormals);
 }
 
 void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)

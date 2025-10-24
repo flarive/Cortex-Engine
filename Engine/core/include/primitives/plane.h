@@ -11,7 +11,7 @@ namespace engine
     class Plane final : public Primitive
     {
     public:
-        Plane(const glm::vec3& _position = glm::vec3());
+        Plane(bool _flipNormals = true, const glm::vec3& _position = glm::vec3());
         ~Plane() = default;
 
         void setup() override;
@@ -31,6 +31,8 @@ namespace engine
         void clean() override;
 
     private:
+        bool m_flipNormals{ true };
+        
         void geometrySetup();
 
         void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);

@@ -4,7 +4,7 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
-engine::Billboard::Billboard(const glm::vec3& _position) : Primitive(_position)
+engine::Billboard::Billboard(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
 }
 
@@ -68,7 +68,7 @@ void engine::Billboard::geometrySetup()
 
 std::vector<engine::Vertex> engine::Billboard::generateVertices()
 {
-    return generateBillboardVertices(m_uvScale);
+    return generateBillboardVertices2(m_uvScale, m_flipNormals);
 }
 
 void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
@@ -107,6 +107,52 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
+
+//void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+//{
+//    shader.use();
+//
+//    position = localTransform.getLocalPosition();
+//    scale = localTransform.getLocalScale();
+//
+//    // Extract camera position from view matrix
+//    glm::vec3 cameraRight = glm::vec3(view[0][0], view[1][0], view[2][0]);
+//    glm::vec3 cameraUp = glm::vec3(view[0][1], view[1][1], view[2][1]);
+//
+//    // Build billboard rotation matrix
+//    glm::mat4 billboardRotation = glm::mat4(1.0f);
+//    billboardRotation[0] = glm::vec4(cameraRight, 0.0f);
+//    billboardRotation[1] = glm::vec4(cameraUp, 0.0f);
+//    billboardRotation[2] = glm::vec4(glm::normalize(glm::cross(cameraRight, cameraUp)), 0.0f);
+//
+//    // Build model matrix: translation * rotation * scale
+//    glm::mat4 model = glm::translate(glm::mat4(1.0f), position)
+//        * billboardRotation
+//        * glm::scale(glm::mat4(1.0f), scale);
+//
+//    shader.setMat4("model", model);
+//    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
+//    shader.setBool("hasTangents", true);
+//
+//    if (m_material)
+//    {
+//        m_material->bind(shader);
+//        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+//        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+//        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+//        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+//        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+//    }
+//
+//    glEnable(GL_BLEND);
+//
+//    // Send to GPU
+//    glBindVertexArray(m_VAO);
+//    glDrawArrays(GL_TRIANGLES, 0, 6);
+//    glBindVertexArray(0);
+//
+//    m_material->unbind();
+//}
 
 void engine::Billboard::clean()
 {

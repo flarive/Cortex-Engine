@@ -5,8 +5,8 @@ MyScene4::MyScene4(std::string _title, engine::App* _app) : engine::Scene(_title
         .method = engine::RenderMethod::PBR,
         .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-        .shadowIntensity = 1.5f,
-        .iblDiffuseIntensity = 1.0f,
+        .shadowIntensity = 0.8f,
+        .iblDiffuseIntensity = 4.0f,
         .iblSpecularIntensity = 1.0f
     })
 {
@@ -46,7 +46,7 @@ void MyScene4::init()
     auto light1 = std::make_shared<engine::SpotLight>();
     light1->intensity = 20.0f;
     light1->cutoff = 12.5f;
-    light1->outerCutoff = 17.5f;
+    light1->outerCutoff = 15.0f;
     light1->target = glm::vec3(0.0f, 0.0f, -5.0f);
     light1->ambientColor = engine::Color(0.1f, 0.1f, 0.1f, 1.0f);
     auto entityLight1 = std::make_shared<engine::Entity>("Light1");
@@ -55,19 +55,25 @@ void MyScene4::init()
     getEntityManager().addChild(entityLight1);
 
 
+    auto trsLight2 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
+    auto light2 = std::make_shared<engine::PointLight>();
+    light2->intensity = 40.0f;
+    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
+    entityLight2->addComponent<engine::TransformComponent>(trsLight2);
+    entityLight2->addComponent<engine::LightComponent>(light2);
+    getEntityManager().addChild(entityLight2);
 
 
     // ground
     auto myPlane = std::make_shared<engine::Plane>();
     myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.2f),
         "textures/pbr/planks/albedo.jpg",
-        "",
         "textures/pbr/planks/normal.jpg",
         "textures/pbr/planks/metallic.jpg",
         "textures/pbr/planks/roughness.jpg",
         "textures/pbr/planks/ao.jpg",
         ""), engine::UvMapping(1.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -10.0f), glm::vec3(8.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -16.0f), glm::vec3(12.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);

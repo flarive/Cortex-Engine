@@ -273,8 +273,11 @@ void engine::Scene::gameLoop()
     // measure ui time (part 2 begin)
     auto uiStart2 = Clock::now();
 
+    m_renderer->enableGammaCorrection(false);
+
     // ImGUI rendering
     ImGui::Render();
+
     int display_w, display_h;
     glfwGetFramebufferSize(app->window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
@@ -293,6 +296,12 @@ void engine::Scene::gameLoop()
     }
 
     glfwSwapBuffers(app->window);
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    m_renderer->enableGammaCorrection(sceneSettings.enableGammaCorrection);
 
     // measure ui time (part 2 end)
     auto uiEnd2 = Clock::now();

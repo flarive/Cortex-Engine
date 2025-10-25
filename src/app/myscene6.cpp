@@ -7,9 +7,8 @@ MyScene6::MyScene6(std::string _title, engine::App* _app) : engine::Scene(_title
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 5.0f,
         .shadowIntensity = 1.0f,
-        .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f,
-        .enableGammaCorrection = true
+        .iblDiffuseIntensity = 0.1f,
+        .iblSpecularIntensity = 0.0f
     })
 {
     // my application specific state gets initialized here
@@ -81,7 +80,7 @@ void MyScene6::init()
 
     // helmet model
     auto helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-    auto trsHelmet = engine::Transform(glm::vec3(0.0f, -15.0f, -10.0f), glm::vec3(4.0f), glm::vec3(0.0f, 180.0f, 0.0f));
+    auto trsHelmet = engine::Transform(glm::vec3(0.0f, -15.0f, -10.0f), glm::vec3(8.0f), glm::vec3(0.0f, 180.0f, 0.0f));
     auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet");
     entityHelmet->addComponent<engine::TransformComponent>(trsHelmet);
     entityHelmet->addComponent<engine::ModelComponent>(helmetModel);

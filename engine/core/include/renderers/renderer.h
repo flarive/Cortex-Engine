@@ -61,6 +61,8 @@ namespace engine
 
 		virtual Shader& getShader() = 0;
 
+		void enableGammaCorrection(bool enable);
+
 		virtual void clean() = 0;
 
 	protected:
@@ -125,7 +127,7 @@ namespace engine
 		void enableDepthTest(bool enable);
 		void enableStencilTest(bool enable);
 		void enableFaceCulling(bool enable);
-		void enableGammaCorrection(bool enable);
+		
 
 		void initDepthMapFramebuffer(); // for point light
 		void initDepthMapFramebuffer2(); // for omni light

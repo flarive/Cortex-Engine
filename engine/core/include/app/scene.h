@@ -89,7 +89,7 @@ namespace engine
     public:
         bool is_editor_mode{ false };
         bool show_demo_window{ false };
-        bool show_perf_overlay{ false };
+        bool show_perf_overlay{ true };
         
 
         

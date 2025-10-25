@@ -7,7 +7,8 @@ MyScene3::MyScene3(std::string _title, engine::App* _app) : engine::Scene(_title
         .HDRSkyboxFilePath = "textures/hdr/newport_loft.hdr",
         .shadowIntensity = 1.5f,
         .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f
+        .iblSpecularIntensity = 1.0f,
+        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here
@@ -34,7 +35,7 @@ void MyScene3::init()
     // lights
     auto trsLight5 = engine::Transform{ { 0.0f, 4.0f, -2.0f } };
     auto light5 = std::make_shared<engine::SpotLight>();
-    light5->intensity = 50.0f;
+    light5->intensity = 10.0f;
     light5->cutoff = 12.5f;
     light5->outerCutoff = 27.5f;
     light5->target = glm::vec3(0.0f, 0.0f, -4.0f);
@@ -47,7 +48,7 @@ void MyScene3::init()
 
     auto trsLight1 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light1 = std::make_shared<engine::PointLight>();
-    light1->intensity = 50.0f;
+    light1->intensity = 10.0f;
     auto entityLight1 = std::make_shared<engine::Entity>("Light1");
     entityLight1->addComponent<engine::TransformComponent>(trsLight1);
     entityLight1->addComponent<engine::LightComponent>(light1);
@@ -57,7 +58,7 @@ void MyScene3::init()
 
     auto trsLight2 = engine::Transform{ { 10.0f, 10.0f, 10.0f } };
     auto light2 = std::make_shared<engine::PointLight>();
-    light2->intensity = 50.0f;
+    light2->intensity = 10.0f;
     auto entityLight2 = std::make_shared<engine::Entity>("Light2");
     entityLight2->addComponent<engine::TransformComponent>(trsLight2);
     entityLight2->addComponent<engine::LightComponent>(light2);
@@ -67,7 +68,7 @@ void MyScene3::init()
 
     auto trsLight3 = engine::Transform{ { -10.0f, -10.0f, 10.0f } };
     auto light3 = std::make_shared<engine::PointLight>();
-    light3->intensity = 50.0f;
+    light3->intensity = 10.0f;
     auto entityLight3 = std::make_shared<engine::Entity>("Light3");
     entityLight3->addComponent<engine::TransformComponent>(trsLight3);
     entityLight3->addComponent<engine::LightComponent>(light3);
@@ -77,7 +78,7 @@ void MyScene3::init()
 
     auto trsLight4 = engine::Transform{ { 10.0f, -10.0f, 10.0f } };
     auto light4 = std::make_shared<engine::PointLight>();
-    light4->intensity = 50.0f;
+    light4->intensity = 10.0f;
     auto entityLight4 = std::make_shared<engine::Entity>("Light4");
     entityLight4->addComponent<engine::TransformComponent>(trsLight4);
     entityLight4->addComponent<engine::LightComponent>(light4);
@@ -90,7 +91,6 @@ void MyScene3::init()
     auto myPlane = std::make_shared<engine::Plane>();
     auto matPlane = std::make_shared<engine::PBRMaterial>(engine::Color(1.0f),
         "models/sphere/cliff/albedo.jpg",
-        "",
         "models/sphere/cliff/normal.jpg",
         "models/sphere/cliff/metallic.jpg",
         "models/sphere/cliff/roughness.jpg",
@@ -111,7 +111,6 @@ void MyScene3::init()
 
     auto matSphere1 = std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "models/sphere/rounded-metal-cubes/albedo.dds",
-        "",
         "models/sphere/rounded-metal-cubes/normal.png",
         "models/sphere/rounded-metal-cubes/metallic.png",
         "models/sphere/rounded-metal-cubes/roughness.png",
@@ -133,7 +132,6 @@ void MyScene3::init()
     auto rustedIronSphere = std::make_shared<engine::Sphere>();
     rustedIronSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/rusted_iron/albedo.png",
-        "",
         "textures/pbr/rusted_iron/normal.png",
         "textures/pbr/rusted_iron/metallic.png",
         "textures/pbr/rusted_iron/roughness.png",
@@ -151,7 +149,6 @@ void MyScene3::init()
     auto goldSphere = std::make_shared<engine::Sphere>();
     goldSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/gold/albedo.png",
-        "",
         "textures/pbr/gold/normal.png",
         "textures/pbr/gold/metallic.png",
         "textures/pbr/gold/roughness.png",
@@ -168,7 +165,6 @@ void MyScene3::init()
     auto grassSphere = std::make_shared<engine::Sphere>();
     grassSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/grass/albedo.png",
-        "",
         "textures/pbr/grass/normal.png",
         "textures/pbr/grass/metallic.png",
         "textures/pbr/grass/roughness.png",
@@ -185,7 +181,6 @@ void MyScene3::init()
     auto plasticSphere = std::make_shared<engine::Sphere>();
     plasticSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/plastic/albedo.png",
-        "",
         "textures/pbr/plastic/normal.png",
         "textures/pbr/plastic/metallic.png",
         "textures/pbr/plastic/roughness.png",
@@ -202,7 +197,6 @@ void MyScene3::init()
     auto wallSphere = std::make_shared<engine::Sphere>();
     wallSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/wall/albedo.png",
-        "",
         "textures/pbr/wall/normal.png",
         "textures/pbr/wall/metallic.png",
         "textures/pbr/wall/roughness.png",
@@ -226,7 +220,6 @@ void MyScene3::init()
     auto bronzeSphere = std::make_shared<engine::Sphere>();
     bronzeSphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
         "textures/pbr/bronze/albedo.png",
-        "",
         "textures/pbr/bronze/normal.png",
         "textures/pbr/bronze/metallic.png",
         "textures/pbr/bronze/roughness.png",

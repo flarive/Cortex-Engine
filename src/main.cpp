@@ -4,14 +4,14 @@
 
 #include "app/myapp1.h"
 
-#include "app/myscene1.h"
-#include "app/myscene2.h"
-#include "app/myscene3.h"
-#include "app/myscene4.h"
-#include "app/myscene5.h"
-#include "app/myscene6.h"
-#include "app/myscene7.h"
-#include "app/myscene8.h"
+#include "app/myscene1.h" // blinnphong with skybox
+#include "app/myscene2.h" // blinn phong cushion
+#include "app/myscene3.h" // pbr balls with HDR background
+#include "app/myscene4.h" // pbr cushion
+#include "app/myscene5.h" // pbr buddha
+#include "app/myscene6.h" // pbr rotating helmet
+#include "app/myscene7.h" // pbr multiple helmets
+#include "app/myscene8.h" // monochromatic point shadow
 #include "app/myscene9.h"
 #include "app/myscene10.h" // area lights demo
 

@@ -10,7 +10,7 @@ namespace engine
 
 		PBRMaterial(const Color& ambientColor);
 		PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess = 0.0f);
-		PBRMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = ""
+		PBRMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath = ""
 			, const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = ""
 			, const std::string& heightTexPath = "", float shininess = 0.0f);
 	};

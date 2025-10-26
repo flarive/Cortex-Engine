@@ -5,6 +5,8 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
+#define ALSOFT_LOGFILE "openal_log.txt"
+
 namespace engine
 {
     class AudioManager final

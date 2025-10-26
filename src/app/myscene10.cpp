@@ -73,6 +73,9 @@ void MyScene10::init()
     entityPlane->addComponent<engine::TransformComponent>(trsPlane);
     entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
+
+
+    //m_audioManager = getAudioManager();
 }
 
 
@@ -229,9 +232,9 @@ void MyScene10::switchTwoSided(bool doSwitch)
 
 void MyScene10::playOggFile()
 {
-    auto audioManager = getAudioManager();
-    audioManager.loadOgg("ogg1", "sounds/Example.ogg");
-    audioManager.play("ogg1");
+    engine::AudioManager& audio = getAudioManager();
+    audio.loadOgg("ogg1", "sounds/Example.ogg");
+    audio.play("ogg1");
 }
 
 

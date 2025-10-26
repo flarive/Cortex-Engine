@@ -44,6 +44,9 @@ public:
 
 
 private:
+
+    //engine::AudioManager m_audioManager;
+
     void drawScene(engine::Shader& shader);
 
     void incrementRoughness(float step);

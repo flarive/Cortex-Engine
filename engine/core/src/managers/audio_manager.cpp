@@ -143,7 +143,5 @@ void engine::AudioManager::clean()
         alcCloseDevice(m_device);
         m_device = nullptr;
     }
-
-
 }
 

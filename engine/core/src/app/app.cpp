@@ -1,5 +1,7 @@
 #include "../../include/app/app.h"
 
+#include "../../include/debug/opengl_debug.h"
+
 engine::App::App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
     : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
 {
@@ -146,15 +148,14 @@ const char* engine::App::initOpenGL()
     return glsl_version;
 }
 
-void GLAPIENTRY engine::App::openglDebugCallback(GLenum source, GLenum type, GLuint id,
-    GLenum severity, GLsizei length,
-    const GLchar* message, const void* userParam)
+void GLAPIENTRY engine::App::openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
     // Ignore informational messages
     if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
         return;
     
-    logger.error("OpenGL Debug Message[{}]: {}", id, message);
+    OpenGLDebug::debugMessage(source, type, id, severity, length, message, userParam);
+    //logger.error("OpenGL Debug Message[{}]: {}", id, message);
 }
 
 void engine::App::initWindow()

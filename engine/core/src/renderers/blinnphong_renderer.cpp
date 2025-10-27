@@ -90,8 +90,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
-
-    checkGLError("END OF BLINNPHONG RENDERER SETUP");
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)

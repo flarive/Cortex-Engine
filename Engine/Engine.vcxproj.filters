@@ -354,6 +354,9 @@
     <ClCompile Include="core\src\managers\audio_manager.cpp">
       <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\debug\opengl_debug.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -586,6 +589,9 @@
     </ClInclude>
     <ClInclude Include="core\include\managers\audio_manager.h">
       <Filter>Fichiers d%27en-tête\core\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\opengl_debug.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -90,7 +90,8 @@ namespace engine
 		// texture ID that holds depth map framebuffer
 		unsigned int textureDepthMapBuffer{};
 
-		void checkGLError(const char* label);
+		
+		
 		
 
 		// internal shaders (not accessible)

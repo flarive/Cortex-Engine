@@ -70,11 +70,16 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     screenShader.use();
     screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
-    
-
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
-    initDepthMapFramebuffer();
+    if (m_lights.size() > 0)
+    {
+        auto firstLight = m_lights[0];
+        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+            initDepthMapFramebuffer2();
+        else
+            initDepthMapFramebuffer();
+    }
 
     // color framebuffer configuration
     // -------------------------
@@ -294,14 +299,11 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
-
-
-    checkGLError("END OF PBR RENDERER SETUP");
 }
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
-    // bind to color framebuffer and draw scene as we normally would to color texture 
+    // bind to color framebuffer and draw scene as we normally would to color texture
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     glEnable(GL_DEPTH_TEST); // enable depth testing
     glEnable(GL_STENCIL_TEST); // enable stencil test
@@ -343,13 +345,15 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
 
-
+    
     
 
 
     // update user stuffs
     update(pbrShader);
     update(outlineColorShader);
+
+    
 
     // render skybox (render as last to prevent overdraw)
     backgroundShader.use();
@@ -359,6 +363,8 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
     //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
+
+    
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -371,9 +377,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     //brdfShader.use();
     //renderQuad();
 
-
-
-
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
     {
@@ -383,8 +386,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
         else
             computeDepthMapFramebuffer(pbrShader, width, height, update, firstLight);
     }
-
-
 
     // render to framebuffer
     computeColorFramebuffer();
@@ -397,12 +398,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
-
-
-    //checkGLError("END OF PBR RENDERER LOOP");
 }
-
-
 
 void engine::PbrRenderer::loadShaders()
 {

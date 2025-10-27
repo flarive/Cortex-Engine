@@ -182,13 +182,13 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     // update user stuffs
     update(shader);
 
-    glActiveTexture(GL_TEXTURE10);
+    glActiveTexture(GL_TEXTURE0 + 10);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
     shader.setInt("material.texture_shadowMap", 10);
 
 
     // not needed but need to be reserved to avoid conflicts or overrides
-    glActiveTexture(GL_TEXTURE11);
+    glActiveTexture(GL_TEXTURE0 + 11);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     shader.setInt("material.texture_shadowMapCube", 11);
 
@@ -215,6 +215,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     float near_plane = 1.0f;  // Previously 1.0f
     float far_plane = 25.0f;  // Previously 25.0f
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
+
     std::vector<glm::mat4> shadowTransforms;
     shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
     shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
@@ -255,7 +256,6 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
-    // set lighting uniforms
     shader.setVec3("lightPos", light->position);
     shader.setVec3("viewPos", m_camera->position);
     shader.setBool("enableShadows", true);
@@ -265,11 +265,11 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     update(shader);
 
     // not needed but need to be reserved to avoid conflicts or overrides
-    glActiveTexture(GL_TEXTURE10);
+    glActiveTexture(GL_TEXTURE0 + 10);
     glBindTexture(GL_TEXTURE_2D, 0);
     shader.setInt("material.texture_shadowMap", 10);
 
-    glActiveTexture(GL_TEXTURE11);
+    glActiveTexture(GL_TEXTURE0 + 11);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
     shader.setInt("material.texture_shadowMapCube", 11);
 
@@ -602,18 +602,6 @@ void engine::Renderer::renderSphere()
     glBindVertexArray(m_sphereVAO);
     glDrawElements(GL_TRIANGLE_STRIP, m_indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-}
-
-/// <summary>
-/// //std::cout << "MY MESSAGE " << glGetError() << std::endl; // returns 1281 (invalid value)
-/// </summary>
-/// <param name="label"></param>
-void engine::Renderer::checkGLError(const char* label)
-{
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
-        std::cerr << "OpenGL error at " << label << ": " << std::hex << err << std::endl;
-    }
 }
 
 void engine::Renderer::clean()

@@ -124,9 +124,8 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     // update for fullscreen toggle
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_textShader.setMat4("projection", projection2);
+	m_textShader.setVec3("textColor", color);
 
-
-    glUniform3f(glGetUniformLocation(m_textShader.ID, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     
     // Send to GPU

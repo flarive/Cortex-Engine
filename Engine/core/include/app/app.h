@@ -3,6 +3,8 @@
 #include "../engine.h"
 #include "../tools/file_system.h"
 
+#include "../debug/opengl_debug.h"
+
 #include <iostream>
 #include <functional>
 

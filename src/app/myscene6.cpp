@@ -80,22 +80,6 @@ void MyScene6::init()
 
 
 
-    // light
-    //auto trsLight1 = engine::Transform{ {0.5f, 1.5f, 3.0f} };
-    //auto light1 = std::make_shared<engine::SpotLight>();
-    //light1->intensity = 2.0f;
-    //light1->cutoff = 12.0f;
-    //light1->outerCutoff = 48.0f;
-    //light1->target = glm::vec3(0.0f, 0.0f, 0.0f);
-    //light1->ambientColor = engine::Color(1.0f);
-    //light1->diffuseColor = engine::Color(1.0f);
-    //light1->specularColor = engine::Color(1.0f);
-    //auto entityLight1 = std::make_shared<engine::Entity>("Light1");
-    //entityLight1->addComponent<engine::TransformComponent>(trsLight1);
-    //entityLight1->addComponent<engine::LightComponent>(light1);
-    //getEntityManager().addChild(entityLight1);
-
-
 
     // helmet model
     auto helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
@@ -133,14 +117,11 @@ void MyScene6::key_callback(int key, int scancode, int action, int mods)
         getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
     }
 
-
-
     if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
         getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
         getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
     }
-
 
     if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {

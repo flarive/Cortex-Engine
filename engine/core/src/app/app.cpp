@@ -26,60 +26,7 @@ bool engine::App::isRunning()
 }
 
 
-void engine::App::exit()
-{
-    logger.info("Engine exit");
 
-    // imGui Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-
-    glfwTerminate();
-}
-
-
-// Toggle Fullscreen
-void engine::App::toggleFullscreen(std::function<void()> func)
-{
-    static bool isFullscreen = false;
-
-    // remember window original position and size
-    static int windowPosX, windowPosY;
-    static int windowWidth, windowHeight;
-
-    if (!isFullscreen)
-    {
-        logger.info("Toggle to fullscreen mode");
-
-        // Save window position and size
-        glfwGetWindowPos(window, &windowPosX, &windowPosY);
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
-        // Get primary monitor
-        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-        // Switch to fullscreen
-        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-        glfwGetWindowSize(window, &width, &height);
-    }
-    else
-    {
-        logger.info("Toggle to windowed mode");
-
-        // Restore windowed mode
-        glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
-        glfwGetWindowSize(window, &width, &height);
-    }
-
-    // reinit framebuffers because width and height changed
-    func();
-
-    isFullscreen = !isFullscreen;
-}
 
 
 void engine::App::setup()
@@ -264,4 +211,59 @@ void engine::App::glfw_error_callback(int error, const char* description)
 void engine::App::setWindowTitle(const std::string& title)
 {
     glfwSetWindowTitle(window, title.c_str());
+}
+
+void engine::App::exit()
+{
+    logger.info("Engine exit");
+
+    // imGui Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+
+    glfwTerminate();
+}
+
+
+// Toggle Fullscreen
+void engine::App::toggleFullscreen(std::function<void()> func)
+{
+    static bool isFullscreen = false;
+
+    // remember window original position and size
+    static int windowPosX, windowPosY;
+    static int windowWidth, windowHeight;
+
+    if (!isFullscreen)
+    {
+        logger.info("Toggle to fullscreen mode");
+
+        // Save window position and size
+        glfwGetWindowPos(window, &windowPosX, &windowPosY);
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+        // Get primary monitor
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        // Switch to fullscreen
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        glfwGetWindowSize(window, &width, &height);
+    }
+    else
+    {
+        logger.info("Toggle to windowed mode");
+
+        // Restore windowed mode
+        glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
+        glfwGetWindowSize(window, &width, &height);
+    }
+
+    // reinit framebuffers because width and height changed
+    func();
+
+    isFullscreen = !isFullscreen;
 }

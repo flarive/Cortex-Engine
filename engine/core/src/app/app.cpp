@@ -155,7 +155,6 @@ void GLAPIENTRY engine::App::openglDebugCallback(GLenum source, GLenum type, GLu
         return;
     
     OpenGLDebug::debugMessage(source, type, id, severity, length, message, userParam);
-    //logger.error("OpenGL Debug Message[{}]: {}", id, message);
 }
 
 void engine::App::initWindow()

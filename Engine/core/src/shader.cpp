@@ -7,17 +7,9 @@
 #include "../include/common_defines.h"
 #include "../include/managers/log_manager.h"
 
-// constructor generates the shader on the fly
-// ------------------------------------------------------------------------
-//engine::Shader::Shader(const char* shaderName, const char* vertexPath, const char* fragmentPath) : name(shaderName)
-//{
-//    init(vertexPath, fragmentPath);
-//}
-
 void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
     name = shaderName;
-    
     
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
@@ -83,7 +75,6 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 {
     name = shaderName;
-
 
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};

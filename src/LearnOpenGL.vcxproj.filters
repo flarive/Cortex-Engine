@@ -615,7 +615,7 @@
     <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geometry">
+    <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.geom">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\point_shadow_depth.vert">

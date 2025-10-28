@@ -8,7 +8,8 @@ MyScene6::MyScene6(std::string _title, engine::App* _app) : engine::Scene(_title
         .HDRSkyboxBlurStrength = 5.0f,
         .shadowIntensity = 1.0f,
         .iblDiffuseIntensity = 0.1f,
-        .iblSpecularIntensity = 0.0f
+        .iblSpecularIntensity = 0.0f,
+        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here

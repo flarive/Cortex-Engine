@@ -1,6 +1,7 @@
 #include "../../include/renderers/renderer.h"
 
 #include "../../include/singleton.h"
+#include "../../include/debug/opengl_debug.h"
 
 
 engine::Renderer::Renderer(GLFWwindow* window)
@@ -18,7 +19,7 @@ void engine::Renderer::loadShaders()
     directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vert", "shaders/shadow_mapping_depth.frag");
 
     // for point lights
-    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geometry");
+    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geom");
 
 
     // debug only
@@ -203,7 +204,6 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     //// test depth map (also comment computeColorFramebuffer);
     //renderQuad();
 }
-
 
 /// <summary>
 /// Omnilight only !!!!!

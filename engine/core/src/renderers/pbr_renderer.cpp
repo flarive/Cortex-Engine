@@ -3,6 +3,7 @@
 #include "../../include/singleton.h"
 
 #include "../../include/tools/file_system.h"
+#include "../../include/debug/opengl_debug.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -64,9 +65,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     backgroundShader.use();
     backgroundShader.setInt("environmentMap", 0); // Should be texture unit, not texture ID
-    backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
-    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
-
+    
+    
     screenShader.use();
     screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
@@ -327,16 +327,13 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // bind pre-computed IBL data
-    glActiveTexture(GL_TEXTURE7);
+    glActiveTexture(GL_TEXTURE0 + 7);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-    glActiveTexture(GL_TEXTURE8);
+    glActiveTexture(GL_TEXTURE0 + 8);
     glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-    glActiveTexture(GL_TEXTURE9);
+    glActiveTexture(GL_TEXTURE0 + 9);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-    
-
-    // should be moved in init !!!!!!!!!!!!!!!!!!!!!!
     // bind pre-computed area light LTC data
     glActiveTexture(GL_TEXTURE0 + 20);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
@@ -344,31 +341,26 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 
-
-    
-    
-
-
     // update user stuffs
     update(pbrShader);
     update(outlineColorShader);
 
-    
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
 
     // render skybox (render as last to prevent overdraw)
     backgroundShader.use();
     backgroundShader.setMat4("view", view);
     backgroundShader.setMat4("projection", projection);
+    backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
+    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
+
+    // Bind the cube map texture to texture unit 0
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
     //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-
-    
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
 
     if (!settings.HDRSkyboxHide)
         renderCube();

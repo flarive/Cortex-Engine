@@ -5,6 +5,7 @@
 
 #include "../misc/noncopyable.h"
 #include "../common_defines.h"
+#include "../debug/opengl_debug.h"
 
 #include <map>
 

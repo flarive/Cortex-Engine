@@ -142,7 +142,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     };
 
 
-
+    //OpenGLDebug::GLClearError();
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
@@ -167,6 +167,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+
+    //OpenGLDebug::GLCheckError();
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     // --------------------------------------------------------------------------------

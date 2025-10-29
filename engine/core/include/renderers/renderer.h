@@ -90,8 +90,8 @@ namespace engine
 		// texture ID that holds depth map framebuffer
 		unsigned int textureDepthMapBuffer{};
 
-		
-		
+		GLuint m_currentVAO = 0;
+		void bindVAO(GLuint vao);
 		
 
 		// internal shaders (not accessible)

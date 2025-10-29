@@ -191,6 +191,9 @@ void engine::Scene::listenForEditorChanges()
 
 void engine::Scene::gameLoop()
 {
+    OpenGLDebug::GLClearError();
+    
+    
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
@@ -321,6 +324,8 @@ void engine::Scene::gameLoop()
     auto cpuFrameEnd = Clock::now();
     std::chrono::duration<double, std::milli> cpuFrameDuration = cpuFrameEnd - cpuFrameStart;
     cpuTime = cpuFrameDuration.count();
+
+    OpenGLDebug::GLCheckError();
 }
 
 void engine::Scene::initEntities()

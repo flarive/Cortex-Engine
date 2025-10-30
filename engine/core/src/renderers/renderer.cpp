@@ -400,16 +400,6 @@ void engine::Renderer::updateSettings()
     }
 }
 
-
-void engine::Renderer::bindVAO(GLuint vao)
-{
-    if (m_currentVAO != vao) {
-        glBindVertexArray(vao);
-        m_currentVAO = vao;
-    }
-}
-
-
 void engine::Renderer::renderCube()
 {
     // initialize (if necessary)
@@ -484,10 +474,9 @@ void engine::Renderer::renderCube()
     }
 
     // Send to GPU
-    //glBindVertexArray(m_cubeVAO);
-    bindVAO(m_cubeVAO);
+    glBindVertexArray(m_cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    //glBindVertexArray(0);
+    glBindVertexArray(0);
 }
 
 void engine::Renderer::renderQuad()

@@ -339,16 +339,14 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     
     if (!m_shared_model)
     {
-        for (auto& mesh : meshes)
-        {
+        for (auto& mesh : meshes) {
             mesh.draw(shader, transformMatrix);
         }
     }
     else
     {
 		// shared model, loaded one time, drawn multiple times
-        for (auto& mesh : m_shared_model->meshes)
-        {
+        for (auto& mesh : m_shared_model->meshes) {
             mesh.draw(shader, transformMatrix);
         }
     }
@@ -356,8 +354,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
 void engine::Model::clean()
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
-    {
+    for (unsigned int i = 0; i < meshes.size(); i++) {
         meshes[i].clean();
     }
 

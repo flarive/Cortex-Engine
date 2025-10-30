@@ -178,24 +178,6 @@ namespace engine
 
         void refreshFullscreen();
 
-
-        // renderCube() renders a 1x1 3D cube in NDC.
-        // -------------------------------------------------
-        unsigned int cubeVAO{};
-        unsigned int cubeVBO{};
-        void renderCube();
-        
-        // renderQuad() renders a 1x1 XY quad in NDC
-        // -----------------------------------------
-        unsigned int quadVAO{};
-        unsigned int quadVBO{};
-        void renderQuad();
-      
-        // renders (and builds at first invocation) a sphere
-        // -------------------------------------------------
-        unsigned int sphereVAO{};
-        GLsizei indexCount{};
-        void renderSphere();
         
 
     private:

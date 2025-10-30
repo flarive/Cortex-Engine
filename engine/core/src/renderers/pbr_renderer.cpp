@@ -20,8 +20,8 @@ engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
 
 void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
-    m_lights = lights;
-    m_camera = camera;
+    m_lights = lights; // copy ?????????
+    m_camera = camera; // copy ?????????
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -142,7 +142,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     };
 
 
-    //OpenGLDebug::GLClearError();
+    
+
+    
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
@@ -154,13 +156,13 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     glViewport(0, 0, vsize, vsize); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
     for (unsigned int i = 0; i < 6; ++i)
     {
         equirectangularToCubemapShader.setMat4("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        renderCube(); // render skybox
+        renderCube();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -169,7 +171,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
 
-    //OpenGLDebug::GLCheckError();
+    
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     // --------------------------------------------------------------------------------
@@ -204,7 +206,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
         irradianceShader.setMat4("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         renderCube();
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -250,7 +251,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
         {
             prefilterShader.setMat4("view", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
-
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderCube();
         }

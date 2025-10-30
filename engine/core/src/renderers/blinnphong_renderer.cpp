@@ -3,6 +3,7 @@
 #include "../../include/singleton.h"
 
 #include "../../include/tools/file_system.h"
+#include "../../include/debug/opengl_debug.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -19,9 +20,9 @@ engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
 
 void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
-    m_lights = lights;
-    m_camera = camera;
-    
+    m_lights = lights; // copy ?????????
+    m_camera = camera; // copy ?????????
+
     // configure global opengl state
     // -----------------------------
     // enable depth testing
@@ -90,6 +91,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+
+    
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -100,6 +103,8 @@ void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
+    //OpenGLDebug::GLClearError();
+    
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
@@ -166,6 +171,8 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
+
+    //OpenGLDebug::GLCheckError();
 }
 
 void engine::BlinnPhongRenderer::loadShaders()

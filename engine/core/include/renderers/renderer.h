@@ -90,8 +90,7 @@ namespace engine
 		// texture ID that holds depth map framebuffer
 		unsigned int textureDepthMapBuffer{};
 
-		GLuint m_currentVAO = 0;
-		void bindVAO(GLuint vao);
+		
 		
 
 		// internal shaders (not accessible)
@@ -150,14 +149,11 @@ namespace engine
 		void renderCube();
 
 
-
 		// renderQuad() renders a 1x1 XY quad in NDC
 		// -----------------------------------------
 		unsigned int m_quadVAO{};
 		unsigned int m_quadVBO{};
 		void renderQuad();
-
-
 
 		// renders (and builds at first invocation) a sphere
 		// -------------------------------------------------

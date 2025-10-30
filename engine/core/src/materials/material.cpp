@@ -1,5 +1,6 @@
 #include "../../include/materials/material.h"
 
+#include <format>
 
 engine::Material::Material(std::vector<Texture> _textures, float _shininess)
     : textures(std::move(_textures)), m_shininess(_shininess)
@@ -36,8 +37,8 @@ void engine::Material::bind(engine::Shader& shader) const
         glBindTexture(GL_TEXTURE_2D, texture.id);
 
         // Pass the texture unit to the shader
-        shader.setInt("material." + texture.type, textureUnit);
-        shader.setBool("material.has_" + texture.type + "_map", texture.id > 0);
+        shader.setInt(std::format("material.{}", texture.type), textureUnit);
+        shader.setBool(std::format("material.has_{}_map", texture.type), texture.id > 0);
 
 		//std::cout << "binding texture: " << texture.path << " to unit " << textureUnit << " as " << texture.type << " with ID " << texture.id << std::endl;
 

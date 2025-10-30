@@ -1,5 +1,7 @@
 #include "../include/mesh.h"
 
+#include "../include/debug/opengl_debug.h"
+
 #include <memory>
 
 engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material)
@@ -56,16 +58,13 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
 // render the mesh
 void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
+    OpenGLDebug::GLClearError();
+
     assert(m_material);
 
     shader.use();
     m_material->bind(shader); // Bind material textures
 
-
-
-    //std::cout << "engine::Mesh::draw " << model[3].x << "/" << model[3].y << "/" << model[3].z << std::endl;
-        
-        
     shader.setMat4("model", transformMatrix);
     shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
     shader.setBool("hasTangents", true);
@@ -91,6 +90,8 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
     glBindVertexArray(0);
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+
+    OpenGLDebug::GLCheckError();
 }
 
 void engine::Mesh::setupMesh()

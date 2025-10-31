@@ -32,7 +32,7 @@ namespace engine
         virtual void loadTexturesAsync();
 
 
-        virtual void bind(Shader& shader) const;
+        virtual bool bind(Shader& shader) const;
         virtual void unbind() const;
 
         virtual bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
@@ -45,6 +45,8 @@ namespace engine
         virtual bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
 
         virtual bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
+
+        bool allTexturesLoaded() { return m_allTexturesLoaded; }
 
         // 6 textures for the cubemap
         std::vector<std::string> m_cubemapTextures{};
@@ -105,5 +107,7 @@ namespace engine
         float m_emissiveIntensity{ 1.0f };
 
         float m_shininess{};
+
+        bool m_allTexturesLoaded{};
 	};
 }

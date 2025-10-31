@@ -151,6 +151,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     update(blinnPhongShader);
     //update(outlineColorShader);
 
+
     // compute light shadows using a depth map framebuffer
     if (m_lights.size() > 0)
     {

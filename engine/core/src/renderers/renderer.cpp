@@ -264,6 +264,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     // update user stuffs
     update(shader);
 
+
     // not needed but need to be reserved to avoid conflicts or overrides
     glActiveTexture(GL_TEXTURE0 + 10);
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -20,6 +20,8 @@ namespace engine
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
 
+        bool isValid() const;
+
         // activate the shader
         void use();
 

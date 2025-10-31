@@ -51,7 +51,7 @@ void engine::App::setup()
         // enable openGL debut ouput
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        //glDebugMessageCallback(openglDebugCallback, nullptr);
+        glDebugMessageCallback(openglDebugCallback, nullptr);
     }
     else {
         logger.warn("OpenGL debug context not available.");

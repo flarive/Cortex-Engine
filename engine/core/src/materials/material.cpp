@@ -26,34 +26,99 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 
 }
 
+//bool engine::Material::bind(engine::Shader& shader) const
+//{
+//    unsigned int textureUnit = 0;
+//
+//    for (const auto& texture : textures)
+//    {
+//        if (texture.id > 0)
+//        {
+//            glActiveTexture(GL_TEXTURE0 + textureUnit);
+//            glBindTexture(GL_TEXTURE_2D, texture.id);
+//
+//            // Pass the texture unit to the shader
+//            shader.setInt(std::format("material.{}", texture.type), textureUnit);
+//            shader.setBool(std::format("material.has_{}_map", texture.type), true);
+//
+//            textureUnit++;
+//        }
+//        else {
+//            std::cerr << "Warning: Texture ID is 0. Texture might not be loaded correctly." << std::endl;
+//            shader.setBool(std::format("material.has_{}_map", texture.type), false);
+//        }
+//    }
+//
+//    glActiveTexture(GL_TEXTURE0); // Reset active texture
+//}
 
-void engine::Material::bind(engine::Shader& shader) const
+bool engine::Material::bind(engine::Shader& shader) const
 {
     unsigned int textureUnit = 0;
+    bool success = true;
 
     for (const auto& texture : textures)
     {
-        glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glBindTexture(GL_TEXTURE_2D, texture.id);
+        const std::string uniformName = std::format("material.{}", texture.type);
+        const std::string hasMapName = std::format("material.has_{}_map", texture.type);
 
-        // Pass the texture unit to the shader
-        shader.setInt(std::format("material.{}", texture.type), textureUnit);
-        shader.setBool(std::format("material.has_{}_map", texture.type), texture.id > 0);
+        if (texture.id > 0)
+        {
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
+            glBindTexture(GL_TEXTURE_2D, texture.id);
 
-		//std::cout << "binding texture: " << texture.path << " to unit " << textureUnit << " as " << texture.type << " with ID " << texture.id << std::endl;
+            GLenum error = glGetError();
+            if (error != GL_NO_ERROR)
+            {
+                std::cerr << "OpenGL error while binding texture '" << texture.type
+                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
+                shader.setBool(hasMapName, false);
+                success = false;
+                continue;
+            }
 
-        textureUnit++;
+            shader.setInt(uniformName, textureUnit);
+            shader.setBool(hasMapName, true);
+            textureUnit++;
+        }
+        else
+        {
+            std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
+            shader.setBool(hasMapName, false);
+            success = false;
+        }
     }
 
     glActiveTexture(GL_TEXTURE0); // Reset active texture
+    return success;
 }
+
+//void engine::Material::unbind() const
+//{
+//    for (size_t i = 0; i < textures.size(); i++)
+//    {
+//        glActiveTexture(GL_TEXTURE0 + (GLenum)i);
+//        glBindTexture(GL_TEXTURE_2D, 0);
+//    }
+//
+//    glActiveTexture(GL_TEXTURE0); // Reset to default
+//}
 
 void engine::Material::unbind() const
 {
-    for (size_t i = 0; i < textures.size(); i++)
+    for (size_t i = 0; i < textures.size(); ++i)
     {
-        glActiveTexture(GL_TEXTURE0 + (GLenum)i);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if (textures[i].id > 0)
+        {
+            glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            GLenum error = glGetError();
+            if (error != GL_NO_ERROR)
+            {
+                std::cerr << "OpenGL error while unbinding texture unit " << i << ": " << std::hex << error << std::endl;
+            }
+        }
     }
 
     glActiveTexture(GL_TEXTURE0); // Reset to default
@@ -92,7 +157,7 @@ void engine::Material::loadTextures()
 void engine::Material::loadTexturesAsync()
 {
     textures.clear();
-    textures.reserve(7);
+    textures.reserve(8);
 
     // Load textures asynchronously
     engine::Texture::loadTextureAsync(getDiffuseTexPath());
@@ -120,31 +185,43 @@ void engine::Material::loadTexturesAsync()
 
     // get TextureID from queue
     diffuseMapId = engine::TextureManager::textureIDCache[getDiffuseTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
+    if (diffuseMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
 
     specularMapId = engine::TextureManager::textureIDCache[getSpecularTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
+    if (specularMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
 
     normalMapId = engine::TextureManager::textureIDCache[getNormalTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+    if (normalMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
 
     metallicMapId = engine::TextureManager::textureIDCache[getMetallicTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
+    if (metallicMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
 
     roughnessMapId = engine::TextureManager::textureIDCache[getRoughnessTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
+    if (roughnessMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
 
     aoMapId = engine::TextureManager::textureIDCache[getAoTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
+    if (aoMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
 
     heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
-
-    heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+    if (heightMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
 
     emissiveMapId = engine::TextureManager::textureIDCache[getEmissiveTexPath()];
-    textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+    if (emissiveMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+
+
+    if (diffuseMapId > 0)
+    {
+        //std::cout << "All textures loaded !!!!!" << std::endl;
+        m_allTexturesLoaded = true;
+    }
 }
 
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)

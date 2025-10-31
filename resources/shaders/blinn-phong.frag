@@ -12,6 +12,9 @@ struct Material {
     sampler2D texture_shadowMap; // 10
     samplerCube texture_shadowMapCube; // 11
 
+    sampler2D texture_metalness_from_combined;
+    sampler2D texture_roughness_from_combined;
+
     vec3 ambient_color;
     vec3 diffuse_color;
     vec3 specular_color;
@@ -23,6 +26,7 @@ struct Material {
     bool has_texture_normal_map;
     bool has_texture_metalness_map;
     bool has_texture_roughness_map;
+    bool has_texture_metalness_from_combined_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
     bool has_texture_emissive_map;

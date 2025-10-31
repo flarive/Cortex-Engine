@@ -51,16 +51,16 @@ void MyScene1::init()
 
 
     // ground
-    //auto myPlane = make_shared<Plane>();
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
-    //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
-    //auto entityPlane = make_shared<Entity>("MyPlane");
-    //entityPlane->addComponent<TransformComponent>(trsPlane);
-    //entityPlane->addComponent<PrimitiveComponent>(myPlane);
-    //getEntityManager().addChild(entityPlane);
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png"), UvMapping(6.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
+    getEntityManager().addChild(entityPlane);
 
 
-    //// billboard
+    // billboard
     //auto myBillboard = make_shared<Billboard>(false);
     //myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png"), UvMapping(1.0f));
     //auto trsBillboard = Transform(vec3(0.0f, -0.15f, -3.0f), vec3(0.35f), vec3(0.0f, 0.0f, 0.0f));
@@ -115,15 +115,15 @@ void MyScene1::init()
 
 
     // cushion model
-    auto cushionModel = make_shared<Model>("models/cushion/cushion.glb");
-    auto trsCushion = Transform(vec3(-0.5f, -0.35f, 0.0f), vec3(0.10f), vec3(0.0f, 45.0f, 0.0f));
-    auto entityCushion = make_shared<Entity>("MyCushion");
-    entityCushion->addComponent<TransformComponent>(trsCushion);
-    entityCushion->addComponent<ModelComponent>(cushionModel);
-    getEntityManager().addChild(entityCushion);
+    //auto cushionModel = make_shared<Model>("models/cushion/cushion.glb");
+    //auto trsCushion = Transform(vec3(-0.5f, -0.35f, 0.0f), vec3(0.10f), vec3(0.0f, 45.0f, 0.0f));
+    //auto entityCushion = make_shared<Entity>("MyCushion");
+    //entityCushion->addComponent<TransformComponent>(trsCushion);
+    //entityCushion->addComponent<ModelComponent>(cushionModel);
+    //getEntityManager().addChild(entityCushion);
 
 
-    //// backpack model
+    // backpack model
     //auto backpackModel = make_shared<Model>("models/backpack/backpack.glb");
     //auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f), vec3(90.0f, 0.0f, 0.0f));
     //auto entityBackpack = make_shared<Entity>("MyBackpack");

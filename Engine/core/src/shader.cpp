@@ -151,6 +151,29 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glDeleteShader(geometry);
 }
 
+bool engine::Shader::isValid() const
+{
+    if (ID == 0) {
+        std::cerr << "Shader program ID is 0. Shader not created." << std::endl;
+        return false;
+    }
+
+    GLint linkStatus = 0;
+    glGetProgramiv(ID, GL_LINK_STATUS, &linkStatus);
+
+    if (linkStatus == GL_FALSE) {
+        GLint logLength = 0;
+        glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &logLength);
+
+        std::vector<char> log(logLength);
+        glGetProgramInfoLog(ID, logLength, nullptr, log.data());
+
+        std::cerr << "Shader program linking failed:\n" << log.data() << std::endl;
+        return false;
+    }
+
+    return true;
+}
 
 // activate the shader
 // ------------------------------------------------------------------------

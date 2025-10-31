@@ -6,6 +6,8 @@
 
 #include "../../include/singleton.h"
 
+#include "../../include/debug/opengl_debug.h"
+
 
 engine::Plane::Plane(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
@@ -77,7 +79,33 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
 
 void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    if (!m_material || !shader.isValid()) {
+        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
+        return;
+    }
+
+    if (!m_material->allTexturesLoaded()) {
+        std::cout << "Textures not ready. Deferring draw." << std::endl;
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
+        return;
+    }
+
+    GLint uniformLoc = glGetUniformLocation(shader.ID, "material.diffuse_texture");
+    if (uniformLoc == -1) {
+        std::cerr << "Uniform 'material.diffuse_texture' not found in shader." << std::endl;
+    }
+
     shader.use();
+    OpenGLDebug::checkGLError("shader.use");
+
+
+
+    
+    
 
     position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
@@ -85,7 +113,12 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
     if (m_material)
     {
-        m_material->bind(shader);
+        if (!m_material->bind(shader)) {
+            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+            return;
+        }
+        OpenGLDebug::checkGLError("bind");
+
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
         shader.setVec3("material.specular_color", m_material->getSpecularColor());
@@ -106,8 +139,13 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
     // Send to GPU
     glBindVertexArray(m_VAO);
+    OpenGLDebug::checkGLError("glBindVertexArray");
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    OpenGLDebug::checkGLError("glDrawArrays");
+
     glBindVertexArray(0);
+    OpenGLDebug::checkGLError("glBindVertexArray");
 
 
     auto* singleton = engine::Singleton::getInstance();
@@ -119,6 +157,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     }
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+    OpenGLDebug::checkGLError("Unbind");
 }
 
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

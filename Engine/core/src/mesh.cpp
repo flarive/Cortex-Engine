@@ -58,8 +58,6 @@ void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, flo
 // render the mesh
 void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
-    OpenGLDebug::GLClearError();
-
     assert(m_material);
 
     shader.use();
@@ -84,14 +82,19 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
+    //OpenGLDebug::GLClearError();
+    
+    
+
     // send to GPU
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    // 1282 Message: GL_INVALID_OPERATION error generated. State(s) are invalid: program texture usage
+    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+    //OpenGLDebug::GLCheckError();
 
-    OpenGLDebug::GLCheckError();
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
 }
 
 void engine::Mesh::setupMesh()
@@ -136,6 +139,10 @@ void engine::Mesh::setupMesh()
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
     glBindVertexArray(0);
+
+
+    // During mesh setup
+    m_indexCount = static_cast<unsigned int>(indices.size());
 }
 
 void engine::Mesh::clean()

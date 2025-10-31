@@ -89,6 +89,14 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
 
 void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    return;
+    
+    if (!m_material->allTexturesLoaded())
+    {
+        std::cout << "Defer cube draw" << std::endl;
+        return;
+    }
+    
     shader.use();
 
     position = localTransform.getLocalPosition();

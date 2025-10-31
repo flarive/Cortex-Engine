@@ -39,6 +39,8 @@ namespace engine
         // render data 
         unsigned int VBO{}, EBO{}, VAO{};
 
+        unsigned int m_indexCount{};
+
         std::shared_ptr<Material> m_material{};
 
         // initializes all the buffer objects/arrays

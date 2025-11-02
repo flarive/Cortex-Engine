@@ -70,14 +70,14 @@ void MyScene1::init()
     //getEntityManager().addChild(entityBillboard);
 
 
-    //// cube
-    //auto myCube = make_shared<Cube>(2.0f);
-    //myCube->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
-    //auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
-    //auto entityCube = make_shared<Entity>("MyCube");
-    //entityCube->addComponent<TransformComponent>(trsCube);
-    //entityCube->addComponent<PrimitiveComponent>(myCube);
-    //getEntityManager().addChild(entityCube);
+    // cube
+    auto myCube = make_shared<Cube>(2.0f);
+    myCube->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
+    auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
+    auto entityCube = make_shared<Entity>("MyCube");
+    entityCube->addComponent<TransformComponent>(trsCube);
+    entityCube->addComponent<PrimitiveComponent>(myCube);
+    getEntityManager().addChild(entityCube);
 
 
     //// cylinder
@@ -92,26 +92,26 @@ void MyScene1::init()
     //getEntityManager().addChild(entityCylinder);
 
 
-    //// cone
-    //auto myCone = make_shared<Cone>();
-    //myCone->radius = 0.1f;
-    //myCone->height = 0.3f;
-    //myCone->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    //auto trsCone = Transform(vec3(1.0f, -0.35f, 0.0f));
-    //auto entityCone = make_shared<Entity>("MyCone");
-    //entityCone->addComponent<TransformComponent>(trsCone);
-    //entityCone->addComponent<PrimitiveComponent>(myCone);
-    //getEntityManager().addChild(entityCone);
+    // cone
+    auto myCone = make_shared<Cone>();
+    myCone->radius = 0.1f;
+    myCone->height = 0.3f;
+    myCone->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsCone = Transform(vec3(1.0f, -0.35f, 0.0f));
+    auto entityCone = make_shared<Entity>("MyCone");
+    entityCone->addComponent<TransformComponent>(trsCone);
+    entityCone->addComponent<PrimitiveComponent>(myCone);
+    getEntityManager().addChild(entityCone);
 
 
-    //// sphere
-    //auto mySphere = make_shared<Sphere>();
-    //mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    //auto trsSphere = Transform(vec3(1.5f, -0.35f, 0.0f), vec3(0.2f));
-    //auto entitySphere = make_shared<Entity>("MySphere");
-    //entitySphere->addComponent<TransformComponent>(trsSphere);
-    //entitySphere->addComponent<PrimitiveComponent>(mySphere);
-    //getEntityManager().addChild(entitySphere);
+    // sphere
+    auto mySphere = make_shared<Sphere>();
+    mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsSphere = Transform(vec3(1.5f, -0.35f, 0.0f), vec3(0.2f));
+    auto entitySphere = make_shared<Entity>("MySphere");
+    entitySphere->addComponent<TransformComponent>(trsSphere);
+    entitySphere->addComponent<PrimitiveComponent>(mySphere);
+    getEntityManager().addChild(entitySphere);
 
 
     // cushion model
@@ -133,13 +133,13 @@ void MyScene1::init()
 
 
     // cube outside camera frustrum
-    //auto myCube2 = make_shared<Cube>();
-    //myCube2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
-    //auto trsCube2 = Transform(vec3(-3.0f, -0.35f, 0.0f), vec3(0.15f));
-    //auto entityCube2 = make_shared<Entity>("MyCube2");
-    //entityCube2->addComponent<TransformComponent>(trsCube2);
-    //entityCube2->addComponent<PrimitiveComponent>(myCube2);
-    //getEntityManager().addChild(entityCube2);
+    auto myCube2 = make_shared<Cube>();
+    myCube2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
+    auto trsCube2 = Transform(vec3(-3.0f, -0.35f, 0.0f), vec3(0.15f));
+    auto entityCube2 = make_shared<Entity>("MyCube2");
+    entityCube2->addComponent<TransformComponent>(trsCube2);
+    entityCube2->addComponent<PrimitiveComponent>(myCube2);
+    getEntityManager().addChild(entityCube2);
 
 
     // skybox

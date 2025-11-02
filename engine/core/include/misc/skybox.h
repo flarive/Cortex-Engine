@@ -14,6 +14,8 @@ namespace engine
         unsigned int m_skyboxVAO{}, m_skyboxVBO{};
         Shader m_skyboxShader{};
 
+		bool m_isSetup{ false };
+
     public:
         Skybox() = default;
         ~Skybox() = default;

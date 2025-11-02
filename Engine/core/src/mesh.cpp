@@ -138,6 +138,7 @@ void engine::Mesh::setupMesh()
     // weights
     glEnableVertexAttribArray(6);
     glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
+
     glBindVertexArray(0);
 
 

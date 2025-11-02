@@ -89,22 +89,35 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
 
 void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    return;
-    
-    if (!m_material->allTexturesLoaded())
-    {
-        std::cout << "Defer cube draw" << std::endl;
+    if (!m_material || !shader.isValid()) {
+        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
+        return;
+    }
+
+    if (!m_material->allTexturesLoaded()) {
+        std::cout << "Textures not ready. Deferring draw." << std::endl;
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
         return;
     }
     
     shader.use();
+    OpenGLDebug::checkGLError("shader.use");
 
     position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 
-    if (m_material)
+    if (shader.name == "blinnphong" || shader.name == "pbr")
     {
+        if (!m_material->bind(shader)) {
+            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+            return;
+        }
+
         m_material->bind(shader);
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
@@ -120,16 +133,27 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
+	// used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-    shader.setBool("hasTangents", true);
+
+    if (shader.name == "blinnphong" || shader.name == "pbr")
+    {
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader.setBool("hasTangents", true);
+    }
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    OpenGLDebug::checkGLError("glBindVertexArray");
 
-    m_material->unbind();
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    OpenGLDebug::checkGLError("glDrawArrays");
+
+    glBindVertexArray(0);
+    OpenGLDebug::checkGLError("glBindVertexArray");
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+    OpenGLDebug::checkGLError("Unbind");
 }
 
 void engine::Cube::clean()

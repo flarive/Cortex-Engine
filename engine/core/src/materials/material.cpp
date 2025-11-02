@@ -26,32 +26,6 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 
 }
 
-//bool engine::Material::bind(engine::Shader& shader) const
-//{
-//    unsigned int textureUnit = 0;
-//
-//    for (const auto& texture : textures)
-//    {
-//        if (texture.id > 0)
-//        {
-//            glActiveTexture(GL_TEXTURE0 + textureUnit);
-//            glBindTexture(GL_TEXTURE_2D, texture.id);
-//
-//            // Pass the texture unit to the shader
-//            shader.setInt(std::format("material.{}", texture.type), textureUnit);
-//            shader.setBool(std::format("material.has_{}_map", texture.type), true);
-//
-//            textureUnit++;
-//        }
-//        else {
-//            std::cerr << "Warning: Texture ID is 0. Texture might not be loaded correctly." << std::endl;
-//            shader.setBool(std::format("material.has_{}_map", texture.type), false);
-//        }
-//    }
-//
-//    glActiveTexture(GL_TEXTURE0); // Reset active texture
-//}
-
 bool engine::Material::bind(engine::Shader& shader) const
 {
     unsigned int textureUnit = 0;
@@ -92,17 +66,6 @@ bool engine::Material::bind(engine::Shader& shader) const
     glActiveTexture(GL_TEXTURE0); // Reset active texture
     return success;
 }
-
-//void engine::Material::unbind() const
-//{
-//    for (size_t i = 0; i < textures.size(); i++)
-//    {
-//        glActiveTexture(GL_TEXTURE0 + (GLenum)i);
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//    }
-//
-//    glActiveTexture(GL_TEXTURE0); // Reset to default
-//}
 
 void engine::Material::unbind() const
 {

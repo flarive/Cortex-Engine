@@ -12,6 +12,8 @@
 
 #include "../transform.h"
 
+#include "../../include/debug/opengl_debug.h"
+
 
 namespace engine
 {

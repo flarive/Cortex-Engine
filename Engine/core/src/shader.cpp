@@ -64,7 +64,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
 
-    //std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
+    std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -179,6 +179,7 @@ bool engine::Shader::isValid() const
 // ------------------------------------------------------------------------
 void engine::Shader::use()
 {
+	std::cout << "Using shader program: " << name << " (ID: " << ID << ")" << std::endl;
     glUseProgram(engine::Shader::ID);
 }
 

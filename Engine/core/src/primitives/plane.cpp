@@ -6,8 +6,6 @@
 
 #include "../../include/singleton.h"
 
-#include "../../include/debug/opengl_debug.h"
-
 
 engine::Plane::Plane(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
@@ -94,18 +92,10 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
         return;
     }
 
-    GLint uniformLoc = glGetUniformLocation(shader.ID, "material.diffuse_texture");
-    if (uniformLoc == -1) {
-        std::cerr << "Uniform 'material.diffuse_texture' not found in shader." << std::endl;
-    }
+
 
     shader.use();
     OpenGLDebug::checkGLError("shader.use");
-
-
-
-    
-    
 
     position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
@@ -113,29 +103,45 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
     if (m_material)
     {
-        if (!m_material->bind(shader)) {
-            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-            return;
+        if (shader.name == "blinnphong" || shader.name == "pbr")
+        {
+            if (!m_material->bind(shader)) {
+                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+                return;
+            }
+
+
+            //GLint uniformLoc = glGetUniformLocation(shader.ID, "material.texture_diffuse");
+            //if (uniformLoc == -1) {
+            //    std::cerr << "Uniform 'material.texture_diffuse' not found in shader " << shader.ID << std::endl;
+            //}
+
+
+
+            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+            shader.setVec3("material.specular_color", m_material->getSpecularColor());
+
+            shader.setFloat("material.shininess", m_material->getShininessIntensity());
+
+            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
+
+            shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
         }
-        OpenGLDebug::checkGLError("bind");
-
-        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        shader.setVec3("material.specular_color", m_material->getSpecularColor());
-
-        shader.setFloat("material.shininess", m_material->getShininessIntensity());
-
-        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-
-
-        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
-        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
+    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-    shader.setBool("hasTangents", true);
+
+    if (shader.name == "blinnphong" || shader.name == "pbr")
+    {
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader.setBool("hasTangents", true);
+    }
+
 
     // Send to GPU
     glBindVertexArray(m_VAO);

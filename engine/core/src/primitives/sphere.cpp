@@ -144,7 +144,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         return;
     }
 
-    if (!m_material->allTexturesLoaded()) {
+    if (!m_material->getAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }
@@ -153,7 +153,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
         return;
     }
-    
+
     shader.use();
     OpenGLDebug::checkGLError("shader.use");
 
@@ -193,7 +193,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
     }
-    
+
     // Send to GPU
     glBindVertexArray(m_VAO);
     OpenGLDebug::checkGLError("glBindVertexArray");

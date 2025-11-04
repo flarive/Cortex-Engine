@@ -145,7 +145,23 @@ std::vector<engine::Vertex> engine::Cylinder::generateVertices()
 
 void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    if (!m_material || !shader.isValid()) {
+        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
+        return;
+    }
+
+    if (!m_material->getAllTexturesLoaded()) {
+        std::cout << "Textures not ready. Deferring draw." << std::endl;
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
+        return;
+    }
+
     shader.use();
+    OpenGLDebug::checkGLError("shader.use");
 
     position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
@@ -153,27 +169,45 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
 
     if (m_material)
     {
-        m_material->bind(shader);
-        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        shader.setVec3("material.specular_color", m_material->getSpecularColor());
-        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        
-        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
-        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-    }
+        if (shader.name == "blinnphong" || shader.name == "pbr")
+        {
+            if (!m_material->bind(shader)) {
+                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+                return;
+            }
 
-    shader.setMat4("model", transformMatrix);
-    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-    shader.setBool("hasTangents", true);
+            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+            shader.setVec3("material.specular_color", m_material->getSpecularColor());
+            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
+            shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+        }
+
+        // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
+        shader.setMat4("model", transformMatrix);
+
+        if (shader.name == "blinnphong" || shader.name == "pbr")
+        {
+            shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+            shader.setBool("hasTangents", true);
+        }
+    }
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    OpenGLDebug::checkGLError("glBindVertexArray");
 
-    m_material->unbind();
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+    OpenGLDebug::checkGLError("glDrawArrays");
+
+    glBindVertexArray(0);
+    OpenGLDebug::checkGLError("glBindVertexArray");
+
+    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+    OpenGLDebug::checkGLError("Unbind");
 }
 
 void engine::Cylinder::clean()

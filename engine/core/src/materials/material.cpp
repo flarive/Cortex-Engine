@@ -57,9 +57,10 @@ bool engine::Material::bind(engine::Shader& shader) const
         }
         else
         {
-            std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
+            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
             shader.setBool(hasMapName, false);
-            success = false;
+            //success = false;
+            success = true;
         }
     }
 
@@ -120,7 +121,7 @@ void engine::Material::loadTextures()
 void engine::Material::loadTexturesAsync()
 {
     textures.clear();
-    textures.reserve(8);
+    textures.reserve(7);
 
     // Load textures asynchronously
     engine::Texture::loadTextureAsync(getDiffuseTexPath());
@@ -131,7 +132,7 @@ void engine::Material::loadTexturesAsync()
     engine::Texture::loadTextureAsync(getAoTexPath());
     engine::Texture::loadTextureAsync(getHeightTexPath());
     engine::Texture::loadTextureAsync(getEmissiveTexPath());
-    
+
 
     // Queue OpenGL execution on main thread
     unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
@@ -148,39 +149,39 @@ void engine::Material::loadTexturesAsync()
 
     // get TextureID from queue
     diffuseMapId = engine::TextureManager::textureIDCache[getDiffuseTexPath()];
-    if (diffuseMapId > 0)
+    //if (diffuseMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
 
     specularMapId = engine::TextureManager::textureIDCache[getSpecularTexPath()];
-    if (specularMapId > 0)
+    //if (specularMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
 
     normalMapId = engine::TextureManager::textureIDCache[getNormalTexPath()];
-    if (normalMapId > 0)
+    //if (normalMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
 
     metallicMapId = engine::TextureManager::textureIDCache[getMetallicTexPath()];
-    if (metallicMapId > 0)
+    //if (metallicMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
 
     roughnessMapId = engine::TextureManager::textureIDCache[getRoughnessTexPath()];
-    if (roughnessMapId > 0)
+    //if (roughnessMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
 
     aoMapId = engine::TextureManager::textureIDCache[getAoTexPath()];
-    if (aoMapId > 0)
+    //if (aoMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
 
     heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
-    if (heightMapId > 0)
+    //if (heightMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
 
     emissiveMapId = engine::TextureManager::textureIDCache[getEmissiveTexPath()];
-    if (emissiveMapId > 0)
+    //if (emissiveMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 
 
-    if (diffuseMapId > 0)
+    if (diffuseMapId > 0) // BOFFFFF !!!!
     {
         //std::cout << "All textures loaded !!!!!" << std::endl;
         m_allTexturesLoaded = true;

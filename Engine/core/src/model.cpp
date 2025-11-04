@@ -108,7 +108,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space
     std::vector<unsigned int> indices{};
     std::vector<engine::Texture> textures{};
-    
+
     // Reserve space to avoid reallocations
     indices.reserve(mesh->mNumFaces * 3); // Assuming each face is a triangle
     vertices.reserve(mesh->mNumVertices);
@@ -221,6 +221,8 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     // Create Material
     auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
 
+    meshMaterial->setAllTexturesLoaded(true); // ???????????
+
     // return a mesh object created from the extracted mesh data
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
@@ -229,7 +231,7 @@ bool engine::SharedModel::checkMetalnessRoughnessSingleTexture(const aiScene* sc
 {
     aiString str1{};
     aiString str2{};
-    
+
     for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_METALNESS); i++)
     {
         mat->GetTexture(aiTextureType_METALNESS, i, &str1);
@@ -327,6 +329,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
             textures_loaded.emplace_back(texture.id, texture.type, texture.path);
         }
     }
+
     return textures;
 }
 
@@ -336,7 +339,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     position = localTransform.getLocalPosition();
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
-    
+
     if (!m_shared_model)
     {
         for (auto& mesh : meshes) {
@@ -345,7 +348,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     }
     else
     {
-		// shared model, loaded one time, drawn multiple times
+        // shared model, loaded one time, drawn multiple times
         for (auto& mesh : m_shared_model->meshes) {
             mesh.draw(shader, transformMatrix);
         }

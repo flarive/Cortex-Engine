@@ -230,7 +230,6 @@ engine::AABB* engine::Entity::getBoundingVolume()
 	return nullptr;
 }
 
-
 engine::AABB engine::Entity::getGlobalAABB()
 {
 	auto transform = getTransform();

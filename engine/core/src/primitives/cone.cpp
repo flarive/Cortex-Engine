@@ -134,7 +134,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    if (!m_material->allTexturesLoaded()) {
+    if (!m_material->getAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }

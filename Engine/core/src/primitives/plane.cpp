@@ -42,11 +42,11 @@ void engine::Plane::geometrySetup()
     // configure plane VAO
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
-    
+
     // Send to GPU
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        
+
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
     // Position attribute
@@ -82,7 +82,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
         return;
     }
 
-    if (!m_material->allTexturesLoaded()) {
+    if (!m_material->getAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }
@@ -169,7 +169,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
     m_debugDrawLine.init();
-    
+
     // Compute the center of the plane in world space
     glm::vec3 center = glm::vec3(transformMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 

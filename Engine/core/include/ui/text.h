@@ -20,7 +20,8 @@ namespace engine
         GLFWwindow* m_window{};
         std::map<GLchar, Character> m_characters{};
         unsigned int m_VAO{}, m_VBO{};
-        Shader m_textShader{};
+        static Shader m_textShader; // Shared across all instances
+
 
     public:
         Text() = default;

@@ -10,23 +10,23 @@
 
 namespace engine
 {
-	/// <summary>
-	/// Abstract class for materials
-	/// </summary>
-	class Material : public NonCopyable
-	{
-	public:
+    /// <summary>
+    /// Abstract class for materials
+    /// </summary>
+    class Material : public NonCopyable
+    {
+    public:
 
         std::vector<Texture> textures{}; // Store textures
 
 
-        
+
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
         Material(const Color& ambientColor);
         Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
         Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 1.0f);
 
-		virtual ~Material() = default;
+        virtual ~Material() = default;
 
         virtual void loadTextures();
         virtual void loadTexturesAsync();
@@ -46,7 +46,8 @@ namespace engine
 
         virtual bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
-        bool allTexturesLoaded() { return m_allTexturesLoaded; }
+        bool getAllTexturesLoaded() { return m_allTexturesLoaded; }
+        void setAllTexturesLoaded(bool state) { m_allTexturesLoaded = state; }
 
         // 6 textures for the cubemap
         std::vector<std::string> m_cubemapTextures{};
@@ -109,5 +110,5 @@ namespace engine
         float m_shininess{};
 
         bool m_allTexturesLoaded{};
-	};
+    };
 }

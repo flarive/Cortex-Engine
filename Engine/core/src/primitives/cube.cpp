@@ -94,7 +94,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    if (!m_material->allTexturesLoaded()) {
+    if (!m_material->getAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }
@@ -103,7 +103,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
         return;
     }
-    
+
     shader.use();
     OpenGLDebug::checkGLError("shader.use");
 
@@ -133,7 +133,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
     }
 
-	// used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
+    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
 
     if (shader.name == "blinnphong" || shader.name == "pbr")

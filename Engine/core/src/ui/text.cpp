@@ -2,6 +2,8 @@
 
 #include "../../include/tools/file_system.h"
 
+engine::Shader engine::Text::m_textShader; // Define the static member
+
 void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
 {
     m_window = window;
@@ -10,8 +12,11 @@ void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fo
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
-    
-    m_textShader.init("UITextShader", "shaders/text.vert", "shaders/text.frag");
+
+    if (!m_textShader.isInitialized()) {
+        m_textShader.init("UITextShader", "shaders/text.vert", "shaders/text.frag");
+    }
+
 
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
@@ -115,7 +120,7 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     int width{ 0 };
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
-    
+
     // activate corresponding render state	
     m_textShader.use();
 
@@ -124,10 +129,10 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     // update for fullscreen toggle
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_textShader.setMat4("projection", projection2);
-	m_textShader.setVec3("textColor", color);
+    m_textShader.setVec3("textColor", color);
 
     glActiveTexture(GL_TEXTURE0);
-    
+
     // Send to GPU
     glBindVertexArray(m_VAO);
 

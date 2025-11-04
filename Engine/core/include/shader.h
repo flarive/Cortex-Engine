@@ -11,7 +11,7 @@ namespace engine
     class Shader final : private NonCopyable
     {
     public:
-		unsigned int ID{};
+        unsigned int ID{};
         std::string name{};
 
         Shader() = default;
@@ -21,6 +21,10 @@ namespace engine
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
 
         bool isValid() const;
+
+
+
+        bool isInitialized() const { return m_initialized; }
 
         // activate the shader
         void use();
@@ -41,6 +45,8 @@ namespace engine
         void clean();
 
     private:
+        bool m_initialized = false;
+
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------
         void checkCompileErrors(unsigned int shader, std::string type);

@@ -10,7 +10,7 @@
 void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
     name = shaderName;
-    
+
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
     std::string fragmentCode{};
@@ -63,6 +63,9 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
+
+    m_initialized = true;
+
 
     std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
 
@@ -143,6 +146,8 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
 
+    m_initialized = true;
+
     //std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
 
     // delete the shaders as they're linked into our program now and no longer necessary
@@ -179,7 +184,7 @@ bool engine::Shader::isValid() const
 // ------------------------------------------------------------------------
 void engine::Shader::use()
 {
-	std::cout << "Using shader program: " << name << " (ID: " << ID << ")" << std::endl;
+    //std::cout << "Using shader program: " << name << " (ID: " << ID << ")" << std::endl;
     glUseProgram(engine::Shader::ID);
 }
 

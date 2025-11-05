@@ -23,7 +23,7 @@ MyScene9::MyScene9(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene9::init()
 {
     auto trsCamera1 = engine::Transform{ { 0.0f, 5.0f, 3.0f } };
-    auto camera1 = std::make_shared<engine::FlyCamera>();
+    auto camera1 = std::make_shared<engine::OrbitCamera>();
     camera1->movementSpeed = 10.0f;
     auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
     entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);

@@ -5,6 +5,8 @@
 #include "../../include/materials/material.h"
 #include "../../include/tools/helpers.h"
 
+#include "../../include/singleton.h"
+
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -94,7 +96,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    if (!m_material->getAllTexturesLoaded()) {
+    if (!m_material->areAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }
@@ -152,12 +154,62 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        drawDebugNormals(projection, view, transformMatrix);
+    }
+
     if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
 }
+
+void engine::Cube::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
+{
+    m_debugDrawLine.init();
+
+    // Define the local normals for each face of the cube
+    const std::vector<glm::vec3> localNormals = {
+        glm::vec3(1.0f, 0.0f, 0.0f),   // +X (right)
+        glm::vec3(-1.0f, 0.0f, 0.0f),  // -X (left)
+        glm::vec3(0.0f, 1.0f, 0.0f),   // +Y (top)
+        glm::vec3(0.0f, -1.0f, 0.0f),  // -Y (bottom)
+        glm::vec3(0.0f, 0.0f, 1.0f),   // +Z (front)
+        glm::vec3(0.0f, 0.0f, -1.0f)   // -Z (back)
+    };
+
+    // Define the local centers for each face of the cube (assuming cube is axis-aligned and centered at origin)
+    const std::vector<glm::vec3> localFaceCenters = {
+        glm::vec3(0.5f, 0.0f, 0.0f),   // +X face center
+        glm::vec3(-0.5f, 0.0f, 0.0f),  // -X face center
+        glm::vec3(0.0f, 0.5f, 0.0f),   // +Y face center
+        glm::vec3(0.0f, -0.5f, 0.0f),  // -Y face center
+        glm::vec3(0.0f, 0.0f, 0.5f),   // +Z face center
+        glm::vec3(0.0f, 0.0f, -0.5f)   // -Z face center
+    };
+
+    // Transform each face center and normal to world space
+    for (size_t i = 0; i < localNormals.size(); ++i) {
+        // Transform the face center to world space
+        glm::vec3 worldFaceCenter = glm::vec3(transformMatrix * glm::vec4(localFaceCenters[i], 1.0f));
+        // Transform the normal to world space
+        glm::vec3 worldNormal = glm::normalize(glm::mat3(transformMatrix) * localNormals[i]);
+        // Compute the end point of the normal line
+        glm::vec3 end = worldFaceCenter + worldNormal * 0.25f; // Scale for visibility
+        // Add the debug line (with arrow)
+        m_debugDrawLine.addLine(worldFaceCenter, end, glm::vec3(1.0f, 0.0f, 0.0f), true, 0.06f); // Red color for normal
+    }
+
+    // Render all debug lines
+    m_debugDrawLine.render(view, projection);
+    m_debugDrawLine.clear();
+}
+
 
 void engine::Cube::clean()
 {

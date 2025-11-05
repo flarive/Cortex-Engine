@@ -13,6 +13,7 @@
 #include "../transform.h"
 
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/debug/debug_draw_line.h"
 
 
 namespace engine

@@ -82,7 +82,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
         return;
     }
 
-    if (!m_material->getAllTexturesLoaded()) {
+    if (!m_material->areAllTexturesLoaded()) {
         std::cout << "Textures not ready. Deferring draw." << std::endl;
         return;
     }

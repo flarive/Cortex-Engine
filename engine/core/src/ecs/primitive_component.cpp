@@ -104,9 +104,7 @@ void engine::PrimitiveComponent::update(Transform& transform)
 
 void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	//OpenGLDebug::GLClearError();
 	m_primitive->draw(shader, projection, view, worldTransformMatrix, localTransform);
-	//OpenGLDebug::GLCheckError();
 
 	auto* singleton = engine::Singleton::getInstance();
 	assert(singleton != nullptr && "Singleton not initialized !");

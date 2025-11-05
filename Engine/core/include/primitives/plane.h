@@ -4,8 +4,6 @@
 #include "../materials/material.h"
 #include "../primitives/primitive.h"
 
-#include "../debug/debug_draw_line.h"
-
 namespace engine
 {
     class Plane final : public Primitive

@@ -46,8 +46,10 @@ namespace engine
 
         virtual bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
-        bool getAllTexturesLoaded() { return m_allTexturesLoaded; }
+        bool areAllTexturesLoaded() const { return !hasTextures() || (hasTextures() && m_allTexturesLoaded); }
         void setAllTexturesLoaded(bool state) { m_allTexturesLoaded = state; }
+
+		bool hasTextures() const { return !textures.empty(); }
 
         // 6 textures for the cubemap
         std::vector<std::string> m_cubemapTextures{};

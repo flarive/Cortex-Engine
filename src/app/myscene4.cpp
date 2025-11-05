@@ -7,7 +7,8 @@ MyScene4::MyScene4(std::string _title, engine::App* _app) : engine::Scene(_title
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .shadowIntensity = 0.8f,
         .iblDiffuseIntensity = 4.0f,
-        .iblSpecularIntensity = 1.0f
+        .iblSpecularIntensity = 1.0f,
+        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here
@@ -55,13 +56,13 @@ void MyScene4::init()
     getEntityManager().addChild(entityLight1);
 
 
-    auto trsLight2 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
-    auto light2 = std::make_shared<engine::PointLight>();
-    light2->intensity = 40.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
-    entityLight2->addComponent<engine::TransformComponent>(trsLight2);
-    entityLight2->addComponent<engine::LightComponent>(light2);
-    getEntityManager().addChild(entityLight2);
+    //auto trsLight2 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
+    //auto light2 = std::make_shared<engine::PointLight>();
+    //light2->intensity = 10.0f;
+    //auto entityLight2 = std::make_shared<engine::Entity>("Light2");
+    //entityLight2->addComponent<engine::TransformComponent>(trsLight2);
+    //entityLight2->addComponent<engine::LightComponent>(light2);
+    //getEntityManager().addChild(entityLight2);
 
 
     // ground

@@ -12,14 +12,14 @@
 #include "app/myscene6.h" // pbr rotating helmet
 #include "app/myscene7.h" // pbr multiple helmets
 #include "app/myscene8.h" // monochromatic point shadow
-#include "app/myscene9.h"
+#include "app/myscene9.h" // orbit camera
 #include "app/myscene10.h" // area lights demo
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene1;
+using MyScene = MyScene8;
 
 App* myApp{};
 Scene* myScene{};

@@ -38,6 +38,10 @@ namespace engine
         
         void geometrySetup();
 
-        unsigned int indexCount{};
+        //unsigned int indexCount{};
+
+        void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
+
+        DebugDraw m_debugDrawLine{};
     };
 }

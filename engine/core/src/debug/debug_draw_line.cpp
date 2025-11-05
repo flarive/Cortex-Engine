@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <iostream>
 
+engine::Shader engine::DebugDraw::m_shader; // Define the static member
+
 engine::DebugDraw::DebugDraw() {}
 engine::DebugDraw::~DebugDraw()
 {

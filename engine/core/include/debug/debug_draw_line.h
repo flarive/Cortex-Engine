@@ -36,7 +36,7 @@ namespace engine
         std::vector<Line> m_lines;
         GLuint m_vao{ 0 };
         GLuint m_vbo{ 0 };
-        Shader m_shader{};
+        static Shader m_shader; // Shared across all instances
         bool m_initialized{ false };
     };
 }

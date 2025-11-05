@@ -220,8 +220,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
 
     // Create Material
     auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
-
-    meshMaterial->setAllTexturesLoaded(true); // ???????????
+    meshMaterial->setAllTexturesLoaded(true);
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };

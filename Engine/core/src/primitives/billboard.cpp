@@ -136,8 +136,11 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("Unbind");
+    if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
+    {
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("Unbind");
+    }
 }
 
 //void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)

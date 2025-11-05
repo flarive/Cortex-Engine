@@ -188,6 +188,19 @@ void engine::Shader::use()
     glUseProgram(engine::Shader::ID);
 }
 
+// check uniform in shader
+// -------------------------------------------------------------------------
+bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, std::string uniformName)
+{
+    GLint uniformLoc = glGetUniformLocation(shaderID, uniformName.c_str());
+    if (uniformLoc == -1) {
+        std::cerr << "Uniform '" << uniformName << "' not found in shader " << shaderID << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 // utility uniform functions
 // ------------------------------------------------------------------------
 void engine::Shader::setBool(const std::string& name, bool value) const
@@ -276,4 +289,11 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
             exit(EXIT_FAILURE);
         }
     }
+}
+
+engine::ShaderType engine::Shader::getShaderType()
+{
+    if (name == "blinnphong") return ShaderType::BlinnPhong;
+    if (name == "pbr") return ShaderType::PBR;
+    return ShaderType::Unknown;
 }

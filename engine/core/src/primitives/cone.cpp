@@ -144,8 +144,6 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-
-
     shader.use();
     OpenGLDebug::checkGLError("shader.use");
 
@@ -196,8 +194,11 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("Unbind");
+    if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
+    {
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("Unbind");
+    }
 }
 
 void engine::Cone::clean()

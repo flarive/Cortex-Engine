@@ -101,22 +101,17 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 
+
+    ShaderType type = shader.getShaderType();
+
     if (m_material)
     {
-        if (shader.name == "blinnphong" || shader.name == "pbr")
+        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
         {
             if (!m_material->bind(shader)) {
                 std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
                 return;
             }
-
-
-            //GLint uniformLoc = glGetUniformLocation(shader.ID, "material.texture_diffuse");
-            //if (uniformLoc == -1) {
-            //    std::cerr << "Uniform 'material.texture_diffuse' not found in shader " << shader.ID << std::endl;
-            //}
-
-
 
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
             shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
@@ -136,7 +131,8 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
 
-    if (shader.name == "blinnphong" || shader.name == "pbr")
+
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
@@ -162,8 +158,11 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
         drawDebugNormals(projection, view, transformMatrix);
     }
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("Unbind");
+    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
+    {
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("Unbind");
+    }
 }
 
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

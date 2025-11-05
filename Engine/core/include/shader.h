@@ -8,6 +8,14 @@
 
 namespace engine
 {
+    enum class ShaderType {
+        Unknown,
+        BlinnPhong,
+        PBR
+    };
+
+    
+
     class Shader final : private NonCopyable
     {
     public:
@@ -29,6 +37,8 @@ namespace engine
         // activate the shader
         void use();
 
+        bool checkShaderUniformExists(unsigned int shaderID, std::string uniformName);
+
         // utility uniform functions
         void setBool(const std::string& name, bool value) const;
         void setInt(const std::string& name, int value) const;
@@ -43,6 +53,9 @@ namespace engine
         void setMat3(const std::string& name, const glm::mat3& mat) const;
         void setMat4(const std::string& name, const glm::mat4& mat) const;
         void clean();
+
+        ShaderType getShaderType();
+
 
     private:
         bool m_initialized = false;

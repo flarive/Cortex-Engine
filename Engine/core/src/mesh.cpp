@@ -10,51 +10,6 @@ engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _ind
     setupMesh();
 }
 
-
-// render the mesh
-//void engine::Mesh::draw(Shader& shader, glm::vec3 position, glm::vec3 scale, float angle, glm::vec3 rotation)
-//{
-//    assert(m_material);
-//
-//    shader.use();
-//    m_material->bind(shader); // Bind material textures
-//
-//    // send to GPU
-//    glBindVertexArray(m_VAO);
-//
-//    // calculate the model matrix for each object and pass it to shader before drawing
-//    glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-//    model = glm::translate(model, position);
-//    if (angle > 0.0f) model = glm::rotate(model, glm::radians(angle), rotation);
-//    model = glm::scale(model, scale);
-//    shader.setMat4("model", model);
-//    shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(model))));
-//    shader.setBool("hasTangents", true);
-//
-//    if (m_material)
-//    {
-//        shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-//        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-//        shader.setVec3("material.specular_color", m_material->getSpecularColor());
-//
-//        float aa = m_material->getShininessIntensity();
-//
-//        shader.setFloat("material.shininess", m_material->getShininessIntensity());
-//
-//        shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-//
-//        shader.setFloat("material.heightScale", m_material->getHeightIntensity());
-//        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-//        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-//    }
-//
-//    // draw mesh
-//    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//
-//    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-//}
-
 // render the mesh
 void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
 {
@@ -121,14 +76,10 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-
-    if (m_material)
+    if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
     {
-        if (shader.name == "blinnphong" || shader.name == "pbr")
-        {
-            m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-            OpenGLDebug::checkGLError("Unbind");
-        }
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("Unbind");
     }
 }
 

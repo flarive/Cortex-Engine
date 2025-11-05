@@ -206,8 +206,11 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("Unbind");
+    if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
+    {
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("Unbind");
+    }
 }
 
 void engine::Cylinder::clean()

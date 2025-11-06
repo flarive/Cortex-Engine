@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "../common_defines.h"
+
 namespace engine
 {
     enum class RenderMethod
@@ -18,7 +20,10 @@ namespace engine
         std::string HDRSkyboxFilePath{};
         float HDRSkyboxBlurStrength{ 0.0f };
 
+        bool enableShadows{ true };
         float shadowIntensity{ 1.5f };
+        float shadowMapsTextureSize{ 2048.0f };
+        
         float iblDiffuseIntensity{ 1.0f };
         float iblSpecularIntensity{ 1.0f };
 
@@ -31,7 +36,6 @@ namespace engine
         bool drawBoundingBoxesVisualHelpers{ false };
         bool drawNormalsVisualHelpers{ false };
 
-        bool enableShadows{ true };
-        GLsizei shadowMapsTextureSize = 2048;
+        
     };
 }

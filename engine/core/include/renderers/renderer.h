@@ -129,12 +129,12 @@ namespace engine
 		void enableFaceCulling(bool enable);
 		
 
-		void initDepthMapFramebuffer(); // for point light
-		void initDepthMapFramebuffer2(); // for omni light
+		void initDepthMapFramebuffer(GLsizei shadowSize); // for point light
+		void initDepthMapFramebuffer2(GLsizei shadowSize); // for omni light
 
 
-		void computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
-		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
+		void computeDepthMapFramebuffer(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
+		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
 		
 
 		void computeColorFramebuffer();

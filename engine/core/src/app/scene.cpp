@@ -156,37 +156,61 @@ void engine::Scene::listenForEditorChanges()
             m_selectedEntityID = entity->id;
         });
 
-    m_editor.setOnSceneSettingChanged([this](std::string key, bool value)
+    m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, float> value)
         {
-            logger.info("{} setting changed: {})", key, value);
-
             auto* singleton = engine::Singleton::getInstance();
             assert(singleton != nullptr && "Singleton not initialized !");
             SceneSettings& sceneSettings = singleton->sceneSettings();
 
+			bool boolValue = false;
+			int intValue = 0;
+			float floatValue = 0.0f;
+
+            if (std::holds_alternative<bool>(value))
+            {
+                boolValue = std::get<bool>(value);
+                logger.info("{} setting changed: {})", key, boolValue);
+            }
+            else if (std::holds_alternative<int>(value))
+            {
+                intValue = std::get<int>(value);
+                logger.info("{} setting changed: {})", key, intValue);
+            }
+            else if (std::holds_alternative<float>(value))
+            {
+                floatValue = std::get<float>(value);
+                logger.info("{} setting changed: {})", key, floatValue);
+            }
+
             if (key == "draw_wireframe") {
-                sceneSettings.drawAsWireframe = value;
+                sceneSettings.drawAsWireframe = boolValue;
             }
             else if (key == "enable_gamma_correction") {
-                sceneSettings.enableGammaCorrection = value;
+                sceneSettings.enableGammaCorrection = boolValue;
             }
             else if (key == "enable_face_culling") {
-                sceneSettings.enableFaceCulling = value;
+                sceneSettings.enableFaceCulling = boolValue;
             }
             else if (key == "enable_camera_frustrum_culling") {
-                sceneSettings.enableCameraFrustrumCulling = value;
+                sceneSettings.enableCameraFrustrumCulling = boolValue;
 			}
             else if (key == "draw_lights_visual_helpers") {
-                sceneSettings.drawLightsVisualHelpers = value;
+                sceneSettings.drawLightsVisualHelpers = boolValue;
             }
             else if (key == "draw_bounding_boxes_visual_helpers") {
-                sceneSettings.drawBoundingBoxesVisualHelpers = value;
+                sceneSettings.drawBoundingBoxesVisualHelpers = boolValue;
             }
             else if (key == "draw_debug_normals_visual_helpers") {
-                sceneSettings.drawNormalsVisualHelpers = value;
+                sceneSettings.drawNormalsVisualHelpers = boolValue;
             }
             else if (key == "enable_shadows") {
-                sceneSettings.enableShadows = value;
+                sceneSettings.enableShadows = boolValue;
+            }
+            else if (key == "shadow_maps_texture_size") {
+                sceneSettings.shadowMapsTextureSize = floatValue;
+            }
+            else if (key == "shadow_intensity") {
+                sceneSettings.shadowIntensity = floatValue;
             }
         });
 }

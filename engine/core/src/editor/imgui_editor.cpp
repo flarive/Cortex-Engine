@@ -258,8 +258,21 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static int lastShadowMapTextureSize = 2048;
-    if (ImGui::SliderInt("Shadow maps texture size", &lastShadowMapTextureSize, 256, 4096))
+    static float lastShadowMapTextureSize = 2048;
+    static bool isDraggingSlider = false;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::DragFloat(
+        "Shadow maps texture size",
+        &sceneSetting_shadowMapTextureSize,
+        256, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+        256,  // Minimum value
+        4096   // Maximum value
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
     {
         if (m_onSceneSettingChanged && lastShadowMapTextureSize != sceneSetting_shadowMapTextureSize)
         {
@@ -267,6 +280,32 @@ void engine::ImGuiEditor::renderTabSettings()
             lastShadowMapTextureSize = sceneSetting_shadowMapTextureSize;
         }
     }
+
+
+
+    static float lastShadowIntensity = 1.5f;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::DragFloat(
+        "Shadow maps intensity",
+        &sceneSetting_shadowIntensity,
+        0.1f, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+        0.0f,  // Minimum value
+        5.0f   // Maximum value
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (m_onSceneSettingChanged && lastShadowIntensity != sceneSetting_shadowIntensity)
+        {
+            m_onSceneSettingChanged("shadow_intensity", sceneSetting_shadowIntensity);
+            lastShadowIntensity = sceneSetting_shadowIntensity;
+        }
+    }
+
+
 
     ImGui::PopStyleVar();
 

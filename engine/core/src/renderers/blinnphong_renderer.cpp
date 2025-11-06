@@ -80,9 +80,9 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            initDepthMapFramebuffer2();
+            initDepthMapFramebuffer2((GLsizei)settings.shadowMapsTextureSize);
         else
-            initDepthMapFramebuffer();
+            initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
     }
 
     // color framebuffer configuration
@@ -91,8 +91,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
-
-    
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -111,6 +109,10 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
 
     updateSettings();
 
@@ -131,7 +133,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setMat4("projection", projection);
     blinnPhongShader.setMat4("view", view);
     blinnPhongShader.setVec3("viewPos", camera->position);
-
+    blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
 
 
     // should be moved in init !!!!!!!!!!!!!!!!!!!!!!
@@ -143,7 +145,6 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
     blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
 
-    
 
     // update user stuffs
     update(blinnPhongShader);
@@ -155,9 +156,9 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            computeDepthMapFramebuffer2(blinnPhongShader, width, height, update, firstLight);
+            computeDepthMapFramebuffer2(blinnPhongShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
         else
-            computeDepthMapFramebuffer(blinnPhongShader, width, height, update, firstLight);
+            computeDepthMapFramebuffer(blinnPhongShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
     // render to framebuffer

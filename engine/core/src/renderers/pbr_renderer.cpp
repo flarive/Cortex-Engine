@@ -76,9 +76,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            initDepthMapFramebuffer2();
+            initDepthMapFramebuffer2((GLsizei)settings.shadowMapsTextureSize);
         else
-            initDepthMapFramebuffer();
+            initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
     }
 
     // color framebuffer configuration
@@ -294,7 +294,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setInt("LTC1", 20); // Should be texture unit, not texture ID
     pbrShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
 
-
     backgroundShader.use();
     backgroundShader.setMat4("projection", projection);
 
@@ -317,6 +316,12 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     updateSettings();
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
+
+
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();
 
@@ -327,6 +332,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setMat4("projection", projection);
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->position);
+    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
 
 
     // bind pre-computed IBL data
@@ -348,9 +354,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     update(pbrShader);
     update(outlineColorShader);
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+
 
     // render skybox (render as last to prevent overdraw)
     backgroundShader.use();
@@ -377,9 +381,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            computeDepthMapFramebuffer2(pbrShader, width, height, update, firstLight);
+            computeDepthMapFramebuffer2(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
         else
-            computeDepthMapFramebuffer(pbrShader, width, height, update, firstLight);
+            computeDepthMapFramebuffer(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
     // render to framebuffer

@@ -30,7 +30,7 @@ namespace engine
 		}
 
 		// Let parent register a callback
-		void setOnSceneSettingChanged(std::function<void(std::string, bool)> callback) {
+		void setOnSceneSettingChanged(std::function<void(std::string, std::variant<bool, int, float>) > callback) {
 			m_onSceneSettingChanged = std::move(callback);
 		}
 
@@ -45,7 +45,7 @@ namespace engine
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
-		std::function<void(std::string, bool)> m_onSceneSettingChanged; // << callback
+		std::function<void(std::string, std::variant<bool, int, float>)> m_onSceneSettingChanged; // << callback
 
 		void renderTabSettings();
 		void renderTabAbout();
@@ -93,7 +93,8 @@ namespace engine
 		bool sceneSetting_drawBoundingBoxesVisualHelpers{ false };
 		bool sceneSetting_drawDebugNormalsVisualHelpers{ false };
 		bool sceneSetting_enableShadows{ true };
-		unsigned int sceneSetting_shadowMapTextureSize{ 2048 };
+		float sceneSetting_shadowIntensity{ 1.5f };
+		float sceneSetting_shadowMapTextureSize{ 2048 };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

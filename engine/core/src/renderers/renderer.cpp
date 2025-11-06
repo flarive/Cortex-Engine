@@ -79,12 +79,17 @@ void engine::Renderer::enableGammaCorrection(bool enable)
 /// </summary>
 void engine::Renderer::initDepthMapFramebuffer()
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+
     // create depth framebuffer
     glGenFramebuffers(1, &depthMapFramebuffer);
     // create depth texture
     glGenTextures(1, &textureDepthMapBuffer);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, sceneSettings.shadowMapsTextureSize, sceneSettings.shadowMapsTextureSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -109,13 +114,18 @@ void engine::Renderer::initDepthMapFramebuffer()
 /// </summary>
 void engine::Renderer::initDepthMapFramebuffer2()
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+    
+    
     glGenFramebuffers(1, &depthMapFramebuffer);
     // create depth cubemap texture
     glGenTextures(1, &textureDepthMapBuffer);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, sceneSettings.shadowMapsTextureSize, sceneSettings.shadowMapsTextureSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -143,6 +153,10 @@ void engine::Renderer::initDepthMapFramebuffer2()
 /// </summary>
 void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
     glm::mat4 lightProjection, lightView;
@@ -156,7 +170,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     directionalDepthMapShader.use();
     directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glViewport(0, 0, sceneSettings.shadowMapsTextureSize, sceneSettings.shadowMapsTextureSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -166,19 +180,20 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     update(directionalDepthMapShader);
     glDisable(GL_POLYGON_OFFSET_FILL);
 
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // reset viewport
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    
+
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     shader.use();
     shader.setVec3("lightPos", light->position);
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-    shader.setBool("enableShadows", true);
+    shader.setBool("enableShadows", sceneSettings.enableShadows);
 
     // update user stuffs
     update(shader);
@@ -210,11 +225,16 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
 /// </summary>
 void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, int height, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+    
+    
     // 0. create depth cubemap transformation matrices
     // -----------------------------------------------
     float near_plane = 1.0f;  // Previously 1.0f
     float far_plane = 25.0f;  // Previously 25.0f
-    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT, near_plane, far_plane);
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), sceneSettings.shadowMapsTextureSize / sceneSettings.shadowMapsTextureSize, near_plane, far_plane);
 
     std::vector<glm::mat4> shadowTransforms;
     shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
@@ -228,7 +248,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
 
     // 1. render scene to depth cubemap
     // --------------------------------
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glViewport(0, 0, sceneSettings.shadowMapsTextureSize, sceneSettings.shadowMapsTextureSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
     pointDepthMapShader.use();
@@ -253,12 +273,13 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     glm::mat4 projection = glm::perspective(glm::radians(m_camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = m_camera->getViewMatrix();
 
+
     shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
     shader.setVec3("lightPos", light->position);
     shader.setVec3("viewPos", m_camera->position);
-    shader.setBool("enableShadows", true);
+    shader.setBool("enableShadows", sceneSettings.enableShadows);
     shader.setFloat("far_plane", far_plane);
 
     // update user stuffs

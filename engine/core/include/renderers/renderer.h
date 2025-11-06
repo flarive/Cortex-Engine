@@ -73,7 +73,7 @@ namespace engine
 		std::vector<std::shared_ptr<Light>> m_lights{};
 
 		// shadow maps texture size
-		const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
+		//const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
 
 		// renderbuffer object to render the main framebuffer
 		unsigned int rbo{};

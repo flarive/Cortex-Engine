@@ -103,8 +103,6 @@ void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
-    //OpenGLDebug::GLClearError();
-    
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
@@ -172,8 +170,6 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
-
-    //OpenGLDebug::GLCheckError();
 }
 
 void engine::BlinnPhongRenderer::loadShaders()

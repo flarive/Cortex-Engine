@@ -247,8 +247,26 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    
 
+    static bool lastEnableShadows = true;
+    if (ImGui::Toggle("Enable shadows", &sceneSetting_enableShadows, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastEnableShadows != sceneSetting_enableShadows)
+        {
+            m_onSceneSettingChanged("enable_shadows", sceneSetting_enableShadows);
+            lastEnableShadows = sceneSetting_enableShadows;
+        }
+    }
+
+    static int lastShadowMapTextureSize = 2048;
+    if (ImGui::SliderInt("Shadow maps texture size", &lastShadowMapTextureSize, 256, 4096))
+    {
+        if (m_onSceneSettingChanged && lastShadowMapTextureSize != sceneSetting_shadowMapTextureSize)
+        {
+            m_onSceneSettingChanged("shadow_maps_texture_size", sceneSetting_shadowMapTextureSize);
+            lastShadowMapTextureSize = sceneSetting_shadowMapTextureSize;
+        }
+    }
 
     ImGui::PopStyleVar();
 

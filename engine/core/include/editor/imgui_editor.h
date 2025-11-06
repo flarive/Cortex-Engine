@@ -92,6 +92,8 @@ namespace engine
 		bool sceneSetting_drawLightsVisualHelpers{ false };
 		bool sceneSetting_drawBoundingBoxesVisualHelpers{ false };
 		bool sceneSetting_drawDebugNormalsVisualHelpers{ false };
+		bool sceneSetting_enableShadows{ true };
+		unsigned int sceneSetting_shadowMapTextureSize{ 2048 };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

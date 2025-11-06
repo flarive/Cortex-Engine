@@ -77,6 +77,8 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
 
 void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    ShaderType type = shader.getShaderType();
+
     if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
@@ -102,7 +104,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     scale = localTransform.getLocalScale();
 
 
-    ShaderType type = shader.getShaderType();
+    
 
     if (m_material)
     {

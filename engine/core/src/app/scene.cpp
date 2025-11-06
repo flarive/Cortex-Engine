@@ -185,6 +185,9 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "draw_debug_normals_visual_helpers") {
                 sceneSettings.drawNormalsVisualHelpers = value;
             }
+            else if (key == "enable_shadows") {
+                sceneSettings.enableShadows = value;
+            }
         });
 }
 #endif

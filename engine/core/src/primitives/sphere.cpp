@@ -139,6 +139,8 @@ std::vector<engine::Vertex> engine::Sphere::generateVertices()
 
 void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    ShaderType type = shader.getShaderType();
+
     if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
@@ -163,7 +165,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
     if (m_material)
     {
-        if (shader.name == "blinnphong" || shader.name == "pbr")
+        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
         {
             if (!m_material->bind(shader)) {
                 std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
@@ -188,7 +190,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
 
-    if (shader.name == "blinnphong" || shader.name == "pbr")
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
@@ -204,7 +206,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    if (m_material && (shader.name == "blinnphong" || shader.name == "pbr"))
+    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");

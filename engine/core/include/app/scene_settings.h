@@ -30,5 +30,8 @@ namespace engine
         bool drawLightsVisualHelpers{ false };
         bool drawBoundingBoxesVisualHelpers{ false };
         bool drawNormalsVisualHelpers{ false };
+
+        bool enableShadows{ true };
+        GLsizei shadowMapsTextureSize = 2048;
     };
 }

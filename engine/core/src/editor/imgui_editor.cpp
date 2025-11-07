@@ -306,6 +306,39 @@ void engine::ImGuiEditor::renderTabSettings()
     }
 
 
+    
+    
+    //if (ImGui::InputFloat("Shadows maps bias", &sceneSetting_shadowMapBiasFactor))
+    //{
+    //    if (m_onSceneSettingChanged && lastShadowMapsBiasFactor != sceneSetting_shadowMapBiasFactor)
+    //    {
+    //        m_onSceneSettingChanged("shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
+    //        lastShadowMapsBiasFactor = sceneSetting_shadowMapBiasFactor;
+    //    }
+    //}
+
+    static float lastShadowMapsBiasFactor = 0.001f;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::DragFloat(
+        "Shadow maps bias",
+        &sceneSetting_shadowMapBiasFactor,
+        0.001f, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+        0.0001f,  // Minimum value
+        0.1f   // Maximum value
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (m_onSceneSettingChanged && lastShadowMapsBiasFactor != sceneSetting_shadowMapBiasFactor)
+        {
+            m_onSceneSettingChanged("shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
+            lastShadowMapsBiasFactor = sceneSetting_shadowMapBiasFactor;
+        }
+    }
+
 
     ImGui::PopStyleVar();
 

@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 
 // coming from vertex shader
 in VS_OUT {
@@ -32,6 +32,8 @@ struct Material {
 
     float heightScale;
     float shadowIntensity; // Adjust to make shadows darker
+    float shadowMapsBias; // Offset to reduce shadow acne
+    int shadowMapsBlur;
     float normalMapIntensity;
     float emissiveIntensity;
 
@@ -383,27 +385,113 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 //    return currentTexCoords;
 //}
 
-float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
+//float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
+//{
+//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+//    projCoords = projCoords * 0.5 + 0.5;
+//    
+//    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;
+//    float currentDepth = projCoords.z;
+//    
+//
+//    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir))), 0.0005);
+//
+//
+//    //float bias = max(0.002 * (1.0 - dot(fs_in.Normal, lightDir)), 0.0005);
+//    //float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.FragPos))), 0.0001);
+//    float shadow = 0.0;
+//    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+//    
+//    for (int x = -1; x <= 1; ++x) {
+//        for (int y = -1; y <= 1; ++y) {
+//            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+//            shadow += (currentDepth - bias > pcfDepth) ? 1.0 : 0.0;
+//        }
+//    }
+//    shadow /= 9.0;
+//    
+//    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+//
+//    return shadow;
+//}
+
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
 {
+    // Transform fragment position to light space
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
-    
-    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;
-    float currentDepth = projCoords.z;
-    
-    //float bias = max(0.002 * (1.0 - dot(fs_in.Normal, lightDir)), 0.0005);
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.FragPos))), 0.0001);
-    float shadow = 0.0;
+
+    // If outside shadow map, return no shadow
+    if (projCoords.z > 1.0)
+        return 0.0;
+
+    // Compute light direction
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+
+    // Compute bias (resolution-independent)
+    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
+
+    // Optional: scale bias by shadow map texel size for directional lights
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
-    
+    bias += length(texelSize) * 0.5;
+
+    // Percentage-Closer Filtering (3x3)
+    float shadow = 0.0;
     for (int x = -1; x <= 1; ++x) {
         for (int y = -1; y <= 1; ++y) {
             float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-            shadow += (currentDepth - bias > pcfDepth) ? 1.0 : 0.0;
+            shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
         }
     }
     shadow /= 9.0;
-    
+
+    // Apply shadow intensity and clamp
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+
+    return shadow;
+}
+
+float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightPos)
+{
+    // Transform fragment position to light space
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    // If outside shadow map, return no shadow
+    if (projCoords.z > 1.0)
+        return 0.0;
+
+    // Compute light direction
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+
+    // Bias calculation
+    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
+
+    // Shadow map texel size
+    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+
+    // Distance-based blur scaling
+    float distanceFactor = clamp(projCoords.z, 0.0, 1.0); // 0 near, 1 far
+    int radius = int(mix(1.0, float(material.shadowMapsBlur), distanceFactor)); // near -> small blur, far -> big blur
+    float sigma = float(radius) * 0.5; // Gaussian sigma based on radius
+
+    float shadow = 0.0;
+    float totalWeight = 0.0;
+
+    for (int x = -radius; x <= radius; ++x) {
+        for (int y = -radius; y <= radius; ++y) {
+            // Gaussian weight
+            float weight = exp(-(x*x + y*y) / (2.0 * sigma * sigma));
+
+            // Sample shadow map
+            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+
+            shadow += weight * ((projCoords.z - bias > pcfDepth) ? 1.0 : 0.0);
+            totalWeight += weight;
+        }
+    }
+
+    shadow /= totalWeight; // Normalize by total weight
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
 
     return shadow;
@@ -572,7 +660,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
-    float shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    float shadow = enableShadows ? ShadowCalculationPCFWithBlur(fs_in.FragPosLightSpace, light.direction) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  

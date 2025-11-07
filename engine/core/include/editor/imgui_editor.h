@@ -95,6 +95,7 @@ namespace engine
 		bool sceneSetting_enableShadows{ true };
 		float sceneSetting_shadowIntensity{ 1.5f };
 		float sceneSetting_shadowMapTextureSize{ 2048 };
+		float sceneSetting_shadowMapBiasFactor{ 0.001f };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

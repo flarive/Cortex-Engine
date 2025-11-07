@@ -73,7 +73,6 @@ void MyScene8::init()
     // cube 2
     auto myCube2 = std::make_shared<engine::Cube>();
     myCube2->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
-
     auto trsCube2 = engine::Transform(glm::vec3(1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCube2 = std::make_shared<engine::Entity>("MyCube2");
     entityCube2->addComponent<engine::TransformComponent>(trsCube2);
@@ -94,7 +93,6 @@ void MyScene8::init()
     // cube 4
     auto myCube4 = std::make_shared<engine::Cube>();
     myCube4->setup(std::make_shared<engine::BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
-
     auto trsCube4 = engine::Transform(glm::vec3(-1.0f, -0.35f, 1.0f), glm::vec3(0.15f), glm::vec3(0.0f, 0.0f, 0.0f));
     auto entityCube4 = std::make_shared<engine::Entity>("MyCube4");
     entityCube4->addComponent<engine::TransformComponent>(trsCube4);

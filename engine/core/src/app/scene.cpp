@@ -206,11 +206,14 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "enable_shadows") {
                 sceneSettings.enableShadows = boolValue;
             }
+            else if (key == "shadow_intensity") {
+                sceneSettings.shadowIntensity = floatValue;
+            }
             else if (key == "shadow_maps_texture_size") {
                 sceneSettings.shadowMapsTextureSize = floatValue;
             }
-            else if (key == "shadow_intensity") {
-                sceneSettings.shadowIntensity = floatValue;
+            else if (key == "shadow_maps_bias_factor") {
+                sceneSettings.shadowMapsBiasFactor = floatValue;
             }
         });
 }

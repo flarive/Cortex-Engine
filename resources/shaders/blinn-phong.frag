@@ -32,6 +32,7 @@ struct Material {
     bool has_texture_emissive_map;
 
     float shadowIntensity; // Adjust to make shadows darker
+    float shadowMapsBias; // Offset to reduce shadow acne
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 }; 
@@ -389,7 +390,7 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
     // now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
 
-    float bias = 0.001;
+    float bias = material.shadowMapsBias;
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 
 
@@ -476,7 +477,7 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 l
 
 	// Angle-dependent bias
 	//float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-    float bias = 0.001;
+    float bias = material.shadowMapsBias; //0.001
 
 	// View-dependent disk radius
 	float viewDistance = length(viewPos - fragPos);

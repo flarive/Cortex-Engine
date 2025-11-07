@@ -42,7 +42,6 @@ namespace engine
 
 		std::shared_ptr<Entity> m_selectedEntity{};
 
-
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
 		std::function<void(std::string, std::variant<bool, int, float>)> m_onSceneSettingChanged; // << callback
@@ -77,11 +76,16 @@ namespace engine
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 
+		void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format = "");
+
+
 	protected:
 		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache{};
 		std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache{};
 
 		std::unordered_map<std::string, GLuint> m_iconActionTextureCache{};
+
+		
 
 		float itemLabelWidth{ 100.0f }; // pixels
 
@@ -96,6 +100,7 @@ namespace engine
 		float sceneSetting_shadowIntensity{ 1.5f };
 		float sceneSetting_shadowMapTextureSize{ 2048 };
 		float sceneSetting_shadowMapBiasFactor{ 0.001f };
+		float sceneSetting_shadowMapBlur{ 0.001f };
 
 		const float ROUNDING{ 3.0f };
 		const ImVec2 SIZE{ ImVec2(21, 21) };

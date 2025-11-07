@@ -215,6 +215,9 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "shadow_maps_bias_factor") {
                 sceneSettings.shadowMapsBiasFactor = floatValue;
             }
+            else if (key == "shadow_maps_blur_factor") {
+                sceneSettings.shadowMapsBlur = floatValue;
+            }
         });
 }
 #endif

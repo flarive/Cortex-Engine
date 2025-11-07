@@ -24,6 +24,7 @@ namespace engine
         float shadowIntensity{ 1.5f };
         float shadowMapsTextureSize{ 2048.0f };
         float shadowMapsBiasFactor{ 0.001f };
+        float shadowMapsBlur{ 1.0f };
         
         float iblDiffuseIntensity{ 1.0f };
         float iblSpecularIntensity{ 1.0f };

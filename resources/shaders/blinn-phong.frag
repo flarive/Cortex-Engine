@@ -33,6 +33,7 @@ struct Material {
 
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
+    float shadowMapsBlur;
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 }; 

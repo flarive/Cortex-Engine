@@ -57,7 +57,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setInt("material.texture_brdfLUT", 9); // Should be texture unit, not texture ID
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    pbrShader.setInt("material.shadowMapsBlur", 3);
+    pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
@@ -336,7 +336,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setVec3("viewPos", camera->position);
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    pbrShader.setInt("material.shadowMapsBlur", 3);
+    pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
 
     // bind pre-computed IBL data

@@ -258,93 +258,55 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
+    
+
+
+
     static float lastShadowMapTextureSize = 2048;
-    static bool isDraggingSlider = false;
-
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::DragFloat(
-        "Shadow maps texture size",
-        &sceneSetting_shadowMapTextureSize,
-        256, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
-        256,  // Minimum value
-        4096   // Maximum value
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastShadowMapTextureSize != sceneSetting_shadowMapTextureSize)
-        {
-            m_onSceneSettingChanged("shadow_maps_texture_size", sceneSetting_shadowMapTextureSize);
-            lastShadowMapTextureSize = sceneSetting_shadowMapTextureSize;
-        }
-    }
-
-
+    renderSliderFloatWithLabel("Shadow maps texture size", "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096, 256, "%.0f");
 
     static float lastShadowIntensity = 1.5f;
+    renderSliderFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f");
 
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::DragFloat(
-        "Shadow maps intensity",
-        &sceneSetting_shadowIntensity,
-        0.1f, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
-        0.0f,  // Minimum value
-        5.0f   // Maximum value
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastShadowIntensity != sceneSetting_shadowIntensity)
-        {
-            m_onSceneSettingChanged("shadow_intensity", sceneSetting_shadowIntensity);
-            lastShadowIntensity = sceneSetting_shadowIntensity;
-        }
-    }
-
-
-    
-    
-    //if (ImGui::InputFloat("Shadows maps bias", &sceneSetting_shadowMapBiasFactor))
-    //{
-    //    if (m_onSceneSettingChanged && lastShadowMapsBiasFactor != sceneSetting_shadowMapBiasFactor)
-    //    {
-    //        m_onSceneSettingChanged("shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
-    //        lastShadowMapsBiasFactor = sceneSetting_shadowMapBiasFactor;
-    //    }
-    //}
 
     static float lastShadowMapsBiasFactor = 0.001f;
+    renderSliderFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.0001f, 0.1f, 0.001f, "%.3f");
 
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::DragFloat(
-        "Shadow maps bias",
-        &sceneSetting_shadowMapBiasFactor,
-        0.001f, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
-        0.0001f,  // Minimum value
-        0.1f   // Maximum value
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastShadowMapsBiasFactor != sceneSetting_shadowMapBiasFactor)
-        {
-            m_onSceneSettingChanged("shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
-            lastShadowMapsBiasFactor = sceneSetting_shadowMapBiasFactor;
-        }
-    }
-
+    static float lastShadowMapsBlur = 1.0f;
+    renderSliderFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 10.0f, 0.1f, "%.1f");
 
     ImGui::PopStyleVar();
 
     ImGui::PopStyleColor();
 
     ImGui::EndChild();
+}
+
+
+void engine::ImGuiEditor::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format)
+{
+    static bool isDraggingSlider = false;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::DragFloat(
+        label,
+        &value,
+        step, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+        min,  // Minimum value
+        max,   // Maximum value
+		format // Display format
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (m_onSceneSettingChanged && lastValue != value)
+        {
+            m_onSceneSettingChanged(key, value);
+            lastValue = value;
+        }
+    }
 }
 
 void engine::ImGuiEditor::renderTabAbout()

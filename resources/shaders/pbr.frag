@@ -33,7 +33,7 @@ struct Material {
     float heightScale;
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
-    int shadowMapsBlur;
+    float shadowMapsBlur;
     float normalMapIntensity;
     float emissiveIntensity;
 
@@ -472,7 +472,7 @@ float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightPos)
 
     // Distance-based blur scaling
     float distanceFactor = clamp(projCoords.z, 0.0, 1.0); // 0 near, 1 far
-    int radius = int(mix(1.0, float(material.shadowMapsBlur), distanceFactor)); // near -> small blur, far -> big blur
+    int radius = int(material.shadowMapsBlur);// int(mix(1.0, float(material.shadowMapsBlur), distanceFactor)); // near -> small blur, far -> big blur
     float sigma = float(radius) * 0.5; // Gaussian sigma based on radius
 
     float shadow = 0.0;

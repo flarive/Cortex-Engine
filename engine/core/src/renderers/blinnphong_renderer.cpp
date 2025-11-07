@@ -55,7 +55,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.use();
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShader.setInt("material.shadowMapsBlur", 1);
+    blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
 
     LTC1Map = Texture::loadMTexture();
@@ -137,7 +137,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setVec3("viewPos", camera->position);
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShader.setInt("material.shadowMapsBlur", 1);
+    blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
 
     // should be moved in init !!!!!!!!!!!!!!!!!!!!!!

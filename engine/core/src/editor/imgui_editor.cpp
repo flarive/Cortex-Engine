@@ -268,12 +268,11 @@ void engine::ImGuiEditor::renderTabSettings()
     static float lastShadowIntensity = 1.5f;
     renderSliderFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f");
 
-
     static float lastShadowMapsBiasFactor = 0.001f;
     renderSliderFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.0001f, 0.1f, 0.001f, "%.3f");
 
     static float lastShadowMapsBlur = 1.0f;
-    renderSliderFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 10.0f, 0.1f, "%.1f");
+    renderSliderFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 11.0f, 1.0f, "%.0f");
 
     ImGui::PopStyleVar();
 

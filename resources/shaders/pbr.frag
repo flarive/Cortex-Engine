@@ -451,7 +451,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightDir)
 {
     // Transform fragment position to light space
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -461,19 +461,22 @@ float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightPos)
     if (projCoords.z > 1.0)
         return 0.0;
 
-    // Compute light direction
-    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    // Normal-offset bias: move fragment slightly along normal in light space
+    vec3 normal = normalize(fs_in.Normal);
+    vec3 offsetPos = fs_in.FragPos + normal * 0.005; // tweak offset for acne reduction
+    vec4 offsetLightSpace = lightSpaceMatrix * vec4(offsetPos, 1.0);
+    vec3 offsetProjCoords = offsetLightSpace.xyz / offsetLightSpace.w;
+    offsetProjCoords = offsetProjCoords * 0.5 + 0.5;
 
-    // Bias calculation
-    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
+    // Bias based on angle
+    float bias = max(0.005 * (1.0 - dot(normal, normalize(lightDir))), 0.0005);
 
     // Shadow map texel size
     vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
 
-    // Distance-based blur scaling
-    float distanceFactor = clamp(projCoords.z, 0.0, 1.0); // 0 near, 1 far
-    int radius = int(material.shadowMapsBlur);// int(mix(1.0, float(material.shadowMapsBlur), distanceFactor)); // near -> small blur, far -> big blur
-    float sigma = float(radius) * 0.5; // Gaussian sigma based on radius
+    // Fixed blur radius and Gaussian sigma
+    int radius = int(material.shadowMapsBlur);        // e.g., 2 for 5x5 kernel
+    float sigma = float(radius) * 1.0;
 
     float shadow = 0.0;
     float totalWeight = 0.0;
@@ -484,9 +487,9 @@ float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightPos)
             float weight = exp(-(x*x + y*y) / (2.0 * sigma * sigma));
 
             // Sample shadow map
-            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float pcfDepth = texture(material.texture_shadowMap, offsetProjCoords.xy + vec2(x, y) * texelSize).r;
 
-            shadow += weight * ((projCoords.z - bias > pcfDepth) ? 1.0 : 0.0);
+            shadow += weight * ((offsetProjCoords.z - bias > pcfDepth) ? 1.0 : 0.0);
             totalWeight += weight;
         }
     }

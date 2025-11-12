@@ -98,8 +98,8 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // shader configuration
-    // --------------------
+    // shader configuration for visual debugging
+    // -----------------------------------------
     //depthMapToQuadShader.use();
     //depthMapToQuadShader.setInt("depthMap", 0);
 }
@@ -348,8 +348,8 @@ void engine::Renderer::initColorFramebufferMSAA(int width, int height)
 
 void engine::Renderer::computeColorFramebuffer()
 {
-    // draw color framebuffer to screen
-    // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+     //draw color framebuffer to screen
+     //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
     // clear all relevant buffers

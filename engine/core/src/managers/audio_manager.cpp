@@ -8,7 +8,7 @@
 
 engine::AudioManager::AudioManager()
 {
-    initOpenAL();
+    //initOpenAL(); // uncomment !
 }
 
 engine::AudioManager::~AudioManager()

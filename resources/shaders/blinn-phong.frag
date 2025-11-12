@@ -306,7 +306,6 @@ vec2 rand(vec2 co)
     return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
 }
 
-
 float ShadowCalculationFaster(vec4 fragPosLightSpace, vec3 lightPos)
 {
     // perform perspective divide
@@ -344,6 +343,34 @@ float ShadowCalculationFaster(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
+//float ShadowCalculation(vec4 fragPosLightSpace)
+//{
+//    // perform perspective divide
+//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+//    // transform to [0,1] range
+//    projCoords = projCoords * 0.5 + 0.5;
+//    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+//    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r; 
+//    // get depth of current fragment from light's perspective
+//    float currentDepth = projCoords.z;
+//    // check whether current frag pos is in shadow
+//    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+//
+//    return shadow;
+//} 
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    // read blurred depth
+    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    return shadow;
+}
 
 float ShadowCalculationSlower(vec4 fragPosLightSpace, vec3 lightPos)
 {
@@ -639,6 +666,8 @@ void main()
     //FragColor = vec4(ToSRGB(result), alpha);
     FragColor = vec4(result, alpha);
 
+    //FragColor = texture(material.texture_shadowMap,  fs_in.TexCoords);
+
     // Discard transparent fragments (optional)
     if (alpha < 0.1)
         discard;
@@ -760,7 +789,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     specular *= attenuation * intensity;
 
     // Shadow calculation (using the light's position for shadow mapping)
-    float shadow = enableShadows ? ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position) : 0.0;
+    //float shadow = enableShadows ? ShadowCalculationSlower(fs_in.FragPosLightSpace, light.position) : 0.0;
+    float shadow = enableShadows ? ShadowCalculation(fs_in.FragPosLightSpace) : 0.0;
+    
     
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

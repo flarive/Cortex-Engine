@@ -354,8 +354,6 @@ void engine::Scene::gameLoop()
     auto cpuFrameEnd = Clock::now();
     std::chrono::duration<double, std::milli> cpuFrameDuration = cpuFrameEnd - cpuFrameStart;
     cpuTime = cpuFrameDuration.count();
-
-    
 }
 
 void engine::Scene::initEntities()
@@ -407,6 +405,7 @@ void engine::Scene::drawEntities(Shader& shader)
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum)
 {
+
     if (!entity->enabled)
         return;
 
@@ -649,7 +648,7 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
 void engine::Scene::refreshFullscreen()
 {
     // reinit framebuffers because width and height changed
-    m_renderer->initColorFramebuffer(app->width, app->height);
+    m_renderer->initColorFramebuffer(app->width, app->height); // TODO use MSAA version instead !!!
 }
 
 void engine::Scene::glfw_error_callback(int error, const char* description)

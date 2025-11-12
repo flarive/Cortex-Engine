@@ -415,6 +415,22 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 //    return shadow;
 //}
 
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}  
+
 float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
 {
     // Transform fragment position to light space
@@ -638,7 +654,14 @@ void main()
     //color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
 
-    FragColor = vec4(color, 1.0);
+    // Sample the alpha value from the diffuse texture
+    float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
+
+    FragColor = vec4(color, alpha);
+
+    // Discard transparent fragments (optional)
+    if (alpha < 0.1)
+        discard;
 }
 
 // Calculates the color when using a spot light.
@@ -663,7 +686,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
-    float shadow = enableShadows ? ShadowCalculationPCFWithBlur(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    float shadow = enableShadows ? ShadowCalculation(fs_in.FragPosLightSpace) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  

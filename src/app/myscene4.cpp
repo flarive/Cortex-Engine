@@ -197,7 +197,8 @@ void MyScene4::drawScene(engine::Shader& shader)
     if (myCushion)
     {
         auto trs = myCushion->getTransform();
-        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         myCushion->setTransform(trs);
     }
 

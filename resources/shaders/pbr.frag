@@ -31,6 +31,8 @@ struct Material {
     sampler2D texture_roughness_from_combined;
 
     float heightScale;
+
+    int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
@@ -149,8 +151,34 @@ uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 const float PI = 3.14159265359;
 
 
+// function prototypes
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
-const vec2 poissonDisk[16] = vec2[](
+
+const int POISSON_SAMPLES = 4;
+
+const vec2 poissonDisk4[4] = vec2[](
+    vec2(0.130, 0.870),
+    vec2(0.570, 0.430),
+    vec2(0.930, 0.720),
+    vec2(0.420, 0.920)
+);
+
+const vec2 poissonDisk8[8] = vec2[](
+    vec2(0.14, 0.43),
+    vec2(0.65, 0.15),
+    vec2(0.33, 0.87),
+    vec2(0.76, 0.75),
+    vec2(0.19, 0.62),
+    vec2(0.51, 0.33),
+    vec2(0.83, 0.44),
+    vec2(0.25, 0.98)
+);
+
+const vec2 poissonDisk16[16] = vec2[](
     vec2(-0.94201624, -0.39906216),
     vec2(0.94558609, -0.76890725),
     vec2(-0.094184101, -0.92938870),
@@ -168,14 +196,6 @@ const vec2 poissonDisk[16] = vec2[](
     vec2(0.19984126, 0.78641367),
     vec2(0.14383161, -0.14100790)
 );
-
-
-// function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
-vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
-
 
 // Vector form without project to the plane (dot with the normal)
 // Use for proxy sphere clipping
@@ -385,36 +405,7 @@ vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 //    return currentTexCoords;
 //}
 
-//float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
-//{
-//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-//    projCoords = projCoords * 0.5 + 0.5;
-//    
-//    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r;
-//    float currentDepth = projCoords.z;
-//    
-//
-//    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir))), 0.0005);
-//
-//
-//    //float bias = max(0.002 * (1.0 - dot(fs_in.Normal, lightDir)), 0.0005);
-//    //float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightDir - fs_in.FragPos))), 0.0001);
-//    float shadow = 0.0;
-//    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
-//    
-//    for (int x = -1; x <= 1; ++x) {
-//        for (int y = -1; y <= 1; ++y) {
-//            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-//            shadow += (currentDepth - bias > pcfDepth) ? 1.0 : 0.0;
-//        }
-//    }
-//    shadow /= 9.0;
-//    
-//    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
-//
-//    return shadow;
-//}
-
+// hard shadows
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     // perform perspective divide
@@ -429,9 +420,9 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 
     return shadow;
-}  
+}
 
-float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
 {
     // Transform fragment position to light space
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -467,7 +458,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightDir)
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
 {
     // Transform fragment position to light space
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -515,6 +506,181 @@ float ShadowCalculationPCFWithBlur(vec4 fragPosLightSpace, vec3 lightDir)
 
     return shadow;
 }
+
+// PCF soft shadows
+float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
+{
+    // Project fragment position from light space to [0,1]
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    // If outside the light frustum, no shadow
+    if (projCoords.z > 1.0)
+        return 0.0;
+
+    float currentDepth = projCoords.z;
+
+    // Dynamic bias based on angle to light
+    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
+
+    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+
+    // === Controls for softness ===
+    float shadowSoftness = material.shadowMapsBlur;  // Larger => softer
+    float diskRadius = shadowSoftness * texelSize.x;
+
+    float shadow = 0.0;
+    int totalSamples = 0;
+
+    // Combine Poisson offsets + small PCF kernel
+    for (int i = 0; i < 16; ++i)
+    {
+        vec2 poissonOffset = (poissonDisk16[i] - 0.5) * diskRadius;
+
+        for (int x = -1; x <= 1; ++x)
+        {
+            for (int y = -1; y <= 1; ++y)
+            {
+                vec2 offset = poissonOffset + vec2(x, y) * texelSize;
+                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+                totalSamples++;
+            }
+        }
+    }
+
+    shadow /= float(totalSamples);
+
+    return shadow;
+}
+
+float rand2(vec2 co)
+{
+    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+mat2 rotationMatrix(float angle)
+{
+    float s = sin(angle);
+    float c = cos(angle);
+    return mat2(c, -s, s, c);
+}
+
+const int PCSS_SAMPLES = 16;
+//const int PCSS_SAMPLES = 24; // high quality
+//const int PCSS_SAMPLES = 32; // ultra smooth
+
+const vec2 poissonDiskPCSS[PCSS_SAMPLES] = vec2[](
+    vec2(-0.94201624, -0.39906216),
+    vec2( 0.94558609, -0.76890725),
+    vec2(-0.09418410, -0.92938870),
+    vec2( 0.34495938,  0.29387760),
+    vec2(-0.91588581,  0.45771432),
+    vec2(-0.81544232, -0.87912464),
+    vec2(-0.38277543,  0.27676845),
+    vec2( 0.97484398,  0.75648379),
+    vec2( 0.44323325, -0.97511554),
+    vec2( 0.53742981, -0.47373420),
+    vec2(-0.26496911, -0.41893023),
+    vec2( 0.79197514,  0.19090188),
+    vec2(-0.24188840,  0.99706507),
+    vec2(-0.81409955,  0.91437590),
+    vec2( 0.19984126,  0.78641367),
+    vec2( 0.14383161, -0.14100790)
+);
+
+
+// PCSS (Percentage-Closer Soft Shadows) is a PCF better variant
+// Crisp shadows (like Sun at noon):
+// float searchRadius = 4.0 * texelSize.x;
+// float filterRadius = penumbra * 18.0 * texelSize.x;
+// Realistic daylight:
+// float searchRadius = 5.0 * texelSize.x;
+// float filterRadius = penumbra * 30.0 * texelSize.x;
+// Very soft cloudy-day shadows:
+// float searchRadius = 7.0 * texelSize.x;
+// float filterRadius = penumbra * 55.0 * texelSize.x;
+float ShadowCalculationPCSS(vec4 fragPosLightSpace)
+{
+    // Project fragment from light space to shadow map UV
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0)
+        return 0.0;
+
+    float currentDepth = projCoords.z;
+
+    // Bias
+    float bias = material.shadowMapsBias; // 0.001
+
+    // Shadow map texel size
+    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+
+    // =========================================================
+    // 1. BLOCKER SEARCH
+    // =========================================================
+    float avgBlockerDepth = 0.0;
+    int blockerCount = 0;
+
+    //float searchRadius = 3.0 * texelSize.x; // tighter
+    float searchRadius = 6.0 * texelSize.x; // broader penumbra
+
+    for (int i = 0; i < PCSS_SAMPLES; ++i)
+    {
+        vec2 disk = poissonDiskPCSS[i] * searchRadius;
+        float depthSample = texture(material.texture_shadowMap, projCoords.xy + disk).r;
+
+        if (depthSample < currentDepth - bias)
+        {
+            avgBlockerDepth += depthSample;
+            blockerCount++;
+        }
+    }
+
+    if (blockerCount == 0)
+        return 0.0; // No blocker = fully lit
+
+    avgBlockerDepth /= float(blockerCount);
+
+    // =========================================================
+    // 2. PENUMBRA SIZE
+    // =========================================================
+    float receiver = currentDepth;
+    float penumbra = (receiver - avgBlockerDepth) / max(avgBlockerDepth, 0.0001);
+
+    //float filterRadius = penumbra * 15.0 * texelSize.x; // crisp
+    //float filterRadius = penumbra * 25.0 * texelSize.x; // medium soft
+    //float filterRadius = penumbra * 50.0 * texelSize.x; // very soft
+
+    float filterRadius = penumbra * material.shadowMapsBlur * texelSize.x; // very soft
+
+    // =========================================================
+    // 3. PCF FILTERING w/ POISSON ROTATION
+    // =========================================================
+
+    float shadow = 0.0;
+
+    // rotate Poisson disk - removes banding
+    float angle = rand2(gl_FragCoord.xy) * 6.2831853;
+    mat2 rot = rotationMatrix(angle);
+
+    for (int i = 0; i < PCSS_SAMPLES; ++i)
+    {
+        vec2 disk = rot * poissonDiskPCSS[i];
+        vec2 offset = disk * filterRadius;
+
+        float sampleDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+
+        shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
+    }
+
+    shadow /= float(PCSS_SAMPLES);
+
+    return shadow;
+}
+
+
 
 // ----------------------------------------------------------------------------
 void main()
@@ -686,7 +852,13 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
-    float shadow = enableShadows ? ShadowCalculation(fs_in.FragPosLightSpace) : 0.0;
+    float shadow = 0.0;
+    if (material.shadowCalculationMethod == 1)
+        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    else if (material.shadowCalculationMethod == 2)
+        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    else if (material.shadowCalculationMethod == 3)
+        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  
@@ -745,7 +917,15 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     vec3 radiance = light.diffuse;
 
     // Shadow calculation
-    float shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    float shadow = 0.0;
+    if (material.shadowCalculationMethod == 1)
+        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    else if (material.shadowCalculationMethod == 2)
+        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+    else if (material.shadowCalculationMethod == 3)
+        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+
+
     radiance *= (1.0 - shadow);  
 
     vec3 F0 = mix(vec3(0.04), color, 1.0);  

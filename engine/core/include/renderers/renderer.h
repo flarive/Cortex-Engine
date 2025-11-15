@@ -102,6 +102,9 @@ namespace engine
 
 		Shader outlineColorShader{};
 
+		//Shader blurShader{};
+		//Shader depthToColorShader{};
+
 
 		unsigned int irradianceMap{};
 		unsigned int prefilterMap{};
@@ -119,6 +122,8 @@ namespace engine
 		unsigned short m_pointLightCount{};
 		unsigned short m_areaLightCount{};
 
+
+
 		virtual void loadShaders() = 0;
 		
 		
@@ -131,6 +136,7 @@ namespace engine
 
 		void initDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initDepthMapFramebuffer2(GLsizei shadowSize); // for omni light
+
 
 
 		void computeDepthMapFramebuffer(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);

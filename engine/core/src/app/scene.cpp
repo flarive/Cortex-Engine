@@ -156,7 +156,7 @@ void engine::Scene::listenForEditorChanges()
             m_selectedEntityID = entity->id;
         });
 
-    m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, float> value)
+    m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, unsigned int, float> value)
         {
             auto* singleton = engine::Singleton::getInstance();
             assert(singleton != nullptr && "Singleton not initialized !");
@@ -164,6 +164,7 @@ void engine::Scene::listenForEditorChanges()
 
 			bool boolValue = false;
 			int intValue = 0;
+            unsigned int unsignedIntValue = 0;
 			float floatValue = 0.0f;
 
             if (std::holds_alternative<bool>(value))
@@ -206,11 +207,14 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "enable_shadows") {
                 sceneSettings.enableShadows = boolValue;
             }
+            else if (key == "shadow_calculation_method") {
+                sceneSettings.shadowCalculationMethod = intValue;
+            }
             else if (key == "shadow_intensity") {
                 sceneSettings.shadowIntensity = floatValue;
             }
             else if (key == "shadow_maps_texture_size") {
-                sceneSettings.shadowMapsTextureSize = floatValue;
+                sceneSettings.shadowMapsTextureSize = static_cast<float>(intValue);
             }
             else if (key == "shadow_maps_bias_factor") {
                 sceneSettings.shadowMapsBiasFactor = floatValue;

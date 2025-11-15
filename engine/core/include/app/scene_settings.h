@@ -4,6 +4,8 @@
 
 #include "../common_defines.h"
 
+#include "../lights/light.h"
+
 namespace engine
 {
     enum class RenderMethod
@@ -21,6 +23,7 @@ namespace engine
         float HDRSkyboxBlurStrength{ 0.0f };
 
         bool enableShadows{ true };
+        int shadowCalculationMethod{ static_cast<int>(ShadowCalculationMethod::PCFSoft) };
         float shadowIntensity{ 1.5f };
         float shadowMapsTextureSize{ 2048.0f };
         float shadowMapsBiasFactor{ 0.001f };

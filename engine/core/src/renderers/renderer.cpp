@@ -1,4 +1,4 @@
-#include "../../include/renderers/renderer.h"
+﻿#include "../../include/renderers/renderer.h"
 
 #include "../../include/singleton.h"
 #include "../../include/debug/opengl_debug.h"
@@ -184,8 +184,9 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     // update user stuffs
     update(shader);
 
+
     glActiveTexture(GL_TEXTURE0 + 10);
-    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer); //blurColorBuffers[lastBlurIndex]
     shader.setInt("material.texture_shadowMap", 10);
 
 
@@ -194,6 +195,8 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     shader.setInt("material.texture_shadowMapCube", 11);
 
+
+
     // render Depth map to quad for visual debugging
     // ---------------------------------------------
     //depthMapToQuadShader.use();
@@ -201,6 +204,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     //depthMapToQuadShader.setFloat("far_plane", far_plane);
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+
 
     //// test depth map (also comment computeColorFramebuffer);
     //renderQuad();

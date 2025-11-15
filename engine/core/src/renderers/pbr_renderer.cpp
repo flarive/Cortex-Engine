@@ -56,6 +56,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setInt("material.texture_prefilter", 8); // Should be texture unit, not texture ID
     pbrShader.setInt("material.texture_brdfLUT", 9); // Should be texture unit, not texture ID
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
@@ -85,7 +86,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebufferMSAA(width, height);
+    //initColorFramebufferMSAA(width, height);
+    initColorFramebuffer(width, height);
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
@@ -335,6 +337,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->position);
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
@@ -393,11 +396,10 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     // render to framebuffer
     computeColorFramebuffer();
 
-
     // Resolve MSAA to screen or another texture FBO
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

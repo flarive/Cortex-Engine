@@ -395,46 +395,185 @@ namespace engine
         return vertices;
     }
 
-
-
-    inline std::vector<engine::Vertex> generateBillboardVertices(float uvScale)
+    inline std::vector<Vertex> generateBillboardVertices3(float uvScale, bool flipNormal = false)
     {
-        const glm::vec3 normal(0.0f, 0.0f, 1.0f);      // facing forward
-        const glm::vec3 tangent(1.0f, 0.0f, 0.0f);     // horizontal right
-        const glm::vec3 bitangent(0.0f, 1.0f, 0.0f);   // vertical up
-
-        // Quad corners, counter-clockwise order
-        glm::vec3 positions[] = {
-            { -0.5f, -0.5f, 0.0f },  // bottom-left
-            {  0.5f, -0.5f, 0.0f },  // bottom-right
-            {  0.5f,  0.5f, 0.0f },  // top-right
-            { -0.5f,  0.5f, 0.0f }   // top-left
-        };
-
-        // UVs (with uv scaling)
-        glm::vec2 uvs[] = {
-            { 0.0f, 0.0f },
-            { 1.0f * uvScale, 0.0f },
-            { 1.0f * uvScale, 1.0f * uvScale },
-            { 0.0f, 1.0f * uvScale }
-        };
-
-        // Define the two triangles (CCW winding)
         std::vector<engine::Vertex> vertices;
-        vertices.reserve(6);
 
-        // Triangle 1
-        vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
-        vertices.emplace_back( positions[1], normal, uvs[1], tangent, bitangent );
-        vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
+        // Helper function to rotate a vector 90 degrees around the X-axis
+        auto rotateX90 = [](const glm::vec3& v) {
+            return glm::vec3(
+                v.x,       // x remains the same
+                v.z,       // y becomes z
+                -v.y       // z becomes -y
+            );
+            };
 
-        // Triangle 2
-        vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
-        vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
-        vertices.emplace_back( positions[3], normal, uvs[3], tangent, bitangent );
+        // Define positions (XY plane, facing +Z) and rotate them
+        glm::vec3 pos1 = rotateX90(glm::vec3(-1.0f, 1.0f, 0.0f));  // Top-left
+        glm::vec3 pos2 = rotateX90(glm::vec3(-1.0f, -1.0f, 0.0f)); // Bottom-left
+        glm::vec3 pos3 = rotateX90(glm::vec3(1.0f, -1.0f, 0.0f));  // Bottom-right
+        glm::vec3 pos4 = rotateX90(glm::vec3(1.0f, 1.0f, 0.0f));   // Top-right
+
+        // Texture coordinates (unchanged)
+        glm::vec2 uv1(0.0f, 0.0f);          // Top-left
+        glm::vec2 uv2(0.0f, uvScale);       // Bottom-left
+        glm::vec2 uv3(uvScale, uvScale);    // Bottom-right
+        glm::vec2 uv4(uvScale, 0.0f);       // Top-right
+
+        // Normal vector (facing +Z or -Z) and rotate it
+        glm::vec3 normal = rotateX90(glm::vec3(0.0f, 0.0f, 1.0f));
+        if (flipNormal) {
+            normal = -normal;
+        }
+
+        // Triangle 1: pos1, pos3, pos2 (CCW)
+        glm::vec3 edge1 = pos3 - pos1;
+        glm::vec3 edge2 = pos2 - pos1;
+        glm::vec2 deltaUV1 = uv3 - uv1;
+        glm::vec2 deltaUV2 = uv2 - uv1;
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+        glm::vec3 tangent1, bitangent1;
+        tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        tangent1 = glm::normalize(tangent1);
+        tangent1 = rotateX90(tangent1); // Rotate tangent
+
+        bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+        bitangent1 = glm::normalize(bitangent1);
+        bitangent1 = rotateX90(bitangent1); // Rotate bitangent
+
+        // Triangle 2: pos1, pos4, pos3 (CCW)
+        edge1 = pos4 - pos1;
+        edge2 = pos3 - pos1;
+        deltaUV1 = uv4 - uv1;
+        deltaUV2 = uv3 - uv1;
+        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+        glm::vec3 tangent2, bitangent2;
+        tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        tangent2 = glm::normalize(tangent2);
+        tangent2 = rotateX90(tangent2); // Rotate tangent
+
+        bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+        bitangent2 = glm::normalize(bitangent2);
+        bitangent2 = rotateX90(bitangent2); // Rotate bitangent
+
+        // Flip tangent space if normal is flipped
+        if (flipNormal) {
+            tangent1 = -tangent1;
+            bitangent1 = -bitangent1;
+            tangent2 = -tangent2;
+            bitangent2 = -bitangent2;
+        }
+
+        // Add vertices with CCW winding
+        vertices.emplace_back(pos1, normal, uv1, tangent1, bitangent1);
+        vertices.emplace_back(pos3, normal, uv3, tangent1, bitangent1);
+        vertices.emplace_back(pos2, normal, uv2, tangent1, bitangent1);
+        vertices.emplace_back(pos1, normal, uv1, tangent2, bitangent2);
+        vertices.emplace_back(pos4, normal, uv4, tangent2, bitangent2);
+        vertices.emplace_back(pos3, normal, uv3, tangent2, bitangent2);
 
         return vertices;
     }
+
+
+
+
+    //inline std::vector<engine::Vertex> generateBillboardVertices(float uvScale)
+    //{
+    //    const glm::vec3 normal(0.0f, 0.0f, 1.0f);      // facing forward
+    //    const glm::vec3 tangent(1.0f, 0.0f, 0.0f);     // horizontal right
+    //    const glm::vec3 bitangent(0.0f, 1.0f, 0.0f);   // vertical up
+
+    //    // Quad corners, counter-clockwise order
+    //    glm::vec3 positions[] = {
+    //        { -0.5f, -0.5f, 0.0f },  // bottom-left
+    //        {  0.5f, -0.5f, 0.0f },  // bottom-right
+    //        {  0.5f,  0.5f, 0.0f },  // top-right
+    //        { -0.5f,  0.5f, 0.0f }   // top-left
+    //    };
+
+    //    // UVs (with uv scaling)
+    //    glm::vec2 uvs[] = {
+    //        { 0.0f, 0.0f },
+    //        { 1.0f * uvScale, 0.0f },
+    //        { 1.0f * uvScale, 1.0f * uvScale },
+    //        { 0.0f, 1.0f * uvScale }
+    //    };
+
+    //    // Define the two triangles (CCW winding)
+    //    std::vector<engine::Vertex> vertices;
+    //    vertices.reserve(6);
+
+    //    // Triangle 1
+    //    vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
+    //    vertices.emplace_back( positions[1], normal, uvs[1], tangent, bitangent );
+    //    vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
+
+    //    // Triangle 2
+    //    vertices.emplace_back( positions[0], normal, uvs[0], tangent, bitangent );
+    //    vertices.emplace_back( positions[2], normal, uvs[2], tangent, bitangent );
+    //    vertices.emplace_back( positions[3], normal, uvs[3], tangent, bitangent );
+
+    //    return vertices;
+    //}
+
+
+    inline std::vector<engine::Vertex> generateBillboardVerticesRot(float uvScale)
+    {
+        glm::mat4 rot = glm::rotate(glm::mat4(1.0f),
+            glm::radians(0.0f),
+            glm::vec3(0, 0, 1));
+
+
+
+        auto R = [&](const glm::vec3& v)
+            {
+                return glm::vec3(rot * glm::vec4(v, 1.0f));
+            };
+
+        glm::vec3 normal = R({ 0, 0, 1 });
+        glm::vec3 tangent = R({ 1, 0, 0 });
+        glm::vec3 bitangent = R({ 0, 1, 0 });
+
+        // Quad corners (will be rotated)
+        glm::vec3 positions[] = {
+            R({ -0.5f, -0.5f, 0.0f }), // bottom-left
+            R({  0.5f, -0.5f, 0.0f }), // bottom-right
+            R({  0.5f,  0.5f, 0.0f }), // top-right
+            R({ -0.5f,  0.5f, 0.0f })  // top-left
+        };
+
+        // UVs (UVs themselves do NOT rotate under geometric rotation)
+        glm::vec2 uvs[] = {
+            { 0.0f, 0.0f },
+            { uvScale, 0.0f },
+            { uvScale, uvScale },
+            { 0.0f, uvScale }
+        };
+
+        // Build triangles
+        std::vector<engine::Vertex> vertices;
+        vertices.reserve(6);
+
+        vertices.emplace_back(positions[0], normal, uvs[0], tangent, bitangent);
+        vertices.emplace_back(positions[1], normal, uvs[1], tangent, bitangent);
+        vertices.emplace_back(positions[2], normal, uvs[2], tangent, bitangent);
+
+        vertices.emplace_back(positions[0], normal, uvs[0], tangent, bitangent);
+        vertices.emplace_back(positions[2], normal, uvs[2], tangent, bitangent);
+        vertices.emplace_back(positions[3], normal, uvs[3], tangent, bitangent);
+
+        return vertices;
+    }
+
 
 
     inline std::vector<engine::Vertex> generateCubeVertices(float uvScale)

@@ -169,7 +169,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     }
 
     // render to framebuffer
-    //computeColorFramebuffer();
+    computeColorFramebuffer();
 
     // Resolve MSAA to screen or another texture FBO
     //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);

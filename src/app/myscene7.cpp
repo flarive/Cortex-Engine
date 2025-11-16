@@ -329,11 +329,12 @@ void MyScene7::update(engine::Shader& shader)
         rotation += 360.0f;
     }
 
-    auto child2 = getEntityManager().findEntityByName("Child2");
+    auto child2 = getEntityManager().findEntityByName("Child1");
     if (child2)
     {
         auto trs = child2->getTransform();
-        trs.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         child2->setTransform(trs);
     }
 
@@ -342,31 +343,10 @@ void MyScene7::update(engine::Shader& shader)
     if (mySphere)
     {
         auto trs = mySphere->getTransform();
-        trs.setLocalRotation(glm::vec3(0.0f, rotation, 0.0f));
+        auto rot = trs.getLocalRotation();
+        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
         mySphere->setTransform(trs);
     }
-
-
-    
-
-    //auto child2 = getEntityManager().findEntityByName("Child2");
-    //if (child2)
-    //{
-    //    auto trs = child2->getTransform();
-    //    auto rot = trs.getLocalRotation();
-    //    trs.setLocalRotation(glm::vec3(rotation, 0.0f, 0.0f));
-    //    child2->setTransform(trs);
-    //}
-
-
-    //auto mySphere = getEntityManager().findEntityByName("MySphere");
-    //if (mySphere)
-    //{
-    //    auto trs = mySphere->getTransform();
-    //    auto rot = trs.getLocalRotation();
-    //    trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
-    //    mySphere->setTransform(trs);
-    //}
 
     rotation += deltaTime * 10.0f;
 }

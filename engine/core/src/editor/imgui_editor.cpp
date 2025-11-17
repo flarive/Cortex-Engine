@@ -911,6 +911,13 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
                     component->setProperty(kvPair.key, *pValue);
                 }
             }
+            else if (auto pValue = std::get_if<bool>(&kvPair.value))
+            {
+                if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, kvPair.key).c_str(), pValue))
+                {
+                    component->setProperty(kvPair.key, *pValue);
+                }
+            }
         }
         ImGui::EndTable();
     }

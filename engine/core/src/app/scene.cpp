@@ -489,6 +489,12 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         {
             if (typeID == ComponentType::primitive || typeID == ComponentType::model)
             {
+                if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+                {
+                    // ????????????????????
+                    //auto zzzz = component->getPublicProperties();
+                }
+                
                 // primitive and model
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;

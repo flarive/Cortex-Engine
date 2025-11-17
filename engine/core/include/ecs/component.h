@@ -16,7 +16,7 @@ namespace engine
 	struct KeyValuePair
     {
         std::string key{};
-        std::variant<int, std::string, float> value{};
+        std::variant<int, std::string, float, bool> value{};
 	};;
 
     // faster

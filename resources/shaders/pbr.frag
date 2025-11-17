@@ -61,6 +61,9 @@ struct Material {
     bool has_texture_ao_map;
     bool has_texture_height_map;
     bool has_texture_emissive_map;
+
+    bool canCastShadows;
+    bool canReceiveShadows;
 };
 
 struct DirLight {

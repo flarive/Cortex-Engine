@@ -37,6 +37,9 @@ struct Material {
     float shadowMapsBlur;
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+
+    bool canCastShadows;
+    bool canReceiveShadows;
 }; 
 
 struct DirLight {
@@ -992,11 +995,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

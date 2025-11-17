@@ -84,7 +84,9 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 		if (auto billboard = std::static_pointer_cast<Billboard>(m_primitive))
 		{
 			m_propertySetters = {
-				{"uvscale", [billboard](float value) { billboard->getUvScale() = value; }}
+				{"uvscale", [billboard](float value) { billboard->getUvScale() = value; }},
+				{"canCastShadows", [billboard](bool value) { billboard->getMaterial()->canCastShadows() = value; }},
+				{"canReceiveShadows", [billboard](bool value) { billboard->getMaterial()->canReceiveShadows() = value; }}
 			};
 		}
 	}
@@ -176,7 +178,9 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 		if (auto plane = std::static_pointer_cast<Plane>(m_primitive))
 		{
 			return {
-				engine::KeyValuePair{ "uvscale", plane->getUvScale() }
+				engine::KeyValuePair{ "uvscale", plane->getUvScale() },
+				engine::KeyValuePair{ "canCastShadows", plane->getMaterial()->canCastShadows()},
+				engine::KeyValuePair{ "canReceiveShadows", plane->getMaterial()->canReceiveShadows() }
 			};
 		}
 	}
@@ -207,7 +211,9 @@ std::vector<engine::KeyValuePair> engine::PrimitiveComponent::getPublicPropertie
 		if (auto billboard = std::static_pointer_cast<Billboard>(m_primitive))
 		{
 			return {
-				engine::KeyValuePair{ "uvscale", billboard->getUvScale() }
+				engine::KeyValuePair{ "uvscale", billboard->getUvScale() },
+				engine::KeyValuePair{ "canCastShadows", billboard->getMaterial()->canCastShadows()},
+				engine::KeyValuePair{ "canReceiveShadows", billboard->getMaterial()->canReceiveShadows() }
 			};
 		}
 	}

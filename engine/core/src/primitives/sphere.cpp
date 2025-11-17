@@ -184,6 +184,9 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
             shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+
+            shader.setBool("material.canCastShadows", m_material->canCastShadows());
+            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
         }
     }
 

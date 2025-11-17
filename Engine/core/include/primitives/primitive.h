@@ -54,6 +54,8 @@ namespace engine
         float m_uvScale{ 1.0f };
 
 
+
+
     public:
         
         glm::vec3 position{};
@@ -78,6 +80,7 @@ namespace engine
 
 		float& getUvScale() { return m_uvScale; }
         void setUvScale(float uvScale) { m_uvScale = uvScale; }
+
 
         void reSetup() { setup(); };
 

@@ -103,9 +103,6 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 
-
-    
-
     if (m_material)
     {
         if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
@@ -127,6 +124,9 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
             shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+
+            shader.setBool("material.canCastShadows", m_material->canCastShadows());
+            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
         }
     }
 

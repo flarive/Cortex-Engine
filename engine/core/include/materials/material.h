@@ -75,8 +75,8 @@ namespace engine
         const virtual float getShininessIntensity() const { return m_shininess; }
         const virtual float getAmbientIntensity() const { return m_ambientIntensity; }
         const virtual float getEmissiveIntensity() const { return m_emissiveIntensity; }
-        const virtual bool& canCastShadows() { return m_canCastShadows; }
-        const virtual bool& canReceiveShadows() { return m_canReceiveShadows; }
+        bool& canCastShadows() { return m_canCastShadows; }
+        bool& canReceiveShadows() { return m_canReceiveShadows; }
 
 
         virtual void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }

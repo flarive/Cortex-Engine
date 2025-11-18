@@ -73,7 +73,7 @@ void engine::Billboard::geometrySetup()
 
 std::vector<engine::Vertex> engine::Billboard::generateVertices()
 {
-    return generateBillboardVerticesRot(m_uvScale);
+    return generateBillboardVertices(m_uvScale);
 }
 
 void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)

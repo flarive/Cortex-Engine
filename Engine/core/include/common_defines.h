@@ -10,7 +10,7 @@
 
 #include <string>
 #include <iostream>
-
+#include <variant>
 
 #define EDITOR_MODE true
 
@@ -18,4 +18,10 @@
 namespace engine
 {
 	using Color = glm::vec4;
+
+	struct KeyValuePair
+	{
+		std::string key{};
+		std::variant<int, std::string, float, bool> value{};
+	};;
 }

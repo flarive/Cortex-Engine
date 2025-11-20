@@ -4,7 +4,7 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
-engine::Billboard::Billboard(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
+engine::Billboard::Billboard(bool _flipNormals, const glm::vec3& _position) : Primitive(_position)
 {
 }
 

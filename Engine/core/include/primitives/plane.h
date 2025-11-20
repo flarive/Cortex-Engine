@@ -16,6 +16,17 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
+        std::vector<KeyValuePair> getPublicProperties() override {
+            return {
+                {"uvscale", getUvScale()}
+            };
+        }
+        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+            return {
+                {"uvscale", [this](float value) { getUvScale() = value; }}
+            };
+        }
+
         std::vector<Vertex> generateVertices() override;
 
         // draws the model, and thus all its meshes

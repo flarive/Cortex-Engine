@@ -13,11 +13,7 @@ namespace engine
 {
     enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5 };
 
-	struct KeyValuePair
-    {
-        std::string key{};
-        std::variant<int, std::string, float, bool> value{};
-	};;
+
 
     // faster
     constexpr unsigned int toInt(ComponentType type) {

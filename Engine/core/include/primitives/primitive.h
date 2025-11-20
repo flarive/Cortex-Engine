@@ -74,6 +74,10 @@ namespace engine
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean() = 0;
 
+
+        virtual std::vector<KeyValuePair> getPublicProperties() = 0;
+        virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
+
         virtual std::vector<Vertex> generateVertices() = 0;
 
         std::shared_ptr<Material> getMaterial() { return m_material; }

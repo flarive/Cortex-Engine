@@ -492,7 +492,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
                 {
                     // ????????????????????
-                    //auto zzzz = component->getPublicProperties();
+                    auto zzzz = component->getPublicProperties();
                 }
                 
                 // primitive and model

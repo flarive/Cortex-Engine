@@ -18,6 +18,16 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
+        std::vector<KeyValuePair> getPublicProperties() override {
+            return {
+            };
+        }
+        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+            return {
+            };
+        }
+
+
         std::vector<Vertex> generateVertices() override;
         
         // draws the model, and thus all its meshes
@@ -32,8 +42,6 @@ namespace engine
         void clean() override;
 
     private:
-        bool m_flipNormals{ true };
-        
         void geometrySetup();
     };
 }

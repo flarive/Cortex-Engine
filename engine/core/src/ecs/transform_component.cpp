@@ -23,12 +23,16 @@ void engine::TransformComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 
 engine::AABB* engine::TransformComponent::getBoundingVolume()
 {
-    auto aabb = engine::AABB(glm::vec3(), glm::vec3());
-    auto zzz = std::make_unique<AABB>(aabb);
-    return zzz.get();
+    return new engine::AABB(glm::vec3(), glm::vec3());
+    // Caller must delete the pointer later!
 }
 
-std::vector<engine::KeyValuePair> engine::TransformComponent::getPublicProperties()
+engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::TransformComponent::getPublicProperties()
 {
-    return std::vector<engine::KeyValuePair>{};
+    return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+}
+
+std::unordered_map<std::string, std::function<void(float)>> engine::TransformComponent::getPropertySetters()
+{
+    return std::unordered_map<std::string, std::function<void(float)>>();
 }

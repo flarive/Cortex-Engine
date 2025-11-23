@@ -45,7 +45,12 @@ engine::AABB* engine::LightComponent::getBoundingVolume()
     return m_boundingVolume.get();
 }
 
-std::vector<engine::KeyValuePair> engine::LightComponent::getPublicProperties()
+engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::LightComponent::getPublicProperties()
 {
-    return std::vector<engine::KeyValuePair>{};
+    return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+}
+
+std::unordered_map<std::string, std::function<void(float)>> engine::LightComponent::getPropertySetters()
+{
+    return std::unordered_map<std::string, std::function<void(float)>>();
 }

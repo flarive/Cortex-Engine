@@ -11,19 +11,26 @@ namespace engine
     class Billboard final : public Primitive
     {
     public:
-        Billboard(bool _flipNormals = true, const glm::vec3& _position = glm::vec3());
+        Billboard(const glm::vec3& _position = glm::vec3());
         ~Billboard() = default;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        std::vector<KeyValuePair> getPublicProperties() override {
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
             return {
+                {"uvscale", getUvScale()},
+                {"canCastShadows", canCastShadows()},
+                {"canReceiveShadows", canReceiveShadows()}
             };
         }
+
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
             return {
+                {"uvscale", [this](float value) { getUvScale() = value; }},
+                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
 

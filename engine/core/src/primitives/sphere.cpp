@@ -134,7 +134,7 @@ void engine::Sphere::geometrySetup()
 
 std::vector<engine::Vertex> engine::Sphere::generateVertices()
 {
-    return generateSphereVertices(radius, m_uvScale);
+    return generateSphereVertices(m_radius, m_uvScale);
 }
 
 void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
@@ -185,8 +185,8 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
-            shader.setBool("material.canCastShadows", m_material->canCastShadows());
-            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
         }
     }
 

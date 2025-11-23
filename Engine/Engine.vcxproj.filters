@@ -593,5 +593,8 @@
     <ClInclude Include="core\include\debug\opengl_debug.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\misc\ordered_map.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

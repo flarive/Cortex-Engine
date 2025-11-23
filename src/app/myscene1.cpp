@@ -66,7 +66,7 @@ void MyScene1::init()
 
 
     // billboard
-    auto myBillboard = make_shared<Billboard>(false);
+    auto myBillboard = make_shared<Billboard>();
     myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png"), UvMapping(1.0f));
     auto trsBillboard = Transform(vec3(0.0f, -0.18f, 1.35f), vec3(0.7f));
     auto entityBillboard = make_shared<Entity>("MyBillboard");
@@ -86,9 +86,7 @@ void MyScene1::init()
 
 
     // cylinder
-    auto myCylinder = make_shared<Cylinder>();
-    myCylinder->radius = 0.1f;
-    myCylinder->height = 0.3f;
+    auto myCylinder = make_shared<Cylinder>(0.1f, 0.3f);
     myCylinder->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
     auto trsCylinder = Transform(vec3(0.5f, -0.35f, 0.0f));
     auto entityCylinder = make_shared<Entity>("MyCylinder");
@@ -98,9 +96,7 @@ void MyScene1::init()
 
 
     // cone
-    auto myCone = make_shared<Cone>();
-    myCone->radius = 0.1f;
-    myCone->height = 0.3f;
+    auto myCone = make_shared<Cone>(0.1f, 0.3f);
     myCone->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
     auto trsCone = Transform(vec3(1.0f, -0.35f, 0.0f));
     auto entityCone = make_shared<Entity>("MyCone");

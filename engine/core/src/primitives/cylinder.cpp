@@ -3,7 +3,7 @@
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
 
-engine::Cylinder::Cylinder(const glm::vec3& _position) : Primitive(_position)
+engine::Cylinder::Cylinder(float _radius, float _height, const glm::vec3& _position) : Primitive(_position), m_radius(_radius), m_height(_height)
 {
 }
 
@@ -140,7 +140,7 @@ void engine::Cylinder::geometrySetup()
 
 std::vector<engine::Vertex> engine::Cylinder::generateVertices()
 {
-    return generateCylinderVertices(36, height, radius, m_uvScale);
+    return generateCylinderVertices(36, m_height, m_radius, m_uvScale);
 }
 
 void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
@@ -187,8 +187,8 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
-            shader.setBool("material.canCastShadows", m_material->canCastShadows());
-            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
         }
 
         // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)

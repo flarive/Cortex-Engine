@@ -4,7 +4,7 @@
 #include "../../include/tools/helpers.h"
 
 
-engine::Cone::Cone(const glm::vec3& _position) : Primitive(_position)
+engine::Cone::Cone(float _radius, float _height, const glm::vec3& _position) : Primitive(_position), m_radius(_radius), m_height(_height)
 {
 }
 
@@ -124,7 +124,7 @@ void engine::Cone::geometrySetup()
 
 std::vector<engine::Vertex> engine::Cone::generateVertices()
 {
-    return generateConeVertices(36, height, radius, m_uvScale);
+    return generateConeVertices(36, m_height, m_radius, m_uvScale);
 }
 
 void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
@@ -175,8 +175,8 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
-            shader.setBool("material.canCastShadows", m_material->canCastShadows());
-            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
         }
     }
 

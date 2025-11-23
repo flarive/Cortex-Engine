@@ -72,7 +72,7 @@ void engine::Plane::geometrySetup()
 
 std::vector<engine::Vertex> engine::Plane::generateVertices()
 {
-    return generatePlaneVertices(m_uvScale, m_flipNormals);
+    return Primitive::generatePlaneVertices(m_uvScale, m_flipNormals);
 }
 
 void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
@@ -125,8 +125,8 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
-            shader.setBool("material.canCastShadows", m_material->canCastShadows());
-            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
         }
     }
 

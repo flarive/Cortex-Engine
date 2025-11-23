@@ -897,28 +897,30 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        for (auto& kvPair : properties)
-        {
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text(kvPair.key.c_str());
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(80);
-            if (auto pValue = std::get_if<float>(&kvPair.value))
+        properties.forEach([&](const auto& key, auto& value)
             {
-                if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, kvPair.key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text(key.c_str());
+                ImGui::TableSetColumnIndex(1);
+                ImGui::SetNextItemWidth(80);
+                if (auto pValue = std::get_if<float>(&value))
                 {
-                    component->setProperty(kvPair.key, *pValue);
+                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
+                    {
+                        // float value changed
+                        component->setProperty(key, *pValue);
+                    }
                 }
-            }
-            else if (auto pValue = std::get_if<bool>(&kvPair.value))
-            {
-                if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, kvPair.key).c_str(), pValue))
+                else if (auto pValue = std::get_if<bool>(&value))
                 {
-                    component->setProperty(kvPair.key, *pValue);
+                    if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
+                    {
+                        // bool value changed
+                        component->setProperty(key, *pValue);
+                    }
                 }
-            }
-        }
+            });
         ImGui::EndTable();
     }
 }

@@ -6,8 +6,13 @@
 #include "../transform.h"
 #include "../aabb.h"
 
+#include "../misc/ordered_map.h"
+
 #include <vector>
+#include <map>
 #include <variant>
+#include <unordered_map>
+#include <functional>
 
 namespace engine
 {
@@ -36,7 +41,8 @@ namespace engine
 
         virtual std::string getName() = 0;
 
-        virtual std::vector<KeyValuePair> getPublicProperties() = 0;
+        virtual ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() = 0;
+        virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
 	};
 
     /// <summary>

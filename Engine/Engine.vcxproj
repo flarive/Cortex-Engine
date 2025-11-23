@@ -273,6 +273,7 @@
     <ClInclude Include="core\include\misc\colors.h" />
     <ClInclude Include="core\include\managers\log_manager.h" />
     <ClInclude Include="core\include\misc\ltc_matrix.h" />
+    <ClInclude Include="core\include\misc\ordered_map.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />

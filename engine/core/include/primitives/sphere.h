@@ -12,7 +12,7 @@ namespace engine
     class Sphere final : public Primitive
     {
     public:
-        float radius{ 1.0f };
+        
 
         Sphere(const glm::vec3& _position = glm::vec3());
         ~Sphere() = default;
@@ -21,18 +21,26 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        std::vector<KeyValuePair> getPublicProperties() override {
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
             return {
-                {"radius", radius},
-                {"uvscale", getUvScale()}
+                {"radius", getRadius()},
+                {"uvscale", getUvScale()},
+                {"canCastShadows", canCastShadows()},
+                {"canReceiveShadows", canReceiveShadows() }
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
             return {
-                {"radius", [this](float value) { radius = value; }},
-                {"uvscale", [this](float value) { getUvScale() = value; }}
+                {"radius", [this](float value) { getRadius() = value; }},
+                {"uvscale", [this](float value) { getUvScale() = value; }},
+                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
+
+
+        float& getRadius() { return m_radius; }
+        void setRadius(float radius) { m_radius = radius; }
 
         std::vector<Vertex> generateVertices() override;
 
@@ -47,6 +55,8 @@ namespace engine
         void clean() override;
 
     private:
+        float m_radius{ 1.0f };
+        
         void geometrySetup();
 
         unsigned int indexCount{};

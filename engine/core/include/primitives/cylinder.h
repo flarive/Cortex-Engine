@@ -12,30 +12,37 @@ namespace engine
     class Cylinder final : public Primitive
     {
     public:
-        float radius{ 1.0f };
-        float height{ 2.0f };
-
-        Cylinder(const glm::vec3& _position = glm::vec3());
+        Cylinder(float _radius = 1.0f, float _height = 3.0f, const glm::vec3& _position = glm::vec3());
         ~Cylinder() = default;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        std::vector<KeyValuePair> getPublicProperties() override {
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
             return {
-                {"radius", radius},
-                {"height", height},
-                {"uvscale", getUvScale()}
+                {"radius", getRadius()},
+                {"height", getHeight()},
+                {"uvscale", getUvScale()},
+                {"canCastShadows", canCastShadows()},
+                {"canReceiveShadows", canReceiveShadows()}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
             return {
-                {"radius", [this](float value) { radius = value; }},
-                {"height", [this](float value) { height = value; }},
-                {"uvscale", [this](float value) { getUvScale() = value; }}
+                {"radius", [this](float value) { getRadius() = value; }},
+                {"height", [this](float value) { getHeight() = value; }},
+                {"uvscale", [this](float value) { getUvScale() = value; }},
+                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
+
+        float& getRadius() { return m_radius; }
+        void setRadius(float radius) { m_radius = radius; }
+
+        float& getHeight() { return m_height; }
+        void setHeight(float height) { m_height = height; }
 
         std::vector<Vertex> generateVertices() override;
 
@@ -51,6 +58,9 @@ namespace engine
         
 
     private:
+        float m_radius{ 1.0f };
+        float m_height{ 2.0f };
+        
         void geometrySetup();
 
         unsigned int indexCount{};

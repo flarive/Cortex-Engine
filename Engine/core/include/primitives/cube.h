@@ -18,22 +18,35 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        std::vector<KeyValuePair> getPublicProperties() override {
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
             return {
-                {"width", m_width},
-                {"height", m_height},
-                {"depth", m_depth},
-                {"uvscale", getUvScale()}
+                {"width", getWidth()},
+                {"height", getHeight()},
+                {"depth", getDepth()},
+                {"uvscale", getUvScale()},
+                {"canCastShadows", canCastShadows()},
+                {"canReceiveShadows", canReceiveShadows()}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
             return {
-                {"width", [this](float value) { m_width = value; }},
-                {"height", [this](float value) { m_height = value; }},
-                {"depth", [this](float value) { m_depth = value; }},
-                {"uvscale", [this](float value) { getUvScale() = value; }}
+                {"width", [this](float value) { getWidth() = value; }},
+                {"height", [this](float value) { getHeight() = value; }},
+                {"depth", [this](float value) { getDepth() = value; }},
+                {"uvscale", [this](float value) { getUvScale() = value; }},
+                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
+
+        float& getWidth() { return m_width; }
+        void setWidth(float width) { m_width = width; }
+
+        float& getHeight() { return m_height; }
+        void setHeight(float height) { m_height = height; }
+
+        float& getDepth() { return m_depth; }
+        void setDepth(float depth) { m_depth = depth; }
 
         std::vector<Vertex> generateVertices() override;
 

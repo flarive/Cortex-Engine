@@ -4,8 +4,10 @@
 #include "../../include/uvmapping.h"
 #include "../../include/tools/helpers.h"
 
-engine::Billboard::Billboard(bool _flipNormals, const glm::vec3& _position) : Primitive(_position)
+engine::Billboard::Billboard(const glm::vec3& _position) : Primitive(_position)
 {
+    setCanCastShadows(false);
+	setCanReceiveShadows(false);
 }
 
 void engine::Billboard::setup()
@@ -24,10 +26,6 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 void engine::Billboard::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
     m_material = material;
-    m_material->setCanCastShadows(false);
-    m_material->setCanReceiveShadows(false);
-
-
     m_uvScale = uv.getUvScale();
 
     geometrySetup(); // Geometry setup
@@ -119,8 +117,8 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
 
             shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
-            shader.setBool("material.canCastShadows", m_material->canCastShadows());
-            shader.setBool("material.canReceiveShadows", m_material->canReceiveShadows());
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
         }
     }
 

@@ -35,7 +35,12 @@ engine::AABB* engine::CameraComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-std::vector<engine::KeyValuePair> engine::CameraComponent::getPublicProperties()
+engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::CameraComponent::getPublicProperties()
 {
-	return std::vector<engine::KeyValuePair>{};
+	return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+}
+
+std::unordered_map<std::string, std::function<void(float)>> engine::CameraComponent::getPropertySetters()
+{
+	return std::unordered_map<std::string, std::function<void(float)>>();
 }

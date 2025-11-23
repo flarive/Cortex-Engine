@@ -16,14 +16,18 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        std::vector<KeyValuePair> getPublicProperties() override {
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
             return {
-                {"uvscale", getUvScale()}
+                {"uvscale", getUvScale()},
+                {"canCastShadows", canCastShadows()},
+                {"canReceiveShadows", canReceiveShadows()}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
             return {
-                {"uvscale", [this](float value) { getUvScale() = value; }}
+                {"uvscale", [this](float value) { getUvScale() = value; }},
+                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
 

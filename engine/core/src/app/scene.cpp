@@ -8,6 +8,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <functional>
+#include <memory>
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -489,14 +491,43 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         {
             if (typeID == ComponentType::primitive || typeID == ComponentType::model)
             {
+				bool shouldDraw = true;
+                
+                // manage shadow casting or not
                 if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
                 {
-                    // ????????????????????
-                    auto zzzz = component->getPublicProperties();
+                    auto properties = component->getPublicProperties();
+
+                    auto wwwwwwwwww = std::dynamic_pointer_cast<PrimitiveComponent>(component);
+                    if (wwwwwwwwww)
+                    {
+                        auto pppppppppp = wwwwwwwwww->getPrimitive();
+                        if (pppppppppp)
+                        {
+                            
+                        }
+					}
+
+                    if (properties.contains("canCastShadows"))
+                    {
+                        auto vvv = properties.at("canCastShadows");
+                        if (auto pBool = std::get_if<bool>(&vvv))
+                        {
+                            shouldDraw = *pBool;
+                        }
+                        else if (auto pInt = std::get_if<int>(&vvv))
+                        {
+                            shouldDraw = (*pInt != 0); // Example: treat non-zero as true
+                        }
+                    }
                 }
                 
                 // primitive and model
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+                if (shouldDraw)
+                    component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+                else
+                    int ii = 0;
+
                 inFrustrumCount++;
             }
             else if (typeID == ComponentType::light)

@@ -497,27 +497,12 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
                 {
                     auto properties = component->getPublicProperties();
-
-                    auto wwwwwwwwww = std::dynamic_pointer_cast<PrimitiveComponent>(component);
-                    if (wwwwwwwwww)
-                    {
-                        auto pppppppppp = wwwwwwwwww->getPrimitive();
-                        if (pppppppppp)
-                        {
-                            
-                        }
-					}
-
                     if (properties.contains("canCastShadows"))
                     {
-                        auto vvv = properties.at("canCastShadows");
-                        if (auto pBool = std::get_if<bool>(&vvv))
+                        auto canCastShadows = properties.at("canCastShadows");
+                        if (auto pBool = std::get_if<bool>(&canCastShadows))
                         {
                             shouldDraw = *pBool;
-                        }
-                        else if (auto pInt = std::get_if<int>(&vvv))
-                        {
-                            shouldDraw = (*pInt != 0); // Example: treat non-zero as true
                         }
                     }
                 }

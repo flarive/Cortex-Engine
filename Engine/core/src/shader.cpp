@@ -66,8 +66,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 
     m_initialized = true;
 
-
-    std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
+	logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -148,7 +147,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 
     m_initialized = true;
 
-    //std::cout << "Shader program compiled and linked: " << name << " (ID: " << ID << ")" << std::endl;
+    //logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -159,7 +158,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 bool engine::Shader::isValid() const
 {
     if (ID == 0) {
-        std::cerr << "Shader program ID is 0. Shader not created." << std::endl;
+		logger.error("Shader program ID is 0. Shader not created.");
         return false;
     }
 
@@ -173,7 +172,7 @@ bool engine::Shader::isValid() const
         std::vector<char> log(logLength);
         glGetProgramInfoLog(ID, logLength, nullptr, log.data());
 
-        std::cerr << "Shader program linking failed:\n" << log.data() << std::endl;
+		logger.error("Shader program linking failed: {}", log.data());
         return false;
     }
 
@@ -194,7 +193,7 @@ bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, std::string
 {
     GLint uniformLoc = glGetUniformLocation(shaderID, uniformName.c_str());
     if (uniformLoc == -1) {
-        std::cerr << "Uniform '" << uniformName << "' not found in shader " << shaderID << std::endl;
+		logger.error("Uniform '{}' not found in shader {}", uniformName, shaderID);
         return false;
     }
 

@@ -123,10 +123,27 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     }
 
     glEnable(GL_BLEND);
-    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader.setMat4("model", transformMatrix);
+    // Get camera's right and up vectors from the view matrix
+    glm::mat4 viewInverse = glm::inverse(view);
+    glm::vec3 cameraRight = glm::normalize(glm::vec3(viewInverse[0]));
+    glm::vec3 cameraUp = glm::normalize(glm::vec3(viewInverse[1]));
+
+    // Billboard's forward axis is the negative of the camera's forward axis
+    glm::vec3 cameraForward = -glm::normalize(glm::vec3(viewInverse[2]));
+
+    // Construct the billboard's model matrix
+    glm::mat4 billboardModel = glm::mat4(1.0f);
+    billboardModel[0] = glm::vec4(cameraRight, 0.0f);
+    billboardModel[1] = glm::vec4(cameraUp, 0.0f);
+    billboardModel[2] = glm::vec4(cameraForward, 0.0f);
+    billboardModel[3] = glm::vec4(position, 1.0f);
+
+    // Apply scale
+    billboardModel = glm::scale(billboardModel, scale);
+
+    // Pass the billboard's model matrix to the shader
+    shader.setMat4("model", billboardModel);
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

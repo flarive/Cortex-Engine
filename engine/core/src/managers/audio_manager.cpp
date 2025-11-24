@@ -9,29 +9,72 @@
 engine::AudioManager::AudioManager()
 {
     //initOpenAL(); // uncomment !
+
+    m_initThread = std::thread(&AudioManager::initOpenALInternal, this);
+    m_initThread.detach(); // Detach so the thread runs independently
 }
 
 engine::AudioManager::~AudioManager()
 {
+    if (m_initThread.joinable()) {
+        m_initThread.join(); // Wait for thread to finish (if not detached)
+    }
+    
     clean();
 }
 
 
-void engine::AudioManager::initOpenAL()
+//void engine::AudioManager::initOpenAL()
+//{
+//    m_device = alcOpenDevice(nullptr);
+//    if (!m_device) {
+//        logger.warn("Failed to open OpenAL device");
+//        return;
+//    }
+//    m_context = alcCreateContext(m_device, nullptr);
+//    if (!m_context) {
+//        logger.warn("Failed to create OpenAL context");
+//        alcCloseDevice(m_device);
+//        return;
+//    }
+//    alcMakeContextCurrent(m_context);
+//}
+
+// In AudioManager.cpp
+void engine::AudioManager::initOpenALInternal()
 {
+    bool success = false;
+
     m_device = alcOpenDevice(nullptr);
     if (!m_device) {
         logger.warn("Failed to open OpenAL device");
-        return;
     }
-    m_context = alcCreateContext(m_device, nullptr);
-    if (!m_context) {
-        logger.warn("Failed to create OpenAL context");
-        alcCloseDevice(m_device);
-        return;
+    else {
+        m_context = alcCreateContext(m_device, nullptr);
+        if (!m_context) {
+            logger.warn("Failed to create OpenAL context");
+            alcCloseDevice(m_device);
+        }
+        else {
+            alcMakeContextCurrent(m_context);
+            success = true;
+        }
     }
-    alcMakeContextCurrent(m_context);
+
+    m_initialized = success;
+
+    // Invoke callback if set
+    if (m_initCallback) {
+        std::lock_guard<std::mutex> lock(m_callbackMutex);
+        m_initCallback(success);
+    }
 }
+
+bool engine::AudioManager::isInitialized() const
+{
+    return m_initialized;
+}
+
 
 void engine::AudioManager::loadOgg(const std::string& id, const std::string& filename)
 {
@@ -80,6 +123,11 @@ void engine::AudioManager::loadOgg(const std::string& id, const std::string& fil
 
 engine::AudioManager::AudioData* engine::AudioManager::findAudio(const std::string& id)
 {
+    if (!isInitialized()) {
+        logger.warn("OpenAL not initialized yet");
+        return nullptr;
+    }
+    
     auto it = std::lower_bound(
         m_audioMap.begin(), m_audioMap.end(), id,
         [](const std::pair<std::string, AudioData>& pair, const std::string& key) {
@@ -94,6 +142,11 @@ engine::AudioManager::AudioData* engine::AudioManager::findAudio(const std::stri
 
 void engine::AudioManager::play(const std::string& id)
 {
+    if (!isInitialized()) {
+        logger.warn("OpenAL not initialized yet");
+        return;
+    }
+
     AudioData* audio = findAudio(id);
 
     if (audio) {
@@ -109,6 +162,12 @@ void engine::AudioManager::play(const std::string& id)
     else {
         logger.warn("Audio ID not found:{}", id);
     }
+}
+
+void engine::AudioManager::setInitCallback(InitCallback callback)
+{
+    std::lock_guard<std::mutex> lock(m_callbackMutex);
+    m_initCallback = callback;
 }
 
 void engine::AudioManager::clean()
@@ -144,4 +203,3 @@ void engine::AudioManager::clean()
         m_device = nullptr;
     }
 }
-

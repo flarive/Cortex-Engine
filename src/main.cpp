@@ -5,7 +5,7 @@
 #include "app/myapp1.h"
 
 #include "app/myscene1.h" // blinnphong with skybox
-#include "app/myscene2.h" // blinn phong cushion
+#include "app/myscene2.h" // blinnphong cushion
 #include "app/myscene3.h" // pbr balls with HDR background
 #include "app/myscene4.h" // pbr cushion
 #include "app/myscene5.h" // pbr buddha
@@ -14,12 +14,13 @@
 #include "app/myscene8.h" // monochromatic point shadow
 #include "app/myscene9.h" // orbit camera
 #include "app/myscene10.h" // area lights demo
+#include "app/myscene11.h" // blinnphong animated character
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene1;
+using MyScene = MyScene11;
 
 App* myApp{};
 Scene* myScene{};

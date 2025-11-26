@@ -2,7 +2,7 @@
 
 #include "../common_defines.h"
 
-#include "../model.h"
+#include "../models/model.h"
 #include "../transform.h"
 #include "../aabb.h"
 #include "../ecs/component.h"

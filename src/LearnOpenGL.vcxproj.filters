@@ -95,6 +95,9 @@
     <Filter Include="resources\sounds">
       <UniqueIdentifier>{b9186b90-b130-4d7d-81ed-b253786fed2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\vampire">
+      <UniqueIdentifier>{c692eeaa-db42-457a-9ae3-4c879dc7d123}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -135,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="..\libs\stb\stb_vorbis.c">
       <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene11.cpp">
+      <Filter>sources\app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -738,6 +744,15 @@
     <CopyFileToFolders Include="..\resources\shaders\depthToColorShader.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\anim_model.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\anim_model.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\dancing_vampire.dae">
+      <Filter>resources\models\vampire</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -773,5 +788,22 @@
     <ClInclude Include="app\myscene10.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="app\myscene11.h">
+      <Filter>app</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\models\vampire\Vampire_diffuse.png">
+      <Filter>resources\models\vampire</Filter>
+    </Image>
+    <Image Include="..\resources\models\vampire\Vampire_emission.png">
+      <Filter>resources\models\vampire</Filter>
+    </Image>
+    <Image Include="..\resources\models\vampire\Vampire_normal.png">
+      <Filter>resources\models\vampire</Filter>
+    </Image>
+    <Image Include="..\resources\models\vampire\Vampire_specular.png">
+      <Filter>resources\models\vampire</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -206,8 +206,8 @@
     <ClCompile Include="core\src\lights\light.cpp" />
     <ClCompile Include="core\src\lights\point_light.cpp" />
     <ClCompile Include="core\src\lights\spot_light.cpp" />
-    <ClCompile Include="core\src\mesh.cpp" />
-    <ClCompile Include="core\src\model.cpp" />
+    <ClCompile Include="core\src\models\mesh.cpp" />
+    <ClCompile Include="core\src\models\model.cpp" />
     <ClCompile Include="core\src\primitives\billboard.cpp" />
     <ClCompile Include="core\src\primitives\cube.cpp" />
     <ClCompile Include="core\src\primitives\plane.cpp" />
@@ -274,6 +274,12 @@
     <ClInclude Include="core\include\managers\log_manager.h" />
     <ClInclude Include="core\include\misc\ltc_matrix.h" />
     <ClInclude Include="core\include\misc\ordered_map.h" />
+    <ClInclude Include="core\include\models\animated_model.h" />
+    <ClInclude Include="core\include\models\animation.h" />
+    <ClInclude Include="core\include\models\animator.h" />
+    <ClInclude Include="core\include\models\animdata.h" />
+    <ClInclude Include="core\include\models\assimp_glm_helpers.h" />
+    <ClInclude Include="core\include\models\bone.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />
@@ -284,9 +290,9 @@
     <ClInclude Include="core\include\lights\light.h" />
     <ClInclude Include="core\include\lights\point_light.h" />
     <ClInclude Include="core\include\lights\spot_light.h" />
-    <ClInclude Include="core\include\mesh.h" />
+    <ClInclude Include="core\include\models\mesh.h" />
     <ClInclude Include="core\include\misc\noncopyable.h" />
-    <ClInclude Include="core\include\model.h" />
+    <ClInclude Include="core\include\models\model.h" />
     <ClInclude Include="core\include\primitives\billboard.h" />
     <ClInclude Include="core\include\primitives\cube.h" />
     <ClInclude Include="core\include\primitives\plane.h" />

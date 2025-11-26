@@ -3,7 +3,7 @@
 
 #include "component.h"
 
-#include "../model.h"
+#include "../models/model.h"
 #include "../frustrum.h"
 #include "../bounding_volume.h"
 #include "../aabb.h"

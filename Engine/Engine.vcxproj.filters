@@ -157,6 +157,12 @@
     <Filter Include="Fichiers sources\core\debug">
       <UniqueIdentifier>{d1f8f3fa-a447-484c-8b79-c1dcaa78f88b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\models">
+      <UniqueIdentifier>{7dc79a58-79fe-4083-8142-637e6a2f64d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\models">
+      <UniqueIdentifier>{907fd9e1-c4cd-4739-ba34-c36d7f175057}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -203,12 +209,6 @@
     </ClCompile>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>Fichiers sources\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\mesh.cpp">
-      <Filter>Fichiers sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\model.cpp">
-      <Filter>Fichiers sources\core</Filter>
     </ClCompile>
     <ClCompile Include="core\src\shader.cpp">
       <Filter>Fichiers sources\core</Filter>
@@ -357,6 +357,12 @@
     <ClCompile Include="core\src\debug\opengl_debug.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\models\mesh.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\model.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -411,12 +417,6 @@
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\common_defines.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\mesh.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\model.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\shader.h">
@@ -595,6 +595,30 @@
     </ClInclude>
     <ClInclude Include="core\include\misc\ordered_map.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\mesh.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\model.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\animated_model.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\animator.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\animation.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\animdata.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\bone.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\assimp_glm_helpers.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

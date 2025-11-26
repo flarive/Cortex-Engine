@@ -34,7 +34,7 @@
 #include "ecs/model_component.h"
 
 
-#include "model.h"
+#include "models/model.h"
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"

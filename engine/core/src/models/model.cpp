@@ -17,7 +17,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
-
 engine::SharedModel::SharedModel(bool gamma, bool flipUVs)
 {
 
@@ -28,18 +27,6 @@ engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipU
     assert(!path.empty() && "Model path is empty !");
 
     loadModel(path, flipUVs);
-}
-
-// constructor, expects a filepath to a 3D model.
-engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_path, _gamma, _flipUVs), position(_position)
-{
-}
-
-// constructor, expects a model (for sharing)
-engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
-{
 }
 
 void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
@@ -331,6 +318,21 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
 
     return textures;
 }
+
+
+// constructor, expects a filepath to a 3D model.
+engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : SharedModel(_path, _gamma, _flipUVs), position(_position)
+{
+}
+
+// constructor, expects a model (for sharing)
+engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
+{
+}
+
+
 
 // draws the model, and thus all its meshes
 void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)

@@ -75,8 +75,6 @@ namespace engine
         const virtual float getShininessIntensity() const { return m_shininess; }
         const virtual float getAmbientIntensity() const { return m_ambientIntensity; }
         const virtual float getEmissiveIntensity() const { return m_emissiveIntensity; }
-        //bool& canCastShadows() { return m_canCastShadows; }
-        //bool& canReceiveShadows() { return m_canReceiveShadows; }
 
 
         virtual void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
@@ -84,8 +82,6 @@ namespace engine
         virtual void setShininessIntensity(float intensity) { m_shininess = intensity; }
         virtual void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
         virtual void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
-        //virtual void setCanCastShadows(bool canCast) { m_canCastShadows = canCast; }
-        //virtual void setCanReceiveShadows(bool canReceive) { m_canReceiveShadows = canReceive; }
 
         const virtual std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 

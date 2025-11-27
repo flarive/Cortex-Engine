@@ -363,6 +363,12 @@
     <ClCompile Include="core\src\models\model.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\models\animated_model.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\shared_model.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -618,6 +624,9 @@
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
     <ClInclude Include="core\include\models\assimp_glm_helpers.h">
+      <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\shared_model.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
   </ItemGroup>

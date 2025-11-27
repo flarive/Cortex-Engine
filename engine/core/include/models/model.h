@@ -5,7 +5,9 @@
 #include "mesh.h"
 #include "../shader.h"
 #include "../transform.h"
+#include "shared_model.h"
 
+#include <glm/glm.hpp>
 
 #include <assimp/importer.hpp>
 #include <assimp/scene.h>
@@ -20,18 +22,19 @@
 namespace engine
 {
     // just to have std::dynamic_pointer_cast working on Model class
-    class SharedModel : private NonCopyable {
+    class SharedModel : private NonCopyable
+    {
     public:
-		// model data (TODO : make private with getters)
+        // model data (TODO : make private with getters)
         std::vector<Texture> textures_loaded{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
         std::vector<Mesh> meshes{};
         std::string directory{};
         bool gammaCorrection{};
 
-        
-        
-        
-		// at least one virtual method to make it base class
+
+
+
+        // at least one virtual method to make it base class
         virtual ~SharedModel() = default;
 
         SharedModel(bool gamma, bool flipUVs);
@@ -43,8 +46,8 @@ namespace engine
         unsigned int getNumberOfMeshes() const;
 
     private:
-        
-        
+
+
         // processes a node in a recursive fashion.
         // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
         void processNode(aiNode* node, const aiScene* scene);
@@ -61,16 +64,15 @@ namespace engine
 
         unsigned int m_numberOfMeshes{};
 
-        
+
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
 
         mutable std::mutex textureMutex;
     };
-
-
-    class Model final : public SharedModel
+    
+    class Model : public SharedModel
     {
     public:
         glm::vec3 position{};

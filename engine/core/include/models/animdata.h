@@ -1,10 +1,9 @@
 #pragma once
 
-#include<glm/glm.hpp>
+//#include<glm/glm.hpp>
 
 namespace engine
 {
-
 	struct BoneInfo
 	{
 		/*id is index in finalBoneMatrices*/
@@ -12,6 +11,5 @@ namespace engine
 
 		/*offset matrix transforms vertex from model space to bone space*/
 		glm::mat4 offset;
-
 	};
 }

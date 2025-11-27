@@ -35,6 +35,7 @@
 
 
 #include "models/model.h"
+#include "models/animated_model.h"
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"

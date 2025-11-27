@@ -149,36 +149,28 @@ void engine::Material::loadTexturesAsync()
 
     // get TextureID from queue
     diffuseMapId = engine::TextureManager::textureIDCache[getDiffuseTexPath()];
-    //if (diffuseMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
 
     specularMapId = engine::TextureManager::textureIDCache[getSpecularTexPath()];
-    //if (specularMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
 
     normalMapId = engine::TextureManager::textureIDCache[getNormalTexPath()];
-    //if (normalMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
 
     metallicMapId = engine::TextureManager::textureIDCache[getMetallicTexPath()];
-    //if (metallicMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
 
     roughnessMapId = engine::TextureManager::textureIDCache[getRoughnessTexPath()];
-    //if (roughnessMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
 
     aoMapId = engine::TextureManager::textureIDCache[getAoTexPath()];
-    //if (aoMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
 
     heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
-    //if (heightMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
 
     emissiveMapId = engine::TextureManager::textureIDCache[getEmissiveTexPath()];
-    //if (emissiveMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+    textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 
 
     if (diffuseMapId > 0) // BOFFFFF !!!!

@@ -19,7 +19,6 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 	m_debug_boundingBox->setup(matDebugLight);
 }
 
-
 void engine::ModelComponent::init(Transform& transform)
 {
 	m_model->position = transform.getLocalPosition();

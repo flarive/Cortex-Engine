@@ -64,7 +64,7 @@ void MyScene11::init()
 
 
     // animated vampire model
-    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
+    auto vampireModel = make_shared<AnimatedModel>("models/vampire/dancing_vampire.dae", false, true);
     auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.005f), vec3(0.0f, 45.0f, 0.0f));
     auto entityVampire = make_shared<Entity>("MyVampire");
     entityVampire->addComponent<TransformComponent>(trsVampire);

@@ -4,6 +4,7 @@
 #include "component.h"
 
 #include "../models/model.h"
+#include "../models/animated_model.h"
 #include "../frustrum.h"
 #include "../bounding_volume.h"
 #include "../aabb.h"

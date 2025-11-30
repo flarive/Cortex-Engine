@@ -369,6 +369,9 @@
     <ClCompile Include="core\src\models\shared_model.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\ecs\animator_component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -628,6 +631,9 @@
     </ClInclude>
     <ClInclude Include="core\include\models\shared_model.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\animator_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

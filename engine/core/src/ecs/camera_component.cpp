@@ -12,7 +12,7 @@ void engine::CameraComponent::init(Transform& transform)
 	m_camera->position = transform.getLocalPosition();
 }
 
-void engine::CameraComponent::update(Transform& transform)
+void engine::CameraComponent::update(float deltaTime, Transform& transform)
 {
 
 }

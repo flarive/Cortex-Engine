@@ -34,7 +34,7 @@ void engine::PrimitiveComponent::init(Transform& transform)
 	m_primitive->scale = transform.getLocalScale();
 }
 
-void engine::PrimitiveComponent::update(Transform& transform)
+void engine::PrimitiveComponent::update(float deltaTime, Transform& transform)
 {
 
 }

@@ -13,7 +13,7 @@ void engine::LightComponent::init(Transform& transform)
     m_light->position = transform.getLocalPosition();
 }
 
-void engine::LightComponent::update(Transform& transform)
+void engine::LightComponent::update(float deltaTime, Transform& transform)
 {
 
 }

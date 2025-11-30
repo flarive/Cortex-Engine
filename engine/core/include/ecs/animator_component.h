@@ -1,37 +1,46 @@
 #pragma once
 
+
 #include "component.h"
 
-#include "../cameras/camera.h"
+#include "../models/model.h"
+#include "../models/animated_model.h"
+#include "../frustrum.h"
+#include "../bounding_volume.h"
+#include "../aabb.h"
+
+#include "../models/animator.h"
+#include "../shader.h"
+
+#include <variant>
 
 namespace engine
 {
-	class CameraComponent final : public ComponentBase<CameraComponent>
+	class AnimatorComponent final : public ComponentBase<AnimatorComponent>
 	{
 	public:
 
-		CameraComponent() = default;
-		CameraComponent(std::shared_ptr<Camera> camera);
-		~CameraComponent() = default;
+		AnimatorComponent() = default;
+		AnimatorComponent(std::shared_ptr<Animator> model);
+		~AnimatorComponent() = default;
 
 		void init(Transform& transform) override;
 		void update(float deltaTime, Transform& transform) override;
 
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
-		std::shared_ptr<Camera> getCamera()
+		std::shared_ptr<Animator> getModel()
 		{
-			return m_camera;
+			return m_animator;
 		}
 
-
 		static ComponentType getStaticTypeID() {
-			return ComponentType::camera;
+			return ComponentType::animator;
 		}
 
 		std::string getName() override
 		{
-			return "Camera";
+			return "Animator";
 		}
 
 		engine::AABB* getBoundingVolume() override;
@@ -41,9 +50,10 @@ namespace engine
 
 	private:
 
-		std::shared_ptr<Camera> m_camera{};
+		std::shared_ptr<Animator> m_animator{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		AABB generateBoundingVolume(const std::shared_ptr<Camera> camera);
+
+		AABB generateBoundingVolume(const std::shared_ptr<Animator> animator);
 	};
 }

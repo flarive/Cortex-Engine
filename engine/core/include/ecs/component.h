@@ -16,7 +16,7 @@
 
 namespace engine
 {
-    enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5 };
+    enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5, animator = 6};
 
 
 
@@ -33,7 +33,7 @@ namespace engine
         virtual ~Component() = default;
 
         virtual void init(Transform& transform) = 0;
-        virtual void update(Transform& transform) = 0;
+        virtual void update(float deltaTime, Transform& transform) = 0;
 
         virtual void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) = 0;
 

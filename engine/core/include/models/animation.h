@@ -6,20 +6,21 @@
 
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
+#include <assimp/matrix4x4.h>
 
 #include "animated_model.h"
 #include "bone.h"
 #include "animdata.h"
-#include "animated_model.h"
+
 
 namespace engine
 {
 	struct AssimpNodeData
 	{
-		glm::mat4 transformation;
-		std::string name;
-		int childrenCount;
-		std::vector<AssimpNodeData> children;
+		glm::mat4 transformation{};
+		std::string name{};
+		int childrenCount{};
+		std::vector<AssimpNodeData> children{};
 	};
 
 	class Animation
@@ -27,7 +28,7 @@ namespace engine
 	public:
 		Animation() = default;
 
-		Animation(const std::string& animationPath, AnimatedModel* model)
+		Animation(const std::string& animationPath, std::shared_ptr<AnimatedModel> model)
 		{
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
@@ -71,8 +72,8 @@ namespace engine
 		{
 			int size = animation->mNumChannels;
 
-			auto& boneInfoMap = model.GetBoneInfoMap();//getting m_BoneInfoMap from Model class
-			int& boneCount = model.GetBoneCount(); //getting the m_BoneCounter from Model class
+			auto& boneInfoMap = model.getBoneInfoMap();//getting m_BoneInfoMap from Model class
+			int& boneCount = model.getBoneCount(); //getting the m_BoneCounter from Model class
 
 			//reading channels(bones engaged in an animation and their keyframes)
 			for (int i = 0; i < size; i++)
@@ -100,17 +101,17 @@ namespace engine
 			dest.transformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(src->mTransformation);
 			dest.childrenCount = src->mNumChildren;
 
-			for (int i = 0; i < src->mNumChildren; i++)
+			for (unsigned int i = 0; i < src->mNumChildren; i++)
 			{
 				AssimpNodeData newData;
 				ReadHierarchyData(newData, src->mChildren[i]);
 				dest.children.push_back(newData);
 			}
 		}
-		float m_Duration;
-		int m_TicksPerSecond;
-		std::vector<Bone> m_Bones;
-		AssimpNodeData m_RootNode;
-		std::map<std::string, BoneInfo> m_BoneInfoMap;
+		float m_Duration{};
+		int m_TicksPerSecond{};
+		std::vector<Bone> m_Bones{};
+		AssimpNodeData m_RootNode{};
+		std::map<std::string, BoneInfo> m_BoneInfoMap{};
 	};
 }

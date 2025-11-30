@@ -521,8 +521,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 // primitive and model
                 if (shouldDraw)
                     component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-                else
-                    int ii = 0;
 
                 inFrustrumCount++;
             }
@@ -530,6 +528,12 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             {
                 // light
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+            }
+            else if (typeID == ComponentType::animator)
+            {
+                // camera
+				component->update(deltaTime, transform);
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
             else if (typeID == ComponentType::camera)
             {

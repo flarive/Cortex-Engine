@@ -32,10 +32,13 @@
 #include "ecs/primitive_component.h"
 #include "ecs/light_component.h"
 #include "ecs/model_component.h"
+#include "ecs/animator_component.h"
 
 
 #include "models/model.h"
 #include "models/animated_model.h"
+#include "models/animator.h"
+#include "models/animation.h"
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"

@@ -65,21 +65,32 @@ void MyScene11::init()
 
     // animated vampire model
     auto vampireModel = make_shared<AnimatedModel>("models/vampire/dancing_vampire.dae", false, true);
+    auto vampireAnimation = make_shared<Animation>("models/vampire/dancing_vampire.dae", vampireModel);
+    auto vampireAnimator = make_shared<Animator>(vampireAnimation);
     auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.005f), vec3(0.0f, 45.0f, 0.0f));
     auto entityVampire = make_shared<Entity>("MyVampire");
     entityVampire->addComponent<TransformComponent>(trsVampire);
     entityVampire->addComponent<ModelComponent>(vampireModel);
+    entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
     getEntityManager().addChild(entityVampire);
 
-    // load models
-    // -----------
-    //Model ourModel(FileSystem::getPath("resources/objects/vampire/dancing_vampire.dae"));
-    //Animation danceAnimation(FileSystem::getPath("resources/objects/vampire/dancing_vampire.dae"), &ourModel);
-    //Animator animator(&danceAnimation);
 
 
-
-
+    // skybox
+    auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
+    if (renderer)
+    {
+        vector<string> faces
+        {
+            "textures/skybox/right.jpg",
+            "textures/skybox/left.jpg",
+            "textures/skybox/top.jpg",
+            "textures/skybox/bottom.jpg",
+            "textures/skybox/front.jpg",
+            "textures/skybox/back.jpg"
+        };
+        renderer->setSkybox(faces);
+    }
 
 
     textFPSCount.setup(app->window, FONT_PATH, 28);

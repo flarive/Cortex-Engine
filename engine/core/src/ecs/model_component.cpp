@@ -26,7 +26,7 @@ void engine::ModelComponent::init(Transform& transform)
 	m_model->scale = transform.getLocalScale();
 }
 
-void engine::ModelComponent::update(Transform& transform)
+void engine::ModelComponent::update(float deltaTime, Transform& transform)
 {
 
 }

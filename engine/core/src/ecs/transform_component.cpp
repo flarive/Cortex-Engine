@@ -11,7 +11,7 @@ void engine::TransformComponent::init(Transform& transform)
 
 }
 
-void engine::TransformComponent::update(Transform& transform)
+void engine::TransformComponent::update(float deltaTime, Transform& transform)
 {
 
 }

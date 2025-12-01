@@ -53,6 +53,14 @@ void engine::AnimatedModel::draw(Shader& shader, const glm::mat4& transformMatri
     }
 }
 
+
+// poubelle !!!!!!!!!!!
+void engine::AnimatedModel::draw(Shader& shader)
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].draw(shader);
+}
+
 void engine::AnimatedModel::clean()
 {
     for (unsigned int i = 0; i < meshes.size(); i++) {

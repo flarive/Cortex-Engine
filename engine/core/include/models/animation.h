@@ -28,7 +28,7 @@ namespace engine
 	public:
 		Animation() = default;
 
-		Animation(const std::string& animationPath, std::shared_ptr<AnimatedModel> model)
+		Animation(const std::string& animationPath, AnimatedModel* &model)
 		{
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);

@@ -14,10 +14,10 @@ namespace engine
 	class Animator
 	{
 	public:
-		Animator(std::shared_ptr<Animation> animation) : m_CurrentTime(0.0), m_CurrentAnimation(animation)
+		Animator(Animation* animation)// : m_CurrentTime(0.0), m_CurrentAnimation(animation)
 		{
-			//m_CurrentTime = 0.0;
-			//m_CurrentAnimation = animation;
+			m_CurrentTime = 0.0;
+			m_CurrentAnimation = animation;
 
 			m_FinalBoneMatrices.reserve(100);
 
@@ -36,7 +36,7 @@ namespace engine
 			}
 		}
 
-		void playAnimation(std::shared_ptr<Animation> pAnimation)
+		void playAnimation(Animation* pAnimation)
 		{
 			m_CurrentAnimation = pAnimation;
 			m_CurrentTime = 0.0f;
@@ -76,7 +76,7 @@ namespace engine
 
 	private:
 		std::vector<glm::mat4> m_FinalBoneMatrices{};
-		std::shared_ptr<Animation> m_CurrentAnimation{};
+		Animation* m_CurrentAnimation{};
 		float m_CurrentTime{};
 		float m_DeltaTime{};
 	};

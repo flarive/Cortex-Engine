@@ -239,15 +239,15 @@ int main()
     // build and compile shaders
     // -------------------------
     engine::Shader ourShader{};
-    ourShader.init("anim_model", "anim_model.vs", "anim_model.fs");
+    ourShader.init("anim_model", "shaders/anim_model.vert", "shaders/anim_model.frag");
 
 
     // load models
     // -----------
-    const std::string aaa = engine::FileSystem::getPath("resources/objects/vampire/dancing_vampire.dae");
-    engine::AnimatedModel ourModel(engine::FileSystem::getPath("resources/objects/vampire/dancing_vampire.dae"));
-    engine::Animation danceAnimation(aaa, &ourModel);
-    engine::Animator animator(&danceAnimation);
+    const std::string aaa = engine::FileSystem::getPath("models/vampire/dancing_vampire.dae");
+    engine::AnimatedModel* ourModel = new engine::AnimatedModel(engine::FileSystem::getPath("models/vampire/dancing_vampire.dae"));
+    engine::Animation* danceAnimation = new engine::Animation(aaa, ourModel);
+    engine::Animator animator(danceAnimation);
 
 
     // draw in wireframe
@@ -292,7 +292,16 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
-        ourModel.draw(ourShader);
+
+        engine::Transform localTransform{
+            glm::vec3(0.0f, -0.4f, 0.0f),
+            glm::vec3(.5f, .5f, .5f),
+            glm::vec3(0.0f, 0.0f, 0.0f)
+        };
+
+        glm::mat4 worldTrandform = localTransform.getLocalModelMatrix();
+
+        ourModel->draw(ourShader, worldTrandform, localTransform);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

@@ -26,7 +26,7 @@ namespace engine
         Mesh(Mesh&&) = default;
 
         // render the mesh
-        void draw(Shader& shader, const glm::mat4 transformMatrix);
+        void draw(Shader& shader, const glm::mat4 transformMatrix = glm::mat4(1.0f));
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 

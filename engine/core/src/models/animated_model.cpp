@@ -133,6 +133,7 @@ void engine::AnimatedModel::extractBoneWeightForVertices(std::vector<Vertex>& ve
     }
 }
 
+
 engine::Mesh engine::AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // Data to fill
@@ -254,6 +255,8 @@ engine::Mesh engine::AnimatedModel::processMesh(aiMesh* mesh, const aiScene* sce
     // Create Material
     auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
     meshMaterial->setAllTexturesLoaded(true);
+
+    extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };

@@ -46,8 +46,8 @@ void main()
     // Handle bone animation if the model is animated
     if (isAnimated)
     {
-        //totalPosition = vec4(0.0);
-        totalPosition = vec4(aPos, 1.0);
+        totalPosition = vec4(0.0);
+        //totalPosition = vec4(aPos, 1.0);
         totalNormal = vec3(0.0);
         for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
         {

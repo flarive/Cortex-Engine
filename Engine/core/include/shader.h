@@ -11,7 +11,8 @@ namespace engine
     enum class ShaderType {
         Unknown,
         BlinnPhong,
-        PBR
+        PBR,
+        AnimModel
     };
 
     

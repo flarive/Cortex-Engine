@@ -294,5 +294,6 @@ engine::ShaderType engine::Shader::getShaderType()
 {
     if (name == "blinnphong") return ShaderType::BlinnPhong;
     if (name == "pbr") return ShaderType::PBR;
+    if (name == "anim_model") return ShaderType::BlinnPhong;
     return ShaderType::Unknown;
 }

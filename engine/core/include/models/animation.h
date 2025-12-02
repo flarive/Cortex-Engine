@@ -28,7 +28,7 @@ namespace engine
 	public:
 		Animation() = default;
 
-		Animation(const std::string& animationPath, AnimatedModel* &model)
+		Animation(const std::string& animationPath, std::shared_ptr<AnimatedModel> model)
 		{
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
@@ -39,7 +39,7 @@ namespace engine
 			aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 			globalTransformation = globalTransformation.Inverse();
 			ReadHierarchyData(m_RootNode, scene->mRootNode);
-			ReadMissingBones(animation, *model);
+			ReadMissingBones(animation, *model.get());
 		}
 
 		~Animation()

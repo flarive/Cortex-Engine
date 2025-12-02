@@ -52,7 +52,6 @@ namespace engine
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform);
-        //void draw(Shader& shader);
 
         void clean();
 

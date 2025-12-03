@@ -35,7 +35,7 @@ namespace engine
 			assert(scene && scene->mRootNode);
 			auto animation = scene->mAnimations[0];
 			m_duration = static_cast<float>(animation->mDuration);
-			m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond);
+			m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond / 2.0);
 			aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 			globalTransformation = globalTransformation.Inverse();
 			readHierarchyData(m_rootNode, scene->mRootNode);

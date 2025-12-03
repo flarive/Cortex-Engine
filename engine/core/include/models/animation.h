@@ -8,7 +8,7 @@
 #include <assimp/scene.h>
 #include <assimp/matrix4x4.h>
 
-#include "animated_model.h"
+#include "model.h"
 #include "bone.h"
 #include "animdata.h"
 
@@ -28,52 +28,55 @@ namespace engine
 	public:
 		Animation() = default;
 
-		Animation(const std::string& animationPath, std::shared_ptr<AnimatedModel> model)
+		Animation(const std::string& animationPath, std::shared_ptr<Model> model)
 		{
 			Assimp::Importer importer;
 			const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 			assert(scene && scene->mRootNode);
 			auto animation = scene->mAnimations[0];
-			m_Duration = animation->mDuration;
-			m_TicksPerSecond = animation->mTicksPerSecond;
+			m_duration = static_cast<float>(animation->mDuration);
+			m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond);
 			aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 			globalTransformation = globalTransformation.Inverse();
-			ReadHierarchyData(m_RootNode, scene->mRootNode);
-			ReadMissingBones(animation, *model.get());
+			readHierarchyData(m_rootNode, scene->mRootNode);
+			readMissingBones(animation, *model.get());
 		}
 
 		~Animation()
 		{
 		}
 
-		Bone* FindBone(const std::string& name)
+		Bone* findBone(const std::string& name)
 		{
-			auto iter = std::find_if(m_Bones.begin(), m_Bones.end(),
+			auto iter = std::find_if(m_bones.begin(), m_bones.end(),
 				[&](const Bone& Bone)
 				{
-					return Bone.GetBoneName() == name;
+					return Bone.getBoneName() == name;
 				}
 			);
-			if (iter == m_Bones.end()) return nullptr;
+			if (iter == m_bones.end()) return nullptr;
 			else return &(*iter);
 		}
 
 
-		inline float GetTicksPerSecond() { return m_TicksPerSecond; }
-		inline float GetDuration() { return m_Duration; }
-		inline const AssimpNodeData& GetRootNode() { return m_RootNode; }
-		inline const std::map<std::string, BoneInfo>& GetBoneIDMap()
-		{
-			return m_BoneInfoMap;
-		}
+		inline int getTicksPerSecond() { return m_ticksPerSecond; }
+		inline float getDuration() { return m_duration; }
+		inline const AssimpNodeData& getRootNode() { return m_rootNode; }
+		inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return m_boneInfoMap; }
 
 	private:
-		void ReadMissingBones(const aiAnimation* animation, AnimatedModel& model)
+		float m_duration{};
+		int m_ticksPerSecond{};
+		std::vector<Bone> m_bones{};
+		AssimpNodeData m_rootNode{};
+		std::map<std::string, BoneInfo> m_boneInfoMap{};
+		
+		void readMissingBones(const aiAnimation* animation, Model& model)
 		{
 			int size = animation->mNumChannels;
 
-			auto& boneInfoMap = model.getBoneInfoMap();//getting m_BoneInfoMap from Model class
-			int& boneCount = model.getBoneCount(); //getting the m_BoneCounter from Model class
+			auto& boneInfoMap = model.getBoneInfoMap();//getting m_boneInfoMap from Model class
+			int& boneCount = model.getBoneCount(); //getting the m_boneCounter from Model class
 
 			//reading channels(bones engaged in an animation and their keyframes)
 			for (int i = 0; i < size; i++)
@@ -86,14 +89,14 @@ namespace engine
 					boneInfoMap[boneName].id = boneCount;
 					boneCount++;
 				}
-				m_Bones.push_back(Bone(channel->mNodeName.data,
+				m_bones.push_back(Bone(channel->mNodeName.data,
 					boneInfoMap[channel->mNodeName.data].id, channel));
 			}
 
-			m_BoneInfoMap = boneInfoMap;
+			m_boneInfoMap = boneInfoMap;
 		}
 
-		void ReadHierarchyData(AssimpNodeData& dest, const aiNode* src)
+		void readHierarchyData(AssimpNodeData& dest, const aiNode* src)
 		{
 			assert(src);
 
@@ -104,14 +107,9 @@ namespace engine
 			for (unsigned int i = 0; i < src->mNumChildren; i++)
 			{
 				AssimpNodeData newData;
-				ReadHierarchyData(newData, src->mChildren[i]);
+				readHierarchyData(newData, src->mChildren[i]);
 				dest.children.push_back(newData);
 			}
 		}
-		float m_Duration{};
-		int m_TicksPerSecond{};
-		std::vector<Bone> m_Bones{};
-		AssimpNodeData m_RootNode{};
-		std::map<std::string, BoneInfo> m_BoneInfoMap{};
 	};
 }

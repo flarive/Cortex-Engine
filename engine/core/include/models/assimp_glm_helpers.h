@@ -13,6 +13,7 @@ namespace
 	{
 	public:
 
+		// convert an Assimp matrix to a glm matrix
 		static inline glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from)
 		{
 			glm::mat4 to;

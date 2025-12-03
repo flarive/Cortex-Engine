@@ -24,7 +24,7 @@ void engine::AnimatorComponent::draw(glm::mat4 projection, glm::mat4 view, Shade
 {
 	auto transforms = m_animator->getFinalBoneMatrices();
 
-	shader.setBool("isAnimated", true);
+	//shader.setBool("isAnimated", true);
 
 	for (int i = 0; i < transforms.size(); ++i)
 	{

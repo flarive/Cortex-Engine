@@ -5,15 +5,12 @@
 #include "mesh.h"
 #include "../shader.h"
 #include "../transform.h"
-
+#include "animdata.h"
 
 #include <assimp/importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <string>
-#include <vector>
-#include <mutex>
 
 #include "SOIL2.h"
 
@@ -22,6 +19,11 @@
 #include <format>
 #include <chrono>
 #include <future>
+#include <map>
+#include <string>
+#include <vector>
+#include <mutex>
+
 
 
 namespace engine
@@ -41,11 +43,21 @@ namespace engine
         // at least one virtual method to make it base class
         virtual ~SharedModel() = default;
 
-        SharedModel(bool gamma, bool flipUVs);
+        SharedModel(bool hasBones, bool gamma, bool flipUVs);
 
         // constructor, expects a filepath to a 3D model.
-        SharedModel(const std::string& path, bool gamma = false, bool flipUVs = false);
+        SharedModel(const std::string& path, bool hasBones, bool gamma = false, bool flipUVs = false);
 
+
+        auto& getBoneInfoMap() { return m_boneInfoMap; }
+        int& getBoneCount() { return m_boneCounter; }
+
+
+        bool& hasBones() { return m_hasBones; }
+
+        void setVertexBoneDataToDefault(Vertex& vertex);
+        void setVertexBoneData(Vertex& vertex, int boneID, float weight);
+        void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
         unsigned int getNumberOfMeshes() const;
 
@@ -66,6 +78,9 @@ namespace engine
 
         unsigned int m_numberOfMeshes{};
 
+        bool m_hasBones{};
+        std::map<std::string, BoneInfo> m_boneInfoMap{};
+        int m_boneCounter{};
 
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.

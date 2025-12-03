@@ -14,7 +14,6 @@
 #include <assimp/postprocess.h>
 
 
-
 #include <string>
 #include <vector>
 #include <mutex>
@@ -32,9 +31,9 @@ namespace engine
 		~Model() = default;
 
         // constructor, expects a filepath to a 3D model.
-        Model(const std::string& _path, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::string& _path, bool _hasBones = false, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
-        Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::shared_ptr<SharedModel>& _shared_model, bool _hasBones = false, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform);
@@ -42,7 +41,6 @@ namespace engine
         void clean();
 
         unsigned int getNumberOfMeshes() const;
-
 
     private:
         // for shared model only (loaded one time, drawn multiple times)

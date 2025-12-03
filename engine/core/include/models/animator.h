@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 #include <assimp/scene.h>
-#include <assimp/Importer.hpp>
+#include <assimp/importer.hpp>
 
 #include "animation.h"
 #include "bone.h"
@@ -16,9 +16,6 @@ namespace engine
 	public:
 		Animator(std::shared_ptr<Animation> animation) : m_CurrentTime(0.0), m_CurrentAnimation(animation)
 		{
-			/*m_CurrentTime = 0.0;
-			m_CurrentAnimation = animation;*/
-
 			m_FinalBoneMatrices.reserve(100);
 
 			for (int i = 0; i < 100; i++)
@@ -32,9 +29,9 @@ namespace engine
 			m_DeltaTime = dt;
 			if (m_CurrentAnimation)
 			{
-				m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt;
-				m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
-				calculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
+				m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
+				m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
+				calculateBoneTransform(&m_CurrentAnimation->getRootNode(), glm::mat4(1.0f));
 			}
 		}
 
@@ -49,17 +46,17 @@ namespace engine
 			std::string nodeName = node->name;
 			glm::mat4 nodeTransform = node->transformation;
 
-			Bone* Bone = m_CurrentAnimation->FindBone(nodeName);
+			Bone* Bone = m_CurrentAnimation->findBone(nodeName);
 
 			if (Bone)
 			{
-				Bone->Update(m_CurrentTime);
-				nodeTransform = Bone->GetLocalTransform();
+				Bone->update(m_CurrentTime);
+				nodeTransform = Bone->getLocalTransform();
 			}
 
 			glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-			auto boneInfoMap = m_CurrentAnimation->GetBoneIDMap();
+			auto boneInfoMap = m_CurrentAnimation->getBoneIDMap();
 			if (boneInfoMap.find(nodeName) != boneInfoMap.end())
 			{
 				int index = boneInfoMap[nodeName].id;

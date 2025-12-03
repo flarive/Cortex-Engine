@@ -64,10 +64,10 @@ void MyScene11::init()
 
 
     // animated vampire model
-    auto vampireModel = make_shared<AnimatedModel>("models/vampire/dancing_vampire.dae", false, true);
+    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", true, false, true);
     auto vampireAnimation = make_shared<Animation>("models/vampire/dancing_vampire.dae", vampireModel);
     auto vampireAnimator = make_shared<Animator>(vampireAnimation);
-    auto trsVampire = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.01f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityVampire = make_shared<Entity>("MyVampire");
     entityVampire->addComponent<TransformComponent>(trsVampire);
     entityVampire->addComponent<ModelComponent>(vampireModel);

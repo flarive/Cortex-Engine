@@ -4,14 +4,16 @@
 #include "../../include/tools/file_system.h"
 #include "../../include/tools/helpers.h"
 
+#include "../../include/models/assimp_glm_helpers.h"
 
 
-engine::SharedModel::SharedModel(bool gamma, bool flipUVs)
+
+engine::SharedModel::SharedModel(bool hasBones, bool gamma, bool flipUVs) : m_hasBones(hasBones)
 {
 
 }
 
-engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(const std::string& path, bool hasBones, bool gamma, bool flipUVs) : m_hasBones(hasBones)
 {
     assert(!path.empty() && "Model path is empty !");
 
@@ -96,15 +98,17 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         glm::vec3 vector{}; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
 
         // positions
-        engine::Vertex vertex(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
+        //engine::Vertex vertex(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
+        engine::Vertex vertex{ AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]) };
 
         // normals
         if (mesh->HasNormals())
         {
-            vector.x = mesh->mNormals[i].x;
+            /*vector.x = mesh->mNormals[i].x;
             vector.y = mesh->mNormals[i].y;
             vector.z = mesh->mNormals[i].z;
-            vertex.normal = vector;
+            vertex.normal = vector;*/
+            vertex.normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
         }
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
@@ -198,6 +202,10 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     // Create Material
     auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
     meshMaterial->setAllTexturesLoaded(true);
+
+    // m_hasBones could be calculated i suppose
+    if (m_hasBones)
+        extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
@@ -313,4 +321,64 @@ unsigned int engine::SharedModel::getNumberOfMeshes() const
 {
     return m_numberOfMeshes;
 }
+
+
+void engine::SharedModel::setVertexBoneDataToDefault(Vertex& vertex)
+{
+    for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+    {
+        vertex.boneIDs[i] = -1;
+        vertex.weights[i] = 0.0f;
+    }
+}
+
+void engine::SharedModel::setVertexBoneData(Vertex& vertex, int boneID, float weight)
+{
+    for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+    {
+        /*if (vertex.boneIDs[i] < 0)
+        {*/
+            vertex.weights[i] = weight;
+            vertex.boneIDs[i] = boneID;
+            break;
+        //}
+    }
+}
+
+void engine::SharedModel::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+{
+    auto& boneInfoMap = m_boneInfoMap;
+    int& boneCount = m_boneCounter;
+
+    for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    {
+        int boneID = -1;
+        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+        if (boneInfoMap.find(boneName) == boneInfoMap.end())
+        {
+            BoneInfo newBoneInfo;
+            newBoneInfo.id = boneCount;
+            newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
+            boneInfoMap[boneName] = newBoneInfo;
+            boneID = boneCount;
+            boneCount++;
+        }
+        else
+        {
+            boneID = boneInfoMap[boneName].id;
+        }
+        assert(boneID != -1);
+        auto weights = mesh->mBones[boneIndex]->mWeights;
+        int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+        {
+            int vertexId = weights[weightIndex].mVertexId;
+            float weight = weights[weightIndex].mWeight;
+            assert(vertexId <= vertices.size());
+            setVertexBoneData(vertices[vertexId], boneID, weight);
+        }
+    }
+}
+
 

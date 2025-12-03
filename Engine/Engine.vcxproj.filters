@@ -363,9 +363,6 @@
     <ClCompile Include="core\src\models\model.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\models\animated_model.cpp">
-      <Filter>Fichiers sources\core\models</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\models\shared_model.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
@@ -609,9 +606,6 @@
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
     <ClInclude Include="core\include\models\model.h">
-      <Filter>Fichiers d%27en-tête\core\models</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\models\animated_model.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
     <ClInclude Include="core\include\models\animator.h">

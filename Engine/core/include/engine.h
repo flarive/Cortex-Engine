@@ -36,7 +36,6 @@
 
 
 #include "models/model.h"
-#include "models/animated_model.h"
 #include "models/animator.h"
 #include "models/animation.h"
 

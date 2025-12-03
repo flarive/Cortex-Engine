@@ -5,8 +5,8 @@ layout (location = 1) in vec3 aNormal; // the normal variable has attribute posi
 layout (location = 2) in vec2 aTexCoords; // the uv variable has attribute position 2
 layout (location = 3) in vec3 aTangents; // the tangent variable has attribute position 3
 layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
-layout (location = 5) in ivec4 boneIds;  // Only used for animated models
-layout (location = 6) in vec4 weights;    // Only used for animated models
+layout (location = 5) in ivec4 aBoneIds;  // Only used for animated models
+layout (location = 6) in vec4 aWeights;    // Only used for animated models
 
 out VS_OUT {
     vec3 FragPos; // vertex position in world space, same as worldPosition
@@ -36,7 +36,7 @@ uniform vec3 viewPos;
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
-uniform bool isAnimated; // Flag to determine if the model is animated
+uniform bool isAnimated; // Flag to determine if the model is animated with bones animation
 
 void main()
 {
@@ -47,23 +47,22 @@ void main()
     if (isAnimated)
     {
         totalPosition = vec4(0.0);
-        //totalPosition = vec4(aPos, 1.0);
         totalNormal = vec3(0.0);
         for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
         {
-            if(boneIds[i] == -1)
+            if(aBoneIds[i] == -1)
                 continue;
 
-            if (boneIds[i] >= MAX_BONES)
+            if (aBoneIds[i] >= MAX_BONES)
             {
                 totalPosition = vec4(aPos, 1.0);
                 totalNormal = aNormal;
                 break;
             }
 
-            vec4 localPosition = finalBonesMatrices[boneIds[i]] * vec4(aPos, 1.0);
-            totalPosition += localPosition * weights[i];
-            totalNormal += mat3(finalBonesMatrices[boneIds[i]]) * aNormal * weights[i];
+            vec4 localPosition = finalBonesMatrices[aBoneIds[i]] * vec4(aPos, 1.0);
+            totalPosition += localPosition * aWeights[i];
+            totalNormal += mat3(finalBonesMatrices[aBoneIds[i]]) * aNormal * aWeights[i];
         }
     }
     else

@@ -196,6 +196,9 @@
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
     <ClCompile Include="core\src\managers\log_manager.cpp" />
+    <ClCompile Include="core\src\models\animation.cpp" />
+    <ClCompile Include="core\src\models\animator.cpp" />
+    <ClCompile Include="core\src\models\bone.cpp" />
     <ClCompile Include="core\src\models\shared_model.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
@@ -279,7 +282,6 @@
     <ClInclude Include="core\include\misc\ordered_map.h" />
     <ClInclude Include="core\include\models\animation.h" />
     <ClInclude Include="core\include\models\animator.h" />
-    <ClInclude Include="core\include\models\animdata.h" />
     <ClInclude Include="core\include\models\assimp_glm_helpers.h" />
     <ClInclude Include="core\include\models\bone.h" />
     <ClInclude Include="core\include\models\shared_model.h" />

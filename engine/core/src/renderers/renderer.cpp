@@ -155,6 +155,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
     // render scene from light's point of view
     directionalDepthMapShader.use();
     directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    
 
     glViewport(0, 0, (GLsizei)shadowSize, (GLsizei)shadowSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);

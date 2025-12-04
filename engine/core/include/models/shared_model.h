@@ -5,7 +5,7 @@
 #include "mesh.h"
 #include "../shader.h"
 #include "../transform.h"
-#include "animdata.h"
+#include "bone.h"
 
 #include <assimp/importer.hpp>
 #include <assimp/scene.h>
@@ -82,6 +82,7 @@ namespace engine
         std::map<std::string, BoneInfo> m_boneInfoMap{};
         int m_boneCounter{};
 
+        mutable std::mutex textureMutex;
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
@@ -89,7 +90,5 @@ namespace engine
         // checks all material textures of a given type and loads the textures if they're not loaded yet.
         // the required info is returned as a Texture struct.
         std::vector<Texture> loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName);
-
-        mutable std::mutex textureMutex;
     };
 }

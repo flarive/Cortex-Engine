@@ -38,7 +38,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 
-
+    bool aaa = hasBones();
     shader.setBool("isAnimated", hasBones());
 
     if (!m_shared_model)

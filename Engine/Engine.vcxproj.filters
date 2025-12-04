@@ -369,6 +369,15 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\models\animation.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\animator.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\bone.cpp">
+      <Filter>Fichiers sources\core\models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -612,9 +621,6 @@
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
     <ClInclude Include="core\include\models\animation.h">
-      <Filter>Fichiers d%27en-tête\core\models</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\models\animdata.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
     <ClInclude Include="core\include\models\bone.h">

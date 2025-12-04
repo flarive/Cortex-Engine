@@ -43,10 +43,10 @@ namespace engine
         // at least one virtual method to make it base class
         virtual ~SharedModel() = default;
 
-        SharedModel(bool hasBones, bool gamma, bool flipUVs);
+        SharedModel(bool gamma, bool flipUVs);
 
         // constructor, expects a filepath to a 3D model.
-        SharedModel(const std::string& path, bool hasBones, bool gamma = false, bool flipUVs = false);
+        SharedModel(const std::string& path, bool gamma = false, bool flipUVs = false);
 
 
         auto& getBoneInfoMap() { return m_boneInfoMap; }

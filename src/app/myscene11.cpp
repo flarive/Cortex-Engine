@@ -52,9 +52,10 @@ void MyScene11::init()
     // ground
     auto myPlane = make_shared<Plane>();
     myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f),
-        "textures/wood_diffuse.png",
-        "textures/wood_specular.png"), UvMapping(2.0f));
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, -6.0f), vec3(10.0f), vec3(0.0f, 0.0f, 0.0f));
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_diff_1k.jpg",
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_spec_1k.jpg",
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_nor_gl_1k.jpg"), UvMapping(1.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(3.0f), vec3(0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -64,7 +65,7 @@ void MyScene11::init()
 
 
     // animated vampire model
-    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, false, true);
+    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
     auto vampireAnimation = make_shared<Animation>("models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
     auto vampireAnimator = make_shared<Animator>(vampireAnimation);
     auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
@@ -73,24 +74,6 @@ void MyScene11::init()
     entityVampire->addComponent<ModelComponent>(vampireModel);
     entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
     getEntityManager().addChild(entityVampire);
-
-
-
-    // skybox
-    //auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
-    //if (renderer)
-    //{
-    //    vector<string> faces
-    //    {
-    //        "textures/skybox/right.jpg",
-    //        "textures/skybox/left.jpg",
-    //        "textures/skybox/top.jpg",
-    //        "textures/skybox/bottom.jpg",
-    //        "textures/skybox/front.jpg",
-    //        "textures/skybox/back.jpg"
-    //    };
-    //    renderer->setSkybox(faces);
-    //}
 
 
     textFPSCount.setup(app->window, FONT_PATH, 28);

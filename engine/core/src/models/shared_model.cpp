@@ -8,12 +8,12 @@
 
 
 
-engine::SharedModel::SharedModel(bool hasBones, bool gamma, bool flipUVs) : m_hasBones(hasBones)
+engine::SharedModel::SharedModel(bool gamma, bool flipUVs)
 {
 
 }
 
-engine::SharedModel::SharedModel(const std::string& path, bool hasBones, bool gamma, bool flipUVs) : m_hasBones(hasBones)
+engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipUVs)
 {
     assert(!path.empty() && "Model path is empty !");
 
@@ -47,10 +47,21 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
+    // check for bones or not
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        aiMesh* mesh = scene->mMeshes[i];
+        if (mesh->HasBones()) {
+            m_hasBones = true;
+            break;
+        }
+    }
+
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
     m_numberOfMeshes += scene->mNumMeshes;
+
+    
 
     // Stop the timer
     auto end = std::chrono::high_resolution_clock::now();
@@ -74,6 +85,7 @@ void engine::SharedModel::processNode(aiNode* node, const aiScene* scene)
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.push_back(processMesh(mesh, scene));
     }
+
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
@@ -95,21 +107,27 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     // walk through each of the mesh's vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
+        Vertex vertex{ glm::vec3(0.0f, 0.0f, 0.0f) };
+
         glm::vec3 vector{}; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
 
+
+        if (m_hasBones)
+            setVertexBoneDataToDefault(vertex);
+
         // positions
-        //engine::Vertex vertex(glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z));
-        engine::Vertex vertex{ AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]) };
+        vertex.position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
+
 
         // normals
         if (mesh->HasNormals())
         {
-            /*vector.x = mesh->mNormals[i].x;
-            vector.y = mesh->mNormals[i].y;
-            vector.z = mesh->mNormals[i].z;
-            vertex.normal = vector;*/
             vertex.normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
         }
+
+
+        
+        
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -203,7 +221,6 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
     meshMaterial->setAllTexturesLoaded(true);
 
-    // m_hasBones could be calculated i suppose
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
 
@@ -336,12 +353,12 @@ void engine::SharedModel::setVertexBoneData(Vertex& vertex, int boneID, float we
 {
     for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
     {
-        /*if (vertex.boneIDs[i] < 0)
-        {*/
+        if (vertex.boneIDs[i] < 0)
+        {
             vertex.weights[i] = weight;
             vertex.boneIDs[i] = boneID;
             break;
-        //}
+        }
     }
 }
 

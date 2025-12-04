@@ -98,6 +98,9 @@
     <Filter Include="resources\models\vampire">
       <UniqueIdentifier>{c692eeaa-db42-457a-9ae3-4c879dc7d123}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\plastered-stone-wall">
+      <UniqueIdentifier>{c0c6b8f3-4b48-439f-bf5c-a47f6191b9e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -753,6 +756,25 @@
     <CopyFileToFolders Include="..\resources\models\vampire\dancing_vampire.dae">
       <Filter>resources\models\vampire</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_diffuse.png" />
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_emission.png" />
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_normal.png" />
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_specular.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_arm_1k.jpg">
+      <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_diff_1k.jpg">
+      <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_disp_1k.jpg">
+      <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_nor_gl_1k.jpg">
+      <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_spec_1k.jpg">
+      <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -791,19 +813,5 @@
     <ClInclude Include="app\myscene11.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\models\vampire\Vampire_diffuse.png">
-      <Filter>resources\models\vampire</Filter>
-    </Image>
-    <Image Include="..\resources\models\vampire\Vampire_emission.png">
-      <Filter>resources\models\vampire</Filter>
-    </Image>
-    <Image Include="..\resources\models\vampire\Vampire_normal.png">
-      <Filter>resources\models\vampire</Filter>
-    </Image>
-    <Image Include="..\resources\models\vampire\Vampire_specular.png">
-      <Filter>resources\models\vampire</Filter>
-    </Image>
   </ItemGroup>
 </Project>

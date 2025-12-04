@@ -20,14 +20,14 @@
 
 
 // constructor, expects a filepath to a 3D model.
-engine::Model::Model(const std::string& _path, bool _hasBones, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_path, _hasBones, _gamma, _flipUVs), position(_position)
+engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : SharedModel(_path, _gamma, _flipUVs), position(_position)
 {
 }
 
 // constructor, expects a model (for sharing)
-engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _hasBones, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_hasBones, _gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
+engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
+    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
 {
 }
 
@@ -38,7 +38,6 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     rotation = localTransform.getLocalRotation();
     scale = localTransform.getLocalScale();
 
-    bool aaa = hasBones();
     shader.setBool("isAnimated", hasBones());
 
     if (!m_shared_model)

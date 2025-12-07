@@ -5,6 +5,7 @@
 #include "../common_defines.h"
 
 #include "../lights/light.h"
+#include "../misc/colors.h"
 
 namespace engine
 {
@@ -14,9 +15,21 @@ namespace engine
         PBR = 1 // mainstream
     };
 
+    struct GradientBackgroundSettings final
+    {
+        bool enabled{ false };
+        Color topColor{ Colors::Black };
+        Color bottomColor{ Colors::Black };
+        float ySplit{ 0.5f };
+    };
+    
+
     struct SceneSettings final
     {
         RenderMethod method{};
+
+		Color backgroundColor{ Colors::Black };
+        GradientBackgroundSettings backgroundGradientColors { false, Colors::Black, Colors::Black, 0.0f};
 
         bool HDRSkyboxHide{ false };
         std::string HDRSkyboxFilePath{};
@@ -40,7 +53,7 @@ namespace engine
         bool drawLightsVisualHelpers{ false };
         bool drawBoundingBoxesVisualHelpers{ false };
         bool drawNormalsVisualHelpers{ false };
-
-        
     };
+
+    
 }

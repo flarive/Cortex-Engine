@@ -11,7 +11,7 @@ engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _ind
 }
 
 // render the mesh
-void engine::Mesh::draw(Shader& shader, const glm::mat4 transformMatrix)
+void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 {
     ShaderType type = shader.getShaderType();
 

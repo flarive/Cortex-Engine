@@ -20,6 +20,17 @@ engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipU
     loadModel(path, flipUVs);
 }
 
+engine::SharedModel::SharedModel(const std::string& path, const std::shared_ptr<Material>& material, bool gamma, bool flipUVs)
+{
+    assert(!path.empty() && "Model path is empty !");
+
+    assert(material && "Material is not defined !");
+
+	m_customMaterial = material;
+
+    loadModel(path, flipUVs);
+}
+
 void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
 {
     // Start the timer
@@ -118,16 +129,10 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         // positions
         vertex.position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
 
-
         // normals
         if (mesh->HasNormals())
-        {
             vertex.normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
-        }
 
-
-        
-        
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -177,37 +182,42 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     // specular: texture_specularN
     // normal: texture_normalN
 
+    
+
+    // get colors
+    aiColor4D ambient, diffuse, specular;
+    aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambient);
+    aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+    aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
+
+
+    std::shared_ptr<Material> meshMaterial{};
+
+    // get textures
+    
     // 1. diffuse maps
     std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
-    //std::cout << "diffuseMaps " << diffuseMaps.size() << std::endl;
     for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
     // 2. specular maps
     std::vector<engine::Texture> specularMaps = loadMaterialTextures(scene, material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
-    //std::cout << "specularMaps " << specularMaps.size() << std::endl;
     for (auto& texture : specularMaps) { textures.push_back(std::move(texture)); }
     // 3. normal maps
     std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
-    //std::cout << "normalMaps " << normalMaps.size() << std::endl;
     for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
     // 4. metallic maps (now tagged as "texture_metalness_from_combined")
     std::vector<engine::Texture> metallicMaps = loadMaterialTextures(scene, material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
-    //std::cout << "metallicMaps " << metallicMaps.size() << std::endl;
     for (auto& texture : metallicMaps) { textures.push_back(std::move(texture)); }
     // 5. roughness maps (now tagged as "texture_roughness_from_combined")
     std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
-    //std::cout << "roughnessMaps " << roughnessMaps.size() << std::endl;
     for (auto& texture : roughnessMaps) { textures.push_back(std::move(texture)); }
     // 6. ambient occlusion maps
     std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(scene, material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
-    //std::cout << "ambientOcclusionMaps " << ambientOcclusionMaps.size() << std::endl;
     for (auto& texture : ambientOcclusionMaps) { textures.push_back(std::move(texture)); }
     // 7. height maps
     std::vector<engine::Texture> heightMaps = loadMaterialTextures(scene, material, aiTextureType_HEIGHT, "texture_height"); // bump
-    //std::cout << "heightMaps " << heightMaps.size() << std::endl;
     for (auto& texture : heightMaps) { textures.push_back(std::move(texture)); }
     // 8. emissive maps
     std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
-    //std::cout << "emissiveMaps " << emissiveMaps.size() << std::endl;
     for (auto& texture : emissiveMaps) { textures.push_back(std::move(texture)); }
 
     float shininess{};
@@ -217,9 +227,29 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         shininess = 32.0f;
     }
 
-    // Create Material
-    auto meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
-    meshMaterial->setAllTexturesLoaded(true);
+    
+
+    if (m_customMaterial)
+    {
+		// use a user defined material
+        meshMaterial = m_customMaterial;
+	}
+    else
+    {
+        // use material data embedded into model file
+        if (textures.size() > 0)
+        {
+            meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
+            meshMaterial->setAllTexturesLoaded(true);
+        }
+        else
+        {
+            meshMaterial = std::make_shared<Material>
+                (Color(ambient.r, ambient.g, ambient.b, ambient.a),
+                    Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a),
+                    Color(specular.r, specular.g, specular.b, specular.a), shininess);
+        }
+    }
 
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
@@ -245,7 +275,6 @@ bool engine::SharedModel::checkMetalnessRoughnessSingleTexture(const aiScene* sc
 
     return str1 == str2;
 }
-
 
 std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
 {
@@ -338,7 +367,6 @@ unsigned int engine::SharedModel::getNumberOfMeshes() const
 {
     return m_numberOfMeshes;
 }
-
 
 void engine::SharedModel::setVertexBoneDataToDefault(Vertex& vertex)
 {

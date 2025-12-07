@@ -33,7 +33,7 @@ void MyScene2::init()
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 2.0f;
+    light1->intensity = 1.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);

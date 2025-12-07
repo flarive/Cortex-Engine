@@ -15,6 +15,7 @@ namespace engine
 
 		// Skybox shader
 		Shader skyboxShader{};
+		Shader backgroundShader{};
 		
 		BlinnPhongRenderer(GLFWwindow* window);
 		
@@ -30,10 +31,15 @@ namespace engine
 	private:
 		void loadShaders() override;
 
+		void initBackground();
+		void renderBackground(const SceneSettings& settings);
+
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount);
 
 
 	protected:
 		std::shared_ptr<Skybox> m_skybox{};
+
+		unsigned int backgroundVBO{}, backgroundVAO{};
 	};
 }

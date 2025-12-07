@@ -11,7 +11,7 @@ MyScene1::MyScene1(string _title, App* _app) : Scene(_title, _app, SceneSettings
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
-        .shadowIntensity = 1.5f,
+        .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048
     })
 {
@@ -38,7 +38,7 @@ void MyScene1::init()
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 2.0f;
+    light1->intensity = 1.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);

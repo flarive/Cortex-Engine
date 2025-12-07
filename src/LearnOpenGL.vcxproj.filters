@@ -101,6 +101,9 @@
     <Filter Include="resources\textures\pbr\plastered-stone-wall">
       <UniqueIdentifier>{c0c6b8f3-4b48-439f-bf5c-a47f6191b9e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\mixamo">
+      <UniqueIdentifier>{8ed8fd1f-7b0f-45de-9dae-74da4e07fb7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -282,7 +285,7 @@
     <CopyFileToFolders Include="..\resources\shaders\pbr.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\background.frag">
+    <CopyFileToFolders Include="..\resources\shaders\pbr_background.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\albedo.png">
@@ -360,7 +363,7 @@
     <CopyFileToFolders Include="..\resources\shaders\equirectangular_to_cubemap.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\background.vert">
+    <CopyFileToFolders Include="..\resources\shaders\pbr_background.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\brdf.vert">
@@ -747,19 +750,9 @@
     <CopyFileToFolders Include="..\resources\shaders\depthToColorShader.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\anim_model.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\anim_model.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\vampire\dancing_vampire.dae">
       <Filter>resources\models\vampire</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_diffuse.png" />
-    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_emission.png" />
-    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_normal.png" />
-    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_specular.png" />
     <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_arm_1k.jpg">
       <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
     </CopyFileToFolders>
@@ -774,6 +767,33 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\plastered-stone-wall\plastered_stone_wall_spec_1k.jpg">
       <Filter>resources\textures\pbr\plastered-stone-wall</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_diffuse.png">
+      <Filter>resources\models\vampire</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_emission.png">
+      <Filter>resources\models\vampire</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_normal.png">
+      <Filter>resources\models\vampire</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\vampire\Vampire_specular.png">
+      <Filter>resources\models\vampire</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.fbx">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.dae">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDanceAnimOnly.dae">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.dae">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.frag">
+      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -813,5 +833,10 @@
     <ClInclude Include="app\myscene11.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\blinnphong_background.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

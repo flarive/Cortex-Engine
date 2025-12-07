@@ -88,10 +88,12 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
             initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
     }
 
+    initBackground();
+
     // color framebuffer configuration
     // -------------------------
-    //initColorFramebufferMSAA(width, height);
-    initColorFramebuffer(width, height);
+    initColorFramebufferMSAA(width, height);
+    //initColorFramebuffer(width, height);
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
@@ -105,18 +107,21 @@ void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
+    
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
 
-    // make sure we clear the framebuffer's content
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+    renderBackground(settings); // Render your gradient or custom background
+    
+    
+    
 
     updateSettings();
 
@@ -172,9 +177,9 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     computeColorFramebuffer();
 
     // Resolve MSAA to screen or another texture FBO
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
@@ -188,8 +193,60 @@ void engine::BlinnPhongRenderer::loadShaders()
     // skybox reflection shader
     skyboxShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
 
+	// gradient background shader
+    backgroundShader.init("background", "shaders/blinnphong_background.vert", "shaders/blinnphong_background.frag");
+
     // shared shaders
     Renderer::loadShaders();
+}
+
+void engine::BlinnPhongRenderer::initBackground()
+{
+    float vertices[] = {
+        // positions   // texture coords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &backgroundVAO);
+    glGenBuffers(1, &backgroundVBO);
+    glBindVertexArray(backgroundVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, backgroundVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+}
+
+void engine::BlinnPhongRenderer::renderBackground(const SceneSettings& settings)
+{
+    // make sure we clear the framebuffer's content
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
+    
+    if (settings.backgroundGradientColors.enabled)
+    {
+        // gradient color background
+        backgroundShader.use();
+        backgroundShader.setVec4("topcolor", settings.backgroundGradientColors.topColor);
+        backgroundShader.setVec4("bottomcolor", settings.backgroundGradientColors.bottomColor);
+        backgroundShader.setFloat("ySplit", settings.backgroundGradientColors.ySplit);
+
+        glBindVertexArray(backgroundVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // Only clear depth and stencil
+    }
+    else
+    {
+        // solid color background
+        Color backgroundColor = settings.backgroundColor;
+        glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
 }
 
 void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)

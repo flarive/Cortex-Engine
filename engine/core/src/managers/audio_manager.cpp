@@ -23,23 +23,6 @@ engine::AudioManager::~AudioManager()
     clean();
 }
 
-
-//void engine::AudioManager::initOpenAL()
-//{
-//    m_device = alcOpenDevice(nullptr);
-//    if (!m_device) {
-//        logger.warn("Failed to open OpenAL device");
-//        return;
-//    }
-//    m_context = alcCreateContext(m_device, nullptr);
-//    if (!m_context) {
-//        logger.warn("Failed to create OpenAL context");
-//        alcCloseDevice(m_device);
-//        return;
-//    }
-//    alcMakeContextCurrent(m_context);
-//}
-
 // In AudioManager.cpp
 void engine::AudioManager::initOpenALInternal()
 {

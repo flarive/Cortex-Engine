@@ -6,7 +6,7 @@ engine::Animation::Animation(const std::string& animationPath, std::shared_ptr<M
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
-	auto animation = scene->mAnimations[0];
+	aiAnimation* animation = scene->mAnimations[0];
 	m_duration = static_cast<float>(animation->mDuration);
 	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speed);
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;

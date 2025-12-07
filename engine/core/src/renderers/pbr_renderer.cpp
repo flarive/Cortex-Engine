@@ -86,8 +86,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    //initColorFramebufferMSAA(width, height);
-    initColorFramebuffer(width, height);
+    initColorFramebufferMSAA(width, height);
+    //initColorFramebuffer(width, height);
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
@@ -397,9 +397,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     computeColorFramebuffer();
 
     // Resolve MSAA to screen or another texture FBO
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();
@@ -415,7 +415,7 @@ void engine::PbrRenderer::loadShaders()
     brdfShader.init("brdfShader", "shaders/brdf.vert", "shaders/brdf.frag");
 
     // HDR skybox shader
-    backgroundShader.init("background", "shaders/background.vert", "shaders/background.frag");
+    backgroundShader.init("background", "shaders/pbr_background.vert", "shaders/pbr_background.frag");
 
     // shared shaders
     Renderer::loadShaders();

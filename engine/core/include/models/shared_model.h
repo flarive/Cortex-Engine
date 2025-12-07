@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../misc/noncopyable.h"
+#include "../materials/material.h"
 #include "../texture.h"
 #include "mesh.h"
 #include "../shader.h"
@@ -48,6 +49,8 @@ namespace engine
         // constructor, expects a filepath to a 3D model.
         SharedModel(const std::string& path, bool gamma = false, bool flipUVs = false);
 
+        SharedModel(const std::string& path, const std::shared_ptr<Material>& material, bool gamma, bool flipUVs);
+
 
         auto& getBoneInfoMap() { return m_boneInfoMap; }
         int& getBoneCount() { return m_boneCounter; }
@@ -83,6 +86,8 @@ namespace engine
         int m_boneCounter{};
 
         mutable std::mutex textureMutex;
+
+        std::shared_ptr<Material> m_customMaterial{};
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);

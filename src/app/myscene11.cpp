@@ -34,11 +34,11 @@ void MyScene11::init()
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 6.0f;
+    light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);
-    light1->ambientColor = Color(0.2f);
+    light1->ambientColor = Color(0.6f);
     light1->diffuseColor = Color(1.0f);
     light1->specularColor = Color(1.0f);
     auto entityLight1 = make_shared<Entity>("Light1");
@@ -78,8 +78,8 @@ void MyScene11::init()
 
 
     // mixamo twist dance model
-    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.dae", false, true);
-    auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.dae", mixamoModel, 0.2f);
+    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", false, true);
+    auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimator = make_shared<Animator>(mixamoAnimation);
     auto trsMixamo = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityMixamo = make_shared<Entity>("MyMixamo");

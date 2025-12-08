@@ -795,6 +795,19 @@
     <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.vert" />
+    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.bin">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.gltf">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.glb">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.glb">
+      <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -833,10 +846,5 @@
     <ClInclude Include="app\myscene11.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\resources\shaders\blinnphong_background.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

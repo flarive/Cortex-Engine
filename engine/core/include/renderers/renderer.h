@@ -6,6 +6,8 @@
 #include "../lights/light.h"
 #include "../cameras/camera.h"
 
+#include "../debug/debug_plane_grid.h"
+
 #include "../misc/ltc_matrix.h"
 
 
@@ -122,7 +124,7 @@ namespace engine
 		unsigned short m_pointLightCount{};
 		unsigned short m_areaLightCount{};
 
-
+		DebugPlaneGrid m_debugPlaneGrid{};
 
 		virtual void loadShaders() = 0;
 		

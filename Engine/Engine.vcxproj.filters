@@ -378,6 +378,9 @@
     <ClCompile Include="core\src\models\bone.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\debug\debug_plane_grid.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -634,6 +637,9 @@
     </ClInclude>
     <ClInclude Include="core\include\ecs\animator_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\debug_plane_grid.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

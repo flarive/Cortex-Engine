@@ -29,16 +29,17 @@ void MyScene11::init()
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
+    
 
 
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 2.0f;
+    light1->intensity = 6.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);
-    light1->ambientColor = Color(0.6f);
+    light1->ambientColor = Color(0.2f);
     light1->diffuseColor = Color(1.0f);
     light1->specularColor = Color(1.0f);
     auto entityLight1 = make_shared<Entity>("Light1");
@@ -78,7 +79,8 @@ void MyScene11::init()
 
 
     // mixamo twist dance model
-    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", false, true);
+    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f, 0.0f, 0.0f, 1.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f, 0.487f, 0.487f, 1.0f), 3.675f);
+    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimator = make_shared<Animator>(mixamoAnimation);
     auto trsMixamo = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
@@ -88,9 +90,6 @@ void MyScene11::init()
     entityMixamo->addComponent<AnimatorComponent>(mixamoAnimator);
     getEntityManager().addChild(entityMixamo);
 
-
-    // why ????????????
-    camera1->processKeyboard(YAW_UP, 0.0f);
 
 
     textFPSCount.setup(app->window, FONT_PATH, 28);

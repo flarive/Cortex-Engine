@@ -43,6 +43,8 @@ namespace engine
         std::mutex m_callbackMutex;
         std::condition_variable m_callbackCV;
 
+        std::atomic<bool> m_shouldExit{ false };
+
         struct AudioData {
             ALuint source;
             ALuint buffer;

@@ -179,6 +179,7 @@
     <ClCompile Include="core\src\cameras\fps_camera.cpp" />
     <ClCompile Include="core\src\cameras\orbit_camera.cpp" />
     <ClCompile Include="core\src\debug\debug_draw_line.cpp" />
+    <ClCompile Include="core\src\debug\debug_plane_grid.cpp" />
     <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp" />
     <ClCompile Include="core\src\debug\opengl_debug.cpp" />
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
     <ClInclude Include="core\include\debug\debug_draw_line.h" />
+    <ClInclude Include="core\include\debug\debug_plane_grid.h" />
     <ClInclude Include="core\include\debug\imgui_perf_overlay.h" />
     <ClInclude Include="core\include\debug\opengl_debug.h" />
     <ClInclude Include="core\include\ecs\animator_component.h" />

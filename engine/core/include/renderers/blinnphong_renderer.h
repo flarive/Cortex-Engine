@@ -34,6 +34,9 @@ namespace engine
 		void initBackground();
 		void renderBackground(const SceneSettings& settings);
 
+		void initDebugPlaneGrid();
+		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);
+
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount);
 
 
@@ -41,5 +44,6 @@ namespace engine
 		std::shared_ptr<Skybox> m_skybox{};
 
 		unsigned int backgroundVBO{}, backgroundVAO{};
+
 	};
 }

@@ -8,26 +8,26 @@
 
 engine::AudioManager::AudioManager()
 {
-    //initOpenAL(); // uncomment !
-
     m_initThread = std::thread(&AudioManager::initOpenALInternal, this);
-    m_initThread.detach(); // Detach so the thread runs independently
+    //m_initThread.detach(); // Detach so the thread runs independently
 }
 
 engine::AudioManager::~AudioManager()
 {
+    m_shouldExit = true; // Signal the thread to exit early
     if (m_initThread.joinable()) {
-        m_initThread.join(); // Wait for thread to finish (if not detached)
+        m_initThread.join(); // Wait for thread to finish
     }
-    
     clean();
 }
 
 // In AudioManager.cpp
 void engine::AudioManager::initOpenALInternal()
 {
-    bool success = false;
+    if (m_shouldExit)
+        return;
 
+    bool success = false;
     m_device = alcOpenDevice(nullptr);
     if (!m_device) {
         logger.warn("Failed to open OpenAL device");
@@ -43,15 +43,13 @@ void engine::AudioManager::initOpenALInternal()
             success = true;
         }
     }
-
     m_initialized = success;
-
-    // Invoke callback if set
     if (m_initCallback) {
         std::lock_guard<std::mutex> lock(m_callbackMutex);
         m_initCallback(success);
     }
 }
+
 
 bool engine::AudioManager::isInitialized() const
 {
@@ -153,34 +151,64 @@ void engine::AudioManager::setInitCallback(InitCallback callback)
     m_initCallback = callback;
 }
 
+//void engine::AudioManager::clean()
+//{
+//    // Only clean up if the context is valid
+//    if (!m_context)
+//        return;
+//
+//    for (auto& [id, data] : m_audioMap) {
+//        ALint state;
+//        alGetSourcei(data.source, AL_SOURCE_STATE, &state);
+//        if (state == AL_PLAYING) {
+//            alSourceStop(data.source);
+//        }
+//        alSourcei(data.source, AL_BUFFER, 0);
+//        alDeleteSources(1, &data.source);
+//        alDeleteBuffers(1, &data.buffer);
+//    }
+//    m_audioMap.clear();
+//
+//    // Make context non-current
+//    alcMakeContextCurrent(nullptr);
+//    alcDestroyContext(m_context);
+//    m_context = nullptr;
+//
+//    if (m_device) {
+//        alcCloseDevice(m_device);
+//        m_device = nullptr;
+//    }
+//}
+
 void engine::AudioManager::clean()
 {
+    // Signal the thread to exit early if it's still running
+    m_shouldExit = true;
+    if (m_initThread.joinable()) {
+        m_initThread.join(); // Wait for thread to finish
+    }
+
+    // Only clean up if the context is valid
+    if (!m_context)
+        return;
+
     for (auto& [id, data] : m_audioMap) {
         ALint state;
         alGetSourcei(data.source, AL_SOURCE_STATE, &state);
         if (state == AL_PLAYING) {
             alSourceStop(data.source);
         }
-        // Detach buffer from source
         alSourcei(data.source, AL_BUFFER, 0);
-        // Delete source and buffer
         alDeleteSources(1, &data.source);
         alDeleteBuffers(1, &data.buffer);
     }
     m_audioMap.clear();
 
-    ALenum error = alGetError();
-    if (error != AL_NO_ERROR) {
-        logger.warn("OpenAL error during cleanup: {}", error);
-    }
+    // Make context non-current
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(m_context);
+    m_context = nullptr;
 
-    // Destroy context and close device
-    if (m_context) {
-        // Make context non-current
-        alcMakeContextCurrent(nullptr);
-        alcDestroyContext(m_context);
-        m_context = nullptr;
-    }
     if (m_device) {
         alcCloseDevice(m_device);
         m_device = nullptr;

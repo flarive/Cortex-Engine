@@ -12,6 +12,8 @@
 #include "../../include/misc/colors.h"
 
 
+
+
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
     : Renderer(window)
 {
@@ -90,6 +92,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     initBackground();
 
+    initDebugPlaneGrid();
+
     // color framebuffer configuration
     // -------------------------
     initColorFramebufferMSAA(width, height);
@@ -111,6 +115,9 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
+    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 view = camera->getViewMatrix();
+
     
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -120,6 +127,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     renderBackground(settings); // Render your gradient or custom background
     
+    renderDebugPlaneGrid(projection, view);
     
     
 
@@ -127,8 +135,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
 
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
-    glm::mat4 view = camera->getViewMatrix();
+    
 
 
     // draw skybox first
@@ -247,6 +254,16 @@ void engine::BlinnPhongRenderer::renderBackground(const SceneSettings& settings)
         glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
+}
+
+void engine::BlinnPhongRenderer::initDebugPlaneGrid()
+{
+    m_debugPlaneGrid.init(100, 10.0f);
+}
+
+void engine::BlinnPhongRenderer::renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view)
+{
+	m_debugPlaneGrid.draw(projection, view);
 }
 
 void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)

@@ -6,13 +6,13 @@
 #include <array> //std::array
 #include <memory> //std::unique_ptr
 
-engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
-    : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED), mouseSensitivity(SENSITIVITY), zoom(ZOOM)
+engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _zoom, float _yaw, float _pitch, float _speed, float _sensitivity)
+	: front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(_speed), mouseSensitivity(_sensitivity), zoom(_zoom), yaw(_yaw), pitch(_pitch)
 {
     position = _position;
     worldUp = _up;
-    yaw = _yaw;
-    pitch = _pitch;
+    //yaw = _yaw;
+    //pitch = _pitch;
     
     updateCameraVectors();
 }

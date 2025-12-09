@@ -1,9 +1,9 @@
 #include "../../include/cameras/fly_camera.h"
 
-engine::FlyCamera::FlyCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
-    : engine::Camera(_position, _up, _yaw, _pitch)
+engine::FlyCamera::FlyCamera(float _zoom, float _yaw, float _pitch, float _movementSpeed, float _mouseSensitivity, glm::vec3 _position, glm::vec3 _up)
+	: engine::Camera(_position, _up, _zoom, _yaw, _pitch, _movementSpeed, _mouseSensitivity)
 {
-    //updateCameraVectors(); ?????????
+	updateCameraVectors(); // needed if base Camera constructor is called
 }
 
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

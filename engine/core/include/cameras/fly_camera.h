@@ -9,7 +9,7 @@ namespace engine
     {
     public:
         // constructor with vectors
-        FlyCamera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _yaw = YAW, float _pitch = PITCH);
+        FlyCamera(float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _movementSpeed = SPEED, float _mouseSensitivity = SENSITIVITY, glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f));
 
         CameraType getTypeID() const override
         {

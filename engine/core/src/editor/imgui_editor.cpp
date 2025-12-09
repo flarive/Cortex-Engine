@@ -854,6 +854,8 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
 
     // Use a temporary variable to hold the zoom value
     float zoom = component->getCamera()->zoom;
+    float yaw = component->getCamera()->yaw;
+    float pitch = component->getCamera()->pitch;
 
     if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
     {
@@ -867,9 +869,30 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
         ImGui::SetNextItemWidth(80);
         if (ImGui::DragFloat("##zoom", &zoom, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None))
         {
+            component->getCamera()->zoom = zoom;
         }
 
-        component->getCamera()->zoom = zoom;
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::Text("Yaw");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::SetNextItemWidth(80);
+        if (ImGui::DragFloat("##yaw", &yaw, 5.0f, -180.0f, 180.0f, "%.0f", ImGuiSliderFlags_None))
+        {
+            component->getCamera()->yaw = yaw;
+        }
+
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::Text("Pitch");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::SetNextItemWidth(80);
+        if (ImGui::DragFloat("##pitch", &pitch, 5.0f, -180.0f, 180.0f, "%.0f", ImGuiSliderFlags_None))
+        {
+            component->getCamera()->pitch = pitch;
+        }
 
         ImGui::EndTable();
     }

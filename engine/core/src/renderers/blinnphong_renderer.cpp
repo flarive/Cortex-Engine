@@ -258,7 +258,7 @@ void engine::BlinnPhongRenderer::renderBackground(const SceneSettings& settings)
 
 void engine::BlinnPhongRenderer::initDebugPlaneGrid()
 {
-    m_debugPlaneGrid.init(10, 1.0f);
+    m_debugPlaneGrid.init(10, 0.5f);
 }
 
 void engine::BlinnPhongRenderer::renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view)

@@ -10,7 +10,7 @@ namespace engine
 		DebugPlaneGrid() = default;
 		~DebugPlaneGrid() = default;
 
-		void init(int size = 10, float spacing = 1.0f);
+		void init(int size = 10, float spacing = 1.0f, const glm::vec3& offset = glm::vec3(0.0f));
 		void draw(const glm::mat4& projection, const glm::mat4& view);
 
 	private:

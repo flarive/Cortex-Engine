@@ -3,7 +3,7 @@
 engine::OrbitCamera::OrbitCamera(glm::vec3 _target, float _radius, float _theta, float _phi, glm::vec3 _up)
     : engine::Camera(glm::vec3(0.0, 0.0, 0.0), _up), target(_target), Radius(_radius), Theta(_theta), Phi(_phi)
 {
-    updateCameraVectors();
+    updateCameraVectors(); // needed if base Camera constructor is called
 }
 
 void engine::OrbitCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPhi)

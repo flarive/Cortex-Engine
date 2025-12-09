@@ -21,10 +21,11 @@ MyScene11::MyScene11(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene11::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {0.0f, 3.0f, 5.0f} };
-    auto camera1 = make_shared<FlyCamera>();
-    camera1->zoom = 20.0f;
-    camera1->movementSpeed = 1.0f;
+    auto trsCamera1 = Transform{ {0.0f, 1.0f, 5.0f} };
+    auto camera1 = make_shared<FlyCamera>(20.0f, -90.0f, -7.0f, 10.0f);
+    //camera1->zoom = 20.0f;
+    //camera1->movementSpeed = 1.0f
+    //camera1->pitch = -30.0f;
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -49,7 +50,14 @@ void MyScene11::init()
 
 
 
-
+    // sphere
+    //auto mySphere = make_shared<Sphere>();
+    //mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    //auto trsSphere = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.2f));
+    //auto entitySphere = make_shared<Entity>("MySphere");
+    //entitySphere->addComponent<TransformComponent>(trsSphere);
+    //entitySphere->addComponent<PrimitiveComponent>(mySphere);
+    //getEntityManager().addChild(entitySphere);
 
     // ground
     //auto myPlane = make_shared<Plane>();
@@ -83,7 +91,7 @@ void MyScene11::init()
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimator = make_shared<Animator>(mixamoAnimation);
-    auto trsMixamo = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
+    auto trsMixamo = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityMixamo = make_shared<Entity>("MyMixamo");
     entityMixamo->addComponent<TransformComponent>(trsMixamo);
     entityMixamo->addComponent<ModelComponent>(mixamoModel);
@@ -132,31 +140,28 @@ void MyScene11::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene11::mouse_callback(double xposIn, double yposIn)
 {
-    //(void)xposIn;   //Do nothing
-    //(void)yposIn;   //Do nothing
-
     Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
 
-    float xpos{ static_cast<float>(xposIn) };
-    float ypos{ static_cast<float>(yposIn) };
+    //float xpos{ static_cast<float>(xposIn) };
+    //float ypos{ static_cast<float>(yposIn) };
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+    //if (firstMouse)
+    //{
+    //    lastX = xpos;
+    //    lastY = ypos;
+    //    firstMouse = false;
+    //}
 
-    float xoffset{ xpos - lastX };
-    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    //float xoffset{ xpos - lastX };
+    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
+    //lastX = xpos;
+    //lastY = ypos;
 
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene11::scroll_callback(double xoffset, double yoffset)

@@ -1,8 +1,12 @@
 #include "myscene9.h"
 
-MyScene9::MyScene9(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
+using namespace std;
+using namespace glm;
+using namespace engine;
+
+MyScene9::MyScene9(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = engine::RenderMethod::PBR,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -22,12 +26,12 @@ MyScene9::MyScene9(std::string _title, engine::App* _app) : engine::Scene(_title
 
 void MyScene9::init()
 {
-    auto trsCamera1 = engine::Transform{ { 0.0f, 5.0f, 3.0f } };
-    auto camera1 = std::make_shared<engine::OrbitCamera>();
+    auto trsCamera1 = Transform{ { 0.0f, 5.0f, 3.0f } };
+    auto camera1 = make_shared<OrbitCamera>();
     camera1->movementSpeed = 10.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
-    entityCamera1->addComponent<engine::CameraComponent>(camera1);
+    auto entityCamera1 = make_shared<Entity>("Camera1");
+    entityCamera1->addComponent<TransformComponent>(trsCamera1);
+    entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
@@ -36,55 +40,55 @@ void MyScene9::init()
 
 
     // lights
-    auto trsLight1 = engine::Transform{};
+    auto trsLight1 = Transform{};
     trsLight1.setLocalPosition({ -10.0f, 10.0f, -10.0f });
-    auto light1 = std::make_shared<engine::PointLight>();
+    auto light1 = make_shared<PointLight>();
     light1->intensity = 10.0f;
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
-    entityLight1->addComponent<engine::TransformComponent>(trsLight1);
-    entityLight1->addComponent<engine::LightComponent>(light1);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
-    auto trsLight2 = engine::Transform{};
+    auto trsLight2 = Transform{};
     trsLight2.setLocalPosition({ 10.0f, 10.0f, -10.0f });
-    auto light2 = std::make_shared<engine::PointLight>();
+    auto light2 = make_shared<PointLight>();
     light2->intensity = 10.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
-    entityLight2->addComponent<engine::TransformComponent>(trsLight2);
-    entityLight2->addComponent<engine::LightComponent>(light2);
+    auto entityLight2 = make_shared<Entity>("Light2");
+    entityLight2->addComponent<TransformComponent>(trsLight2);
+    entityLight2->addComponent<LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
 
 
 
-    auto trsLight3 = engine::Transform{};
+    auto trsLight3 = Transform{};
     trsLight3.setLocalPosition({ -10.0f, -10.0f, -10.0f });
-    auto light3 = std::make_shared<engine::PointLight>();
+    auto light3 = make_shared<PointLight>();
     light3->intensity = 10.0f;
-    auto entityLight3 = std::make_shared<engine::Entity>("Light3");
-    entityLight3->addComponent<engine::TransformComponent>(trsLight3);
-    entityLight3->addComponent<engine::LightComponent>(light3);
+    auto entityLight3 = make_shared<Entity>("Light3");
+    entityLight3->addComponent<TransformComponent>(trsLight3);
+    entityLight3->addComponent<LightComponent>(light3);
     getEntityManager().addChild(entityLight3);
 
 
 
-    auto trsLight4 = engine::Transform{};
+    auto trsLight4 = Transform{};
     trsLight4.setLocalPosition({ 10.0f, -10.0f, -10.0f });
-    auto light4 = std::make_shared<engine::PointLight>();
+    auto light4 = make_shared<PointLight>();
     light4->intensity = 10.0f;
-    auto entityLight4 = std::make_shared<engine::Entity>("Light4");
-    entityLight4->addComponent<engine::TransformComponent>(trsLight4);
-    entityLight4->addComponent<engine::LightComponent>(light4);
+    auto entityLight4 = make_shared<Entity>("Light4");
+    entityLight4->addComponent<TransformComponent>(trsLight4);
+    entityLight4->addComponent<LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
 
 
 
     // helmet model
-    std::shared_ptr<engine::Model> helmetModel = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-    auto trsHelmet = engine::Transform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityHelmet = std::make_shared<engine::Entity>("MyHelmet");
-    entityHelmet->addComponent<engine::TransformComponent>(trsHelmet);
-    entityHelmet->addComponent<engine::ModelComponent>(helmetModel);
+    shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, true);
+    auto trsHelmet = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityHelmet = make_shared<Entity>("MyHelmet");
+    entityHelmet->addComponent<TransformComponent>(trsHelmet);
+    entityHelmet->addComponent<ModelComponent>(helmetModel);
     getEntityManager().addChild(entityHelmet);
 
     auto helmetMat = helmetModel->meshes[0].getMaterial();
@@ -107,41 +111,41 @@ void MyScene9::init()
 // ---------------------------------------------------------------------------------------------------------
 void MyScene9::key_callback(int key, int scancode, int action, int mods)
 {
-    engine::Scene::key_callback(key, scancode, action, mods);
+    Scene::key_callback(key, scancode, action, mods);
 
     //// Detect Shift key state
     ////bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     //if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     //{
-    //    getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
-    //    getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+    //    getActiveCamera()->processKeyboard(LEFT, deltaTime);
+    //    getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
     //}
 
 
 
     //if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     //{
-    //    getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
-    //    getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+    //    getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+    //    getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     //}
 
 
     //if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
     //{
-    //    getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+    //    getActiveCamera()->processKeyboard(FORWARD, deltaTime);
     //}
 
     //if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
     //{
-    //    getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+    //    getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
     //}
 }
 
 
 void MyScene9::mouse_callback(double xposIn, double yposIn)
 {
-    engine::Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
@@ -167,7 +171,7 @@ void MyScene9::mouse_callback(double xposIn, double yposIn)
 
 void MyScene9::scroll_callback(double xoffset, double yoffset)
 {
-    engine::Scene::scroll_callback(xoffset, yoffset);
+    Scene::scroll_callback(xoffset, yoffset);
 
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
@@ -179,12 +183,12 @@ void MyScene9::gamepad_callback(const GLFWgamepadstate& state)
 
 void MyScene9::framebuffer_size_callback(int newWidth, int newHeight)
 {
-    engine::Scene::framebuffer_size_callback(newWidth, newHeight);
+    Scene::framebuffer_size_callback(newWidth, newHeight);
 
     ourText.setup(app->window, FONT_PATH, 28);
 }
 
-void MyScene9::update(engine::Shader& shader)
+void MyScene9::update(Shader& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -201,7 +205,7 @@ void MyScene9::clean()
     //helmetModel.clean();
 }
 
-void MyScene9::drawScene(engine::Shader& shader)
+void MyScene9::drawScene(Shader& shader)
 {
     (void)shader;   //Do nothing
 }
@@ -209,8 +213,8 @@ void MyScene9::drawScene(engine::Shader& shader)
 void MyScene9::drawUI()
 {
     // render HUD / UI
-    ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    ourText2.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    ourSprite.draw(glm::vec2(50, app->height - 100), glm::vec2(50.0f, 50.0f), 0.0f, glm::vec3(1.0f));
-    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
+    ourText.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    ourText2.draw(format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    ourSprite.draw(vec2(50, app->height - 100), vec2(50.0f, 50.0f), 0.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
 }

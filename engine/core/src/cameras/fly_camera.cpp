@@ -3,6 +3,7 @@
 engine::FlyCamera::FlyCamera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pitch)
     : engine::Camera(_position, _up, _yaw, _pitch)
 {
+    //updateCameraVectors(); ?????????
 }
 
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

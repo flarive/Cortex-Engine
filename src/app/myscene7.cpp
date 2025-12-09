@@ -1,8 +1,13 @@
 #include "myscene7.h"
 
-MyScene7::MyScene7(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
+using namespace std;
+using namespace glm;
+using namespace engine;
+
+
+MyScene7::MyScene7(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = engine::RenderMethod::PBR,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -26,53 +31,53 @@ void MyScene7::before_init_hook()
 void MyScene7::init()
 {
     // cameras
-    auto trsCamera1 = engine::Transform{ { 0.0f, -16.0f, 2.0f } };
-    auto camera1 = std::make_shared<engine::FlyCamera>();
+    auto trsCamera1 = Transform{ { 0.0f, -16.0f, 2.0f } };
+    auto camera1 = make_shared<FlyCamera>();
     camera1->zoom = 100.0f;
     camera1->movementSpeed = 10.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
-    entityCamera1->addComponent<engine::CameraComponent>(camera1);
+    auto entityCamera1 = make_shared<Entity>("Camera1");
+    entityCamera1->addComponent<TransformComponent>(trsCamera1);
+    entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
 
     // lights
-    auto trsLight1 = engine::Transform{ { -10.0f, -5.0f, -10.0f } };
-    auto light1 = std::make_shared<engine::PointLight>();
+    auto trsLight1 = Transform{ { -10.0f, -5.0f, -10.0f } };
+    auto light1 = make_shared<PointLight>();
     light1->intensity = 20.0f;
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
-    entityLight1->addComponent<engine::TransformComponent>(trsLight1);
-    entityLight1->addComponent<engine::LightComponent>(light1);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
-    auto trsLight2 = engine::Transform{ { 10.0f, -5.0f, -10.0f } };
-    auto light2 = std::make_shared<engine::PointLight>();
+    auto trsLight2 = Transform{ { 10.0f, -5.0f, -10.0f } };
+    auto light2 = make_shared<PointLight>();
     light2->intensity = 20.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
-    entityLight2->addComponent<engine::TransformComponent>(trsLight2);
-    entityLight2->addComponent<engine::LightComponent>(light2);
+    auto entityLight2 = make_shared<Entity>("Light2");
+    entityLight2->addComponent<TransformComponent>(trsLight2);
+    entityLight2->addComponent<LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
 
 
 
-    auto trsLight3 = engine::Transform{ { -10.0f, -25.0f, -10.0f } };
-    auto light3 = std::make_shared<engine::PointLight>();
+    auto trsLight3 = Transform{ { -10.0f, -25.0f, -10.0f } };
+    auto light3 = make_shared<PointLight>();
     light3->intensity = 20.0f;
-    auto entityLight3 = std::make_shared<engine::Entity>("Light3");
-    entityLight3->addComponent<engine::TransformComponent>(trsLight3);
-    entityLight3->addComponent<engine::LightComponent>(light3);
+    auto entityLight3 = make_shared<Entity>("Light3");
+    entityLight3->addComponent<TransformComponent>(trsLight3);
+    entityLight3->addComponent<LightComponent>(light3);
     getEntityManager().addChild(entityLight3);
 
 
 
-    auto trsLight4 = engine::Transform{ { 10.0f, -25.0f, -10.0f } };
-    auto light4 = std::make_shared<engine::PointLight>();
+    auto trsLight4 = Transform{ { 10.0f, -25.0f, -10.0f } };
+    auto light4 = make_shared<PointLight>();
     light4->intensity = 20.0f;
-    auto entityLight4 = std::make_shared<engine::Entity>("Light4");
-    entityLight4->addComponent<engine::TransformComponent>(trsLight4);
-    entityLight4->addComponent<engine::LightComponent>(light4);
+    auto entityLight4 = make_shared<Entity>("Light4");
+    entityLight4->addComponent<TransformComponent>(trsLight4);
+    entityLight4->addComponent<LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
 
 
@@ -84,7 +89,7 @@ void MyScene7::init()
 
 
 
-    auto sharedModel = std::make_shared<engine::SharedModel>("models/helmet/DamagedHelmet.glTF", false, true);
+    auto sharedModel = make_shared<SharedModel>("models/helmet/DamagedHelmet.glTF", false, true);
 
     
 
@@ -93,16 +98,16 @@ void MyScene7::init()
     float offset = -15.0f;
     for (unsigned int i = 1; i <= 7; ++i)
     {
-        auto trs = engine::Transform{};
+        auto trs = Transform{};
         trs.setLocalPosition({ offset, -22.0f, -10.0f });
-        trs.setLocalScale(glm::vec3(2.0f));
+        trs.setLocalScale(vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-        auto model = std::make_shared<engine::Model>(sharedModel);
+        auto model = make_shared<Model>(sharedModel);
 
-        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", i));
-        entity->addComponent<engine::TransformComponent>(trs);
-        entity->addComponent<engine::ModelComponent>(model);
+        auto entity = make_shared<Entity>(format("Child{}", i));
+        entity->addComponent<TransformComponent>(trs);
+        entity->addComponent<ModelComponent>(model);
         getEntityManager().addChild(entity);
 
         offset += 5.0f;
@@ -111,16 +116,16 @@ void MyScene7::init()
 
     // sample nested entity hierarchy
     offset = -15.0f;
-    std::shared_ptr<engine::Entity> lastEntity = getEntityManager().getRootEntity();
+    shared_ptr<Entity> lastEntity = getEntityManager().getRootEntity();
     for (unsigned int i = 1; i < 8; ++i)
     {
-        auto trs = engine::Transform{};
+        auto trs = Transform{};
 
         if (i == 1)
         {
             // parent
             trs.setLocalPosition({ offset, -12.0f, -10.0f });
-            trs.setLocalScale(glm::vec3(2.0f));
+            trs.setLocalScale(vec3(2.0f));
             trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
             offset = 0.0f;
@@ -129,15 +134,15 @@ void MyScene7::init()
         {
             // childs
             trs.setLocalPosition({ offset, 0.0f, 0.0f });
-            trs.setLocalScale(glm::vec3(1.0f));
+            trs.setLocalScale(vec3(1.0f));
             trs.setLocalRotation({ 0.0f, 0.0f, 0.0f });
         }
 
-        auto model = std::make_shared<engine::Model>(sharedModel);
+        auto model = make_shared<Model>(sharedModel);
 
-        auto entity = std::make_shared<engine::Entity>(std::format("NestedChild{}", i));
-        entity->addComponent<engine::TransformComponent>(trs);
-        entity->addComponent<engine::ModelComponent>(model);
+        auto entity = make_shared<Entity>(format("NestedChild{}", i));
+        entity->addComponent<TransformComponent>(trs);
+        entity->addComponent<ModelComponent>(model);
         getEntityManager().addChild(lastEntity, entity);
 
         if (i == 1)
@@ -150,40 +155,40 @@ void MyScene7::init()
 
 
     // ground
-    auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<PBRMaterial>(Color(0.1f),
         "textures/rusted_metal_diffuse.jpg",
-        "textures/rusted_metal_specular.jpg"), engine::UvMapping(1.0f));
+        "textures/rusted_metal_specular.jpg"), UvMapping(1.0f));
 
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -10.0f, -10.0f), glm::vec3(10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
-    entityPlane->addComponent<engine::TransformComponent>(trsPlane);
-    entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
+    auto trsPlane = Transform(vec3(0.0f, -10.0f, -10.0f), vec3(10.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
     // cube
-    auto myCube = std::make_shared<engine::Cube>(2.0f);
-    myCube->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
+    auto myCube = make_shared<Cube>(2.0f);
+    myCube->setup(make_shared<PBRMaterial>(Color(0.1f),
         "textures/container2_diffuse.png",
         "textures/container2_specular.png"));
 
-    auto trsCube = engine::Transform(glm::vec3(-3.0f, -17.0f, -10.0f), glm::vec3(2.0f), glm::vec3(90.0f, 0.0f, 0.0f));
-    auto entityCube = std::make_shared<engine::Entity>("MyCube");
-    entityCube->addComponent<engine::TransformComponent>(trsCube);
-    entityCube->addComponent<engine::PrimitiveComponent>(myCube);
+    auto trsCube = Transform(vec3(-3.0f, -17.0f, -10.0f), vec3(2.0f), vec3(90.0f, 0.0f, 0.0f));
+    auto entityCube = make_shared<Entity>("MyCube");
+    entityCube->addComponent<TransformComponent>(trsCube);
+    entityCube->addComponent<PrimitiveComponent>(myCube);
     getEntityManager().addChild(entityCube);
 
 
     // sphere
-    auto mySphere = std::make_shared<engine::Sphere>();
-    mySphere->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f),
+    auto mySphere = make_shared<Sphere>();
+    mySphere->setup(make_shared<PBRMaterial>(Color(0.1f),
         "textures/uv_mapper.jpg"));
 
-    auto trsSphere = engine::Transform(glm::vec3(3.0f, -17.0f, -10.0f), glm::vec3(2.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere = std::make_shared<engine::Entity>("MySphere");
-    entitySphere->addComponent<engine::TransformComponent>(trsSphere);
-    entitySphere->addComponent<engine::PrimitiveComponent>(mySphere);
+    auto trsSphere = Transform(vec3(3.0f, -17.0f, -10.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entitySphere = make_shared<Entity>("MySphere");
+    entitySphere->addComponent<TransformComponent>(trsSphere);
+    entitySphere->addComponent<PrimitiveComponent>(mySphere);
     getEntityManager().addChild(entitySphere);
 
 
@@ -211,42 +216,42 @@ void MyScene7::after_init_hook()
 // ---------------------------------------------------------------------------------------------------------
 void MyScene7::key_callback(int key, int scancode, int action, int mods)
 {
-    engine::Scene::key_callback(key, scancode, action, mods);
+    Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
     //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
-        getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(LEFT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
     }
 
     if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
-        getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     }
 
     if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
     }
 
     if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
     }
 
     if (key == GLFW_KEY_N && action == GLFW_PRESS)
     {
-        auto trs = engine::Transform{};
+        auto trs = Transform{};
         trs.setLocalPosition({ offset_dynamic, -32.0f, -10.0f });
-        trs.setLocalScale(glm::vec3(2.0f));
+        trs.setLocalScale(vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
 
-        auto model = std::make_shared<engine::Model>("models/helmet/DamagedHelmet.glTF", false, true);
-        auto entity = std::make_shared<engine::Entity>(std::format("Child{}", 88));
+        auto model = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, true);
+        auto entity = make_shared<Entity>(format("Child{}", 88));
         getEntityManager().addChild(entity);
 
         offset_dynamic += 5.0f;
@@ -261,7 +266,7 @@ void MyScene7::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene7::mouse_callback(double xposIn, double yposIn)
 {
-    engine::Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
@@ -287,7 +292,7 @@ void MyScene7::mouse_callback(double xposIn, double yposIn)
 
 void MyScene7::scroll_callback(double xoffset, double yoffset)
 {
-    engine::Scene::scroll_callback(xoffset, yoffset);
+    Scene::scroll_callback(xoffset, yoffset);
 
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
@@ -296,30 +301,30 @@ void MyScene7::gamepad_callback(const GLFWgamepadstate& state)
 {
     getActiveCamera()->processJoystickMovement(state);
 
-    //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout <<
-    // "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+    //cout << "Left Stick X Axis: " << state.axes[0] << endl; // tested with PS4 controller connected via micro USB cable
+    //cout << "Left Stick Y Axis: " << state.axes[1] << endl; // tested with PS4 controller connected via micro USB cable
+    //cout << "Right Stick X Axis: " << state.axes[2] << endl; // tested with PS4 controller connected via micro USB cable
+    //cout << "Right Stick Y Axis: " << state.axes[3] << endl; // tested with PS4 controller connected via micro USB cable
+    //cout << "Left Trigger/L2: " << state.axes[4] << endl; // tested with PS4 controller connected via micro USB cable
+    //cout <<
+    // "Right Trigger/R2: " << state.axes[5] << endl; // tested with PS4 controller connected via micro USB cable
 
     if (GLFW_PRESS == state.buttons[1])
     {
-        std::cout << "Pressed" << std::endl;
+        cout << "Pressed" << endl;
     }
     else if (GLFW_RELEASE == state.buttons[0])
     {
-        //std::cout << "Released" << std::endl;
+        //cout << "Released" << endl;
     }
 }
 
 void MyScene7::framebuffer_size_callback(int newWidth, int newHeight)
 {
-    engine::Scene::framebuffer_size_callback(newWidth, newHeight);
+    Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene7::update(engine::Shader& shader)
+void MyScene7::update(Shader& shader)
 {
     (void)shader;   //Do nothing
 
@@ -334,7 +339,7 @@ void MyScene7::update(engine::Shader& shader)
     {
         auto trs = child2->getTransform();
         auto rot = trs.getLocalRotation();
-        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
+        trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         child2->setTransform(trs);
     }
 
@@ -344,7 +349,7 @@ void MyScene7::update(engine::Shader& shader)
     {
         auto trs = mySphere->getTransform();
         auto rot = trs.getLocalRotation();
-        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
+        trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         mySphere->setTransform(trs);
     }
 
@@ -354,11 +359,11 @@ void MyScene7::update(engine::Shader& shader)
 void MyScene7::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPolyCount.draw(std::format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textMeshCount.draw(std::format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    textPrimitiveCount.draw(std::format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, glm::vec3(1.0f));
-    ourSprite.draw(glm::vec2(50, app->height - 50), glm::vec2(50.0f, -50.0f), 0.0f, glm::vec3(1.0f));
+    textFPSCount.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPolyCount.draw(format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPrimitiveCount.draw(format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
+    ourSprite.draw(vec2(50, app->height - 50), vec2(50.0f, -50.0f), 0.0f, vec3(1.0f));
 }
 
 void MyScene7::clean()

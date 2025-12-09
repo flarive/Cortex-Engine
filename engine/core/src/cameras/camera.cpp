@@ -13,6 +13,7 @@ engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _yaw, float _pi
     worldUp = _up;
     yaw = _yaw;
     pitch = _pitch;
+    
     updateCameraVectors();
 }
 
@@ -25,7 +26,7 @@ void engine::Camera::setFromViewMatrix(const glm::mat4& view)
 {
     // Inverse view => world transform
     glm::mat4 inv = glm::inverse(view);
-    position = glm::vec3(inv[3]);              // translation
+    position = glm::vec3(inv[3]); // translation
     front = glm::normalize(-glm::vec3(view[0][2], view[1][2], view[2][2])); // forward
     up = glm::normalize(glm::vec3(view[0][1], view[1][1], view[2][1]));  // up
 }

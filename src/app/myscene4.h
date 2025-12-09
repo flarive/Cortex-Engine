@@ -4,7 +4,10 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyScene4 final : public engine::Scene
+using namespace std;
+using namespace engine;
+
+class MyScene4 final : public Scene
 {
 private:
     bool firstMouse{ true };
@@ -14,7 +17,7 @@ private:
 
     const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
-    engine::Text ourText{};
+    Text ourText{};
 
     float rotation{};
 
@@ -22,7 +25,7 @@ private:
 
 
 public:
-    MyScene4(std::string _title, engine::App* _app);
+    MyScene4(std::string _title, App* _app);
 
     void init() override;
    
@@ -36,7 +39,7 @@ public:
     void framebuffer_size_callback(int newWidth, int newHeight);
 
 
-    void update(engine::Shader& shader) override;
+    void update(Shader& shader) override;
 
     void updateUI() override;
 
@@ -44,7 +47,7 @@ public:
 
 
 private:
-    void drawScene(engine::Shader& shader);
+    void drawScene(Shader& shader);
 
     void drawUI();
 };

@@ -4,7 +4,10 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
-class MyScene8 final : public engine::Scene
+using namespace std;
+using namespace engine;
+
+class MyScene8 final : public Scene
 {
 private:
     bool firstMouse{ true };
@@ -13,15 +16,15 @@ private:
     float lastY{ 0.0f };
 
 
-    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
+    const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    engine::Text ourText{};
+    Text ourText{};
 
-    engine::Skybox ourSkybox{};
+    Skybox ourSkybox{};
 
 public:
-    MyScene8(std::string _title, engine::App* _app);
+    MyScene8(string _title, App* _app);
 
 
     void init() override;
@@ -35,7 +38,7 @@ public:
 
     void framebuffer_size_callback(int newWidth, int newHeight);
 
-    void update(engine::Shader& shader) override;
+    void update(Shader& shader) override;
 
     void updateUI() override;
 
@@ -43,7 +46,7 @@ public:
 
 
 private:
-    void drawScene(engine::Shader& shader);
+    void drawScene(Shader& shader);
 
     void drawUI();
 };

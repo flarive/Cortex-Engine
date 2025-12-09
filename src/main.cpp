@@ -16,6 +16,8 @@
 #include "app/myscene10.h" // area lights demo
 #include "app/myscene11.h" // blinnphong animated character
 
+// https://github.com/TheCherno/ImGuizmo
+
 using namespace engine;
 
 // make it easier to switch between apps

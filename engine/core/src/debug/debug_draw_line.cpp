@@ -15,7 +15,11 @@ engine::DebugDraw::~DebugDraw()
 void engine::DebugDraw::init()
 {
     if (m_initialized) return;
-    m_shader.init("debug_line", "shaders/debug/debug_line.vert", "shaders/debug/debug_line.frag");
+    
+    if (!m_shader.isInitialized()) {
+        m_shader.init("debug_line", "shaders/debug/debug_line.vert", "shaders/debug/debug_line.frag");
+    }
+    
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
     glBindVertexArray(m_vao);

@@ -4,6 +4,9 @@
 #include "core/include/app/scene.h"
 #include "core/include/engine.h"
 
+using namespace std;
+using namespace engine;
+
 class MyScene3 final : public engine::Scene
 {
 private:
@@ -12,17 +15,17 @@ private:
     float lastX{ 0.0f };
     float lastY{ 0.0f };
 
-    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
+    const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
  
 
-    engine::Text ourText{};
+    Text ourText{};
 
 
     float rotation{};
 
 public:
-    MyScene3(std::string _title, engine::App* _app);
+    MyScene3(string _title, App* _app);
        
 
 
@@ -47,7 +50,7 @@ public:
 
 
 private:
-    void drawScene(engine::Shader& shader);
+    void drawScene(Shader& shader);
 
     void drawUI();
 };

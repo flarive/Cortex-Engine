@@ -21,8 +21,8 @@ MyScene11::MyScene11(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene11::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {0.0f, 0.0f, 5.0f} };
-    auto camera1 = make_shared<FpsCamera>();
+    auto trsCamera1 = Transform{ {0.0f, 3.0f, 5.0f} };
+    auto camera1 = make_shared<FlyCamera>();
     camera1->zoom = 20.0f;
     camera1->movementSpeed = 1.0f;
     auto entityCamera1 = make_shared<Entity>("Camera1");
@@ -79,7 +79,7 @@ void MyScene11::init()
 
 
     // mixamo twist dance model
-    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f, 0.0f, 0.0f, 1.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f, 0.487f, 0.487f, 1.0f), 3.675f);
+    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimator = make_shared<Animator>(mixamoAnimation);
@@ -132,31 +132,31 @@ void MyScene11::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene11::mouse_callback(double xposIn, double yposIn)
 {
-    (void)xposIn;   //Do nothing
-    (void)yposIn;   //Do nothing
+    //(void)xposIn;   //Do nothing
+    //(void)yposIn;   //Do nothing
 
-    //Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
-    //if (is_editor_mode)
-    //    return;
+    if (is_editor_mode)
+        return;
 
-    //float xpos{ static_cast<float>(xposIn) };
-    //float ypos{ static_cast<float>(yposIn) };
+    float xpos{ static_cast<float>(xposIn) };
+    float ypos{ static_cast<float>(yposIn) };
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset{ xpos - lastX };
-    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    float xoffset{ xpos - lastX };
+    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene11::scroll_callback(double xoffset, double yoffset)

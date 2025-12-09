@@ -2,9 +2,13 @@
 
 #include <random>
 
-MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
+using namespace std;
+using namespace glm;
+using namespace engine;
+
+MyScene10::MyScene10(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = engine::RenderMethod::PBR,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -25,21 +29,21 @@ MyScene10::MyScene10(std::string _title, engine::App* _app) : engine::Scene(_tit
 void MyScene10::init()
 {
     // camera
-    auto trsCamera1 = engine::Transform{ { 0.0f, 1.0f, 0.0f } };
-    auto camera1 = std::make_shared<engine::FlyCamera>();
+    auto trsCamera1 = Transform{ { 0.0f, 1.0f, 0.0f } };
+    auto camera1 = make_shared<FlyCamera>();
     camera1->movementSpeed = 10.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
-    entityCamera1->addComponent<engine::CameraComponent>(camera1);
+    auto entityCamera1 = make_shared<Entity>("Camera1");
+    entityCamera1->addComponent<TransformComponent>(trsCamera1);
+    entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
     // lights
-    std::uniform_real_distribution<GLfloat> random_floats(0.0f, 1.0f);
-    typedef std::chrono::high_resolution_clock myclock;
+    uniform_real_distribution<GLfloat> random_floats(0.0f, 1.0f);
+    typedef chrono::high_resolution_clock myclock;
     auto seed = static_cast<unsigned int>(myclock::now().time_since_epoch().count());
-    std::default_random_engine generator(seed);
-    std::function<float(void)> fn = [&random_floats, &generator] { return random_floats(generator); };
+    default_random_engine generator(seed);
+    function<float(void)> fn = [&random_floats, &generator] { return random_floats(generator); };
     for (int i = 0; i < NUM_AREA_LIGHTS; i++)
     {
         float x = fn(); x = (x > 0.5f) ? x : -x;
@@ -47,31 +51,31 @@ void MyScene10::init()
 
 
         // plane
-        //auto myPlane = std::make_shared<engine::Plane>();
-        //myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.1f), engine::Colors::YellowGreen, engine::Colors::Crimson));
+        //auto myPlane = make_shared<Plane>();
+        //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), Colors::YellowGreen, Colors::Crimson));
 
-        auto trsLight = engine::Transform{ { glm::vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
-        auto light = std::make_shared<engine::AreaLight>();
-        light->color = glm::vec3(fn(), fn(), fn());
+        auto trsLight = Transform{ { vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
+        auto light = make_shared<AreaLight>();
+        light->color = vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
         light->intensity = 1.0f;
         light->twoSided = false;
-        auto entityLight = std::make_shared<engine::Entity>(std::format("AreaLight{}", i + 1));
-        entityLight->addComponent<engine::TransformComponent>(trsLight);
-        entityLight->addComponent<engine::LightComponent>(light);
+        auto entityLight = make_shared<Entity>(format("AreaLight{}", i + 1));
+        entityLight->addComponent<TransformComponent>(trsLight);
+        entityLight->addComponent<LightComponent>(light);
         getEntityManager().addChild(entityLight);
     }
 
     // ground
-    auto myPlane = std::make_shared<engine::Plane>(false);
-    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), engine::UvMapping(1.0f));
-    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(10.0f), "textures/concrete_diffuse.png"), engine::UvMapping(6.0f));
-    //myPlane->setup(std::make_shared<engine::BlinnPhongMaterial>(engine::Color(1.0f), engine::Colors::Red, engine::Colors::Crimson, 1.0f));
-    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(10.0f), "textures/concrete_diffuse.png", "textures/concrete_normal.png"), engine::UvMapping(6.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(16.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
-    entityPlane->addComponent<engine::TransformComponent>(trsPlane);
-    entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
+    auto myPlane = make_shared<Plane>(false);
+    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), UvMapping(1.0f));
+    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(10.0f), "textures/concrete_diffuse.png"), UvMapping(6.0f));
+    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(1.0f), Colors::Red, Colors::Crimson, 1.0f));
+    myPlane->setup(make_shared<PBRMaterial>(Color(10.0f), "textures/concrete_diffuse.png", "textures/concrete_normal.png"), UvMapping(6.0f));
+    auto trsPlane = Transform(vec3(0.0f, 0.2f, 0.0f), vec3(16.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
@@ -84,31 +88,31 @@ void MyScene10::init()
 // ---------------------------------------------------------------------------------------------------------
 void MyScene10::key_callback(int key, int scancode, int action, int mods)
 {
-    engine::Scene::key_callback(key, scancode, action, mods);
+    Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
     bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
-        getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(LEFT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
     }
 
     if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
-        getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     }
 
     if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
     }
 
     if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
-        getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
     }
 
     if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
@@ -133,7 +137,7 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
 
 void MyScene10::mouse_callback(double xposIn, double yposIn)
 {
-    engine::Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
@@ -159,7 +163,7 @@ void MyScene10::mouse_callback(double xposIn, double yposIn)
 
 void MyScene10::scroll_callback(double xoffset, double yoffset)
 {
-    engine::Scene::scroll_callback(xoffset, yoffset);
+    Scene::scroll_callback(xoffset, yoffset);
 
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
@@ -171,10 +175,10 @@ void MyScene10::gamepad_callback(const GLFWgamepadstate& state)
 
 void MyScene10::framebuffer_size_callback(int newWidth, int newHeight)
 {
-    engine::Scene::framebuffer_size_callback(newWidth, newHeight);
+    Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene10::update(engine::Shader& shader)
+void MyScene10::update(Shader& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -182,12 +186,12 @@ void MyScene10::update(engine::Shader& shader)
 
 void MyScene10::incrementRoughness(float step)
 {
-    static glm::vec3 color = engine::Colors::SlateGray;
+    static vec3 color = Colors::SlateGray;
     static float roughness = 0.5f;
     roughness += step;
     roughness = glm::clamp(roughness, 0.0f, 1.0f);
 
-    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    auto areaLights = getEntityManager().findEntitiesOfType<AreaLight>();
     if (areaLights.size() > 0)
     {
         for (const auto& areaLight : areaLights)
@@ -203,7 +207,7 @@ void MyScene10::incrementLightIntensity(float step)
     intensity += step;
     intensity = glm::clamp(intensity, 0.0f, 100.0f);
 
-    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    auto areaLights = getEntityManager().findEntitiesOfType<AreaLight>();
     if (areaLights.size() > 0)
     {
         for (const auto& areaLight : areaLights)
@@ -220,7 +224,7 @@ void MyScene10::switchTwoSided(bool doSwitch)
 
     twoSided = doSwitch;
 
-    auto areaLights = getEntityManager().findEntitiesOfType<engine::AreaLight>();
+    auto areaLights = getEntityManager().findEntitiesOfType<AreaLight>();
     if (areaLights.size() > 0)
     {
         for (const auto& areaLight : areaLights)
@@ -232,7 +236,7 @@ void MyScene10::switchTwoSided(bool doSwitch)
 
 void MyScene10::playOggFile()
 {
-    engine::AudioManager& audio = getAudioManager();
+    AudioManager& audio = getAudioManager();
     audio.loadOgg("ogg1", "sounds/Example.ogg");
     audio.play("ogg1");
 }
@@ -248,7 +252,7 @@ void MyScene10::clean()
     // clean up any resources
 }
 
-void MyScene10::drawScene(engine::Shader& shader)
+void MyScene10::drawScene(Shader& shader)
 {
     (void)shader;   //Do nothing
 }

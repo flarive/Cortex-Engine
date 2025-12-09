@@ -25,6 +25,7 @@ namespace engine
         // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
         void processMouseScroll(float yoffset) override;
 
+        // processes input received from a gamepad
         void processJoystickMovement(const GLFWgamepadstate& state) override;
 
 

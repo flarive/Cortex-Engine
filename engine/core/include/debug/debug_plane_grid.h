@@ -14,6 +14,6 @@ namespace engine
 		void draw(const glm::mat4& projection, const glm::mat4& view);
 
 	private:
-		std::vector<DebugDraw> m_debugDrawLines{};
+		DebugDraw m_debugDrawLine{};
 	};
 }

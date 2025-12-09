@@ -1,8 +1,12 @@
 #include "myscene4.h"
 
-MyScene4::MyScene4(std::string _title, engine::App* _app) : engine::Scene(_title, _app, engine::SceneSettings
+using namespace std;
+using namespace glm;
+using namespace engine;
+
+MyScene4::MyScene4(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = engine::RenderMethod::PBR,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .shadowIntensity = 0.8f,
@@ -21,22 +25,22 @@ MyScene4::MyScene4(std::string _title, engine::App* _app) : engine::Scene(_title
 void MyScene4::init()
 {
     // cameras
-    auto trsCamera1 = engine::Transform{ {0.0f, -8.0f, 2.0f } };
-    auto camera1 = std::make_shared<engine::FlyCamera>();
+    auto trsCamera1 = Transform{ {0.0f, -8.0f, 2.0f } };
+    auto camera1 = make_shared<FlyCamera>();
     camera1->zoom = 45.0f;
     camera1->movementSpeed = 10.0f;
-    auto entityCamera1 = std::make_shared<engine::Entity>("Camera1");
-    entityCamera1->addComponent<engine::TransformComponent>(trsCamera1);
-    entityCamera1->addComponent<engine::CameraComponent>(camera1);
+    auto entityCamera1 = make_shared<Entity>("Camera1");
+    entityCamera1->addComponent<TransformComponent>(trsCamera1);
+    entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
-    auto trsCamera2 = engine::Transform{ { 0.0f, -9.0f, 2.0f } };
-    auto camera2 = std::make_shared<engine::FlyCamera>();
+    auto trsCamera2 = Transform{ { 0.0f, -9.0f, 2.0f } };
+    auto camera2 = make_shared<FlyCamera>();
     camera2->zoom = 20.0f;
     camera2->movementSpeed = 10.0f;
-    auto entityCamera2 = std::make_shared<engine::Entity>("Camera2");
-    entityCamera2->addComponent<engine::TransformComponent>(trsCamera2);
-    entityCamera2->addComponent<engine::CameraComponent>(camera2);
+    auto entityCamera2 = make_shared<Entity>("Camera2");
+    entityCamera2->addComponent<TransformComponent>(trsCamera2);
+    entityCamera2->addComponent<CameraComponent>(camera2);
     getEntityManager().addChild(entityCamera2);
 
 
@@ -44,50 +48,50 @@ void MyScene4::init()
 
 
     // lights
-    auto trsLight1 = engine::Transform{ { 0.0f, 8.0f, 0.0f } };
-    auto light1 = std::make_shared<engine::SpotLight>();
+    auto trsLight1 = Transform{ { 0.0f, 8.0f, 0.0f } };
+    auto light1 = make_shared<SpotLight>();
     light1->intensity = 20.0f;
     light1->cutoff = 12.5f;
     light1->outerCutoff = 15.0f;
-    light1->target = glm::vec3(0.0f, 0.0f, -5.0f);
-    light1->ambientColor = engine::Color(0.1f, 0.1f, 0.1f, 1.0f);
-    auto entityLight1 = std::make_shared<engine::Entity>("Light1");
-    entityLight1->addComponent<engine::TransformComponent>(trsLight1);
-    entityLight1->addComponent<engine::LightComponent>(light1);
+    light1->target = vec3(0.0f, 0.0f, -5.0f);
+    light1->ambientColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
-    auto trsLight2 = engine::Transform{ { -10.0f, 10.0f, 10.0f } };
-    auto light2 = std::make_shared<engine::PointLight>();
+    auto trsLight2 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    auto light2 = make_shared<PointLight>();
     light2->intensity = 90.0f;
-    auto entityLight2 = std::make_shared<engine::Entity>("Light2");
-    entityLight2->addComponent<engine::TransformComponent>(trsLight2);
-    entityLight2->addComponent<engine::LightComponent>(light2);
+    auto entityLight2 = make_shared<Entity>("Light2");
+    entityLight2->addComponent<TransformComponent>(trsLight2);
+    entityLight2->addComponent<LightComponent>(light2);
     getEntityManager().addChild(entityLight2);
 
 
     // ground
-    auto myPlane = std::make_shared<engine::Plane>();
-    myPlane->setup(std::make_shared<engine::PBRMaterial>(engine::Color(0.2f),
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
         "textures/pbr/planks/albedo.jpg",
         "textures/pbr/planks/normal.jpg",
         "textures/pbr/planks/metallic.jpg",
         "textures/pbr/planks/roughness.jpg",
         "textures/pbr/planks/ao.jpg",
-        ""), engine::UvMapping(1.0f));
-    auto trsPlane = engine::Transform(glm::vec3(0.0f, -11.0f, -16.0f), glm::vec3(12.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityPlane = std::make_shared<engine::Entity>("MyPlane");
-    entityPlane->addComponent<engine::TransformComponent>(trsPlane);
-    entityPlane->addComponent<engine::PrimitiveComponent>(myPlane);
+        ""), UvMapping(1.0f));
+    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
     // cushion model
-    std::shared_ptr<engine::Model> cushionModel = std::make_shared<engine::Model>("models/cushion/cushion.obj");
-    auto trsCushion = engine::Transform(glm::vec3(0.0f, -9.85f + 1.0f, -10.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    auto entityCushion = std::make_shared<engine::Entity>("MyCushion");
-    entityCushion->addComponent<engine::TransformComponent>(trsCushion);
-    entityCushion->addComponent<engine::ModelComponent>(cushionModel);
+    shared_ptr<Model> cushionModel = make_shared<Model>("models/cushion/cushion.obj");
+    auto trsCushion = Transform(vec3(0.0f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityCushion = make_shared<Entity>("MyCushion");
+    entityCushion->addComponent<TransformComponent>(trsCushion);
+    entityCushion->addComponent<ModelComponent>(cushionModel);
     getEntityManager().addChild(entityCushion);
 
     ourText.setup(app->window, FONT_PATH, 28);
@@ -97,38 +101,38 @@ void MyScene4::init()
 // ---------------------------------------------------------------------------------------------------------
 void MyScene4::key_callback(int key, int scancode, int action, int mods)
 {
-    engine::Scene::key_callback(key, scancode, action, mods);
+    Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
     bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::YAW_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
     else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::LEFT, deltaTime);
+        getActiveCamera()->processKeyboard(LEFT, deltaTime);
 
     if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::YAW_UP, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::RIGHT, deltaTime);
+        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
 
 
 
     if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::PITCH_UP, deltaTime);
+        getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
     else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::FORWARD, deltaTime);
+        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
 
     if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::PITCH_DOWN, deltaTime);
+        getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
     else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(engine::BACKWARD, deltaTime);
+        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
 }
 
 
 void MyScene4::mouse_callback(double xposIn, double yposIn)
 {
-    engine::Scene::mouse_callback(xposIn, yposIn);
+    Scene::mouse_callback(xposIn, yposIn);
 
     if (is_editor_mode)
         return;
@@ -154,7 +158,7 @@ void MyScene4::mouse_callback(double xposIn, double yposIn)
 
 void MyScene4::scroll_callback(double xoffset, double yoffset)
 {
-    engine::Scene::scroll_callback(xoffset, yoffset);
+    Scene::scroll_callback(xoffset, yoffset);
 
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
@@ -166,12 +170,12 @@ void MyScene4::gamepad_callback(const GLFWgamepadstate& state)
 
 void MyScene4::framebuffer_size_callback(int newWidth, int newHeight)
 {
-    engine::Scene::framebuffer_size_callback(newWidth, newHeight);
+    Scene::framebuffer_size_callback(newWidth, newHeight);
 
     ourText.setup(app->window, FONT_PATH, 28);
 }
 
-void MyScene4::update(engine::Shader& shader)
+void MyScene4::update(Shader& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -189,7 +193,7 @@ void MyScene4::clean()
     cushionModel.clean();*/
 }
 
-void MyScene4::drawScene(engine::Shader& shader)
+void MyScene4::drawScene(Shader& shader)
 {
     (void)shader;   //Do nothing
 
@@ -198,7 +202,7 @@ void MyScene4::drawScene(engine::Shader& shader)
     {
         auto trs = myCushion->getTransform();
         auto rot = trs.getLocalRotation();
-        trs.setLocalRotation(glm::vec3(rot.x, rotation, rot.z));
+        trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCushion->setTransform(trs);
     }
 
@@ -208,5 +212,5 @@ void MyScene4::drawScene(engine::Shader& shader)
 void MyScene4::drawUI()
 {
     // render HUD / UI
-    ourText.draw(std::format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
 }

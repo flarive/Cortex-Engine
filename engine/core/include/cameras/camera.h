@@ -10,7 +10,7 @@
 namespace engine
 {
     // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
-    enum Camera_Movement {
+    enum CameraMovement {
         FORWARD,
         BACKWARD,
         LEFT,
@@ -67,7 +67,7 @@ namespace engine
         void setFromViewMatrix(const glm::mat4& view);
 
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-        virtual void processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch = true) = 0;
+        virtual void processKeyboard(CameraMovement direction, float deltaTime, GLboolean constrainPitch = true) = 0;
 
         // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
         virtual void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) = 0;

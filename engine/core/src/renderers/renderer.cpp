@@ -3,6 +3,8 @@
 #include "../../include/singleton.h"
 #include "../../include/debug/opengl_debug.h"
 
+#include <memory>
+
 
 engine::Renderer::Renderer(GLFWwindow* window)
     : m_window(window)
@@ -74,10 +76,36 @@ void engine::Renderer::enableGammaCorrection(bool enable)
         glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
+void engine::Renderer::initDebugPlaneGrid()
+{
+    m_debugPlaneGrid.init(10, 0.5f);
+}
+
+void engine::Renderer::renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view)
+{
+    m_debugPlaneGrid.draw(projection, view);
+}
+
+void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
+{
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
+    if (m_lights.size() > 0)
+    {
+        auto firstLight = m_lights[0];
+        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+            initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+        else
+            initSpotLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+    }
+}
+
 /// <summary>
 /// Spotlight only !!!!
 /// </summary>
-void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
+void engine::Renderer::initSpotLightDepthMapFramebuffer(GLsizei shadowSize)
 {
     // create depth framebuffer
     glGenFramebuffers(1, &depthMapFramebuffer);
@@ -107,7 +135,7 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Omnilight only !!!!
 /// </summary>
-void engine::Renderer::initDepthMapFramebuffer2(GLsizei shadowSize)
+void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 {
     glGenFramebuffers(1, &depthMapFramebuffer);
     // create depth cubemap texture
@@ -368,7 +396,7 @@ void engine::Renderer::computeColorFramebuffer()
     renderQuad();
 }
 
-void engine::Renderer::updateSettings()
+void engine::Renderer::updateEditorPropertySettings()
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");

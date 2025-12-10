@@ -4,6 +4,7 @@
 
 #include "../shader.h"
 #include "../lights/light.h"
+#include "../lights/point_light.h"
 #include "../cameras/camera.h"
 
 #include "../debug/debug_plane_grid.h"
@@ -136,18 +137,20 @@ namespace engine
 		void enableFaceCulling(bool enable);
 		
 
-		void initDepthMapFramebuffer(GLsizei shadowSize); // for point light
-		void initDepthMapFramebuffer2(GLsizei shadowSize); // for omni light
+		void initDepthMapFramebuffer(GLsizei shadowSize);
+
 
 
 
 		void computeDepthMapFramebuffer(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
 		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
 		
+		void initDebugPlaneGrid();
+		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);
 
 		void computeColorFramebuffer();
 
-		void updateSettings();
+		void updateEditorPropertySettings();
 
 
 		// renderCube() renders a 1x1 3D cube in NDC.
@@ -168,5 +171,10 @@ namespace engine
 		unsigned int m_sphereVAO{};
 		GLsizei m_indexCount{};
 		void renderSphere();
+
+
+	private:
+		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
+		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light
 	};
 }

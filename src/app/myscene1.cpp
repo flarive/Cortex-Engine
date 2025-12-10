@@ -26,9 +26,7 @@ void MyScene1::init()
 {
     // camera
     auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
-    auto camera1 = make_shared<FpsCamera>();
-    camera1->zoom = 25.0f;
-    camera1->movementSpeed = 10.0f;
+    auto camera1 = make_shared<FpsCamera>(25.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);

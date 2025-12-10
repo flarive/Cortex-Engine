@@ -11,8 +11,7 @@ namespace engine
     enum class ShaderType {
         Unknown,
         BlinnPhong,
-        PBR,
-        AnimModel
+        PBR
     };
 
     
@@ -36,7 +35,7 @@ namespace engine
         bool isInitialized() const { return m_initialized; }
 
         // activate the shader
-        void use();
+        void use() const;
 
         bool checkShaderUniformExists(unsigned int shaderID, std::string uniformName);
 

@@ -1,7 +1,7 @@
 #include "../../include/cameras/orbit_camera.h"
 
 engine::OrbitCamera::OrbitCamera(glm::vec3 _target, float _radius, float _theta, float _phi, glm::vec3 _up)
-    : engine::Camera(glm::vec3(0.0, 0.0, 0.0), _up), target(_target), Radius(_radius), Theta(_theta), Phi(_phi)
+    : engine::Camera(glm::vec3(0.0, 0.0, 0.0), _up), target(_target), radius(_radius), theta(_theta), phi(_phi)
 {
     updateCameraVectors(); // needed if base Camera constructor is called
 }
@@ -11,16 +11,16 @@ void engine::OrbitCamera::processMouseMovement(float xoffset, float yoffset, GLb
     xoffset *= mouseSensitivity;
     yoffset *= mouseSensitivity;
 
-    Theta += xoffset;
-    Phi += yoffset;
+    theta += xoffset;
+    phi += yoffset;
 
     // make sure that when phi is out of bounds, screen doesn't get flipped
     if (constrainPhi)
     {
-        if (Phi > 89.0f)
-            Phi = 89.0f;
-        if (Phi < -89.0f)
-            Phi = -89.0f;
+        if (phi > 89.0f)
+            phi = 89.0f;
+        if (phi < -89.0f)
+            phi = -89.0f;
     }
 
     updateCameraVectors();
@@ -28,12 +28,12 @@ void engine::OrbitCamera::processMouseMovement(float xoffset, float yoffset, GLb
 
 void engine::OrbitCamera::processMouseScroll(float yoffset)
 {
-    Radius -= yoffset;
-    if (Radius < 1.0f)
-        Radius = 1.0f;
+    radius -= yoffset;
+    if (radius < 1.0f)
+        radius = 1.0f;
 }
 
-void engine::OrbitCamera::processKeyboard(Camera_Movement direction, float deltaTime, GLboolean constrainPitch)
+void engine::OrbitCamera::processKeyboard(CameraMovement direction, float deltaTime, GLboolean constrainPitch)
 {
     (void)direction;   //Do nothing
     (void)deltaTime;   //Do nothing
@@ -54,9 +54,9 @@ glm::mat4 engine::OrbitCamera::getViewMatrix()
 void engine::OrbitCamera::updateCameraVectors()
 {
     // spherical to cartesian coordinates
-    position.x = target.x + Radius * sin(glm::radians(Theta)) * cos(glm::radians(Phi));
-    position.y = target.y + Radius * sin(glm::radians(Phi));
-    position.z = target.z + Radius * cos(glm::radians(Theta)) * cos(glm::radians(Phi));
+    position.x = target.x + radius * sin(glm::radians(theta)) * cos(glm::radians(phi));
+    position.y = target.y + radius * sin(glm::radians(phi));
+    position.z = target.z + radius * cos(glm::radians(theta)) * cos(glm::radians(phi));
 
     // calculate the new Front vector
     front = glm::normalize(target - position);
@@ -64,5 +64,3 @@ void engine::OrbitCamera::updateCameraVectors()
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 }
-
-

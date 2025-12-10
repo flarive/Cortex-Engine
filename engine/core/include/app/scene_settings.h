@@ -31,6 +31,8 @@ namespace engine
 		Color backgroundColor{ Colors::Black };
         GradientBackgroundSettings backgroundGradientColors { false, Colors::Black, Colors::Black, 0.0f};
 
+        bool showDebugGrid{ false };
+
         bool HDRSkyboxHide{ false };
         std::string HDRSkyboxFilePath{};
         float HDRSkyboxBlurStrength{ 0.0f };

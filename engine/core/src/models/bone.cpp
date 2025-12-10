@@ -11,9 +11,11 @@ engine::Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	{
 		aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
 		double timeStamp = channel->mPositionKeys[positionIndex].mTime;
+		KeyPosition data{ AssimpGLMHelpers::GetGLMVec(aiPosition), static_cast<float>(timeStamp) };
+		/*
 		KeyPosition data;
 		data.position = AssimpGLMHelpers::GetGLMVec(aiPosition);
-		data.timeStamp = static_cast<float>(timeStamp);
+		data.timeStamp = static_cast<float>(timeStamp);*/
 		m_positions.push_back(data);
 	}
 
@@ -22,9 +24,10 @@ engine::Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	{
 		aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
 		double timeStamp = channel->mRotationKeys[rotationIndex].mTime;
-		KeyRotation data;
+		KeyRotation data{ AssimpGLMHelpers::GetGLMQuat(aiOrientation), static_cast<float>(timeStamp) };
+		/*KeyRotation data;
 		data.orientation = AssimpGLMHelpers::GetGLMQuat(aiOrientation);
-		data.timeStamp = static_cast<float>(timeStamp);
+		data.timeStamp = static_cast<float>(timeStamp);*/
 		m_rotations.push_back(data);
 	}
 
@@ -33,13 +36,13 @@ engine::Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	{
 		aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
 		double timeStamp = channel->mScalingKeys[keyIndex].mTime;
-		KeyScale data;
+		KeyScale data{ AssimpGLMHelpers::GetGLMVec(scale), static_cast<float>(timeStamp) };
+		/*KeyScale data;
 		data.scale = AssimpGLMHelpers::GetGLMVec(scale);
-		data.timeStamp = static_cast<float>(timeStamp);
+		data.timeStamp = static_cast<float>(timeStamp);*/
 		m_scales.push_back(data);
 	}
 }
-
 
 void engine::Bone::update(float animationTime)
 {
@@ -48,7 +51,6 @@ void engine::Bone::update(float animationTime)
 	glm::mat4 scale = interpolateScaling(animationTime);
 	m_localTransform = translation * rotation * scale;
 }
-
 
 int engine::Bone::getPositionIndex(float animationTime)
 {

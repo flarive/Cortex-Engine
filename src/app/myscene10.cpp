@@ -31,7 +31,6 @@ void MyScene10::init()
     // camera
     auto trsCamera1 = Transform{ { 0.0f, 1.0f, 0.0f } };
     auto camera1 = make_shared<FlyCamera>();
-    camera1->movementSpeed = 10.0f;
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -48,11 +47,6 @@ void MyScene10::init()
     {
         float x = fn(); x = (x > 0.5f) ? x : -x;
         float z = fn(); z = (z > 0.5f) ? z : -z;
-
-
-        // plane
-        //auto myPlane = make_shared<Plane>();
-        //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), Colors::YellowGreen, Colors::Crimson));
 
         auto trsLight = Transform{ { vec3(x, 0.0f, z) * 8.f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, fn() * 360.0f, 0.0f} };
         auto light = make_shared<AreaLight>();
@@ -77,9 +71,6 @@ void MyScene10::init()
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
-
-
-    //m_audioManager = getAudioManager();
 }
 
 
@@ -240,7 +231,6 @@ void MyScene10::playOggFile()
     audio.loadOgg("ogg1", "sounds/Example.ogg");
     audio.play("ogg1");
 }
-
 
 void MyScene10::updateUI()
 {

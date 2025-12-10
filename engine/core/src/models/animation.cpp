@@ -15,7 +15,6 @@ engine::Animation::Animation(const std::string& animationPath, std::shared_ptr<M
 	readMissingBones(animation, *model.get());
 }
 
-
 engine::Bone* engine::Animation::findBone(const std::string& name)
 {
 	auto iter = std::find_if(m_bones.begin(), m_bones.end(),
@@ -32,7 +31,7 @@ void engine::Animation::readMissingBones(const aiAnimation* animation, Model& mo
 {
 	int size = animation->mNumChannels;
 
-	auto& boneInfoMap = model.getBoneInfoMap();//getting m_boneInfoMap from Model class
+	auto& boneInfoMap = model.getBoneInfoMap(); //getting m_boneInfoMap from Model class
 	int& boneCount = model.getBoneCount(); //getting the m_boneCounter from Model class
 
 	//reading channels(bones engaged in an animation and their keyframes)

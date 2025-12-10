@@ -75,14 +75,15 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
-    if (m_lights.size() > 0)
+    initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+    /*if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            initDepthMapFramebuffer2((GLsizei)settings.shadowMapsTextureSize);
+            initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
         else
-            initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    }
+            initSpotLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+    }*/
 
     // color framebuffer configuration
     // -------------------------
@@ -100,6 +101,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     //int vsize = static_cast<int>(std::max(scrWidth, scrHeight) * qualityFactor);
 
 
+    if (settings.showDebugGrid)
+        initDebugPlaneGrid();
 
     // pbr: setup framebuffer
     // ----------------------
@@ -309,6 +312,10 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
     // bind to color framebuffer and draw scene as we normally would to color texture
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     glEnable(GL_DEPTH_TEST); // enable depth testing
@@ -318,16 +325,16 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
 
-    updateSettings();
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
-
-
+    updateEditorPropertySettings();
 
     glm::mat4 projection = glm::perspective(glm::radians(camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();
+    
+    if (settings.showDebugGrid)
+        renderDebugPlaneGrid(projection, view);
+
+
+    
 
 
 

@@ -8,6 +8,7 @@ MyScene11::MyScene11(string _title, App* _app) : Scene(_title, _app, SceneSettin
     {
         .method = RenderMethod::BlinnPhong,
         .backgroundGradientColors{true, Colors::hexToNormalizedRGB("#a0a0a0"), Colors::hexToNormalizedRGB("#cccccc"), 0.75f},
+        .showDebugGrid = true,
         .shadowIntensity = 2.0f
     })
 {
@@ -23,9 +24,6 @@ void MyScene11::init()
     // camera
     auto trsCamera1 = Transform{ {0.0f, 1.0f, 5.0f} };
     auto camera1 = make_shared<FlyCamera>(20.0f, -90.0f, -7.0f, 10.0f);
-    //camera1->zoom = 20.0f;
-    //camera1->movementSpeed = 1.0f
-    //camera1->pitch = -30.0f;
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);

@@ -28,16 +28,10 @@ void MyScene9::init()
 {
     auto trsCamera1 = Transform{ { 0.0f, 5.0f, 3.0f } };
     auto camera1 = make_shared<OrbitCamera>();
-    camera1->movementSpeed = 10.0f;
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
-
-
-
-
-
 
     // lights
     auto trsLight1 = Transform{};

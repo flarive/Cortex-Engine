@@ -181,7 +181,7 @@ bool engine::Shader::isValid() const
 
 // activate the shader
 // ------------------------------------------------------------------------
-void engine::Shader::use()
+void engine::Shader::use() const
 {
     //std::cout << "Using shader program: " << name << " (ID: " << ID << ")" << std::endl;
     glUseProgram(engine::Shader::ID);

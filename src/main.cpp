@@ -24,7 +24,7 @@ using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene11;
+using MyScene = MyScene9;
 
 App* myApp{};
 Scene* myScene{};

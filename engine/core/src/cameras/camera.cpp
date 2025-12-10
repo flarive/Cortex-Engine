@@ -40,6 +40,10 @@ void engine::Camera::updateCameraVectors()
 {
 }
 
+void engine::Camera::setup()
+{
+}
+
 // https://learnopengl.com/code_viewer_gh.php?code=src/8.guest/2021/1.scene/2.frustum_culling/frustum_culling.cpp
 engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar)
 {

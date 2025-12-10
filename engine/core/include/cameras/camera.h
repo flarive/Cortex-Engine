@@ -6,6 +6,12 @@
 #include "../transform.h"
 
 #include "../frustrum.h"
+#include "../misc/ordered_map.h"
+
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <functional>
 
 namespace engine
 {
@@ -31,6 +37,19 @@ namespace engine
     const float ZOOM{ 45.0f };
 
     enum class CameraType { undefined = 0, fps = 1, fly = 2, orbit = 3 };
+
+    const std::unordered_map<CameraType, std::string> CameraTypeNames = {
+    {CameraType::undefined, "undefined"},
+    {CameraType::fps, "FPS"},
+    {CameraType::fly, "Fly"},
+    {CameraType::orbit, "Orbit"}
+    };
+
+    inline std::string to_string(CameraType type) {
+        auto it = CameraTypeNames.find(type);
+        return it != CameraTypeNames.end() ? it->second : "unknown";
+    }
+
 
 
     // A fly/fps camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -77,12 +96,16 @@ namespace engine
 
         virtual void processJoystickMovement(const GLFWgamepadstate& state) = 0;
 
+        virtual ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() = 0;
+        virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
+
+		virtual void setup() = 0;
 
         void draw(const glm::vec3& _position);
 
-        engine::Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
+        Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
 
-
+        void reSetup() { setup(); };
 
     protected:
         // calculates the front vector from the Camera's (updated) Euler Angles

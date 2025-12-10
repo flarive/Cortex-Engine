@@ -16,6 +16,31 @@ namespace engine
             return CameraType::fly;
         }
 
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
+            return {
+                {"zoom", getZoom()},
+                {"yaw", getYaw()},
+                {"pitch", getPitch()}
+            };
+        }
+        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+            return {
+                {"zoom", [this](float value) { getZoom() = value; }},
+                {"yaw", [this](float value) { getYaw() = value; }},
+                {"pitch", [this](float value) { getPitch() = value; }}
+            };
+        }
+
+
+        float& getZoom() { return zoom; }
+        void setZoom(float _zoom) { zoom = _zoom; }
+
+        float& getYaw() { return yaw; }
+        void setYaw(float _yaw) { yaw = _yaw; }
+
+        float& getPitch() { return pitch; }
+        void setPitch(float _pitch) { pitch = _pitch; }
+
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         void processKeyboard(CameraMovement direction, float deltaTime, GLboolean constrainPitch = true) override;
 
@@ -27,6 +52,9 @@ namespace engine
 
         // processes input received from a gamepad
         void processJoystickMovement(const GLFWgamepadstate& state) override;
+
+        void setup() override;
+
 
 
     protected:

@@ -68,7 +68,7 @@ namespace engine
 
 		void renderTransformComponent(const std::shared_ptr<Entity>& entity, bool displayPosition = true, bool displayRotation = true, bool displayScale = true);
 		void renderLightComponent(std::shared_ptr<LightComponent>& component);
-		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
+		void renderCameraComponent(std::shared_ptr<CameraComponent>& component, std::shared_ptr<TransformComponent>& transformComponent);
 		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent);
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 

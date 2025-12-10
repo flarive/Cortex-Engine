@@ -26,6 +26,30 @@ namespace engine
             return CameraType::orbit;
         }
 
+        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
+            return {
+                {"radius", getRadius()},
+                {"theta", getTheta()},
+                {"phi", getPhi()}
+            };
+        }
+        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+            return {
+                {"radius", [this](float value) { getRadius() = value; }},
+                {"theta", [this](float value) { getTheta() = value; }},
+                {"phi", [this](float value) { getPhi() = value; }}
+            };
+        }
+
+        float& getRadius() { return radius; }
+        void setRadius(float _radius) { radius = _radius; }
+
+        float& getTheta() { return theta; }
+        void setTheta(float _theta) { theta = _theta; }
+
+        float& getPhi() { return phi; }
+        void setPhi(float _phi) { phi = _phi; }
+
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
         glm::mat4 getViewMatrix();
 
@@ -45,5 +69,7 @@ namespace engine
     private:
         // calculates the camera's position and orientation based on spherical coordinates
         void updateCameraVectors() override;
+
+        void setup() override;
     };
 }

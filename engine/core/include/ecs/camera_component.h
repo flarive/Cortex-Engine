@@ -39,10 +39,14 @@ namespace engine
 		ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override;
 		std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override;
 
+		void setProperty(const std::string& key, float value);
+
 	private:
 
 		std::shared_ptr<Camera> m_camera{};
 		std::unique_ptr<AABB> m_boundingVolume{};
+
+		std::unordered_map<std::string, std::function<void(float)>> m_propertySetters{};
 
 		AABB generateBoundingVolume(const std::shared_ptr<Camera> camera);
 	};

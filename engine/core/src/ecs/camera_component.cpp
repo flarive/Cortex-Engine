@@ -4,6 +4,9 @@ engine::CameraComponent::CameraComponent(std::shared_ptr<Camera> camera)
     : m_camera(camera)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(camera));
+
+	// Initialize property setters based on primitive type
+	m_propertySetters = m_camera->getPropertySetters();
 }
 
 
@@ -37,10 +40,19 @@ engine::AABB* engine::CameraComponent::getBoundingVolume()
 
 engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::CameraComponent::getPublicProperties()
 {
-	return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+	return m_camera->getPublicProperties();
 }
 
 std::unordered_map<std::string, std::function<void(float)>> engine::CameraComponent::getPropertySetters()
 {
-	return std::unordered_map<std::string, std::function<void(float)>>();
+	return m_camera->getPropertySetters();
+}
+void engine::CameraComponent::setProperty(const std::string& key, float value)
+{
+	auto it = m_propertySetters.find(key);
+	if (it != m_propertySetters.end())
+	{
+		it->second(value);
+		m_camera->reSetup(); // Assuming all primitives have a reSetup() method
+	}
 }

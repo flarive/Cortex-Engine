@@ -64,3 +64,8 @@ void engine::OrbitCamera::updateCameraVectors()
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 }
+
+void engine::OrbitCamera::setup()
+{
+    updateCameraVectors();
+}

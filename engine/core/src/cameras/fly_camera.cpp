@@ -127,3 +127,8 @@ void engine::FlyCamera::updateCameraVectors()
     right = glm::normalize(glm::cross(front, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     up = glm::normalize(glm::cross(right, new_front));
 }
+
+void engine::FlyCamera::setup()
+{
+    updateCameraVectors();
+}

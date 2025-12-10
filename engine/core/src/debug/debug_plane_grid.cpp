@@ -8,7 +8,7 @@ void engine::DebugPlaneGrid::init(int size, float spacing, const glm::vec3& offs
     float totalSize = size * spacing;
     float halfSize = totalSize / 2.0f;
 
-    glm::vec3 color{ 0.4f };
+    glm::vec3 color{ 0.6f };
 
     // Calculate the number of lines and their positions
     int numLines = size + 1; // 11 lines for size=10

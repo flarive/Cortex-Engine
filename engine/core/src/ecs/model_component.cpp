@@ -17,6 +17,9 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
 	m_debug_boundingBox = std::make_unique<Cube>(width, height, depth); // Cube at origin with dimensions of the AABB
 	m_debug_boundingBox->setup(matDebugLight);
+
+	// Initialize property setters based on primitive type
+	m_propertySetters = m_model->getPropertySetters();
 }
 
 void engine::ModelComponent::init(Transform& transform)
@@ -81,14 +84,20 @@ engine::AABB* engine::ModelComponent::getBoundingVolume()
 
 engine::ordered_map<std::string, engine::EditorProperty> engine::ModelComponent::getPublicProperties()
 {
-	return engine::ordered_map<std::string, EditorProperty>{};
+	return m_model->getPublicProperties();
 }
 
 std::unordered_map<std::string, std::function<void(float)>> engine::ModelComponent::getPropertySetters()
 {
-	return std::unordered_map<std::string, std::function<void(float)>>();
+	return m_model->getPropertySetters();
 }
 
 void engine::ModelComponent::setProperty(const std::string& key, float value)
 {
+	auto it = m_propertySetters.find(key);
+	if (it != m_propertySetters.end())
+	{
+		it->second(value);
+		m_model->reSetup(); // Assuming all primitives have a reSetup() method
+	}
 }

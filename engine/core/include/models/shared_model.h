@@ -25,32 +25,56 @@
 #include <vector>
 #include <mutex>
 
+#include "../misc/ordered_map.h"
+
+
+#include <unordered_map>
+#include <functional>
+
 
 
 namespace engine
 {
+    enum class ModelType { undefined = 0, model = 1, sharedModel = 2 };
+
+    const std::unordered_map<ModelType, std::string> ModelTypeNames = {
+        {ModelType::undefined, "undefined"},
+        {ModelType::model, "Model"},
+        {ModelType::sharedModel, "Shared model"}
+    };
+
+    inline std::string to_string(ModelType type) {
+        auto it = ModelTypeNames.find(type);
+        return it != ModelTypeNames.end() ? it->second : "unknown";
+    }
+    
     class SharedModel : private NonCopyable
     {
     public:
         // model data (TODO : make private with getters)
         std::vector<Texture> textures_loaded{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
         std::vector<Mesh> meshes{};
-        std::string directory{};
+        
         bool gammaCorrection{};
-
+        bool flipUV{};
 
 
 
         // at least one virtual method to make it base class
         virtual ~SharedModel() = default;
 
-        SharedModel(bool gamma, bool flipUVs);
+        SharedModel(bool _gamma, bool _flipUV);
 
         // constructor, expects a filepath to a 3D model.
-        SharedModel(const std::string& path, bool gamma = false, bool flipUVs = false);
+        SharedModel(const std::string& _path, bool _gamma = false, bool _flipUV = false);
 
-        SharedModel(const std::string& path, const std::shared_ptr<Material>& material, bool gamma, bool flipUVs);
+        SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV);
 
+
+        ModelType getTypeID() const
+        {
+            return ModelType::sharedModel;
+        }
 
         auto& getBoneInfoMap() { return m_boneInfoMap; }
         int& getBoneCount() { return m_boneCounter; }
@@ -58,14 +82,25 @@ namespace engine
 
         bool& hasBones() { return m_hasBones; }
 
+
+        bool& getFlipUV() { return flipUV; }
+        void setFlipUV(bool _flipUV) { flipUV = _flipUV; }
+
+
+
         void setVertexBoneDataToDefault(Vertex& vertex);
         void setVertexBoneData(Vertex& vertex, int boneID, float weight);
         void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
-        unsigned int getNumberOfMeshes() const;
+        unsigned int getMeshCount() const;
+
+        std::string getFilename() const { return m_filename; }
+
+        void reSetup();
 
     private:
-
+        std::string m_directory{};
+        std::string m_filename{};
 
         // processes a node in a recursive fashion.
         // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -74,6 +109,8 @@ namespace engine
         virtual Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
         bool checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat);
+
+        
 
 
 

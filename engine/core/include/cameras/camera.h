@@ -39,10 +39,10 @@ namespace engine
     enum class CameraType { undefined = 0, fps = 1, fly = 2, orbit = 3 };
 
     const std::unordered_map<CameraType, std::string> CameraTypeNames = {
-    {CameraType::undefined, "undefined"},
-    {CameraType::fps, "FPS"},
-    {CameraType::fly, "Fly"},
-    {CameraType::orbit, "Orbit"}
+        {CameraType::undefined, "undefined"},
+        {CameraType::fps, "FPS"},
+        {CameraType::fly, "Fly"},
+        {CameraType::orbit, "Orbit"}
     };
 
     inline std::string to_string(CameraType type) {

@@ -21,10 +21,11 @@ namespace engine
 
 	struct EditorProperty
 	{
-		std::variant<int, std::string, float, bool> value{};
+		std::variant<int, unsigned int, std::string, float, bool> value{};
 		float min{};
 		float max{};
 		float step{};
 		std::string format{};
+		bool readOnly{ false };
 	};
 }

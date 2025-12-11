@@ -18,9 +18,9 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"zoom", EditorProperty { getZoom(), 0.0f, 100.0f, 1.0f, "%.2f" }},
-                {"yaw", EditorProperty { getYaw(), -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"pitch", EditorProperty { getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
+                {"Zoom", EditorProperty { getZoom(), 0.0f, 100.0f, 1.0f, "%.2f" }},
+                {"Yaw", EditorProperty { getYaw(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"Pitch", EditorProperty { getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {

@@ -6,29 +6,31 @@
 
 #include "../../include/models/assimp_glm_helpers.h"
 
+#include <filesystem>
+#include <string>
 
-
-engine::SharedModel::SharedModel(bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(bool _gamma, bool _flipUV) 
+    : gammaCorrection(_gamma), flipUV(_flipUV)
 {
 
 }
 
-engine::SharedModel::SharedModel(const std::string& path, bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _flipUV)
+    : gammaCorrection(_gamma), flipUV(_flipUV)
 {
-    assert(!path.empty() && "Model path is empty !");
+    assert(!_path.empty() && "Model path is empty !");
 
-    loadModel(path, flipUVs);
+    loadModel(_path, _flipUV);
 }
 
-engine::SharedModel::SharedModel(const std::string& path, const std::shared_ptr<Material>& material, bool gamma, bool flipUVs)
+engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV)
+	: gammaCorrection(_gamma), flipUV(_flipUV), m_customMaterial(_material)
 {
-    assert(!path.empty() && "Model path is empty !");
+    assert(!_path.empty() && "Model path is empty !");
 
-    assert(material && "Material is not defined !");
+    assert(_material && "Material is not defined !");
 
-	m_customMaterial = material;
-
-    loadModel(path, flipUVs);
+    loadModel(_path, _flipUV);
 }
 
 void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
@@ -55,8 +57,14 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
         return;
     }
 
+
     // retrieve the directory path of the filepath
-    directory = path.substr(0, path.find_last_of('/'));
+    m_directory = path.substr(0, path.find_last_of('/'));
+
+    // retrieve the filename of the filepath
+    size_t last_slash = path.find_last_of("/\\"); // Works for both '/' and '\'
+    m_filename = path.substr(last_slash + 1);
+
 
     // check for bones or not
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
@@ -339,7 +347,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
             else
             {
                 // Texture from file
-                texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->directory);
+                texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->m_directory);
             }
 
             if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
@@ -363,7 +371,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
     return textures;
 }
 
-unsigned int engine::SharedModel::getNumberOfMeshes() const
+unsigned int engine::SharedModel::getMeshCount() const
 {
     return m_numberOfMeshes;
 }
@@ -424,6 +432,14 @@ void engine::SharedModel::extractBoneWeightForVertices(std::vector<Vertex>& vert
             setVertexBoneData(vertices[vertexId], boneID, weight);
         }
     }
+}
+
+void engine::SharedModel::reSetup()
+{
+    std::filesystem::path fullpath = std::filesystem::path(m_directory) / m_filename;
+    std::string fullpath_str = fullpath.string();
+
+    loadModel(fullpath_str, flipUV);
 }
 
 

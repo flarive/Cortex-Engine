@@ -486,7 +486,7 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
         {
             // transform component
             transformComponent = std::reinterpret_pointer_cast<TransformComponent>(component);
-            renderTransformComponent(entity, true, true, true);
+            renderTransformComponent(entity);
         }
         else if (typeID == ComponentType::camera)
         {
@@ -516,9 +516,13 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
 }
 
 
-void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>& entity, bool displayPosition, bool displayRotation, bool displayScale)
+void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>& entity)
 {
     auto transformComponent = entity->getComponent<TransformComponent>();
+
+    bool displayPosition{ true };
+    bool displayRotation{ true };
+    bool displayScale{ true };
 
 
     ImGui::SeparatorText(transformComponent->getName().c_str());
@@ -540,10 +544,11 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     std::shared_ptr<PrimitiveComponent> primitiveComponent{};
     std::shared_ptr<ModelComponent> modelComponent{};
 
-    //auto t = entity->getType();
     if (cameraComponent = entity->getComponent<CameraComponent>())
     {
         position = cameraComponent->getCamera()->position;
+        displayRotation = false;
+        displayScale = false;
     }
     else if (lightComponent = entity->getComponent<LightComponent>())
     {
@@ -849,146 +854,22 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
 {
     ImGui::SeparatorText(component->getName().c_str());
 
-    if (!component)
-        return;
-
-
-    //auto camera = component->getCamera();
-    //if (!camera)
-    //    return;
-
-
-    //// draw component properties dynamically
-    //auto properties = component->getPublicProperties();
-    //auto componentType = to_string(camera->getTypeID());
-    //auto componentName = component->getName();
-
-    renderDynamicProperties(component);
-
-    //if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-    //{
-    //    ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-    //    ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-    //    properties.forEach([&](const std::string& key, EditorProperty& property)
-    //        {
-    //            ImGui::TableNextRow();
-    //            ImGui::TableSetColumnIndex(0);
-    //            ImGui::Text(key.c_str());
-    //            ImGui::TableSetColumnIndex(1);
-    //            ImGui::SetNextItemWidth(80);
-    //            if (auto pValue = std::get_if<float>(&property.value))
-    //            {
-    //                if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-    //                {
-    //                    // float value changed
-    //                    component->setProperty(key, *pValue);
-    //                }
-    //            }
-    //            else if (auto pValue = std::get_if<bool>(&property.value))
-    //            {
-    //                if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
-    //                {
-    //                    // bool value changed
-    //                    component->setProperty(key, *pValue);
-    //                }
-    //            }
-    //        });
-    //    ImGui::EndTable();
-    //}
-}
-
-void engine::ImGuiEditor::renderDynamicProperties(Component& component)
-{
     auto camera = component->getCamera();
     if (!camera)
         return;
 
-
-    // draw component properties dynamically
-    auto properties = component->getPublicProperties();
-    auto componentType = to_string(camera->getTypeID());
-    auto componentName = component.getName();
-
-    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        properties.forEach([&](const std::string& key, EditorProperty& property)
-            {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::Text(key.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SetNextItemWidth(80);
-                if (auto pValue = std::get_if<float>(&property.value))
-                {
-                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                    {
-                        // float value changed
-                        component.setProperty(key, *pValue);
-                    }
-                }
-                else if (auto pValue = std::get_if<bool>(&property.value))
-                {
-                    if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
-                    {
-                        // bool value changed
-                        component.setProperty(key, *pValue);
-                    }
-                }
-            });
-        ImGui::EndTable();
-    }
+    renderDynamicProperties(component, to_string(camera->getTypeID()));
 }
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)
 {
     ImGui::SeparatorText(component->getName().c_str());
 
-    if (!component)
-        return;
-
-
     auto primitive = component->getPrimitive();
     if (!primitive)
-		return;
+        return;
 
-
-    // draw component properties dynamically
-    auto properties = component->getPublicProperties();
-    auto componentType = to_string(primitive->getTypeID());
-    auto componentName = component->getName();
-
-    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        properties.forEach([&](const std::string& key, EditorProperty& property)
-            {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::Text(key.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SetNextItemWidth(80);
-                if (auto pValue = std::get_if<float>(&property.value))
-                {
-                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                    {
-                        // float value changed
-                        component->setProperty(key, *pValue);
-                    }
-                }
-                else if (auto pValue = std::get_if<bool>(&property.value))
-                {
-                    if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
-                    {
-                        // bool value changed
-                        component->setProperty(key, *pValue);
-                    }
-                }
-            });
-        ImGui::EndTable();
-    }
+    renderDynamicProperties(component, to_string(primitive->getTypeID()));
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
@@ -1004,8 +885,11 @@ void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& 
 {
     ImGui::SeparatorText(component->getName().c_str());
 
-    if (!component)
+    auto model = component->getModel();
+    if (!model)
         return;
+
+    renderDynamicProperties(component, to_string(model->getTypeID()));
 }
 
 GLuint engine::ImGuiEditor::getEntityTypeSmallIcon(const engine::EntityType entityType)
@@ -1133,4 +1017,104 @@ bool engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name
 
     return res;
 }
+
+
+void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
+{
+    if (!component)
+        return;
+
+    // draw component properties dynamically
+    auto properties = component->getPublicProperties();
+    auto componentName = component->getName();
+
+    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    {
+        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+        properties.forEach([&](const std::string& key, EditorProperty& property)
+            {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text(key.c_str());
+                ImGui::TableSetColumnIndex(1);
+                ImGui::SetNextItemWidth(80);
+
+                if (float* pValue = std::get_if<float>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%d", *pValue);
+                    }
+                    else {
+                        if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                        {
+                            // float value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (int* pValue = std::get_if<int>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%i", *pValue);
+					}
+                    else {
+                        if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                        {
+                            // int value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (unsigned int* pValue = std::get_if<unsigned int>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%u", *pValue);
+                    }
+                    else {
+                        if (ImGui::DragScalar(std::format("##{}{}{}", componentName, componentType, key).c_str(), ImGuiDataType_U32, pValue, property.step))
+                        {
+                            // unsigned int value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (bool* pValue = std::get_if<bool>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%i", *pValue);
+                    }
+                    else {
+                        if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
+                        {
+                            // bool value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (std::string* pValue = std::get_if<std::string>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%s", pValue->c_str());
+                    }
+                    else {
+                        // Create a temporary buffer for ImGui::InputText
+                        char buffer[256];
+                        strncpy(buffer, pValue->c_str(), sizeof(buffer));
+                        buffer[sizeof(buffer) - 1] = '\0'; // Ensure null-termination
+
+                        if (ImGui::InputText(std::format("##{}{}{}", componentName, componentType, key).c_str(), buffer, sizeof(buffer)))
+                        {
+                            // Update the std::string if the value changed
+                            *pValue = buffer;
+                            // string value changed
+                            // component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+            });
+        ImGui::EndTable();
+    }
+}
+
 #endif

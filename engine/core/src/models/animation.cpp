@@ -45,8 +45,7 @@ void engine::Animation::readMissingBones(const aiAnimation* animation, Model& mo
 			boneInfoMap[boneName].id = boneCount;
 			boneCount++;
 		}
-		m_bones.push_back(Bone(channel->mNodeName.data,
-			boneInfoMap[channel->mNodeName.data].id, channel));
+		m_bones.push_back(Bone(channel->mNodeName.data,	boneInfoMap[channel->mNodeName.data].id, channel));
 	}
 
 	m_boneInfoMap = boneInfoMap;

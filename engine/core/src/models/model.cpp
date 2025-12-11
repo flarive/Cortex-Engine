@@ -71,7 +71,7 @@ void engine::Model::clean()
     meshes.clear();
 }
 
-unsigned int engine::Model::getNumberOfMeshes() const
+unsigned int engine::Model::getMeshCount() const
 {
     if (!m_shared_model)
     {
@@ -79,6 +79,6 @@ unsigned int engine::Model::getNumberOfMeshes() const
     }
     else
     {
-        return m_shared_model->getNumberOfMeshes();
+        return m_shared_model->getMeshCount();
     }
 }

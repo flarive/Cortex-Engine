@@ -37,6 +37,29 @@ namespace engine
         // constructor, expects a shared model to be displayed multiple times and loaded only one time.
         Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
+        ModelType getTypeID() const
+        {
+            return ModelType::model;
+        }
+
+        ordered_map<std::string, EditorProperty> getPublicProperties() {
+            return {
+                {"File", EditorProperty { getFilename(), 0.0f, 0.0f, 0.0f, "%s", true }},
+                {"Meshes count", EditorProperty { getMeshCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
+                {"Bones count", EditorProperty { getBoneCount(), 0.0f, 0.0f, 0.0f, "%i", true }},
+                {"Flip UV", EditorProperty { getFlipUV(), 0.0f, 1.0f, 1.0f }},
+            };
+        }
+
+        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() {
+            return {
+                {"flipuv", [this](bool value) { getFlipUV() = value; }}
+            };
+        }
+
+
+
+
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform);
 
@@ -44,7 +67,7 @@ namespace engine
 
         void clean();
 
-        unsigned int getNumberOfMeshes() const;
+        unsigned int getMeshCount() const;
 
     private:
         // for shared model only (loaded one time, drawn multiple times)

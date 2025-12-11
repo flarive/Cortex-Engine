@@ -59,7 +59,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-
+    
 
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
@@ -82,14 +82,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
     initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    //if (m_lights.size() > 0)
-    //{
-    //    auto firstLight = m_lights[0];
-    //    if (std::dynamic_pointer_cast<PointLight>(firstLight))
-    //        initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    //    else
-    //        initSpotLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    //}
 
     initBackground();
 
@@ -156,6 +148,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    
 
 
     // should be moved in init !!!!!!!!!!!!!!!!!!!!!!

@@ -17,14 +17,13 @@
 #include "app/myscene11.h" // blinnphong animated character
 
 // https://github.com/TheCherno/ImGuizmo
-// https://skymods.org/download/freemenu2
 // https://stackoverflow.com/questions/57454921/what-causes-glsl-recompilation-of-vertex-shader-based-on-state
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene9;
+using MyScene = MyScene1;
 
 App* myApp{};
 Scene* myScene{};

@@ -76,14 +76,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
     initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    /*if (m_lights.size() > 0)
-    {
-        auto firstLight = m_lights[0];
-        if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-        else
-            initSpotLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
-    }*/
 
     // color framebuffer configuration
     // -------------------------

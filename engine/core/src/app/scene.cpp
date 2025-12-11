@@ -422,7 +422,6 @@ void engine::Scene::drawEntities(Shader& shader)
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum)
 {
-
     if (!entity->enabled)
         return;
 

@@ -41,8 +41,10 @@ namespace engine
 
 		engine::AABB* getBoundingVolume() override;
 
-		ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override;
+		ordered_map<std::string, EditorProperty> getPublicProperties() override;
 		std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override;
+
+		void setProperty(const std::string& key, float value) override;
 
 	private:
 

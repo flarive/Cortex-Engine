@@ -19,9 +19,12 @@ namespace engine
 {
 	using Color = glm::vec4;
 
-	struct KeyValuePair
+	struct EditorProperty
 	{
-		std::string key{};
 		std::variant<int, std::string, float, bool> value{};
-	};;
+		float min{};
+		float max{};
+		float step{};
+		std::string format{};
+	};
 }

@@ -96,7 +96,7 @@ namespace engine
 
         virtual void processJoystickMovement(const GLFWgamepadstate& state) = 0;
 
-        virtual ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() = 0;
+        virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
         virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
 
 		virtual void setup() = 0;

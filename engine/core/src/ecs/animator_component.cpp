@@ -43,14 +43,18 @@ engine::AABB* engine::AnimatorComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::AnimatorComponent::getPublicProperties()
+engine::ordered_map<std::string, engine::EditorProperty> engine::AnimatorComponent::getPublicProperties()
 {
-	return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+	return engine::ordered_map<std::string, EditorProperty>{};
 }
 
 std::unordered_map<std::string, std::function<void(float)>> engine::AnimatorComponent::getPropertySetters()
 {
 	return std::unordered_map<std::string, std::function<void(float)>>();
+}
+
+void engine::AnimatorComponent::setProperty(const std::string& key, float value)
+{
 }
 
 

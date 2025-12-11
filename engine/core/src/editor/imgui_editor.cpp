@@ -853,6 +853,52 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
         return;
 
 
+    //auto camera = component->getCamera();
+    //if (!camera)
+    //    return;
+
+
+    //// draw component properties dynamically
+    //auto properties = component->getPublicProperties();
+    //auto componentType = to_string(camera->getTypeID());
+    //auto componentName = component->getName();
+
+    renderDynamicProperties(component);
+
+    //if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    //{
+    //    ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+    //    ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+    //    properties.forEach([&](const std::string& key, EditorProperty& property)
+    //        {
+    //            ImGui::TableNextRow();
+    //            ImGui::TableSetColumnIndex(0);
+    //            ImGui::Text(key.c_str());
+    //            ImGui::TableSetColumnIndex(1);
+    //            ImGui::SetNextItemWidth(80);
+    //            if (auto pValue = std::get_if<float>(&property.value))
+    //            {
+    //                if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+    //                {
+    //                    // float value changed
+    //                    component->setProperty(key, *pValue);
+    //                }
+    //            }
+    //            else if (auto pValue = std::get_if<bool>(&property.value))
+    //            {
+    //                if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
+    //                {
+    //                    // bool value changed
+    //                    component->setProperty(key, *pValue);
+    //                }
+    //            }
+    //        });
+    //    ImGui::EndTable();
+    //}
+}
+
+void engine::ImGuiEditor::renderDynamicProperties(Component& component)
+{
     auto camera = component->getCamera();
     if (!camera)
         return;
@@ -861,121 +907,39 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     // draw component properties dynamically
     auto properties = component->getPublicProperties();
     auto componentType = to_string(camera->getTypeID());
-    auto componentName = component->getName();
+    auto componentName = component.getName();
 
     if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        properties.forEach([&](const auto& key, auto& value)
+        properties.forEach([&](const std::string& key, EditorProperty& property)
             {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text(key.c_str());
                 ImGui::TableSetColumnIndex(1);
                 ImGui::SetNextItemWidth(80);
-                if (auto pValue = std::get_if<float>(&value))
+                if (auto pValue = std::get_if<float>(&property.value))
                 {
-					float min = 0.0f;
-					float max = 100.0f;
-
-                    if (key == "yaw")
-                    {
-                        min = -180.0f;
-                        max = 180.0f;
-                    }
-                    else if (key == "pitch")
-                    {
-                        min = -90.0f;
-                        max = 90.0f;
-                    }
-                    else if (key == "radius")
-                    {
-                        min = 0.0f;
-                        max = 100.0f;
-                    }
-                    else if (key == "theta")
-                    {
-                        min = -180.0f;
-                        max = 180;
-                    }
-                    else if (key == "phi")
-                    {
-                        min = -180.0f;
-                        max = 180.0f;
-                    }
-                    
-                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, 1.0f, min, max, "%.2f", ImGuiSliderFlags_NoRoundToFormat))
+                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
                     {
                         // float value changed
-                        component->setProperty(key, *pValue);
+                        component.setProperty(key, *pValue);
                     }
                 }
-                else if (auto pValue = std::get_if<bool>(&value))
+                else if (auto pValue = std::get_if<bool>(&property.value))
                 {
                     if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
                     {
                         // bool value changed
-                        component->setProperty(key, *pValue);
+                        component.setProperty(key, *pValue);
                     }
                 }
             });
         ImGui::EndTable();
     }
 }
-
-//void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component)
-//{
-//    ImGui::SeparatorText(component->getName().c_str());
-//    
-//    if (!component)
-//        return;
-//
-//    // Use a temporary variable to hold the zoom value
-//    float zoom = component->getCamera()->zoom;
-//    float yaw = component->getCamera()->yaw;
-//    float pitch = component->getCamera()->pitch;
-//
-//    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-//    {
-//        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-//        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-//
-//        ImGui::TableNextRow();
-//        ImGui::TableSetColumnIndex(0);
-//        ImGui::Text("Zoom");
-//        ImGui::TableSetColumnIndex(1);
-//        ImGui::SetNextItemWidth(80);
-//        if (ImGui::DragFloat("##zoom", &zoom, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None))
-//        {
-//            component->getCamera()->zoom = zoom;
-//        }
-//
-//
-//        ImGui::TableNextRow();
-//        ImGui::TableSetColumnIndex(0);
-//        ImGui::Text("Yaw");
-//        ImGui::TableSetColumnIndex(1);
-//        ImGui::SetNextItemWidth(80);
-//        if (ImGui::DragFloat("##yaw", &yaw, 5.0f, -180.0f, 180.0f, "%.0f", ImGuiSliderFlags_None))
-//        {
-//            component->getCamera()->yaw = yaw;
-//        }
-//
-//
-//        ImGui::TableNextRow();
-//        ImGui::TableSetColumnIndex(0);
-//        ImGui::Text("Pitch");
-//        ImGui::TableSetColumnIndex(1);
-//        ImGui::SetNextItemWidth(80);
-//        if (ImGui::DragFloat("##pitch", &pitch, 5.0f, -180.0f, 180.0f, "%.0f", ImGuiSliderFlags_None))
-//        {
-//            component->getCamera()->pitch = pitch;
-//        }
-//
-//        ImGui::EndTable();
-//    }
-//}
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)
 {
@@ -999,22 +963,22 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     {
         ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
         ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        properties.forEach([&](const auto& key, auto& value)
+        properties.forEach([&](const std::string& key, EditorProperty& property)
             {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text(key.c_str());
                 ImGui::TableSetColumnIndex(1);
                 ImGui::SetNextItemWidth(80);
-                if (auto pValue = std::get_if<float>(&value))
+                if (auto pValue = std::get_if<float>(&property.value))
                 {
-                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, 0.01f, 0.0f, 10.0f, "%.3f", ImGuiSliderFlags_NoRoundToFormat))
+                    if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
                     {
                         // float value changed
                         component->setProperty(key, *pValue);
                     }
                 }
-                else if (auto pValue = std::get_if<bool>(&value))
+                else if (auto pValue = std::get_if<bool>(&property.value))
                 {
                     if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
                     {

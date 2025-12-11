@@ -41,8 +41,10 @@ namespace engine
 
         virtual std::string getName() = 0;
 
-        virtual ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() = 0;
+        virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
         virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
+
+        virtual void setProperty(const std::string& key, float value) = 0;
 	};
 
     /// <summary>

@@ -27,12 +27,16 @@ engine::AABB* engine::TransformComponent::getBoundingVolume()
     // Caller must delete the pointer later!
 }
 
-engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::TransformComponent::getPublicProperties()
+engine::ordered_map<std::string, engine::EditorProperty> engine::TransformComponent::getPublicProperties()
 {
-    return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+    return engine::ordered_map<std::string, EditorProperty>{};
 }
 
 std::unordered_map<std::string, std::function<void(float)>> engine::TransformComponent::getPropertySetters()
 {
     return std::unordered_map<std::string, std::function<void(float)>>();
+}
+
+void engine::TransformComponent::setProperty(const std::string& key, float value)
+{
 }

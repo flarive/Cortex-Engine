@@ -21,12 +21,12 @@ namespace engine
         void setup(const std::shared_ptr<Material>& material) override;
         void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
-        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
+        ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"radius", getRadius()},
-                {"uvscale", getUvScale()},
-                {"canCastShadows", canCastShadows()},
-                {"canReceiveShadows", canReceiveShadows() }
+                {"radius", EditorProperty { getRadius(), 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"uvscale", EditorProperty { getUvScale(), 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canCastShadows", EditorProperty { canCastShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canReceiveShadows", EditorProperty { canReceiveShadows(), 0.0f, 10.0f, 0.01f, "%.3f" } }
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {

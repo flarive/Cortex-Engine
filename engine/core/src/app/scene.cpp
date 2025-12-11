@@ -510,7 +510,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                     if (properties.contains("canCastShadows"))
                     {
                         auto canCastShadows = properties.at("canCastShadows");
-                        if (auto pBool = std::get_if<bool>(&canCastShadows))
+                        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
                         {
                             shouldDraw = *pBool;
                         }

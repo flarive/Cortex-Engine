@@ -26,11 +26,11 @@ namespace engine
             return CameraType::orbit;
         }
 
-        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
+        ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"radius", getRadius()},
-                {"theta", getTheta()},
-                {"phi", getPhi()}
+                {"radius", EditorProperty { getRadius(), 0.0f, 100.0f, 1.0f, "%.2f" }},
+                {"theta", EditorProperty { getTheta(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"phi", EditorProperty { getPhi(), -180.0f, 180.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {

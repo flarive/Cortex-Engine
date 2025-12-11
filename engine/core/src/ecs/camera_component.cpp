@@ -38,7 +38,7 @@ engine::AABB* engine::CameraComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::CameraComponent::getPublicProperties()
+engine::ordered_map<std::string, engine::EditorProperty> engine::CameraComponent::getPublicProperties()
 {
 	return m_camera->getPublicProperties();
 }
@@ -47,6 +47,7 @@ std::unordered_map<std::string, std::function<void(float)>> engine::CameraCompon
 {
 	return m_camera->getPropertySetters();
 }
+
 void engine::CameraComponent::setProperty(const std::string& key, float value)
 {
 	auto it = m_propertySetters.find(key);

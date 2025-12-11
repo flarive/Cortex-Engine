@@ -16,11 +16,11 @@ namespace engine
             return CameraType::fps;
         }
 
-        ordered_map<std::string, std::variant<int, std::string, float, bool>> getPublicProperties() override {
+        ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"zoom", getZoom()},
-                {"yaw", getYaw()},
-                {"pitch", getPitch()}
+                {"zoom", EditorProperty { getZoom(), 0.0f, 100.0f, 1.0f, "%.2f" }},
+                {"yaw", EditorProperty { getYaw(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"pitch", EditorProperty { getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {

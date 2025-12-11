@@ -79,12 +79,16 @@ engine::AABB* engine::ModelComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::ModelComponent::getPublicProperties()
+engine::ordered_map<std::string, engine::EditorProperty> engine::ModelComponent::getPublicProperties()
 {
-	return engine::ordered_map<std::string, std::variant<int, std::string, float, bool>>{};
+	return engine::ordered_map<std::string, EditorProperty>{};
 }
 
 std::unordered_map<std::string, std::function<void(float)>> engine::ModelComponent::getPropertySetters()
 {
 	return std::unordered_map<std::string, std::function<void(float)>>();
+}
+
+void engine::ModelComponent::setProperty(const std::string& key, float value)
+{
 }

@@ -84,7 +84,7 @@ engine::AABB* engine::PrimitiveComponent::getBoundingVolume()
 	return m_boundingVolume.get();
 }
 
-engine::ordered_map<std::string, std::variant<int, std::string, float, bool>> engine::PrimitiveComponent::getPublicProperties()
+engine::ordered_map<std::string, engine::EditorProperty> engine::PrimitiveComponent::getPublicProperties()
 {
 	return m_primitive->getPublicProperties();
 }

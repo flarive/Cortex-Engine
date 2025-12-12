@@ -42,21 +42,6 @@ namespace engine
             return ModelType::model;
         }
 
-        ordered_map<std::string, EditorProperty> getPublicProperties() {
-            return {
-                {"File", EditorProperty { getFilename(), 0.0f, 0.0f, 0.0f, "%s", true }},
-                {"Meshes count", EditorProperty { getMeshCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
-                {"Bones count", EditorProperty { getBoneCount(), 0.0f, 0.0f, 0.0f, "%i", true }},
-                {"Flip UV", EditorProperty { getFlipUV(), 0.0f, 1.0f, 1.0f }},
-            };
-        }
-
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() {
-            return {
-                {"flipuv", [this](bool value) { getFlipUV() = value; }}
-            };
-        }
-
 
 
 
@@ -68,6 +53,7 @@ namespace engine
         void clean();
 
         unsigned int getMeshCount() const;
+        //unsigned int getVertexCount() const;
 
     private:
         // for shared model only (loaded one time, drawn multiple times)

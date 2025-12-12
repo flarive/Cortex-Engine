@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+#include <variant>
 
 #include "../common_defines.h"
 #include "../vertex.h"
@@ -81,7 +82,7 @@ namespace engine
 
 
 		virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
-        virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
+        virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
         virtual std::vector<Vertex> generateVertices() = 0;
 

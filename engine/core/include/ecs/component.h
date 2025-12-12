@@ -13,6 +13,7 @@
 #include <variant>
 #include <unordered_map>
 #include <functional>
+#include <variant>
 
 namespace engine
 {
@@ -42,9 +43,9 @@ namespace engine
         virtual std::string getName() = 0;
 
         virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
-        virtual std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() = 0;
+        virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
-        virtual void setProperty(const std::string& key, float value) = 0;
+        virtual void setProperty(const std::string& key, EditorPropertyValue value) = 0;
 	};
 
     /// <summary>

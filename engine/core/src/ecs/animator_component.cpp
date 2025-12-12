@@ -48,12 +48,12 @@ engine::ordered_map<std::string, engine::EditorProperty> engine::AnimatorCompone
 	return engine::ordered_map<std::string, EditorProperty>{};
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::AnimatorComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::AnimatorComponent::getPropertySetters()
 {
-	return std::unordered_map<std::string, std::function<void(float)>>();
+	return std::unordered_map<std::string, std::function<void(EditorPropertyValue)>>();
 }
 
-void engine::AnimatorComponent::setProperty(const std::string& key, float value)
+void engine::AnimatorComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 }
 

@@ -28,7 +28,6 @@ engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const
 engine::Model::Model(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUVs, const glm::vec3& _position)
     : SharedModel(_path, _material, _gamma, _flipUVs), position(_position)
 {
-
 }
 
 // constructor, expects a model (for sharing)
@@ -82,3 +81,8 @@ unsigned int engine::Model::getMeshCount() const
         return m_shared_model->getMeshCount();
     }
 }
+
+//unsigned int engine::Model::getVertexCount() const
+//{
+//    return m_numberOfVertices;
+//}

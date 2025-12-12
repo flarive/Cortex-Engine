@@ -69,17 +69,16 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     // check for bones or not
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[i];
-        if (mesh->HasBones()) {
+        if (mesh->HasBones())
             m_hasBones = true;
-            break;
-        }
+        
+        m_numberOfVertices += mesh->mNumVertices;
     }
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
     m_numberOfMeshes += scene->mNumMeshes;
-
     
 
     // Stop the timer
@@ -374,6 +373,11 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
 unsigned int engine::SharedModel::getMeshCount() const
 {
     return m_numberOfMeshes;
+}
+
+unsigned int engine::SharedModel::getVertexCount() const
+{
+    return m_numberOfVertices;
 }
 
 void engine::SharedModel::setVertexBoneDataToDefault(Vertex& vertex)

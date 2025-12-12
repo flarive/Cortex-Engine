@@ -690,164 +690,170 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
 void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& component)
 {
     ImGui::SeparatorText(component->getName().c_str());
-    
-    if (!component)
+
+    auto light = component->getLight();
+    if (!light)
         return;
 
-    std::shared_ptr<PointLight> pointLight;
-    std::shared_ptr<DirectionalLight> dirLight;
-    std::shared_ptr<SpotLight> spotLight;
+    renderDynamicProperties(component, to_string(light->getTypeID()));
+    
+    //if (!component)
+    //    return;
 
-    if (pointLight = std::dynamic_pointer_cast<PointLight>(component->getLight()))
-    {
-    }
-    else if (dirLight = std::dynamic_pointer_cast<DirectionalLight>(component->getLight()))
-    {
-    }
-    else if (spotLight = std::dynamic_pointer_cast<SpotLight>(component->getLight()))
-    {
-    }
+    //std::shared_ptr<PointLight> pointLight;
+    //std::shared_ptr<DirectionalLight> dirLight;
+    //std::shared_ptr<SpotLight> spotLight;
 
-    if (spotLight)
-    {
-        if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
-        {
-            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-            ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-            ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-            ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //if (pointLight = std::dynamic_pointer_cast<PointLight>(component->getLight()))
+    //{
+    //}
+    //else if (dirLight = std::dynamic_pointer_cast<DirectionalLight>(component->getLight()))
+    //{
+    //}
+    //else if (spotLight = std::dynamic_pointer_cast<SpotLight>(component->getLight()))
+    //{
+    //}
 
-            ImGui::TableNextRow();
+    //if (spotLight)
+    //{
+    //    if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
+    //    {
+    //        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+    //        ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //        ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //        ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Target");
+    //        ImGui::TableNextRow();
 
-            ImGui::TableSetColumnIndex(1);
-            ImGui::Text("X");
-            ImGui::TableSetColumnIndex(2);
-            ImGui::DragFloat("##targetX", &spotLight->target.x, 0.1f);
+    //        ImGui::TableSetColumnIndex(0);
+    //        ImGui::Text("Target");
 
-            ImGui::TableSetColumnIndex(3);
-            ImGui::Text("Y");
-            ImGui::TableSetColumnIndex(4);
-            ImGui::DragFloat("##targetY", &spotLight->target.y, 0.1f);
+    //        ImGui::TableSetColumnIndex(1);
+    //        ImGui::Text("X");
+    //        ImGui::TableSetColumnIndex(2);
+    //        ImGui::DragFloat("##targetX", &spotLight->target.x, 0.1f);
 
-            ImGui::TableSetColumnIndex(5);
-            ImGui::Text("Z");
-            ImGui::TableSetColumnIndex(6);
-            ImGui::DragFloat("##targetZ", &spotLight->target.z, 0.1f);
+    //        ImGui::TableSetColumnIndex(3);
+    //        ImGui::Text("Y");
+    //        ImGui::TableSetColumnIndex(4);
+    //        ImGui::DragFloat("##targetY", &spotLight->target.y, 0.1f);
 
-            ImGui::EndTable();
-        }
+    //        ImGui::TableSetColumnIndex(5);
+    //        ImGui::Text("Z");
+    //        ImGui::TableSetColumnIndex(6);
+    //        ImGui::DragFloat("##targetZ", &spotLight->target.z, 0.1f);
 
-        if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-        {
-            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-            ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+    //        ImGui::EndTable();
+    //    }
 
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Inner Cutoff");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(80);
-            ImGui::DragFloat("##innerCutoff", &spotLight->cutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+    //    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    //    {
+    //        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+    //        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
 
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Outer Cutoff");
-            ImGui::TableSetColumnIndex(1);
-            ImGui::SetNextItemWidth(80);
-            ImGui::DragFloat("##outerCutoff", &spotLight->outerCutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+    //        ImGui::TableNextRow();
+    //        ImGui::TableSetColumnIndex(0);
+    //        ImGui::Text("Inner Cutoff");
+    //        ImGui::TableSetColumnIndex(1);
+    //        ImGui::SetNextItemWidth(80);
+    //        ImGui::DragFloat("##innerCutoff", &spotLight->cutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
-            ImGui::EndTable();
-        }
-    }
-    else if (dirLight)
-    {
-        if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
-        {
-            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-            ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-            ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
-            ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
-            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //        ImGui::TableNextRow();
+    //        ImGui::TableSetColumnIndex(0);
+    //        ImGui::Text("Outer Cutoff");
+    //        ImGui::TableSetColumnIndex(1);
+    //        ImGui::SetNextItemWidth(80);
+    //        ImGui::DragFloat("##outerCutoff", &spotLight->outerCutoff, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
-            ImGui::TableNextRow();
+    //        ImGui::EndTable();
+    //    }
+    //}
+    //else if (dirLight)
+    //{
+    //    if (ImGui::BeginTable("MyTable", 7, ImGuiTableFlags_SizingStretchSame))
+    //    {
+    //        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+    //        ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //        ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 70.0f);
+    //        ImGui::TableSetupColumn("Z", ImGuiTableColumnFlags_WidthFixed, 5.0f);
+    //        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 70.0f);
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Target");
+    //        ImGui::TableNextRow();
 
-            ImGui::TableSetColumnIndex(1);
-            ImGui::Text("X");
-            ImGui::TableSetColumnIndex(2);
-            ImGui::DragFloat("##targetX", &dirLight->target.x, 0.1f);
+    //        ImGui::TableSetColumnIndex(0);
+    //        ImGui::Text("Target");
 
-            ImGui::TableSetColumnIndex(3);
-            ImGui::Text("Y");
-            ImGui::TableSetColumnIndex(4);
-            ImGui::DragFloat("##targetY", &dirLight->target.y, 0.1f);
+    //        ImGui::TableSetColumnIndex(1);
+    //        ImGui::Text("X");
+    //        ImGui::TableSetColumnIndex(2);
+    //        ImGui::DragFloat("##targetX", &dirLight->target.x, 0.1f);
 
-            ImGui::TableSetColumnIndex(5);
-            ImGui::Text("Z");
-            ImGui::TableSetColumnIndex(6);
-            ImGui::DragFloat("##targetZ", &dirLight->target.z, 0.1f);
+    //        ImGui::TableSetColumnIndex(3);
+    //        ImGui::Text("Y");
+    //        ImGui::TableSetColumnIndex(4);
+    //        ImGui::DragFloat("##targetY", &dirLight->target.y, 0.1f);
 
-            ImGui::EndTable();
-        }
-    }
+    //        ImGui::TableSetColumnIndex(5);
+    //        ImGui::Text("Z");
+    //        ImGui::TableSetColumnIndex(6);
+    //        ImGui::DragFloat("##targetZ", &dirLight->target.z, 0.1f);
 
-    // common to all lights
-    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+    //        ImGui::EndTable();
+    //    }
+    //}
 
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Intensity");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::SetNextItemWidth(80);
-        ImGui::DragFloat("##intensity", &component->getLight()->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
+    //// common to all lights
+    //if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    //{
+    //    ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+    //    ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
 
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Ambient Color");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-        ImGui::ColorEdit3("##ambientColor", glm::value_ptr(component->getLight()->ambientColor), ImGuiColorEditFlags_NoLabel);
+    //    ImGui::TableNextRow();
+    //    ImGui::TableSetColumnIndex(0);
+    //    ImGui::Text("Intensity");
+    //    ImGui::TableSetColumnIndex(1);
+    //    ImGui::SetNextItemWidth(80);
+    //    ImGui::DragFloat("##intensity", &component->getLight()->intensity, 1.0f, 0.0f, 1000.0f, "%.3f", ImGuiSliderFlags_None);
 
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Diffuse Color");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-        ImGui::ColorEdit3("##diffuseColor", glm::value_ptr(component->getLight()->diffuseColor), ImGuiColorEditFlags_NoLabel);
+    //    ImGui::TableNextRow();
+    //    ImGui::TableSetColumnIndex(0);
+    //    ImGui::Text("Ambient Color");
+    //    ImGui::TableSetColumnIndex(1);
+    //    ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+    //    ImGui::ColorEdit3("##ambientColor", glm::value_ptr(component->getLight()->ambientColor), ImGuiColorEditFlags_NoLabel);
 
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Specular Color");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
-        // Show color preview
-        ImGui::ColorEdit3("##specularColor", glm::value_ptr(component->getLight()->specularColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
-        ImGui::SameLine();
+    //    ImGui::TableNextRow();
+    //    ImGui::TableSetColumnIndex(0);
+    //    ImGui::Text("Diffuse Color");
+    //    ImGui::TableSetColumnIndex(1);
+    //    ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+    //    ImGui::ColorEdit3("##diffuseColor", glm::value_ptr(component->getLight()->diffuseColor), ImGuiColorEditFlags_NoLabel);
 
-        // Show numeric inputs without labels
-        ImGui::DragFloat3(
-            "##specularColorInputs",
-            glm::value_ptr(component->getLight()->specularColor),
-            0.01f,
-            0.0f,
-            1.0f
-        );
+    //    ImGui::TableNextRow();
+    //    ImGui::TableSetColumnIndex(0);
+    //    ImGui::Text("Specular Color");
+    //    ImGui::TableSetColumnIndex(1);
+    //    ImGui::SetNextItemWidth(-FLT_MIN); // Use all available width
+    //    // Show color preview
+    //    ImGui::ColorEdit3("##specularColor", glm::value_ptr(component->getLight()->specularColor), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+    //    ImGui::SameLine();
 
-        ImGui::EndTable();
-    }
+    //    // Show numeric inputs without labels
+    //    ImGui::DragFloat3(
+    //        "##specularColorInputs",
+    //        glm::value_ptr(component->getLight()->specularColor),
+    //        0.01f,
+    //        0.0f,
+    //        1.0f
+    //    );
+
+    //    ImGui::EndTable();
+    //}
 }
 
 void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)

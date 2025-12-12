@@ -32,11 +32,11 @@ engine::ordered_map<std::string, engine::EditorProperty> engine::TransformCompon
     return engine::ordered_map<std::string, EditorProperty>{};
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::TransformComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::TransformComponent::getPropertySetters()
 {
-    return std::unordered_map<std::string, std::function<void(float)>>();
+    return std::unordered_map<std::string, std::function<void(EditorPropertyValue)>>();
 }
 
-void engine::TransformComponent::setProperty(const std::string& key, float value)
+void engine::TransformComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 }

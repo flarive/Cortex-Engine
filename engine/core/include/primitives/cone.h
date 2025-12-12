@@ -29,13 +29,18 @@ namespace engine
             };
         }
 
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                {"radius", [this](float value) { getRadius() = value; }},
-                {"height", [this](float value) { getHeight() = value; }},
-                {"uvscale", [this](float value) { getUvScale() = value; }},
-                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
-                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
+                { "radius", [this](EditorPropertyValue value) { getRadius() = *(std::get_if<float>(&value)); } },
+                { "height", [this](EditorPropertyValue value) { getHeight() = *(std::get_if<float>(&value)); } },
+                { "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
+                { "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
+                { "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
+                //{"radius", [this](float value) { getRadius() = value; }},
+                //{"height", [this](float value) { getHeight() = value; }},
+                //{"uvscale", [this](float value) { getUvScale() = value; }},
+                //{"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                //{"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
 

@@ -87,12 +87,12 @@ engine::ordered_map<std::string, engine::EditorProperty> engine::ModelComponent:
 	return m_model->getPublicProperties();
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::ModelComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::ModelComponent::getPropertySetters()
 {
 	return m_model->getPropertySetters();
 }
 
-void engine::ModelComponent::setProperty(const std::string& key, float value)
+void engine::ModelComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 	auto it = m_propertySetters.find(key);
 	if (it != m_propertySetters.end())

@@ -89,12 +89,12 @@ engine::ordered_map<std::string, engine::EditorProperty> engine::PrimitiveCompon
 	return m_primitive->getPublicProperties();
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::PrimitiveComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::PrimitiveComponent::getPropertySetters()
 {
 	return m_primitive->getPropertySetters();
 }
 
-void engine::PrimitiveComponent::setProperty(const std::string& key, float value)
+void engine::PrimitiveComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 	auto it = m_propertySetters.find(key);
 	if (it != m_propertySetters.end())

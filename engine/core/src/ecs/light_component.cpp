@@ -6,6 +6,9 @@ engine::LightComponent::LightComponent(std::shared_ptr<Light> light)
     : m_light(light)
 {
     m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(light));
+
+    // Initialize property setters based on primitive type
+    m_propertySetters = m_light->getPropertySetters();
 }
 
 void engine::LightComponent::init(Transform& transform)
@@ -47,14 +50,20 @@ engine::AABB* engine::LightComponent::getBoundingVolume()
 
 engine::ordered_map<std::string, engine::EditorProperty> engine::LightComponent::getPublicProperties()
 {
-    return engine::ordered_map<std::string, EditorProperty>{};
+    return m_light->getPublicProperties();
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::LightComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::LightComponent::getPropertySetters()
 {
-    return std::unordered_map<std::string, std::function<void(float)>>();
+    return m_light->getPropertySetters();
 }
 
-void engine::LightComponent::setProperty(const std::string& key, float value)
+void engine::LightComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
+    auto it = m_propertySetters.find(key);
+    if (it != m_propertySetters.end())
+    {
+        it->second(value);
+        //m_light->reSetup(); // Assuming all primitives have a reSetup() method
+    }
 }

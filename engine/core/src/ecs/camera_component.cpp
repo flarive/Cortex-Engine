@@ -43,12 +43,12 @@ engine::ordered_map<std::string, engine::EditorProperty> engine::CameraComponent
 	return m_camera->getPublicProperties();
 }
 
-std::unordered_map<std::string, std::function<void(float)>> engine::CameraComponent::getPropertySetters()
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::CameraComponent::getPropertySetters()
 {
 	return m_camera->getPropertySetters();
 }
 
-void engine::CameraComponent::setProperty(const std::string& key, float value)
+void engine::CameraComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 	auto it = m_propertySetters.find(key);
 	if (it != m_propertySetters.end())

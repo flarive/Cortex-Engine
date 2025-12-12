@@ -19,9 +19,11 @@ namespace engine
 {
 	using Color = glm::vec4;
 
+	using EditorPropertyValue = std::variant<int, unsigned int, std::string, float, bool, glm::vec2, glm::vec3, glm::vec4>;
+
 	struct EditorProperty
 	{
-		std::variant<int, unsigned int, std::string, float, bool> value{};
+		EditorPropertyValue value{};
 		float min{};
 		float max{};
 		float step{};

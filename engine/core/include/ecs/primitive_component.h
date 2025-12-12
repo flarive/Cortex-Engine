@@ -45,9 +45,9 @@ namespace engine
 		engine::AABB* getBoundingVolume() override;
 
 		ordered_map<std::string, engine::EditorProperty> getPublicProperties() override;
-		std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override;
+		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override;
 
-		void setProperty(const std::string& key, float value);
+		void setProperty(const std::string& key, EditorPropertyValue value);
 
 	private:
 
@@ -61,7 +61,7 @@ namespace engine
 		bool DISPLAY_DEBUG_BOUNDING_BOX{ false };
 
 
-		std::unordered_map<std::string, std::function<void(float)>> m_propertySetters{};
+		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};
 
 		AABB generateBoundingVolume(const std::shared_ptr<Primitive> primitive);
 	};

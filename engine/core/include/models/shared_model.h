@@ -70,6 +70,22 @@ namespace engine
 
         SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV);
 
+        ordered_map<std::string, EditorProperty> getPublicProperties() {
+            return {
+                {"File", EditorProperty { getFilename(), 0.0f, 0.0f, 0.0f, "%s", true }},
+                {"Meshes count", EditorProperty { getMeshCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
+                {"Vertex count", EditorProperty { getVertexCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
+                {"Bones count", EditorProperty { getBoneCount(), 0.0f, 0.0f, 0.0f, "%i", true }},
+                {"Flip UV", EditorProperty { getFlipUV(), 0.0f, 1.0f, 1.0f, "%s", true }},
+            };
+        }
+
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
+            return {
+                //{"flipuv", [this](bool value) { getFlipUV() = value; }}
+            };
+        }
+
 
         ModelType getTypeID() const
         {
@@ -93,6 +109,7 @@ namespace engine
         void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
         unsigned int getMeshCount() const;
+        unsigned int getVertexCount() const;
 
         std::string getFilename() const { return m_filename; }
 
@@ -117,6 +134,7 @@ namespace engine
     protected:
 
         unsigned int m_numberOfMeshes{};
+        unsigned int m_numberOfVertices{};
 
         bool m_hasBones{};
         std::map<std::string, BoneInfo> m_boneInfoMap{};

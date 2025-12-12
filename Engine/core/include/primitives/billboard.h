@@ -26,11 +26,14 @@ namespace engine
             };
         }
 
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                {"uvscale", [this](float value) { getUvScale() = value; }},
-                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
-                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
+                { "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
+                { "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
+                { "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
+                //{"uvscale", [this](float value) { getUvScale() = value; }},
+                //{"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                //{"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
 

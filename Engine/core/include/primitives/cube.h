@@ -28,14 +28,20 @@ namespace engine
                 {"Receive shadows", EditorProperty { canReceiveShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }}
             };
         }
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                {"width", [this](float value) { getWidth() = value; }},
-                {"height", [this](float value) { getHeight() = value; }},
-                {"depth", [this](float value) { getDepth() = value; }},
-                {"uvscale", [this](float value) { getUvScale() = value; }},
-                {"canCastShadows", [this](float value) { canCastShadows() = value; }},
-                {"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
+                { "width", [this](EditorPropertyValue value) { getWidth() = *(std::get_if<float>(&value)); } },
+                { "height", [this](EditorPropertyValue value) { getHeight() = *(std::get_if<float>(&value)); } },
+                { "depth", [this](EditorPropertyValue value) { getDepth() = *(std::get_if<float>(&value)); } },
+                { "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
+                { "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
+                { "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
+                //{"width", [this](float value) { getWidth() = value; }},
+                //{"height", [this](float value) { getHeight() = value; }},
+                //{"depth", [this](float value) { getDepth() = value; }},
+                //{"uvscale", [this](float value) { getUvScale() = value; }},
+                //{"canCastShadows", [this](float value) { canCastShadows() = value; }},
+                //{"canReceiveShadows", [this](float value) { canReceiveShadows() = value; }}
             };
         }
 

@@ -42,9 +42,9 @@ namespace engine
 
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() override;
-		std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override;
+		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override;
 
-		void setProperty(const std::string& key, float value) override;
+		void setProperty(const std::string& key, EditorPropertyValue value) override;
 
 	private:
 		Transform m_transform{};       // local position/rotation/scale

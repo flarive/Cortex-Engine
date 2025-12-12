@@ -23,11 +23,14 @@ namespace engine
                 {"Pitch", EditorProperty { getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
             };
         }
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                {"zoom", [this](float value) { getZoom() = value; }},
+                /*{"zoom", [this](float value) { getZoom() = value; }},
                 {"yaw", [this](float value) { getYaw() = value; }},
-                {"pitch", [this](float value) { getPitch() = value; }}
+                {"pitch", [this](float value) { getPitch() = value; }}*/
+                { "zoom", [this](EditorPropertyValue value) { getZoom() = *(std::get_if<float>(&value)); } },
+                { "yaw", [this](EditorPropertyValue value) { getYaw() = *(std::get_if<float>(&value)); } },
+                { "pitch", [this](EditorPropertyValue value) { getPitch() = *(std::get_if<float>(&value)); } }
             };
         }
 

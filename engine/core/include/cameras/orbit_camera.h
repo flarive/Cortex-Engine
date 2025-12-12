@@ -33,11 +33,14 @@ namespace engine
                 {"Phi", EditorProperty { getPhi(), -180.0f, 180.0f, 1.0f, "%.2f" }}
             };
         }
-        std::unordered_map<std::string, std::function<void(float)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                {"radius", [this](float value) { getRadius() = value; }},
+                /*{"radius", [this](float value) { getRadius() = value; }},
                 {"theta", [this](float value) { getTheta() = value; }},
-                {"phi", [this](float value) { getPhi() = value; }}
+                {"phi", [this](float value) { getPhi() = value; }}*/
+                { "radius", [this](EditorPropertyValue value) { getRadius() = *(std::get_if<float>(&value)); } },
+                { "theta", [this](EditorPropertyValue value) { getTheta() = *(std::get_if<float>(&value)); } },
+                { "phi", [this](EditorPropertyValue value) { getPhi() = *(std::get_if<float>(&value)); } }
             };
         }
 

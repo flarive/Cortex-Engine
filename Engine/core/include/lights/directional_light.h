@@ -19,7 +19,7 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"Intensity", EditorProperty { getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"intensity", EditorProperty { "Intensity", getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
                 //{"Target", EditorProperty { getTarget(), -180.0f, 180.0f, 1.0f, "%.2f" }},
             };
         }

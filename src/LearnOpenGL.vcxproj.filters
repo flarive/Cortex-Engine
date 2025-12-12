@@ -795,7 +795,6 @@
     <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.vert" />
     <CopyFileToFolders Include="..\resources\models\mixamo\Idle.bin">
       <Filter>resources\models\mixamo</Filter>
     </CopyFileToFolders>
@@ -807,6 +806,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\mixamo\Idle.glb">
       <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.vert">
+      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

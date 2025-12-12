@@ -18,16 +18,13 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"Zoom", EditorProperty { getZoom(), 0.0f, 100.0f, 1.0f, "%.2f" }},
-                {"Yaw", EditorProperty { getYaw(), -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"Pitch", EditorProperty { getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
+                {"zoom", EditorProperty { "Zoom", getZoom(), 0.0f, 100.0f, 1.0f, "%.2f"}},
+                {"yaw", EditorProperty { "Yaw", getYaw(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"pitch", EditorProperty { "Pitch", getPitch(), -90.0f, 90.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                /*{"zoom", [this](float value) { getZoom() = value; }},
-                {"yaw", [this](float value) { getYaw() = value; }},
-                {"pitch", [this](float value) { getPitch() = value; }}*/
                 { "zoom", [this](EditorPropertyValue value) { getZoom() = *(std::get_if<float>(&value)); } },
                 { "yaw", [this](EditorPropertyValue value) { getYaw() = *(std::get_if<float>(&value)); } },
                 { "pitch", [this](EditorPropertyValue value) { getPitch() = *(std::get_if<float>(&value)); } }

@@ -18,14 +18,12 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"Intensity", EditorProperty { getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
-                //{"Target", EditorProperty { getTarget(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"intensity", EditorProperty { "Intensity", getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
                 { "intensity", [this](EditorPropertyValue value) { getIntensity() = *(std::get_if<float>(&value)); } }
-                //{"target", [this](glm::vec3 value) { getTarget() = value; }},
             };
         }
 

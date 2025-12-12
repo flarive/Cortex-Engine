@@ -21,14 +21,18 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"Intensity", EditorProperty { getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
-                //{"Target", EditorProperty { getTarget(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"target", EditorProperty { "Target", getTarget(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"intensity", EditorProperty { "Intensity", getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"cutoff", EditorProperty { "Inner cutoff", getCutoff(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"outerCutoff", EditorProperty { "Outer cutoff", getOuterCutoff(), 0.0f, 1000.0f, 1.0f, "%.3f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                { "intensity", [this](EditorPropertyValue value) { getIntensity() = *(std::get_if<float>(&value)); } }
-                //{"target", [this](glm::vec3 value) { getTarget() = value; }},
+                { "intensity", [this](EditorPropertyValue value) { getIntensity() = *(std::get_if<float>(&value)); } },
+                { "target", [this](EditorPropertyValue value) { getTarget() = *(std::get_if<glm::vec3>(&value)); } },
+                { "cutoff", [this](EditorPropertyValue value) { getCutoff() = *(std::get_if<float>(&value)); } },
+                { "outerCutoff", [this](EditorPropertyValue value) { getOuterCutoff() = *(std::get_if<float>(&value)); } }
             };
         }
 

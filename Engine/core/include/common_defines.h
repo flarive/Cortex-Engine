@@ -23,6 +23,7 @@ namespace engine
 
 	struct EditorProperty
 	{
+		std::string displayName{};
 		EditorPropertyValue value{};
 		float min{};
 		float max{};

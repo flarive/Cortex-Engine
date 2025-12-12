@@ -28,16 +28,13 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"Radius", EditorProperty { getRadius(), 0.0f, 100.0f, 1.0f, "%.2f" }},
-                {"Theta", EditorProperty { getTheta(), -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"Phi", EditorProperty { getPhi(), -180.0f, 180.0f, 1.0f, "%.2f" }}
+                {"radius", EditorProperty { "Radius", getRadius(), 0.0f, 100.0f, 1.0f, "%.2f" }},
+                {"theta", EditorProperty { "Theta", getTheta(), -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"phi", EditorProperty { "Phi", getPhi(), -180.0f, 180.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
-                /*{"radius", [this](float value) { getRadius() = value; }},
-                {"theta", [this](float value) { getTheta() = value; }},
-                {"phi", [this](float value) { getPhi() = value; }}*/
                 { "radius", [this](EditorPropertyValue value) { getRadius() = *(std::get_if<float>(&value)); } },
                 { "theta", [this](EditorPropertyValue value) { getTheta() = *(std::get_if<float>(&value)); } },
                 { "phi", [this](EditorPropertyValue value) { getPhi() = *(std::get_if<float>(&value)); } }

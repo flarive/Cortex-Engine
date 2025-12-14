@@ -1,4 +1,4 @@
-#include "../../include/models/animation.h"
+#include "../../include/animators/animation.h"
 
 
 engine::Animation::Animation(const std::string& animationPath, std::shared_ptr<Model> model, float speed)
@@ -7,8 +7,14 @@ engine::Animation::Animation(const std::string& animationPath, std::shared_ptr<M
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	aiAnimation* animation = scene->mAnimations[0];
-	m_duration = static_cast<float>(animation->mDuration);
+	m_duration = static_cast<float>(animation->mDuration); //ms
 	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speed);
+	//m_numFrames = static_cast<unsigned int>(animation->mDuration * animation->mTicksPerSecond); // 283 ?
+
+	m_desiredFPS = 30.0f;
+	m_durationInSeconds = animation->mDuration / animation->mTicksPerSecond;
+	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
+
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 	globalTransformation = globalTransformation.Inverse();
 	readHierarchyData(m_rootNode, scene->mRootNode);

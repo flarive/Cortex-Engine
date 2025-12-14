@@ -8,6 +8,7 @@
 #include "../ecs/camera_component.h"
 #include "../ecs/model_component.h"
 #include "../ecs/primitive_component.h"
+#include "../ecs/animator_component.h"
 
 #include "../lights/light.h"
 
@@ -71,9 +72,10 @@ namespace engine
 
 		void renderTransformComponent(const std::shared_ptr<Entity>& entity);
 		void renderLightComponent(std::shared_ptr<LightComponent>& component);
-		void renderCameraComponent(std::shared_ptr<CameraComponent>& component, std::shared_ptr<TransformComponent>& transformComponent);
-		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent);
+		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
+		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
+		void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
 
 		bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);

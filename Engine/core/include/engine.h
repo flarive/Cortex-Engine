@@ -36,8 +36,8 @@
 
 
 #include "models/model.h"
-#include "models/animator.h"
-#include "models/animation.h"
+#include "animators/bone_animator.h"
+#include "animators/animation.h"
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"

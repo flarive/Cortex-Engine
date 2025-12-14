@@ -170,6 +170,7 @@
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
     <ClCompile Include="core\src\aabb.cpp" />
+    <ClCompile Include="core\src\animators\animator.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
@@ -197,8 +198,8 @@
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
     <ClCompile Include="core\src\managers\log_manager.cpp" />
-    <ClCompile Include="core\src\models\animation.cpp" />
-    <ClCompile Include="core\src\models\animator.cpp" />
+    <ClCompile Include="core\src\animators\animation.cpp" />
+    <ClCompile Include="core\src\animators\bone_animator.cpp" />
     <ClCompile Include="core\src\models\bone.cpp" />
     <ClCompile Include="core\src\models\shared_model.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="..\libs\imgui\imgui_internal.h" />
     <ClInclude Include="..\libs\imgui\themes\imgui_spectrum.h" />
     <ClInclude Include="core\include\aabb.h" />
+    <ClInclude Include="core\include\animators\animator.h" />
     <ClInclude Include="core\include\app\app.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
@@ -282,8 +284,8 @@
     <ClInclude Include="core\include\managers\log_manager.h" />
     <ClInclude Include="core\include\misc\ltc_matrix.h" />
     <ClInclude Include="core\include\misc\ordered_map.h" />
-    <ClInclude Include="core\include\models\animation.h" />
-    <ClInclude Include="core\include\models\animator.h" />
+    <ClInclude Include="core\include\animators\animation.h" />
+    <ClInclude Include="core\include\animators\bone_animator.h" />
     <ClInclude Include="core\include\models\assimp_glm_helpers.h" />
     <ClInclude Include="core\include\models\bone.h" />
     <ClInclude Include="core\include\models\shared_model.h" />

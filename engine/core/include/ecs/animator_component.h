@@ -8,7 +8,7 @@
 #include "../bounding_volume.h"
 #include "../aabb.h"
 
-#include "../models/animator.h"
+#include "../animators/animator.h"
 #include "../shader.h"
 
 #include <variant>
@@ -28,7 +28,7 @@ namespace engine
 
 		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
-		std::shared_ptr<Animator> getModel()
+		std::shared_ptr<Animator> getAnimator()
 		{
 			return m_animator;
 		}

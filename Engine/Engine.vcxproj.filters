@@ -163,6 +163,18 @@
     <Filter Include="Fichiers sources\core\models">
       <UniqueIdentifier>{907fd9e1-c4cd-4739-ba34-c36d7f175057}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\animators">
+      <UniqueIdentifier>{961ab932-48f3-474b-8e78-a571fb5c1b4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\animators">
+      <UniqueIdentifier>{8b86513d-acd4-495c-8a18-fa4d3cb6fee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\animators\base">
+      <UniqueIdentifier>{2612e75c-cc56-4dfb-89a2-cac16b1df180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\animators\base">
+      <UniqueIdentifier>{56751c71-9888-4144-ad83-f5c3a2af1c0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -369,17 +381,20 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\models\animation.cpp">
-      <Filter>Fichiers sources\core\models</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\models\animator.cpp">
-      <Filter>Fichiers sources\core\models</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\models\bone.cpp">
       <Filter>Fichiers sources\core\models</Filter>
     </ClCompile>
     <ClCompile Include="core\src\debug\debug_plane_grid.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animators\bone_animator.cpp">
+      <Filter>Fichiers sources\core\animators</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animators\animation.cpp">
+      <Filter>Fichiers sources\core\animators</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animators\animator.cpp">
+      <Filter>Fichiers sources\core\animators\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -620,12 +635,6 @@
     <ClInclude Include="core\include\models\model.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\animator.h">
-      <Filter>Fichiers d%27en-tête\core\models</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\models\animation.h">
-      <Filter>Fichiers d%27en-tête\core\models</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\models\bone.h">
       <Filter>Fichiers d%27en-tête\core\models</Filter>
     </ClInclude>
@@ -640,6 +649,15 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\debug_plane_grid.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animators\animation.h">
+      <Filter>Fichiers d%27en-tête\core\animators</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animators\bone_animator.h">
+      <Filter>Fichiers d%27en-tête\core\animators</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animators\animator.h">
+      <Filter>Fichiers d%27en-tête\core\animators\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

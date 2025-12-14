@@ -66,7 +66,7 @@ void MyScene11::init()
     // animated vampire model
     auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
     auto vampireAnimation = make_shared<Animation>("models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
-    auto vampireAnimator = make_shared<Animator>(vampireAnimation);
+    auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
     auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityVampire = make_shared<Entity>("MyVampire");
     entityVampire->addComponent<TransformComponent>(trsVampire);
@@ -79,7 +79,7 @@ void MyScene11::init()
     //auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
     //auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     //auto mixamoAnimation = make_shared<Animation>("models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
-    //auto mixamoAnimator = make_shared<Animator>(mixamoAnimation);
+    //auto mixamoAnimator = make_shared<BonesAnimator>(mixamoAnimation);
     //auto trsMixamo = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
     //auto entityMixamo = make_shared<Entity>("MyMixamo");
     //entityMixamo->addComponent<TransformComponent>(trsMixamo);

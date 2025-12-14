@@ -45,12 +45,12 @@ engine::AABB* engine::AnimatorComponent::getBoundingVolume()
 
 engine::ordered_map<std::string, engine::EditorProperty> engine::AnimatorComponent::getPublicProperties()
 {
-	return engine::ordered_map<std::string, EditorProperty>{};
+	return m_animator->getPublicProperties();
 }
 
 std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::AnimatorComponent::getPropertySetters()
 {
-	return std::unordered_map<std::string, std::function<void(EditorPropertyValue)>>();
+	return m_animator->getPropertySetters();
 }
 
 void engine::AnimatorComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)

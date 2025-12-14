@@ -8,9 +8,9 @@
 #include <assimp/scene.h>
 #include <assimp/matrix4x4.h>
 
-#include "model.h"
-#include "bone.h"
-#include "assimp_glm_helpers.h"
+#include "../models/model.h"
+#include "../models/bone.h"
+#include "../models/assimp_glm_helpers.h"
 
 
 namespace engine
@@ -23,7 +23,7 @@ namespace engine
 		std::vector<AssimpNodeData> children{};
 	};
 
-	class Animation
+	class Animation : private NonCopyable
 	{
 	public:
 		Animation() = default;
@@ -36,12 +36,18 @@ namespace engine
 
 		inline int getTicksPerSecond() { return m_ticksPerSecond; }
 		inline float getDuration() { return m_duration; }
+		inline float getDurationInSeconds() { return m_durationInSeconds; }
+		inline unsigned int getFramesCount() { return m_numFrames; }
 		inline const AssimpNodeData& getRootNode() { return m_rootNode; }
 		inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return m_boneInfoMap; }
 
+
 	private:
 		float m_duration{};
+		float m_durationInSeconds{};
 		int m_ticksPerSecond{};
+		unsigned int m_desiredFPS{};
+		unsigned int m_numFrames{};
 		std::vector<Bone> m_bones{};
 		AssimpNodeData m_rootNode{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};

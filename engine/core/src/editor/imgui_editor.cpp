@@ -497,7 +497,7 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
         {
             // camera component
             auto cameraComponent = dynamic_pointer_cast<CameraComponent>(component);
-            if (cameraComponent) renderCameraComponent(cameraComponent, transformComponent);
+            if (cameraComponent) renderCameraComponent(cameraComponent);
         }
         else if (typeID == ComponentType::light)
         {
@@ -515,7 +515,13 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
         {
             // primitive component
             auto primitiveComponent = dynamic_pointer_cast<PrimitiveComponent>(component);
-            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent, transformComponent);
+            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent);
+        }
+        else if (typeID == ComponentType::animator)
+        {
+            // animator component
+            auto animatorComponent = dynamic_pointer_cast<AnimatorComponent>(component);
+            if (animatorComponent) renderAnimatorComponent(animatorComponent);
         }
     }
 }
@@ -701,7 +707,7 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     renderDynamicProperties(component, to_string(light->getTypeID()));
 }
 
-void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)
+void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component)
 {
     ImGui::SeparatorText(component->getName().c_str());
 
@@ -712,7 +718,7 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     renderDynamicProperties(component, to_string(camera->getTypeID()));
 }
 
-void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, std::shared_ptr<TransformComponent>& transformComponent)
+void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
 {
     ImGui::SeparatorText(component->getName().c_str());
 
@@ -721,6 +727,17 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
         return;
 
     renderDynamicProperties(component, to_string(primitive->getTypeID()));
+}
+
+void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component)
+{
+    ImGui::SeparatorText(component->getName().c_str());
+
+    auto animator = component->getAnimator();
+    if (!animator)
+        return;
+
+    renderDynamicProperties(component, to_string(animator->getTypeID()));
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
@@ -894,7 +911,7 @@ void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> com
                 if (float* pValue = std::get_if<float>(&property.value))
                 {
                     if (property.readOnly) {
-                        ImGui::Text("%d", *pValue);
+                        ImGui::Text("%f", *pValue);
                     }
                     else {
                         if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))

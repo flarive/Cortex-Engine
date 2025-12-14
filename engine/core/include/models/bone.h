@@ -11,7 +11,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-
+#include "../misc/noncopyable.h"
 
 namespace engine
 {
@@ -42,7 +42,7 @@ namespace engine
 		glm::mat4 offset;
 	};
 
-	class Bone
+	class Bone// : private NonCopyable
 	{
 	public:
 		Bone(const std::string& name, int ID, const aiNodeAnim* channel);

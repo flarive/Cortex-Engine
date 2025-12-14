@@ -1,7 +1,8 @@
-#include "../../include/models/animator.h"
+#include "../../include/animators/bone_animator.h"
 
 
-engine::Animator::Animator(std::shared_ptr<Animation> animation) : m_CurrentTime(0.0), m_CurrentAnimation(animation)
+engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
+	: Animator(animation)
 {
 	m_FinalBoneMatrices.reserve(100);
 
@@ -11,7 +12,7 @@ engine::Animator::Animator(std::shared_ptr<Animation> animation) : m_CurrentTime
 	}
 }
 
-void engine::Animator::updateAnimation(float dt)
+void engine::BonesAnimator::updateAnimation(float dt)
 {
 	m_DeltaTime = dt;
 	if (m_CurrentAnimation)
@@ -22,13 +23,13 @@ void engine::Animator::updateAnimation(float dt)
 	}
 }
 
-void engine::Animator::playAnimation(std::shared_ptr<Animation> pAnimation)
+void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
 	m_CurrentAnimation = pAnimation;
 	m_CurrentTime = 0.0f;
 }
 
-void engine::Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
 	std::string nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;

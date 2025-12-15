@@ -1,14 +1,15 @@
 #include "../../include/animators/animation.h"
 
 
-engine::Animation::Animation(const std::string& animationPath, std::shared_ptr<Model> model, float speed)
+engine::Animation::Animation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
+	: m_name(animationName), m_filepath(animationPath), m_speedFactor(speedFactor)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	aiAnimation* animation = scene->mAnimations[0];
 	m_duration = static_cast<float>(animation->mDuration); //ms
-	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speed);
+	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speedFactor);
 	//m_numFrames = static_cast<unsigned int>(animation->mDuration * animation->mTicksPerSecond); // 283 ?
 
 	m_desiredFPS = 30.0f;

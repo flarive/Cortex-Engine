@@ -1,14 +1,44 @@
 #include "../../include/animators/bone_animator.h"
 
-
 engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 	: Animator(animation)
 {
-	m_FinalBoneMatrices.reserve(100);
+	m_animationsFinalBoneMatrices.clear();
+	
+	auto zzz = std::vector<glm::mat4>();
+	zzz.reserve(100);
+	
+	m_FinalBoneMatrices.reserve(100); // retro compat, to remove
 
 	for (int i = 0; i < 100; i++)
 	{
-		m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
+		m_FinalBoneMatrices.push_back(glm::mat4(1.0f)); // retro compat, to remove
+		zzz.push_back(glm::mat4(1.0f));
+	}
+
+	// create a new entry
+	m_animationsFinalBoneMatrices.emplace(animation->getName(), zzz);
+}
+
+engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations)
+	: Animator(animations[0])
+{
+	m_animationsFinalBoneMatrices.clear();
+
+	for (auto it = animations.begin(); it != animations.end(); ++it)
+	{
+		auto animation = *it;
+
+		auto zzz = std::vector<glm::mat4>();
+		zzz.reserve(100);
+
+		for (int i = 0; i < 100; i++)
+		{
+			zzz.push_back(glm::mat4(1.0f));
+		}
+
+		// create a new entry
+		m_animationsFinalBoneMatrices.emplace(animation->getName(), zzz);
 	}
 }
 
@@ -43,6 +73,16 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 	}
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform;
+
+	std::string currentAnimName = m_CurrentAnimation->getName();
+
+	if (m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end()) {
+		std::cout << "Key exists!\n";
+	}
+	else {
+		std::cout << "Key does not exist.\n";
+	}
+
 
 	auto boneInfoMap = m_CurrentAnimation->getBoneIDMap();
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end())

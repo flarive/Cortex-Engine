@@ -17,6 +17,7 @@ namespace engine
 	{
 	public:
 		BonesAnimator(std::shared_ptr<Animation> animation);
+		BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations);
 		~BonesAnimator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -26,6 +27,8 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() override {
 			return {
+				{"animation_name", EditorProperty { "Animation name", getCurrentAnimation()->getName(), 0.0f, 0.0f, 0.0f, "", true}},
+				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), 0.0f, 0.0f, 0.0f, "", true}},
 				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), 0.0f, 100.0f, 1.0f, "%.2f", true}},
 				{"animation_frames", EditorProperty { "Animation frames", getCurrentAnimation()->getFramesCount(), 0.0f, 100.0f, 1.0f, "%.2f", true}}
 			};
@@ -46,6 +49,8 @@ namespace engine
 		std::vector<glm::mat4> getFinalBoneMatrices() override { return m_FinalBoneMatrices; }
 
 	private:
-		std::vector<glm::mat4> m_FinalBoneMatrices{};
+		std::vector<glm::mat4> m_FinalBoneMatrices{}; // old
+
+		std::map < std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
 	};
 }

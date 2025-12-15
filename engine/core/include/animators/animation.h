@@ -27,7 +27,7 @@ namespace engine
 	{
 	public:
 		Animation() = default;
-		Animation(const std::string& animationPath, std::shared_ptr<Model> model, float speed = 1.0f);
+		Animation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor = 1.0f);
 
 		~Animation() = default;
 
@@ -41,8 +41,20 @@ namespace engine
 		inline const AssimpNodeData& getRootNode() { return m_rootNode; }
 		inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return m_boneInfoMap; }
 
+		std::string& getName() { return m_name; }
+		void setName(std::string name) { m_name = name; }
+
+		float& getSpeedFactor() { return m_speedFactor; }
+		void setSpeedFactor(float speedFactor) { m_speedFactor = speedFactor; }
+
+		std::string getFilepath() { return m_filepath; }
+		
+
 
 	private:
+		std::string m_name{};
+		std::string m_filepath{};
+		float m_speedFactor{};
 		float m_duration{};
 		float m_durationInSeconds{};
 		int m_ticksPerSecond{};

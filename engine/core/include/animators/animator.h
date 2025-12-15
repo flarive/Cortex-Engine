@@ -32,6 +32,7 @@ namespace engine
     {
     public:
 		Animator(std::shared_ptr<Animation> animation);
+		Animator(std::vector<std::shared_ptr<Animation>>& animations);
 		~Animator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -48,6 +49,7 @@ namespace engine
 		virtual std::vector<glm::mat4> getFinalBoneMatrices() = 0;
 
 	protected:
+		std::vector<std::shared_ptr<Animation>> m_animations{};
 		std::shared_ptr<Animation> m_CurrentAnimation{};
 		float m_CurrentTime{};
 		float m_DeltaTime{};

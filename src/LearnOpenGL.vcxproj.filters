@@ -780,26 +780,8 @@
     <CopyFileToFolders Include="..\resources\models\vampire\Vampire_specular.png">
       <Filter>resources\models\vampire</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.fbx">
-      <Filter>resources\models\mixamo</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.dae">
-      <Filter>resources\models\mixamo</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\TwistDanceAnimOnly.dae">
-      <Filter>resources\models\mixamo</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.dae">
-      <Filter>resources\models\mixamo</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.frag">
       <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.bin">
-      <Filter>resources\models\mixamo</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\mixamo\Idle.gltf">
-      <Filter>resources\models\mixamo</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\mixamo\TwistDance.glb">
       <Filter>resources\models\mixamo</Filter>
@@ -809,6 +791,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\blinnphong_background.vert">
       <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\mixamo\HipHopDance.glb">
+      <Filter>resources\models\mixamo</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

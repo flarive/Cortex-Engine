@@ -11,6 +11,8 @@
 #include <string>
 #include <iostream>
 #include <variant>
+#include <vector>
+#include <map>
 
 #define EDITOR_MODE true
 
@@ -19,16 +21,16 @@ namespace engine
 {
 	using Color = glm::vec4;
 
-	using EditorPropertyValue = std::variant<int, unsigned int, std::string, float, bool, glm::vec2, glm::vec3, glm::vec4>;
+	using EditorPropertyValue = std::variant<int, unsigned int, std::string, float, bool, glm::vec2, glm::vec3, glm::vec4, std::vector<std::string>>;
 
 	struct EditorProperty
 	{
 		std::string displayName{};
 		EditorPropertyValue value{};
+		bool readOnly{ false };
 		float min{};
 		float max{};
 		float step{};
 		std::string format{};
-		bool readOnly{ false };
 	};
 }

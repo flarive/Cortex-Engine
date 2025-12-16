@@ -1013,6 +1013,27 @@ void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> com
                         }
                     }
                 }
+                else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%", *pValue);
+                    }
+                    else
+                    {
+                        if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
+                        {
+                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+                            for (auto value : *pValue)
+                            {
+                                ImGui::TableNextRow();
+                                ImGui::Text("%", value);
+                            }
+
+                            ImGui::EndTable();
+                        }
+                    }
+                }
             });
         ImGui::EndTable();
     }

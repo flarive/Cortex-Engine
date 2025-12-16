@@ -21,10 +21,10 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"target", EditorProperty { "Target", getTarget(), -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"intensity", EditorProperty { "Intensity", getIntensity(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
-                {"cutoff", EditorProperty { "Inner cutoff", getCutoff(), 0.0f, 1000.0f, 1.0f, "%.3f" }},
-                {"outerCutoff", EditorProperty { "Outer cutoff", getOuterCutoff(), 0.0f, 1000.0f, 1.0f, "%.3f" }}
+                {"target", EditorProperty { "Target", getTarget(), false, -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"intensity", EditorProperty { "Intensity", getIntensity(), false, 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"cutoff", EditorProperty { "Inner cutoff", getCutoff(), false, 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"outerCutoff", EditorProperty { "Outer cutoff", getOuterCutoff(), false, 0.0f, 1000.0f, 1.0f, "%.3f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

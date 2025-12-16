@@ -27,10 +27,12 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() override {
 			return {
-				{"animation_name", EditorProperty { "Animation name", getCurrentAnimation()->getName(), 0.0f, 0.0f, 0.0f, "", true}},
-				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), 0.0f, 0.0f, 0.0f, "", true}},
-				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), 0.0f, 100.0f, 1.0f, "%.2f", true}},
-				{"animation_frames", EditorProperty { "Animation frames", getCurrentAnimation()->getFramesCount(), 0.0f, 100.0f, 1.0f, "%.2f", true}}
+				{"animation_name", EditorProperty { "Current anim", getCurrentAnimation()->getName(), true}},
+				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), true}},
+				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), true}},
+				{"animation_frames", EditorProperty { "Animation frames", getAnimations(), true}},
+
+				{ "animations", EditorProperty { "Animations", getCurrentAnimation()->getName(), true} },
 			};
 		}
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
@@ -39,18 +41,24 @@ namespace engine
 		}
 
 		std::shared_ptr<Animation>& getCurrentAnimation() { return m_CurrentAnimation; }
+		std::vector<std::string> getAnimations()
+		{
+			return std::vector<std::string> { "aa", "bbb", "cccc" };
+		}
 
 		void updateAnimation(float dt) override;
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 
-		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+		
+
+		
 	
 
-		std::vector<glm::mat4> getFinalBoneMatrices() override;
+		const std::vector<glm::mat4>& getFinalBoneMatrices() const override;
 
 	private:
-		//std::vector<glm::mat4> m_FinalBoneMatrices{}; // old
+		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
 
-		std::map < std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
+		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 	};
 }

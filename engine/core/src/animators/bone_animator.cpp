@@ -7,12 +7,9 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 	
 	auto animmFinalBoneMatrices = std::vector<glm::mat4>();
 	animmFinalBoneMatrices.reserve(100);
-	
-	//m_FinalBoneMatrices.reserve(100); // retro compat, to remove
 
 	for (int i = 0; i < 100; i++)
 	{
-		//m_FinalBoneMatrices.push_back(glm::mat4(1.0f)); // retro compat, to remove
 		animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
 	}
 
@@ -21,7 +18,7 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 }
 
 engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations)
-	: Animator(animations[0])
+	: Animator(animations)
 {
 	m_animationsFinalBoneMatrices.clear();
 
@@ -59,8 +56,10 @@ void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 	m_CurrentTime = 0.0f;
 }
 
-std::vector<glm::mat4> engine::BonesAnimator::getFinalBoneMatrices()
+const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() const
 {
+	static const std::vector<glm::mat4> kEmpty; // lives forever
+
 	std::string currentAnimName = m_CurrentAnimation->getName();
 
 	bool keyExists = m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end();
@@ -71,6 +70,8 @@ std::vector<glm::mat4> engine::BonesAnimator::getFinalBoneMatrices()
 	{
 		return m_animationsFinalBoneMatrices.at(currentAnimName);
 	}
+
+	return kEmpty;
 }
 
 void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
@@ -96,14 +97,12 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 
 	if (keyExists)
 	{
-		auto animFinalBoneMatrices = m_animationsFinalBoneMatrices.at(currentAnimName);
-
 		auto boneInfoMap = m_CurrentAnimation->getBoneIDMap();
 		if (boneInfoMap.find(nodeName) != boneInfoMap.end())
 		{
 			int index = boneInfoMap[nodeName].id;
 			glm::mat4 offset = boneInfoMap[nodeName].offset;
-			animFinalBoneMatrices[index] = globalTransformation * offset;
+			m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * offset;
 		}
 
 		for (int i = 0; i < node->childrenCount; i++)

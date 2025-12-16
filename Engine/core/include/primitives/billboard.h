@@ -20,9 +20,9 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"uvscale", EditorProperty { "UV scale", getUvScale(), 0.0f, 10.0f, 0.01f, "%.3f"}},
-                {"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }},
-                {"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }}
+                {"uvscale", EditorProperty { "UV scale", getUvScale(), false, 0.0f, 10.0f, 0.01f, "%.3f"}},
+                {"canCastShadows", EditorProperty { "Cast shadows", false, canCastShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canReceiveShadows", EditorProperty { "Receive shadows", false, canReceiveShadows(), 0.0f, 10.0f, 0.01f, "%.3f" }}
             };
         }
 

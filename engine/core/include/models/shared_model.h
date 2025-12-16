@@ -72,11 +72,11 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
-                {"file", EditorProperty { "File", getFilename(), 0.0f, 0.0f, 0.0f, "%s", true}},
-                {"meshCount", EditorProperty { "Meshes count", getMeshCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
-                {"vertexCount", EditorProperty { "Vertex count", getVertexCount(), 0.0f, 0.0f, 0.0f, "%u", true }},
-                {"bonesCount", EditorProperty { "Bones count", getBoneCount(), 0.0f, 0.0f, 0.0f, "%i", true }},
-                {"flipUV", EditorProperty { "Flip UV", getFlipUV(), 0.0f, 1.0f, 1.0f, "%s", true }},
+                {"file", EditorProperty { "File", getFilename(), true, 0.0f, 0.0f, 0.0f, "%s"}},
+                {"meshCount", EditorProperty { "Meshes count", getMeshCount(), true, 0.0f, 0.0f, 0.0f, "%u" }},
+                {"vertexCount", EditorProperty { "Vertex count", getVertexCount(), true, 0.0f, 0.0f, 0.0f, "%u" }},
+                {"bonesCount", EditorProperty { "Bones count", getBoneCount(), true, 0.0f, 0.0f, 0.0f, "%i" }},
+                {"flipUV", EditorProperty { "Flip UV", getFlipUV(), true, 0.0f, 1.0f, 1.0f, "%s" }},
             };
         }
 

@@ -28,9 +28,9 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"radius", EditorProperty { "Radius", getRadius(), 0.0f, 100.0f, 1.0f, "%.2f" }},
-                {"theta", EditorProperty { "Theta", getTheta(), -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"phi", EditorProperty { "Phi", getPhi(), -180.0f, 180.0f, 1.0f, "%.2f" }}
+                {"radius", EditorProperty { "Radius", getRadius(), false, 0.0f, 100.0f, 1.0f, "%.2f" }},
+                {"theta", EditorProperty { "Theta", getTheta(), false, -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"phi", EditorProperty { "Phi", getPhi(), false, -180.0f, 180.0f, 1.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

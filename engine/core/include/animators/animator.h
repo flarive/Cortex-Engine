@@ -46,7 +46,7 @@ namespace engine
 		virtual void updateAnimation(float dt) = 0;
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
 
-		virtual std::vector<glm::mat4> getFinalBoneMatrices() = 0;
+		virtual const std::vector<glm::mat4>& getFinalBoneMatrices() const = 0;
 
 	protected:
 		std::vector<std::shared_ptr<Animation>> m_animations{};

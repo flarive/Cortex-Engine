@@ -83,6 +83,7 @@ namespace engine
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 		void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
+		void renderVectorTable(const std::vector<std::string>& items);
 
 		void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max);
 		void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format);

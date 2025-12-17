@@ -30,9 +30,8 @@ namespace engine
 				{"animation_name", EditorProperty { "Current anim", getCurrentAnimation()->getName(), true}},
 				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), true}},
 				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), true}},
-				{"animation_frames", EditorProperty { "Animation frames", getAnimations(), true}},
-
-				{ "animations", EditorProperty { "Animations", getCurrentAnimation()->getName(), true} },
+				{"animation_frames", EditorProperty { "Animation frames", getCurrentAnimation()->getFramesCount(), true}},
+				{"animations", EditorProperty { "Animations", getAnimations(), true} }
 			};
 		}
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
@@ -41,10 +40,8 @@ namespace engine
 		}
 
 		std::shared_ptr<Animation>& getCurrentAnimation() { return m_CurrentAnimation; }
-		std::vector<std::string> getAnimations()
-		{
-			return std::vector<std::string> { "aa", "bbb", "cccc" };
-		}
+		std::vector<std::string> getAnimations();
+		
 
 		void updateAnimation(float dt) override;
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;

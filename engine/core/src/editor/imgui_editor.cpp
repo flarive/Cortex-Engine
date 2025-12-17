@@ -1016,18 +1016,19 @@ void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> com
                 else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
                 {
                     if (property.readOnly) {
-                        ImGui::Text("%", *pValue);
+                        renderVectorTable(*pValue);
                     }
                     else
                     {
-                        if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
+                        if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
                         {
                             ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
 
-                            for (auto value : *pValue)
+                            for (std::string value : *pValue)
                             {
                                 ImGui::TableNextRow();
-                                ImGui::Text("%", value);
+                                ImGui::TableSetColumnIndex(0);
+                                ImGui::Text("%s", value.c_str());
                             }
 
                             ImGui::EndTable();
@@ -1035,6 +1036,74 @@ void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> com
                     }
                 }
             });
+        ImGui::EndTable();
+    }
+}
+
+void engine::ImGuiEditor::renderVectorTable(const std::vector<std::string>& items)
+{
+    static int selected_row = -1;
+
+    if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
+    {
+        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+
+        // Target compact row height
+        const float text_h = ImGui::GetTextLineHeight();       // tighter than GetTextLineHeightWithSpacing()
+        const float row_height = text_h + 2.0f;                    // add a couple of pixels if needed
+
+        const float rounding = 2.0f;
+
+        int row_index = 0;
+        for (const auto& value : items)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+
+            // Compute full row rect spanning the table inner rect
+            ImVec2 cursor = ImGui::GetCursorScreenPos();
+            ImGuiTable* table = ImGui::GetCurrentTable();
+
+            ImVec2 min(table->InnerRect.Min.x, cursor.y);
+            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
+
+            // Hit-test over the full row to support hover/active/click
+            ImGui::PushID(row_index);
+            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
+            bool hovered = ImGui::IsItemHovered();
+            bool held = ImGui::IsItemActive();             // while mouse down on this row
+            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
+            if (clicked)
+                selected_row = row_index;
+            ImGui::PopID();
+
+            const bool is_selected = (row_index == selected_row);
+
+            // Color policy:
+            // - Selected: Blue
+            // - Hovered (unselected): Green
+            // - Idle (unselected): Red
+            ImU32 col = IM_COL32(255, 0, 0, 255);   // red
+            if (is_selected)
+                col = IM_COL32(0, 0, 255, 255);     // blue
+            else if (hovered)
+                col = IM_COL32(0, 255, 0, 255);     // green
+
+            // Draw background behind content
+            ImGui::TablePushBackgroundChannel();
+            ImDrawList* dl = ImGui::GetWindowDrawList();
+            dl->AddRectFilled(min, max, col, rounding);
+            ImGui::TablePopBackgroundChannel();
+
+            // Draw content
+            ImGui::SetCursorScreenPos(cursor); // reset cursor after InvisibleButton
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("%s", value.c_str());
+
+            ++row_index;
+        }
+
         ImGui::EndTable();
     }
 }

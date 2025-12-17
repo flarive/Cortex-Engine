@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 
-#define EDITOR_MODE true
+#define EDITOR_MODE false
 
 
 namespace engine

@@ -1046,14 +1046,12 @@ void engine::ImGuiEditor::renderVectorTable(const std::vector<std::string>& item
 
     if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
     {
-        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_None);
 
 
         // Target compact row height
         const float text_h = ImGui::GetTextLineHeight();       // tighter than GetTextLineHeightWithSpacing()
         const float row_height = text_h + 2.0f;                    // add a couple of pixels if needed
-
-        const float rounding = 2.0f;
 
         int row_index = 0;
         for (const auto& value : items)
@@ -1084,22 +1082,31 @@ void engine::ImGuiEditor::renderVectorTable(const std::vector<std::string>& item
             // - Selected: Blue
             // - Hovered (unselected): Green
             // - Idle (unselected): Red
-            ImU32 col = IM_COL32(255, 0, 0, 255);   // red
+            ImU32 col = IM_COL32(50, 50, 50, 255);   // red
             if (is_selected)
-                col = IM_COL32(0, 0, 255, 255);     // blue
+                col = IM_COL32(70, 70, 70, 255);     // blue
             else if (hovered)
-                col = IM_COL32(0, 255, 0, 255);     // green
+                col = IM_COL32(70, 70, 70, 255);     // green
+
+            
+            ImGui::TablePushBackgroundChannel();
 
             // Draw background behind content
-            ImGui::TablePushBackgroundChannel();
             ImDrawList* dl = ImGui::GetWindowDrawList();
-            dl->AddRectFilled(min, max, col, rounding);
+            dl->AddRectFilled(min, max, col, ROUNDING);
+            
+            // Draw border (use a contrasting color, e.g., white or gray)
+            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
+            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
+
             ImGui::TablePopBackgroundChannel();
 
+            // Add horizontal padding
+            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
+
             // Draw content
-            ImGui::SetCursorScreenPos(cursor); // reset cursor after InvisibleButton
-            ImGui::TableSetColumnIndex(0);
             ImGui::Text("%s", value.c_str());
+
 
             ++row_index;
         }

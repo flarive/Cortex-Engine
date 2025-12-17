@@ -37,7 +37,7 @@ engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& an
 	}
 }
 
-std::vector<std::string> engine::BonesAnimator::getAnimations()
+std::vector<std::string> engine::BonesAnimator::getAnimationsStringList()
 {
 	std::vector<std::string> names;
 	names.reserve(m_animations.size()); // avoids reallocation growth

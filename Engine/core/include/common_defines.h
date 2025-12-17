@@ -13,8 +13,9 @@
 #include <variant>
 #include <vector>
 #include <map>
+#include <functional>
 
-#define EDITOR_MODE false
+#define EDITOR_MODE true
 
 
 namespace engine
@@ -32,5 +33,13 @@ namespace engine
 		float max{};
 		float step{};
 		std::string format{};
+		std::function<void(bool)> function = nullptr;
 	};
+
+	//struct KeyValueFunction
+	//{
+	//	std::string key{};
+	//	std::string value{};
+	//	std::function<void(bool)> function = nullptr;
+	//};
 }

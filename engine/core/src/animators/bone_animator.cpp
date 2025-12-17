@@ -22,10 +22,8 @@ engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& an
 {
 	m_animationsFinalBoneMatrices.clear();
 
-	for (auto it = animations.begin(); it != animations.end(); ++it)
+	for (const auto& animation : m_animations)
 	{
-		auto animation = *it;
-
 		auto animmFinalBoneMatrices = std::vector<glm::mat4>();
 		animmFinalBoneMatrices.reserve(100);
 

@@ -609,14 +609,12 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
                 });
         }
         break;
-    case GLFW_KEY_W:
-        if (action == GLFW_PRESS && !key_w_pressed)
-        {
+    case GLFW_KEY_F12:
+        if (action == GLFW_PRESS && !key_w_pressed) {
             is_editor_mode = !is_editor_mode;
             key_w_pressed = true;
         }
-        else if (action == GLFW_RELEASE)
-        {
+        else if (action == GLFW_RELEASE) {
             key_w_pressed = false;
         }
         break;

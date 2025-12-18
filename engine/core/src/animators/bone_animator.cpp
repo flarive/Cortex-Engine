@@ -66,6 +66,21 @@ void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 	m_CurrentTime = 0.0f;
 }
 
+void engine::BonesAnimator::playAnimationAtIndex(unsigned short index)
+{
+	unsigned short loop = 0;
+	for (const auto& animation : m_animations)
+	{
+		if (loop == index)
+		{
+			playAnimation(animation);
+			break;
+		}
+
+		loop++;
+	}
+}
+
 const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() const
 {
 	static const std::vector<glm::mat4> kEmpty; // lives forever

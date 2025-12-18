@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
+#include <functional>
 #include <assimp/scene.h>
 #include <assimp/importer.hpp>
 
@@ -31,7 +32,7 @@ namespace engine
 				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), true}},
 				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), true}},
 				{"animation_frames", EditorProperty { "Animation frames", getCurrentAnimation()->getFramesCount(), true}},
-				{"animations", EditorProperty { "Animations", getAnimationsStringList(), true} }
+				{"animations", EditorProperty { "Animations",	getAnimationsStringList(), true, 0.0f, 0.0f, 0.0f, "", [this](unsigned short index) { this->playAnimationAtIndex(index); } }}
 			};
 		}
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
@@ -48,7 +49,7 @@ namespace engine
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 
 		
-
+		void playAnimationAtIndex(unsigned short index);
 		
 	
 

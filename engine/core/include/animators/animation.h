@@ -58,7 +58,7 @@ namespace engine
 		float m_duration{};
 		float m_durationInSeconds{};
 		int m_ticksPerSecond{};
-		unsigned int m_desiredFPS{};
+		unsigned int m_desiredFPS{30u};
 		unsigned int m_numFrames{};
 		std::vector<Bone> m_bones{};
 		AssimpNodeData m_rootNode{};

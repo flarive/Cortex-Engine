@@ -33,13 +33,6 @@ namespace engine
 		float max{};
 		float step{};
 		std::string format{};
-		std::function<void(bool)> function = nullptr;
+		std::function<void(unsigned short)> function{};
 	};
-
-	//struct KeyValueFunction
-	//{
-	//	std::string key{};
-	//	std::string value{};
-	//	std::function<void(bool)> function = nullptr;
-	//};
 }

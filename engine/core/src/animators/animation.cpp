@@ -10,9 +10,6 @@ engine::Animation::Animation(const std::string& animationName, const std::string
 	aiAnimation* animation = scene->mAnimations[0];
 	m_duration = static_cast<float>(animation->mDuration); //ms
 	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speedFactor);
-	//m_numFrames = static_cast<unsigned int>(animation->mDuration * animation->mTicksPerSecond); // 283 ?
-
-	m_desiredFPS = 30.0f;
 	m_durationInSeconds = animation->mDuration / animation->mTicksPerSecond;
 	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 

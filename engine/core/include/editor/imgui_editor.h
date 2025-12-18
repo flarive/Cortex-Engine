@@ -12,14 +12,13 @@
 
 #include "../lights/light.h"
 
+#include <variant>
+
 #include <imgui.h>
 
 #if EDITOR_MODE
 namespace engine
 {
-
-
-	
 	class ImGuiEditor final
 	{
 	public:
@@ -36,7 +35,7 @@ namespace engine
 		}
 
 		// Let parent register a callback
-		void setOnSceneSettingChanged(std::function<void(std::string, std::variant<bool, int, unsigned int, float>) > callback) {
+		void setOnSceneSettingChanged(std::function<void(std::string, std::variant<bool, int, unsigned int, float>)> callback) {
 			m_onSceneSettingChanged = std::move(callback);
 		}
 
@@ -83,7 +82,7 @@ namespace engine
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 		void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
-		void renderVectorTable(const std::vector<std::string>& items);
+		//void renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property);
 
 		void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max);
 		void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format);

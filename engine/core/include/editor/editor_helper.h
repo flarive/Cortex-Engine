@@ -4,18 +4,42 @@
 #include <vector>
 
 #include "../common_defines.h"
+#include "../ecs/entity.h"
+#include "../ecs/component.h"
 
 #include <imgui.h>
 
+
+
 namespace engine
 {
+	using SceneSetting = std::variant<bool, int, unsigned int, float>;
+
 	class EditorHelper final
 	{
 	public:
 		static void renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property);
+		static void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
 
-	private:
-		static const float ROUNDING{ 3.0f };
-		static const ImVec2 SIZE{ ImVec2(21, 21) };
+		static bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
+		static void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
+
+		static void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+		static void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+		static void renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+
+		inline static const ImVec4 im_white{ 0.882f, 0.882f, 0.882f, 1.0f };
+		inline static const ImVec4 im_gray{ 0.502f, 0.502f, 0.502f, 1.0f };
+		inline static const ImVec4 im_dark{ 0.0f, 0.0f, 0.0f, 0.2f };
+		inline static const ImVec4 im_light{ 1.0f, 1.0f, 1.0f, 0.2f };
+
+		inline static auto green = IM_COL32(138, 219, 0, 255);
+		inline static auto blue = IM_COL32(44, 143, 255, 255);
+		inline static auto red = IM_COL32(255, 54, 83, 255);
+		inline static auto white = IM_COL32(255, 255, 255, 255);
+
+		inline static const float ROUNDING = 3.0f;
+		inline static const ImVec2 SIZE{ 21.0f, 21.0f };
+		inline static const float ITEM_LABEL_WIDTH{ 100.0f }; // pixels
 	};
 }

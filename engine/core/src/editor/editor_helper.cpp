@@ -9,6 +9,8 @@
 
 #include <imgui_internal.h>
 
+#include <format>
+
 void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
 {
     static unsigned short prev_selected_row = -1;
@@ -81,5 +83,280 @@ void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& ite
         }
 
         ImGui::EndTable();
+    }
+}
+
+void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
+{
+    if (!component)
+        return;
+
+    // draw component properties dynamically
+    auto properties = component->getPublicProperties();
+    auto componentName = component->getName();
+
+    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+    {
+        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, ITEM_LABEL_WIDTH);
+        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
+        properties.forEach([&](const std::string& key, EditorProperty& property)
+            {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text(property.displayName.c_str());
+                ImGui::TableSetColumnIndex(1);
+                ImGui::SetNextItemWidth(80);
+
+                if (float* pValue = std::get_if<float>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%f", *pValue);
+                    }
+                    else {
+                        if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                        {
+                            // float value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (int* pValue = std::get_if<int>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%i", *pValue);
+                    }
+                    else {
+                        if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                        {
+                            // int value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (unsigned int* pValue = std::get_if<unsigned int>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%u", *pValue);
+                    }
+                    else {
+                        if (ImGui::DragScalar(std::format("##{}{}{}", componentName, componentType, key).c_str(), ImGuiDataType_U32, pValue, property.step))
+                        {
+                            // unsigned int value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (bool* pValue = std::get_if<bool>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%s", (*pValue == 1 ? "Yes" : "No"));
+                    }
+                    else {
+                        if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
+                        {
+                            // bool value changed
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (std::string* pValue = std::get_if<std::string>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%s", pValue->c_str());
+                    }
+                    else {
+                        // Create a temporary buffer for ImGui::InputText
+                        char buffer[256];
+                        strncpy(buffer, pValue->c_str(), sizeof(buffer));
+                        buffer[sizeof(buffer) - 1] = '\0'; // Ensure null-termination
+
+                        if (ImGui::InputText(std::format("##{}{}{}", componentName, componentType, key).c_str(), buffer, sizeof(buffer)))
+                        {
+                            // string value changed
+                            *pValue = buffer;
+                            component->setProperty(key, *pValue);
+                        }
+                    }
+                }
+                else if (glm::vec3* pValue = std::get_if<glm::vec3>(&property.value))
+                {
+                    if (property.readOnly) {
+                        ImGui::Text("%i", *pValue);
+                    }
+                    else
+                    {
+                        if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
+                        {
+                            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+                            ImGui::TableNextRow();
+
+                            ImGui::TableSetColumnIndex(0);
+                            if (drawCustomDragFloat("X", "##tposX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                component->setProperty(key, *pValue);
+                            }
+
+                            ImGui::TableSetColumnIndex(1);
+                            if (drawCustomDragFloat("Y", "##tposY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                component->setProperty(key, *pValue);
+                            }
+
+                            ImGui::TableSetColumnIndex(2);
+                            if (drawCustomDragFloat("Z", "##tposZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
+                                component->setProperty(key, *pValue);
+                            }
+
+                            ImGui::EndTable();
+                        }
+                    }
+                }
+                else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
+                {
+                    if (property.readOnly) {
+                        EditorHelper::renderVectorTable(*pValue, property);
+                    }
+                    else
+                    {
+                        if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
+                        {
+                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+                            for (std::string value : *pValue)
+                            {
+                                ImGui::TableNextRow();
+                                ImGui::TableSetColumnIndex(0);
+                                ImGui::Text("%s", value.c_str());
+                            }
+
+                            ImGui::EndTable();
+                        }
+                    }
+                }
+            });
+        ImGui::EndTable();
+    }
+}
+
+void engine::EditorHelper::drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor)
+{
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    ImVec2 min = position;
+    ImVec2 max = ImVec2(position.x + size.x, position.y + size.y);
+
+    // Draw red rectangle with rounded left corners
+    draw_list->AddRectFilled(min, max, backgroundColor, rounding, ImDrawFlags_RoundCornersLeft);
+
+    // Draw text centered
+    ImVec2 text_size = ImGui::CalcTextSize(text);
+    ImVec2 text_pos = ImVec2(
+        position.x + (size.x - text_size.x) * 0.5f,
+        position.y + (size.y - text_size.y) * 0.5f
+    );
+    draw_list->AddText(text_pos, foregroundColor, text);
+}
+
+
+bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step)
+{
+    drawCustomLabel(text, position, size, rounding, backgroundColor, foregroundColor);
+
+    // Move cursor to the end of the label manually
+    ImGui::SetCursorScreenPos(ImVec2(position.x + size.x, position.y));
+
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 size2 = ImVec2(width, ImGui::GetFrameHeight()); // Width can be adjusted
+
+    // Draw background with rounded right corners
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    draw_list->AddRectFilled(pos, ImVec2(pos.x + size2.x, pos.y + size2.y),
+        IM_COL32(50, 50, 50, 255), rounding,
+        ImDrawFlags_RoundCornersRight);
+
+    // Render the DragFloat widget
+    ImGui::SetCursorScreenPos(pos); // Reset cursor to draw over the background
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0)); // Transparent background
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
+    ImGui::SetNextItemWidth(width);
+    bool res = ImGui::DragFloat(name, value, step, 0.0f, 0.0f, "%.2f");
+    ImGui::PopStyleColor(3);
+
+    return res;
+}
+
+void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+{
+    static bool isDraggingSlider = false;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::SliderInt(
+        label,
+        &value,
+        min,  // Minimum value
+        max   // Maximum value
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (sceneSettingChanged && lastValue != value)
+        {
+            sceneSettingChanged(key, value);
+            lastValue = value;
+        }
+    }
+}
+
+void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+{
+    static bool isDraggingSlider = false;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::SliderFloat(
+        label,
+        &value,
+        min,  // Minimum value
+        max,   // Maximum value
+        format // Display format
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (sceneSettingChanged && lastValue != value)
+        {
+            sceneSettingChanged(key, value);
+            lastValue = value;
+        }
+    }
+}
+
+void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+{
+    static bool isDraggingSlider = false;
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::DragFloat(
+        label,
+        &value,
+        step, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+        min,  // Minimum value
+        max,   // Maximum value
+        format // Display format
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (sceneSettingChanged && lastValue != value)
+        {
+            sceneSettingChanged(key, value);
+            lastValue = value;
+        }
     }
 }

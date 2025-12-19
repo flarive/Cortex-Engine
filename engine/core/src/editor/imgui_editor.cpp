@@ -26,7 +26,7 @@
 #include "../../include/primitives/cylinder.h"
 #include "../../include/primitives/cone.h"
 
-#include "../../include/editor/editor_helper.h"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -39,17 +39,6 @@
 #include <functional>
 
 #if EDITOR_MODE
-
-const ImVec4 im_white(0.882f, 0.882f, 0.882f, 1.0f);
-const ImVec4 im_gray(0.502f, 0.502f, 0.502f, 1.0f);
-const ImVec4 im_dark(0.0f, 0.0f, 0.0f, 0.2f);
-const ImVec4 im_light(1.0f, 1.0f, 1.0f, 0.2f);
-
-static auto green = IM_COL32(138, 219, 0, 255);
-static auto blue = IM_COL32(44, 143, 255, 255);
-static auto red = IM_COL32(255, 54, 83, 255);
-static auto white = IM_COL32(255, 255, 255, 255);
-
 
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
 {
@@ -160,16 +149,16 @@ void engine::ImGuiEditor::renderTabSettings()
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
     ImGuiTogglePalette material_palette_on;
-    material_palette_on.Frame = im_dark;
-    material_palette_on.Knob = im_white;
-    material_palette_on.KnobHover = im_white;
-    material_palette_on.FrameBorder = im_light;
+    material_palette_on.Frame = EditorHelper::im_dark;
+    material_palette_on.Knob = EditorHelper::im_white;
+    material_palette_on.KnobHover = EditorHelper::im_white;
+    material_palette_on.FrameBorder = EditorHelper::im_light;
 
     ImGuiTogglePalette material_palette_off;
-    material_palette_off.Frame = im_dark;
-    material_palette_off.Knob = im_gray;
-    material_palette_off.KnobHover = im_gray;
-    material_palette_off.FrameBorder = im_light;
+    material_palette_off.Frame = EditorHelper::im_dark;
+    material_palette_off.Knob = EditorHelper::im_gray;
+    material_palette_off.KnobHover = EditorHelper::im_gray;
+    material_palette_off.FrameBorder = EditorHelper::im_light;
 
     ImGuiToggleConfig toggle_config;
     toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
@@ -267,19 +256,19 @@ void engine::ImGuiEditor::renderTabSettings()
     
 
     static int lastShadowCalculationMethod = static_cast<int>(ShadowCalculationMethod::PCFSoft);
-    renderSliderIntWithLabel("Shadow maps method", "shadow_calculation_method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3);
+    EditorHelper::renderSliderIntWithLabel("Shadow maps method", "shadow_calculation_method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3, m_onSceneSettingChanged);
 
     static int lastShadowMapTextureSize = 2048;
-    renderSliderIntWithLabel("Shadow maps texture size", "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096);
+    EditorHelper::renderSliderIntWithLabel("Shadow maps texture size", "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096, m_onSceneSettingChanged);
 
     static float lastShadowIntensity = 1.5f;
-    renderDragFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f");
+    EditorHelper::renderDragFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
     static float lastShadowMapsBiasFactor = 0.001f;
-    renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.0001f, 0.001f, 0.0001f, "%.3f");
+    EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.0001f, 0.001f, 0.0001f, "%.3f", m_onSceneSettingChanged);
 
     static float lastShadowMapsBlur = 1.0f;
-    renderDragFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f");
+    EditorHelper::renderDragFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
     ImGui::PopStyleVar();
 
@@ -288,80 +277,80 @@ void engine::ImGuiEditor::renderTabSettings()
     ImGui::EndChild();
 }
 
-void engine::ImGuiEditor::renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max)
-{
-    static bool isDraggingSlider = false;
-
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::SliderInt(
-        label,
-        &value,
-        min,  // Minimum value
-        max   // Maximum value
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastValue != value)
-        {
-            m_onSceneSettingChanged(key, value);
-            lastValue = value;
-        }
-    }
-}
-
-void engine::ImGuiEditor::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format)
-{
-    static bool isDraggingSlider = false;
-
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::SliderFloat(
-        label,
-        &value,
-        min,  // Minimum value
-        max,   // Maximum value
-        format // Display format
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastValue != value)
-        {
-            m_onSceneSettingChanged(key, value);
-            lastValue = value;
-        }
-    }
-}
-
-void engine::ImGuiEditor::renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format)
-{
-    static bool isDraggingSlider = false;
-
-    // Use DragInt with a step of 256 (or your desired step)
-    ImGui::DragFloat(
-        label,
-        &value,
-        step, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
-        min,  // Minimum value
-        max,   // Maximum value
-        format // Display format
-    );
-    isDraggingSlider = ImGui::IsItemActive();
-
-    // Apply changes only on release
-    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
-    {
-        if (m_onSceneSettingChanged && lastValue != value)
-        {
-            m_onSceneSettingChanged(key, value);
-            lastValue = value;
-        }
-    }
-}
+//void engine::ImGuiEditor::renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max)
+//{
+//    static bool isDraggingSlider = false;
+//
+//    // Use DragInt with a step of 256 (or your desired step)
+//    ImGui::SliderInt(
+//        label,
+//        &value,
+//        min,  // Minimum value
+//        max   // Maximum value
+//    );
+//    isDraggingSlider = ImGui::IsItemActive();
+//
+//    // Apply changes only on release
+//    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+//    {
+//        if (m_onSceneSettingChanged && lastValue != value)
+//        {
+//            m_onSceneSettingChanged(key, value);
+//            lastValue = value;
+//        }
+//    }
+//}
+//
+//void engine::ImGuiEditor::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format)
+//{
+//    static bool isDraggingSlider = false;
+//
+//    // Use DragInt with a step of 256 (or your desired step)
+//    ImGui::SliderFloat(
+//        label,
+//        &value,
+//        min,  // Minimum value
+//        max,   // Maximum value
+//        format // Display format
+//    );
+//    isDraggingSlider = ImGui::IsItemActive();
+//
+//    // Apply changes only on release
+//    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+//    {
+//        if (m_onSceneSettingChanged && lastValue != value)
+//        {
+//            m_onSceneSettingChanged(key, value);
+//            lastValue = value;
+//        }
+//    }
+//}
+//
+//void engine::ImGuiEditor::renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format)
+//{
+//    static bool isDraggingSlider = false;
+//
+//    // Use DragInt with a step of 256 (or your desired step)
+//    ImGui::DragFloat(
+//        label,
+//        &value,
+//        step, // Step size (1.0f means it increments by 1 per "tick", but you can use 256.0f for 256 steps)
+//        min,  // Minimum value
+//        max,   // Maximum value
+//        format // Display format
+//    );
+//    isDraggingSlider = ImGui::IsItemActive();
+//
+//    // Apply changes only on release
+//    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+//    {
+//        if (m_onSceneSettingChanged && lastValue != value)
+//        {
+//            m_onSceneSettingChanged(key, value);
+//            lastValue = value;
+//        }
+//    }
+//}
 
 void engine::ImGuiEditor::renderTabAbout()
 {
@@ -593,7 +582,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
    
     if (ImGui::BeginTable("MyTable", 4, ImGuiTableFlags_SizingStretchSame))
     {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
+        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, EditorHelper::ITEM_LABEL_WIDTH);
         ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
         ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
         ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
@@ -606,17 +595,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Position");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &posX, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &posX, 0.01f)) {
                 position.x = posX;
             }
 
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &posY, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &posY, 0.01f)) {
                 position.y = posY;
             }
 
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &posZ, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &posZ, 0.01f)) {
                 position.z = posZ;
             }
         }
@@ -629,17 +618,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Rotation");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &rotX, 1.0f)) {
+            if (EditorHelper::drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &rotX, 1.0f)) {
                 rotation.x = rotX;
             }
 
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &rotY, 1.0f)) {
+            if (EditorHelper::drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &rotY, 1.0f)) {
                 rotation.y = rotY;
             }
 
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &rotZ, 1.0f)) {
+            if (EditorHelper::drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &rotZ, 1.0f)) {
                 rotation.z = rotZ;
             }
         }
@@ -652,17 +641,17 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             ImGui::Text("Scale");
 
             ImGui::TableSetColumnIndex(1);
-            if (drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &scaX, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &scaX, 0.01f)) {
                 scale.x = scaX;
             }
             
             ImGui::TableSetColumnIndex(2);
-            if (drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &scaY, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &scaY, 0.01f)) {
                 scale.y = scaY;
             }
             
             ImGui::TableSetColumnIndex(3);
-            if (drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &scaZ, 0.01f)) {
+            if (EditorHelper::drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &scaZ, 0.01f)) {
                 scale.z = scaZ;
             }
         }
@@ -705,7 +694,7 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     if (!light)
         return;
 
-    renderDynamicProperties(component, to_string(light->getTypeID()));
+    EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
 }
 
 void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component)
@@ -716,7 +705,7 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     if (!camera)
         return;
 
-    renderDynamicProperties(component, to_string(camera->getTypeID()));
+    EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
 }
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
@@ -727,7 +716,7 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (!primitive)
         return;
 
-    renderDynamicProperties(component, to_string(primitive->getTypeID()));
+    EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
 }
 
 void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component)
@@ -738,7 +727,7 @@ void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorCompon
     if (!animator)
         return;
 
-    renderDynamicProperties(component, to_string(animator->getTypeID()));
+    EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
@@ -758,7 +747,7 @@ void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& 
     if (!model)
         return;
 
-    renderDynamicProperties(component, to_string(model->getTypeID()));
+    EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
 }
 
 GLuint engine::ImGuiEditor::getEntityTypeSmallIcon(const engine::EntityType entityType)
@@ -838,282 +827,5 @@ GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
         return iconTexture;
     }
 }
-
-
-void engine::ImGuiEditor::drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor)
-{
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    ImVec2 min = position;
-    ImVec2 max = ImVec2(position.x + size.x, position.y + size.y);
-
-    // Draw red rectangle with rounded left corners
-    draw_list->AddRectFilled(min, max, backgroundColor, rounding, ImDrawFlags_RoundCornersLeft);
-
-    // Draw text centered
-    ImVec2 text_size = ImGui::CalcTextSize(text);
-    ImVec2 text_pos = ImVec2(
-        position.x + (size.x - text_size.x) * 0.5f,
-        position.y + (size.y - text_size.y) * 0.5f
-    );
-    draw_list->AddText(text_pos, foregroundColor, text);
-}
-
-
-bool engine::ImGuiEditor::drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step)
-{
-    drawCustomLabel(text, position, size, rounding, backgroundColor, foregroundColor);
-
-    // Move cursor to the end of the label manually
-    ImGui::SetCursorScreenPos(ImVec2(position.x + size.x, position.y));
-
-    ImVec2 pos = ImGui::GetCursorScreenPos();
-    ImVec2 size2 = ImVec2(width, ImGui::GetFrameHeight()); // Width can be adjusted
-
-    // Draw background with rounded right corners
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->AddRectFilled(pos, ImVec2(pos.x + size2.x, pos.y + size2.y),
-        IM_COL32(50, 50, 50, 255), rounding,
-        ImDrawFlags_RoundCornersRight);
-
-    // Render the DragFloat widget
-    ImGui::SetCursorScreenPos(pos); // Reset cursor to draw over the background
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0)); // Transparent background
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
-    ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
-    ImGui::SetNextItemWidth(width);
-    bool res = ImGui::DragFloat(name, value, step, 0.0f, 0.0f, "%.2f");
-    ImGui::PopStyleColor(3);
-
-    return res;
-}
-
-
-void engine::ImGuiEditor::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
-{
-    if (!component)
-        return;
-
-    // draw component properties dynamically
-    auto properties = component->getPublicProperties();
-    auto componentName = component->getName();
-
-    if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, itemLabelWidth);
-        ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
-        properties.forEach([&](const std::string& key, EditorProperty& property)
-            {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::Text(property.displayName.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SetNextItemWidth(80);
-
-                if (float* pValue = std::get_if<float>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%f", *pValue);
-                    }
-                    else {
-                        if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                        {
-                            // float value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (int* pValue = std::get_if<int>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%i", *pValue);
-					}
-                    else {
-                        if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                        {
-                            // int value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (unsigned int* pValue = std::get_if<unsigned int>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%u", *pValue);
-                    }
-                    else {
-                        if (ImGui::DragScalar(std::format("##{}{}{}", componentName, componentType, key).c_str(), ImGuiDataType_U32, pValue, property.step))
-                        {
-                            // unsigned int value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (bool* pValue = std::get_if<bool>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%s", (*pValue == 1 ? "Yes" : "No"));
-                    }
-                    else {
-                        if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
-                        {
-                            // bool value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (std::string* pValue = std::get_if<std::string>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%s", pValue->c_str());
-                    }
-                    else {
-                        // Create a temporary buffer for ImGui::InputText
-                        char buffer[256];
-                        strncpy(buffer, pValue->c_str(), sizeof(buffer));
-                        buffer[sizeof(buffer) - 1] = '\0'; // Ensure null-termination
-
-                        if (ImGui::InputText(std::format("##{}{}{}", componentName, componentType, key).c_str(), buffer, sizeof(buffer)))
-                        {
-                            // string value changed
-                            *pValue = buffer;
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (glm::vec3* pValue = std::get_if<glm::vec3>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%i", *pValue);
-                    }
-                    else
-                    {
-                        if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
-                        {
-                            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-                            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-
-                            ImGui::TableNextRow();
-
-                            ImGui::TableSetColumnIndex(0);
-                            if (drawCustomDragFloat("X", "##tposX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::TableSetColumnIndex(1);
-                            if (drawCustomDragFloat("Y", "##tposY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::TableSetColumnIndex(2);
-                            if (drawCustomDragFloat("Z", "##tposZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::EndTable();
-                        }
-                    }
-                }
-                else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
-                {
-                    if (property.readOnly) {
-                        EditorHelper::renderVectorTable(*pValue, property);
-                    }
-                    else
-                    {
-                        if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
-                        {
-                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-
-                            for (std::string value : *pValue)
-                            {
-                                ImGui::TableNextRow();
-                                ImGui::TableSetColumnIndex(0);
-                                ImGui::Text("%s", value.c_str());
-                            }
-
-                            ImGui::EndTable();
-                        }
-                    }
-                }
-            });
-        ImGui::EndTable();
-    }
-}
-
-//void engine::ImGuiEditor::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
-//{
-//    static unsigned short prev_selected_row = -1;
-//    static unsigned short selected_row = -1;
-//
-//    if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
-//    {
-//        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_None);
-//
-//
-//        // Target compact row height
-//        const float text_h = ImGui::GetTextLineHeight();       // tighter than GetTextLineHeightWithSpacing()
-//        const float row_height = text_h + 2.0f;                    // add a couple of pixels if needed
-//
-//        unsigned short row_index = 0;
-//        for (const auto& value : items)
-//        {
-//            ImGui::TableNextRow();
-//            ImGui::TableSetColumnIndex(0);
-//
-//            // Compute full row rect spanning the table inner rect
-//            ImVec2 cursor = ImGui::GetCursorScreenPos();
-//            ImGuiTable* table = ImGui::GetCurrentTable();
-//
-//            ImVec2 min(table->InnerRect.Min.x, cursor.y);
-//            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
-//
-//            // Hit-test over the full row to support hover/active/click
-//            ImGui::PushID(row_index);
-//            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
-//            bool hovered = ImGui::IsItemHovered();
-//            bool held = ImGui::IsItemActive();             // while mouse down on this row
-//            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
-//            if (clicked)
-//                selected_row = row_index;
-//            ImGui::PopID();
-//
-//            const bool is_selected = (row_index == selected_row);
-//            if (is_selected && prev_selected_row != selected_row)
-//            {
-//                property.function(selected_row);
-//                prev_selected_row = selected_row;
-//            }
-//
-//            // Color policy
-//            ImU32 col = IM_COL32(50, 50, 50, 255);
-//            if (is_selected) col = IM_COL32(70, 70, 70, 255);
-//            else if (hovered) col = IM_COL32(70, 70, 70, 255);
-//
-//            
-//            ImGui::TablePushBackgroundChannel();
-//
-//            // Draw background behind content
-//            ImDrawList* dl = ImGui::GetWindowDrawList();
-//            dl->AddRectFilled(min, max, col, ROUNDING);
-//            
-//            // Draw border (use a contrasting color, e.g., white or gray)
-//            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
-//            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
-//
-//            ImGui::TablePopBackgroundChannel();
-//
-//            // Add horizontal padding
-//            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
-//
-//            // Draw content
-//            ImGui::Text("%s", value.c_str());
-//
-//            ++row_index;
-//        }
-//
-//        ImGui::EndTable();
-//    }
-//}
 
 #endif

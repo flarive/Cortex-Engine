@@ -12,6 +12,8 @@
 
 #include "../lights/light.h"
 
+#include "editor_helper.h"
+
 #include <variant>
 
 #include <imgui.h>
@@ -35,7 +37,7 @@ namespace engine
 		}
 
 		// Let parent register a callback
-		void setOnSceneSettingChanged(std::function<void(std::string, std::variant<bool, int, unsigned int, float>)> callback) {
+		void setOnSceneSettingChanged(std::function<void(std::string, SceneSetting)> callback) {
 			m_onSceneSettingChanged = std::move(callback);
 		}
 
@@ -49,7 +51,7 @@ namespace engine
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
-		std::function<void(std::string, std::variant<bool, int, unsigned int, float>)> m_onSceneSettingChanged; // << callback
+		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
 
 		void renderTabSettings();
 		void renderTabAbout();
@@ -76,17 +78,12 @@ namespace engine
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 		void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
 
-		bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
-		void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
-
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
-		void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
-		//void renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property);
 
-		void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max);
-		void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format);
-		void renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format);
+		//void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max);
+		//void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format);
+		//void renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format);
 
 
 	protected:
@@ -97,7 +94,7 @@ namespace engine
 
 		
 
-		float itemLabelWidth{ 100.0f }; // pixels
+		
 
 		bool sceneSetting_drawAsWireframe{ false };
 		bool sceneSetting_enableGammaCorrection{ false };
@@ -113,8 +110,9 @@ namespace engine
 		float sceneSetting_shadowMapBiasFactor{ 0.001f };
 		float sceneSetting_shadowMapBlur{ 1.0f };
 
-		const float ROUNDING{ 3.0f };
-		const ImVec2 SIZE{ ImVec2(21, 21) };
+		//const float ROUNDING{ 3.0f };
+		//const ImVec2 SIZE{ ImVec2(21, 21) };
+		//const float itemLabelWidth{ 100.0f }; // pixels
 	};
 }
 #endif

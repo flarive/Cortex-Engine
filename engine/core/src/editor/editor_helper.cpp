@@ -9,6 +9,8 @@
 
 #include <imgui_internal.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <format>
 
 
@@ -140,22 +142,36 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                                 ImGui::TableNextRow();
 
                                 ImGui::TableSetColumnIndex(0);
-                                if (drawCustomDragFloat("X", "##tposX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::TableSetColumnIndex(1);
-                                if (drawCustomDragFloat("Y", "##tposY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::TableSetColumnIndex(2);
-                                if (drawCustomDragFloat("Z", "##tposZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
+                                if (drawCustomDragFloat("Z", std::format("##{}{}{}Z", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::EndTable();
                             }
+                        }
+                    }
+                    else if (glm::vec4* pValue = std::get_if<glm::vec4>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("(%f, %f, %f, %f)", pValue->x, pValue->y, pValue->z, pValue->w);
+                        }
+                        else
+                        {
+                            ImGui::PushItemWidth(200.0f);
+                            if (ImGui::ColorEdit3(std::format("##{}{}{}", componentName, componentType, key).c_str(), glm::value_ptr(*pValue), ImGuiColorEditFlags_NoLabel)) {
+                                component->setProperty(key, *pValue);
+                            }
+                            ImGui::PopItemWidth();
                         }
                     }
                     else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
@@ -381,77 +397,5 @@ void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& ite
         ImGui::EndTable();
     }
 }
-
-//void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
-//{
-//    static unsigned short prev_selected_row = -1;
-//    static unsigned short selected_row = -1;
-//
-//    // Set the table width to the available content region width
-//    float tableWidth = ImGui::GetContentRegionAvail().x;
-//
-//    if (ImGui::BeginTable("MyTable", 1,
-//        ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter))
-//    {
-//        // Use ImGuiTableColumnFlags_WidthStretch to make the column take all available horizontal space
-//        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_WidthStretch);
-//
-//        // Target compact row height
-//        const float text_h = ImGui::GetTextLineHeight();
-//        const float row_height = text_h + 2.0f;
-//
-//        unsigned short row_index = 0;
-//        for (const auto& value : items)
-//        {
-//            ImGui::TableNextRow();
-//            ImGui::TableSetColumnIndex(0);
-//
-//            // Get the full width of the table's inner rectangle
-//            ImVec2 cursor = ImGui::GetCursorScreenPos();
-//            ImGuiTable* table = ImGui::GetCurrentTable();
-//            ImVec2 min(table->InnerRect.Min.x, cursor.y);
-//            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
-//
-//            // Hit-test over the full row
-//            ImGui::PushID(row_index);
-//            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
-//            bool hovered = ImGui::IsItemHovered();
-//            bool held = ImGui::IsItemActive();
-//            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
-//            if (clicked)
-//                selected_row = row_index;
-//            ImGui::PopID();
-//
-//            // Selection logic
-//            const bool is_selected = (row_index == selected_row);
-//            if (is_selected && prev_selected_row != selected_row)
-//            {
-//                property.function(selected_row);
-//                prev_selected_row = selected_row;
-//            }
-//
-//            // Color policy
-//            ImU32 col = IM_COL32(50, 50, 50, 255);
-//            if (is_selected) col = IM_COL32(70, 70, 70, 255);
-//            else if (hovered) col = IM_COL32(70, 70, 70, 255);
-//
-//            // Draw background and border
-//            ImGui::TablePushBackgroundChannel();
-//            ImDrawList* dl = ImGui::GetWindowDrawList();
-//            dl->AddRectFilled(min, max, col, ROUNDING);
-//            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
-//            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
-//            ImGui::TablePopBackgroundChannel();
-//
-//            // Draw content (text) with some padding
-//            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
-//            ImGui::Text("%s", value.c_str());
-//
-//            ++row_index;
-//        }
-//
-//        ImGui::EndTable();
-//    }
-//}
 
 

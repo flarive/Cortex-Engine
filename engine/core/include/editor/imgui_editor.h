@@ -81,10 +81,6 @@ namespace engine
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 
-		//void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max);
-		//void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format);
-		//void renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format);
-
 
 	protected:
 		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache{};
@@ -109,10 +105,6 @@ namespace engine
 		int sceneSetting_shadowMapTextureSize{ 2048 };
 		float sceneSetting_shadowMapBiasFactor{ 0.001f };
 		float sceneSetting_shadowMapBlur{ 1.0f };
-
-		//const float ROUNDING{ 3.0f };
-		//const ImVec2 SIZE{ ImVec2(21, 21) };
-		//const float itemLabelWidth{ 100.0f }; // pixels
 	};
 }
 #endif

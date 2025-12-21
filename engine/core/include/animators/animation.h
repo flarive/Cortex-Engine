@@ -38,6 +38,8 @@ namespace engine
 		inline float getDuration() { return m_duration; }
 		inline float getDurationInSeconds() { return m_durationInSeconds; }
 		inline unsigned int getFramesCount() { return m_numFrames; }
+		inline unsigned int getFPS() { return m_desiredFPS; }
+		inline float getSpeedFactor() const { return m_speedFactor; }
 		inline const AssimpNodeData& getRootNode() { return m_rootNode; }
 		inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return m_boneInfoMap; }
 

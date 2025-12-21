@@ -18,7 +18,7 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"intensity", EditorProperty { "Intensity", getIntensity(), false, 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"intensity", EditorProperty { "Intensity", getIntensity(), editable, 0.0f, 1000.0f, 1.0f, "%.3f" }},
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

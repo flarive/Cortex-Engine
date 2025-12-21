@@ -10,7 +10,7 @@ engine::Animation::Animation(const std::string& animationName, const std::string
 	aiAnimation* animation = scene->mAnimations[0];
 	m_duration = static_cast<float>(animation->mDuration); //ms
 	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speedFactor);
-	m_durationInSeconds = animation->mDuration / animation->mTicksPerSecond;
+	m_durationInSeconds = static_cast<float>(animation->mDuration / animation->mTicksPerSecond);
 	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;

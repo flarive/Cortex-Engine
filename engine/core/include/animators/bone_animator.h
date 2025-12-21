@@ -28,11 +28,15 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() override {
 			return {
-				{"animation_name", EditorProperty { "Current anim", getCurrentAnimation()->getName(), true}},
-				{"animation_file", EditorProperty { "Animation path", getCurrentAnimation()->getFilepath(), true}},
-				{"animation_duration", EditorProperty { "Animation duration", getCurrentAnimation()->getDurationInSeconds(), true}},
-				{"animation_frames", EditorProperty { "Animation frames", getCurrentAnimation()->getFramesCount(), true}},
-				{"animations", EditorProperty { "Animations",	getAnimationsStringList(), true, 0.0f, 0.0f, 0.0f, "", [this](unsigned short index) { this->playAnimationAtIndex(index); } }}
+				{"label_current_animation", EditorProperty { "Animation", 0, label }},
+				{"animation_name", EditorProperty { "Current", getCurrentAnimation()->getName(), readonly }},
+				{"animation_file", EditorProperty { "Path", getCurrentAnimation()->getFilepath(), readonly }},
+				{"animation_duration", EditorProperty { "Duration", getCurrentAnimation()->getDurationInSeconds(), readonly, 0.0f, 0.0f, 0.0f, "", "sec" }},
+				{"animation_frames", EditorProperty { "Length", getCurrentAnimation()->getFramesCount(), readonly, 0.0f, 0.0f, 0.0f, "", "frames" }},
+				{"animation_fps", EditorProperty { "FPS", getCurrentAnimation()->getFPS(), readonly }},
+				{"animation_speed", EditorProperty { "Speed", getCurrentAnimation()->getSpeedFactor(), readonly }},
+				{"label_animations", EditorProperty { "Animations", 0, label }},
+				{"animations", EditorProperty { "*", getAnimationsStringList(), noheader | readonly, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { this->playAnimationAtIndex(index); }}}
 			};
 		}
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

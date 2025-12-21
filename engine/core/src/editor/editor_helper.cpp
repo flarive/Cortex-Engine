@@ -11,80 +11,7 @@
 
 #include <format>
 
-void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
-{
-    static unsigned short prev_selected_row = -1;
-    static unsigned short selected_row = -1;
 
-    if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_None);
-
-
-        // Target compact row height
-        const float text_h = ImGui::GetTextLineHeight();       // tighter than GetTextLineHeightWithSpacing()
-        const float row_height = text_h + 2.0f;                    // add a couple of pixels if needed
-
-        unsigned short row_index = 0;
-        for (const auto& value : items)
-        {
-            ImGui::TableNextRow();
-            ImGui::TableSetColumnIndex(0);
-
-            // Compute full row rect spanning the table inner rect
-            ImVec2 cursor = ImGui::GetCursorScreenPos();
-            ImGuiTable* table = ImGui::GetCurrentTable();
-
-            ImVec2 min(table->InnerRect.Min.x, cursor.y);
-            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
-
-            // Hit-test over the full row to support hover/active/click
-            ImGui::PushID(row_index);
-            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
-            bool hovered = ImGui::IsItemHovered();
-            bool held = ImGui::IsItemActive();             // while mouse down on this row
-            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
-            if (clicked)
-                selected_row = row_index;
-            ImGui::PopID();
-
-            const bool is_selected = (row_index == selected_row);
-            if (is_selected && prev_selected_row != selected_row)
-            {
-                property.function(selected_row);
-                prev_selected_row = selected_row;
-            }
-
-            // Color policy
-            ImU32 col = IM_COL32(50, 50, 50, 255);
-            if (is_selected) col = IM_COL32(70, 70, 70, 255);
-            else if (hovered) col = IM_COL32(70, 70, 70, 255);
-
-
-            ImGui::TablePushBackgroundChannel();
-
-            // Draw background behind content
-            ImDrawList* dl = ImGui::GetWindowDrawList();
-            dl->AddRectFilled(min, max, col, ROUNDING);
-
-            // Draw border (use a contrasting color, e.g., white or gray)
-            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
-            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
-
-            ImGui::TablePopBackgroundChannel();
-
-            // Add horizontal padding
-            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
-
-            // Draw content
-            ImGui::Text("%s", value.c_str());
-
-            ++row_index;
-        }
-
-        ImGui::EndTable();
-    }
-}
 
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
 {
@@ -103,138 +30,158 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
             {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
-                ImGui::Text(property.displayName.c_str());
-                ImGui::TableSetColumnIndex(1);
-                ImGui::SetNextItemWidth(80);
 
-                if (float* pValue = std::get_if<float>(&property.value))
+                if (property.type & label)
                 {
-                    if (property.readOnly) {
-                        ImGui::Text("%f", *pValue);
-                    }
-                    else {
-                        if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                        {
-                            // float value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
+					// 1 column label full width
+                    ImGui::SetNextItemWidth(-FLT_MIN);
+                    ImGui::Text(property.display.c_str());
                 }
-                else if (int* pValue = std::get_if<int>(&property.value))
+                else
                 {
-                    if (property.readOnly) {
-                        ImGui::Text("%i", *pValue);
-                    }
-                    else {
-                        if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
-                        {
-                            // int value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (unsigned int* pValue = std::get_if<unsigned int>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%u", *pValue);
-                    }
-                    else {
-                        if (ImGui::DragScalar(std::format("##{}{}{}", componentName, componentType, key).c_str(), ImGuiDataType_U32, pValue, property.step))
-                        {
-                            // unsigned int value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (bool* pValue = std::get_if<bool>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%s", (*pValue == 1 ? "Yes" : "No"));
-                    }
-                    else {
-                        if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
-                        {
-                            // bool value changed
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (std::string* pValue = std::get_if<std::string>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%s", pValue->c_str());
-                    }
-                    else {
-                        // Create a temporary buffer for ImGui::InputText
-                        char buffer[256];
-                        strncpy(buffer, pValue->c_str(), sizeof(buffer));
-                        buffer[sizeof(buffer) - 1] = '\0'; // Ensure null-termination
-
-                        if (ImGui::InputText(std::format("##{}{}{}", componentName, componentType, key).c_str(), buffer, sizeof(buffer)))
-                        {
-                            // string value changed
-                            *pValue = buffer;
-                            component->setProperty(key, *pValue);
-                        }
-                    }
-                }
-                else if (glm::vec3* pValue = std::get_if<glm::vec3>(&property.value))
-                {
-                    if (property.readOnly) {
-                        ImGui::Text("%i", *pValue);
-                    }
-                    else
+                    if (property.type & noheader)
                     {
-                        if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
-                        {
-                            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-                            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-
-                            ImGui::TableNextRow();
-
-                            ImGui::TableSetColumnIndex(0);
-                            if (drawCustomDragFloat("X", "##tposX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::TableSetColumnIndex(1);
-                            if (drawCustomDragFloat("Y", "##tposY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::TableSetColumnIndex(2);
-                            if (drawCustomDragFloat("Z", "##tposZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
-                                component->setProperty(key, *pValue);
-                            }
-
-                            ImGui::EndTable();
-                        }
+                        // Full width for readonly property: Span both columns
+                        float fullWidth = ImGui::GetContentRegionAvail().x;
+                        ImGui::SetNextItemWidth(fullWidth);
                     }
-                }
-                else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
-                {
-                    if (property.readOnly) {
-                        EditorHelper::renderVectorTable(*pValue, property);
-                    }
-                    else
+                    else if (property.type & editable | readonly)
                     {
-                        if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
-                        {
-                            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-
-                            for (std::string value : *pValue)
+                        // 2 columns, header and property
+                        ImGui::Text(property.display.c_str());
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::SetNextItemWidth(80);
+                    }
+ 
+                    if (float* pValue = std::get_if<float>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%.2f%s", *pValue, !property.suffix.empty() ? std::format(" {}", property.suffix).c_str() : "");
+                        }
+                        else {
+                            if (ImGui::DragFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
                             {
-                                ImGui::TableNextRow();
-                                ImGui::TableSetColumnIndex(0);
-                                ImGui::Text("%s", value.c_str());
+                                // float value changed
+                                component->setProperty(key, *pValue);
                             }
+                        }
+                    }
+                    else if (int* pValue = std::get_if<int>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%i%s", *pValue, !property.suffix.empty() ? std::format(" {}", property.suffix).c_str() : "");
+                        }
+                        else {
+                            if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                            {
+                                // int value changed
+                                component->setProperty(key, *pValue);
+                            }
+                        }
+                    }
+                    else if (unsigned int* pValue = std::get_if<unsigned int>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%u%s", *pValue, !property.suffix.empty() ? std::format(" {}", property.suffix).c_str() : "");
+                        }
+                        else {
+                            if (ImGui::DragScalar(std::format("##{}{}{}", componentName, componentType, key).c_str(), ImGuiDataType_U32, pValue, property.step))
+                            {
+                                // unsigned int value changed
+                                component->setProperty(key, *pValue);
+                            }
+                        }
+                    }
+                    else if (bool* pValue = std::get_if<bool>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%s", (*pValue == 1 ? "Yes" : "No"));
+                        }
+                        else {
+                            if (ImGui::Checkbox(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue))
+                            {
+                                // bool value changed
+                                component->setProperty(key, *pValue);
+                            }
+                        }
+                    }
+                    else if (std::string* pValue = std::get_if<std::string>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%s", pValue->c_str());
+                        }
+                        else {
+                            // Create a temporary buffer for ImGui::InputText
+                            char buffer[256];
+                            strncpy(buffer, pValue->c_str(), sizeof(buffer));
+                            buffer[sizeof(buffer) - 1] = '\0'; // Ensure null-termination
 
-                            ImGui::EndTable();
+                            if (ImGui::InputText(std::format("##{}{}{}", componentName, componentType, key).c_str(), buffer, sizeof(buffer)))
+                            {
+                                // string value changed
+                                *pValue = buffer;
+                                component->setProperty(key, *pValue);
+                            }
+                        }
+                    }
+                    else if (glm::vec3* pValue = std::get_if<glm::vec3>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%i", *pValue);
+                        }
+                        else
+                        {
+                            if (ImGui::BeginTable("MyTable", 3, ImGuiTableFlags_SizingStretchSame))
+                            {
+                                ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                                ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                                ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+                                ImGui::TableNextRow();
+
+                                ImGui::TableSetColumnIndex(0);
+                                if (drawCustomDragFloat("X", "##tposX", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                    component->setProperty(key, *pValue);
+                                }
+
+                                ImGui::TableSetColumnIndex(1);
+                                if (drawCustomDragFloat("Y", "##tposY", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                    component->setProperty(key, *pValue);
+                                }
+
+                                ImGui::TableSetColumnIndex(2);
+                                if (drawCustomDragFloat("Z", "##tposZ", ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
+                                    component->setProperty(key, *pValue);
+                                }
+
+                                ImGui::EndTable();
+                            }
+                        }
+                    }
+                    else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            EditorHelper::renderVectorTable(*pValue, property);
+                        }
+                        else
+                        {
+                            if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
+                            {
+                                ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_None);
+
+                                for (std::string value : *pValue)
+                                {
+                                    ImGui::TableNextRow();
+                                    ImGui::TableSetColumnIndex(0);
+                                    ImGui::Text("%s", value.c_str());
+                                }
+
+                                ImGui::EndTable();
+                            }
                         }
                     }
                 }
-            });
+        });
         ImGui::EndTable();
     }
 }
@@ -360,3 +307,151 @@ void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const cha
         }
     }
 }
+
+void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
+{
+    static unsigned short prev_selected_row = -1;
+    static unsigned short selected_row = -1;
+
+    if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
+    {
+        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_WidthStretch);
+
+        // Target compact row height
+        const float text_h = ImGui::GetTextLineHeight();       // tighter than GetTextLineHeightWithSpacing()
+        const float row_height = text_h + 2.0f;                    // add a couple of pixels if needed
+
+        unsigned short row_index = 0;
+        for (const auto& value : items)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+
+            // Compute full row rect spanning the table inner rect
+            ImVec2 cursor = ImGui::GetCursorScreenPos();
+            ImGuiTable* table = ImGui::GetCurrentTable();
+
+            ImVec2 min(table->InnerRect.Min.x, cursor.y);
+            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
+
+            // Hit-test over the full row to support hover/active/click
+            ImGui::PushID(row_index);
+            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
+            bool hovered = ImGui::IsItemHovered();
+            bool held = ImGui::IsItemActive();             // while mouse down on this row
+            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
+            if (clicked)
+                selected_row = row_index;
+            ImGui::PopID();
+
+            const bool is_selected = (row_index == selected_row);
+            if (is_selected && prev_selected_row != selected_row)
+            {
+                property.function(selected_row);
+                prev_selected_row = selected_row;
+            }
+
+            // Color policy
+            ImU32 col = IM_COL32(50, 50, 50, 255);
+            if (is_selected) col = IM_COL32(70, 70, 70, 255);
+            else if (hovered) col = IM_COL32(70, 70, 70, 255);
+
+
+            ImGui::TablePushBackgroundChannel();
+
+            // Draw background behind content
+            ImDrawList* dl = ImGui::GetWindowDrawList();
+            dl->AddRectFilled(min, max, col, ROUNDING);
+
+            // Draw border (use a contrasting color, e.g., white or gray)
+            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
+            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
+
+            ImGui::TablePopBackgroundChannel();
+
+            // Add horizontal padding
+            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
+
+            // Draw content
+            ImGui::Text("%s", value.c_str());
+
+            ++row_index;
+        }
+
+        ImGui::EndTable();
+    }
+}
+
+//void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
+//{
+//    static unsigned short prev_selected_row = -1;
+//    static unsigned short selected_row = -1;
+//
+//    // Set the table width to the available content region width
+//    float tableWidth = ImGui::GetContentRegionAvail().x;
+//
+//    if (ImGui::BeginTable("MyTable", 1,
+//        ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter))
+//    {
+//        // Use ImGuiTableColumnFlags_WidthStretch to make the column take all available horizontal space
+//        ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_WidthStretch);
+//
+//        // Target compact row height
+//        const float text_h = ImGui::GetTextLineHeight();
+//        const float row_height = text_h + 2.0f;
+//
+//        unsigned short row_index = 0;
+//        for (const auto& value : items)
+//        {
+//            ImGui::TableNextRow();
+//            ImGui::TableSetColumnIndex(0);
+//
+//            // Get the full width of the table's inner rectangle
+//            ImVec2 cursor = ImGui::GetCursorScreenPos();
+//            ImGuiTable* table = ImGui::GetCurrentTable();
+//            ImVec2 min(table->InnerRect.Min.x, cursor.y);
+//            ImVec2 max(table->InnerRect.Max.x, cursor.y + row_height);
+//
+//            // Hit-test over the full row
+//            ImGui::PushID(row_index);
+//            ImGui::InvisibleButton("##row_hit", ImVec2(max.x - min.x, row_height));
+//            bool hovered = ImGui::IsItemHovered();
+//            bool held = ImGui::IsItemActive();
+//            bool clicked = ImGui::IsItemClicked(ImGuiMouseButton_Left);
+//            if (clicked)
+//                selected_row = row_index;
+//            ImGui::PopID();
+//
+//            // Selection logic
+//            const bool is_selected = (row_index == selected_row);
+//            if (is_selected && prev_selected_row != selected_row)
+//            {
+//                property.function(selected_row);
+//                prev_selected_row = selected_row;
+//            }
+//
+//            // Color policy
+//            ImU32 col = IM_COL32(50, 50, 50, 255);
+//            if (is_selected) col = IM_COL32(70, 70, 70, 255);
+//            else if (hovered) col = IM_COL32(70, 70, 70, 255);
+//
+//            // Draw background and border
+//            ImGui::TablePushBackgroundChannel();
+//            ImDrawList* dl = ImGui::GetWindowDrawList();
+//            dl->AddRectFilled(min, max, col, ROUNDING);
+//            ImU32 border_col = ImGui::GetColorU32(ImGuiCol_Border);
+//            dl->AddRect(min, max, border_col, ROUNDING, 0, 1.0f);
+//            ImGui::TablePopBackgroundChannel();
+//
+//            // Draw content (text) with some padding
+//            ImGui::SetCursorScreenPos(ImVec2(cursor.x + 5.0f, cursor.y));
+//            ImGui::Text("%s", value.c_str());
+//
+//            ++row_index;
+//        }
+//
+//        ImGui::EndTable();
+//    }
+//}
+
+

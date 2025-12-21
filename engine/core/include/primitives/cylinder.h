@@ -21,11 +21,11 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
-                {"radius", EditorProperty{ "Radius", getRadius(), false, 0.0f, 10.0f, 0.01f, "%.3f" }},
-                {"height", EditorProperty{ "Height", getHeight(), false, 0.0f, 10.0f, 0.01f, "%.3f" }},
-                {"uvscale", EditorProperty{ "UV scale", getUvScale(), false, 0.0f, 10.0f, 0.01f, "%.3f" }},
-                {"canCastShadows", EditorProperty{ "Cast shadows", canCastShadows(), false, 0.0f, 10.0f, 0.01f, "%.3f" }},
-                {"canReceiveShadows", EditorProperty{ "Receive shadows", canReceiveShadows(), false, 0.0f, 10.0f, 0.01f, "%.3f" }}
+                {"radius", EditorProperty{ "Radius", getRadius(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"height", EditorProperty{ "Height", getHeight(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"uvscale", EditorProperty{ "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canCastShadows", EditorProperty{ "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canReceiveShadows", EditorProperty{ "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

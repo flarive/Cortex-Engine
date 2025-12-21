@@ -21,12 +21,18 @@ namespace engine
             return {
                 {"target", EditorProperty { "Target", getTarget(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
                 {"intensity", EditorProperty { "Intensity", getIntensity(), editable, 0.0f, 1000.0f, 1.0f, "%.3f" }},
+                {"ambientColor", EditorProperty { "Ambient color", getAmbientColor(), editable, 0.0f, 0.0f, 0.0f, "" }},
+                {"diffuseColor", EditorProperty { "Diffuse color", getDiffuseColor(), editable, 0.0f, 0.0f, 0.0f, "" }},
+                {"specularColor", EditorProperty { "Specular color", getSpecularColor(), editable, 0.0f, 0.0f, 0.0f, "" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
                 { "intensity", [this](EditorPropertyValue value) { getIntensity() = *(std::get_if<float>(&value)); } },
                 { "target", [this](EditorPropertyValue value) { getTarget() = *(std::get_if<glm::vec3>(&value)); } },
+                { "ambientColor", [this](EditorPropertyValue value) { getAmbientColor() = *(std::get_if<Color>(&value)); } },
+                { "diffuseColor", [this](EditorPropertyValue value) { getDiffuseColor() = *(std::get_if<Color>(&value)); } },
+                { "specularColor", [this](EditorPropertyValue value) { getSpecularColor() = *(std::get_if<Color>(&value)); } }
             };
         }
 

@@ -13,7 +13,6 @@
 
 namespace engine
 {
-
 	class BonesAnimator final : public Animator
 	{
 	public:

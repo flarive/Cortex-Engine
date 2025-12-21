@@ -37,6 +37,7 @@
 
 #include "models/model.h"
 #include "animators/bone_animator.h"
+#include "animators/rotation_animator.h"
 #include "animators/animation.h"
 
 #include "cameras/camera.h"

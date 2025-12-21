@@ -36,20 +36,22 @@ void MyScene8::init()
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
     light1->intensity = 1.0f;
-    light1->ambientColor = Color(0.5f);
+    light1->ambientColor = Color(1.0f);
+    light1->diffuseColor = Color(1.0f);
+    light1->specularColor = Color(1.0f);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
 
 
-    auto zzz = Colors::hexToNormalizedRGB("#FFF1AD");
-    auto zzz2 = Color(0.5f);
-    auto zzz3 = Color(0.5f);
+    //auto zzz = Colors::hexToNormalizedRGB("#FFF1AD");
+    //auto zzz2 = Color(0.5f);
+    //auto zzz3 = Color(0.5f);
 
-    //auto zzz = Color(1.0f, 0.5f, 0.31f, 1.0f); //ColorManager::hexToNormalizedRGB("#FFF1AD");
-    //auto zzz2 = Color(1.0f, 0.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#FFFF99");
-    //auto zzz3 = Color(0.0f, 1.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#00FFFF");
+    auto zzz = Color(1.0f, 0.5f, 0.31f, 1.0f); //ColorManager::hexToNormalizedRGB("#FFF1AD");
+    auto zzz2 = Color(1.0f, 0.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#FFFF99");
+    auto zzz3 = Color(0.0f, 1.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#00FFFF");
 
 
     // ground

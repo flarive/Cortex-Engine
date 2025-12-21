@@ -13,7 +13,7 @@
 
 namespace engine
 {
-	enum class AnimatorType { undefined = 0, bones = 1 };
+	enum class AnimatorType { undefined = 0, bones = 1, rotation = 2 };
 
 	const std::unordered_map<AnimatorType, std::string> AnimatorTypeNames = {
 	{AnimatorType::undefined, "undefined"},

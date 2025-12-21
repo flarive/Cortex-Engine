@@ -1,6 +1,6 @@
 #include "../../include/app/scene.h"
 
-#include "extensions/imoguizmo.hpp"
+//#include "extensions/imoguizmo.hpp"
 #include "../../include/managers/log_manager.h"
 #include "../../include/singleton.h"
 
@@ -776,40 +776,44 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
 #if EDITOR_MODE
 void engine::Scene::renderGizmo()
 {
-    // it is recommended to use a separate projection matrix since the values that work best
-    // can be very different from what works well with normal renderings
-    // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
-
-    // optional: configure color, axis length and more
-    ImOGuizmo::config.axisLengthScale = 0.33f;
-    ImOGuizmo::config.lineThicknessScale = 0.027f;
-
-    ImVec2 avail = ImGui::GetContentRegionAvail();
-
-    // Position gizmo in top-right corner of this window
-    ImVec2 windowPos = ImGui::GetWindowPos();
-    ImOGuizmo::SetRect(
-        windowPos.x + avail.x + 440.0f, // stick to top-right
-        windowPos.y - 50.0f,
-        100.0f
-    );
-
-
-    ImOGuizmo::BeginFrame();
-
-    glm::mat4 projMat = glm::perspective(glm::radians(getActiveCamera()->zoom), static_cast<float>(app->width) / static_cast<float>(app->height), 0.1f, 100.0f);
-    const float* projPtr = glm::value_ptr(projMat);
-
-    glm::mat4 viewMatrix = getActiveCamera()->getViewMatrix();
-    float* viewPtr = glm::value_ptr(viewMatrix);
-
-    float pivotDistance = 1.0f;
-    // optional: set distance to pivot (-> activates interaction)
-    if (ImOGuizmo::DrawGizmo(viewPtr, projPtr, pivotDistance))
-    {
-        // in case of user interaction viewMatrix gets updated
-        // Apply snapped view back to camera
-        getActiveCamera()->setFromViewMatrix(viewMatrix);
-    }
 }
+
+//void engine::Scene::renderGizmo()
+//{
+//    // it is recommended to use a separate projection matrix since the values that work best
+//    // can be very different from what works well with normal renderings
+//    // e.g., with glm -> glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 1000.0f);
+//
+//    // optional: configure color, axis length and more
+//    ImOGuizmo::config.axisLengthScale = 0.33f;
+//    ImOGuizmo::config.lineThicknessScale = 0.027f;
+//
+//    ImVec2 avail = ImGui::GetContentRegionAvail();
+//
+//    // Position gizmo in top-right corner of this window
+//    ImVec2 windowPos = ImGui::GetWindowPos();
+//    ImOGuizmo::SetRect(
+//        windowPos.x + avail.x + 440.0f, // stick to top-right
+//        windowPos.y - 50.0f,
+//        100.0f
+//    );
+//
+//
+//    ImOGuizmo::BeginFrame();
+//
+//    glm::mat4 projMat = glm::perspective(glm::radians(getActiveCamera()->zoom), static_cast<float>(app->width) / static_cast<float>(app->height), 0.1f, 100.0f);
+//    const float* projPtr = glm::value_ptr(projMat);
+//
+//    glm::mat4 viewMatrix = getActiveCamera()->getViewMatrix();
+//    float* viewPtr = glm::value_ptr(viewMatrix);
+//
+//    float pivotDistance = 1.0f;
+//    // optional: set distance to pivot (-> activates interaction)
+//    if (ImOGuizmo::DrawGizmo(viewPtr, projPtr, pivotDistance))
+//    {
+//        // in case of user interaction viewMatrix gets updated
+//        // Apply snapped view back to camera
+//        getActiveCamera()->setFromViewMatrix(viewMatrix);
+//    }
+//}
 #endif

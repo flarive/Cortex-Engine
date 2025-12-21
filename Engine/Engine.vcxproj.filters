@@ -399,6 +399,9 @@
     <ClCompile Include="core\src\editor\editor_helper.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\animators\rotation_animator.cpp">
+      <Filter>Fichiers sources\core\animators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -664,6 +667,9 @@
     </ClInclude>
     <ClInclude Include="core\include\editor\editor_helper.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animators\rotation_animator.h">
+      <Filter>Fichiers d%27en-tête\core\animators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

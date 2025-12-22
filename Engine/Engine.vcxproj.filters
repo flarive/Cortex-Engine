@@ -175,6 +175,9 @@
     <Filter Include="Fichiers sources\core\animators\base">
       <UniqueIdentifier>{56751c71-9888-4144-ad83-f5c3a2af1c0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\imgui\extensions\imGizmo">
+      <UniqueIdentifier>{39068587-84bd-494b-be3c-6d505bad3431}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -401,6 +404,18 @@
     </ClCompile>
     <ClCompile Include="core\src\animators\rotation_animator.cpp">
       <Filter>Fichiers sources\core\animators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGradient.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImSequencer.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -670,6 +685,18 @@
     </ClInclude>
     <ClInclude Include="core\include\animators\rotation_animator.h">
       <Filter>Fichiers d%27en-tête\core\animators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.h">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGradient.h">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImSequencer.h">
+      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

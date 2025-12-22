@@ -159,6 +159,10 @@
   <ItemGroup>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGradient.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImSequencer.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_palette.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_presets.cpp" />
@@ -238,6 +242,10 @@
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="..\libs\imgui\extensions\icon\IconsForkAwesome.h" />
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.h" />
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGradient.h" />
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h" />
+    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImSequencer.h" />
     <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp" />
     <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_offset_rect.h" />
     <ClInclude Include="..\libs\imgui\extensions\toggle\imgui_toggle.h" />

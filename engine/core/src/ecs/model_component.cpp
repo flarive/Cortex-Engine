@@ -9,14 +9,9 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(model));
 
-	// load light cube debug shader
-	m_lightDebugShader.init("model_boundingbox_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
-
-	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
-
 	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
-	m_debug_boundingBox = std::make_unique<Cube>(width, height, depth); // Cube at origin with dimensions of the AABB
-	m_debug_boundingBox->setup(matDebugLight);
+	m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	m_debug_boundingBox->setup();
 
 	// Initialize property setters based on primitive type
 	m_propertySetters = m_model->getPropertySetters();
@@ -24,9 +19,7 @@ engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
 
 void engine::ModelComponent::init(Transform& transform)
 {
-	m_model->position = transform.getLocalPosition();
-	m_model->rotation = transform.getLocalRotation();
-	m_model->scale = transform.getLocalScale();
+	m_model->setTransform(transform.getLocalPosition(), transform.getLocalRotation(), transform.getLocalScale());
 }
 
 void engine::ModelComponent::update(float deltaTime, Transform& transform)
@@ -34,7 +27,7 @@ void engine::ModelComponent::update(float deltaTime, Transform& transform)
 	
 }
 
-void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::ModelComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
     m_model->draw(shader, worldTransformMatrix, localTransform);
 
@@ -44,12 +37,7 @@ void engine::ModelComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& 
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)
 	{
-		// Pass model matrix to shader
-		m_lightDebugShader.use();
-		m_lightDebugShader.setMat4("projection", projection);
-		m_lightDebugShader.setMat4("view", view);
-		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
-		m_debug_boundingBox->draw(m_lightDebugShader, projection, view, worldTransformMatrix, localTransform);
+		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
 	}
 }
 

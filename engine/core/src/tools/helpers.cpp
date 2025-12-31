@@ -1,5 +1,15 @@
 #include "../../include/tools/helpers.h"
 
+void engine::Helpers::printMat4(const glm::mat4& mat)
+{
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            std::cout << mat[j][i] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 //engine::NormalizedRotation engine::Helpers::normalizeRotation(glm::vec3 rotation)
 //{
 //    engine::NormalizedRotation result{};

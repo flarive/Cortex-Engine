@@ -4,6 +4,8 @@
 
 #include <tuple>
 
+engine::Shader engine::Sprite::m_spriteShader; // Define the static member
+
 engine::Sprite::~Sprite()
 {
     glDeleteVertexArrays(1, &m_quadVAO);
@@ -17,8 +19,10 @@ void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
     
-    m_spriteShader.init("UISpriteShader", "shaders/sprite.vert", "shaders/sprite.frag");
-
+    if (!m_spriteShader.isInitialized()) {
+        m_spriteShader.init("UISpriteShader", "shaders/sprite.vert", "shaders/sprite.frag");
+    }
+    
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_spriteShader.use();
     m_spriteShader.setMat4("projection", projection2);
@@ -102,4 +106,12 @@ void engine::Sprite::initRenderData()
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+void engine::Sprite::clean()
+{
+    glDeleteVertexArrays(1, &m_quadVAO);
+    glDeleteTextures(1, &m_texture_id);
+
+    m_spriteShader.clean();
 }

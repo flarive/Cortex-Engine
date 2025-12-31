@@ -1745,6 +1745,7 @@ namespace ImGuizmo
       {
          //ImGui::CaptureMouseFromApp();
          ImGui::SetNextFrameWantCaptureMouse(true); // ??????????
+         //ImGui::GetIO().WantCaptureMouse = true;  // ImGui captures the mouse
          const float len = fabsf(IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, gContext.mTranslationPlan)); // near plan
          vec_t newPos = gContext.mRayOrigin + gContext.mRayVector * len;
 
@@ -1815,7 +1816,8 @@ namespace ImGuizmo
          if (type != NONE)
          {
             //ImGui::CaptureMouseFromApp();
-             ImGui::SetNextFrameWantCaptureMouse(true); // ??????????
+            ImGui::SetNextFrameWantCaptureMouse(false); // ??????????
+            //ImGui::GetIO().WantCaptureMouse = true;  // ImGui captures the mouse
          }
          if (CanActivate() && type != NONE)
          {
@@ -1858,6 +1860,7 @@ namespace ImGuizmo
          {
             //ImGui::CaptureMouseFromApp();
             ImGui::SetNextFrameWantCaptureMouse(true); // ??????????
+            //ImGui::GetIO().WantCaptureMouse = true;  // ImGui captures the mouse
          }
          if (CanActivate() && type != NONE)
          {

@@ -175,7 +175,7 @@
     <Filter Include="Fichiers sources\core\animators\base">
       <UniqueIdentifier>{56751c71-9888-4144-ad83-f5c3a2af1c0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Fichiers sources\imgui\extensions\imGizmo">
+    <Filter Include="Fichiers sources\imgui\extensions\imGuizmo">
       <UniqueIdentifier>{39068587-84bd-494b-be3c-6d505bad3431}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -405,17 +405,20 @@
     <ClCompile Include="core\src\animators\rotation_animator.cpp">
       <Filter>Fichiers sources\core\animators</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImCurveEdit.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGradient.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGradient.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImSequencer.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImSequencer.cpp">
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\debug\debug_cube.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -687,16 +690,19 @@
       <Filter>Fichiers d%27en-tête\core\animators</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.h">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGradient.h">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImSequencer.h">
-      <Filter>Fichiers sources\imgui\extensions\imGizmo</Filter>
+      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\debug_cube.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

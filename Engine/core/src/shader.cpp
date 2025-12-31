@@ -183,13 +183,17 @@ bool engine::Shader::isValid() const
 // ------------------------------------------------------------------------
 void engine::Shader::use() const
 {
-    //std::cout << "Using shader program: " << name << " (ID: " << ID << ")" << std::endl;
-    glUseProgram(engine::Shader::ID);
+    if (isValid()) {
+        glUseProgram(ID);
+    }
+    else {
+        std::cerr << "Shader::use(): Shader is not valid!" << std::endl;
+    }
 }
 
 // check uniform in shader
 // -------------------------------------------------------------------------
-bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, std::string uniformName)
+bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, const std::string& uniformName) const
 {
     GLint uniformLoc = glGetUniformLocation(shaderID, uniformName.c_str());
     if (uniformLoc == -1) {
@@ -204,64 +208,181 @@ bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, std::string
 // ------------------------------------------------------------------------
 void engine::Shader::setBool(const std::string& name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(engine::Shader::ID, name.c_str()), (int)value);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform1i(uniformLoc, (int)value);
+        //logger.info("Shader {} Set bool uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setInt(const std::string& name, int value) const
 {
-    glUniform1i(glGetUniformLocation(engine::Shader::ID, name.c_str()), value);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform1i(uniformLoc, value);
+        //logger.info("Shader {} Set int uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setFloat(const std::string& name, float value) const
 {
-    glUniform1f(glGetUniformLocation(engine::Shader::ID, name.c_str()), value);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform1f(uniformLoc, value);
+        //logger.info("Shader {} Set float uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setVec2(const std::string& name, const glm::vec2& value) const
 {
-    glUniform2fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, &value[0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform2fv(uniformLoc, 1, &value[0]);
+        //logger.info("Shader {} Set vec2 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 void engine::Shader::setVec2(const std::string& name, float x, float y) const
 {
-    glUniform2f(glGetUniformLocation(engine::Shader::ID, name.c_str()), x, y);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform2f(uniformLoc, x, y);
+        //logger.info("Shader {} Set vec2 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setVec3(const std::string& name, const glm::vec3& value) const
 {
-    glUniform3fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, &value[0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform3fv(uniformLoc, 1, &value[0]);
+        //logger.info("Shader {} Set vec3 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 void engine::Shader::setVec3(const std::string& name, float x, float y, float z) const
 {
-    glUniform3f(glGetUniformLocation(engine::Shader::ID, name.c_str()), x, y, z);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform3f(uniformLoc, x, y, z);
+        //logger.info("Shader {} Set vec3 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setVec4(const std::string& name, const glm::vec4& value) const
 {
-    glUniform4fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, &value[0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform4fv(uniformLoc, 1, &value[0]);
+        //logger.info("Shader {} Set vec4 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 void engine::Shader::setVec4(const std::string& name, float x, float y, float z, float w)
 {
-    glUniform4f(glGetUniformLocation(engine::Shader::ID, name.c_str()), x, y, z, w);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniform4f(uniformLoc, x, y, z, w);
+        //logger.info("Shader {} Set vec4 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setMat2(const std::string& name, const glm::mat2& mat) const
 {
-    glUniformMatrix2fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniformMatrix2fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+        //logger.info("Shader {} Set mat2 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setMat3(const std::string& name, const glm::mat3& mat) const
 {
-    glUniformMatrix3fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniformMatrix3fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+        //logger.info("Shader {} Set mat3 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 // ------------------------------------------------------------------------
 void engine::Shader::setMat4(const std::string& name, const glm::mat4& mat) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(engine::Shader::ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    if (uniformLoc != -1)
+    {
+        glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
+        //logger.info("Shader {} Set mat4 uniform '{}'", ID, name);
+    }
+    else
+    {
+        logger.error("Uniform '{}' not found in shader {}", name, ID);
+    }
 }
 
 void engine::Shader::clean()
 {
-    glDeleteProgram(ID);
+    if (ID > 0)
+    {
+        if (isValid()) {
+            glDeleteProgram(ID);
+        }
+        logger.info("Shader program {} (ID: {}) deleted", name, ID);
+        ID = 0;
+        name.clear();
+        m_initialized = false;
+    }
 }
 
 void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)

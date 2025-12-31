@@ -20,7 +20,7 @@ void engine::AnimatorComponent::update(float deltaTime, Transform& transform)
 	m_animator->updateAnimation(deltaTime);
 }
 
-void engine::AnimatorComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::AnimatorComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	auto transforms = m_animator->getFinalBoneMatrices();
 

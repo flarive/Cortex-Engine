@@ -212,6 +212,7 @@ void MyScene8::clean()
 {
     // clean up any resources
     ourSkybox.clean();
+    ourText.clean();
 }
 
 void MyScene8::drawScene(Shader& shader)

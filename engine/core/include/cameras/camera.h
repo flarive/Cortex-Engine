@@ -72,6 +72,8 @@ namespace engine
         float mouseSensitivity{};
         float zoom{}; // fov
 
+		bool isPerspective{ true };
+
         // constructor with vectors
         Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _speed = SPEED, float _sensitivity = SENSITIVITY);
 
@@ -81,7 +83,7 @@ namespace engine
         }
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-        glm::mat4 getViewMatrix();
+        glm::mat4& getViewMatrix();
 
         void setFromViewMatrix(const glm::mat4& view);
 
@@ -105,9 +107,19 @@ namespace engine
 
         Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
 
+        // Inside the Camera class definition
+        float getDistanceToTarget(const glm::vec3& target) const
+        {
+            return glm::distance(position, target);
+        }
+
         void reSetup() { setup(); };
 
     protected:
+
+        glm::mat4 m_viewMatrix{}; // Store the view matrix
+
+
         // calculates the front vector from the Camera's (updated) Euler Angles
         virtual void updateCameraVectors() = 0;
     };

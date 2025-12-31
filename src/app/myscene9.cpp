@@ -196,7 +196,10 @@ void MyScene9::updateUI()
 void MyScene9::clean()
 {
     // clean up any resources
-    //helmetModel.clean();
+    ourText.clean();
+    ourText2.clean();
+    ourSprite.clean();
+    textMeshCount.clean();
 }
 
 void MyScene9::drawScene(Shader& shader)

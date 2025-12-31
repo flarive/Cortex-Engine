@@ -21,7 +21,7 @@ void engine::LightComponent::update(float deltaTime, Transform& transform)
 
 }
 
-void engine::LightComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::LightComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
     m_light->draw(shader,
         projection,

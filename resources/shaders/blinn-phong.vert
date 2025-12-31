@@ -76,9 +76,11 @@ void main()
 
     // Normal handling
     if (reverse_normals)
-        vs_out.Normal = transpose(inverse(mat3(model))) * (-1.0 * totalNormal);
+        //vs_out.Normal = transpose(inverse(mat3(model))) * (-1.0 * totalNormal);
+        vs_out.Normal = normalMatrix * (-1.0 * totalNormal);
     else
-        vs_out.Normal = transpose(inverse(mat3(model))) * totalNormal;
+        //vs_out.Normal = transpose(inverse(mat3(model))) * totalNormal;
+        vs_out.Normal = normalMatrix * totalNormal;
 
     // Pass through other attributes
     vs_out.TexCoords = aTexCoords;

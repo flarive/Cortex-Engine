@@ -212,7 +212,9 @@ void MyScene6::updateUI()
 void MyScene6::clean()
 {
     // clean up any resources
-    //helmetModel.clean();
+    ourText.clean();
+    ourText2.clean();
+    ourSprite.clean();
 }
 
 void MyScene6::drawScene(Shader& shader)

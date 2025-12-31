@@ -1,6 +1,6 @@
 #include "../../include/primitives/primitive.h"
 
-engine::Primitive::Primitive(const glm::vec3& _position) : position(_position)
+engine::Primitive::Primitive(const glm::vec3& _position) : m_position(_position)
 {
 }
 

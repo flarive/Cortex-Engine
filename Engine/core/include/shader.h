@@ -37,7 +37,7 @@ namespace engine
         // activate the shader
         void use() const;
 
-        bool checkShaderUniformExists(unsigned int shaderID, std::string uniformName);
+        bool checkShaderUniformExists(unsigned int shaderID, const std::string& uniformName) const;
 
         // utility uniform functions
         void setBool(const std::string& name, bool value) const;

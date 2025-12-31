@@ -58,6 +58,8 @@ namespace engine
         bool gammaCorrection{};
         bool flipUV{};
 
+        bool highlight{};
+
 
 
         // at least one virtual method to make it base class
@@ -114,7 +116,10 @@ namespace engine
 
         void reSetup();
 
+
     private:
+
+        
         std::string m_directory{};
         std::string m_filename{};
 
@@ -131,6 +136,8 @@ namespace engine
 
 
     protected:
+
+
 
         unsigned int m_numberOfMeshes{};
         unsigned int m_numberOfVertices{};

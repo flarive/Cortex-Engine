@@ -26,6 +26,8 @@ namespace engine
         void clear();
         void clean();
 
+		bool isInitialized() const { return m_initialized; }
+
     private:
         struct Line
         {
@@ -33,10 +35,10 @@ namespace engine
             glm::vec3 end;
             glm::vec3 color;
         };
-        std::vector<Line> m_lines;
-        GLuint m_vao{ 0 };
-        GLuint m_vbo{ 0 };
+        std::vector<Line> m_lines{};
+        GLuint m_vao{};
+        GLuint m_vbo{};
         static Shader m_shader; // Shared across all instances
-        bool m_initialized{ false };
+        bool m_initialized{};
     };
 }

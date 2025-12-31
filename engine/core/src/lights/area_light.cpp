@@ -67,10 +67,7 @@ void engine::AreaLight::setup()
 
 void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    std::string base = std::format("areaLights[{}]", m_index);
-
-    shader.use();
-    shader.setBool(std::format("{}.use", base), m_enabled);
+    ShaderType type = shader.getShaderType();
 
     // Calculate the light's points
     glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
@@ -78,28 +75,33 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
     glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
 
-   
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        std::string base = std::format("areaLights[{}]", m_index);
+
+        shader.use();
+        shader.setBool(std::format("{}.use", base), m_enabled);
+
+        // Send the light's points to the shader
+        std::string str_pos = std::format("{}.points", base);
+        std::string str_col = std::format("{}.color", base);
+        std::string str_int = std::format("{}.intensity", base);
+        std::string str_two = std::format("{}.twoSided", base);
+
+        shader.setVec3((str_pos + "[0]").c_str(), p0);
+        shader.setVec3((str_pos + "[1]").c_str(), p1);
+        shader.setVec3((str_pos + "[2]").c_str(), p2);
+        shader.setVec3((str_pos + "[3]").c_str(), p3);
 
 
-    // Send the light's points to the shader
-    std::string str_pos = std::format("{}.points", base);
-    std::string str_col = std::format("{}.color", base);
-    std::string str_int = std::format("{}.intensity", base);
-    std::string str_two = std::format("{}.twoSided", base);
-
-    shader.setVec3((str_pos + "[0]").c_str(), p0);
-    shader.setVec3((str_pos + "[1]").c_str(), p1);
-    shader.setVec3((str_pos + "[2]").c_str(), p2);
-    shader.setVec3((str_pos + "[3]").c_str(), p3);
+        shader.setVec3(str_col.c_str(), color);
+        shader.setFloat(str_int.c_str(), intensity);
+        shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
 
 
-    shader.setVec3(str_col.c_str(), color);
-    shader.setFloat(str_int.c_str(), intensity);
-    shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
-
-
-    glm::vec3 temp = Colors::SlateGray;
-    shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+        glm::vec3 temp = Colors::SlateGray;
+        shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+    }
 
     shaderLightPlane.use();
     shaderLightPlane.setMat4("model", transformMatrix);
@@ -107,8 +109,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     shaderLightPlane.setMat4("projection", projection);
     shaderLightPlane.setVec3("lightColor", color);
 
-	//m_primitive->draw(shader, transformMatrix, localTransform);
-        
+
     // send to GPU
     glBindVertexArray(areaLightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -123,7 +124,6 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
         drawDebugNormals(p0, p1, p2, p3, projection, view, transformMatrix);
     }
 }
-
 
 void engine::AreaLight::drawDebugNormals(const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
@@ -142,4 +142,6 @@ void engine::AreaLight::drawDebugNormals(const glm::vec3& p0, const glm::vec3& p
 
 void engine::AreaLight::clean()
 {
+    if (m_debugDrawLine.isInitialized())
+        m_debugDrawLine.clean();
 }

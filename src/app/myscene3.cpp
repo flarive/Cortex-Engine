@@ -339,13 +339,7 @@ void MyScene3::updateUI()
 void MyScene3::clean()
 {
     // clean up any resources
-    //rustedIronSphere.clean();
-    //goldSphere.clean();
-    //grassSphere.clean();
-    //plasticSphere.clean();
-    //wallSphere.clean();
-    //bronzeSphere.clean();
-    //ourPlane.clean();
+    ourText.clean();
 }
 
 void MyScene3::drawScene(Shader& shader)

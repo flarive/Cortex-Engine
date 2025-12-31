@@ -308,8 +308,8 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
                         // Tag the texture as metallic or roughness
                         if (type == aiTextureType_METALNESS)
                             texture.type = "texture_metalness_from_combined";
-                        else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
-                            texture.type = "texture_roughness_from_combined";
+                        //else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
+                        //    texture.type = "texture_roughness_from_combined";
                     }
 
                     textures.push_back(std::move(texture));

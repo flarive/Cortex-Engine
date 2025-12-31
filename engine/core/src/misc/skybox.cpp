@@ -22,14 +22,7 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 
 
     // skybox textures
-    //unsigned int textureID;
-    //glGenTextures(1, &textureID);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     m_cubemapTexture = engine::Texture::loadCubemap(faces);
-
-
-    /*m_skyboxShader.use();
-    m_skyboxShader.setInt("texture_skybox", 0);*/
 
     m_isSetup = true;
 }
@@ -57,31 +50,40 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     glDepthMask(GL_FALSE);
 
     m_skyboxShader.use();
-    OpenGLDebug::checkGLError("shader.use");
+    OpenGLDebug::checkGLError("shader.use77");
    
+    
+
     
     m_skyboxShader.setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
     m_skyboxShader.setMat4("projection", projection);
+    m_skyboxShader.setInt("texture_skybox", 0);
 
     // bind texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTexture);
-    m_skyboxShader.setInt("texture_skybox", 0);
+    
 
     // Send skybox cube to GPU
     glBindVertexArray(m_skyboxVAO);
     OpenGLDebug::checkGLError("glBindVertexArray");
+
     glDrawArrays(GL_TRIANGLES, 0, 36);
     OpenGLDebug::checkGLError("glDrawArrays");
+
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LESS); // set depth function back to default
+    
 
 	// unbind texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    //glUseProgram(0);
+
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 // optional: de-allocate all resources once they've outlived their purpose
@@ -91,6 +93,8 @@ void engine::Skybox::clean()
     {
         glDeleteVertexArrays(1, &m_skyboxVAO);
         glDeleteBuffers(1, &m_skyboxVBO);
+
+        m_skyboxShader.clean();
 
         m_isSetup = false;
     }

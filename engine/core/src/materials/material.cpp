@@ -36,6 +36,8 @@ bool engine::Material::bind(engine::Shader& shader) const
         const std::string uniformName = std::format("material.{}", texture.type);
         const std::string hasMapName = std::format("material.has_{}_map", texture.type);
 
+        shader.use();
+
         if (texture.id > 0)
         {
             glActiveTexture(GL_TEXTURE0 + textureUnit);

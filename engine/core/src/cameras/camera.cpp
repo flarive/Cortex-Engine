@@ -11,15 +11,14 @@ engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _zoom, float _y
 {
     position = _position;
     worldUp = _up;
-    //yaw = _yaw;
-    //pitch = _pitch;
     
     updateCameraVectors();
 }
 
-glm::mat4 engine::Camera::getViewMatrix()
+glm::mat4& engine::Camera::getViewMatrix()
 {
-    return glm::lookAt(position, position + front, up);
+    m_viewMatrix = glm::lookAt(position, position + front, up);
+    return m_viewMatrix;
 }
 
 void engine::Camera::setFromViewMatrix(const glm::mat4& view)

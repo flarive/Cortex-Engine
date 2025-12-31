@@ -187,8 +187,7 @@ void MyScene4::updateUI()
 void MyScene4::clean()
 {
     // clean up any resources
-    /*ourPlane.clean();
-    cushionModel.clean();*/
+    ourText.clean();
 }
 
 void MyScene4::drawScene(Shader& shader)

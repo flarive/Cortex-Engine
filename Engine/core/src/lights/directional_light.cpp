@@ -30,18 +30,23 @@ void engine::DirectionalLight::setup()
 
 void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    std::string base = std::format("dirLights[{}]", m_index);
+    ShaderType type = shader.getShaderType();
 
-    shader.use();
-    shader.setBool(std::format("{}.use", base), m_enabled);
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        std::string base = std::format("dirLights[{}]", m_index);
 
-    shader.setVec3(std::format("{}.position", base), position);
+        shader.use();
+        shader.setBool(std::format("{}.use", base), m_enabled);
 
-    shader.setVec3(std::format("{}.ambient", base), ambient);
-    shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
-    shader.setVec3(std::format("{}.specular", base), specular);
+        shader.setVec3(std::format("{}.position", base), position);
 
-    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+        shader.setVec3(std::format("{}.ambient", base), ambient);
+        shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
+        shader.setVec3(std::format("{}.specular", base), specular);
+
+        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+    }
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");

@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 
 struct Material {
     sampler2D texture_diffuse; // 0
@@ -13,28 +13,37 @@ struct Material {
     samplerCube texture_shadowMapCube; // 11
 
     sampler2D texture_metalness_from_combined;
-    sampler2D texture_roughness_from_combined;
+    //sampler2D texture_roughness_from_combined;
+
+    //float heightScale;
 
     vec3 ambient_color;
     vec3 diffuse_color;
     vec3 specular_color;
+
+    float ambient_intensity;
 
     float shininess;
 
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
-    bool has_texture_metalness_map;
+    bool has_texture_metalness_map; // not used in shader
     bool has_texture_roughness_map;
     bool has_texture_metalness_from_combined_map;
     bool has_texture_ao_map;
     bool has_texture_height_map;
     bool has_texture_emissive_map;
 
+
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
+    float normalMapIntensity;
+    float emissiveIntensity;
+
+
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
@@ -112,6 +121,7 @@ in VS_OUT {
 
 // coming from code
 uniform vec3 viewPos;
+uniform vec3 lightPos;
 uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
@@ -768,10 +778,41 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
 //    return shadow;
 //}
 
+// fake usage to avoid unused uniform removal
+bool checkUnusedUniforms()
+{
+    // fake not needed in blinn phong
+    float metallic = 0;
+    float roughness = 0;
+
+    if (material.has_texture_metalness_from_combined_map)
+    {
+        // Sample the combined texture
+        vec4 metalRoughness = texture(material.texture_metalness_from_combined, fs_in.TexCoords);
+        metallic = metalRoughness.b; // Extract metallic from Blue channel
+        roughness = metalRoughness.g; // Extract roughness from Green channel
+    }
+    else
+    {
+        // 2 distinct textures
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, fs_in.TexCoords).r : 0.0; // Non-metallic;
+        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, fs_in.TexCoords).r : 0.5; // Moderate roughness
+    }
+
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, fs_in.TexCoords).r : 0.0; // Full ambient occlusion
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, fs_in.TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
+    float height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).r : 0.0;
+
+    bool aaa = material.canCastShadows;
+    vec3 fakeAmbient = material.ambient_color * material.ambient_intensity;
+
+    return aaa ? (metallic + roughness + ao + emissive.x + height + fakeAmbient.x > 0.0 ? true : false) : false;
+}
+
 void main()
 {
     vec3 norm;
-    if (material.has_texture_normal_map)
+    if (material.has_texture_normal_map && hasTangents)
     {
         // Sample the normal map texture
         norm = texture(material.texture_normal, fs_in.TexCoords).rgb;
@@ -780,18 +821,18 @@ void main()
         // Transform normal from tangent space to world space
         vec3 T = normalize(fs_in.Tangent);
         vec3 B = normalize(fs_in.Bitangent);
+
         vec3 N = normalize(fs_in.Normal);
         mat3 TBN = mat3(T, B, N);
-        norm = normalize(TBN * norm);
+        norm = normalize(TBN * norm) * material.normalMapIntensity;
     }
     else
     {
-        norm = normalize(fs_in.Normal); // Use the geometry normal as a fallback
+        norm = normalize(fs_in.Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
     }
 
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 
-    
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
     // For each phase, a calculate function is defined that calculates the corresponding color
@@ -811,6 +852,11 @@ void main()
     vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
+    if (checkUnusedUniforms())
+    {
+        mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
+    }
+    
 
 	vec3 N = normalize(fs_in.Normal);
 	vec3 V = normalize(viewPos - fs_in.FragPos);
@@ -894,6 +940,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
 
+    
+
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
@@ -916,7 +964,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 // calculates the color when using a point light.
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
+    // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
+    vec3 lightDir = normalize(lightPos - fragPos);
     
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
@@ -959,7 +1008,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     // Direction from fragment to light
-    vec3 lightDir = normalize(light.position - fragPos);
+    // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
+    vec3 lightDir = normalize(lightPos - fragPos);
 
     // Diffuse shading
     float diff = max(dot(normal, light.direction), 0.0);
@@ -985,7 +1035,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // Ambient, Diffuse, and Specular components
     //vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
     float ambientStrength = 0.5;
-    //vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
     vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
     vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
@@ -997,12 +1046,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = 0.0;
+    //float temp = 0.0; // fake usage of material.canCastShadows
     if (material.shadowCalculationMethod == 1)
+    {
         shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+    }
     else if (material.shadowCalculationMethod == 2)
+    {
         shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+    }
     else if (material.shadowCalculationMethod == 3)
+    {
         shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+    }
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

@@ -13,14 +13,9 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(primitive));
 
-	// load light cube debug shader
-	m_lightDebugShader.init("primitive_boundingbox_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
-
-	auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 0.0f, 0.0f, 0.5f));
-
 	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
-	m_debug_boundingBox = std::make_unique<Cube>(width, height, depth); // Cube at origin with dimensions of the AABB
-	m_debug_boundingBox->setup(matDebugLight);
+	m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	m_debug_boundingBox->setup();
 
 
 	// Initialize property setters based on primitive type
@@ -29,9 +24,9 @@ engine::PrimitiveComponent::PrimitiveComponent(std::shared_ptr<Primitive> primit
 
 void engine::PrimitiveComponent::init(Transform& transform)
 {
-	m_primitive->position = transform.getLocalPosition();
-	m_primitive->rotation = transform.getLocalRotation();
-	m_primitive->scale = transform.getLocalScale();
+	m_primitive->setPosition(transform.getLocalPosition());
+	m_primitive->setRotation(transform.getLocalRotation());
+	m_primitive->setScale(transform.getLocalScale());
 }
 
 void engine::PrimitiveComponent::update(float deltaTime, Transform& transform)
@@ -39,7 +34,7 @@ void engine::PrimitiveComponent::update(float deltaTime, Transform& transform)
 
 }
 
-void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::PrimitiveComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	m_primitive->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
@@ -47,15 +42,10 @@ void engine::PrimitiveComponent::draw(glm::mat4 projection, glm::mat4 view, Shad
 	assert(singleton != nullptr && "Singleton not initialized !");
 	SceneSettings& sceneSettings = singleton->sceneSettings();
 
-	if (sceneSettings.drawBoundingBoxesVisualHelpers)
-	{
-		// Pass model matrix to shader
-		m_lightDebugShader.use();
-		m_lightDebugShader.setMat4("projection", projection);
-		m_lightDebugShader.setMat4("view", view);
-		m_lightDebugShader.setVec4("customColor", m_debug_boundingBox->getMaterial()->getAmbientColor());
-		m_debug_boundingBox->draw(m_lightDebugShader, projection, view, worldTransformMatrix, localTransform);
-	}
+	//if (sceneSettings.drawBoundingBoxesVisualHelpers)
+	//{
+	//	m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
+	//}
 }
 
 engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)

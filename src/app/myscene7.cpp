@@ -367,5 +367,9 @@ void MyScene7::updateUI()
 void MyScene7::clean()
 {
     // clean up any resources
-    //helmetModel.clean();
+    textFPSCount.clean();
+    textPolyCount.clean();
+    textMeshCount.clean();
+    textPrimitiveCount.clean();
+    ourSprite.clean();
 }

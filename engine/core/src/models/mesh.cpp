@@ -31,7 +31,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use");
+    OpenGLDebug::checkGLError("shader.use66");
 
     if (m_material)
     {
@@ -50,7 +50,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 
             shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
-            shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+            //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
         }

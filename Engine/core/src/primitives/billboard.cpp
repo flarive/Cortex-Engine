@@ -102,11 +102,9 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use");
+    OpenGLDebug::checkGLError("shader.use55");
 
-    position = localTransform.getLocalPosition();
-    rotation = localTransform.getLocalRotation();
-    scale = localTransform.getLocalScale();
+    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
     if (m_material)
     {
@@ -145,10 +143,10 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     billboardModel[0] = glm::vec4(cameraRight, 0.0f);
     billboardModel[1] = glm::vec4(cameraUp, 0.0f);
     billboardModel[2] = glm::vec4(cameraForward, 0.0f);
-    billboardModel[3] = glm::vec4(position, 1.0f);
+    billboardModel[3] = glm::vec4(getPosition(), 1.0f);
 
     // Apply scale
-    billboardModel = glm::scale(billboardModel, scale);
+    billboardModel = glm::scale(billboardModel, getScale());
 
     // Pass the billboard's model matrix to the shader
     shader.setMat4("model", billboardModel);

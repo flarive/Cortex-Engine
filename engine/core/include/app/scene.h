@@ -3,7 +3,6 @@
 #include "app.h"
 #include "../engine.h"
 
-
 #include "../renderers/renderer.h"
 #include "../renderers/blinnphong_renderer.h"
 #include "../renderers/pbr_renderer.h"
@@ -30,7 +29,11 @@ namespace engine
     class Scene : private NonCopyable
     {
     private:
-        bool key_w_pressed{ false };
+        static Scene* currentInstance; // Static pointer to the current instance
+        
+        bool key_f11_pressed{ false };
+
+        
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
@@ -178,7 +181,8 @@ namespace engine
 
         void refreshFullscreen();
 
-        
+        static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+
 
     private:
         
@@ -186,6 +190,24 @@ namespace engine
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 
+
+        // Camera projection
+        //bool isPerspective = true;
+        //float fov = 27.f;
+        float viewWidth = 10.f; // for orthographic
+        const float camYAngle = 165.f / 180.f * 3.14159f;
+        const float camXAngle = 32.f / 180.f * 3.14159f;
+        float camDistance = 0.f;
+        int gizmoCount = 1;
+
+        const float identityMatrix[16] =
+        { 1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f };
+
+        bool firstFrame = true;
+        int lastUsing = 0;
 
         void computeLightsIndexes();
         
@@ -199,8 +221,25 @@ namespace engine
         void countItems(std::shared_ptr<Entity>& entity);
 
         #if EDITOR_MODE
-        void renderGizmo();
+        void renderGuizmo();
         void listenForEditorChanges();
+        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);
+        void LookAt(const float* eye, const float* at, const float* up, float* m16);
+
+        void Cross(const float* a, const float* b, float* r);
+
+
+        float Dot(const float* a, const float* b);
+
+        void Normalize(const float* a, float* r);
+
+        void performRayCasting(double xpos, double ypos);
+
+        bool testRayAABBIntersection(
+            const glm::vec3& rayOrigin,
+            const glm::vec3& rayDirection,
+            const engine::AABB* aabb);
+
         #endif
     };
 }

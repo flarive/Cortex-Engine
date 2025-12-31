@@ -33,5 +33,7 @@ namespace engine
         // render line of text
         // -------------------
         void draw(std::string text, float x, float y, float scale, glm::vec3 color);
+
+        void clean();
     };
 }

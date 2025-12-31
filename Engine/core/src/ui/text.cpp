@@ -175,3 +175,23 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void engine::Text::clean()
+{
+    // Delete textures
+    for (auto& pair : m_characters) {
+        glDeleteTextures(1, &pair.second.TextureID);
+    }
+    m_characters.clear();
+    // Delete VAO and VBO
+    if (m_VAO != 0) {
+        glDeleteVertexArrays(1, &m_VAO);
+        m_VAO = 0;
+    }
+    if (m_VBO != 0) {
+        glDeleteBuffers(1, &m_VBO);
+        m_VBO = 0;
+    }
+
+    m_textShader.clean();
+}

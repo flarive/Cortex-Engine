@@ -159,10 +159,10 @@
   <ItemGroup>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.cpp" />
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGradient.cpp" />
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.cpp" />
-    <ClCompile Include="..\libs\imgui\extensions\imGizmo\ImSequencer.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGradient.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImSequencer.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_palette.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_presets.cpp" />
@@ -184,6 +184,7 @@
     <ClCompile Include="core\src\cameras\fly_camera.cpp" />
     <ClCompile Include="core\src\cameras\fps_camera.cpp" />
     <ClCompile Include="core\src\cameras\orbit_camera.cpp" />
+    <ClCompile Include="core\src\debug\debug_cube.cpp" />
     <ClCompile Include="core\src\debug\debug_draw_line.cpp" />
     <ClCompile Include="core\src\debug\debug_plane_grid.cpp" />
     <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="core\include\cameras\orbit_camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
+    <ClInclude Include="core\include\debug\debug_cube.h" />
     <ClInclude Include="core\include\debug\debug_draw_line.h" />
     <ClInclude Include="core\include\debug\debug_plane_grid.h" />
     <ClInclude Include="core\include\debug\imgui_perf_overlay.h" />

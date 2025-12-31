@@ -14,6 +14,8 @@ namespace engine
     {
         unsigned int targetFPS{ 0 }; // 0 means no FPS capping
     };
+
+    //class Scene; // forward declaration
     
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
@@ -49,12 +51,10 @@ namespace engine
 
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
-    
 
     private:
 
         void setup();
-
 
         void initGLFW();
         const char* initOpenGL();

@@ -278,6 +278,7 @@ void engine::BlinnPhongRenderer::clean()
     // delete shaders
     blinnPhongShader.clean();
     skyboxShader.clean();
+    backgroundShader.clean();
 
 	m_skybox->clean();
 }

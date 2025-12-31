@@ -20,6 +20,7 @@ engine::LogManager& engine::LogManager::getInstance()
 
 void engine::LogManager::init_sinks()
 {
+#ifndef DISABLE_LOGGING_FILE
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::info);
     console_sink->set_pattern("[cortex] [%^%l%$] %v");
@@ -28,6 +29,13 @@ void engine::LogManager::init_sinks()
     file_sink->set_level(spdlog::level::info);
 
     logger = new spdlog::logger(LOGER_NAME, { console_sink, file_sink });
+#else
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    console_sink->set_level(spdlog::level::info);
+    console_sink->set_pattern("[cortex] [%^%l%$] %v");
+
+    logger = new spdlog::logger(LOGER_NAME, { console_sink });
+#endif
 }
 
 //void engine::LogManager::info(const std::string& msg)

@@ -22,9 +22,9 @@ namespace engine
     class Model : public SharedModel
     {
     public:
-        glm::vec3 position{};
+        /*glm::vec3 position{};
         glm::vec3 rotation{};
-        glm::vec3 scale{};
+        glm::vec3 scale{};*/
 
         Model() = default;
 		~Model() = default;
@@ -55,7 +55,26 @@ namespace engine
         unsigned int getMeshCount() const;
         //unsigned int getVertexCount() const;
 
+        glm::vec3& getPosition() { return m_position; }
+        glm::vec3& getRotation() { return m_rotation; }
+        glm::vec3& getScale() { return m_scale; }
+
+        void setPosition(const glm::vec3& position) { m_position = position; }
+        void setRotation(const glm::vec3& rotation) { m_rotation = rotation; }
+        void setScale(const glm::vec3& scale) { m_scale = scale; }
+
+        void setTransform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale) {
+            m_position = position;
+            m_rotation = rotation;
+            m_scale = scale;
+        }
+
     private:
+
+        glm::vec3 m_position{};
+        glm::vec3 m_rotation{};
+        glm::vec3 m_scale{};
+
         // for shared model only (loaded one time, drawn multiple times)
         std::shared_ptr<SharedModel> m_shared_model{};
     };

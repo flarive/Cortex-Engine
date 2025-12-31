@@ -9,6 +9,8 @@
 #include <memory>
 #include <source_location>
 
+#define DISABLE_LOGGING_FILE
+
 namespace engine
 {
     class LogManager final
@@ -26,16 +28,15 @@ namespace engine
         }
 
         template<typename... Args>
-        void warn(fmt::format_string<Args...> fmt,
-            Args&&... args) {
+        void warn(fmt::format_string<Args...> fmt, Args&&... args)
+        {
             std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
             logger->warn(msg);
         }
 
         template<typename... Args>
-        void warn(fmt::format_string<Args...> fmt,
-            std::source_location loc,
-            Args&&... args) {
+        void warn(fmt::format_string<Args...> fmt, std::source_location loc, Args&&... args)
+        {
             std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
             logger->warn(msg, loc);
         }
@@ -44,16 +45,15 @@ namespace engine
         //void error(const std::string& msg);
 
         template<typename... Args>
-        void error(fmt::format_string<Args...> fmt,
-            Args&&... args) {
+        void error(fmt::format_string<Args...> fmt, Args&&... args)
+        {
             std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
             logger->error(msg);
         }
 
         template<typename... Args>
-        void error(fmt::format_string<Args...> fmt,
-            std::source_location loc,
-            Args&&... args) {
+        void error(fmt::format_string<Args...> fmt, std::source_location loc, Args&&... args)
+        {
             std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
             logger->error(msg, loc);
         }

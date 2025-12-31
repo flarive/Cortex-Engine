@@ -21,28 +21,27 @@
 
 // constructor, expects a filepath to a 3D model.
 engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_path, _gamma, _flipUVs), position(_position)
+    : SharedModel(_path, _gamma, _flipUVs), m_position(_position)
 {
 }
 
 engine::Model::Model(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_path, _material, _gamma, _flipUVs), position(_position)
+    : SharedModel(_path, _material, _gamma, _flipUVs), m_position(_position)
 {
 }
 
 // constructor, expects a model (for sharing)
 engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
-    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), position(_position)
+    : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), m_position(_position)
 {
 }
 
 // draws the model, and thus all its meshes
 void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    position = localTransform.getLocalPosition();
-    rotation = localTransform.getLocalRotation();
-    scale = localTransform.getLocalScale();
+    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
+    shader.use();
     shader.setBool("isAnimated", hasBones());
 
     if (!m_shared_model)

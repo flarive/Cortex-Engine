@@ -8,7 +8,7 @@
 #include "../bounding_volume.h"
 #include "../aabb.h"
 
-#include "../primitives/cube.h"
+#include "../debug/debug_cube.h"
 #include "../shader.h"
 
 namespace engine
@@ -24,7 +24,7 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(float deltaTime, Transform& transform) override;
 
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
+		void draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
 		std::shared_ptr<Model> getModel()
 		{
@@ -52,11 +52,7 @@ namespace engine
 		std::shared_ptr<Model> m_model{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		std::unique_ptr<Cube> m_debug_boundingBox{};
-
-		Shader m_lightDebugShader{};
-
-		bool DISPLAY_DEBUG_BOUNDING_BOX{ true };
+		std::unique_ptr<DebugCube> m_debug_boundingBox{};
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};
 

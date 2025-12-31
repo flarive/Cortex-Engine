@@ -18,7 +18,7 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(float deltaTime, Transform& transform) override;
 
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
+		void draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
 		static ComponentType getStaticTypeID()
 		{
@@ -31,9 +31,14 @@ namespace engine
 		}
 
 		Transform getTransform() { return m_transform; }
-		glm::mat4 getWorldTransformMatrix() { return m_worldTransform; }
+		glm::mat4& getWorldTransformMatrix() { return m_worldTransform; }
 
 
+		// The world matrix is typically a 4x4 matrix that combines translation, rotation, and scale. It is often represented as:
+		// [R R R T]
+		// [R R R T]
+		// [R R R T]
+		// [0 0 0 1]
 		void setTransform(const Transform& transform) { m_transform = transform; }
 		void setWorldTransformMatrix(const glm::mat4& worldTransform)
 		{

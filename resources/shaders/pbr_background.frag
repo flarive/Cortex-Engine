@@ -15,9 +15,6 @@ const float pi = 3.14159265359;
 const int samples = 2;
 const float sigma = float(samples) * 0.25;
 
-uniform vec2 u_resolution;
-
-
 float gaussian(vec2 i) {
     return 1.0 / (2.0 * pi * pow2(sigma)) * exp(-((pow2(i.x) + pow2(i.y)) / (2.0 * pow2(sigma))));
 }

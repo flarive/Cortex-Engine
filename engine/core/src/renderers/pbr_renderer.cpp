@@ -366,7 +366,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     backgroundShader.use();
     backgroundShader.setMat4("view", view);
     backgroundShader.setMat4("projection", projection);
-    backgroundShader.setVec2("u_resolution", glm::vec2(width, height));
     backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
     // Bind the cube map texture to texture unit 0

@@ -160,11 +160,9 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use");
+    OpenGLDebug::checkGLError("shader.use44");
 
-    position = localTransform.getLocalPosition();
-    rotation = localTransform.getLocalRotation();
-    scale = localTransform.getLocalScale();
+    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
     if (m_material)
     {
@@ -184,7 +182,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
             shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
 
-            shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+            //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 

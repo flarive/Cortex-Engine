@@ -28,9 +28,9 @@ struct Material {
     samplerCube texture_shadowMapCube; // 11 NOT IMPLEMENTED YET !!!!!!!!!!!!
 
     sampler2D texture_metalness_from_combined;
-    sampler2D texture_roughness_from_combined;
+    //sampler2D texture_roughness_from_combined;
 
-    float heightScale;
+    //float heightScale;
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -39,8 +39,14 @@ struct Material {
     float normalMapIntensity;
     float emissiveIntensity;
 
-    float ambient_intensity;
     vec3 ambient_color;
+    vec3 diffuse_color;
+    vec3 specular_color;
+
+    float ambient_intensity;
+
+    float shininess;
+
 
     float iblDiffuseIntensity;  // New uniform for diffuse IBL intensity
     float iblSpecularIntensity; // New uniform for specular IBL intensity
@@ -118,6 +124,7 @@ struct AreaLight {
 
 // coming from code
 uniform vec3 viewPos;
+uniform vec3 lightPos;
 uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
@@ -376,15 +383,15 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }   
 // ----------------------------------------------------------------------------
-vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
-{ 
-    float height =  texture(material.texture_height, texCoords).r;    
-    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
-    return texCoords - p;
+//vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
+//{ 
+//    float height =  texture(material.texture_height, texCoords).r;    
+//    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
+//    return texCoords - p;
 //
 //    float height =  texture(material.texture_height, texCoords).r;     
 //    return texCoords - viewDir.xy * (height * material.heightScale); 
-} 
+//} 
 
 //
 //vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
@@ -683,7 +690,19 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     return shadow;
 }
 
-
+// fake usage to avoid unused uniform removal
+bool checkUnusedUniforms()
+{
+    if (material.ambient_color == vec3(0.0) && material.ambient_intensity == 0.0
+    && material.diffuse_color == vec3(0.0)
+    && material.specular_color == vec3(0.0) && far_plane == 1.0f)
+    {
+        vec2 texelSize = 1.0 / textureSize(material.texture_shadowMapCube, 0);
+        return material.shininess > 0 && material.canCastShadows && texelSize == vec2(0.0) && lightPos == vec3(0.0);
+    }
+    
+    return material.has_texture_specular_map && material.has_texture_normal_map && material.has_texture_height_map;
+}
 
 // ----------------------------------------------------------------------------
 void main()
@@ -734,6 +753,11 @@ void main()
 
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+
+    if (checkUnusedUniforms())
+    {
+        ao = 0.0;
+    }
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -857,11 +881,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     // Compute shadow factor
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  
@@ -922,11 +946,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 
     // Shadow calculation
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
 
     radiance *= (1.0 - shadow);  

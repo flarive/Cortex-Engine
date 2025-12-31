@@ -188,8 +188,10 @@ void engine::Entity::setTransform(const engine::Transform& transform)
 	}
 }
 
-glm::mat4 engine::Entity::getWorldTransform()
+glm::mat4& engine::Entity::getWorldTransform()
 {
+	static glm::mat4 empty{};
+	
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
 	{
@@ -198,7 +200,7 @@ glm::mat4 engine::Entity::getWorldTransform()
 
 	logger.warn("Entity getWorldTransform() error, entity {} has no transform component", this->name);
 
-	return glm::mat4{};
+	return empty;
 }
 
 void engine::Entity::setWorldTransform(const glm::mat4& worldTransform)

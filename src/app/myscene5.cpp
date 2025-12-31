@@ -212,8 +212,7 @@ void MyScene5::updateUI()
 void MyScene5::clean()
 {
     // clean up any resources
-    //ourPlane.clean();
-    //buddhaModel.clean();
+    ourText.clean();
 }
 
 void MyScene5::drawScene(Shader& shader)

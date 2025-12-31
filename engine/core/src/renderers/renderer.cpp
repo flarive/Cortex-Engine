@@ -647,6 +647,7 @@ void engine::Renderer::clean()
     pointDepthMapShader.clean();
     depthMapToQuadShader.clean();
     cubeFaceDebugShader.clean();
+    outlineColorShader.clean();
 
     // delete framebuffers
     glDeleteFramebuffers(1, &depthMapFramebuffer);

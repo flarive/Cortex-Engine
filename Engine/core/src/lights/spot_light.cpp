@@ -27,25 +27,32 @@ void engine::SpotLight::setup()
 
 void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    std::string base = std::format("spotLights[{}]", m_index);
+    ShaderType type = shader.getShaderType();
 
-    shader.use();
-    shader.setBool(std::format("{}.use", base), m_enabled);
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        std::string base = std::format("spotLights[{}]", m_index);
+        
+        shader.use();
+        shader.setBool(std::format("{}.use", base), m_enabled);
 
-    shader.setVec3(std::format("{}.position", base), position);
-    shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+        shader.setVec3(std::format("{}.position", base), position);
+        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
 
-    shader.setVec3(std::format("{}.ambient", base), ambient * intensity);
-    shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
-    shader.setVec3(std::format("{}.specular", base), specular);
+        shader.setVec3(std::format("{}.ambient", base), ambient * intensity);
+        shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
+        shader.setVec3(std::format("{}.specular", base), specular);
 
-    shader.setFloat(std::format("{}.constant", base), 1.0f);
-    shader.setFloat(std::format("{}.linear", base), 0.09f);
-    shader.setFloat(std::format("{}.quadratic", base), 0.032f); // tweak shadow intensity
+        shader.setFloat(std::format("{}.constant", base), 1.0f);
+        shader.setFloat(std::format("{}.linear", base), 0.09f);
+        shader.setFloat(std::format("{}.quadratic", base), 0.032f); // tweak shadow intensity
 
-    // clamp
-    shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(cutoff)));
-    shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(outerCutoff)));
+        // clamp
+        shader.setFloat(std::format("{}.cutOff", base), glm::cos(glm::radians(cutoff)));
+        shader.setFloat(std::format("{}.outerCutOff", base), glm::cos(glm::radians(outerCutoff)));
+    }
+
+    
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");

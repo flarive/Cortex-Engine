@@ -185,5 +185,10 @@ void MyScene2::updateUI()
 void MyScene2::clean()
 {
     // clean up any resources
+    textFPSCount.clean();
+    textPolyCount.clean();
+    textMeshCount.clean();
+    textPrimitiveCount.clean();
+    textDrawnCount.clean();
+    textTotalCount.clean();
 }
-

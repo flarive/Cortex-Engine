@@ -70,36 +70,6 @@ void engine::DebugDraw::addLine(
         m_lines.push_back({ end, arrowPoint4, color });
     }
 }
-//
-//void engine::DebugDraw::addLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color, bool withArrow, float arrowSize)
-//{
-//    // Add the main line
-//    m_lines.push_back({ start, end, color });
-//
-//    if (withArrow) {
-//        // Calculate the direction vector
-//        glm::vec3 direction = glm::normalize(end - start);
-//
-//        // Find a perpendicular vector to the direction
-//        glm::vec3 perpendicular;
-//        if (fabs(direction.x) > fabs(direction.z)) {
-//            // If direction is mostly in the x-axis, cross with the y-axis
-//            perpendicular = glm::normalize(glm::cross(direction, glm::vec3(0.0f, 1.0f, 0.0f)));
-//        }
-//        else {
-//            // Otherwise, cross with the x-axis
-//            perpendicular = glm::normalize(glm::cross(direction, glm::vec3(1.0f, 0.0f, 0.0f)));
-//        }
-//
-//        // Calculate the two symmetrical points for the arrowhead
-//        glm::vec3 arrowPoint1 = end - direction * arrowSize + perpendicular * arrowSize;
-//        glm::vec3 arrowPoint2 = end - direction * arrowSize - perpendicular * arrowSize;
-//
-//        // Add the two lines for the symmetrical arrowhead
-//        m_lines.push_back({ end, arrowPoint1, color });
-//        m_lines.push_back({ end, arrowPoint2, color });
-//    }
-//}
 
 void engine::DebugDraw::render(const glm::mat4& view, const glm::mat4& projection)
 {

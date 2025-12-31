@@ -43,7 +43,7 @@ namespace engine
 		Transform getTransform();
 		void setTransform(const engine::Transform& transform);
 		
-		glm::mat4 getWorldTransform();
+		glm::mat4& getWorldTransform();
 		void setWorldTransform(const glm::mat4& worldTransform);
 
 

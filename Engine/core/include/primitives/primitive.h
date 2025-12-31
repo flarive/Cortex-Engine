@@ -64,9 +64,11 @@ namespace engine
 
     public:
         
-        glm::vec3 position{};
-        glm::vec3 rotation{};
-        glm::vec3 scale{};
+        //glm::vec3 position{};
+        //glm::vec3 rotation{};
+        //glm::vec3 scale{};
+
+        bool highlight{};
         
         Primitive(const glm::vec3& _position = glm::vec3());
         virtual ~Primitive() = default;
@@ -114,7 +116,31 @@ namespace engine
             return PrimitiveType::undefined;
         }
 
+		inline glm::vec3& getPosition() { return m_position; }
+        inline glm::vec3& getRotation() { return m_rotation; }
+        inline glm::vec3& getScale() { return m_scale; }
+
+        inline void setPosition(const glm::vec3& position) { m_position = position; }
+        inline void setRotation(const glm::vec3& rotation) { m_rotation = rotation; }
+        inline void setScale(const glm::vec3& scale) { m_scale = scale; }
+
+        inline void setTransform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale) {
+            m_position = position;
+            m_rotation = rotation;
+            m_scale = scale;
+		}
+
+  //      void setTransform(const Transform& transform) {
+  //          m_position = transform.getLocalPosition();
+  //          m_rotation = transform.getLocalRotation();
+  //          m_scale = transform.getLocalScale();
+		//}
+
     private:
+        glm::vec3 m_position{};
+        glm::vec3 m_rotation{};
+        glm::vec3 m_scale{};
+        
         virtual void geometrySetup() = 0;
     };
 

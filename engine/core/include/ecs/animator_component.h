@@ -26,7 +26,7 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(float deltaTime, Transform& transform) override;
 
-		void draw(glm::mat4 projection, glm::mat4 view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
+		void draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume = nullptr) override;
 
 		std::shared_ptr<Animator> getAnimator()
 		{

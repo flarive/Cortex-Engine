@@ -43,9 +43,6 @@ namespace engine
 
         PrimitiveType getTypeID() const override
         {
-            
-            
-            
             return PrimitiveType::billboard;
         }
 

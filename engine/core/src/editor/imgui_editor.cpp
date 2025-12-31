@@ -480,15 +480,15 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     }
     else if (primitiveComponent = entity->getComponent<PrimitiveComponent>())
     {
-        position = primitiveComponent->getPrimitive()->position;
-        scale = primitiveComponent->getPrimitive()->scale;
-        rotation = primitiveComponent->getPrimitive()->rotation;
+        position = primitiveComponent->getPrimitive()->getPosition();
+        scale = primitiveComponent->getPrimitive()->getScale();
+        rotation = primitiveComponent->getPrimitive()->getRotation();
     }
     else if (modelComponent = entity->getComponent<ModelComponent>())
     {
-        position = modelComponent->getModel()->position;
-        scale = modelComponent->getModel()->scale;
-        rotation = modelComponent->getModel()->rotation;
+        position = modelComponent->getModel()->getPosition();
+        scale = modelComponent->getModel()->getScale();
+        rotation = modelComponent->getModel()->getRotation();
     }
 
     // Local variables for ImGui
@@ -595,16 +595,16 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     else if (primitiveComponent)
     {
         auto p = primitiveComponent->getPrimitive();
-        p->position = position;
-        p->rotation = rotation;
-        p->scale = scale;
+        p->setPosition(position);
+        p->setRotation(rotation);
+        p->setScale(scale);
     }
     else if (modelComponent)
     {
         auto p = modelComponent->getModel();
-        p->position = position;
-        p->rotation = rotation;
-        p->scale = scale;
+        p->setPosition(position);
+        p->setRotation(rotation);
+        p->setScale(scale);
     }
 
     updateTransformComponent(transformComponent, position, rotation, scale); // dirty

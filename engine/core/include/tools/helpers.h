@@ -15,5 +15,6 @@ namespace engine
 	{
 	public:
 		//static NormalizedRotation normalizeRotation(glm::vec3 rotation);
+		static void printMat4(const glm::mat4& mat);
 	};
 }

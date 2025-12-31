@@ -30,35 +30,40 @@ void engine::PointLight::setup()
 
 void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    std::string base = std::format("pointLights[{}]", m_index);
+    ShaderType type = shader.getShaderType();
 
-    shader.use();
-    shader.setBool(std::format("{}.use", base), m_enabled);
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        std::string base = std::format("pointLights[{}]", m_index);
 
-    shader.setVec3(std::format("{}.position", base), position);
+        shader.use();
+        shader.setBool(std::format("{}.use", base), m_enabled);
 
-    shader.setVec3(std::format("{}.ambient", base), ambient);
-    shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
-    shader.setVec3(std::format("{}.specular", base), specular);
+        shader.setVec3(std::format("{}.position", base), position);
 
-
-
-    // no attenuation values
-    //shader.setFloat(std::format("{}.constant", base), 1.0f);
-    //shader.setFloat(std::format("{}.linear", base), 0.0f);
-    //shader.setFloat(std::format("{}.quadratic", base), 0.0f);
+        shader.setVec3(std::format("{}.ambient", base), ambient);
+        shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
+        shader.setVec3(std::format("{}.specular", base), specular);
 
 
 
-    //constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
-    //Usually 1.0 so the denominator never goes to zero.
-    shader.setFloat(std::format("{}.constant", base), 1.0f);
+        // no attenuation values
+        //shader.setFloat(std::format("{}.constant", base), 1.0f);
+        //shader.setFloat(std::format("{}.linear", base), 0.0f);
+        //shader.setFloat(std::format("{}.quadratic", base), 0.0f);
 
-    // linear: Controls how quickly the light falls off linearly with distance.
-    shader.setFloat(std::format("{}.linear", base), 0.09f); //0.09, 0.045, 0.0014
 
-    // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
-    shader.setFloat(std::format("{}.quadratic", base), 0.032f); // 0.032, 0.0075, 0.000007
+
+        //constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
+        //Usually 1.0 so the denominator never goes to zero.
+        shader.setFloat(std::format("{}.constant", base), 1.0f);
+
+        // linear: Controls how quickly the light falls off linearly with distance.
+        shader.setFloat(std::format("{}.linear", base), 0.09f); //0.09, 0.045, 0.0014
+
+        // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
+        shader.setFloat(std::format("{}.quadratic", base), 0.032f); // 0.032, 0.0075, 0.000007
+    }
 
 
     auto* singleton = engine::Singleton::getInstance();

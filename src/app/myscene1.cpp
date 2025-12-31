@@ -26,7 +26,7 @@ void MyScene1::init()
 {
     // camera
     auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
-    auto camera1 = make_shared<FpsCamera>(25.0f, -90.0f, 0.0f, 10.0f);
+    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -202,7 +202,7 @@ void MyScene1::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode)
+    if (is_editor_mode || show_demo_window)
         return;
 
     float xpos{ static_cast<float>(xposIn) };
@@ -297,4 +297,10 @@ void MyScene1::updateUI()
 void MyScene1::clean()
 {
     // clean up any resources
+    textFPSCount.clean();
+    textPolyCount.clean();
+    textMeshCount.clean();
+    textPrimitiveCount.clean();
+    textDrawnCount.clean();
+    textTotalCount.clean();
 }

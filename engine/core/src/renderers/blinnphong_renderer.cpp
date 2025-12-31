@@ -194,7 +194,7 @@ void engine::BlinnPhongRenderer::loadShaders()
     blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
 
     // skybox reflection shader
-    skyboxShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
+    skyboxReflectionShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
 
 	// gradient background shader
     backgroundShader.init("background", "shaders/blinnphong_background.vert", "shaders/blinnphong_background.frag");
@@ -277,7 +277,7 @@ void engine::BlinnPhongRenderer::clean()
     
     // delete shaders
     blinnPhongShader.clean();
-    skyboxShader.clean();
+    skyboxReflectionShader.clean();
     backgroundShader.clean();
 
 	m_skybox->clean();

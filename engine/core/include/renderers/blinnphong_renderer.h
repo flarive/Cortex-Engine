@@ -14,7 +14,7 @@ namespace engine
 		Shader blinnPhongShader{};
 
 		// Skybox shader
-		Shader skyboxShader{};
+		Shader skyboxReflectionShader{};
 		Shader backgroundShader{};
 		
 		BlinnPhongRenderer(GLFWwindow* window);

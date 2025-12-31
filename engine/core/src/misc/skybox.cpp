@@ -94,6 +94,8 @@ void engine::Skybox::clean()
         glDeleteVertexArrays(1, &m_skyboxVAO);
         glDeleteBuffers(1, &m_skyboxVBO);
 
+        glDeleteTextures(1, &m_cubemapTexture);
+
         m_skyboxShader.clean();
 
         m_isSetup = false;

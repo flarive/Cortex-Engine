@@ -12,7 +12,8 @@ MyScene1::MyScene1(string _title, App* _app) : Scene(_title, _app, SceneSettings
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048
+        .shadowMapsTextureSize = 2048,
+        .drawBoundingBoxesVisualHelpers = true
     })
 {
     // my application specific state gets initialized here

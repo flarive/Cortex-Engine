@@ -12,8 +12,7 @@ MyScene1::MyScene1(string _title, App* _app) : Scene(_title, _app, SceneSettings
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048,
-        .drawBoundingBoxesVisualHelpers = true
+        .shadowMapsTextureSize = 2048
     })
 {
     // my application specific state gets initialized here
@@ -285,14 +284,14 @@ void MyScene1::update(Shader& shader)
 void MyScene1::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    textPolyCount.draw(format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    textMeshCount.draw(format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
-    textPrimitiveCount.draw(format("{} primitives", (int)primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    textDrawnCount.draw(format("{} drawn", (int)inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
-    textTotalCount.draw(format("{} total", (int)totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
+    textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
+    textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
 }
 
 void MyScene1::clean()

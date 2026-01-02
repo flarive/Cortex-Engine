@@ -263,4 +263,5 @@ void engine::App::toggleFullscreen(std::function<void()> func)
     func();
 
     isFullscreen = !isFullscreen;
+	fullscreen = isFullscreen;
 }

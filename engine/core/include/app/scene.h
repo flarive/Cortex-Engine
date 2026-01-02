@@ -235,10 +235,13 @@ namespace engine
 
         void performRayCasting(double xpos, double ypos);
 
+        //bool isInsideAABB(const glm::vec3& point, const glm::vec3& boxMin, const glm::vec3& boxMax);
+
         bool testRayAABBIntersection(
             const glm::vec3& rayOrigin,
             const glm::vec3& rayDirection,
-            const engine::AABB* aabb);
+            const engine::AABB* aabb,
+            float& outDistance);
 
         #endif
     };

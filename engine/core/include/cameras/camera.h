@@ -87,6 +87,8 @@ namespace engine
 
         void setFromViewMatrix(const glm::mat4& view);
 
+        glm::mat4& getPerspectiveProjection(float width, float height, float near = 0.1f, float far = 100.0f);
+
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         virtual void processKeyboard(CameraMovement direction, float deltaTime, GLboolean constrainPitch = true) = 0;
 
@@ -118,6 +120,7 @@ namespace engine
     protected:
 
         glm::mat4 m_viewMatrix{}; // Store the view matrix
+        glm::mat4 m_projection{};
 
 
         // calculates the front vector from the Camera's (updated) Euler Angles

@@ -141,7 +141,7 @@ void MyScene9::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode)
+    if (is_editor_mode || show_demo_window)
         return;
 
     float xpos = static_cast<float>(xposIn);
@@ -210,8 +210,8 @@ void MyScene9::drawScene(Shader& shader)
 void MyScene9::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
-    ourText2.draw(format("{} polys", (int)polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
     ourSprite.draw(vec2(50, app->height - 100), vec2(50.0f, 50.0f), 0.0f, vec3(1.0f));
-    textMeshCount.draw(format("{} meshes", (int)meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
 }

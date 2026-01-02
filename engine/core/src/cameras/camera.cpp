@@ -21,6 +21,12 @@ glm::mat4& engine::Camera::getViewMatrix()
     return m_viewMatrix;
 }
 
+glm::mat4& engine::Camera::getPerspectiveProjection(float width, float height, float near, float far)
+{
+    m_projection = glm::perspective(glm::radians(zoom), width / height, near, far);
+    return m_projection;
+}
+
 void engine::Camera::setFromViewMatrix(const glm::mat4& view)
 {
     // Inverse view => world transform

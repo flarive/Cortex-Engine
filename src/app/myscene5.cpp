@@ -141,7 +141,7 @@ void MyScene5::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode)
+    if (is_editor_mode || show_demo_window)
         return;
 
     float xpos = static_cast<float>(xposIn);
@@ -231,12 +231,12 @@ void MyScene5::drawScene(Shader& shader)
 
 
     stringstream ss;
-    ss << title << " - " << (int)framerate << " FPS";
+    ss << title << " - " << format("{:.0f} FPS", framerate);
     app->setWindowTitle(ss.str());
 }
 
 void MyScene5::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{} FPS", (int)framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
 }

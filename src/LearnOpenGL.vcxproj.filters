@@ -104,6 +104,9 @@
     <Filter Include="resources\models\mixamo">
       <UniqueIdentifier>{8ed8fd1f-7b0f-45de-9dae-74da4e07fb7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\UI">
+      <UniqueIdentifier>{3a6429d1-0c93-41ef-9a49-89ddf5d1bfdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -794,6 +797,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\mixamo\HipHopDance.glb">
       <Filter>resources\models\mixamo</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\UI\cortex-logo.png">
+      <Filter>resources\UI</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

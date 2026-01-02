@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <functional>
 #include <memory>
@@ -137,8 +138,8 @@ void engine::Scene::initialize()
     #endif
 
     // mouse picking for editor mode
-    if (show_demo_window)
-        glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
+    //if (show_demo_window)
+        //glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
 
     after_init();
 }
@@ -307,7 +308,7 @@ void engine::Scene::gameLoop()
     }
     #endif
 
-    renderGuizmo();
+    //renderGuizmo();
     
     if (show_perf_overlay)
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
@@ -363,6 +364,8 @@ void engine::Scene::gameLoop()
 
     m_renderer->enableGammaCorrection(false);
 
+    renderGuizmo();
+
     // ImGUI rendering
     ImGui::Render();
 
@@ -370,6 +373,8 @@ void engine::Scene::gameLoop()
     glfwGetFramebufferSize(app->window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    
 
     // Update and Render additional Platform Windows
     // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
@@ -822,7 +827,11 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
 void engine::Scene::renderGuizmo()
 {
     auto cam = getActiveCamera();
-    glm::mat4 projection = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+
+    if (!cam)
+        return;
+
+    glm::mat4 projection = cam->getPerspectiveProjection((float)app->width, (float)app->height, 0.1f, 100.0f);
     glm::mat4 view = cam->getViewMatrix();
 
     // Convert glm::mat4 to const float*
@@ -837,37 +846,39 @@ void engine::Scene::renderGuizmo()
     ImGuizmo::SetOrthographic(!cam->isPerspective);
     ImGuizmo::BeginFrame();
 
-    ImGui::SetNextWindowPos(ImVec2(1024, 100));
-    ImGui::SetNextWindowSize(ImVec2(256, 256));
+    //ImGui::SetNextWindowPos(ImVec2(1024, 100));
+    //ImGui::SetNextWindowSize(ImVec2(256, 256));
 
-    // create a window and insert the inspector
-    ImGui::SetNextWindowPos(ImVec2(10, 10));
-    ImGui::SetNextWindowSize(ImVec2(320, 340));
-    ImGui::Begin("Editor");
-    ImGui::Text("Camera");
-    bool viewDirty = false;
-    if (ImGui::RadioButton("Perspective", cam->isPerspective)) cam->isPerspective = true;
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Orthographic", !cam->isPerspective)) cam->isPerspective = false;
-    if (cam->isPerspective)
-    {
-        ImGui::SliderFloat("Fov", &cam->zoom, 20.f, 110.f);
-    }
-    else
-    {
-        ImGui::SliderFloat("Ortho width", &viewWidth, 1, 20);
-    }
-    viewDirty |= ImGui::SliderFloat("Distance", &camDistance, 1.f, 10.f);
-    ImGui::SliderInt("Gizmo count", &gizmoCount, 1, 4);
+    //// create a window and insert the inspector
+    //ImGui::SetNextWindowPos(ImVec2(10, 10));
+    //ImGui::SetNextWindowSize(ImVec2(320, 340));
+    //ImGui::Begin("Editor");
+    //ImGui::Text("Camera");
+    //bool viewDirty = false;
+    //if (ImGui::RadioButton("Perspective", cam->isPerspective)) cam->isPerspective = true;
+    //ImGui::SameLine();
+    //if (ImGui::RadioButton("Orthographic", !cam->isPerspective)) cam->isPerspective = false;
+    //if (cam->isPerspective)
+    //{
+    //    ImGui::SliderFloat("Fov", &cam->zoom, 20.f, 110.f);
+    //}
+    //else
+    //{
+    //    ImGui::SliderFloat("Ortho width", &viewWidth, 1, 20);
+    //}
+    //viewDirty |= ImGui::SliderFloat("Distance", &camDistance, 1.f, 10.f);
+    //ImGui::SliderInt("Gizmo count", &gizmoCount, 1, 4);
 
-    if (viewDirty || firstFrame)
-    {
-        float eye[] = { cosf(camYAngle) * cosf(camXAngle) * camDistance, sinf(camXAngle) * camDistance, sinf(camYAngle) * cosf(camXAngle) * camDistance };
-        float at[] = { 0.f, 0.f, 0.f };
-        float up[] = { 0.f, 1.f, 0.f };
-        LookAt(eye, at, up, viewPtr2);
-        firstFrame = false;
-    }
+    //if (viewDirty || firstFrame)
+    //{
+    //    float eye[] = { cosf(camYAngle) * cosf(camXAngle) * camDistance, sinf(camXAngle) * camDistance, sinf(camYAngle) * cosf(camXAngle) * camDistance };
+    //    float at[] = { 0.f, 0.f, 0.f };
+    //    float up[] = { 0.f, 1.f, 0.f };
+    //    LookAt(eye, at, up, viewPtr2);
+    //    firstFrame = false;
+    //}
+
+    //ImGui::End();
 
     auto cubeEntity = m_entityManager.findEntityByName("MySphere");
     if (cubeEntity)
@@ -876,10 +887,10 @@ void engine::Scene::renderGuizmo()
         float* objectMatrixPtr = glm::value_ptr(objectMatrix);
 
 
-        ImGui::Text("X: %f Y: %f", io.MousePos.x, io.MousePos.y);
+        //ImGui::Text("X: %f Y: %f", io.MousePos.x, io.MousePos.y);
         //ImGuizmo::DrawGrid(viewPtr, projectionPtr, identityMatrix, 100.f);
         //ImGuizmo::DrawCubes(viewPtr, projectionPtr, &objectMatrix[0][0], gizmoCount);
-        ImGui::Separator();
+        //ImGui::Separator();
         for (int matId = 0; matId < gizmoCount; matId++)
         {
             ImGuizmo::SetID(matId);
@@ -892,9 +903,42 @@ void engine::Scene::renderGuizmo()
         }
     }
 
-    ImGui::End();
+    
+    // Get the GLFW window position and size
+    GLFWwindow* window = glfwGetCurrentContext();
+    int windowX, windowY;
+    glfwGetWindowPos(window, &windowX, &windowY);
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    ImGuizmo::ViewManipulate(viewPtr2, camDistance, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
+    // Calculate the guizmo position relative to the window's top-right corner
+	ImVec2 pos = !app->fullscreen ? ImVec2(windowX + windowWidth - 128, windowY + 0) : ImVec2(windowWidth - 128, 0);
+    ImVec2 size = ImVec2(128, 128);
+
+    // box displayed in the upper right corner
+    if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
+    {
+        // Get the updated view matrix
+        glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
+
+        // Decompose the original view matrix to get its rotation and position
+        glm::vec3 originalPosition, newPosition, scale;
+        glm::quat originalRotation;
+
+        // Decompose the original view matrix
+        glm::vec3 skew;
+        glm::vec4 perspective;
+        glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
+
+        // Decompose the updated view matrix to get the new position
+        glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
+
+        // Reconstruct the view matrix with the new position and the original rotation
+        glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
+
+        // Set the new view matrix
+        cam->setFromViewMatrix(newViewMatrix);
+    }
 }
 
 void engine::Scene::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity)
@@ -1043,34 +1087,41 @@ void engine::Scene::Normalize(const float* a, float* r)
 
 void engine::Scene::performRayCasting(double xpos, double ypos)
 {
-    // Get window dimensions (you may need to pass these or store them)
-    float windowWidth = app->width;  // Replace with actual width
-    float windowHeight = app->height; // Replace with actual height
+    // Get window dimensions
+    float windowWidth = app->width;
+    float windowHeight = app->height;
 
     // Convert to NDC
     float x = (2.0f * xpos) / windowWidth - 1.0f;
     float y = 1.0f - (2.0f * ypos) / windowHeight;
-    glm::vec3 rayNDC = glm::vec3(x, y, 1.0f);
+    glm::vec3 rayNDC = glm::vec3(x, y, -1.0f); // Use -1.0f for near plane
 
     auto cam = getActiveCamera();
-    
 
     // Convert to eye space
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+    glm::mat4 projectionMatrix = glm::perspective(
+        glm::radians(cam->zoom),
+        (float)windowWidth / (float)windowHeight,
+        0.1f, 100.0f
+    );
     glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
     glm::vec4 rayEye = inverseProjection * glm::vec4(rayNDC, 1.0f);
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f); // Direction vector in eye space
+
+    // Normalize the ray direction in eye space
+    glm::vec3 rayEyeDir = glm::normalize(glm::vec3(rayEye));
 
     // Convert to world space
     glm::mat4 viewMatrix = cam->getViewMatrix();
     glm::mat4 inverseView = glm::inverse(viewMatrix);
-    glm::vec3 rayWorld = glm::vec3(inverseView * rayEye);
-    glm::vec3 rayDirection = glm::normalize(rayWorld);
+    glm::vec3 rayWorldDir = glm::vec3(inverseView * glm::vec4(rayEyeDir, 0.0f));
+    glm::vec3 rayOrigin = cam->position; // Ray origin is the camera position in world space
 
-    // Ray origin is the camera position
-    glm::vec3 rayOrigin = cam->position;
+    // Track closest hit
+    float closestDistance = std::numeric_limits<float>::max();
+    std::shared_ptr<Entity> pickedEntity = nullptr;
 
-    // Rest of your code for ray-AABB intersection
+    // Iterate through entities
     auto entity = m_entityManager.getRootEntity();
     if (entity)
     {
@@ -1083,10 +1134,14 @@ void engine::Scene::performRayCasting(double xpos, double ypos)
                     AABB* vol = modelComponent->getBoundingVolume();
                     if (vol)
                     {
-                        if (testRayAABBIntersection(rayOrigin, rayDirection, vol)) {
-                            modelComponent->getModel()->highlight = true;
-                            std::cout << "picked model " << child->name << std::endl;
-                            break;
+                        float distance;
+                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
+                        {
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                pickedEntity = child;
+                            }
                         }
                     }
                 }
@@ -1095,44 +1150,187 @@ void engine::Scene::performRayCasting(double xpos, double ypos)
                     AABB* vol = primitiveComponent->getBoundingVolume();
                     if (vol)
                     {
-                        if (testRayAABBIntersection(rayOrigin, rayDirection, vol)) {
-                            primitiveComponent->getPrimitive()->highlight = true;
-                            std::cout << "picked primitive " << child->name << std::endl;
-                            break;
+                        float distance;
+                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
+                        {
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                pickedEntity = child;
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+    // Highlight the closest picked entity
+    if (pickedEntity)
+    {
+        if (auto modelComponent = pickedEntity->getComponent<ModelComponent>())
+        {
+            modelComponent->getModel()->highlight = true;
+            std::cout << "Picked model: " << pickedEntity->name << std::endl;
+        }
+        else if (auto primitiveComponent = pickedEntity->getComponent<PrimitiveComponent>())
+        {
+            primitiveComponent->getPrimitive()->highlight = true;
+            std::cout << "Picked primitive: " << pickedEntity->name << std::endl;
+        }
+    }
 }
+
+
+//void engine::Scene::performRayCasting(double xpos, double ypos)
+//{
+//    // Get window dimensions (you may need to pass these or store them)
+//    float windowWidth = app->width;  // Replace with actual width
+//    float windowHeight = app->height; // Replace with actual height
+//
+//    // Convert to NDC
+//    float x = (2.0f * xpos) / windowWidth - 1.0f;
+//    float y = 1.0f - (2.0f * ypos) / windowHeight;
+//    //glm::vec3 rayNDC = glm::vec3(x, y, 1.0f);
+//    glm::vec3 rayNDC = glm::vec3(x, y, -1.0f); // Use -1.0f for near plane
+//
+//    auto cam = getActiveCamera();
+//    
+//    // Convert to eye space
+//    glm::mat4 projectionMatrix = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+//    glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
+//    glm::vec4 rayEye = inverseProjection * glm::vec4(rayNDC, 1.0f);
+//    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f); // Direction vector in eye space
+//
+//    // Normalize the ray direction in eye space
+//    glm::vec3 rayEyeDir = glm::normalize(glm::vec3(rayEye));
+//
+//    // Convert to world space
+//    glm::mat4 viewMatrix = cam->getViewMatrix();
+//    glm::mat4 inverseView = glm::inverse(viewMatrix);
+//    glm::vec3 rayWorldDir = glm::vec3(inverseView * glm::vec4(rayEyeDir, 0.0f));
+//    glm::vec3 rayOrigin = cam->position; // Ray origin is the camera position in world space
+//
+//
+//    // Convert to eye space
+//    //glm::mat4 projectionMatrix = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+//    //glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
+//    //glm::vec4 rayEye = inverseProjection * glm::vec4(rayNDC, 1.0f);
+//    //rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+//
+//    //// Convert to world space
+//    //glm::mat4 viewMatrix = cam->getViewMatrix();
+//    //glm::mat4 inverseView = glm::inverse(viewMatrix);
+//    //glm::vec3 rayWorld = glm::vec3(inverseView * rayEye);
+//    //glm::vec3 rayDirection = glm::normalize(rayWorld);
+//
+//    // Ray origin is the camera position
+//    //glm::vec3 rayOrigin = cam->position;
+//
+//    // Rest of your code for ray-AABB intersection
+//    auto entity = m_entityManager.getRootEntity();
+//    if (entity)
+//    {
+//        for (auto& child : entity->children)
+//        {
+//            if (child)
+//            {
+//                if (auto modelComponent = child->getComponent<ModelComponent>())
+//                {
+//                    AABB* vol = modelComponent->getBoundingVolume();
+//                    if (vol)
+//                    {
+//                        if (testRayAABBIntersection(rayOrigin, rayDirection, vol)) {
+//                            modelComponent->getModel()->highlight = true;
+//                            std::cout << "picked model " << child->name << std::endl;
+//                            break;
+//                        }
+//                    }
+//                }
+//                else if (auto primitiveComponent = child->getComponent<PrimitiveComponent>())
+//                {
+//                    AABB* vol = primitiveComponent->getBoundingVolume();
+//                    if (vol)
+//                    {
+//                        if (testRayAABBIntersection(rayOrigin, rayDirection, vol)) {
+//                            primitiveComponent->getPrimitive()->highlight = true;
+//                            std::cout << "picked primitive " << child->name << std::endl;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 bool engine::Scene::testRayAABBIntersection(
     const glm::vec3& rayOrigin,
     const glm::vec3& rayDirection,
-    const engine::AABB* aabb) {
-
-    // Calculate boxMin and boxMax from AABB
+    const engine::AABB* aabb,
+    float& outDistance)
+{
     glm::vec3 boxMin = aabb->center - aabb->extents;
     glm::vec3 boxMax = aabb->center + aabb->extents;
 
     float tmin = -std::numeric_limits<float>::infinity();
     float tmax = std::numeric_limits<float>::infinity();
 
-    for (int i = 0; i < 3; i++) {
-        if (std::abs(rayDirection[i]) < 1e-6f) {
+    for (int i = 0; i < 3; i++)
+    {
+        if (std::abs(rayDirection[i]) < 1e-6f)
+        {
             // Ray is parallel to the slab
             if (rayOrigin[i] < boxMin[i] || rayOrigin[i] > boxMax[i])
                 return false;
         }
-        else {
+        else
+        {
             float t1 = (boxMin[i] - rayOrigin[i]) / rayDirection[i];
             float t2 = (boxMax[i] - rayOrigin[i]) / rayDirection[i];
             tmin = std::max(tmin, std::min(t1, t2));
             tmax = std::min(tmax, std::max(t1, t2));
         }
     }
+
+    outDistance = tmin;
     return tmax >= tmin;
 }
+
+
+//bool engine::Scene::isInsideAABB(const glm::vec3& point, const glm::vec3& boxMin, const glm::vec3& boxMax)
+//{
+//    return (point.x >= boxMin.x && point.x <= boxMax.x &&
+//        point.y >= boxMin.y && point.y <= boxMax.y &&
+//        point.z >= boxMin.z && point.z <= boxMax.z);
+//}
+
+//bool engine::Scene::testRayAABBIntersection(
+//    const glm::vec3& rayOrigin,
+//    const glm::vec3& rayDirection,
+//    const engine::AABB* aabb) {
+//
+//    // Calculate boxMin and boxMax from AABB
+//    glm::vec3 boxMin = aabb->center - aabb->extents;
+//    glm::vec3 boxMax = aabb->center + aabb->extents;
+//
+//    float tmin = -std::numeric_limits<float>::infinity();
+//    float tmax = std::numeric_limits<float>::infinity();
+//
+//    for (int i = 0; i < 3; i++) {
+//        if (std::abs(rayDirection[i]) < 1e-6f) {
+//            // Ray is parallel to the slab
+//            if (rayOrigin[i] < boxMin[i] || rayOrigin[i] > boxMax[i])
+//                return false;
+//        }
+//        else {
+//            float t1 = (boxMin[i] - rayOrigin[i]) / rayDirection[i];
+//            float t2 = (boxMax[i] - rayOrigin[i]) / rayDirection[i];
+//            tmin = std::max(tmin, std::min(t1, t2));
+//            tmax = std::min(tmax, std::max(t1, t2));
+//        }
+//    }
+//    return tmax >= tmin;
+//}
 
 #endif

@@ -19,7 +19,7 @@ struct Material {
     sampler2D texture_diffuse; // 0
     sampler2D texture_specular; // 1
     sampler2D texture_normal; // 2
-    sampler2D texture_metallic; // 3
+    sampler2D texture_metalness; // 3
     sampler2D texture_roughness; // 4
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
@@ -747,7 +747,7 @@ void main()
     else
     {
         // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metallic, texCoords).r : 0.0; // Non-metallic;
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0; // Non-metallic;
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
     }
 
@@ -756,7 +756,7 @@ void main()
 
     if (checkUnusedUniforms())
     {
-        ao = 0.0;
+        ao += 0.000001;
     }
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 

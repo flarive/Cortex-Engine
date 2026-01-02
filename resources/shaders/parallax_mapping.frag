@@ -19,7 +19,7 @@ struct Material {
     sampler2D texture_diffuse; // 0
     sampler2D texture_specular; // 1
     sampler2D texture_normal; // 2
-    sampler2D texture_metallic; // 3
+    sampler2D texture_metalness; // 3
     sampler2D texture_roughness; // 4
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6

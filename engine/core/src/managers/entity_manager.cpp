@@ -3,6 +3,9 @@
 
 #include "../../include/ecs/transform_component.h"
 
+const std::string engine::EntityManager::ROOT_ENTITY_NAME = "Root"; // Definition
+
+
 void engine::EntityManager::create()
 {
     m_rootEntity = std::make_shared<engine::Entity>(ROOT_ENTITY_NAME);

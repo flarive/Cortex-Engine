@@ -4,7 +4,7 @@
 
 
 engine::App::App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
-    : title(_title), width(_width), height(_height), fullscreen(_fullscreen), settings(_settings)
+    : title(_title), width(static_cast<float>(_width)), height(static_cast<float>(_height)), fullscreen(_fullscreen), settings(_settings)
 {
     logger.info("Engine startup");
 
@@ -109,20 +109,23 @@ void engine::App::initWindow()
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
     
     const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-    if (fullscreen)
-    {
-        width = mode->width;
-        height = mode->height;
-    }
+    //if (fullscreen)
+    //{
+    //    width = static_cast<float>(mode->width);
+    //    height = static_cast<float>(mode->height);
+    //}
 
     // Create window with graphics context
-    window = glfwCreateWindow(width, height, "Cortex engine", fullscreen ? myMonitor : NULL, nullptr);
+    window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), "Cortex engine", NULL, nullptr);
     if (window == NULL)
     {
         logger.error("Failed to create GLFW window");
         glfwTerminate();
         std::exit(EXIT_FAILURE);
     }
+
+    if (fullscreen)
+        toggleFullscreen([this](){});
 
     glfwMakeContextCurrent(window);
 }
@@ -248,7 +251,11 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 
         // Switch to fullscreen
         glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-        glfwGetWindowSize(window, &width, &height);
+        //glfwGetWindowSize(window, &width, &height);
+
+        // Cast to float
+        width = static_cast<float>(mode->width);
+        height = static_cast<float>(mode->height);
     }
     else
     {
@@ -256,7 +263,11 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 
         // Restore windowed mode
         glfwSetWindowMonitor(window, nullptr, windowPosX, windowPosY, windowWidth, windowHeight, 0);
-        glfwGetWindowSize(window, &width, &height);
+        //glfwGetWindowSize(window, &width, &height);
+        
+        // Cast to float
+        width = static_cast<float>(windowWidth);
+        height = static_cast<float>(windowHeight);
     }
 
     // reinit framebuffers because width and height changed

@@ -25,8 +25,8 @@ namespace engine
 
         // settings
         std::string title{};
-        int width{}; // windowed width
-        int height{}; // windowed height
+        float width{}; // windowed width
+        float height{}; // windowed height
         bool fullscreen{};
 
         AppSettings settings;

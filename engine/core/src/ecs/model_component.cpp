@@ -36,9 +36,7 @@ void engine::ModelComponent::draw(const glm::mat4& projection, const glm::mat4& 
 	SceneSettings& sceneSettings = singleton->sceneSettings();
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)
-	{
 		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
-	}
 }
 
 engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_ptr<Model> model)

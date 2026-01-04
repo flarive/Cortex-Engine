@@ -42,10 +42,8 @@ void engine::PrimitiveComponent::draw(const glm::mat4& projection, const glm::ma
 	assert(singleton != nullptr && "Singleton not initialized !");
 	SceneSettings& sceneSettings = singleton->sceneSettings();
 
-	//if (sceneSettings.drawBoundingBoxesVisualHelpers)
-	//{
-	//	m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
-	//}
+	if (sceneSettings.drawBoundingBoxesVisualHelpers)
+		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
 }
 
 engine::AABB engine::PrimitiveComponent::generateBoundingVolume(const std::shared_ptr<Primitive> primitive)

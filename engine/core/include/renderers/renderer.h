@@ -142,8 +142,8 @@ namespace engine
 
 
 
-		void computeDepthMapFramebuffer(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
-		void computeDepthMapFramebuffer2(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
+		void computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
+		void computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
 		
 		void initDebugPlaneGrid();
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);

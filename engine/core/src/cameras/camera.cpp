@@ -21,7 +21,7 @@ glm::mat4& engine::Camera::getViewMatrix()
     return m_viewMatrix;
 }
 
-glm::mat4& engine::Camera::getPerspectiveProjection(float width, float height, float near, float far)
+glm::mat4& engine::Camera::getProjectionMatrix(float width, float height, float near, float far)
 {
     m_projection = glm::perspective(glm::radians(zoom), width / height, near, far);
     return m_projection;

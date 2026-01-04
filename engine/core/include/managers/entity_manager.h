@@ -23,7 +23,7 @@ namespace engine
 	{
 	public:
 		
-		const std::string ROOT_ENTITY_NAME = "Root";
+		static const std::string ROOT_ENTITY_NAME; // Declaration only
 		
 		EntityManager() = default;
 		~EntityManager() = default;

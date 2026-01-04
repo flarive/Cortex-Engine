@@ -37,6 +37,8 @@ namespace engine
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
+        bool m_displayViewTransformGuizmo{ true };
+        bool m_displayObjectTransformGuizmo{ false };
         #endif
 
         ImGuiPerfOverlay m_perfOverlay{};
@@ -84,7 +86,8 @@ namespace engine
 
         unsigned short m_activeCameraIndex{};
 
-        unsigned int m_selectedEntityID{};
+        //unsigned int m_selectedEntityID{};
+		std::shared_ptr<Entity> m_selectedEntity{};
 
         virtual void before_init_hook() {}; // Overridable by derived classes
         virtual void after_init_hook() {}; // Overridable by derived classes
@@ -200,6 +203,11 @@ namespace engine
         float camDistance = 0.f;
         int gizmoCount = 1;
 
+        std::unordered_map<std::string, GLuint> m_iconActionTextureCache{};
+
+        // In your engine::Scene class header
+        std::unordered_map<std::string, bool> iconToggleStates;
+
         const float identityMatrix[16] =
         { 1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -223,19 +231,11 @@ namespace engine
         #if EDITOR_MODE
         void renderGuizmo();
         void listenForEditorChanges();
-        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);
-        void LookAt(const float* eye, const float* at, const float* up, float* m16);
-
-        void Cross(const float* a, const float* b, float* r);
-
-
-        float Dot(const float* a, const float* b);
-
-        void Normalize(const float* a, float* r);
+        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
+        GLuint getEditTransformIcon(const std::string& key);
+        void addIcon(const std::string& icon);
 
         void performRayCasting(double xpos, double ypos);
-
-        //bool isInsideAABB(const glm::vec3& point, const glm::vec3& boxMin, const glm::vec3& boxMax);
 
         bool testRayAABBIntersection(
             const glm::vec3& rayOrigin,

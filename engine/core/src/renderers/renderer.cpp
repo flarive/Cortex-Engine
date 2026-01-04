@@ -169,7 +169,7 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Spotlight only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -242,7 +242,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, int width, int
 /// <summary>
 /// Omnilight only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, int height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
     // -----------------------------------------------
@@ -284,7 +284,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, int width, in
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera->zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 projection = m_camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
     glm::mat4 view = m_camera->getViewMatrix();
 
 

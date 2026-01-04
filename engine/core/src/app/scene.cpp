@@ -7,6 +7,7 @@
 #include "../../include/debug/opengl_debug.h"
 
 #include "../../include/tools/helpers.h"
+#include "../../include/aabb.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -17,7 +18,8 @@
 #include <memory>
 #include <iostream>
 #include <limits>
-#include "../../include/aabb.h"
+#include <format>
+
 
 namespace engine {
     Scene* Scene::currentInstance = nullptr; // Definition
@@ -141,6 +143,11 @@ void engine::Scene::initialize()
     //if (show_demo_window)
         //glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
 
+    // In your engine::Scene constructor or init function
+    iconToggleStates["hide"] = false;
+    iconToggleStates["show"] = false;
+
+
     after_init();
 }
 
@@ -202,7 +209,8 @@ void engine::Scene::listenForEditorChanges()
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
-            m_selectedEntityID = entity->id;
+            //m_selectedEntityID = entity->id;
+			m_selectedEntity = entity;
         });
 
     m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, unsigned int, float> value)
@@ -303,20 +311,24 @@ void engine::Scene::gameLoop()
     #if EDITOR_MODE
     if (is_editor_mode)
     {
+        m_displayObjectTransformGuizmo = true;
+        m_displayViewTransformGuizmo = false;
+        
         app->setWindowTitle("EDITOR");
         m_editor.renderUIWindow(is_editor_mode);
+        renderGuizmo();
     }
     #endif
 
-    //renderGuizmo();
     
-    if (show_perf_overlay)
+    
+    if (show_perf_overlay && !is_editor_mode)
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
 
     // Dear ImGui demo windows
     //if (show_demo_window)
     //    ImGui::ShowDemoWindow(&show_demo_window);
-    
+    //
 
 
     // measure ui time (part 1 end)
@@ -363,8 +375,6 @@ void engine::Scene::gameLoop()
     auto uiStart2 = Clock::now();
 
     m_renderer->enableGammaCorrection(false);
-
-    renderGuizmo();
 
     // ImGUI rendering
     ImGui::Render();
@@ -452,9 +462,9 @@ void engine::Scene::drawEntities(Shader& shader)
 
 
     auto cam = getActiveCamera();
-    glm::mat4 projection = glm::perspective(glm::radians(cam->zoom), (float)app->width / (float)app->height, 0.1f, 100.0f);
+    glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
     glm::mat4 view = cam->getViewMatrix();
-    const Frustum camFrustum = cam->createFrustumFromCamera((float)app->width / (float)app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
+    const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
 
 
     // Draw using stored world transforms
@@ -524,7 +534,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
             glStencilMask(0xFF);
         }
-        else
+        else if (m_selectedEntity)
         {
             // Only draw outline where stencil != objectID
             glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
@@ -532,7 +542,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
-            shader.setFloat("outlineWidth", entity->id == m_selectedEntityID ? 0.08f : 0.0f);
+            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
         }
 
         auto transform = entity->getTransform();
@@ -821,9 +831,6 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
 }
 
 #if EDITOR_MODE
-
-
-
 void engine::Scene::renderGuizmo()
 {
     auto cam = getActiveCamera();
@@ -831,7 +838,7 @@ void engine::Scene::renderGuizmo()
     if (!cam)
         return;
 
-    glm::mat4 projection = cam->getPerspectiveProjection((float)app->width, (float)app->height, 0.1f, 100.0f);
+    glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
     glm::mat4 view = cam->getViewMatrix();
 
     // Convert glm::mat4 to const float*
@@ -841,69 +848,6 @@ void engine::Scene::renderGuizmo()
     float* projectionPtr2 = glm::value_ptr(projection);
     float* viewPtr2 = glm::value_ptr(view);
 
-
-    ImGuiIO& io = ImGui::GetIO();
-    ImGuizmo::SetOrthographic(!cam->isPerspective);
-    ImGuizmo::BeginFrame();
-
-    //ImGui::SetNextWindowPos(ImVec2(1024, 100));
-    //ImGui::SetNextWindowSize(ImVec2(256, 256));
-
-    //// create a window and insert the inspector
-    //ImGui::SetNextWindowPos(ImVec2(10, 10));
-    //ImGui::SetNextWindowSize(ImVec2(320, 340));
-    //ImGui::Begin("Editor");
-    //ImGui::Text("Camera");
-    //bool viewDirty = false;
-    //if (ImGui::RadioButton("Perspective", cam->isPerspective)) cam->isPerspective = true;
-    //ImGui::SameLine();
-    //if (ImGui::RadioButton("Orthographic", !cam->isPerspective)) cam->isPerspective = false;
-    //if (cam->isPerspective)
-    //{
-    //    ImGui::SliderFloat("Fov", &cam->zoom, 20.f, 110.f);
-    //}
-    //else
-    //{
-    //    ImGui::SliderFloat("Ortho width", &viewWidth, 1, 20);
-    //}
-    //viewDirty |= ImGui::SliderFloat("Distance", &camDistance, 1.f, 10.f);
-    //ImGui::SliderInt("Gizmo count", &gizmoCount, 1, 4);
-
-    //if (viewDirty || firstFrame)
-    //{
-    //    float eye[] = { cosf(camYAngle) * cosf(camXAngle) * camDistance, sinf(camXAngle) * camDistance, sinf(camYAngle) * cosf(camXAngle) * camDistance };
-    //    float at[] = { 0.f, 0.f, 0.f };
-    //    float up[] = { 0.f, 1.f, 0.f };
-    //    LookAt(eye, at, up, viewPtr2);
-    //    firstFrame = false;
-    //}
-
-    //ImGui::End();
-
-    auto cubeEntity = m_entityManager.findEntityByName("MySphere");
-    if (cubeEntity)
-    {
-        glm::mat4& objectMatrix = cubeEntity->getWorldTransform();
-        float* objectMatrixPtr = glm::value_ptr(objectMatrix);
-
-
-        //ImGui::Text("X: %f Y: %f", io.MousePos.x, io.MousePos.y);
-        //ImGuizmo::DrawGrid(viewPtr, projectionPtr, identityMatrix, 100.f);
-        //ImGuizmo::DrawCubes(viewPtr, projectionPtr, &objectMatrix[0][0], gizmoCount);
-        //ImGui::Separator();
-        for (int matId = 0; matId < gizmoCount; matId++)
-        {
-            ImGuizmo::SetID(matId);
-
-            editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, cubeEntity);
-            if (ImGuizmo::IsUsing())
-            {
-                lastUsing = matId;
-            }
-        }
-    }
-
-    
     // Get the GLFW window position and size
     GLFWwindow* window = glfwGetCurrentContext();
     int windowX, windowY;
@@ -911,37 +855,76 @@ void engine::Scene::renderGuizmo()
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-    // Calculate the guizmo position relative to the window's top-right corner
-	ImVec2 pos = !app->fullscreen ? ImVec2(windowX + windowWidth - 128, windowY + 0) : ImVec2(windowWidth - 128, 0);
-    ImVec2 size = ImVec2(128, 128);
 
-    // box displayed in the upper right corner
-    if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
+    if (m_displayObjectTransformGuizmo)
     {
-        // Get the updated view matrix
-        glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
+        ImGuizmo::SetOrthographic(!cam->isPerspective);
+        ImGuizmo::BeginFrame();
 
-        // Decompose the original view matrix to get its rotation and position
-        glm::vec3 originalPosition, newPosition, scale;
-        glm::quat originalRotation;
 
-        // Decompose the original view matrix
-        glm::vec3 skew;
-        glm::vec4 perspective;
-        glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
 
-        // Decompose the updated view matrix to get the new position
-        glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
 
-        // Reconstruct the view matrix with the new position and the original rotation
-        glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
 
-        // Set the new view matrix
-        cam->setFromViewMatrix(newViewMatrix);
+        ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128, windowY + 10));
+        ImGui::SetNextWindowSize(ImVec2(256, 46));
+
+        static bool open{};
+        ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+        if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
+        {
+            glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
+            float* objectMatrixPtr = glm::value_ptr(objectMatrix);
+
+            for (int matId = 0; matId < gizmoCount; matId++)
+            {
+                ImGuizmo::SetID(matId);
+
+                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity, windowX, windowY, windowWidth, windowHeight);
+                if (ImGuizmo::IsUsing())
+                {
+                    lastUsing = matId;
+                }
+            }
+        }
+
+        ImGui::End();
+    }
+
+    if (m_displayViewTransformGuizmo)
+    {
+        // Calculate the guizmo position relative to the window's top-right corner
+        ImVec2 pos = !app->fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0) : ImVec2(windowWidth - 128.0f, 0);
+        ImVec2 size = ImVec2(128, 128);
+
+        // box displayed in the upper right corner
+        if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
+        {
+            // Get the updated view matrix
+            glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
+
+            // Decompose the original view matrix to get its rotation and position
+            glm::vec3 originalPosition, newPosition, scale;
+            glm::quat originalRotation;
+
+            // Decompose the original view matrix
+            glm::vec3 skew;
+            glm::vec4 perspective;
+            glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
+
+            // Decompose the updated view matrix to get the new position
+            glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
+
+            // Reconstruct the view matrix with the new position and the original rotation
+            glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
+
+            // Set the new view matrix
+            cam->setFromViewMatrix(newViewMatrix);
+        }
     }
 }
 
-void engine::Scene::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity)
+void engine::Scene::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight)
 {
     static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
     static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
@@ -952,67 +935,76 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
     static bool boundSizing = false;
     static bool boundSizingSnap = false;
 
-    if (editTransformDecomposition)
-    {
-        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
-            mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
-            mCurrentGizmoOperation = ImGuizmo::ROTATE;
-        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) // r Key
-            mCurrentGizmoOperation = ImGuizmo::SCALE;
-        if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-            mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-            mCurrentGizmoOperation = ImGuizmo::ROTATE;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
-            mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-        float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-        ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-        ImGui::InputFloat3("Tr", matrixTranslation);
-        ImGui::InputFloat3("Rt", matrixRotation);
-        ImGui::InputFloat3("Sc", matrixScale);
-        ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
 
-        if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-        {
-            if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-                mCurrentGizmoMode = ImGuizmo::LOCAL;
-            ImGui::SameLine();
-            if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-                mCurrentGizmoMode = ImGuizmo::WORLD;
-        }
-        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_F10))
-            useSnap = !useSnap;
-        ImGui::Checkbox("pp", &useSnap);
-        ImGui::SameLine();
+    ImGui::BeginGroup();
+    addIcon("hide");
+    ImGui::SameLine(); // Force next item to be on the same line
+    addIcon("show");
+    ImGui::EndGroup();
 
-        switch (mCurrentGizmoOperation)
-        {
-        case ImGuizmo::TRANSLATE:
-            ImGui::InputFloat3("Snap", &snap[0]);
-            break;
-        case ImGuizmo::ROTATE:
-            ImGui::InputFloat("Angle Snap", &snap[0]);
-            break;
-        case ImGuizmo::SCALE:
-            ImGui::InputFloat("Scale Snap", &snap[0]);
-            break;
-        }
-        ImGui::Checkbox("Bound Sizing", &boundSizing);
-        if (boundSizing)
-        {
-            ImGui::PushID(3);
-            ImGui::Checkbox("", &boundSizingSnap);
-            ImGui::SameLine();
-            ImGui::InputFloat3("Snap", boundsSnap);
-            ImGui::PopID();
-        }
-    }
-    ImGuiIO& io = ImGui::GetIO();
-    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+    //if (editTransformDecomposition)
+    //{
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
+    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
+    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) // r Key
+    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
+    //    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //    ImGui::SameLine();
+    //    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //    ImGui::SameLine();
+    //    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+    //    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+    //    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+    //    ImGui::InputFloat3("Tr", matrixTranslation);
+    //    ImGui::InputFloat3("Rt", matrixRotation);
+    //    ImGui::InputFloat3("Sc", matrixScale);
+    //    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+
+    //    if (mCurrentGizmoOperation != ImGuizmo::SCALE)
+    //    {
+    //        if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+    //            mCurrentGizmoMode = ImGuizmo::LOCAL;
+    //        ImGui::SameLine();
+    //        if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+    //            mCurrentGizmoMode = ImGuizmo::WORLD;
+    //    }
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_F10))
+    //        useSnap = !useSnap;
+    //    ImGui::Checkbox("Snap", &useSnap);
+    //    ImGui::SameLine();
+
+    //    switch (mCurrentGizmoOperation)
+    //    {
+    //    case ImGuizmo::TRANSLATE:
+    //        ImGui::InputFloat3("Snap", &snap[0]);
+    //        break;
+    //    case ImGuizmo::ROTATE:
+    //        ImGui::InputFloat("Angle Snap", &snap[0]);
+    //        break;
+    //    case ImGuizmo::SCALE:
+    //        ImGui::InputFloat("Scale Snap", &snap[0]);
+    //        break;
+    //    }
+    //    ImGui::Checkbox("Bound Sizing", &boundSizing);
+    //    if (boundSizing)
+    //    {
+    //        ImGui::PushID(3);
+    //        ImGui::Checkbox("", &boundSizingSnap);
+    //        ImGui::SameLine();
+    //        ImGui::InputFloat3("Snap", boundsSnap);
+    //        ImGui::PopID();
+    //    }
+    //}
+
+    ImGuizmo::SetRect(windowX, windowY, windowWidth, windowHeight);
     if (ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL))
     {
         float matrixTranslation2[3], matrixRotation2[3], matrixScale2[3];
@@ -1024,65 +1016,58 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
     }
 }
 
-void engine::Scene::LookAt(const float* eye, const float* at, const float* up, float* m16)
+// Updated addIcon function
+void engine::Scene::addIcon(const std::string& icon)
 {
-    float X[3], Y[3], Z[3], tmp[3];
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-    tmp[0] = eye[0] - at[0];
-    tmp[1] = eye[1] - at[1];
-    tmp[2] = eye[2] - at[2];
-    //Z.normalize(eye - at);
-    Normalize(tmp, Z);
-    Normalize(up, Y);
-    //Y.normalize(up);
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
 
-    Cross(Y, Z, tmp);
-    //tmp.cross(Y, Z);
-    Normalize(tmp, X);
-    //X.normalize(tmp);
+    GLuint my_texture_id = getEditTransformIcon(icon);
+    if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
+        iconToggleStates[icon] = !iconToggleStates[icon]; // Toggle state on click
+    }
 
-    Cross(Z, X, tmp);
-    //tmp.cross(Z, X);
-    Normalize(tmp, Y);
-    //Y.normalize(tmp);
+    // radio buttons like
+    //if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
+    //    for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+    //    iconToggleStates[icon] = true; // Turn only this one on
+    //}
 
-    m16[0] = X[0];
-    m16[1] = Y[0];
-    m16[2] = Z[0];
-    m16[3] = 0.0f;
-    m16[4] = X[1];
-    m16[5] = Y[1];
-    m16[6] = Z[1];
-    m16[7] = 0.0f;
-    m16[8] = X[2];
-    m16[9] = Y[2];
-    m16[10] = Z[2];
-    m16[11] = 0.0f;
-    m16[12] = -Dot(X, eye);
-    m16[13] = -Dot(Y, eye);
-    m16[14] = -Dot(Z, eye);
-    m16[15] = 1.0f;
+    if (iconToggleStates[icon]) {
+        ImGui::PopStyleColor(3);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.4f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.5f, 0.2f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.3f, 0.1f, 1.0f));
+    }
+
+    if (ImGui::IsItemHovered()) {
+        // Optional: Additional hover effects
+    }
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor(3);
 }
 
-
-void engine::Scene::Cross(const float* a, const float* b, float* r)
+GLuint engine::Scene::getEditTransformIcon(const std::string& key)
 {
-    r[0] = a[1] * b[2] - a[2] * b[1];
-    r[1] = a[2] * b[0] - a[0] * b[2];
-    r[2] = a[0] * b[1] - a[1] * b[0];
-}
+    auto it = m_iconActionTextureCache.find(key);
+    if (it != m_iconActionTextureCache.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_16x16.png", key);
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
 
-float engine::Scene::Dot(const float* a, const float* b)
-{
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
+        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
 
-void engine::Scene::Normalize(const float* a, float* r)
-{
-    float il = 1.f / (sqrtf(Dot(a, a)) + FLT_EPSILON);
-    r[0] = a[0] * il;
-    r[1] = a[1] * il;
-    r[2] = a[2] * il;
+        return iconTexture;
+    }
 }
 
 void engine::Scene::performRayCasting(double xpos, double ypos)
@@ -1296,41 +1281,5 @@ bool engine::Scene::testRayAABBIntersection(
     outDistance = tmin;
     return tmax >= tmin;
 }
-
-
-//bool engine::Scene::isInsideAABB(const glm::vec3& point, const glm::vec3& boxMin, const glm::vec3& boxMax)
-//{
-//    return (point.x >= boxMin.x && point.x <= boxMax.x &&
-//        point.y >= boxMin.y && point.y <= boxMax.y &&
-//        point.z >= boxMin.z && point.z <= boxMax.z);
-//}
-
-//bool engine::Scene::testRayAABBIntersection(
-//    const glm::vec3& rayOrigin,
-//    const glm::vec3& rayDirection,
-//    const engine::AABB* aabb) {
-//
-//    // Calculate boxMin and boxMax from AABB
-//    glm::vec3 boxMin = aabb->center - aabb->extents;
-//    glm::vec3 boxMax = aabb->center + aabb->extents;
-//
-//    float tmin = -std::numeric_limits<float>::infinity();
-//    float tmax = std::numeric_limits<float>::infinity();
-//
-//    for (int i = 0; i < 3; i++) {
-//        if (std::abs(rayDirection[i]) < 1e-6f) {
-//            // Ray is parallel to the slab
-//            if (rayOrigin[i] < boxMin[i] || rayOrigin[i] > boxMax[i])
-//                return false;
-//        }
-//        else {
-//            float t1 = (boxMin[i] - rayOrigin[i]) / rayDirection[i];
-//            float t2 = (boxMax[i] - rayOrigin[i]) / rayDirection[i];
-//            tmin = std::max(tmin, std::min(t1, t2));
-//            tmax = std::min(tmax, std::max(t1, t2));
-//        }
-//    }
-//    return tmax >= tmin;
-//}
 
 #endif

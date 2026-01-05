@@ -198,7 +198,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // reset viewport
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     
@@ -280,7 +280,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
 
     // 2. render scene as normal 
     // -------------------------
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     

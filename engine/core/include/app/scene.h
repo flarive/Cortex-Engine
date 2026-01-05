@@ -203,7 +203,7 @@ namespace engine
         float camDistance = 0.f;
         int gizmoCount = 1;
 
-        std::unordered_map<std::string, GLuint> m_iconActionTextureCache{};
+        std::unordered_map<std::string, GLuint> m_iconEditorBarTextureCache{};
 
         // In your engine::Scene class header
         std::unordered_map<std::string, bool> iconToggleStates;
@@ -233,7 +233,7 @@ namespace engine
         void listenForEditorChanges();
         void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
         GLuint getEditTransformIcon(const std::string& key);
-        void addIcon(const std::string& icon);
+        void addIcon(const std::string& icon, std::function<void()> onClick);
 
         void performRayCasting(double xpos, double ypos);
 

@@ -14,6 +14,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
+#include "themes/imgui_spectrum.h"
+
 #include <functional>
 #include <memory>
 #include <iostream>
@@ -144,8 +146,9 @@ void engine::Scene::initialize()
         //glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
 
     // In your engine::Scene constructor or init function
-    iconToggleStates["hide"] = false;
-    iconToggleStates["show"] = false;
+    iconToggleStates["translate"] = true;
+    iconToggleStates["rotate"] = false;
+    iconToggleStates["scale"] = false;
 
 
     after_init();
@@ -865,7 +868,7 @@ void engine::Scene::renderGuizmo()
 
 
 
-        ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128, windowY + 10));
+        ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
         ImGui::SetNextWindowSize(ImVec2(256, 46));
 
         static bool open{};
@@ -936,12 +939,35 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
     static bool boundSizingSnap = false;
 
 
+    if (editTransformDecomposition)
+    {
+        ImGui::BeginGroup();
+        addIcon("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
+        ImGui::SameLine();
+        addIcon("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
+        ImGui::SameLine();
+        addIcon("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
+        ImGui::EndGroup();
 
-    ImGui::BeginGroup();
-    addIcon("hide");
-    ImGui::SameLine(); // Force next item to be on the same line
-    addIcon("show");
-    ImGui::EndGroup();
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
+        {
+            mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            iconToggleStates["translate"] = true; // Turn only this one on
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
+        {
+            mCurrentGizmoOperation = ImGuizmo::ROTATE;
+            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            iconToggleStates["rotate"] = true; // Turn only this one on
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S))
+        {
+            mCurrentGizmoOperation = ImGuizmo::SCALE;
+            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            iconToggleStates["scale"] = true; // Turn only this one on
+        }
+    }
 
 
     //if (editTransformDecomposition)
@@ -1016,55 +1042,55 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
     }
 }
 
-// Updated addIcon function
-void engine::Scene::addIcon(const std::string& icon)
+
+void engine::Scene::addIcon(const std::string& icon, std::function<void()> onClick)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
+    // Set default or toggled colors BEFORE rendering the button
+    if (iconToggleStates[icon]) {
+        // Toggled ON colors
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE500));
+    }
+    else {
+        // Toggled OFF colors
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
+    }
 
     GLuint my_texture_id = getEditTransformIcon(icon);
     if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
-        iconToggleStates[icon] = !iconToggleStates[icon]; // Toggle state on click
-    }
+        for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+        iconToggleStates[icon] = true; // Turn only this one on
 
-    // radio buttons like
-    //if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
-    //    for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
-    //    iconToggleStates[icon] = true; // Turn only this one on
-    //}
-
-    if (iconToggleStates[icon]) {
-        ImGui::PopStyleColor(3);
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.4f, 0.1f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.5f, 0.2f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.3f, 0.1f, 1.0f));
+        if (onClick) onClick(); // Call the provided function
     }
 
     if (ImGui::IsItemHovered()) {
         // Optional: Additional hover effects
     }
 
-    ImGui::PopStyleVar(3);
-    ImGui::PopStyleColor(3);
+    ImGui::PopStyleVar(3); // Pop rounding, border, padding
+    ImGui::PopStyleColor(3); // Pop colors
 }
 
 GLuint engine::Scene::getEditTransformIcon(const std::string& key)
 {
-    auto it = m_iconActionTextureCache.find(key);
-    if (it != m_iconActionTextureCache.end())
+    auto it = m_iconEditorBarTextureCache.find(key);
+    if (it != m_iconEditorBarTextureCache.end())
     {
         return it->second;
     }
     else {
-        auto iconName = std::format("icon_{}_16x16.png", key);
+        auto iconName = std::format("editor_{}.png", key);
         GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
 
-        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
+        m_iconEditorBarTextureCache.insert(std::make_pair(key, iconTexture));
 
         return iconTexture;
     }

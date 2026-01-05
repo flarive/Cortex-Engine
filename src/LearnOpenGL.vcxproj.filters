@@ -801,6 +801,9 @@
     <CopyFileToFolders Include="..\resources\UI\cortex-logo.png">
       <Filter>resources\UI</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\editor_rotate.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -839,5 +842,13 @@
     <ClInclude Include="app\myscene11.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\icons\editor_scale.png">
+      <Filter>resources\icons</Filter>
+    </Image>
+    <Image Include="..\resources\icons\editor_translate.png">
+      <Filter>resources\icons</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -398,4 +398,66 @@ void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& ite
     }
 }
 
+void engine::EditorHelper::addIconButton(const std::string& icon, std::function<void()> onClick)
+{
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
+    // Set default or toggled colors BEFORE rendering the button
+    if (m_iconToggleStates[icon]) {
+        // Toggled ON colors
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE500));
+    }
+    else {
+        // Toggled OFF colors
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
+    }
+
+    GLuint my_texture_id = getIconTexture(icon, "editor", "icons");
+    if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18)))
+    {
+        resetIconToggleStates(); // Turn all off
+        setIconToggleState(icon, true); // Turn only this one on
+        if (onClick) onClick(); // Call the provided function
+    }
+
+    if (ImGui::IsItemHovered()) {
+        // Optional: Additional hover effects
+    }
+
+    ImGui::PopStyleVar(3); // Pop rounding, border, padding
+    ImGui::PopStyleColor(3); // Pop colors
+}
+
+GLuint engine::EditorHelper::getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder)
+{
+    auto it = m_iconTextureCache.find(key);
+    if (it != m_iconTextureCache.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        auto iconName = std::format("{}_{}.png", prefix, key);
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), folder);
+
+        m_iconTextureCache.insert(std::make_pair(key, iconTexture));
+
+        return iconTexture;
+    }
+}
+
+void engine::EditorHelper::resetIconToggleStates()
+{
+    for (auto& [k, v] : m_iconToggleStates) v = false; // Turn all off
+}
+
+void engine::EditorHelper::setIconToggleState(const std::string& key, bool state)
+{
+    m_iconToggleStates[key] = state;
+}

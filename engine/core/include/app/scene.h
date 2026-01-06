@@ -86,7 +86,6 @@ namespace engine
 
         unsigned short m_activeCameraIndex{};
 
-        //unsigned int m_selectedEntityID{};
 		std::shared_ptr<Entity> m_selectedEntity{};
 
         virtual void before_init_hook() {}; // Overridable by derived classes
@@ -203,10 +202,10 @@ namespace engine
         float camDistance = 0.f;
         int gizmoCount = 1;
 
-        std::unordered_map<std::string, GLuint> m_iconEditorBarTextureCache{};
+        //std::unordered_map<std::string, GLuint> m_iconEditorBarTextureCache{};
 
-        // In your engine::Scene class header
-        std::unordered_map<std::string, bool> iconToggleStates;
+        //// In your engine::Scene class header
+        //std::unordered_map<std::string, bool> iconToggleStates;
 
         const float identityMatrix[16] =
         { 1.f, 0.f, 0.f, 0.f,
@@ -232,8 +231,8 @@ namespace engine
         void renderGuizmo();
         void listenForEditorChanges();
         void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
-        GLuint getEditTransformIcon(const std::string& key);
-        void addIcon(const std::string& icon, std::function<void()> onClick);
+        //GLuint getEditTransformIcon(const std::string& key);
+        //void addIcon(const std::string& icon, std::function<void()> onClick);
 
         void performRayCasting(double xpos, double ypos);
 

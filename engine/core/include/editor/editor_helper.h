@@ -1,15 +1,16 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "../common_defines.h"
 #include "../ecs/entity.h"
 #include "../ecs/component.h"
 
 #include <imgui.h>
 
-
+#include <string>
+#include <vector>
+#include <variant>
+#include <unordered_map>
+#include <functional>
 
 namespace engine
 {
@@ -41,5 +42,18 @@ namespace engine
 		inline static const float ROUNDING = 3.0f;
 		inline static const ImVec2 SIZE{ 21.0f, 21.0f };
 		inline static const float ITEM_LABEL_WIDTH{ 100.0f }; // pixels
+
+		static void addIconButton(const std::string& icon, std::function<void()> onClick);
+
+		static GLuint getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder);
+		static void setIconToggleState(const std::string& key, bool state);
+
+		static void resetIconToggleStates();
+
+
+
+	private:
+		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
+		static std::unordered_map<std::string, bool> m_iconToggleStates;
 	};
 }

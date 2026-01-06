@@ -145,10 +145,9 @@ void engine::Scene::initialize()
     //if (show_demo_window)
         //glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
 
-    // In your engine::Scene constructor or init function
-    iconToggleStates["translate"] = true;
-    iconToggleStates["rotate"] = false;
-    iconToggleStates["scale"] = false;
+    EditorHelper::setIconToggleState("translate", true);
+    EditorHelper::setIconToggleState("rotate", false);
+    EditorHelper::setIconToggleState("scale", false);
 
 
     after_init();
@@ -173,10 +172,10 @@ void engine::Scene::mouseButtonCallback(GLFWwindow* window, int button, int acti
 
 void engine::Scene::computeLightsIndexes()
 {
-    unsigned int nextPointLightIndex = 0;
-    unsigned int nextDirLightIndex = 0;
-    unsigned int nextSpotLightIndex = 0;
-    unsigned int nextAreaLightIndex = 0;
+    unsigned int nextPointLightIndex{};
+    unsigned int nextDirLightIndex{};
+    unsigned int nextSpotLightIndex{};
+    unsigned int nextAreaLightIndex{};
 
     for (const auto& light : lights)
     {
@@ -212,7 +211,6 @@ void engine::Scene::listenForEditorChanges()
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
             logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
-            //m_selectedEntityID = entity->id;
 			m_selectedEntity = entity;
         });
 
@@ -864,10 +862,6 @@ void engine::Scene::renderGuizmo()
         ImGuizmo::SetOrthographic(!cam->isPerspective);
         ImGuizmo::BeginFrame();
 
-
-
-
-
         ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
         ImGui::SetNextWindowSize(ImVec2(256, 46));
 
@@ -942,30 +936,36 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
     if (editTransformDecomposition)
     {
         ImGui::BeginGroup();
-        addIcon("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
+        EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
-        addIcon("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
+        EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
-        addIcon("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
+        EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
         ImGui::EndGroup();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
         {
             mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
-            iconToggleStates["translate"] = true; // Turn only this one on
+            //for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            //iconToggleStates["translate"] = true; // Turn only this one on
+            EditorHelper::resetIconToggleStates();
+            EditorHelper::setIconToggleState("translate", true);
         }
         else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
         {
             mCurrentGizmoOperation = ImGuizmo::ROTATE;
-            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
-            iconToggleStates["rotate"] = true; // Turn only this one on
+            //for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            //iconToggleStates["rotate"] = true; // Turn only this one on
+            EditorHelper::resetIconToggleStates();
+            EditorHelper::setIconToggleState("rotate", true);
         }
         else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S))
         {
             mCurrentGizmoOperation = ImGuizmo::SCALE;
-            for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
-            iconToggleStates["scale"] = true; // Turn only this one on
+            //for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+            //iconToggleStates["scale"] = true; // Turn only this one on
+            EditorHelper::resetIconToggleStates();
+            EditorHelper::setIconToggleState("scale", true);
         }
     }
 
@@ -1043,58 +1043,58 @@ void engine::Scene::editTransform(const float* cameraView, float* cameraProjecti
 }
 
 
-void engine::Scene::addIcon(const std::string& icon, std::function<void()> onClick)
-{
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+//void engine::Scene::addIcon(const std::string& icon, std::function<void()> onClick)
+//{
+//    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+//    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
+//    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
+//
+//    // Set default or toggled colors BEFORE rendering the button
+//    if (iconToggleStates[icon]) {
+//        // Toggled ON colors
+//        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400));
+//        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700));
+//        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE500));
+//    }
+//    else {
+//        // Toggled OFF colors
+//        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
+//        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
+//        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
+//    }
+//
+//    GLuint my_texture_id = getEditTransformIcon(icon);
+//    if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
+//        for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
+//        iconToggleStates[icon] = true; // Turn only this one on
+//
+//        if (onClick) onClick(); // Call the provided function
+//    }
+//
+//    if (ImGui::IsItemHovered()) {
+//        // Optional: Additional hover effects
+//    }
+//
+//    ImGui::PopStyleVar(3); // Pop rounding, border, padding
+//    ImGui::PopStyleColor(3); // Pop colors
+//}
 
-    // Set default or toggled colors BEFORE rendering the button
-    if (iconToggleStates[icon]) {
-        // Toggled ON colors
-        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE500));
-    }
-    else {
-        // Toggled OFF colors
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.5f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
-    }
-
-    GLuint my_texture_id = getEditTransformIcon(icon);
-    if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18))) {
-        for (auto& [k, v] : iconToggleStates) v = false; // Turn all off
-        iconToggleStates[icon] = true; // Turn only this one on
-
-        if (onClick) onClick(); // Call the provided function
-    }
-
-    if (ImGui::IsItemHovered()) {
-        // Optional: Additional hover effects
-    }
-
-    ImGui::PopStyleVar(3); // Pop rounding, border, padding
-    ImGui::PopStyleColor(3); // Pop colors
-}
-
-GLuint engine::Scene::getEditTransformIcon(const std::string& key)
-{
-    auto it = m_iconEditorBarTextureCache.find(key);
-    if (it != m_iconEditorBarTextureCache.end())
-    {
-        return it->second;
-    }
-    else {
-        auto iconName = std::format("editor_{}.png", key);
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
-
-        m_iconEditorBarTextureCache.insert(std::make_pair(key, iconTexture));
-
-        return iconTexture;
-    }
-}
+//GLuint engine::Scene::getEditTransformIcon(const std::string& key)
+//{
+//    auto it = m_iconEditorBarTextureCache.find(key);
+//    if (it != m_iconEditorBarTextureCache.end())
+//    {
+//        return it->second;
+//    }
+//    else {
+//        auto iconName = std::format("editor_{}.png", key);
+//        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+//
+//        m_iconEditorBarTextureCache.insert(std::make_pair(key, iconTexture));
+//
+//        return iconTexture;
+//    }
+//}
 
 void engine::Scene::performRayCasting(double xpos, double ypos)
 {

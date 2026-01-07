@@ -51,6 +51,8 @@ namespace engine
 
 		static void resetIconToggleStates();
 
+		static void initRenderGuizmo(const std::shared_ptr<Camera> camera);
+
 		static void renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen);
 
 		static void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
@@ -68,7 +70,7 @@ namespace engine
 		static float camDistance;
 		static int gizmoCount;
 
-		static const float identityMatrix[16];
+		//static const float identityMatrix[16];
 
 		static bool firstFrame;
 		static int lastUsing;

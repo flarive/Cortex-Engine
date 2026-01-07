@@ -131,7 +131,8 @@ void engine::Scene::initialize()
     if (cameras.size() == 0) logger.warn("Scene has no camera !");
     //assert(cameras.size() > 0 && "Scene has no camera !");
 
-	camDistance = getActiveCamera()->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
+	//camDistance = getActiveCamera()->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
+	//EditorHelper::initRenderGuizmo(getActiveCamera());
 
     // renderer setup
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
@@ -317,7 +318,7 @@ void engine::Scene::gameLoop()
         
         app->setWindowTitle("EDITOR");
         m_editor.renderUIWindow(is_editor_mode);
-        EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen);
+        //EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen);
     }
     #endif
 

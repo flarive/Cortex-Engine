@@ -34,11 +34,11 @@ const float engine::EditorHelper::camXAngle = 32.f / 180.f * 3.14159f;
 float engine::EditorHelper::camDistance = 0.f;
 int engine::EditorHelper::gizmoCount = 1;
 
-const float engine::EditorHelper::identityMatrix[16] =
-{ 1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f };
+//const float engine::EditorHelper::identityMatrix[16] =
+//{ 1.f, 0.f, 0.f, 0.f,
+//    0.f, 1.f, 0.f, 0.f,
+//    0.f, 0.f, 1.f, 0.f,
+//    0.f, 0.f, 0.f, 1.f };
 
 bool engine::EditorHelper::firstFrame = true;
 int engine::EditorHelper::lastUsing = 0;
@@ -481,6 +481,11 @@ GLuint engine::EditorHelper::getIconTexture(const std::string& key, const std::s
 
         return iconTexture;
     }
+}
+
+void engine::EditorHelper::initRenderGuizmo(const std::shared_ptr<Camera> camera)
+{
+    camDistance = camera->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
 }
 
 void engine::EditorHelper::resetIconToggleStates()

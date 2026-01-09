@@ -132,6 +132,8 @@ void engine::Scene::initialize()
     //assert(cameras.size() > 0 && "Scene has no camera !");
 
 	camDistance = getActiveCamera()->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
+    //EditorHelper::initRenderGuizmo(getActiveCamera());
+
 
     // renderer setup
     m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
@@ -318,6 +320,7 @@ void engine::Scene::gameLoop()
         app->setWindowTitle("EDITOR");
         m_editor.renderUIWindow(is_editor_mode);
         renderGuizmo();
+        //EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen);
     }
     #endif
 
@@ -831,7 +834,7 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
     }
 }
 
-#if EDITOR_MODE
+//#if EDITOR_MODE
 void engine::Scene::renderGuizmo()
 {
     auto cam = getActiveCamera();
@@ -877,7 +880,7 @@ void engine::Scene::renderGuizmo()
             {
                 ImGuizmo::SetID(matId);
 
-                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity, windowX, windowY, windowWidth, windowHeight);
+                EditorHelper::editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity, windowX, windowY, windowWidth, windowHeight);
                 if (ImGuizmo::IsUsing())
                 {
                     lastUsing = matId;
@@ -1308,4 +1311,4 @@ bool engine::Scene::testRayAABBIntersection(
     return tmax >= tmin;
 }
 
-#endif
+//#endif

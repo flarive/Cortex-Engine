@@ -37,9 +37,12 @@ namespace engine
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
+        #endif
+
+
         bool m_displayViewTransformGuizmo{ true };
         bool m_displayObjectTransformGuizmo{ false };
-        #endif
+
 
         ImGuiPerfOverlay m_perfOverlay{};
 
@@ -196,22 +199,11 @@ namespace engine
         // Camera projection
         //bool isPerspective = true;
         //float fov = 27.f;
-        float viewWidth = 10.f; // for orthographic
-        const float camYAngle = 165.f / 180.f * 3.14159f;
-        const float camXAngle = 32.f / 180.f * 3.14159f;
+        //float viewWidth = 10.f; // for orthographic
+        //const float camYAngle = 165.f / 180.f * 3.14159f;
+        //const float camXAngle = 32.f / 180.f * 3.14159f;
         float camDistance = 0.f;
         int gizmoCount = 1;
-
-        //std::unordered_map<std::string, GLuint> m_iconEditorBarTextureCache{};
-
-        //// In your engine::Scene class header
-        //std::unordered_map<std::string, bool> iconToggleStates;
-
-        const float identityMatrix[16] =
-        { 1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f };
 
         bool firstFrame = true;
         int lastUsing = 0;
@@ -228,11 +220,8 @@ namespace engine
         void countItems(std::shared_ptr<Entity>& entity);
 
         #if EDITOR_MODE
-        void renderGuizmo();
         void listenForEditorChanges();
-        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
-        //GLuint getEditTransformIcon(const std::string& key);
-        //void addIcon(const std::string& icon, std::function<void()> onClick);
+        
 
         void performRayCasting(double xpos, double ypos);
 
@@ -243,5 +232,9 @@ namespace engine
             float& outDistance);
 
         #endif
+
+
+        void renderGuizmo();
+        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
     };
 }

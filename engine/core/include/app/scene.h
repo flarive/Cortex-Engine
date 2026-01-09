@@ -37,9 +37,12 @@ namespace engine
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
-        //bool m_displayViewTransformGuizmo{ true };
-        //bool m_displayObjectTransformGuizmo{ false };
         #endif
+
+
+        bool m_displayViewTransformGuizmo{ true };
+        bool m_displayObjectTransformGuizmo{ false };
+
 
         ImGuiPerfOverlay m_perfOverlay{};
 
@@ -199,17 +202,11 @@ namespace engine
         //float viewWidth = 10.f; // for orthographic
         //const float camYAngle = 165.f / 180.f * 3.14159f;
         //const float camXAngle = 32.f / 180.f * 3.14159f;
-        //float camDistance = 0.f;
-        //int gizmoCount = 1;
+        float camDistance = 0.f;
+        int gizmoCount = 1;
 
-        //const float identityMatrix[16] =
-        //{ 1.f, 0.f, 0.f, 0.f,
-        //    0.f, 1.f, 0.f, 0.f,
-        //    0.f, 0.f, 1.f, 0.f,
-        //    0.f, 0.f, 0.f, 1.f };
-
-        //bool firstFrame = true;
-        //int lastUsing = 0;
+        bool firstFrame = true;
+        int lastUsing = 0;
 
         void computeLightsIndexes();
         
@@ -223,9 +220,8 @@ namespace engine
         void countItems(std::shared_ptr<Entity>& entity);
 
         #if EDITOR_MODE
-        //void renderGuizmo();
         void listenForEditorChanges();
-        /*void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);*/
+        
 
         void performRayCasting(double xpos, double ypos);
 
@@ -236,5 +232,9 @@ namespace engine
             float& outDistance);
 
         #endif
+
+
+        void renderGuizmo();
+        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
     };
 }

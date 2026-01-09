@@ -34,11 +34,6 @@ const float engine::EditorHelper::camXAngle = 32.f / 180.f * 3.14159f;
 float engine::EditorHelper::camDistance = 0.f;
 int engine::EditorHelper::gizmoCount = 1;
 
-//const float engine::EditorHelper::identityMatrix[16] =
-//{ 1.f, 0.f, 0.f, 0.f,
-//    0.f, 1.f, 0.f, 0.f,
-//    0.f, 0.f, 1.f, 0.f,
-//    0.f, 0.f, 0.f, 1.f };
 
 bool engine::EditorHelper::firstFrame = true;
 int engine::EditorHelper::lastUsing = 0;
@@ -622,8 +617,8 @@ void engine::EditorHelper::editTransform(const float* cameraView, float* cameraP
         else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S))
         {
             mCurrentGizmoOperation = ImGuizmo::SCALE;
-            EditorHelper::resetIconToggleStates(); // Turn all off
-            EditorHelper::setIconToggleState("scale", true); // Turn only this one on
+            resetIconToggleStates(); // Turn all off
+            setIconToggleState("scale", true); // Turn only this one on
         }
     }
 

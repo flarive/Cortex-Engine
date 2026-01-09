@@ -70,8 +70,6 @@ namespace engine
 		static float camDistance;
 		static int gizmoCount;
 
-		//static const float identityMatrix[16];
-
 		static bool firstFrame;
 		static int lastUsing;
 

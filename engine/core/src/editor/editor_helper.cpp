@@ -24,8 +24,8 @@
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache; // Define the static member
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
 
-bool engine::EditorHelper::m_displayViewTransformGuizmo{ true };
-bool engine::EditorHelper::m_displayObjectTransformGuizmo{ false };
+//bool engine::EditorHelper::m_displayViewTransformGuizmo{ true };
+//bool engine::EditorHelper::m_displayObjectTransformGuizmo{ false };
 
 
 float engine::EditorHelper::viewWidth = 10.f; // for orthographic
@@ -493,10 +493,11 @@ void engine::EditorHelper::setIconToggleState(const std::string& key, bool state
     m_iconToggleStates[key] = state;
 }
 
-void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen)
+void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
 {
     if (!camera)
         return;
+
 
     glm::mat4 projection = camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
     glm::mat4 view = camera->getViewMatrix();
@@ -516,10 +517,11 @@ void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEn
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
 
-    if (m_displayObjectTransformGuizmo)
+    ImGuizmo::BeginFrame();
+
+    if (displayObjectTransformGuizmo)
     {
         ImGuizmo::SetOrthographic(!camera->isPerspective);
-        ImGuizmo::BeginFrame();
 
         ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
         ImGui::SetNextWindowSize(ImVec2(256, 46));
@@ -547,7 +549,7 @@ void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEn
         ImGui::End();
     }
 
-    if (m_displayViewTransformGuizmo)
+    if (displayViewTransformGuizmo)
     {
         // Calculate the guizmo position relative to the window's top-right corner
         ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);

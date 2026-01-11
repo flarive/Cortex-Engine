@@ -53,7 +53,7 @@ namespace engine
 
 		static void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
-		static void renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen);
+		static void renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
 
 		static void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
 
@@ -61,8 +61,8 @@ namespace engine
 		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
 
-		static bool m_displayViewTransformGuizmo;
-		static bool m_displayObjectTransformGuizmo;
+		//static bool m_displayViewTransformGuizmo;
+		//static bool m_displayObjectTransformGuizmo;
 
 		static float viewWidth; // for orthographic
 		static const float camYAngle;

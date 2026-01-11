@@ -195,19 +195,6 @@ namespace engine
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 
-
-        // Camera projection
-        //bool isPerspective = true;
-        //float fov = 27.f;
-        //float viewWidth = 10.f; // for orthographic
-        //const float camYAngle = 165.f / 180.f * 3.14159f;
-        //const float camXAngle = 32.f / 180.f * 3.14159f;
-        float camDistance = 0.f;
-        int gizmoCount = 1;
-
-        bool firstFrame = true;
-        int lastUsing = 0;
-
         void computeLightsIndexes();
         
         static void glfw_error_callback(int error, const char* description);
@@ -232,9 +219,5 @@ namespace engine
             float& outDistance);
 
         #endif
-
-
-        void renderGuizmo();
-        void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
     };
 }

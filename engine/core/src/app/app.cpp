@@ -109,11 +109,6 @@ void engine::App::initWindow()
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
     
     const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-    //if (fullscreen)
-    //{
-    //    width = static_cast<float>(mode->width);
-    //    height = static_cast<float>(mode->height);
-    //}
 
     // Create window with graphics context
     window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), "Cortex engine", NULL, nullptr);

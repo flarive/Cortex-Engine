@@ -1,6 +1,6 @@
 #include "../../include/app/scene.h"
 
-#include "extensions/imGuizmo/ImGuizmo.h"
+//#include "extensions/imGuizmo/ImGuizmo.h"
 #include "../../include/managers/log_manager.h"
 #include "../../include/singleton.h"
 

@@ -208,6 +208,8 @@ namespace engine
 
         #if EDITOR_MODE
         void listenForEditorChanges();
+
+        void setEditorMode();
         
 
         void performRayCasting(double xpos, double ypos);

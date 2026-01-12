@@ -527,7 +527,7 @@ void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEn
         ImGui::SetNextWindowSize(ImVec2(256, 46));
 
         static bool open{};
-        ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
 
         if (selectedEntity && selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
         {

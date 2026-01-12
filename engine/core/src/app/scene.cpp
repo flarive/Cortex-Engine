@@ -1,6 +1,5 @@
 #include "../../include/app/scene.h"
 
-//#include "extensions/imGuizmo/ImGuizmo.h"
 #include "../../include/managers/log_manager.h"
 #include "../../include/singleton.h"
 
@@ -309,24 +308,11 @@ void engine::Scene::gameLoop()
 
     framerate = ImGui::GetIO().Framerate;
 
-    // Editor mode windows
     #if EDITOR_MODE
-    if (is_editor_mode)
-    {
-        m_displayObjectTransformGuizmo = true;
-        m_displayViewTransformGuizmo = false;
-        
-        app->setWindowTitle("EDITOR");
-        m_editor.renderUIWindow(is_editor_mode);
-    }
-    else
-    {
-        m_displayObjectTransformGuizmo = false;
-        m_displayViewTransformGuizmo = true;
-    }
+    setEditorMode();
     #endif
 
-    EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);
+    
     
     if (show_perf_overlay && !is_editor_mode)
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
@@ -428,6 +414,19 @@ void engine::Scene::gameLoop()
     auto cpuFrameEnd = Clock::now();
     std::chrono::duration<double, std::milli> cpuFrameDuration = cpuFrameEnd - cpuFrameStart;
     cpuTime = cpuFrameDuration.count();
+}
+
+void engine::Scene::setEditorMode()
+{
+    m_displayObjectTransformGuizmo = is_editor_mode;
+    m_displayViewTransformGuizmo = !is_editor_mode;
+
+    if (is_editor_mode) {
+        app->setWindowTitle("EDITOR");
+        m_editor.renderUIWindow(is_editor_mode);
+    }
+
+    EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);
 }
 
 void engine::Scene::initEntities()

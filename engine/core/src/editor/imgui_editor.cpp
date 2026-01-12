@@ -56,7 +56,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show)
 
 	static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+    window_flags |= ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground; // ImGuiWindowFlags_NoBringToFrontOnFocus
 
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
     dockspace_flags |= ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;

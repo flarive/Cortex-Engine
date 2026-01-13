@@ -27,10 +27,16 @@
 #include "../../include/primitives/cone.h"
 
 
+#include "../../include/managers/entity_manager.h"
+
+#include "extensions/imGuizmo/ImGuizmo.h"
+
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <imgui_internal.h>
 
@@ -50,7 +56,7 @@ void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
 /// https://github.com/ocornut/imgui/issues/2109#issuecomment-430096134
 /// </summary>
 /// <param name="show"></param>
-void engine::ImGuiEditor::renderUIWindow(bool show)
+void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
 {
 	bool open = true;
 
@@ -117,6 +123,14 @@ void engine::ImGuiEditor::renderUIWindow(bool show)
 	ImGui::Begin("Properties", nullptr, 0);
     renderPropertiesWidget();
 	ImGui::End();
+
+    renderGuizmo(dockspace_id, m_selectedEntity, m_guizmoCamera, width, height, fullscreen, displayObjectTransformGuizmo, displayViewTransformGuizmo);
+}
+
+void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
+{
+    m_guizmoCamera = camera;
+    camDistance = camera->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
 }
 
 void engine::ImGuiEditor::renderHierarchyWidget()
@@ -754,3 +768,221 @@ GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
 }
 
 #endif
+
+
+void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
+{
+    if (!camera)
+        return;
+
+    glm::mat4 projection = camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
+    glm::mat4 view = camera->getViewMatrix();
+
+    // Convert glm::mat4 to const float*
+    const float* projectionPtr = glm::value_ptr(projection);
+    const float* viewPtr = glm::value_ptr(view);
+
+    float* projectionPtr2 = glm::value_ptr(projection);
+    float* viewPtr2 = glm::value_ptr(view);
+
+    // Get the GLFW window position and size
+    GLFWwindow* window = glfwGetCurrentContext();
+    int windowX, windowY;
+    glfwGetWindowPos(window, &windowX, &windowY);
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+
+    ImGuizmo::BeginFrame();
+
+    if (displayObjectTransformGuizmo)
+    {
+        ImGuizmo::SetOrthographic(!camera->isPerspective);
+
+        // Render the Editor window (no-decoration, for gizmo)
+        ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
+
+        // Get the GLFW window position and size
+        GLFWwindow* window = glfwGetCurrentContext();
+        int windowX, windowY;
+        glfwGetWindowPos(window, &windowX, &windowY);
+        int windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+        ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
+        ImGui::SetNextWindowSize(ImVec2(256, 46));
+
+
+
+        static bool open{};
+        ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
+
+
+
+        if (selectedEntity && selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
+        {
+            glm::mat4& objectMatrix = selectedEntity->getWorldTransform();
+            float* objectMatrixPtr = glm::value_ptr(objectMatrix);
+
+            for (int matId = 0; matId < gizmoCount; matId++)
+            {
+                ImGuizmo::SetID(matId);
+
+                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, selectedEntity, windowX, windowY, windowWidth, windowHeight);
+                if (ImGuizmo::IsUsing())
+                {
+                    lastUsing = matId;
+                }
+            }
+        }
+
+        ImGui::End();
+    }
+
+    //if (displayViewTransformGuizmo)
+    //{
+    //    // Calculate the guizmo position relative to the window's top-right corner
+    //    ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);
+    //    ImVec2 size = ImVec2(128, 128);
+
+    //    // box displayed in the upper right corner
+    //    if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
+    //    {
+    //        // Get the updated view matrix
+    //        glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
+
+    //        // Decompose the original view matrix to get its rotation and position
+    //        glm::vec3 originalPosition, newPosition, scale;
+    //        glm::quat originalRotation;
+
+    //        // Decompose the original view matrix
+    //        glm::vec3 skew;
+    //        glm::vec4 perspective;
+    //        glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
+
+    //        // Decompose the updated view matrix to get the new position
+    //        glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
+
+    //        // Reconstruct the view matrix with the new position and the original rotation
+    //        glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
+
+    //        // Set the new view matrix
+    //        camera->setFromViewMatrix(newViewMatrix);
+    //    }
+    //}
+}
+
+void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight)
+{
+    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
+    static bool useSnap = false;
+    static float snap[3] = { 1.f, 1.f, 1.f };
+    static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+    static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
+    static bool boundSizing = false;
+    static bool boundSizingSnap = false;
+
+
+    if (editTransformDecomposition)
+    {
+        ImGui::BeginGroup();
+        EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
+        ImGui::SameLine();
+        EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
+        ImGui::SameLine();
+        EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
+        ImGui::EndGroup();
+
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
+        {
+            mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+            EditorHelper::resetIconToggleStates(); // Turn all off
+            EditorHelper::setIconToggleState("translate", true); // Turn only this one on
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
+        {
+            mCurrentGizmoOperation = ImGuizmo::ROTATE;
+            EditorHelper::resetIconToggleStates(); // Turn all off
+            EditorHelper::setIconToggleState("rotate", true); // Turn only this one on
+        }
+        else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S))
+        {
+            mCurrentGizmoOperation = ImGuizmo::SCALE;
+            EditorHelper::resetIconToggleStates(); // Turn all off
+            EditorHelper::setIconToggleState("scale", true); // Turn only this one on
+        }
+    }
+
+
+    //if (editTransformDecomposition)
+    //{
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
+    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
+    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) // r Key
+    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
+    //    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //    ImGui::SameLine();
+    //    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //    ImGui::SameLine();
+    //    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
+    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
+
+    //    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+    //    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+    //    ImGui::InputFloat3("Tr", matrixTranslation);
+    //    ImGui::InputFloat3("Rt", matrixRotation);
+    //    ImGui::InputFloat3("Sc", matrixScale);
+    //    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+
+    //    if (mCurrentGizmoOperation != ImGuizmo::SCALE)
+    //    {
+    //        if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+    //            mCurrentGizmoMode = ImGuizmo::LOCAL;
+    //        ImGui::SameLine();
+    //        if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+    //            mCurrentGizmoMode = ImGuizmo::WORLD;
+    //    }
+    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_F10))
+    //        useSnap = !useSnap;
+    //    ImGui::Checkbox("Snap", &useSnap);
+    //    ImGui::SameLine();
+
+    //    switch (mCurrentGizmoOperation)
+    //    {
+    //    case ImGuizmo::TRANSLATE:
+    //        ImGui::InputFloat3("Snap", &snap[0]);
+    //        break;
+    //    case ImGuizmo::ROTATE:
+    //        ImGui::InputFloat("Angle Snap", &snap[0]);
+    //        break;
+    //    case ImGuizmo::SCALE:
+    //        ImGui::InputFloat("Scale Snap", &snap[0]);
+    //        break;
+    //    }
+    //    ImGui::Checkbox("Bound Sizing", &boundSizing);
+    //    if (boundSizing)
+    //    {
+    //        ImGui::PushID(3);
+    //        ImGui::Checkbox("", &boundSizingSnap);
+    //        ImGui::SameLine();
+    //        ImGui::InputFloat3("Snap", boundsSnap);
+    //        ImGui::PopID();
+    //    }
+    //}
+
+    ImGuizmo::SetRect(windowX, windowY, windowWidth, windowHeight);
+    if (ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL))
+    {
+        float matrixTranslation2[3], matrixRotation2[3], matrixScale2[3];
+        ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation2, matrixRotation2, matrixScale2);
+
+        auto ttt = Transform{ glm::vec3(matrixTranslation2[0],matrixTranslation2[1], matrixTranslation2[2]), glm::vec3(matrixScale2[0], matrixScale2[1], matrixScale2[2]), glm::vec3(matrixRotation2[0], matrixRotation2[1], matrixRotation2[2]) };
+        entity->setTransform(ttt);
+        entity->updateSelfAndChild();
+    }
+}

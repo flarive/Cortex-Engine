@@ -29,7 +29,7 @@ namespace engine
 
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
-		void renderUIWindow(bool show);
+		void renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
 
 		// Let parent register a callback
 		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
@@ -40,6 +40,13 @@ namespace engine
 		void setOnSceneSettingChanged(std::function<void(std::string, SceneSetting)> callback) {
 			m_onSceneSettingChanged = std::move(callback);
 		}
+
+
+		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
+
+		void renderGuizmo(const ImGuiID& dockspace_id, const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
+
+		void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
 
 
 	private:
@@ -81,6 +88,7 @@ namespace engine
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 
+		
 
 	protected:
 		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache{};
@@ -105,6 +113,18 @@ namespace engine
 		int sceneSetting_shadowMapTextureSize{ 2048 };
 		float sceneSetting_shadowMapBiasFactor{ 0.001f };
 		float sceneSetting_shadowMapBlur{ 1.0f };
+
+
+		float viewWidth; // for orthographic
+		const float camYAngle;
+		const float camXAngle;
+		float camDistance;
+		int gizmoCount;
+
+		bool firstFrame;
+		int lastUsing;
+
+		std::shared_ptr<Camera> m_guizmoCamera{};
 	};
 }
 #endif

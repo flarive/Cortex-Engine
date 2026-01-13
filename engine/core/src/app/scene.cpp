@@ -130,7 +130,7 @@ void engine::Scene::initialize()
     if (cameras.size() == 0) logger.warn("Scene has no camera !");
     //assert(cameras.size() > 0 && "Scene has no camera !");
 
-    EditorHelper::initRenderGuizmo(getActiveCamera());
+    m_editor.initRenderGuizmo(getActiveCamera());
 
 
     // renderer setup
@@ -423,10 +423,10 @@ void engine::Scene::setEditorMode()
 
     if (is_editor_mode) {
         app->setWindowTitle("EDITOR");
-        m_editor.renderUIWindow(is_editor_mode);
+        m_editor.renderUIWindow(is_editor_mode, app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);
     }
 
-    EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);
+    /*EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);*/
 }
 
 void engine::Scene::initEntities()

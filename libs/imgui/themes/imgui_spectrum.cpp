@@ -23,6 +23,8 @@ namespace ImGui {
 
             style->FramePadding = ImVec2(2, 2);
 
+            style->DockingSeparatorSize = 0.0f;
+
  /*           style->WindowPadding = ImVec2(6, 6);
             style->WindowRounding = 5.0f;
             

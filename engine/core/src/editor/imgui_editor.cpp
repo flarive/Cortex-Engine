@@ -96,6 +96,12 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
 		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.38f, NULL, &dock_main_id);
         ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.10f, NULL, &dock_main_id);
 
+        //ImGuiDockNode* node = ImGui::DockBuilderGetNode(dock_id_top);
+        //if (node)
+        //{
+        //    node->LocalFlags |= ImGuiDockNodeFlags_NoResize;
+        //}
+
 		ImGui::DockBuilderDockWindow("Scene", dock_id_left);
         ImGui::DockBuilderDockWindow("Settings", dock_id_left);
 		ImGui::DockBuilderDockWindow("About", dock_id_left);
@@ -127,13 +133,6 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
     renderPropertiesWidget();
 	ImGui::End();
 
-
-    //ImGui::Begin("GuizmoEditor2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
-    //if (ImGui::Button("ppppppp"))
-    //{
-
-    //}
-    //ImGui::End();
 
     renderGuizmo(dockspace_id, width, height, fullscreen, displayObjectTransformGuizmo);
 }
@@ -824,7 +823,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
         //ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
-        ImGui::SetNextWindowSize(ImVec2(256, 46));
+        //ImGui::SetNextWindowSize(ImVec2(256, 46));
 
 
         // Call once or per - frame to position the toolbar.
@@ -853,6 +852,14 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
 
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)); // Fully transparent
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
+
+        
+        
+        
+
         //static bool open{};
         ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);// ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
         //ImGui::Begin("##FloatingToolbar", nullptr, flags);
@@ -876,6 +883,9 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
 
         ImGui::End();
 
+        ImGui::PopStyleVar(2);
+        ImGui::PopStyleColor(1);
+
         //ImGui::PopStyleVar(2);     // WindowRounding, WindowPadding
         //ImGui::PopStyleColor();    // WindowBg
 
@@ -896,13 +906,13 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
 
     if (editTransformDecomposition)
     {
-        //ImGui::BeginGroup();
+        ImGui::BeginGroup();
         EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
-        //ImGui::EndGroup();
+        ImGui::EndGroup();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
         {

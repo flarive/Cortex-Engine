@@ -102,7 +102,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
 
 		ImGui::DockBuilderDockWindow("Properties", dock_id_right);
 
-        ImGui::DockBuilderDockWindow("##FloatingToolbar", dock_id_top);
+        ImGui::DockBuilderDockWindow("FloatingToolbar", dock_id_top);
 
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
@@ -814,7 +814,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
         ImGuizmo::SetOrthographic(!m_guizmoCamera->isPerspective);
 
         // Render the Editor window (no-decoration, for gizmo)
-        //ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
 
         // Get the GLFW window position and size
         GLFWwindow* window = glfwGetCurrentContext();
@@ -824,34 +824,38 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
         //ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
-        //ImGui::SetNextWindowSize(ImVec2(256, 46));
+        ImGui::SetNextWindowSize(ImVec2(256, 46));
 
 
         // Call once or per - frame to position the toolbar.
         // You can compute pos dynamically (e.g., relative to viewport).
-        ImVec2 pos = ImVec2(40.f, 40.f);         // screen-space coords
-        ImVec2 size = ImVec2(240.f, 48.f);       // toolbar size
+        //ImVec2 pos = ImVec2(40.f, 40.f);         // screen-space coords
+        //ImVec2 size = ImVec2(256, 46.f);       // toolbar size
 
-        ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
-        ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+        //ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+        //ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-        // Optional: transparent background
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));           // fully transparent
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);             // rounded corners
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+        //// Optional: transparent background
+        //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));           // fully transparent
+        //ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);             // rounded corners
+        //ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
 
-        ImGuiWindowFlags flags =
-            ImGuiWindowFlags_NoDecoration | // No title bar, borders, scrollbar, etc.
-            ImGuiWindowFlags_NoDocking | // Prevent this window from docking anywhere
-            ImGuiWindowFlags_NoNav | // Optional: no keyboard nav focus
-            ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoFocusOnAppearing |
-            ImGuiWindowFlags_AlwaysAutoResize;   // Or keep fixed size if you prefer
+        //ImGuiWindowFlags flags =
+        //    ImGuiWindowFlags_NoDecoration | // No title bar, borders, scrollbar, etc.
+        //    ImGuiWindowFlags_NoDocking | // Prevent this window from docking anywhere
+        //    ImGuiWindowFlags_NoNav | // Optional: no keyboard nav focus
+        //    ImGuiWindowFlags_NoBringToFrontOnFocus |
+        //    ImGuiWindowFlags_NoFocusOnAppearing |
+        //    ImGuiWindowFlags_AlwaysAutoResize;   // Or keep fixed size if you prefer
 
+
+        ImGuiWindowClass window_class;
+        window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
+        ImGui::SetNextWindowClass(&window_class);
 
         //static bool open{};
-        //ImGui::Begin("##FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-        ImGui::Begin("##FloatingToolbar", nullptr, flags);
+        ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);// ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        //ImGui::Begin("##FloatingToolbar", nullptr, flags);
 
         if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
         {
@@ -872,8 +876,8 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
 
         ImGui::End();
 
-        ImGui::PopStyleVar(2);     // WindowRounding, WindowPadding
-        ImGui::PopStyleColor();    // WindowBg
+        //ImGui::PopStyleVar(2);     // WindowRounding, WindowPadding
+        //ImGui::PopStyleColor();    // WindowBg
 
     }
 }

@@ -186,7 +186,7 @@ namespace engine
 
         void refreshFullscreen();
 
-        static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+        //static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 
     private:
@@ -212,13 +212,13 @@ namespace engine
         void setEditorMode();
         
 
-        void performRayCasting(double xpos, double ypos);
+        //void performRayCasting(double xpos, double ypos);
 
-        bool testRayAABBIntersection(
-            const glm::vec3& rayOrigin,
-            const glm::vec3& rayDirection,
-            const engine::AABB* aabb,
-            float& outDistance);
+        //bool testRayAABBIntersection(
+        //    const glm::vec3& rayOrigin,
+        //    const glm::vec3& rayDirection,
+        //    const engine::AABB* aabb,
+        //    float& outDistance);
 
         #endif
     };

@@ -29,7 +29,7 @@ namespace engine
 
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
-		void renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
+		void renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo);
 
 		// Let parent register a callback
 		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
@@ -44,9 +44,11 @@ namespace engine
 
 		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
-		void renderGuizmo(const ImGuiID& dockspace_id, const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
+		void renderGuizmo(const ImGuiID& dockspace_id, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo);
 
 		void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
+
+		void renderViewGuizmo(const float width, const float height, const bool fullscreen, bool displayViewTransformGuizmo);
 
 
 	private:
@@ -115,14 +117,15 @@ namespace engine
 		float sceneSetting_shadowMapBlur{ 1.0f };
 
 
-		float viewWidth; // for orthographic
-		const float camYAngle;
-		const float camXAngle;
-		float camDistance;
-		int gizmoCount;
+		float viewWidth{ 10.0f }; // for orthographic
+		const float camYAngle{ 165.f / 180.f * 3.14159f };
+		const float camXAngle{ 32.f / 180.f * 3.14159f };
+		float camDistance{};
+		int gizmoCount{ 1 };
 
-		bool firstFrame;
-		int lastUsing;
+		bool firstFrame{ true };
+		int lastUsing{};
+
 
 		std::shared_ptr<Camera> m_guizmoCamera{};
 	};

@@ -154,19 +154,19 @@ void engine::Scene::initialize()
 }
 
 // Callback function
-void engine::Scene::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // Get mouse position and perform ray casting
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        if (currentInstance)
-        {
-			currentInstance->performRayCasting(xpos, ypos);
-        }
-    }
-}
+//void engine::Scene::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+//{
+//    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+//        // Get mouse position and perform ray casting
+//        double xpos, ypos;
+//        glfwGetCursorPos(window, &xpos, &ypos);
+//
+//        if (currentInstance)
+//        {
+//			currentInstance->performRayCasting(xpos, ypos);
+//        }
+//    }
+//}
 
 
 
@@ -423,10 +423,11 @@ void engine::Scene::setEditorMode()
 
     if (is_editor_mode) {
         app->setWindowTitle("EDITOR");
-        m_editor.renderUIWindow(is_editor_mode, app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);
+        m_editor.renderUIWindow(is_editor_mode, app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo);
     }
 
-    /*EditorHelper::renderGuizmo(m_selectedEntity, getActiveCamera(), app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo, m_displayViewTransformGuizmo);*/
+    // render camera view guizmo in the top right corner of the screen
+    m_editor.renderViewGuizmo(app->width, app->height, app->fullscreen, m_displayViewTransformGuizmo);
 }
 
 void engine::Scene::initEntities()
@@ -835,101 +836,101 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
     }
 }
 
-void engine::Scene::performRayCasting(double xpos, double ypos)
-{
-    // Get window dimensions
-    float windowWidth = app->width;
-    float windowHeight = app->height;
-
-    // Convert to NDC
-    float x = (2.0f * xpos) / windowWidth - 1.0f;
-    float y = 1.0f - (2.0f * ypos) / windowHeight;
-    glm::vec3 rayNDC = glm::vec3(x, y, -1.0f); // Use -1.0f for near plane
-
-    auto cam = getActiveCamera();
-
-    // Convert to eye space
-    glm::mat4 projectionMatrix = glm::perspective(
-        glm::radians(cam->zoom),
-        (float)windowWidth / (float)windowHeight,
-        0.1f, 100.0f
-    );
-    glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
-    glm::vec4 rayEye = inverseProjection * glm::vec4(rayNDC, 1.0f);
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f); // Direction vector in eye space
-
-    // Normalize the ray direction in eye space
-    glm::vec3 rayEyeDir = glm::normalize(glm::vec3(rayEye));
-
-    // Convert to world space
-    glm::mat4 viewMatrix = cam->getViewMatrix();
-    glm::mat4 inverseView = glm::inverse(viewMatrix);
-    glm::vec3 rayWorldDir = glm::vec3(inverseView * glm::vec4(rayEyeDir, 0.0f));
-    glm::vec3 rayOrigin = cam->position; // Ray origin is the camera position in world space
-
-    // Track closest hit
-    float closestDistance = std::numeric_limits<float>::max();
-    std::shared_ptr<Entity> pickedEntity = nullptr;
-
-    // Iterate through entities
-    auto entity = m_entityManager.getRootEntity();
-    if (entity)
-    {
-        for (auto& child : entity->children)
-        {
-            if (child)
-            {
-                if (auto modelComponent = child->getComponent<ModelComponent>())
-                {
-                    AABB* vol = modelComponent->getBoundingVolume();
-                    if (vol)
-                    {
-                        float distance;
-                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
-                        {
-                            if (distance < closestDistance)
-                            {
-                                closestDistance = distance;
-                                pickedEntity = child;
-                            }
-                        }
-                    }
-                }
-                else if (auto primitiveComponent = child->getComponent<PrimitiveComponent>())
-                {
-                    AABB* vol = primitiveComponent->getBoundingVolume();
-                    if (vol)
-                    {
-                        float distance;
-                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
-                        {
-                            if (distance < closestDistance)
-                            {
-                                closestDistance = distance;
-                                pickedEntity = child;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Highlight the closest picked entity
-    if (pickedEntity)
-    {
-        if (auto modelComponent = pickedEntity->getComponent<ModelComponent>())
-        {
-            modelComponent->getModel()->highlight = true;
-            std::cout << "Picked model: " << pickedEntity->name << std::endl;
-        }
-        else if (auto primitiveComponent = pickedEntity->getComponent<PrimitiveComponent>())
-        {
-            primitiveComponent->getPrimitive()->highlight = true;
-            std::cout << "Picked primitive: " << pickedEntity->name << std::endl;
-        }
-    }
-}
+//void engine::Scene::performRayCasting(double xpos, double ypos)
+//{
+//    // Get window dimensions
+//    float windowWidth = app->width;
+//    float windowHeight = app->height;
+//
+//    // Convert to NDC
+//    float x = (2.0f * xpos) / windowWidth - 1.0f;
+//    float y = 1.0f - (2.0f * ypos) / windowHeight;
+//    glm::vec3 rayNDC = glm::vec3(x, y, -1.0f); // Use -1.0f for near plane
+//
+//    auto cam = getActiveCamera();
+//
+//    // Convert to eye space
+//    glm::mat4 projectionMatrix = glm::perspective(
+//        glm::radians(cam->zoom),
+//        (float)windowWidth / (float)windowHeight,
+//        0.1f, 100.0f
+//    );
+//    glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
+//    glm::vec4 rayEye = inverseProjection * glm::vec4(rayNDC, 1.0f);
+//    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f); // Direction vector in eye space
+//
+//    // Normalize the ray direction in eye space
+//    glm::vec3 rayEyeDir = glm::normalize(glm::vec3(rayEye));
+//
+//    // Convert to world space
+//    glm::mat4 viewMatrix = cam->getViewMatrix();
+//    glm::mat4 inverseView = glm::inverse(viewMatrix);
+//    glm::vec3 rayWorldDir = glm::vec3(inverseView * glm::vec4(rayEyeDir, 0.0f));
+//    glm::vec3 rayOrigin = cam->position; // Ray origin is the camera position in world space
+//
+//    // Track closest hit
+//    float closestDistance = std::numeric_limits<float>::max();
+//    std::shared_ptr<Entity> pickedEntity = nullptr;
+//
+//    // Iterate through entities
+//    auto entity = m_entityManager.getRootEntity();
+//    if (entity)
+//    {
+//        for (auto& child : entity->children)
+//        {
+//            if (child)
+//            {
+//                if (auto modelComponent = child->getComponent<ModelComponent>())
+//                {
+//                    AABB* vol = modelComponent->getBoundingVolume();
+//                    if (vol)
+//                    {
+//                        float distance;
+//                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
+//                        {
+//                            if (distance < closestDistance)
+//                            {
+//                                closestDistance = distance;
+//                                pickedEntity = child;
+//                            }
+//                        }
+//                    }
+//                }
+//                else if (auto primitiveComponent = child->getComponent<PrimitiveComponent>())
+//                {
+//                    AABB* vol = primitiveComponent->getBoundingVolume();
+//                    if (vol)
+//                    {
+//                        float distance;
+//                        if (testRayAABBIntersection(rayOrigin, rayWorldDir, vol, distance))
+//                        {
+//                            if (distance < closestDistance)
+//                            {
+//                                closestDistance = distance;
+//                                pickedEntity = child;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    // Highlight the closest picked entity
+//    if (pickedEntity)
+//    {
+//        if (auto modelComponent = pickedEntity->getComponent<ModelComponent>())
+//        {
+//            modelComponent->getModel()->highlight = true;
+//            std::cout << "Picked model: " << pickedEntity->name << std::endl;
+//        }
+//        else if (auto primitiveComponent = pickedEntity->getComponent<PrimitiveComponent>())
+//        {
+//            primitiveComponent->getPrimitive()->highlight = true;
+//            std::cout << "Picked primitive: " << pickedEntity->name << std::endl;
+//        }
+//    }
+//}
 
 
 //void engine::Scene::performRayCasting(double xpos, double ypos)
@@ -1014,37 +1015,37 @@ void engine::Scene::performRayCasting(double xpos, double ypos)
 //    }
 //}
 
-bool engine::Scene::testRayAABBIntersection(
-    const glm::vec3& rayOrigin,
-    const glm::vec3& rayDirection,
-    const engine::AABB* aabb,
-    float& outDistance)
-{
-    glm::vec3 boxMin = aabb->center - aabb->extents;
-    glm::vec3 boxMax = aabb->center + aabb->extents;
-
-    float tmin = -std::numeric_limits<float>::infinity();
-    float tmax = std::numeric_limits<float>::infinity();
-
-    for (int i = 0; i < 3; i++)
-    {
-        if (std::abs(rayDirection[i]) < 1e-6f)
-        {
-            // Ray is parallel to the slab
-            if (rayOrigin[i] < boxMin[i] || rayOrigin[i] > boxMax[i])
-                return false;
-        }
-        else
-        {
-            float t1 = (boxMin[i] - rayOrigin[i]) / rayDirection[i];
-            float t2 = (boxMax[i] - rayOrigin[i]) / rayDirection[i];
-            tmin = std::max(tmin, std::min(t1, t2));
-            tmax = std::min(tmax, std::max(t1, t2));
-        }
-    }
-
-    outDistance = tmin;
-    return tmax >= tmin;
-}
+//bool engine::Scene::testRayAABBIntersection(
+//    const glm::vec3& rayOrigin,
+//    const glm::vec3& rayDirection,
+//    const engine::AABB* aabb,
+//    float& outDistance)
+//{
+//    glm::vec3 boxMin = aabb->center - aabb->extents;
+//    glm::vec3 boxMax = aabb->center + aabb->extents;
+//
+//    float tmin = -std::numeric_limits<float>::infinity();
+//    float tmax = std::numeric_limits<float>::infinity();
+//
+//    for (int i = 0; i < 3; i++)
+//    {
+//        if (std::abs(rayDirection[i]) < 1e-6f)
+//        {
+//            // Ray is parallel to the slab
+//            if (rayOrigin[i] < boxMin[i] || rayOrigin[i] > boxMax[i])
+//                return false;
+//        }
+//        else
+//        {
+//            float t1 = (boxMin[i] - rayOrigin[i]) / rayDirection[i];
+//            float t2 = (boxMax[i] - rayOrigin[i]) / rayDirection[i];
+//            tmin = std::max(tmin, std::min(t1, t2));
+//            tmax = std::min(tmax, std::max(t1, t2));
+//        }
+//    }
+//
+//    outDistance = tmin;
+//    return tmax >= tmin;
+//}
 
 //#endif

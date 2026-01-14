@@ -56,7 +56,7 @@ void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
 /// https://github.com/ocornut/imgui/issues/2109#issuecomment-430096134
 /// </summary>
 /// <param name="show"></param>
-void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
+void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo)
 {
 	bool open = true;
 
@@ -94,12 +94,15 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
 
 		ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.22f, NULL, &dock_main_id);
 		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.38f, NULL, &dock_main_id);
+        ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.10f, NULL, &dock_main_id);
 
 		ImGui::DockBuilderDockWindow("Scene", dock_id_left);
         ImGui::DockBuilderDockWindow("Settings", dock_id_left);
 		ImGui::DockBuilderDockWindow("About", dock_id_left);
 
 		ImGui::DockBuilderDockWindow("Properties", dock_id_right);
+
+        ImGui::DockBuilderDockWindow("##FloatingToolbar", dock_id_top);
 
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
@@ -124,8 +127,19 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
     renderPropertiesWidget();
 	ImGui::End();
 
-    renderGuizmo(dockspace_id, m_selectedEntity, m_guizmoCamera, width, height, fullscreen, displayObjectTransformGuizmo, displayViewTransformGuizmo);
+
+    //ImGui::Begin("GuizmoEditor2", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
+    //if (ImGui::Button("ppppppp"))
+    //{
+
+    //}
+    //ImGui::End();
+
+    renderGuizmo(dockspace_id, width, height, fullscreen, displayObjectTransformGuizmo);
 }
+
+
+
 
 void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
 {
@@ -770,13 +784,13 @@ GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
 #endif
 
 
-void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
+void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo)
 {
-    if (!camera)
+    if (!m_guizmoCamera)
         return;
 
-    glm::mat4 projection = camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
-    glm::mat4 view = camera->getViewMatrix();
+    glm::mat4 projection = m_guizmoCamera->getProjectionMatrix(width, height, 0.1f, 100.0f);
+    glm::mat4 view = m_guizmoCamera->getViewMatrix();
 
     // Convert glm::mat4 to const float*
     const float* projectionPtr = glm::value_ptr(projection);
@@ -797,10 +811,10 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const std::s
 
     if (displayObjectTransformGuizmo)
     {
-        ImGuizmo::SetOrthographic(!camera->isPerspective);
+        ImGuizmo::SetOrthographic(!m_guizmoCamera->isPerspective);
 
         // Render the Editor window (no-decoration, for gizmo)
-        ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
+        //ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
 
         // Get the GLFW window position and size
         GLFWwindow* window = glfwGetCurrentContext();
@@ -809,26 +823,46 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const std::s
         int windowWidth, windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-        ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
-        ImGui::SetNextWindowSize(ImVec2(256, 46));
+        //ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
+        //ImGui::SetNextWindowSize(ImVec2(256, 46));
 
 
+        // Call once or per - frame to position the toolbar.
+        // You can compute pos dynamically (e.g., relative to viewport).
+        ImVec2 pos = ImVec2(40.f, 40.f);         // screen-space coords
+        ImVec2 size = ImVec2(240.f, 48.f);       // toolbar size
 
-        static bool open{};
-        ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
+        ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+        // Optional: transparent background
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));           // fully transparent
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);             // rounded corners
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+
+        ImGuiWindowFlags flags =
+            ImGuiWindowFlags_NoDecoration | // No title bar, borders, scrollbar, etc.
+            ImGuiWindowFlags_NoDocking | // Prevent this window from docking anywhere
+            ImGuiWindowFlags_NoNav | // Optional: no keyboard nav focus
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoFocusOnAppearing |
+            ImGuiWindowFlags_AlwaysAutoResize;   // Or keep fixed size if you prefer
 
 
+        //static bool open{};
+        //ImGui::Begin("##FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("##FloatingToolbar", nullptr, flags);
 
-        if (selectedEntity && selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
+        if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
         {
-            glm::mat4& objectMatrix = selectedEntity->getWorldTransform();
+            glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
             float* objectMatrixPtr = glm::value_ptr(objectMatrix);
 
             for (int matId = 0; matId < gizmoCount; matId++)
             {
                 ImGuizmo::SetID(matId);
 
-                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, selectedEntity, windowX, windowY, windowWidth, windowHeight);
+                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity, windowX, windowY, windowWidth, windowHeight);
                 if (ImGuizmo::IsUsing())
                 {
                     lastUsing = matId;
@@ -837,39 +871,11 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const std::s
         }
 
         ImGui::End();
+
+        ImGui::PopStyleVar(2);     // WindowRounding, WindowPadding
+        ImGui::PopStyleColor();    // WindowBg
+
     }
-
-    //if (displayViewTransformGuizmo)
-    //{
-    //    // Calculate the guizmo position relative to the window's top-right corner
-    //    ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);
-    //    ImVec2 size = ImVec2(128, 128);
-
-    //    // box displayed in the upper right corner
-    //    if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
-    //    {
-    //        // Get the updated view matrix
-    //        glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
-
-    //        // Decompose the original view matrix to get its rotation and position
-    //        glm::vec3 originalPosition, newPosition, scale;
-    //        glm::quat originalRotation;
-
-    //        // Decompose the original view matrix
-    //        glm::vec3 skew;
-    //        glm::vec4 perspective;
-    //        glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
-
-    //        // Decompose the updated view matrix to get the new position
-    //        glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
-
-    //        // Reconstruct the view matrix with the new position and the original rotation
-    //        glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
-
-    //        // Set the new view matrix
-    //        camera->setFromViewMatrix(newViewMatrix);
-    //    }
-    //}
 }
 
 void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight)
@@ -886,13 +892,13 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
 
     if (editTransformDecomposition)
     {
-        ImGui::BeginGroup();
+        //ImGui::BeginGroup();
         EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
-        ImGui::EndGroup();
+        //ImGui::EndGroup();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
         {
@@ -984,5 +990,66 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
         auto ttt = Transform{ glm::vec3(matrixTranslation2[0],matrixTranslation2[1], matrixTranslation2[2]), glm::vec3(matrixScale2[0], matrixScale2[1], matrixScale2[2]), glm::vec3(matrixRotation2[0], matrixRotation2[1], matrixRotation2[2]) };
         entity->setTransform(ttt);
         entity->updateSelfAndChild();
+    }
+}
+
+void engine::ImGuiEditor::renderViewGuizmo(const float width, const float height, const bool fullscreen, bool displayViewTransformGuizmo)
+{
+    if (!m_guizmoCamera)
+        return;
+
+    if (displayViewTransformGuizmo)
+    {
+        // MUTUALIZE !!!!!!!!!!!!
+        // Get the GLFW window position and size
+        GLFWwindow* window = glfwGetCurrentContext();
+        int windowX, windowY;
+        glfwGetWindowPos(window, &windowX, &windowY);
+        int windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+        // Calculate the guizmo position relative to the window's top-right corner
+        ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);
+        ImVec2 size = ImVec2(128, 128);
+
+        // MUTUALIZE !!!!!
+        ImGuizmo::BeginFrame();
+
+        // MUTUALIZE !!!!!
+        glm::mat4 projection = m_guizmoCamera->getProjectionMatrix(width, height, 0.1f, 100.0f);
+        glm::mat4 view = m_guizmoCamera->getViewMatrix();
+
+        // Convert glm::mat4 to const float*
+        const float* projectionPtr = glm::value_ptr(projection);
+        const float* viewPtr = glm::value_ptr(view);
+
+        float* projectionPtr2 = glm::value_ptr(projection);
+        float* viewPtr2 = glm::value_ptr(view);
+
+
+        // box displayed in the upper right corner
+        if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
+        {
+            // Get the updated view matrix
+            glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
+
+            // Decompose the original view matrix to get its rotation and position
+            glm::vec3 originalPosition, newPosition, scale;
+            glm::quat originalRotation;
+
+            // Decompose the original view matrix
+            glm::vec3 skew;
+            glm::vec4 perspective;
+            glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
+
+            // Decompose the updated view matrix to get the new position
+            glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
+
+            // Reconstruct the view matrix with the new position and the original rotation
+            glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
+
+            // Set the new view matrix
+            m_guizmoCamera->setFromViewMatrix(newViewMatrix);
+        }
     }
 }

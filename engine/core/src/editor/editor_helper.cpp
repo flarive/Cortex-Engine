@@ -24,21 +24,6 @@
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache; // Define the static member
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
 
-//bool engine::EditorHelper::m_displayViewTransformGuizmo{ true };
-//bool engine::EditorHelper::m_displayObjectTransformGuizmo{ false };
-
-
-//float engine::EditorHelper::viewWidth = 10.f; // for orthographic
-//const float engine::EditorHelper::camYAngle = 165.f / 180.f * 3.14159f;
-//const float engine::EditorHelper::camXAngle = 32.f / 180.f * 3.14159f;
-//float engine::EditorHelper::camDistance = 0.f;
-//int engine::EditorHelper::gizmoCount = 1;
-//
-//
-//bool engine::EditorHelper::firstFrame = true;
-//int engine::EditorHelper::lastUsing = 0;
-//std::shared_ptr<engine::Entity> engine::EditorHelper::m_selectedEntity{};
-
 
 
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
@@ -478,11 +463,6 @@ GLuint engine::EditorHelper::getIconTexture(const std::string& key, const std::s
     }
 }
 
-//void engine::EditorHelper::initRenderGuizmo(const std::shared_ptr<Camera> camera)
-//{
-//    camDistance = camera->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
-//}
-
 void engine::EditorHelper::resetIconToggleStates()
 {
     for (auto& [k, v] : m_iconToggleStates) v = false; // Turn all off
@@ -493,214 +473,74 @@ void engine::EditorHelper::setIconToggleState(const std::string& key, bool state
     m_iconToggleStates[key] = state;
 }
 
-//void engine::EditorHelper::renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo)
-//{
-//    if (!camera)
-//        return;
-//
-//
-//    glm::mat4 projection = camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
-//    glm::mat4 view = camera->getViewMatrix();
-//
-//    // Convert glm::mat4 to const float*
-//    const float* projectionPtr = glm::value_ptr(projection);
-//    const float* viewPtr = glm::value_ptr(view);
-//
-//    float* projectionPtr2 = glm::value_ptr(projection);
-//    float* viewPtr2 = glm::value_ptr(view);
-//
-//    // Get the GLFW window position and size
-//    GLFWwindow* window = glfwGetCurrentContext();
-//    int windowX, windowY;
-//    glfwGetWindowPos(window, &windowX, &windowY);
-//    int windowWidth, windowHeight;
-//    glfwGetWindowSize(window, &windowWidth, &windowHeight);
-//
-//
-//    ImGuizmo::BeginFrame();
-//
-//    if (displayObjectTransformGuizmo)
-//    {
-//        ImGuizmo::SetOrthographic(!camera->isPerspective);
-//
-//        // Get the dockspace ID (must match the one in imgui_editor.cpp)
-//        //ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-//
-//        //// Set the next window to dock into the dockspace
-//        //ImGui::SetNextWindowDockID(dockspace_id);
-//
-//        //ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
-//        //ImGui::SetNextWindowSize(ImVec2(256, 46));
-//
-//        //static bool open{};
-//        //ImGui::Begin("Editor", &open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
-//
-//
-//
-//        //if (selectedEntity && selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
-//        //{
-//        //    glm::mat4& objectMatrix = selectedEntity->getWorldTransform();
-//        //    float* objectMatrixPtr = glm::value_ptr(objectMatrix);
-//
-//        //    for (int matId = 0; matId < gizmoCount; matId++)
-//        //    {
-//        //        ImGuizmo::SetID(matId);
-//
-//        //        editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, selectedEntity, windowX, windowY, windowWidth, windowHeight);
-//        //        if (ImGuizmo::IsUsing())
-//        //        {
-//        //            lastUsing = matId;
-//        //        }
-//        //    }
-//        //}
-//
-//        //ImGui::End();
-//    }
-//
-//    if (displayViewTransformGuizmo)
-//    {
-//        // Calculate the guizmo position relative to the window's top-right corner
-//        ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);
-//        ImVec2 size = ImVec2(128, 128);
-//
-//        // box displayed in the upper right corner
-//        if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))
-//        {
-//            // Get the updated view matrix
-//            glm::mat4 updatedViewMatrix = glm::make_mat4(viewPtr2);
-//
-//            // Decompose the original view matrix to get its rotation and position
-//            glm::vec3 originalPosition, newPosition, scale;
-//            glm::quat originalRotation;
-//
-//            // Decompose the original view matrix
-//            glm::vec3 skew;
-//            glm::vec4 perspective;
-//            glm::decompose(view, scale, originalRotation, originalPosition, skew, perspective);
-//
-//            // Decompose the updated view matrix to get the new position
-//            glm::decompose(updatedViewMatrix, scale, originalRotation, newPosition, skew, perspective);
-//
-//            // Reconstruct the view matrix with the new position and the original rotation
-//            glm::mat4 newViewMatrix = glm::translate(glm::mat4(1.0f), newPosition) * glm::mat4_cast(originalRotation);
-//
-//            // Set the new view matrix
-//            camera->setFromViewMatrix(newViewMatrix);
-//        }
-//    }
-//}
-//
-//void engine::EditorHelper::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight)
-//{
-//    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-//    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
-//    static bool useSnap = false;
-//    static float snap[3] = { 1.f, 1.f, 1.f };
-//    static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
-//    static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
-//    static bool boundSizing = false;
-//    static bool boundSizingSnap = false;
-//
-//
-//    if (editTransformDecomposition)
-//    {
-//        //ImGui::BeginGroup();
-//        //addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
-//        //ImGui::SameLine();
-//        //addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
-//        //ImGui::SameLine();
-//        //addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
-//        //ImGui::EndGroup();
-//
-//        //if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
-//        //{
-//        //    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-//        //    resetIconToggleStates(); // Turn all off
-//        //    setIconToggleState("translate", true); // Turn only this one on
-//        //}
-//        //else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
-//        //{
-//        //    mCurrentGizmoOperation = ImGuizmo::ROTATE;
-//        //    resetIconToggleStates(); // Turn all off
-//        //    setIconToggleState("rotate", true); // Turn only this one on
-//        //}
-//        //else if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S))
-//        //{
-//        //    mCurrentGizmoOperation = ImGuizmo::SCALE;
-//        //    resetIconToggleStates(); // Turn all off
-//        //    setIconToggleState("scale", true); // Turn only this one on
-//        //}
-//    }
-//
-//
-//    //if (editTransformDecomposition)
-//    //{
-//    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
-//    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-//    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R))
-//    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
-//    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) // r Key
-//    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
-//    //    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-//    //        mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-//    //    ImGui::SameLine();
-//    //    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-//    //        mCurrentGizmoOperation = ImGuizmo::ROTATE;
-//    //    ImGui::SameLine();
-//    //    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
-//    //        mCurrentGizmoOperation = ImGuizmo::SCALE;
-//
-//    //    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-//    //    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-//    //    ImGui::InputFloat3("Tr", matrixTranslation);
-//    //    ImGui::InputFloat3("Rt", matrixRotation);
-//    //    ImGui::InputFloat3("Sc", matrixScale);
-//    //    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-//
-//    //    if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-//    //    {
-//    //        if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-//    //            mCurrentGizmoMode = ImGuizmo::LOCAL;
-//    //        ImGui::SameLine();
-//    //        if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-//    //            mCurrentGizmoMode = ImGuizmo::WORLD;
-//    //    }
-//    //    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_F10))
-//    //        useSnap = !useSnap;
-//    //    ImGui::Checkbox("Snap", &useSnap);
-//    //    ImGui::SameLine();
-//
-//    //    switch (mCurrentGizmoOperation)
-//    //    {
-//    //    case ImGuizmo::TRANSLATE:
-//    //        ImGui::InputFloat3("Snap", &snap[0]);
-//    //        break;
-//    //    case ImGuizmo::ROTATE:
-//    //        ImGui::InputFloat("Angle Snap", &snap[0]);
-//    //        break;
-//    //    case ImGuizmo::SCALE:
-//    //        ImGui::InputFloat("Scale Snap", &snap[0]);
-//    //        break;
-//    //    }
-//    //    ImGui::Checkbox("Bound Sizing", &boundSizing);
-//    //    if (boundSizing)
-//    //    {
-//    //        ImGui::PushID(3);
-//    //        ImGui::Checkbox("", &boundSizingSnap);
-//    //        ImGui::SameLine();
-//    //        ImGui::InputFloat3("Snap", boundsSnap);
-//    //        ImGui::PopID();
-//    //    }
-//    //}
-//
-//    ImGuizmo::SetRect(windowX, windowY, windowWidth, windowHeight);
-//    if (ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL))
-//    {
-//        float matrixTranslation2[3], matrixRotation2[3], matrixScale2[3];
-//        ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation2, matrixRotation2, matrixScale2);
-//
-//        auto ttt = Transform{ glm::vec3(matrixTranslation2[0],matrixTranslation2[1], matrixTranslation2[2]), glm::vec3(matrixScale2[0], matrixScale2[1], matrixScale2[2]), glm::vec3(matrixRotation2[0], matrixRotation2[1], matrixRotation2[2]) };
-//        entity->setTransform(ttt);
-//        entity->updateSelfAndChild();
-//    }
-//}
+// Returns true if the toolbar was started successfully.
+// Outputs the background rect in screen space if outBgMin/outBgMax are provided.
+// `outStartCursorLocal` is where your first item will be placed (window-local).
+bool engine::EditorHelper::BeginCenteredToolbar(
+    int   iconCount,
+    float iconSize,
+    float iconSpacing,              // <0 => use style.ItemSpacing.x
+    float bgPaddingX,
+    float bgPaddingY,
+    float bgRounding,
+    ImU32 bgColor,
+    ImVec2* outBgMin,
+    ImVec2* outBgMax,
+    ImVec2* outStartCursorLocal
+)
+{
+    if (iconCount <= 0 || iconSize <= 0.0f)
+        return false;
+
+    if (iconSpacing < 0.0f)
+        iconSpacing = ImGui::GetStyle().ItemSpacing.x;
+
+    // Compute content widths
+    const float groupWidth = iconCount * iconSize + (iconCount - 1) * iconSpacing;
+    const float bgWidth = groupWidth + bgPaddingX * 2.0f;
+    const float bgHeight = iconSize + bgPaddingY * 2.0f;
+
+    // Available width in current region/line
+    const float avail = ImGui::GetContentRegionAvail().x;
+
+    // Horizontal offset to center the BACKGROUND (and thus the group)
+    float offsetX = 0.0f;
+    if (bgWidth < avail)
+        offsetX = (avail - bgWidth) * 0.5f;
+
+    // Anchor positions in WINDOW-LOCAL space
+    ImVec2 cursorStart = ImGui::GetCursorPos(); // window-local
+    ImVec2 bgMin = ImVec2(cursorStart.x + offsetX, cursorStart.y);
+    ImVec2 bgMax = ImVec2(bgMin.x + bgWidth, bgMin.y + bgHeight);
+
+    // Convert to SCREEN space for draw list
+    ImVec2 winPos = ImGui::GetWindowPos();
+    ImVec2 bgMinScreen = ImVec2(winPos.x + bgMin.x, winPos.y + bgMin.y);
+    ImVec2 bgMaxScreen = ImVec2(winPos.x + bgMax.x, winPos.y + bgMax.y);
+
+    // Draw background (behind)
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    draw->AddRectFilled(bgMinScreen, bgMaxScreen, bgColor, bgRounding);
+
+    // Move cursor inside the background for the group
+    ImVec2 groupStart = ImVec2(bgMin.x + bgPaddingX, bgMin.y + bgPaddingY);
+    ImGui::SetCursorPos(groupStart);
+
+    // Start a group so the caller's items are kept together
+    ImGui::BeginGroup();
+
+    // Optional outputs
+    if (outBgMin)              *outBgMin = bgMinScreen;
+    if (outBgMax)              *outBgMax = bgMaxScreen;
+    if (outStartCursorLocal)   *outStartCursorLocal = groupStart;
+
+    return true;
+}
+
+void engine::EditorHelper::EndCenteredToolbar()
+{
+    ImGui::EndGroup();
+    // If you want to ensure layout continues on a new line below the background, you could add:
+    // ImGui::Dummy(ImVec2(0.0f, 0.0f)); // not strictly necessary
+}
+

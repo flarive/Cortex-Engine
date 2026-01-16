@@ -1,4 +1,4 @@
-#include "../../include/editor/imgui_editor.h"
+﻿#include "../../include/editor/imgui_editor.h"
 
 #include "../../include/misc/colors.h"
 
@@ -56,7 +56,7 @@ void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
 /// https://github.com/ocornut/imgui/issues/2109#issuecomment-430096134
 /// </summary>
 /// <param name="show"></param>
-void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo)
+void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo)
 {
 	bool open = true;
 
@@ -134,7 +134,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show, const float width, const flo
 	ImGui::End();
 
 
-    renderGuizmo(dockspace_id, width, height, fullscreen, displayObjectTransformGuizmo);
+    renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 }
 
 
@@ -783,13 +783,10 @@ GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
 #endif
 
 
-void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo)
+void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo)
 {
     if (!m_guizmoCamera)
         return;
-
-    glm::mat4 projection = m_guizmoCamera->getProjectionMatrix(width, height, 0.1f, 100.0f);
-    glm::mat4 view = m_guizmoCamera->getViewMatrix();
 
     // Convert glm::mat4 to const float*
     const float* projectionPtr = glm::value_ptr(projection);
@@ -822,48 +819,17 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
         int windowWidth, windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
-        //ImGui::SetNextWindowPos(ImVec2(windowX + windowWidth / 2.0f - 128.0f, windowY + 10.0f));
-        //ImGui::SetNextWindowSize(ImVec2(256, 46));
-
-
-        // Call once or per - frame to position the toolbar.
-        // You can compute pos dynamically (e.g., relative to viewport).
-        //ImVec2 pos = ImVec2(40.f, 40.f);         // screen-space coords
-        //ImVec2 size = ImVec2(256, 46.f);       // toolbar size
-
-        //ImGui::SetNextWindowPos(pos, ImGuiCond_Always);
-        //ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-
-        //// Optional: transparent background
-        //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));           // fully transparent
-        //ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);             // rounded corners
-        //ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-
-        //ImGuiWindowFlags flags =
-        //    ImGuiWindowFlags_NoDecoration | // No title bar, borders, scrollbar, etc.
-        //    ImGuiWindowFlags_NoDocking | // Prevent this window from docking anywhere
-        //    ImGuiWindowFlags_NoNav | // Optional: no keyboard nav focus
-        //    ImGuiWindowFlags_NoBringToFrontOnFocus |
-        //    ImGuiWindowFlags_NoFocusOnAppearing |
-        //    ImGuiWindowFlags_AlwaysAutoResize;   // Or keep fixed size if you prefer
-
-
+        // Remove tab from dock panel
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
 
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f)); // Fully transparent
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
 
-        
-        
-        
-
-        //static bool open{};
         ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);// ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-        //ImGui::Begin("##FloatingToolbar", nullptr, flags);
-
+       
         if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
         {
             glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
@@ -885,10 +851,6 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, const float 
 
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(1);
-
-        //ImGui::PopStyleVar(2);     // WindowRounding, WindowPadding
-        //ImGui::PopStyleColor();    // WindowBg
-
     }
 }
 
@@ -903,16 +865,15 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     static bool boundSizing = false;
     static bool boundSizingSnap = false;
 
-
     if (editTransformDecomposition)
     {
-        ImGui::BeginGroup();
+        EditorHelper::BeginCenteredToolbar(3, 32);
         EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
         EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
-        ImGui::EndGroup();
+        EditorHelper::EndCenteredToolbar();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
         {
@@ -1007,7 +968,7 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     }
 }
 
-void engine::ImGuiEditor::renderViewGuizmo(const float width, const float height, const bool fullscreen, bool displayViewTransformGuizmo)
+void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& view, const bool fullscreen, bool displayViewTransformGuizmo)
 {
     if (!m_guizmoCamera)
         return;
@@ -1028,10 +989,6 @@ void engine::ImGuiEditor::renderViewGuizmo(const float width, const float height
 
         // MUTUALIZE !!!!!
         ImGuizmo::BeginFrame();
-
-        // MUTUALIZE !!!!!
-        glm::mat4 projection = m_guizmoCamera->getProjectionMatrix(width, height, 0.1f, 100.0f);
-        glm::mat4 view = m_guizmoCamera->getViewMatrix();
 
         // Convert glm::mat4 to const float*
         const float* projectionPtr = glm::value_ptr(projection);

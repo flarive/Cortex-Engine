@@ -421,13 +421,16 @@ void engine::Scene::setEditorMode()
     m_displayObjectTransformGuizmo = is_editor_mode;
     m_displayViewTransformGuizmo = !is_editor_mode;
 
+    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    glm::mat4 view = getActiveCamera()->getViewMatrix();
+
     if (is_editor_mode) {
         app->setWindowTitle("EDITOR");
-        m_editor.renderUIWindow(is_editor_mode, app->width, app->height, app->fullscreen, m_displayObjectTransformGuizmo);
+        m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
     }
 
     // render camera view guizmo in the top right corner of the screen
-    m_editor.renderViewGuizmo(app->width, app->height, app->fullscreen, m_displayViewTransformGuizmo);
+    m_editor.renderViewGuizmo(projection, view, app->fullscreen, m_displayViewTransformGuizmo);// to pass
 }
 
 void engine::Scene::initEntities()

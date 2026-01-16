@@ -29,7 +29,7 @@ namespace engine
 
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
-		void renderUIWindow(bool show, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo);
+		void renderUIWindow(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
 
 		// Let parent register a callback
 		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
@@ -44,11 +44,11 @@ namespace engine
 
 		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
-		void renderGuizmo(const ImGuiID& dockspace_id, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo);
+		void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
 
 		void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
 
-		void renderViewGuizmo(const float width, const float height, const bool fullscreen, bool displayViewTransformGuizmo);
+		void renderViewGuizmo(glm::mat4& projection, glm::mat4& view, const bool fullscreen, bool displayViewTransformGuizmo);
 
 
 	private:

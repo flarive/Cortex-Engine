@@ -51,29 +51,22 @@ namespace engine
 
 		static void resetIconToggleStates();
 
-		//static void initRenderGuizmo(const std::shared_ptr<Camera> camera);
+		static bool BeginCenteredToolbar(
+			int   iconCount,
+			float iconSize,
+			float iconSpacing = -1.0f,              // <0 => use style.ItemSpacing.x
+			float bgPaddingX = 8.0f,
+			float bgPaddingY = 6.0f,
+			float bgRounding = 10.0f,
+			ImU32 bgColor = IM_COL32(32, 32, 32, 180),
+			ImVec2* outBgMin = nullptr,
+			ImVec2* outBgMax = nullptr,
+			ImVec2* outStartCursorLocal = nullptr);
 
-		//static void renderGuizmo(const std::shared_ptr<Entity> selectedEntity, const std::shared_ptr<Camera> camera, const float width, const float height, const bool fullscreen, const bool displayObjectTransformGuizmo, const bool displayViewTransformGuizmo);
-
-		//static void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight);
-
+		static void EndCenteredToolbar();
 
 	private:
 		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
-
-		//static bool m_displayViewTransformGuizmo;
-		//static bool m_displayObjectTransformGuizmo;
-
-		//static float viewWidth; // for orthographic
-		//static const float camYAngle;
-		//static const float camXAngle;
-		//static float camDistance;
-		//static int gizmoCount;
-
-		//static bool firstFrame;
-		//static int lastUsing;
-
-		//static std::shared_ptr<Entity> m_selectedEntity;
 	};
 }

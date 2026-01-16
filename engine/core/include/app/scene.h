@@ -31,7 +31,7 @@ namespace engine
     private:
         static Scene* currentInstance; // Static pointer to the current instance
         
-        bool key_f11_pressed{ false };
+        bool key_F1_pressed{};
 
         
 
@@ -209,7 +209,7 @@ namespace engine
         #if EDITOR_MODE
         void listenForEditorChanges();
 
-        void setEditorMode();
+        void setEditorMode(glm::mat4& projection, glm::mat4& view);
         
 
         //void performRayCasting(double xpos, double ypos);

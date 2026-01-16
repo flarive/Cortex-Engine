@@ -301,6 +301,9 @@ void engine::Scene::gameLoop()
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
+    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    glm::mat4 view = getActiveCamera()->getViewMatrix();
+
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -308,9 +311,9 @@ void engine::Scene::gameLoop()
 
     framerate = ImGui::GetIO().Framerate;
 
-    #if EDITOR_MODE
-    setEditorMode();
-    #endif
+    
+    setEditorMode(projection, view);
+    
 
     
     
@@ -416,18 +419,17 @@ void engine::Scene::gameLoop()
     cpuTime = cpuFrameDuration.count();
 }
 
-void engine::Scene::setEditorMode()
+void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
 {
     m_displayObjectTransformGuizmo = is_editor_mode;
     m_displayViewTransformGuizmo = !is_editor_mode;
 
-    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
-    glm::mat4 view = getActiveCamera()->getViewMatrix();
-
+    #if EDITOR_MODE
     if (is_editor_mode) {
         app->setWindowTitle("EDITOR");
         m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
     }
+    #endif
 
     // render camera view guizmo in the top right corner of the screen
     m_editor.renderViewGuizmo(projection, view, app->fullscreen, m_displayViewTransformGuizmo);// to pass
@@ -661,7 +663,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     switch (key) {
     case GLFW_KEY_ESCAPE:
         glfwSetWindowShouldClose(app->window, GL_TRUE); break;
-    case GLFW_KEY_ENTER:
+    case GLFW_KEY_F:
         if (action == GLFW_RELEASE)
         {
             app->toggleFullscreen([this]() {
@@ -669,13 +671,13 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
                 });
         }
         break;
-    case GLFW_KEY_F11:
-        if (action == GLFW_PRESS && !key_f11_pressed) {
+    case GLFW_KEY_F1:
+        if (action == GLFW_PRESS && !key_F1_pressed) {
             is_editor_mode = !is_editor_mode;
-            key_f11_pressed = true;
+            key_F1_pressed = true;
         }
         else if (action == GLFW_RELEASE) {
-            key_f11_pressed = false;
+            key_F1_pressed = false;
         }
         break;
     case GLFW_KEY_SPACE:

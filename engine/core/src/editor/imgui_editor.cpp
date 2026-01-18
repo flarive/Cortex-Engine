@@ -61,8 +61,8 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 	bool open = true;
 
 	static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
-    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground; // ImGuiWindowFlags_NoBringToFrontOnFocus
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+    window_flags |= ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
     dockspace_flags |= ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;
@@ -71,12 +71,11 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowViewport(viewport->ID);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 5.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f));
 	ImGui::Begin("DockSpace", &open, window_flags);
-	ImGui::PopStyleVar();
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(3);
 
 	
 
@@ -96,12 +95,6 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 		ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.38f, NULL, &dock_main_id);
         ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.10f, NULL, &dock_main_id);
 
-        //ImGuiDockNode* node = ImGui::DockBuilderGetNode(dock_id_top);
-        //if (node)
-        //{
-        //    node->LocalFlags |= ImGuiDockNodeFlags_NoResize;
-        //}
-
 		ImGui::DockBuilderDockWindow("Scene", dock_id_left);
         ImGui::DockBuilderDockWindow("Settings", dock_id_left);
 		ImGui::DockBuilderDockWindow("About", dock_id_left);
@@ -113,26 +106,30 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
 
+    // Push the style change BEFORE DockSpace
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 5.0f));
+
 	ImGui::DockSpace(dockspace_id, ImGui::GetContentRegionAvail(), dockspace_flags);
 
 	ImGui::End();
 
-	ImGui::Begin("Scene", nullptr, 0);
+	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_None);
     renderHierarchyWidget();
 	ImGui::End();
 
-    ImGui::Begin("Settings", nullptr, 0);
+    ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_None);
     renderTabSettings();
     ImGui::End();
 
-	ImGui::Begin("About", nullptr, 0);
+	ImGui::Begin("About", nullptr, ImGuiWindowFlags_None);
     renderTabAbout();
 	ImGui::End();
 
-	ImGui::Begin("Properties", nullptr, 0);
+	ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_None);
     renderPropertiesWidget();
 	ImGui::End();
 
+    ImGui::PopStyleVar();
 
     renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 }
@@ -162,10 +159,11 @@ void engine::ImGuiEditor::renderPropertiesWidget()
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f); // Set rounding to 5 pixels
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f)); // 10 pixels padding on x and y
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
         ImGui::BeginChild("EntityPropertyRegion", ImVec2(0, 0), true, ImGuiWindowFlags_None);
         displayEntityDetails(m_selectedEntity);
         ImGui::EndChild();
-        ImGui::PopStyleVar(2); // Restore default
+        ImGui::PopStyleVar(3); // Restore default
     }
 }
 
@@ -826,9 +824,8 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
 
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f);
 
-        ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);// ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
        
         if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
         {
@@ -849,7 +846,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
 
         ImGui::End();
 
-        ImGui::PopStyleVar(2);
+        ImGui::PopStyleVar(1);
         ImGui::PopStyleColor(1);
     }
 }

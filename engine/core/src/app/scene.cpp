@@ -321,9 +321,9 @@ void engine::Scene::gameLoop()
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
 
     // Dear ImGui demo windows
-    //if (show_demo_window)
-    //    ImGui::ShowDemoWindow(&show_demo_window);
-    //
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+    
 
 
     // measure ui time (part 1 end)

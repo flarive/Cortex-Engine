@@ -58,7 +58,7 @@ namespace engine
 			float bgPaddingX = 8.0f,
 			float bgPaddingY = 6.0f,
 			float bgRounding = 10.0f,
-			ImU32 bgColor = IM_COL32(32, 32, 32, 180),
+			ImU32 bgColor = IM_COL32(37, 37, 37, 255),
 			ImVec2* outBgMin = nullptr,
 			ImVec2* outBgMax = nullptr,
 			ImVec2* outStartCursorLocal = nullptr);

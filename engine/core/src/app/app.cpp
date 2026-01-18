@@ -145,7 +145,7 @@ void engine::App::initImGUI(const char* glsl_version)
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     ////ImGuiIO& io = ImGui::GetIO();
     //ImFont* defaultFont = io.Fonts->AddFontDefault(); // Default
@@ -155,24 +155,20 @@ void engine::App::initImGUI(const char* glsl_version)
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags)
     {
-        //style.WindowRounding = 0.0f;
-        //style.ChildRounding = 5.0f;
-        //style.TabRounding = 5.f;
-        //style.FrameRounding = 5.f;
-        //style.GrabRounding = 5.f;
-        //style.PopupRounding = 5.f;
-        //style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        // Set rounding for ALL windows (including child windows)
+        style.WindowRounding = 6.0f; // Rounding for regular windows
+        style.ChildRounding = 6.0f;  // Rounding for child windows (docked windows)
 
         style.ItemSpacing.y = 8.0; // vertical padding between widgets
         style.FramePadding.x = 8.0; // better widget horizontal padding
         style.FramePadding.y = 4.0; // better widget vertical padding
     }
 
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    //{
+    //    style.WindowRounding = 6.0f;
+    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    //}
 
     // Apply Adobe Spectrum theme
     //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum

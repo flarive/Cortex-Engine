@@ -321,8 +321,8 @@ void engine::Scene::gameLoop()
         m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
 
     // Dear ImGui demo windows
-    if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+    //if (show_demo_window)
+    //    ImGui::ShowDemoWindow(&show_demo_window);
     
 
 
@@ -432,7 +432,7 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
     #endif
 
     // render camera view guizmo in the top right corner of the screen
-    m_editor.renderViewGuizmo(projection, view, app->fullscreen, m_displayViewTransformGuizmo);// to pass
+    m_editor.renderViewGuizmo(projection, view, m_displayViewTransformGuizmo);
 }
 
 void engine::Scene::initEntities()

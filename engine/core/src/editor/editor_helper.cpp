@@ -240,6 +240,8 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
     ImVec2 pos = ImGui::GetCursorScreenPos();
     ImVec2 size2 = ImVec2(width, ImGui::GetFrameHeight()); // Width can be adjusted
 
+	//pos.x -= 2.5f; // Slight adjustment for better alignment
+
     // Draw background with rounded right corners
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddRectFilled(pos, ImVec2(pos.x + size2.x, pos.y + size2.y),
@@ -251,12 +253,19 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0)); // Transparent background
     ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
+
+    //ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, ImDrawFlags_RoundCornersRight);
+
+    //ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.2, 0.2, 1.0));
     ImGui::SetNextItemWidth(width);
     bool res = ImGui::DragFloat(name, value, step, 0.0f, 0.0f, "%.2f");
+
+    //ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(3);
 
     return res;
 }
+
 
 void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
 {

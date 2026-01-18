@@ -77,8 +77,6 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 	ImGui::Begin("DockSpace", &open, window_flags);
 	ImGui::PopStyleVar(3);
 
-	
-
 	ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
 
 	if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
@@ -106,7 +104,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 		ImGui::DockBuilderFinish(dockspace_id);
 	}
 
-    // Push the style change BEFORE DockSpace
+	// custom docked windows tab height and padding
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5.0f, 5.0f));
 
 	ImGui::DockSpace(dockspace_id, ImGui::GetContentRegionAvail(), dockspace_flags);
@@ -780,7 +778,6 @@ GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
 
 #endif
 
-
 void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo)
 {
     if (!m_guizmoCamera)
@@ -810,13 +807,6 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
         // Render the Editor window (no-decoration, for gizmo)
         ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
 
-        // Get the GLFW window position and size
-        GLFWwindow* window = glfwGetCurrentContext();
-        int windowX, windowY;
-        glfwGetWindowPos(window, &windowX, &windowY);
-        int windowWidth, windowHeight;
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
         // Remove tab from dock panel
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
@@ -836,7 +826,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
             {
                 ImGuizmo::SetID(matId);
 
-                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity, windowX, windowY, windowWidth, windowHeight);
+                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity);
                 if (ImGuizmo::IsUsing())
                 {
                     lastUsing = matId;
@@ -851,7 +841,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
     }
 }
 
-void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity, int windowX, int windowY, int windowWidth, int windowHeight)
+void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity)
 {
     static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
     static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
@@ -953,7 +943,8 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     //    }
     //}
 
-    ImGuizmo::SetRect(windowX, windowY, windowWidth, windowHeight);
+    ImGuiIO& io = ImGui::GetIO();
+    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
     if (ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL))
     {
         float matrixTranslation2[3], matrixRotation2[3], matrixScale2[3];
@@ -965,23 +956,17 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     }
 }
 
-void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& view, const bool fullscreen, bool displayViewTransformGuizmo)
+void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo)
 {
     if (!m_guizmoCamera)
         return;
 
     if (displayViewTransformGuizmo)
     {
-        // MUTUALIZE !!!!!!!!!!!!
-        // Get the GLFW window position and size
-        GLFWwindow* window = glfwGetCurrentContext();
-        int windowX, windowY;
-        glfwGetWindowPos(window, &windowX, &windowY);
-        int windowWidth, windowHeight;
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        ImGuiIO& io = ImGui::GetIO();
 
         // Calculate the guizmo position relative to the window's top-right corner
-        ImVec2 pos = !fullscreen ? ImVec2(windowX + windowWidth - 128.0f, windowY + 0.0f) : ImVec2(windowWidth - 128.0f, 0.0f);
+        ImVec2 pos = ImVec2(io.DisplaySize.x - 128.0f, 0.0f);
         ImVec2 size = ImVec2(128, 128);
 
         // MUTUALIZE !!!!!
@@ -993,7 +978,6 @@ void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& vie
 
         float* projectionPtr2 = glm::value_ptr(projection);
         float* viewPtr2 = glm::value_ptr(view);
-
 
         // box displayed in the upper right corner
         if (ImGuizmo::ViewManipulate(viewPtr2, camDistance, pos, size, 0x10101010))

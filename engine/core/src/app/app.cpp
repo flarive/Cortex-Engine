@@ -2,9 +2,10 @@
 
 #include "../../include/debug/opengl_debug.h"
 
+#include <format>
 
 engine::App::App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
-    : title(_title), width(static_cast<float>(_width)), height(static_cast<float>(_height)), fullscreen(_fullscreen), settings(_settings)
+    : m_title(_title), width(static_cast<float>(_width)), height(static_cast<float>(_height)), fullscreen(_fullscreen), settings(_settings)
 {
     logger.info("Engine startup");
 
@@ -201,7 +202,33 @@ void engine::App::glfw_error_callback(int error, const char* description)
 
 void engine::App::setWindowTitle(const std::string& title)
 {
-    glfwSetWindowTitle(window, title.c_str());
+    m_title = title;
+    glfwSetWindowTitle(window, std::format("{}{}{}", m_title_prefix, m_title, m_title_suffix).c_str());
+}
+
+void engine::App::setWindowTitlePrefix(const std::string& prefix)
+{
+    m_title_prefix = prefix;
+}
+
+void engine::App::resetWindowTitlePrefix()
+{
+    m_title_prefix.clear();
+}
+
+void engine::App::setWindowTitleSuffix(const std::string& suffix)
+{
+    m_title_suffix = suffix;
+}
+
+void engine::App::resetWindowTitleSuffix()
+{
+    m_title_suffix.clear();
+}
+
+const std::string& engine::App::getWindowTitle()
+{
+    return m_title;
 }
 
 void engine::App::exit()

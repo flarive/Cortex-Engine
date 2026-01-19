@@ -24,7 +24,6 @@ namespace engine
         GLFWwindow* window{};
 
         // settings
-        std::string title{};
         float width{}; // windowed width
         float height{}; // windowed height
         bool fullscreen{};
@@ -45,12 +44,27 @@ namespace engine
 
         void exit();
 
+
+        const std::string& getWindowTitle();
         void setWindowTitle(const std::string& title);
+
+
+        void setWindowTitlePrefix(const std::string& prefix);
+        void resetWindowTitlePrefix();
+
+        void setWindowTitleSuffix(const std::string& suffix);
+        void resetWindowTitleSuffix();
+
+
 
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
 
     private:
+
+        std::string m_title{};
+        std::string m_title_suffix{};
+        std::string m_title_prefix{ "Cortex : " };
 
         void setup();
 

@@ -426,8 +426,12 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
 
     #if EDITOR_MODE
     if (is_editor_mode) {
-        app->setWindowTitle("EDITOR");
+        app->setWindowTitleSuffix("[EDITOR]");
         m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
+    }
+    else
+    {
+        app->resetWindowTitleSuffix();
     }
     #endif
 

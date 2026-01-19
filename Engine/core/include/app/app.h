@@ -45,9 +45,10 @@ namespace engine
         void exit();
 
 
-        const std::string& getWindowTitle();
-        void setWindowTitle(const std::string& title);
 
+        void setWindowTitle();
+
+        void setWindowTitle(const std::string& title);
 
         void setWindowTitlePrefix(const std::string& prefix);
         void resetWindowTitlePrefix();
@@ -64,7 +65,7 @@ namespace engine
 
         std::string m_title{};
         std::string m_title_suffix{};
-        std::string m_title_prefix{ "Cortex : " };
+        std::string m_title_prefix{ "Cortex |" };
 
         void setup();
 

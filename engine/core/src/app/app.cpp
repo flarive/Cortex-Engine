@@ -200,15 +200,27 @@ void engine::App::glfw_error_callback(int error, const char* description)
     std::exit(EXIT_FAILURE);
 }
 
+void engine::App::setWindowTitle()
+{
+    glfwSetWindowTitle(window, std::format("{} {} {}", m_title_prefix, m_title, m_title_suffix).c_str());
+}
+
 void engine::App::setWindowTitle(const std::string& title)
 {
-    m_title = title;
-    glfwSetWindowTitle(window, std::format("{}{}{}", m_title_prefix, m_title, m_title_suffix).c_str());
+    if (title != m_title)
+    {
+        m_title = title;
+        setWindowTitle();
+    }
 }
 
 void engine::App::setWindowTitlePrefix(const std::string& prefix)
 {
-    m_title_prefix = prefix;
+    if (prefix != m_title_prefix)
+    {
+        m_title_prefix = prefix;
+        setWindowTitle();
+    }
 }
 
 void engine::App::resetWindowTitlePrefix()
@@ -218,7 +230,11 @@ void engine::App::resetWindowTitlePrefix()
 
 void engine::App::setWindowTitleSuffix(const std::string& suffix)
 {
-    m_title_suffix = suffix;
+    if (suffix != m_title_suffix)
+    {
+        m_title_suffix = suffix;
+        setWindowTitle();
+    }
 }
 
 void engine::App::resetWindowTitleSuffix()
@@ -226,10 +242,6 @@ void engine::App::resetWindowTitleSuffix()
     m_title_suffix.clear();
 }
 
-const std::string& engine::App::getWindowTitle()
-{
-    return m_title;
-}
 
 void engine::App::exit()
 {

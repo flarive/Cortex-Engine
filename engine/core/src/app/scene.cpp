@@ -433,6 +433,8 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
     {
         app->resetWindowTitleSuffix();
     }
+
+    app->setWindowTitle();
     #endif
 
     // render camera view guizmo in the top right corner of the screen

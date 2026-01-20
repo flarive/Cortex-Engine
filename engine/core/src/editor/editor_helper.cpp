@@ -21,7 +21,9 @@
 
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache; // Define the static member
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
-
+std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconActionTextureCache; // Define the static member
+std::unordered_map<engine::EntityType, GLuint> engine::EditorHelper::m_iconSmallTextureCache; // Define the static member
+std::unordered_map<engine::EntityType, GLuint> engine::EditorHelper::m_iconMediumTextureCache; // Define the static member
 
 
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
@@ -406,7 +408,7 @@ void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& ite
     }
 }
 
-void engine::EditorHelper::addIconButton(const std::string& icon, std::function<void()> onClick)
+void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::function<void()> onClick)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
@@ -440,6 +442,31 @@ void engine::EditorHelper::addIconButton(const std::string& icon, std::function<
 
     ImGui::PopStyleVar(3); // Pop rounding, border, padding
     ImGui::PopStyleColor(3); // Pop colors
+}
+
+void engine::EditorHelper::addDiscreetIconButton(const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick)
+{
+    // Image button at the end of the line
+    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
+    GLuint buttonIcon = true ? getIcon(icon_on) : getIcon(icon_off);
+
+
+
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.f, 0.f, 0.f, 0.f));
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.f, 0.f));
+
+    if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
+    {
+        //entity->setEnabled(!entity->enabled);
+    }
+
+    ImGui::PopStyleVar(1);
+    ImGui::PopStyleColor(4);
 }
 
 GLuint engine::EditorHelper::getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder)
@@ -539,5 +566,56 @@ void engine::EditorHelper::EndCenteredToolbar()
     ImGui::EndGroup();
     // If you want to ensure layout continues on a new line below the background, you could add:
     // ImGui::Dummy(ImVec2(0.0f, 0.0f)); // not strictly necessary
+}
+
+GLuint engine::EditorHelper::getIcon(const std::string& key)
+{
+    auto it = m_iconActionTextureCache.find(key);
+    if (it != m_iconActionTextureCache.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_16x16.png", key);
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
+
+        return iconTexture;
+    }
+}
+GLuint engine::EditorHelper::getEntityTypeSmallIcon(const engine::EntityType entityType)
+{
+    auto it = m_iconSmallTextureCache.find(entityType);
+    if (it != m_iconSmallTextureCache.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_iconSmallTextureCache.insert(std::make_pair(entityType, iconTexture));
+
+        return iconTexture;
+    }
+}
+
+GLuint engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType entityType)
+{
+    auto it = m_iconMediumTextureCache.find(entityType);
+    if (it != m_iconMediumTextureCache.end())
+    {
+        return it->second;
+    }
+    else {
+        auto iconName = std::format("icon_{}_48x48.png", static_cast<int>(entityType));
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+
+        m_iconMediumTextureCache.insert(std::make_pair(entityType, iconTexture));
+
+        return iconTexture;
+    }
 }
 

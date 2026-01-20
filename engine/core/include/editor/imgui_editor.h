@@ -72,12 +72,10 @@ namespace engine
 		void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
 		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
-		GLuint getEntityTypeSmallIcon(const EntityType entityType);
-		GLuint getEntityTypeMediumIcon(const EntityType entityType);
 
 		ImVec4 getEntityColor(const engine::EntityType entityType);
 
-		GLuint getEntityActionIcon(const std::string& key);
+
 
 		void renderComponents(const std::shared_ptr<Entity>& entity);
 
@@ -95,15 +93,6 @@ namespace engine
 		
 
 	protected:
-		std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache{};
-		std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache{};
-
-		std::unordered_map<std::string, GLuint> m_iconActionTextureCache{};
-
-		
-
-		
-
 		bool sceneSetting_drawAsWireframe{ false };
 		bool sceneSetting_enableGammaCorrection{ false };
 		bool sceneSetting_enableFaceCulling{ true };

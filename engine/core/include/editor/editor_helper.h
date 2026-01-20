@@ -5,6 +5,8 @@
 #include "../ecs/component.h"
 #include "../cameras/camera.h"
 
+#include "../ecs/entity.h"
+
 #include <imgui.h>
 
 #include <string>
@@ -35,7 +37,7 @@ namespace engine
 		inline static const ImVec4 im_dark{ 0.0f, 0.0f, 0.0f, 0.2f };
 		inline static const ImVec4 im_light{ 1.0f, 1.0f, 1.0f, 0.2f };
 
-		inline static auto green = IM_COL32(138, 219, 0, 255);
+		inline static auto green = IM_COL32(0, 151, 51, 255);
 		inline static auto blue = IM_COL32(44, 143, 255, 255);
 		inline static auto red = IM_COL32(255, 54, 83, 255);
 		inline static auto white = IM_COL32(255, 255, 255, 255);
@@ -44,7 +46,12 @@ namespace engine
 		inline static const ImVec2 SIZE{ 21.0f, 21.0f };
 		inline static const float ITEM_LABEL_WIDTH{ 100.0f }; // pixels
 
-		static void addIconButton(const std::string& icon, std::function<void()> onClick);
+		static GLuint getIcon(const std::string& key);
+		static GLuint getEntityTypeSmallIcon(const EntityType entityType);
+		static GLuint getEntityTypeMediumIcon(const EntityType entityType);
+
+		static void addToolbarIconButton(const std::string& icon, std::function<void()> onClick);
+		static void addDiscreetIconButton(const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick);
 
 		static GLuint getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder);
 		static void setIconToggleState(const std::string& key, bool state);
@@ -68,5 +75,10 @@ namespace engine
 	private:
 		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
+
+		static std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
+
+		static std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
+		static std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache;
 	};
 }

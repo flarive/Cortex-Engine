@@ -329,7 +329,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     ImGui::PushID(entity.get()); // unique ID per entity
 
-    GLuint iconTexture = getEntityTypeSmallIcon(entityType);
+    GLuint iconTexture = EditorHelper::getEntityTypeSmallIcon(entityType);
 
     // Row start: small icon
     ImGui::Image((ImTextureID)(intptr_t)iconTexture, ImVec2(16, 16));
@@ -351,7 +351,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     // Image button at the end of the line
     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
-    GLuint buttonIcon = entity->enabled ? getEntityActionIcon("hide") : getEntityActionIcon("show");
+    GLuint buttonIcon = entity->enabled ? EditorHelper::getIcon("hide") : EditorHelper::getIcon("show");
 
     
 
@@ -392,7 +392,7 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
     if (entity)
     {
         auto entityType = entity->getType();
-        GLuint iconTexture = getEntityTypeMediumIcon(entityType);
+        GLuint iconTexture = EditorHelper::getEntityTypeMediumIcon(entityType);
 
         // Draw the icon
         ImGui::Image(iconTexture, ImVec2(48, 48));
@@ -473,209 +473,214 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     bool displayRotation{ true };
     bool displayScale{ true };
 
-
-    ImGui::SeparatorText(transformComponent->getName().c_str());
-
     if (!transformComponent)
         return;
 
-
-    glm::vec3 position{0,0,0};
-    glm::vec3 rotation{0,0,0};
-    glm::vec3 scale{1,1,1};
-
-    std::shared_ptr<CameraComponent> cameraComponent{};
-    std::shared_ptr<LightComponent> lightComponent{};
-    std::shared_ptr<PrimitiveComponent> primitiveComponent{};
-    std::shared_ptr<ModelComponent> modelComponent{};
-
-    if (cameraComponent = entity->getComponent<CameraComponent>())
+    if (ImGui::CollapsingHeader(transformComponent->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
     {
-        position = cameraComponent->getCamera()->position;
-        displayRotation = false;
-        displayScale = false;
-    }
-    else if (lightComponent = entity->getComponent<LightComponent>())
-    {
-        position = lightComponent->getLight()->position;
-        displayRotation = false;
-        displayScale = false;
-    }
-    else if (primitiveComponent = entity->getComponent<PrimitiveComponent>())
-    {
-        position = primitiveComponent->getPrimitive()->getPosition();
-        scale = primitiveComponent->getPrimitive()->getScale();
-        rotation = primitiveComponent->getPrimitive()->getRotation();
-    }
-    else if (modelComponent = entity->getComponent<ModelComponent>())
-    {
-        position = modelComponent->getModel()->getPosition();
-        scale = modelComponent->getModel()->getScale();
-        rotation = modelComponent->getModel()->getRotation();
-    }
+        glm::vec3 position{ 0,0,0 };
+        glm::vec3 rotation{ 0,0,0 };
+        glm::vec3 scale{ 1,1,1 };
 
-    // Local variables for ImGui
-    float posX = position.x;
-    float posY = position.y;
-    float posZ = position.z;
+        std::shared_ptr<CameraComponent> cameraComponent{};
+        std::shared_ptr<LightComponent> lightComponent{};
+        std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+        std::shared_ptr<ModelComponent> modelComponent{};
 
-    float rotX = rotation.x;
-    float rotY = rotation.y;
-    float rotZ = rotation.z;
-
-    float scaX = scale.x;
-    float scaY = scale.y;
-    float scaZ = scale.z;
-
-   
-    if (ImGui::BeginTable("MyTable", 4, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, EditorHelper::ITEM_LABEL_WIDTH);
-        ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-        ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-        ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 75.0f);
-
-        if (displayPosition)
+        if (cameraComponent = entity->getComponent<CameraComponent>())
         {
-            ImGui::TableNextRow();
-
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Position");
-
-            ImGui::TableSetColumnIndex(1);
-            if (EditorHelper::drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &posX, 0.01f)) {
-                position.x = posX;
-            }
-
-            ImGui::TableSetColumnIndex(2);
-            if (EditorHelper::drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &posY, 0.01f)) {
-                position.y = posY;
-            }
-
-            ImGui::TableSetColumnIndex(3);
-            if (EditorHelper::drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &posZ, 0.01f)) {
-                position.z = posZ;
-            }
+            position = cameraComponent->getCamera()->position;
+            displayRotation = false;
+            displayScale = false;
+        }
+        else if (lightComponent = entity->getComponent<LightComponent>())
+        {
+            position = lightComponent->getLight()->position;
+            displayRotation = false;
+            displayScale = false;
+        }
+        else if (primitiveComponent = entity->getComponent<PrimitiveComponent>())
+        {
+            position = primitiveComponent->getPrimitive()->getPosition();
+            scale = primitiveComponent->getPrimitive()->getScale();
+            rotation = primitiveComponent->getPrimitive()->getRotation();
+        }
+        else if (modelComponent = entity->getComponent<ModelComponent>())
+        {
+            position = modelComponent->getModel()->getPosition();
+            scale = modelComponent->getModel()->getScale();
+            rotation = modelComponent->getModel()->getRotation();
         }
 
-        if (displayRotation)
+        // Local variables for ImGui
+        float posX = position.x;
+        float posY = position.y;
+        float posZ = position.z;
+
+        float rotX = rotation.x;
+        float rotY = rotation.y;
+        float rotZ = rotation.z;
+
+        float scaX = scale.x;
+        float scaY = scale.y;
+        float scaZ = scale.z;
+
+
+        if (ImGui::BeginTable("MyTable", 4, ImGuiTableFlags_SizingStretchSame))
         {
-            ImGui::TableNextRow();
+            ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, EditorHelper::ITEM_LABEL_WIDTH);
+            ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 74.0f);
+            ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 74.0f);
+            ImGui::TableSetupColumn("vz", ImGuiTableColumnFlags_WidthFixed, 74.0f);
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Rotation");
+            if (displayPosition)
+            {
+                ImGui::TableNextRow();
 
-            ImGui::TableSetColumnIndex(1);
-            if (EditorHelper::drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &rotX, 1.0f)) {
-                rotation.x = rotX;
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Position");
+
+                ImGui::TableSetColumnIndex(1);
+                if (EditorHelper::drawCustomDragFloat("X", "##posX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &posX, 0.01f)) {
+                    position.x = posX;
+                }
+
+                ImGui::TableSetColumnIndex(2);
+                if (EditorHelper::drawCustomDragFloat("Y", "##posY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &posY, 0.01f)) {
+                    position.y = posY;
+                }
+
+                ImGui::TableSetColumnIndex(3);
+                if (EditorHelper::drawCustomDragFloat("Z", "##posZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &posZ, 0.01f)) {
+                    position.z = posZ;
+                }
             }
 
-            ImGui::TableSetColumnIndex(2);
-            if (EditorHelper::drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &rotY, 1.0f)) {
-                rotation.y = rotY;
+            if (displayRotation)
+            {
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Rotation");
+
+                ImGui::TableSetColumnIndex(1);
+                if (EditorHelper::drawCustomDragFloat("X", "##rotX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &rotX, 1.0f)) {
+                    rotation.x = rotX;
+                }
+
+                ImGui::TableSetColumnIndex(2);
+                if (EditorHelper::drawCustomDragFloat("Y", "##rotY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &rotY, 1.0f)) {
+                    rotation.y = rotY;
+                }
+
+                ImGui::TableSetColumnIndex(3);
+                if (EditorHelper::drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &rotZ, 1.0f)) {
+                    rotation.z = rotZ;
+                }
             }
 
-            ImGui::TableSetColumnIndex(3);
-            if (EditorHelper::drawCustomDragFloat("Z", "##rotZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &rotZ, 1.0f)) {
-                rotation.z = rotZ;
+            if (displayScale)
+            {
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("Scale");
+
+                EditorHelper::addDiscreetIconButton("link", "link", []() {});
+
+                ImGui::TableSetColumnIndex(1);
+                if (EditorHelper::drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &scaX, 0.01f)) {
+                    scale.x = scaX;
+                }
+
+                ImGui::TableSetColumnIndex(2);
+                if (EditorHelper::drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &scaY, 0.01f)) {
+                    scale.y = scaY;
+                }
+
+                ImGui::TableSetColumnIndex(3);
+                if (EditorHelper::drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &scaZ, 0.01f)) {
+                    scale.z = scaZ;
+                }
             }
+
+            ImGui::EndTable();
         }
 
-        if (displayScale)
+        if (cameraComponent)
         {
-            ImGui::TableNextRow();
-
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Scale");
-
-            ImGui::TableSetColumnIndex(1);
-            if (EditorHelper::drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &scaX, 0.01f)) {
-                scale.x = scaX;
-            }
-            
-            ImGui::TableSetColumnIndex(2);
-            if (EditorHelper::drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &scaY, 0.01f)) {
-                scale.y = scaY;
-            }
-            
-            ImGui::TableSetColumnIndex(3);
-            if (EditorHelper::drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &scaZ, 0.01f)) {
-                scale.z = scaZ;
-            }
+            cameraComponent->getCamera()->position = position;
+        }
+        else if (lightComponent)
+        {
+            lightComponent->getLight()->position = position;
+        }
+        else if (primitiveComponent)
+        {
+            auto p = primitiveComponent->getPrimitive();
+            p->setPosition(position);
+            p->setRotation(rotation);
+            p->setScale(scale);
+        }
+        else if (modelComponent)
+        {
+            auto p = modelComponent->getModel();
+            p->setPosition(position);
+            p->setRotation(rotation);
+            p->setScale(scale);
         }
 
-        ImGui::EndTable();
+        updateTransformComponent(transformComponent, position, rotation, scale); // dirty
     }
-
-    if (cameraComponent)
-    {
-        cameraComponent->getCamera()->position = position;
-    }
-    else if (lightComponent)
-    {
-        lightComponent->getLight()->position = position;
-    }
-    else if (primitiveComponent)
-    {
-        auto p = primitiveComponent->getPrimitive();
-        p->setPosition(position);
-        p->setRotation(rotation);
-        p->setScale(scale);
-    }
-    else if (modelComponent)
-    {
-        auto p = modelComponent->getModel();
-        p->setPosition(position);
-        p->setRotation(rotation);
-        p->setScale(scale);
-    }
-
-    updateTransformComponent(transformComponent, position, rotation, scale); // dirty
 }
 
 
 void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& component)
 {
-    ImGui::SeparatorText(component->getName().c_str());
-
     auto light = component->getLight();
     if (!light)
         return;
 
-    EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
+    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
+    }
 }
 
 void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>& component)
 {
-    ImGui::SeparatorText(component->getName().c_str());
-
     auto camera = component->getCamera();
     if (!camera)
         return;
 
-    EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
+    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
+    }
 }
 
 void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
 {
-    ImGui::SeparatorText(component->getName().c_str());
-
     auto primitive = component->getPrimitive();
     if (!primitive)
         return;
 
-    EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
+    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
+    }
 }
 
 void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component)
 {
-    ImGui::SeparatorText(component->getName().c_str());
-
     auto animator = component->getAnimator();
     if (!animator)
         return;
 
-    EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
+    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
+    }
 }
 
 void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale)
@@ -689,47 +694,13 @@ void engine::ImGuiEditor::updateTransformComponent(std::shared_ptr<TransformComp
 
 void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& component)
 {
-    ImGui::SeparatorText(component->getName().c_str());
-
     auto model = component->getModel();
     if (!model)
         return;
 
-    EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
-}
-
-GLuint engine::ImGuiEditor::getEntityTypeSmallIcon(const engine::EntityType entityType)
-{
-    auto it = m_iconSmallTextureCache.find(entityType);
-    if (it != m_iconSmallTextureCache.end())
+    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
     {
-        return it->second;
-    }
-    else
-    {
-        auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
-
-        m_iconSmallTextureCache.insert(std::make_pair(entityType, iconTexture));
-
-        return iconTexture;
-    }
-}
-
-GLuint engine::ImGuiEditor::getEntityTypeMediumIcon(const engine::EntityType entityType)
-{
-    auto it = m_iconMediumTextureCache.find(entityType);
-    if (it != m_iconMediumTextureCache.end())
-    {
-        return it->second;
-    }
-    else {
-        auto iconName = std::format("icon_{}_48x48.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
-
-        m_iconMediumTextureCache.insert(std::make_pair(entityType, iconTexture));
-
-        return iconTexture;
+        EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
     }
 }
 
@@ -757,23 +728,6 @@ ImVec4 engine::ImGuiEditor::getEntityColor(const engine::EntityType entityType)
     }
 
     return ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-}
-
-GLuint engine::ImGuiEditor::getEntityActionIcon(const std::string& key)
-{
-    auto it = m_iconActionTextureCache.find(key);
-    if (it != m_iconActionTextureCache.end())
-    {
-        return it->second;
-    }
-    else {
-        auto iconName = std::format("icon_{}_16x16.png", key);
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
-
-        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
-
-        return iconTexture;
-    }
 }
 
 #endif
@@ -855,11 +809,11 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     if (editTransformDecomposition)
     {
         EditorHelper::BeginCenteredToolbar(3, 32);
-        EditorHelper::addIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
+        EditorHelper::addToolbarIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
-        EditorHelper::addIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
+        EditorHelper::addToolbarIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
-        EditorHelper::addIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
+        EditorHelper::addToolbarIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
         EditorHelper::EndCenteredToolbar();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))

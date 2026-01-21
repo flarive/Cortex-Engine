@@ -444,25 +444,23 @@ void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::fu
     ImGui::PopStyleColor(3); // Pop colors
 }
 
-void engine::EditorHelper::addDiscreetIconButton(const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick)
+void engine::EditorHelper::addDiscreetIconButton(bool& state, const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick)
 {
-    // Image button at the end of the line
-    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
-    GLuint buttonIcon = true ? getIcon(icon_on) : getIcon(icon_off);
-
-
-
+    GLuint buttonIcon = state ? getIcon(icon_on) : getIcon(icon_off);
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.f, 0.f, 0.f, 0.f));
 
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.f, 0.f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 2.f));
 
-    if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
+    if (ImGui::ImageButton(std::format("##{}", icon_off).c_str(), (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
     {
-        //entity->setEnabled(!entity->enabled);
+        if (onClick)
+            onClick();
+
+        state = !state;
     }
 
     ImGui::PopStyleVar(1);
@@ -577,7 +575,7 @@ GLuint engine::EditorHelper::getIcon(const std::string& key)
     }
     else {
         auto iconName = std::format("icon_{}_16x16.png", key);
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false, true, false);
 
         m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
 

@@ -51,7 +51,7 @@ namespace engine
 		static GLuint getEntityTypeMediumIcon(const EntityType entityType);
 
 		static void addToolbarIconButton(const std::string& icon, std::function<void()> onClick);
-		static void addDiscreetIconButton(const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick);
+		static void addDiscreetIconButton(bool& state, const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick);
 
 		static GLuint getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder);
 		static void setIconToggleState(const std::string& key, bool state);

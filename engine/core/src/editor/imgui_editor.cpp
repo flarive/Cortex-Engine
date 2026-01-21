@@ -476,7 +476,10 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     if (!transformComponent)
         return;
 
-    if (ImGui::CollapsingHeader(transformComponent->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(transformComponent->getName().c_str()))
     {
         glm::vec3 position{ 0,0,0 };
         glm::vec3 rotation{ 0,0,0 };
@@ -583,24 +586,53 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             {
                 ImGui::TableNextRow();
 
+				static bool scaleLinked = false;
+
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("Scale");
-
-                EditorHelper::addDiscreetIconButton("link", "link", []() {});
+                ImGui::SameLine(98.0f); // align to right side
+                EditorHelper::addDiscreetIconButton(scaleLinked, "link", "linked", []() {});
 
                 ImGui::TableSetColumnIndex(1);
                 if (EditorHelper::drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &scaX, 0.01f)) {
-                    scale.x = scaX;
+                    if (!scaleLinked)
+                    {
+                        scale.x = scaX;
+                    }
+                    else
+                    {
+                        scale.x = scaX;
+                        scale.y = scaX;
+                        scale.z = scaX;
+                    }
                 }
 
                 ImGui::TableSetColumnIndex(2);
                 if (EditorHelper::drawCustomDragFloat("Y", "##scaY", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::red, EditorHelper::white, &scaY, 0.01f)) {
-                    scale.y = scaY;
+                    if (!scaleLinked)
+                    {
+                        scale.y = scaY;
+                    }
+                    else
+                    {
+                        scale.y = scaY;
+                        scale.x = scaY;
+                        scale.z = scaY;
+					}
                 }
 
                 ImGui::TableSetColumnIndex(3);
                 if (EditorHelper::drawCustomDragFloat("Z", "##scaZ", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::blue, EditorHelper::white, &scaZ, 0.01f)) {
-                    scale.z = scaZ;
+                    if (!scaleLinked)
+                    {
+                        scale.z = scaZ;
+                    }
+                    else
+                    {
+                        scale.z = scaZ;
+                        scale.x = scaZ;
+                        scale.y = scaZ;
+                    }
                 }
             }
 
@@ -641,7 +673,10 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     if (!light)
         return;
 
-    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(component->getName().c_str()))
     {
         EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
     }
@@ -653,7 +688,10 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     if (!camera)
         return;
 
-    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(component->getName().c_str()))
     {
         EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
     }
@@ -665,7 +703,10 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (!primitive)
         return;
 
-    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(component->getName().c_str()))
     {
         EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
     }
@@ -677,7 +718,10 @@ void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorCompon
     if (!animator)
         return;
 
-    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(component->getName().c_str()))
     {
         EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
     }
@@ -698,7 +742,10 @@ void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& 
     if (!model)
         return;
 
-    if (ImGui::CollapsingHeader(component->getName().c_str()), ImGuiTreeNodeFlags_DefaultOpen)
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(component->getName().c_str()))
     {
         EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
     }

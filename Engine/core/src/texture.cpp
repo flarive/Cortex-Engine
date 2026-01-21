@@ -407,18 +407,24 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
     return textureID;
 }
 
-unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory)
+unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory, bool invertY, bool mipmaps, bool compress)
 {
     std::string filename = directory + '/' + path;
 
     logger.info("Loading openGL texture {}", filename);
 
-    unsigned int textureID = SOIL_load_OGL_texture(
-        filename.c_str(),
-        SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID,
-        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_COMPRESS_TO_DXT
-    );
+    unsigned int flags = 0;
+
+    if (invertY)
+		flags |= SOIL_FLAG_INVERT_Y;
+
+    if (mipmaps)
+        flags |= SOIL_FLAG_MIPMAPS;
+
+    if (compress)
+        flags |= SOIL_FLAG_COMPRESS_TO_DXT;
+
+    unsigned int textureID = SOIL_load_OGL_texture(filename.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, flags);
 
     if (textureID == 0)
     {

@@ -46,6 +46,12 @@ namespace engine
         virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
         virtual void setProperty(const std::string& key, EditorPropertyValue value) = 0;
+
+		bool isEnabled() const { return m_isEnabled; }
+		void setEnabled(bool enabled) { m_isEnabled = enabled; }
+
+    private:
+		bool m_isEnabled{ true };
 	};
 
     /// <summary>

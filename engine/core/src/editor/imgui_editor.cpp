@@ -476,14 +476,12 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
     if (!transformComponent)
         return;
 
-    bool checkboxValue = false;
-
-
-    bool headerOpen = true;
+    static bool isHeaderChecked = true;
+    static bool isHeaderExpanded = true; // Set to true to start expanded
 
    
-
-    if (customCollapsingHeaderWithCheckbox(transformComponent->getName().c_str(), &headerOpen, &checkboxValue))
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingCheckboxHeader(transformComponent->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         glm::vec3 position{ 0,0,0 };
         glm::vec3 rotation{ 0,0,0 };
@@ -677,10 +675,11 @@ void engine::ImGuiEditor::renderLightComponent(std::shared_ptr<LightComponent>& 
     if (!light)
         return;
 
+    static bool isHeaderChecked = true;
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader(component->getName().c_str()))
+    if (ImGui::CollapsingCheckboxHeader(component->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
     }
@@ -692,10 +691,11 @@ void engine::ImGuiEditor::renderCameraComponent(std::shared_ptr<CameraComponent>
     if (!camera)
         return;
 
+    static bool isHeaderChecked = true;
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader(component->getName().c_str()))
+    if (ImGui::CollapsingCheckboxHeader(component->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
     }
@@ -707,10 +707,11 @@ void engine::ImGuiEditor::renderPrimitiveComponent(std::shared_ptr<PrimitiveComp
     if (!primitive)
         return;
 
+    static bool isHeaderChecked = true;
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader(component->getName().c_str()))
+    if (ImGui::CollapsingCheckboxHeader(component->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
     }
@@ -722,10 +723,11 @@ void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorCompon
     if (!animator)
         return;
 
+    static bool isHeaderChecked = true;
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader(component->getName().c_str()))
+    if (ImGui::CollapsingCheckboxHeader(component->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
     }
@@ -746,19 +748,11 @@ void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& 
     if (!model)
         return;
 
+    static bool isHeaderChecked = true;
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
-    /*ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (ImGui::CollapsingHeader(component->getName().c_str()))
-    {*/
-        //EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
-    //}
-
-
-    bool checkboxValue = false;
-    bool headerOpen = true;
-
-    if (customCollapsingHeaderWithCheckbox(component->getName().c_str(), &headerOpen, &checkboxValue))
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (ImGui::CollapsingCheckboxHeader(component->getName().c_str(), &isHeaderChecked, ImGuiTreeNodeFlags_None))
     {
         EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
     }
@@ -1020,36 +1014,36 @@ void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& vie
     }
 }
 
-bool engine::ImGuiEditor::customCollapsingHeaderWithCheckbox(const char* label, bool* p_open, bool* p_checked)
-{
-    ImGuiWindow* window = ImGui::GetCurrentWindow();
-    if (window->SkipItems)
-        return false;
-
-    ImGuiContext& g = *GImGui;
-    const ImGuiStyle& style = g.Style;
-    const ImGuiID id = window->GetID(label);
-
-    ImVec2 pos = window->DC.CursorPos;
-    ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
-    ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
-
-    ImGui::SetNextItemOpen(p_open, ImGuiCond_Once);
-
-    // Render the collapsing header
-    bool is_open = ImGui::CollapsingHeader(label, p_open, ImGuiTreeNodeFlags_None);
-
-    // Render the checkbox inside the header
-    float checkbox_width = ImGui::GetFrameHeight();
-    //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
-    ImVec2 checkbox_pos(20, pos.y - 42);
-    ImGui::SetCursorPos(checkbox_pos);
-    if (ImGui::Checkbox("##CheckboxInHeader", p_checked))
-    {
-
-    }
-
-    return is_open;
-}
+//bool engine::ImGuiEditor::customCollapsingHeaderWithCheckbox(const char* label, bool* p_open, bool* p_checked)
+//{
+//    ImGuiWindow* window = ImGui::GetCurrentWindow();
+//    if (window->SkipItems)
+//        return false;
+//
+//    ImGuiContext& g = *GImGui;
+//    const ImGuiStyle& style = g.Style;
+//    const ImGuiID id = window->GetID(label);
+//
+//    ImVec2 pos = window->DC.CursorPos;
+//    ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
+//    ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+//
+//    ImGui::SetNextItemOpen(p_open, ImGuiCond_Once);
+//
+//    // Render the collapsing header
+//    bool is_open = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_None);
+//
+//    // Render the checkbox inside the header
+//    float checkbox_width = ImGui::GetFrameHeight();
+//    //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
+//    ImVec2 checkbox_pos(20, pos.y - 42);
+//    ImGui::SetCursorPos(checkbox_pos);
+//    if (ImGui::Checkbox(std::format("##CheckboxInHeader", label).c_str(), p_checked))
+//    {
+//
+//    }
+//
+//    return is_open;
+//}
 
 

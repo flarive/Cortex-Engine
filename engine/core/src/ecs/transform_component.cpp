@@ -40,3 +40,8 @@ std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>
 void engine::TransformComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
 }
+
+void engine::TransformComponent::setEnabled(bool enabled)
+{
+    ComponentBase<TransformComponent>::setEnabled(enabled);
+}

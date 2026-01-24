@@ -52,7 +52,7 @@ std::vector<std::string> engine::BonesAnimator::getAnimationsStringList()
 void engine::BonesAnimator::updateAnimation(float dt)
 {
 	m_DeltaTime = dt;
-	if (m_CurrentAnimation)
+	if (m_CurrentAnimation && m_isPlaying)
 	{
 		m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
 		m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
@@ -64,6 +64,20 @@ void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
 	m_CurrentAnimation = pAnimation;
 	m_CurrentTime = 0.0f;
+	m_isPlaying = true;
+}
+
+void engine::BonesAnimator::playAnimation()
+{
+	if (m_CurrentAnimation)
+		m_isPlaying = true;
+	else
+		m_isPlaying = false;
+}
+
+void engine::BonesAnimator::stopAnimation()
+{
+	m_isPlaying = false;
 }
 
 void engine::BonesAnimator::playAnimationAtIndex(unsigned short index)

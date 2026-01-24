@@ -45,6 +45,10 @@ namespace engine
 
 		virtual void updateAnimation(float dt) = 0;
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
+		virtual void playAnimation() = 0;
+		virtual void stopAnimation() = 0;
+
+		virtual void playAnimationAtIndex(unsigned short index) = 0;
 
 		virtual const std::vector<glm::mat4>& getFinalBoneMatrices() const = 0;
 
@@ -53,5 +57,6 @@ namespace engine
 		std::shared_ptr<Animation> m_CurrentAnimation{};
 		float m_CurrentTime{};
 		float m_DeltaTime{};
+		bool m_isPlaying{ false };
     };
 }

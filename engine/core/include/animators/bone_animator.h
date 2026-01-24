@@ -50,9 +50,10 @@ namespace engine
 
 		void updateAnimation(float dt) override;
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
-
+		void playAnimation() override;
+		void stopAnimation() override;
 		
-		void playAnimationAtIndex(unsigned short index);
+		void playAnimationAtIndex(unsigned short index) override;
 		
 	
 

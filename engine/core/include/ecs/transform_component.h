@@ -51,6 +51,8 @@ namespace engine
 
 		void setProperty(const std::string& key, EditorPropertyValue value) override;
 
+		void setEnabled(bool enabled) override;
+
 	private:
 		Transform m_transform{};       // local position/rotation/scale
 		glm::mat4 m_worldTransform{};  // should be full parent * local

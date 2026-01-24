@@ -49,6 +49,8 @@ namespace engine
 
 		void setProperty(const std::string& key, EditorPropertyValue value) override;
 
+		void setEnabled(bool enabled) override;
+
 	private:
 
 		std::shared_ptr<Animator> m_animator{};

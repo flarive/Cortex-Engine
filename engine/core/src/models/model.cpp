@@ -39,6 +39,9 @@ engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _ga
 // draws the model, and thus all its meshes
 void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    if (!m_isVisible)
+        return;
+    
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
     shader.use();

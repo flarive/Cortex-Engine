@@ -91,3 +91,8 @@ void engine::PrimitiveComponent::setProperty(const std::string& key, engine::Edi
 		m_primitive->reSetup(); // Assuming all primitives have a reSetup() method
 	}
 }
+
+void engine::PrimitiveComponent::setEnabled(bool enabled)
+{
+	ComponentBase<PrimitiveComponent>::setEnabled(enabled);
+}

@@ -12,7 +12,7 @@ engine::AnimatorComponent::AnimatorComponent(std::shared_ptr<Animator> animator)
 
 void engine::AnimatorComponent::init(Transform& transform)
 {
-
+	m_animator->playAnimationAtIndex(0);
 }
 
 void engine::AnimatorComponent::update(float deltaTime, Transform& transform)
@@ -57,5 +57,16 @@ void engine::AnimatorComponent::setProperty(const std::string& key, engine::Edit
 {
 }
 
+void engine::AnimatorComponent::setEnabled(bool enabled)
+{
+	ComponentBase<AnimatorComponent>::setEnabled(enabled);
 
-
+	if (!enabled)
+	{
+		m_animator->stopAnimation();
+	}
+	else
+	{
+		m_animator->playAnimation();
+	}
+}

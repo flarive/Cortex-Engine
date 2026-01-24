@@ -67,3 +67,8 @@ void engine::LightComponent::setProperty(const std::string& key, engine::EditorP
         //m_light->reSetup(); // Assuming all primitives have a reSetup() method
     }
 }
+
+void engine::LightComponent::setEnabled(bool enabled)
+{
+    ComponentBase<LightComponent>::setEnabled(enabled);
+}

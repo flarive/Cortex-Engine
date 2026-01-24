@@ -48,7 +48,7 @@ namespace engine
         virtual void setProperty(const std::string& key, EditorPropertyValue value) = 0;
 
 		bool isEnabled() const { return m_isEnabled; }
-		void setEnabled(bool enabled) { m_isEnabled = enabled; }
+        virtual void setEnabled(bool enabled) = 0;
 
     private:
 		bool m_isEnabled{ true };

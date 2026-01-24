@@ -72,6 +72,8 @@ namespace engine
 
 		static void EndCenteredToolbar();
 
+		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck);
+
 	private:
 		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
@@ -80,5 +82,7 @@ namespace engine
 
 		static std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
 		static std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache;
+
+		
 	};
 }

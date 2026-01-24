@@ -87,3 +87,10 @@ void engine::ModelComponent::setProperty(const std::string& key, engine::EditorP
 		m_model->reSetup(); // Assuming all primitives have a reSetup() method
 	}
 }
+
+void engine::ModelComponent::setEnabled(bool enabled)
+{
+	ComponentBase<ModelComponent>::setEnabled(enabled);
+
+	m_model->setVisible(enabled);
+}

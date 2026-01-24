@@ -57,3 +57,8 @@ void engine::CameraComponent::setProperty(const std::string& key, engine::Editor
 		m_camera->reSetup(); // Assuming all primitives have a reSetup() method
 	}
 }
+
+void engine::CameraComponent::setEnabled(bool enabled)
+{
+	ComponentBase<CameraComponent>::setEnabled(enabled);
+}

@@ -119,8 +119,6 @@ namespace engine
 
 
 		std::shared_ptr<Camera> m_guizmoCamera{};
-
-		//bool customCollapsingHeaderWithCheckbox(const char* label, bool* p_open, bool* p_checked);
 	};
 }
 #endif

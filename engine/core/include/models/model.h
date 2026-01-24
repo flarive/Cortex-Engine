@@ -69,11 +69,16 @@ namespace engine
             m_scale = scale;
         }
 
+		bool isVisible() const { return m_isVisible; }
+		void setVisible(bool visible) { m_isVisible = visible; }
+
     private:
 
         glm::vec3 m_position{};
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
+
+		bool m_isVisible{ true };
 
         // for shared model only (loaded one time, drawn multiple times)
         std::shared_ptr<SharedModel> m_shared_model{};

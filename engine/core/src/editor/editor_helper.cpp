@@ -617,3 +617,53 @@ GLuint engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType en
     }
 }
 
+/// <summary>
+/// Hack FL !!!!!!!!!!!!!!! Collapsing header with checkbox
+/// </summary>
+/// <param name="label"></param>
+/// <param name="p_checked"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    char result[100];
+    snprintf(result, sizeof(result), "%s%s", "##collapsingHeaderCheckbox", label);
+
+    ImGuiID id = window->GetID(result);
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader;
+    //if (p_visible)
+    flags |= ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+
+    bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+
+    ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;
+
+    ImVec2 pos = window->DC.CursorPos;
+    ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
+    ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+
+    float checkbox_width = ImGui::GetFrameHeight();
+    //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
+    ImVec2 checkbox_pos(32, pos.y - 72);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.0f);       // Reduce corner rounding
+
+    ImGui::SetCursorPos(checkbox_pos);
+
+    if (ImGui::Checkbox(label, p_checked))
+    {
+        onCheck(*p_checked);
+    }
+
+    ImGui::PopStyleVar(3); // Restore the previous style
+
+    return is_open;
+}
+

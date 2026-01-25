@@ -8,6 +8,9 @@ engine::OrbitCamera::OrbitCamera(glm::vec3 _target, float _radius, float _theta,
 
 void engine::OrbitCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPhi)
 {
+    if (!m_enabled)
+        return;
+
     xoffset *= mouseSensitivity;
     yoffset *= mouseSensitivity;
 
@@ -28,6 +31,9 @@ void engine::OrbitCamera::processMouseMovement(float xoffset, float yoffset, GLb
 
 void engine::OrbitCamera::processMouseScroll(float yoffset)
 {
+    if (!m_enabled)
+        return;
+
     radius -= yoffset;
     if (radius < 1.0f)
         radius = 1.0f;
@@ -38,11 +44,18 @@ void engine::OrbitCamera::processKeyboard(CameraMovement direction, float deltaT
     (void)direction;   //Do nothing
     (void)deltaTime;   //Do nothing
     (void)constrainPitch;   //Do nothing
+
+    if (!m_enabled)
+        return;
+
 }
 
 void engine::OrbitCamera::processJoystickMovement(const GLFWgamepadstate& state)
 {
     (void)state;   //Do nothing
+
+    if (!m_enabled)
+        return;
 }
 
 // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -53,6 +66,9 @@ glm::mat4 engine::OrbitCamera::getViewMatrix()
 
 void engine::OrbitCamera::updateCameraVectors()
 {
+    if (!m_enabled)
+        return;
+
     // spherical to cartesian coordinates
     position.x = target.x + radius * sin(glm::radians(theta)) * cos(glm::radians(phi));
     position.y = target.y + radius * sin(glm::radians(phi));

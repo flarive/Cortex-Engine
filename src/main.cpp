@@ -16,14 +16,14 @@
 #include "app/myscene10.h" // area lights demo
 #include "app/myscene11.h" // blinnphong animated character
 
-// https://github.com/TheCherno/ImGuizmo
+// 
 // https://stackoverflow.com/questions/57454921/what-causes-glsl-recompilation-of-vertex-shader-based-on-state
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene11;
+using MyScene = MyScene5;
 
 App* myApp{};
 Scene* myScene{};

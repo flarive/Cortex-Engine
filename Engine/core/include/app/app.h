@@ -46,7 +46,7 @@ namespace engine
 
 
 
-        void setWindowTitle();
+        void setWindowTitle(bool appendFps = true);
 
         void setWindowTitle(const std::string& title);
 
@@ -61,8 +61,10 @@ namespace engine
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
 
-    private:
 
+		std::string& getTitle() { return m_title; }
+
+    private:
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };

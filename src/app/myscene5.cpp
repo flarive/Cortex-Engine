@@ -228,11 +228,6 @@ void MyScene5::drawScene(Shader& shader)
     }
 
     rotation += deltaTime * 10.0f;
-
-
-    stringstream ss;
-    ss << title << " - " << format("{:.0f} FPS", framerate);
-    app->setWindowTitle(ss.str());
 }
 
 void MyScene5::drawUI()

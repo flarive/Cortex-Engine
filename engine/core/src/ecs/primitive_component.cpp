@@ -95,4 +95,6 @@ void engine::PrimitiveComponent::setProperty(const std::string& key, engine::Edi
 void engine::PrimitiveComponent::setEnabled(bool enabled)
 {
 	ComponentBase<PrimitiveComponent>::setEnabled(enabled);
+
+	m_primitive->setEnabled(enabled);
 }

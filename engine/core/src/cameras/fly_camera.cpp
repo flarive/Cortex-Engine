@@ -9,6 +9,9 @@ engine::FlyCamera::FlyCamera(float _zoom, float _yaw, float _pitch, float _speed
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 void engine::FlyCamera::processKeyboard(engine::CameraMovement direction, float deltaTime, GLboolean constrainPitch)
 {
+    if (!m_enabled)
+		return;
+    
     float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)
         position += front * velocity;
@@ -49,6 +52,9 @@ void engine::FlyCamera::processKeyboard(engine::CameraMovement direction, float 
 // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
+    if (!m_enabled)
+        return;
+
     xoffset *= mouseSensitivity;
     yoffset *= mouseSensitivity;
 
@@ -70,6 +76,9 @@ void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboo
 
 void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
 {
+    if (!m_enabled)
+        return;
+    
     float deadZone = 0.2f; // Dead zone threshold to prevent drift
 
     float leftX = (fabs(state.axes[0]) > deadZone) ? state.axes[0] : 0.0f; // Left stick X-axis (left/right movement)
@@ -105,17 +114,17 @@ void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
 // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 void engine::FlyCamera::processMouseScroll(float yoffset)
 {
+    if (!m_enabled)
+        return;
+    
     zoom -= (float)yoffset;
-
-    //if (zoom < 1.0f)
-    //    zoom = 1.0f;
-    //
-    //if (zoom > 45.0f)
-    //    zoom = 45.0f;
 }
 
 void engine::FlyCamera::updateCameraVectors()
 {
+    if (!m_enabled)
+        return;
+
     // calculate the new Front vector
     glm::vec3 new_front;
     new_front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));

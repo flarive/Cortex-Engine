@@ -71,4 +71,6 @@ void engine::LightComponent::setProperty(const std::string& key, engine::EditorP
 void engine::LightComponent::setEnabled(bool enabled)
 {
     ComponentBase<LightComponent>::setEnabled(enabled);
+
+	m_light->setEnabled(enabled);
 }

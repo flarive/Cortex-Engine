@@ -17,13 +17,21 @@ engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _zoom, float _y
 
 glm::mat4& engine::Camera::getViewMatrix()
 {
-    m_viewMatrix = glm::lookAt(position, position + front, up);
+    if (m_enabled)
+        m_viewMatrix = glm::lookAt(position, position + front, up);
+    else
+		m_viewMatrix = glm::mat4(0.0f);
+
     return m_viewMatrix;
 }
 
 glm::mat4& engine::Camera::getProjectionMatrix(float width, float height, float near, float far)
 {
-    m_projection = glm::perspective(glm::radians(zoom), width / height, near, far);
+    if (m_enabled)
+        m_projection = glm::perspective(glm::radians(zoom), width / height, near, far);
+    else
+		m_projection = glm::mat4(0.0f);
+    
     return m_projection;
 }
 
@@ -53,25 +61,29 @@ void engine::Camera::setup()
 engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar)
 {
     engine::Frustum frustum;
-    const float halfVSide = zFar * tanf(fovY * .5f);
-    const float halfHSide = halfVSide * aspect;
-    const glm::vec3 frontMultFar = zFar * front;
 
-    frustum.nearFace = { position + zNear * front, front };
-    frustum.farFace = { position + frontMultFar, -front };
+    if (m_enabled)
+    {
+        const float halfVSide = zFar * tanf(fovY * .5f);
+        const float halfHSide = halfVSide * aspect;
+        const glm::vec3 frontMultFar = zFar * front;
 
-    frustum.rightFace = { position, glm::cross(frontMultFar - right * halfHSide, up) };
-    frustum.leftFace = { position, glm::cross(up, frontMultFar + right * halfHSide) };
-    frustum.topFace = { position, glm::cross(right, frontMultFar - up * halfVSide) };
-    frustum.bottomFace = { position, glm::cross(frontMultFar + up * halfVSide, right) };
+        frustum.nearFace = { position + zNear * front, front };
+        frustum.farFace = { position + frontMultFar, -front };
 
-    // Normalize all normals
-    frustum.nearFace.normal = glm::normalize(frustum.nearFace.normal);
-    frustum.farFace.normal = glm::normalize(frustum.farFace.normal);
-    frustum.rightFace.normal = glm::normalize(frustum.rightFace.normal);
-    frustum.leftFace.normal = glm::normalize(frustum.leftFace.normal);
-    frustum.topFace.normal = glm::normalize(frustum.topFace.normal);
-    frustum.bottomFace.normal = glm::normalize(frustum.bottomFace.normal);
+        frustum.rightFace = { position, glm::cross(frontMultFar - right * halfHSide, up) };
+        frustum.leftFace = { position, glm::cross(up, frontMultFar + right * halfHSide) };
+        frustum.topFace = { position, glm::cross(right, frontMultFar - up * halfVSide) };
+        frustum.bottomFace = { position, glm::cross(frontMultFar + up * halfVSide, right) };
+
+        // Normalize all normals
+        frustum.nearFace.normal = glm::normalize(frustum.nearFace.normal);
+        frustum.farFace.normal = glm::normalize(frustum.farFace.normal);
+        frustum.rightFace.normal = glm::normalize(frustum.rightFace.normal);
+        frustum.leftFace.normal = glm::normalize(frustum.leftFace.normal);
+        frustum.topFace.normal = glm::normalize(frustum.topFace.normal);
+        frustum.bottomFace.normal = glm::normalize(frustum.bottomFace.normal);
+    }
 
     return frustum;
 }

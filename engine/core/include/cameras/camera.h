@@ -117,10 +117,15 @@ namespace engine
 
         void reSetup() { setup(); };
 
+        bool getEnabled() const { return m_enabled; }
+        void setEnabled(bool enabled) { m_enabled = enabled; }
+
     protected:
 
         glm::mat4 m_viewMatrix{}; // Store the view matrix
         glm::mat4 m_projection{};
+
+		bool m_enabled{ true };
 
 
         // calculates the front vector from the Camera's (updated) Euler Angles

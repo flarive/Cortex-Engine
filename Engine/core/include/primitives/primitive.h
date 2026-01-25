@@ -130,16 +130,19 @@ namespace engine
             m_scale = scale;
 		}
 
-  //      void setTransform(const Transform& transform) {
-  //          m_position = transform.getLocalPosition();
-  //          m_rotation = transform.getLocalRotation();
-  //          m_scale = transform.getLocalScale();
-		//}
+        bool isEnabled() const { return m_isEnabled; }
+        void setEnabled(bool enabled) { m_isEnabled = enabled; }
+
+    protected:
+        bool m_isEnabled{ true };
+
 
     private:
         glm::vec3 m_position{};
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
+
+        
         
         virtual void geometrySetup() = 0;
     };

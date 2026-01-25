@@ -200,9 +200,20 @@ void engine::App::glfw_error_callback(int error, const char* description)
     std::exit(EXIT_FAILURE);
 }
 
-void engine::App::setWindowTitle()
+void engine::App::setWindowTitle(bool appendFps)
 {
-    glfwSetWindowTitle(window, std::format("{} {} {}", m_title_prefix, m_title, m_title_suffix).c_str());
+    std::string aa{};
+    
+    if (appendFps)
+    {
+        aa = std::format("{} {} {:.0f} FPS {}", m_title_prefix, m_title, ImGui::GetIO().Framerate, m_title_suffix);
+    }
+    else
+    {
+        aa = std::format("{} {} {}", m_title_prefix, m_title, m_title_suffix);
+    }
+
+    glfwSetWindowTitle(window, aa.c_str());
 }
 
 void engine::App::setWindowTitle(const std::string& title)

@@ -92,5 +92,5 @@ void engine::ModelComponent::setEnabled(bool enabled)
 {
 	ComponentBase<ModelComponent>::setEnabled(enabled);
 
-	m_model->setVisible(enabled);
+	m_model->setEnabled(enabled);
 }

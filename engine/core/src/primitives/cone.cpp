@@ -142,6 +142,9 @@ std::vector<engine::Vertex> engine::Cone::generateVertices()
 
 void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
+    if (!m_isEnabled)
+        return;
+    
     ShaderType type = shader.getShaderType();
 
     if (!m_material || !shader.isValid()) {

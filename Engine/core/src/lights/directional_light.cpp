@@ -37,7 +37,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         std::string base = std::format("dirLights[{}]", m_index);
 
         shader.use();
-        shader.setBool(std::format("{}.use", base), m_enabled);
+        shader.setBool(std::format("{}.use", base), getEnabled());
 
         shader.setVec3(std::format("{}.position", base), position);
 

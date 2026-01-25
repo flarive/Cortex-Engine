@@ -61,4 +61,6 @@ void engine::CameraComponent::setProperty(const std::string& key, engine::Editor
 void engine::CameraComponent::setEnabled(bool enabled)
 {
 	ComponentBase<CameraComponent>::setEnabled(enabled);
+
+	m_camera->setEnabled(enabled);
 }

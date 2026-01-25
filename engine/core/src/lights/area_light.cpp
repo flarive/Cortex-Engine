@@ -80,7 +80,7 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
         std::string base = std::format("areaLights[{}]", m_index);
 
         shader.use();
-        shader.setBool(std::format("{}.use", base), m_enabled);
+        shader.setBool(std::format("{}.use", base), getEnabled());
 
         // Send the light's points to the shader
         std::string str_pos = std::format("{}.points", base);

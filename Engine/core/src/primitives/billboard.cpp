@@ -36,6 +36,9 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material, const U
 
 void engine::Billboard::geometrySetup()
 {
+    if (!m_isEnabled)
+		return;
+
     std::vector<Vertex> vertices = generateVertices();
 
     // configure plane VAO

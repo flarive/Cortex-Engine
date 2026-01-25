@@ -405,16 +405,7 @@
     <ClCompile Include="core\src\animators\rotation_animator.cpp">
       <Filter>Fichiers sources\core\animators</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImCurveEdit.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGradient.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImSequencer.cpp">
       <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="core\src\debug\debug_cube.cpp">
@@ -689,16 +680,7 @@
     <ClInclude Include="core\include\animators\rotation_animator.h">
       <Filter>Fichiers d%27en-tête\core\animators</Filter>
     </ClInclude>
-    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImCurveEdit.h">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGradient.h">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h">
-      <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImSequencer.h">
       <Filter>Fichiers sources\imgui\extensions\imGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="core\include\debug\debug_cube.h">

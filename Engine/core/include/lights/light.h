@@ -88,11 +88,11 @@ namespace engine
 
         virtual void clean() = 0;
 
-        void setEnabled(bool _enabled) { m_enabled = _enabled; }
-
         virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
         virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
+		bool getEnabled() const { return m_enabled; }
+        void setEnabled(bool enabled) { m_enabled = enabled; }
 
 
     private:
@@ -101,7 +101,7 @@ namespace engine
     protected:
         unsigned int m_index{};
 
-		bool m_enabled{ true };
+        bool m_enabled{ true };
 
         Shader m_lightDebugShader{};
 

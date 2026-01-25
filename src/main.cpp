@@ -15,6 +15,7 @@
 #include "app/myscene9.h" // orbit camera
 #include "app/myscene10.h" // area lights demo
 #include "app/myscene11.h" // blinnphong animated character
+#include "app/myscene12.h" // PBR wood plane with misc materials
 
 // 
 // https://stackoverflow.com/questions/57454921/what-causes-glsl-recompilation-of-vertex-shader-based-on-state
@@ -23,7 +24,7 @@ using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene5;
+using MyScene = MyScene12;
 
 App* myApp{};
 Scene* myScene{};

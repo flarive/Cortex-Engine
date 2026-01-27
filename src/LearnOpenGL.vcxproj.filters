@@ -831,7 +831,7 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Color.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_AmbientOcclusion.jpg">
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_AmbientOcclusion.jpg">
       <Filter>resources\textures\pbr\ceramic</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\painted-wood\PaintedWood_AmbientOcclusion.jpg">
@@ -845,6 +845,24 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\hdr\empty_workshop_2k.hdr">
       <Filter>resources\textures\hdr</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Displace.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Normal.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Roughness.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_BaseColor.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Displacement.tiff" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Metallic.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Normal.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Roughness.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\painted-wood\PaintedWood_Color.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\painted-wood\PaintedWood_Displacement.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\painted-wood\PaintedWood_Normal.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\painted-wood\PaintedWood_Roughness.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Normal.jpg">
+      <Filter>resources\textures\pbr\ceramic</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Displacement.jpg">
+      <Filter>resources\textures\pbr\ceramic</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
@@ -887,43 +905,5 @@
     <ClInclude Include="app\myscene12.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\porcelain\Porcelain_Displace.png">
-      <Filter>resources\textures\pbr\porcelain</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\porcelain\Porcelain_Normal.png">
-      <Filter>resources\textures\pbr\porcelain</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\porcelain\Porcelain_Roughness.png">
-      <Filter>resources\textures\pbr\porcelain</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_BaseColor.jpg">
-      <Filter>resources\textures\pbr\ceramic</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Displacement.tiff">
-      <Filter>resources\textures\pbr\ceramic</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Metallic.jpg">
-      <Filter>resources\textures\pbr\ceramic</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Normal.png">
-      <Filter>resources\textures\pbr\ceramic</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Roughness.jpg">
-      <Filter>resources\textures\pbr\ceramic</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\painted-wood\PaintedWood_Color.jpg">
-      <Filter>resources\textures\pbr\painted-wood</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\painted-wood\PaintedWood_Displacement.jpg">
-      <Filter>resources\textures\pbr\painted-wood</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\painted-wood\PaintedWood_Normal.jpg">
-      <Filter>resources\textures\pbr\painted-wood</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\painted-wood\PaintedWood_Roughness.jpg">
-      <Filter>resources\textures\pbr\painted-wood</Filter>
-    </Image>
   </ItemGroup>
 </Project>

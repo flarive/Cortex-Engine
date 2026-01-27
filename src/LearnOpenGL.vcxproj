@@ -1776,37 +1776,25 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_AmbientOcclusion.jpg">
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_AmbientOcclusion.jpg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_BaseColor.jpg">
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_BaseColor.jpg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Displacement.tiff">
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Metallic.jpg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Metallic.jpg">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Normal.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
-      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\Poliigon_ClayCeramicGlossy_5212_Roughness.jpg">
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Roughness.jpg">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
@@ -1868,6 +1856,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\hdr</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\hdr</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Displacement.jpg">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\ceramic\ClayCeramicGlossy_Normal.jpg">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\ceramic</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

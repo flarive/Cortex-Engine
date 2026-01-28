@@ -41,7 +41,7 @@ void engine::ParticleGenerator::init()
         m_particles.push_back(Particle());
 }
 
-void engine::ParticleGenerator::update(float dt, Entity &object, unsigned int newParticles, glm::vec2 offset)
+void engine::ParticleGenerator::update(float dt, GameObject &object, unsigned int newParticles, glm::vec2 offset)
 {
     // add new particles 
     for (unsigned int i = 0; i < newParticles; ++i)
@@ -109,14 +109,14 @@ unsigned int engine::ParticleGenerator::firstUnusedParticle()
     return 0;
 }
 
-void engine::ParticleGenerator::respawnParticle(Particle &particle, Entity &object, glm::vec2 offset)
+void engine::ParticleGenerator::respawnParticle(Particle &particle, GameObject &object, glm::vec2 offset)
 {
     float random = ((rand() % 100) - 50) / 10.0f;
     float rColor = 0.5f + ((rand() % 100) / 100.0f);
-    particle.Position = glm::vec2(0,0) + random + offset; //  object.getTransform().getLocalPosition()
+    particle.Position = object.Position + random + offset;
     particle.Color = glm::vec4(rColor, rColor, rColor, 1.0f);
     particle.Life = 1.0f;
-    //particle.Velocity = object.velocity * 0.1f;
+    particle.Velocity = object.Velocity * 0.1f;
 
     glm::vec2 objectVelocity = glm::vec2(1.0f); // ?????
     particle.Velocity = objectVelocity * 0.1f;

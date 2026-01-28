@@ -5,7 +5,7 @@
 #include "../common_defines.h"
 #include "../shader.h"
 #include "../texture.h"
-#include "../ecs/entity.h"
+#include "game_object.h"
 
 namespace engine
 {
@@ -28,7 +28,7 @@ namespace engine
         // constructor
         ParticleGenerator(const std::string& texPath, unsigned int amount);
         // update all particles
-        void update(float dt, Entity& object, unsigned int newParticles, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+        void update(float dt, GameObject& object, unsigned int newParticles, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
         // render all particles
         void draw();
 
@@ -48,6 +48,6 @@ namespace engine
         // returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
         unsigned int firstUnusedParticle();
         // respawns particle
-        void respawnParticle(Particle& particle, Entity& object, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+        void respawnParticle(Particle& particle, GameObject& object, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
     };
 }

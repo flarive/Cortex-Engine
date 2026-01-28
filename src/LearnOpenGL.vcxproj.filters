@@ -891,6 +891,15 @@
     <CopyFileToFolders Include="..\resources\textures\particle.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\sprite_renderer.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\sprite_renderer.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_AmbientOcclusion.png">
+      <Filter>resources\textures\pbr\porcelain</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

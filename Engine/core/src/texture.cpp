@@ -414,7 +414,12 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
 
 unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory, bool invertY, bool mipmaps, bool compress)
 {
-    std::string filename = directory + '/' + path;
+    std::string filename{};
+
+    if (directory.empty())
+        filename = path;
+    else
+        filename = directory + '/' + path;
 
     logger.info("Loading openGL texture {}", filename);
 

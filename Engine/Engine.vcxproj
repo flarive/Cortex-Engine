@@ -206,6 +206,9 @@
     <ClCompile Include="core\src\animators\bone_animator.cpp" />
     <ClCompile Include="core\src\models\bone.cpp" />
     <ClCompile Include="core\src\models\shared_model.cpp" />
+    <ClCompile Include="core\src\particles\game_object.cpp" />
+    <ClCompile Include="core\src\particles\particle_generator.cpp" />
+    <ClCompile Include="core\src\particles\sprite_renderer.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
     <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
@@ -297,6 +300,9 @@
     <ClInclude Include="core\include\models\assimp_glm_helpers.h" />
     <ClInclude Include="core\include\models\bone.h" />
     <ClInclude Include="core\include\models\shared_model.h" />
+    <ClInclude Include="core\include\particles\game_object.h" />
+    <ClInclude Include="core\include\particles\particle_generator.h" />
+    <ClInclude Include="core\include\particles\sprite_renderer.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />

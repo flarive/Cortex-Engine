@@ -41,6 +41,8 @@ namespace engine
         // override a little NonCopyableButMovable
         Texture(Texture&&) = default;
 
+        void bind() const;
+
         static std::tuple<unsigned int, unsigned char*, int, int, int> loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTextureAsync(const std::string& filename, bool repeat = true, bool gammaCorrection = false);

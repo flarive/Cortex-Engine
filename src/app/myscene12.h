@@ -2,6 +2,7 @@
 
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
+#include "core/include/engine.h"
 
 using namespace std;
 using namespace engine;
@@ -15,19 +16,13 @@ private:
     float lastY{ 0.0f };
 
 
-    const std::string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    Text textFPSCount{};
-    Text textPolyCount{};
-    Text textMeshCount{};
-    Text textPrimitiveCount{};
+
+    
 
 
-    Text textDrawnCount{};
-    Text textTotalCount{};
-
-    float rotation{};
+    ParticleGenerator* particles{};
 
 public:
     MyScene12(string _title, App* _app);

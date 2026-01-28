@@ -28,6 +28,11 @@ engine::Texture::Texture(unsigned int id, const std::string& type, const std::st
 {
 }
 
+void engine::Texture::bind() const
+{
+    glBindTexture(GL_TEXTURE_2D, id);
+}
+
 /// <summary>
 /// Synchronous texture loading
 /// </summary>

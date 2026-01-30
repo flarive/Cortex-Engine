@@ -417,13 +417,10 @@
     <ClCompile Include="core\src\debug\debug_cube.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\particles\particle_generator.cpp">
-      <Filter>Fichiers sources\core\particles</Filter>
+    <ClCompile Include="core\src\tools\random.cpp">
+      <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\particles\game_object.cpp">
-      <Filter>Fichiers sources\core\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\particles\sprite_renderer.cpp">
+    <ClCompile Include="core\src\particles\particle_system.cpp">
       <Filter>Fichiers sources\core\particles</Filter>
     </ClCompile>
   </ItemGroup>
@@ -701,13 +698,10 @@
     <ClInclude Include="core\include\debug\debug_cube.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\particles\particle_generator.h">
-      <Filter>Fichiers d%27en-tête\core\particles</Filter>
+    <ClInclude Include="core\include\tools\random.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\particles\game_object.h">
-      <Filter>Fichiers d%27en-tête\core\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\particles\sprite_renderer.h">
+    <ClInclude Include="core\include\particles\particle_system.h">
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
     </ClInclude>
   </ItemGroup>

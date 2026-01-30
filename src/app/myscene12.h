@@ -18,13 +18,6 @@ private:
 
 
 
-
-    
-
-
-    ParticleGenerator* particles{};
-    GameObject* particleObject{};
-
 public:
     MyScene12(string _title, App* _app);
 

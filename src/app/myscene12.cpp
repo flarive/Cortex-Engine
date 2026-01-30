@@ -149,9 +149,6 @@ void MyScene12::init()
     entitySphere2->addComponent<TransformComponent>(trsSphere2);
     entitySphere2->addComponent<PrimitiveComponent>(sphere2);
     getEntityManager().addChild(entitySphere2);
-
-    particleObject = new GameObject(glm::vec2(0,0), glm::vec2(5,5), FileSystem::getPath("textures/awesomeface.png"));
-    particles = new ParticleGenerator(FileSystem::getPath("textures/particle.png"), 500);
 }
 
 
@@ -236,12 +233,6 @@ void MyScene12::update(Shader& shader)
 {
     // draw scene and UI in framebuffer
     (void)shader;   //Do nothing
-
-
-    // update particles
-    particles->update(deltaTime, *particleObject, 2, glm::vec2(5.0 / 2.0f));
-    particles->draw();
-
 }
 
 void MyScene12::updateUI()

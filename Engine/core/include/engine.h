@@ -65,7 +65,7 @@
 #include "primitives/plane.h"
 #include "primitives/billboard.h"
 
-#include "particles/particle_generator.h"
+#include "particles/particle_system.h"
 
 
 #include "managers/log_manager.h"

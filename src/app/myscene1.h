@@ -3,6 +3,8 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
 
+#include "core/include/particles/particle_system.h"
+
 using namespace std;
 using namespace engine;
 
@@ -30,6 +32,9 @@ private:
 
     Text textDrawnCount{};
     Text textTotalCount{};
+
+    ParticleProps m_Particle;
+    ParticleSystem m_ParticleSystem;
 
     float rotation{};
 

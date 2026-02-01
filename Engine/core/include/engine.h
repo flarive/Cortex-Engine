@@ -67,6 +67,5 @@
 
 #include "particles/particle_system.h"
 
-
 #include "managers/log_manager.h"
 #include "managers/audio_manager.h"

@@ -116,6 +116,9 @@
     <Filter Include="resources\textures\pbr\painted-wood">
       <UniqueIdentifier>{a27cf242-17b7-4583-9173-7e27014982c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\particles">
+      <UniqueIdentifier>{539a2087-1c37-4419-a311-8236cfd4604d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -899,6 +902,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_AmbientOcclusion.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\particles\circle.bmp">
+      <Filter>resources\textures\particles</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\particles\circlealpha.bmp">
+      <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

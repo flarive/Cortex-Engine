@@ -141,6 +141,19 @@ void MyScene1::init()
     getEntityManager().addChild(entityCube2);
 
 
+
+    // Init here
+    m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
+    m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+    m_Particle.SizeBegin = 0.5f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 0.0f;
+    m_Particle.LifeTime = 1.0f;
+    m_Particle.Velocity = { 0.0f, 0.0f };
+    m_Particle.VelocityVariation = { 3.0f, 1.0f };
+    m_Particle.Position = { 0.0f, 0.0f };
+
+
+
+
     // skybox
     auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
     if (renderer)
@@ -202,26 +215,41 @@ void MyScene1::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode || show_demo_window)
-        return;
+    //if (is_editor_mode || show_demo_window)
+    //    return;
 
-    float xpos{ static_cast<float>(xposIn) };
-    float ypos{ static_cast<float>(yposIn) };
+    //float xpos{ static_cast<float>(xposIn) };
+    //float ypos{ static_cast<float>(yposIn) };
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+    //if (firstMouse)
+    //{
+    //    lastX = xpos;
+    //    lastY = ypos;
+    //    firstMouse = false;
+    //}
+
+    //float xoffset{ xpos - lastX };
+    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+
+    //lastX = xpos;
+    //lastY = ypos;
+
+    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+
+    if (glfwGetMouseButton(getWindow(), GLFW_MOUSE_BUTTON_LEFT)) {
+        //Fire ray
+        //ImVec2 mousePos = ImGui::GetMousePos();
+        auto width = app->width;
+        auto height = app->height;
+
+        auto bounds = getActiveCamera()->getBounds(app->width / app->height, glm::radians(getActiveCamera()->zoom), 0.1f);
+        auto pos = getActiveCamera()->position;
+        float x = (xposIn / width) * bounds.width - bounds.width * 0.5f;
+        float y = bounds.height * 0.5f - (yposIn / height) * bounds.height;
+        m_Particle.Position = { x + pos.x, y + pos.y };
+        for (int i = 0; i < 5; i++)
+            m_ParticleSystem.Emit(m_Particle);
     }
-
-    float xoffset{ xpos - lastX };
-    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene1::scroll_callback(double xoffset, double yoffset)

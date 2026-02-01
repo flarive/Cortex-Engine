@@ -12,6 +12,7 @@
 #include <map>
 #include <unordered_map>
 #include <functional>
+#include <array>
 
 namespace engine
 {
@@ -49,6 +50,16 @@ namespace engine
         auto it = CameraTypeNames.find(type);
         return it != CameraTypeNames.end() ? it->second : "unknown";
     }
+
+
+    struct FrustumCorners {
+        std::array<glm::vec3, 8> corners;
+    };
+
+    struct Bounds2D {
+        float width;
+        float height;
+    };
 
 
 
@@ -108,6 +119,9 @@ namespace engine
         void draw(const glm::vec3& _position);
 
         Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
+
+        //FrustumCorners getBounds(float aspect, float fovY, float zNear, float zFar);
+        Bounds2D getBounds(float aspect, float fovY, float zNear);
 
         // Inside the Camera class definition
         float getDistanceToTarget(const glm::vec3& target) const

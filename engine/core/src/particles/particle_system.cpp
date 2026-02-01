@@ -9,7 +9,7 @@
 
 engine::ParticleSystem::ParticleSystem()
 {
-	m_shader.init("particles", "shaders/particle.vert", "shaders/particle.frag");
+	m_shader.init("particles", "shaders/particles.vert", "shaders/particles.frag");
 	
 	m_ParticlePool.resize(1000);
 }

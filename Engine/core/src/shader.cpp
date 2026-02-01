@@ -40,7 +40,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     {
         const char* error = e.what();
         logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("Shader file read failed");
     }
 
     const char* vShaderCode = vertexCode.c_str();
@@ -114,7 +114,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     {
         const char* error = e.what();
         logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("Shader file read failed");
     }
 
     const char* vShaderCode = vertexCode.c_str();
@@ -396,7 +396,7 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
             logger.error("Shader {} SHADER_COMPILATION_ERROR of type: {}", shader, infoLog);
-            exit(EXIT_FAILURE);
+            throw std::runtime_error("Shader compilation error");
         }
     }
     else
@@ -406,7 +406,7 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
         {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
             logger.error("Shader {} PROGRAM_LINKING_ERROR of type {}: {}", shader, type, infoLog);
-            exit(EXIT_FAILURE);
+            throw std::runtime_error("Shader linking error");
         }
     }
 }

@@ -87,3 +87,66 @@ engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY
 
     return frustum;
 }
+
+//engine::FrustumCorners engine::Camera::getBounds(float aspect, float fovY, float zNear, float zFar)
+//{
+//    engine::FrustumCorners frustumCorners;
+//
+//    if (!m_enabled) {
+//        // Return zeroed corners if camera is disabled
+//        for (auto& corner : frustumCorners.corners) {
+//            corner = glm::vec3(0.0f);
+//        }
+//        return frustumCorners;
+//    }
+//
+//    // Compute half dimensions of the near and far planes
+//    const float halfVSideNear = zNear * tanf(fovY * 0.5f);
+//    const float halfHSideNear = halfVSideNear * aspect;
+//    const float halfVSideFar = zFar * tanf(fovY * 0.5f);
+//    const float halfHSideFar = halfVSideFar * aspect;
+//
+//    // Compute the center of the near and far planes
+//    glm::vec3 frontNear = position + front * zNear;
+//    glm::vec3 frontFar = position + front * zFar;
+//
+//    // Compute the 4 corners of the near and far planes
+//    glm::vec3 rightNear = right * halfHSideNear;
+//    glm::vec3 upNear = up * halfVSideNear;
+//    glm::vec3 rightFar = right * halfHSideFar;
+//    glm::vec3 upFar = up * halfVSideFar;
+//
+//    // Near plane corners
+//    frustumCorners.corners[0] = frontNear - rightNear - upNear; // Bottom-left
+//    frustumCorners.corners[1] = frontNear + rightNear - upNear; // Bottom-right
+//    frustumCorners.corners[2] = frontNear + rightNear + upNear; // Top-right
+//    frustumCorners.corners[3] = frontNear - rightNear + upNear; // Top-left
+//
+//    // Far plane corners
+//    frustumCorners.corners[4] = frontFar - rightFar - upFar; // Bottom-left
+//    frustumCorners.corners[5] = frontFar + rightFar - upFar; // Bottom-right
+//    frustumCorners.corners[6] = frontFar + rightFar + upFar; // Top-right
+//    frustumCorners.corners[7] = frontFar - rightFar + upFar; // Top-left
+//
+//    return frustumCorners;
+//}
+
+engine::Bounds2D engine::Camera::getBounds(float aspect, float fovY, float zNear)
+{
+    Bounds2D bounds{ 0.0f, 0.0f };
+
+    if (!m_enabled) {
+        return bounds;
+    }
+
+    // Calculate half-height and half-width of the near plane
+    const float halfVSide = zNear * tanf(glm::radians(fovY) * 0.5f);
+    const float halfHSide = halfVSide * aspect;
+
+    // Total width and height of the near plane
+    bounds.width = 2.0f * halfHSide;
+    bounds.height = 2.0f * halfVSide;
+
+    return bounds;
+}
+

@@ -17,7 +17,7 @@
 #include "app/myscene11.h" // blinnphong animated character
 #include "app/myscene12.h" // PBR wood plane with misc materials
 
-// 
+// https://github.com/Co3us/OpenGLParticleSystem
 // https://stackoverflow.com/questions/57454921/what-causes-glsl-recompilation-of-vertex-shader-based-on-state
 
 using namespace engine;

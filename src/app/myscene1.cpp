@@ -142,16 +142,6 @@ void MyScene1::init()
 
 
 
-    // Init here
-    m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
-    m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
-    m_Particle.SizeBegin = 0.5f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 0.0f;
-    m_Particle.LifeTime = 1.0f;
-    m_Particle.Velocity = { 0.0f, 0.0f };
-    m_Particle.VelocityVariation = { 3.0f, 1.0f };
-    m_Particle.Position = { 0.0f, 0.0f };
-
-
 
 
     // skybox
@@ -235,21 +225,6 @@ void MyScene1::mouse_callback(double xposIn, double yposIn)
     //lastY = ypos;
 
     //getActiveCamera()->processMouseMovement(xoffset, yoffset);
-
-    if (glfwGetMouseButton(getWindow(), GLFW_MOUSE_BUTTON_LEFT)) {
-        //Fire ray
-        //ImVec2 mousePos = ImGui::GetMousePos();
-        auto width = app->width;
-        auto height = app->height;
-
-        auto bounds = getActiveCamera()->getBounds(app->width / app->height, glm::radians(getActiveCamera()->zoom), 0.1f);
-        auto pos = getActiveCamera()->position;
-        float x = (xposIn / width) * bounds.width - bounds.width * 0.5f;
-        float y = bounds.height * 0.5f - (yposIn / height) * bounds.height;
-        m_Particle.Position = { x + pos.x, y + pos.y };
-        for (int i = 0; i < 5; i++)
-            m_ParticleSystem.Emit(m_Particle);
-    }
 }
 
 void MyScene1::scroll_callback(double xoffset, double yoffset)

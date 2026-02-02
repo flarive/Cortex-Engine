@@ -420,7 +420,10 @@
     <ClCompile Include="core\src\tools\random.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\particles\particle_system.cpp">
+    <ClCompile Include="core\src\particles\Particle.cpp">
+      <Filter>Fichiers sources\core\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\particles\ParticleSystem.cpp">
       <Filter>Fichiers sources\core\particles</Filter>
     </ClCompile>
   </ItemGroup>
@@ -701,7 +704,10 @@
     <ClInclude Include="core\include\tools\random.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\particles\particle_system.h">
+    <ClInclude Include="core\include\particles\Particle.h">
+      <Filter>Fichiers d%27en-tête\core\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\particles\ParticleSystem.h">
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
     </ClInclude>
   </ItemGroup>

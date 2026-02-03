@@ -51,7 +51,7 @@ void engine::ParticleSystem::update() {
 	{
 		if (flags[i] == true) {
 			particlesArray[i].lifeSpan -= deltaTime;
-			particlesArray[i].position = particlesArray[i].position + particlesArray[i].startVel * deltaTime;
+			particlesArray[i].position = particlesArray[i].position + particlesArray[i].startVel * glm::vec3(deltaTime);
 			if (particlesArray[i].lifeSpan <= 0) {
 				destroyParticle(i);
 			}

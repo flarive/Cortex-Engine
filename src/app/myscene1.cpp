@@ -142,8 +142,6 @@ void MyScene1::init()
 
 
 
-
-
     // skybox
     auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
     if (renderer)
@@ -280,6 +278,24 @@ void MyScene1::update(Shader& shader)
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCylinder->setTransform(trs);
     }
+
+
+    m_particleSystem.update();
+
+
+    /*if (Global::drawtype == Basic) {*/
+        m_particleSystem.basicDataPrep();
+        int numOfSquares = m_particleSystem.getCurrentDataSize() / 8;
+        m_particleSystem.basicRender(numOfSquares);
+    //}
+    //else if (Global::drawtype == Geometry) {
+    //    glHelpers.geometryDataPrep(glData, ps);
+    //    glHelpers.geometryRender(glData, ps.getCurrentDataSize());
+    //}
+    //else if (Global::drawtype == Instanced) {
+    //    glHelpers.instancedDataPrep(glData, ps);
+    //    glHelpers.instancedRender(glData, ps.getCurrentDataSize());
+    //}
 
     rotation += deltaTime * 10.0f;
 }

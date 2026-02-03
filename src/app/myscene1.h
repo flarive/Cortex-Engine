@@ -34,6 +34,8 @@ private:
     Text textTotalCount{};
 
 
+    ParticleSystem m_particleSystem{ 1000, 100 }; // max 1000 particles, 100 particles per second
+
     float rotation{};
 
 public:

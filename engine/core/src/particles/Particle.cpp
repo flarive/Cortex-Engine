@@ -2,7 +2,6 @@
 
 engine::Particle::Particle()
 {
-	
 	int rn = rand();
 	double positionX = rand() / (double)RAND_MAX * 2 - 1;
 	double positionY = rand() / (double)RAND_MAX * 2 - 1;

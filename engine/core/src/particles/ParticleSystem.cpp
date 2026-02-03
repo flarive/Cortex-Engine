@@ -1,5 +1,8 @@
 #include "../../include/particles/particlesystem.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
+#include "../../include/texture.h"
 
 using namespace std;
 
@@ -17,6 +20,17 @@ engine::ParticleSystem::ParticleSystem(int _NMAX, int _numOfParticlesPerSecond) 
 	currentDataSize = 0;
 	squareSize = 0.25;
 
+
+	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
+	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSource.geom");
+	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
+
+
+	texture = Texture::loadTexture("textures/particles/circlealpha.bmp");
+
+	setUpVertexData();
+
+
 	particlesArray = new Particle[NMAX];
 	flags = new bool[NMAX];
 
@@ -30,8 +44,45 @@ engine::ParticleSystem::~ParticleSystem() {
 	delete(flags);
 }
 
-void engine::ParticleSystem::update() {
+void engine::ParticleSystem::setUpVertexData()
+{
+	// set up vertex data (and buffer(s)) and configure vertex attributes
+	// ------------------------------------------------------------------
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
+
+	//if (Global::drawtype == Instanced)
+	//{
+	//	glGenVertexArrays(1, &glData.quadVAO);
+	//	glGenBuffers(1, &glData.quadVBO);
+	//	glBindVertexArray(glData.quadVAO);
+
+	//	float particleSize = Global::particleSize;
+	//	glGenBuffers(1, &glData.instanceVBO);
+
+	//	float quadVertices[] = {
+	//		// positions    
+	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+	//		 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
+	//		-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
+
+	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+	//		 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
+	//		 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
+	//	};
+	//	glBindBuffer(GL_ARRAY_BUFFER, glData.quadVBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	//	glEnableVertexAttribArray(0);
+	//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	//	glEnableVertexAttribArray(1);
+	//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	//}
+}
+
+void engine::ParticleSystem::update()
+{
 	double currentTime = glfwGetTime();
 	double deltaTime = currentTime - prevTime;
 	prevTime = currentTime;
@@ -59,8 +110,8 @@ void engine::ParticleSystem::update() {
 	}
 }
 
-void engine::ParticleSystem::destroyParticle(int index) {
-
+void engine::ParticleSystem::destroyParticle(int index)
+{
 	flags[index] = false;
 	if (index == maxFilledIndex) {
 		for (int i = maxFilledIndex; i >= 0; i--)
@@ -73,8 +124,8 @@ void engine::ParticleSystem::destroyParticle(int index) {
 	}
 }
 
-void engine::ParticleSystem::initParticles(int n) {
-
+void engine::ParticleSystem::initParticles(int n)
+{
 	for (size_t i = 0; i < n; i++)
 	{
 		Particle particle{};
@@ -92,8 +143,8 @@ void engine::ParticleSystem::initParticles(int n) {
 	}
 }
 
-vector<glm::vec3> engine::ParticleSystem::getDataSquarePoints() {
-
+vector<glm::vec3> engine::ParticleSystem::getDataSquarePoints()
+{
 	int squareDim = 1;
 	std::vector<glm::vec3> points;
 	currentDataSize = 0;
@@ -126,8 +177,8 @@ vector<glm::vec3> engine::ParticleSystem::getDataSquarePoints() {
 	return points;
 }
 
-std::vector<glm::vec3> engine::ParticleSystem::getDataCenterPoints() {
-
+std::vector<glm::vec3> engine::ParticleSystem::getDataCenterPoints()
+{
 	int squareDim = 1;
 	std::vector<glm::vec3> points;
 	currentDataSize = 0;
@@ -141,8 +192,8 @@ std::vector<glm::vec3> engine::ParticleSystem::getDataCenterPoints() {
 	return points;
 }
 
-void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center) {
-
+void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
+{
 	float dist = squareSize;
 	//Point down-left
 	squarePoints[0] = center + glm::vec3(dist, -dist, 0);
@@ -154,6 +205,116 @@ void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center) {
 	squarePoints[3] = center + glm::vec3(dist, dist, 0);
 }
 
-int engine::ParticleSystem::getCurrentDataSize() {
+int engine::ParticleSystem::getCurrentDataSize()
+{
 	return currentDataSize;
 }
+
+
+void engine::ParticleSystem::basicDataPrep()
+{
+	std::vector<glm::vec3>  points = getDataSquarePoints();
+	int currentDataSize = getCurrentDataSize();
+
+	glm::vec3* data = points.data();
+
+	int numOfSquares = (currentDataSize / 8);
+	std::vector<int> indices;
+	for (size_t i = 0; i < numOfSquares; i++)
+	{
+		indices.push_back(i * 4);
+		indices.push_back(i * 4 + 1);
+		indices.push_back(i * 4 + 3);
+		indices.push_back(i * 4 + 1);
+		indices.push_back(i * 4 + 2);
+		indices.push_back(i * 4 + 3);
+	}
+	int* indicesData = indices.data();
+
+	if (currentDataSize > 0) {
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numOfSquares * 6 * sizeof(int), indicesData, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(glm::vec3), (void*)0);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
+		glEnableVertexAttribArray(1);
+
+	}
+
+}
+void engine::ParticleSystem::geometryDataPrep()
+{
+	std::vector<glm::vec3>  points = getDataCenterPoints();
+	glm::vec3* data = points.data();
+	int currentDataSize = getCurrentDataSize();
+
+	int numOfSquares = (currentDataSize / 8);
+
+	if (currentDataSize > 0) {
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glEnableVertexAttribArray(0);
+	}
+
+}
+
+void engine::ParticleSystem::instancedDataPrep()
+{
+	std::vector<glm::vec3>  points = getDataCenterPoints();
+	glm::vec3* data = points.data();
+	int currentDataSize = getCurrentDataSize();
+
+	if (currentDataSize > 0) {
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
+	}
+
+}
+
+void engine::ParticleSystem::renderPrep(unsigned int _VAO)
+{
+	glUniformMatrix4fv(id_shader_PVM_uniform, 1, GL_FALSE, glm::value_ptr(PVM));
+	glUniform1f(glGetUniformLocation(m_shaderSourceGeometry.ID, "squareSize"), squareSize); // particle size
+
+	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	glUseProgram(m_shaderSourceGeometry.ID);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindVertexArray(_VAO);
+}
+
+void engine::ParticleSystem::basicRender(int numOfSquares)
+{
+	renderPrep(VAO);
+	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
+
+}
+
+void engine::ParticleSystem::geometryRender(int currentDataSize)
+{
+	renderPrep(VAO);
+	glDrawArrays(GL_POINTS, 0, currentDataSize);
+}
+
+void engine::ParticleSystem::instancedRender(int currentDataSize)
+{
+	renderPrep(quadVAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, currentDataSize);
+	glBindVertexArray(0);
+}
+

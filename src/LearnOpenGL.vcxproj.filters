@@ -909,6 +909,24 @@
     <CopyFileToFolders Include="..\resources\textures\particles\circlealpha.bmp">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSource.geom">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceBasic.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceBasic.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceGeometry.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceGeometry.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceInstanced.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

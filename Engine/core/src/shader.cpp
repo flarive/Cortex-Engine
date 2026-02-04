@@ -147,7 +147,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 
     m_initialized = true;
 
-    //logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
+    logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);

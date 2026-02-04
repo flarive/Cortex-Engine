@@ -909,7 +909,7 @@
     <CopyFileToFolders Include="..\resources\textures\particles\circlealpha.bmp">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\ParticleSource.geom">
+    <CopyFileToFolders Include="..\resources\shaders\ParticleSourceGeometry.geom">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\ParticleSourceBasic.frag">
@@ -926,6 +926,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\ParticleSourceInstanced.vert">
       <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\particles\rect.jpg">
+      <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

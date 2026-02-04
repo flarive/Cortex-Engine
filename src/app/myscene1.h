@@ -4,6 +4,9 @@
 #include "core/include/app/scene.h"
 
 #include "core/include/particles/particlesystem.h"
+#include "core/include/particles/global.h"
+#include "core/include/particles/openGLData.h"
+#include "core/include/particles/OpenGLHelpers.h"
 
 using namespace std;
 using namespace engine;
@@ -33,8 +36,15 @@ private:
     Text textDrawnCount{};
     Text textTotalCount{};
 
+    //// helper classes for OpenGl functions
+    //// -----------------------------------
+    OpenGLHelpers glHelpers;
+    OpenGLData glData{};
 
-    ParticleSystem m_particleSystem{ 1000, 100 }; // max 1000 particles, 100 particles per second
+    int NMAX = 100;
+    int numOfParticlesPerSecond = 10;
+    ParticleSystem ps{ NMAX, numOfParticlesPerSecond };
+    
 
     float rotation{};
 

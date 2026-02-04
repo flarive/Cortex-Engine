@@ -142,6 +142,31 @@ void MyScene1::init()
 
 
 
+
+    Global::setDrawType(0);
+
+    float squareSize = 0.25f;
+    Global::setParticleSize(squareSize);
+
+
+
+
+    ////select shader sources based on drawtype
+    //// --------------------------------------
+    char* vert, * frag, * geom;
+    glHelpers.selectShaders(vert, frag, geom);
+
+    //glData.shaderProgram = glHelpers.compileShaders(vert, frag, geom);
+    glData.texture = glHelpers.loadTexture();
+
+    glHelpers.setUpVertexData(glData);
+
+    
+
+
+
+
+
     // skybox
     auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
     if (renderer)
@@ -203,26 +228,26 @@ void MyScene1::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    //if (is_editor_mode || show_demo_window)
-    //    return;
+    if (is_editor_mode || show_demo_window)
+        return;
 
-    //float xpos{ static_cast<float>(xposIn) };
-    //float ypos{ static_cast<float>(yposIn) };
+    float xpos{ static_cast<float>(xposIn) };
+    float ypos{ static_cast<float>(yposIn) };
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset{ xpos - lastX };
-    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    float xoffset{ xpos - lastX };
+    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene1::scroll_callback(double xoffset, double yoffset)
@@ -279,23 +304,26 @@ void MyScene1::update(Shader& shader)
         myCylinder->setTransform(trs);
     }
 
+    
 
-    m_particleSystem.update();
 
+    ps.update();
+    glData.PVM = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    
 
-    /*if (Global::drawtype == Basic) {*/
-        m_particleSystem.basicDataPrep();
-        int numOfSquares = m_particleSystem.getCurrentDataSize() / 8;
-        m_particleSystem.basicRender(numOfSquares);
-    //}
-    //else if (Global::drawtype == Geometry) {
-    //    glHelpers.geometryDataPrep(glData, ps);
-    //    glHelpers.geometryRender(glData, ps.getCurrentDataSize());
-    //}
-    //else if (Global::drawtype == Instanced) {
-    //    glHelpers.instancedDataPrep(glData, ps);
-    //    glHelpers.instancedRender(glData, ps.getCurrentDataSize());
-    //}
+    if (Global::drawtype == Basic) {
+        glHelpers.basicDataPrep(glData, ps);
+        int numOfSquares = ps.getCurrentDataSize() / 8;
+        glHelpers.basicRender(glData, numOfSquares);
+    }
+    else if (Global::drawtype == Geometry) {
+        glHelpers.geometryDataPrep(glData, ps);
+        glHelpers.geometryRender(glData, ps.getCurrentDataSize());
+    }
+    else if (Global::drawtype == Instanced) {
+        glHelpers.instancedDataPrep(glData, ps);
+        glHelpers.instancedRender(glData, ps.getCurrentDataSize());
+    }
 
     rotation += deltaTime * 10.0f;
 }

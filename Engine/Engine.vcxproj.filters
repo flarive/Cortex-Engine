@@ -435,6 +435,9 @@
     <ClCompile Include="core\src\particles\OpenGLHelpers.cpp">
       <Filter>Fichiers sources\core\particles</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\ecs\particlesystem_component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -727,6 +730,9 @@
     </ClInclude>
     <ClInclude Include="core\include\particles\OpenGLHelpers.h">
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\particlesystem_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

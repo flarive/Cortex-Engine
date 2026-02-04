@@ -1,7 +1,5 @@
 #include "../../include/particles/particlesystem.h"
 
-//#include <glm/gtc/type_ptr.hpp>
-
 #include "../../include/texture.h"
 
 using namespace std;

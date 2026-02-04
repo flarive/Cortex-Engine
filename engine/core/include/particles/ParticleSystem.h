@@ -5,6 +5,7 @@
 #include "../common_defines.h"
 
 #include "../shader.h"
+#include "../misc/ordered_map.h"
 
 #include<iostream>
 #include <stdlib.h>   
@@ -28,6 +29,26 @@ namespace engine
 		void update();
 		std::vector<glm::vec3> getDataCenterPoints();
 
+		ordered_map<std::string, EditorProperty> getPublicProperties() {
+			return {
+				//{"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
+				//{"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+				//{"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
+			};
+		}
+
+		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
+			return {
+				//{ "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
+				//{ "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
+				//{ "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
+			};
+		}
+
+		bool isEnabled() const { return m_isEnabled; }
+		void setEnabled(bool enabled) { m_isEnabled = enabled; }
+
+		void reSetup() {}
 
 		//void basicDataPrep();
 		//void geometryDataPrep();
@@ -80,6 +101,10 @@ namespace engine
 
 		//void setUpVertexData();
 
+		bool m_isEnabled{true};
 
+		glm::vec3 m_position{};
+		glm::vec3 m_rotation{};
+		glm::vec3 m_scale{};
 	};
 }

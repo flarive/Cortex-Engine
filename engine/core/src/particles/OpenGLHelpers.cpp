@@ -278,7 +278,6 @@ void engine::OpenGLHelpers::renderPrep(int mode, OpenGLData &glData, unsigned in
 	{
 		m_shaderSourceInstanced.use();
 		m_shaderSourceInstanced.setMat4("PVM", glData.PVM);
-		m_shaderSourceInstanced.setFloat("squareSize", Global::particleSize);
 	}
 
 	
@@ -292,7 +291,13 @@ void engine::OpenGLHelpers::renderPrep(int mode, OpenGLData &glData, unsigned in
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	//glUseProgram(glData.shaderProgram);
+	//glBindTexture(GL_TEXTURE_2D, glData.texture);
+
+
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, glData.texture);
+
+
 	glBindVertexArray(VAO);
 }
 

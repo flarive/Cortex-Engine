@@ -187,6 +187,7 @@
     <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp" />
     <ClCompile Include="core\src\debug\opengl_debug.cpp" />
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
+    <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\editor\editor_helper.cpp" />
     <ClCompile Include="core\src\editor\imgui_editor.cpp" />
     <ClCompile Include="core\src\ecs\camera_component.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="core\include\debug\imgui_perf_overlay.h" />
     <ClInclude Include="core\include\debug\opengl_debug.h" />
     <ClInclude Include="core\include\ecs\animator_component.h" />
+    <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\editor\editor_helper.h" />
     <ClInclude Include="core\include\editor\imgui_editor.h" />
     <ClInclude Include="core\include\ecs\camera_component.h" />

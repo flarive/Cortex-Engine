@@ -54,112 +54,121 @@ void MyScene1::init()
 
 
     // ground
-    //auto myPlane = make_shared<Plane>();
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
-    //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
-    //auto entityPlane = make_shared<Entity>("MyPlane");
-    //entityPlane->addComponent<TransformComponent>(trsPlane);
-    //entityPlane->addComponent<PrimitiveComponent>(myPlane);
-    //getEntityManager().addChild(entityPlane);
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
+    getEntityManager().addChild(entityPlane);
 
 
-    //// billboard
-    //auto myBillboard = make_shared<Billboard>();
-    //myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png"), UvMapping(1.0f));
-    //auto trsBillboard = Transform(vec3(0.0f, -0.18f, 1.35f), vec3(0.7f));
-    //auto entityBillboard = make_shared<Entity>("MyBillboard");
-    //entityBillboard->addComponent<TransformComponent>(trsBillboard);
-    //entityBillboard->addComponent<PrimitiveComponent>(myBillboard);
-    //getEntityManager().addChild(entityBillboard);
+    // billboard
+    auto myBillboard = make_shared<Billboard>();
+    myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png"), UvMapping(1.0f));
+    auto trsBillboard = Transform(vec3(0.0f, -0.18f, 1.35f), vec3(0.7f));
+    auto entityBillboard = make_shared<Entity>("MyBillboard");
+    entityBillboard->addComponent<TransformComponent>(trsBillboard);
+    entityBillboard->addComponent<PrimitiveComponent>(myBillboard);
+    getEntityManager().addChild(entityBillboard);
 
 
-    //// cube
-    //auto myCube = make_shared<Cube>(2.0f);
-    //myCube->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
-    //auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
-    //auto entityCube = make_shared<Entity>("MyCube");
-    //entityCube->addComponent<TransformComponent>(trsCube);
-    //entityCube->addComponent<PrimitiveComponent>(myCube);
-    //getEntityManager().addChild(entityCube);
+    // cube
+    auto myCube = make_shared<Cube>(2.0f);
+    myCube->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
+    auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
+    auto entityCube = make_shared<Entity>("MyCube");
+    entityCube->addComponent<TransformComponent>(trsCube);
+    entityCube->addComponent<PrimitiveComponent>(myCube);
+    getEntityManager().addChild(entityCube);
 
 
-    //// cylinder
-    //auto myCylinder = make_shared<Cylinder>(0.1f, 0.3f);
-    //myCylinder->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    //auto trsCylinder = Transform(vec3(0.5f, -0.35f, 0.0f));
-    //auto entityCylinder = make_shared<Entity>("MyCylinder");
-    //entityCylinder->addComponent<TransformComponent>(trsCylinder);
-    //entityCylinder->addComponent<PrimitiveComponent>(myCylinder);
-    //getEntityManager().addChild(entityCylinder);
+    // cylinder
+    auto myCylinder = make_shared<Cylinder>(0.1f, 0.3f);
+    myCylinder->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsCylinder = Transform(vec3(0.5f, -0.35f, 0.0f));
+    auto entityCylinder = make_shared<Entity>("MyCylinder");
+    entityCylinder->addComponent<TransformComponent>(trsCylinder);
+    entityCylinder->addComponent<PrimitiveComponent>(myCylinder);
+    getEntityManager().addChild(entityCylinder);
 
 
-    //// cone
-    //auto myCone = make_shared<Cone>(0.1f, 0.3f);
-    //myCone->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    //auto trsCone = Transform(vec3(1.0f, -0.35f, 0.0f));
-    //auto entityCone = make_shared<Entity>("MyCone");
-    //entityCone->addComponent<TransformComponent>(trsCone);
-    //entityCone->addComponent<PrimitiveComponent>(myCone);
-    //getEntityManager().addChild(entityCone);
+    // cone
+    auto myCone = make_shared<Cone>(0.1f, 0.3f);
+    myCone->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsCone = Transform(vec3(1.0f, -0.35f, 0.0f));
+    auto entityCone = make_shared<Entity>("MyCone");
+    entityCone->addComponent<TransformComponent>(trsCone);
+    entityCone->addComponent<PrimitiveComponent>(myCone);
+    getEntityManager().addChild(entityCone);
 
 
-    //// sphere
-    //auto mySphere = make_shared<Sphere>();
-    //mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    //auto trsSphere = Transform(vec3(1.5f, -0.35f, 0.0f), vec3(0.2f));
-    //auto entitySphere = make_shared<Entity>("MySphere");
-    //entitySphere->addComponent<TransformComponent>(trsSphere);
-    //entitySphere->addComponent<PrimitiveComponent>(mySphere);
-    //getEntityManager().addChild(entitySphere);
+    // sphere
+    auto mySphere = make_shared<Sphere>();
+    mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsSphere = Transform(vec3(1.5f, -0.35f, 0.0f), vec3(0.2f));
+    auto entitySphere = make_shared<Entity>("MySphere");
+    entitySphere->addComponent<TransformComponent>(trsSphere);
+    entitySphere->addComponent<PrimitiveComponent>(mySphere);
+    getEntityManager().addChild(entitySphere);
 
 
-    //// cushion model
-    //auto cushionModel = make_shared<Model>("models/cushion/cushion.glb");
-    //auto trsCushion = Transform(vec3(-0.5f, -0.35f, 0.0f), vec3(0.10f), vec3(0.0f, 45.0f, 0.0f));
-    //auto entityCushion = make_shared<Entity>("MyCushion");
-    //entityCushion->addComponent<TransformComponent>(trsCushion);
-    //entityCushion->addComponent<ModelComponent>(cushionModel);
-    //getEntityManager().addChild(entityCushion);
+    // cushion model
+    auto cushionModel = make_shared<Model>("models/cushion/cushion.glb");
+    auto trsCushion = Transform(vec3(-0.5f, -0.35f, 0.0f), vec3(0.10f), vec3(0.0f, 45.0f, 0.0f));
+    auto entityCushion = make_shared<Entity>("MyCushion");
+    entityCushion->addComponent<TransformComponent>(trsCushion);
+    entityCushion->addComponent<ModelComponent>(cushionModel);
+    getEntityManager().addChild(entityCushion);
 
 
-    //// backpack model
-    //auto backpackModel = make_shared<Model>("models/backpack/backpack.glb");
-    //auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f), vec3(90.0f, 0.0f, 0.0f));
-    //auto entityBackpack = make_shared<Entity>("MyBackpack");
-    //entityBackpack->addComponent<TransformComponent>(trsBackpack);
-    //entityBackpack->addComponent<ModelComponent>(backpackModel);
-    //getEntityManager().addChild(entityBackpack);
+    // backpack model
+    auto backpackModel = make_shared<Model>("models/backpack/backpack.glb");
+    auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f), vec3(90.0f, 0.0f, 0.0f));
+    auto entityBackpack = make_shared<Entity>("MyBackpack");
+    entityBackpack->addComponent<TransformComponent>(trsBackpack);
+    entityBackpack->addComponent<ModelComponent>(backpackModel);
+    getEntityManager().addChild(entityBackpack);
 
 
-    //// cube outside camera frustrum
-    //auto myCube2 = make_shared<Cube>();
-    //myCube2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
-    //auto trsCube2 = Transform(vec3(-3.0f, -0.35f, 0.0f), vec3(0.15f));
-    //auto entityCube2 = make_shared<Entity>("MyCube2");
-    //entityCube2->addComponent<TransformComponent>(trsCube2);
-    //entityCube2->addComponent<PrimitiveComponent>(myCube2);
-    //getEntityManager().addChild(entityCube2);
-
-
-
-
-    Global::setDrawType(2);
-
-    float squareSize = 0.25f;
-    Global::setParticleSize(squareSize);
+    // cube outside camera frustrum
+    auto myCube2 = make_shared<Cube>();
+    myCube2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"));
+    auto trsCube2 = Transform(vec3(-3.0f, -0.35f, 0.0f), vec3(0.15f));
+    auto entityCube2 = make_shared<Entity>("MyCube2");
+    entityCube2->addComponent<TransformComponent>(trsCube2);
+    entityCube2->addComponent<PrimitiveComponent>(myCube2);
+    getEntityManager().addChild(entityCube2);
 
 
 
+    // particle system
+    auto myParticleSystem = make_shared<ParticleSystem>(100, 10);
+    //myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    auto trsParticleSystem = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityParticleSystem = make_shared<Entity>("MyParticleSystem");
+    entityParticleSystem->addComponent<TransformComponent>(trsParticleSystem);
+    entityParticleSystem->addComponent<ParticleSystemComponent>(myParticleSystem);
+    getEntityManager().addChild(entityParticleSystem);
 
-    ////select shader sources based on drawtype
-    //// --------------------------------------
-    char* vert, * frag, * geom;
-    glHelpers.selectShaders(vert, frag, geom);
 
-    //glData.shaderProgram = glHelpers.compileShaders(vert, frag, geom);
-    glData.texture = glHelpers.loadTexture();
+    //Global::setDrawType(2);
 
-    glHelpers.setUpVertexData(glData);
+    //float squareSize = 0.25f;
+    //Global::setParticleSize(squareSize);
+
+
+
+
+    //////select shader sources based on drawtype
+    ////// --------------------------------------
+    //char* vert, * frag, * geom;
+    //glHelpers.selectShaders(vert, frag, geom);
+
+    ////glData.shaderProgram = glHelpers.compileShaders(vert, frag, geom);
+    //glData.texture = glHelpers.loadTexture();
+
+    //glHelpers.setUpVertexData(glData);
 
     
 
@@ -168,20 +177,20 @@ void MyScene1::init()
 
 
     // skybox
-    //auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
-    //if (renderer)
-    //{
-    //    vector<string> faces
-    //    {
-    //        "textures/skybox/right.jpg",
-    //        "textures/skybox/left.jpg",
-    //        "textures/skybox/top.jpg",
-    //        "textures/skybox/bottom.jpg",
-    //        "textures/skybox/front.jpg",
-    //        "textures/skybox/back.jpg"
-    //    };
-    //    renderer->setSkybox(faces);
-    //}
+    auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
+    if (renderer)
+    {
+        vector<string> faces
+        {
+            "textures/skybox/right.jpg",
+            "textures/skybox/left.jpg",
+            "textures/skybox/top.jpg",
+            "textures/skybox/bottom.jpg",
+            "textures/skybox/front.jpg",
+            "textures/skybox/back.jpg"
+        };
+        renderer->setSkybox(faces);
+    }
 
 
 
@@ -307,23 +316,23 @@ void MyScene1::update(Shader& shader)
     
 
 
-    ps.update();
-    glData.PVM = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
-    
+    //ps.update();
+    //glData.PVM = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    //
 
-    if (Global::drawtype == Basic) {
-        glHelpers.basicDataPrep(glData, ps);
-        int numOfSquares = ps.getCurrentDataSize() / 8;
-        glHelpers.basicRender(glData, numOfSquares);
-    }
-    else if (Global::drawtype == Geometry) {
-        glHelpers.geometryDataPrep(glData, ps);
-        glHelpers.geometryRender(glData, ps.getCurrentDataSize());
-    }
-    else if (Global::drawtype == Instanced) {
-        glHelpers.instancedDataPrep(glData, ps);
-        glHelpers.instancedRender(glData, ps.getCurrentDataSize());
-    }
+    //if (Global::drawtype == Basic) {
+    //    glHelpers.basicDataPrep(glData, ps);
+    //    int numOfSquares = ps.getCurrentDataSize() / 8;
+    //    glHelpers.basicRender(glData, numOfSquares);
+    //}
+    //else if (Global::drawtype == Geometry) {
+    //    glHelpers.geometryDataPrep(glData, ps);
+    //    glHelpers.geometryRender(glData, ps.getCurrentDataSize());
+    //}
+    //else if (Global::drawtype == Instanced) {
+    //    glHelpers.instancedDataPrep(glData, ps);
+    //    glHelpers.instancedRender(glData, ps.getCurrentDataSize());
+    //}
 
     rotation += deltaTime * 10.0f;
 }

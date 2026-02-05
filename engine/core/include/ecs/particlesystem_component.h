@@ -3,13 +3,17 @@
 
 #include "component.h"
 
-#include "../particles/particlesystem.h"
 #include "../frustrum.h"
 #include "../bounding_volume.h"
 #include "../aabb.h"
 
 #include "../debug/debug_cube.h"
 #include "../shader.h"
+
+#include "../particles/particlesystem.h"
+#include "../particles/global.h"
+#include "../particles/openGLData.h"
+#include "../particles/OpenGLHelpers.h"
 
 namespace engine
 {
@@ -57,6 +61,15 @@ namespace engine
 		std::unique_ptr<AABB> m_boundingVolume{};
 
 		//std::unique_ptr<DebugCube> m_debug_boundingBox{};
+
+		/// helper classes for OpenGl functions
+		//// -----------------------------------
+		OpenGLHelpers glHelpers;
+		OpenGLData glData{};
+
+		int NMAX = 100;
+		int numOfParticlesPerSecond = 10;
+		//ParticleSystem ps{ NMAX, numOfParticlesPerSecond };
 
 
 

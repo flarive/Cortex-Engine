@@ -14,11 +14,23 @@
 
 namespace engine
 {
-	//enum class ParticleDrawType { basic = 0, geometry = 1, instanced = 2 };
-	
+	enum class ParticleSystemType { undefined = 0, basic = 1 };
+
+	const std::unordered_map<ParticleSystemType, std::string> ParticleSystemTypeNames = {
+		{ParticleSystemType::undefined, "undefined"},
+		{ParticleSystemType::basic, "Basic"}
+	};
+
+	inline std::string to_string(ParticleSystemType type) {
+		auto it = ParticleSystemTypeNames.find(type);
+		return it != ParticleSystemTypeNames.end() ? it->second : "unknown";
+	}
+
+
 	class ParticleSystem
 	{
 	public:
+		ParticleSystem();
 		ParticleSystem(int _NMAX, int _numOfParticlesPerSecond);
 		~ParticleSystem();
 		void initParticles(int n);
@@ -26,6 +38,7 @@ namespace engine
 		int getCurrentDataSize();
 		std::vector<glm::vec3> getDataSquarePoints();
 		void getSquareFromCenter(glm::vec3 center);
+		void setup();
 		void update();
 		std::vector<glm::vec3> getDataCenterPoints();
 
@@ -45,8 +58,38 @@ namespace engine
 			};
 		}
 
+		ParticleSystemType getTypeID() const
+		{
+			return ParticleSystemType::basic;
+		}
+
+
+
 		bool isEnabled() const { return m_isEnabled; }
 		void setEnabled(bool enabled) { m_isEnabled = enabled; }
+
+		glm::vec3& getPosition() { return m_position; }
+		glm::vec3& getRotation() { return m_rotation; }
+		glm::vec3& getScale() { return m_scale; }
+
+		void setPosition(const glm::vec3& position) { m_position = position; }
+		void setRotation(const glm::vec3& rotation) { m_rotation = rotation; }
+		void setScale(const glm::vec3& scale) { m_scale = scale; }
+
+		void setTransform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale) {
+			m_position = position;
+			m_rotation = rotation;
+			m_scale = scale;
+		}
+
+		float getSquareSize() { return m_squareSize; }
+
+		Particle* getParticleArray() { return m_particlesArray; }
+
+		int getMaxFilledIndex() { return m_maxFilledIndex; }
+
+		bool* getFlags() { return m_flags; }
+	
 
 		void reSetup() {}
 
@@ -63,21 +106,21 @@ namespace engine
 		//void instancedRender(int currentDataSize);
 
 	private:
-		int NMAX{};
-		int numOfParticlesPerSecond{};
-		int nbFrames{};
-		int currentDataSize{};
-		int partCounter{};
-		int maxFilledIndex{};
+		int m_NMAX{};
+		int m_numOfParticlesPerSecond{};
+		int m_nbFrames{};
+		int m_currentDataSize{};
+		int m_partCounter{};
+		int m_maxFilledIndex{};
 
-		double prevTime{};
-		double fpsTime{};
+		double m_prevTime{};
+		double m_fpsTime{};
 
-		float squareSize{};
-		bool* flags{};
+		float m_squareSize{};
+		bool* m_flags{};
 
-		Particle* particlesArray{};
-		glm::vec3 squarePoints[4];
+		Particle* m_particlesArray{};
+		glm::vec3 m_squarePoints[4];
 
 		//Shader m_shaderSourceBasic{};
 		//Shader m_shaderSourceGeometry{};

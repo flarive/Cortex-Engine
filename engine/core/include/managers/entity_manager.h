@@ -8,6 +8,7 @@
 #include "../ecs/light_component.h"
 #include "../ecs/primitive_component.h"
 #include "../ecs/model_component.h"
+#include "../ecs/particlesystem_component.h"
 
 
 #include <unordered_map>
@@ -116,43 +117,6 @@ namespace engine
 				findEntitiesOfTypeRecursive<T>(child, result);
 			}
 		}
-
-
-		// old
-		//template<typename T>
-		//void findEntitiesOfTypeRecursive(const std::shared_ptr<engine::Entity>& entity, std::vector<std::shared_ptr<T>>& result)
-		//{
-		//	if (!entity) return;
-
-		//	// Try casting the entity to the desired type
-		//	std::shared_ptr<T> casted{};
-		//	if (entity->primitive && typeid(std::dynamic_pointer_cast<T>(entity->primitive)) == typeid(entity->primitive))
-		//	{
-		//		casted = std::dynamic_pointer_cast<T>(entity->primitive);
-		//	}
-		//	else if (entity->model && typeid(std::dynamic_pointer_cast<T>(entity->model)) == typeid(entity->model))
-		//	{
-		//		casted = std::reinterpret_pointer_cast<T>(entity->model);
-		//	}
-		//	else if (entity->light && typeid(std::dynamic_pointer_cast<T>(entity->light)) == typeid(entity->light))
-		//	{
-		//		casted = std::dynamic_pointer_cast<T>(entity->light);
-		//	}
-		//	else if (entity->camera && typeid(std::dynamic_pointer_cast<T>(entity->camera)) == typeid(entity->camera))
-		//	{
-		//		casted = std::dynamic_pointer_cast<T>(entity->camera);
-		//	}
-
-		//	if (casted)
-		//	{
-		//		result.push_back(casted);
-		//	}
-
-		//	for (const auto& child : entity->children)
-		//	{
-		//		findEntitiesOfTypeRecursive<T>(child, result);
-		//	}
-		//}
 
 
 

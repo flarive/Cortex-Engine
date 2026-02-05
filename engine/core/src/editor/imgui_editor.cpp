@@ -27,6 +27,7 @@
 #include "../../include/primitives/cone.h"
 
 
+
 #include "../../include/managers/entity_manager.h"
 
 // https://github.com/TheCherno/ImGuizmo
@@ -764,6 +765,28 @@ void engine::ImGuiEditor::renderAnimatorComponent(std::shared_ptr<AnimatorCompon
     if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
+    }
+}
+
+void engine::ImGuiEditor::renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component)
+{
+    auto particleSystem = component->getParticleSystem();
+    if (!particleSystem)
+        return;
+
+    bool enabled = component->isEnabled();
+
+    std::function<void(bool)> onCheck = [component, &enabled](bool checked) {
+        component->setEnabled(checked);
+        enabled = component->isEnabled();
+        };
+
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(particleSystem->getTypeID()));
     }
 }
 

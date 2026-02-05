@@ -593,18 +593,17 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             }
             else if (typeID == ComponentType::light)
             {
-                // light
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
             }
             else if (typeID == ComponentType::animator)
             {
-                // camera
 				component->update(deltaTime, transform);
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
-            else if (typeID == ComponentType::camera)
+            else if (typeID == ComponentType::particleSystem)
             {
-                // camera
+                component->update(deltaTime, transform);
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
         }
 

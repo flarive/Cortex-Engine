@@ -3,10 +3,10 @@
 #include "core/include/app/app.h"
 #include "core/include/app/scene.h"
 
-#include "core/include/particles/particlesystem.h"
-#include "core/include/particles/global.h"
-#include "core/include/particles/openGLData.h"
-#include "core/include/particles/OpenGLHelpers.h"
+//#include "core/include/particles/particlesystem.h"
+//#include "core/include/particles/global.h"
+//#include "core/include/particles/openGLData.h"
+//#include "core/include/particles/OpenGLHelpers.h"
 
 using namespace std;
 using namespace engine;
@@ -38,12 +38,12 @@ private:
 
     //// helper classes for OpenGl functions
     //// -----------------------------------
-    OpenGLHelpers glHelpers;
+    /*OpenGLHelpers glHelpers;
     OpenGLData glData{};
 
     int NMAX = 100;
     int numOfParticlesPerSecond = 10;
-    ParticleSystem ps{ NMAX, numOfParticlesPerSecond };
+    ParticleSystem ps{ NMAX, numOfParticlesPerSecond };*/
     
 
     float rotation{};

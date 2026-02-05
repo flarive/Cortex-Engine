@@ -33,6 +33,7 @@
 #include "ecs/light_component.h"
 #include "ecs/model_component.h"
 #include "ecs/animator_component.h"
+#include "ecs/particlesystem_component.h"
 
 
 #include "models/model.h"

@@ -7,26 +7,48 @@
 
 engine::ParticleSystemComponent::ParticleSystemComponent(std::shared_ptr<ParticleSystem> particleSystem) : m_particleSystem(particleSystem)
 {
-	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(particleSystem));
-
-	//auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
-	//m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
-	//m_debug_boundingBox->setup();
-
-
 	// Initialize property setters based on primitive type
 	m_propertySetters = m_particleSystem->getPropertySetters();
 }
 
 void engine::ParticleSystemComponent::init(Transform& transform)
 {
-	//m_particleSystem->setPosition(transform.getLocalPosition());
-	//m_particleSystem->setRotation(transform.getLocalRotation());
-	//m_particleSystem->setScale(transform.getLocalScale());
+	m_particleSystem->setPosition(transform.getLocalPosition());
+	m_particleSystem->setRotation(transform.getLocalRotation());
+	m_particleSystem->setScale(transform.getLocalScale());
+
+
+
+	Global::setDrawType(0);
+
+	float squareSize = 0.25f;
+	Global::setParticleSize(squareSize);
+
+
+
+
+	////select shader sources based on drawtype
+	//// --------------------------------------
+	char* vert, * frag, * geom;
+	glHelpers.selectShaders(vert, frag, geom);
+	glData.texture = glHelpers.loadTexture();
+
+	glHelpers.setUpVertexData(glData);
+
+
 }
 
 void engine::ParticleSystemComponent::update(float deltaTime, Transform& transform)
 {
+	// recalculated each frame
+	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(m_particleSystem));
+
+	//auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
+	//m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	//m_debug_boundingBox->setup();
+
+
+
 
 }
 
@@ -40,32 +62,59 @@ void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const gl
 
 	//if (sceneSettings.drawBoundingBoxesVisualHelpers)
 	//	m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
+
+
+	m_particleSystem->update();
+	glData.PVM = projection;
+
+
+	if (Global::drawtype == Basic) {
+		glHelpers.basicDataPrep(glData, *m_particleSystem);
+		int numOfSquares = m_particleSystem->getCurrentDataSize() / 8;
+		glHelpers.basicRender(glData, numOfSquares);
+	}
+	else if (Global::drawtype == Geometry) {
+		glHelpers.geometryDataPrep(glData, *m_particleSystem);
+		glHelpers.geometryRender(glData, m_particleSystem->getCurrentDataSize());
+	}
+	else if (Global::drawtype == Instanced) {
+		glHelpers.instancedDataPrep(glData, *m_particleSystem);
+		glHelpers.instancedRender(glData, m_particleSystem->getCurrentDataSize());
+	}
 }
 
-engine::AABB engine::ParticleSystemComponent::generateBoundingVolume(const std::shared_ptr<ParticleSystem> primitive)
+engine::AABB engine::ParticleSystemComponent::generateBoundingVolume(const std::shared_ptr<ParticleSystem> particleSystem)
 {
-	//glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-	//glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::lowest()); // Use lowest(), not min()
+	glm::vec3 minV(std::numeric_limits<float>::max());
+	glm::vec3 maxV(-std::numeric_limits<float>::max());
 
-	//std::vector<Vertex> vertices = primitive->generateVertices();
+	
 
-	//for (const auto& vertex : vertices)
-	//{
-	//	minAABB.x = std::min(minAABB.x, vertex.position.x);
-	//	minAABB.y = std::min(minAABB.y, vertex.position.y);
-	//	minAABB.z = std::min(minAABB.z, vertex.position.z);
+	// Conservative radius for a square billboard (half diagonal)
+	const float r = particleSystem->getSquareSize() * 1.41421356237f; // sqrt(2)
+	const glm::vec3 e(r, r, r);
 
-	//	maxAABB.x = std::max(maxAABB.x, vertex.position.x);
-	//	maxAABB.y = std::max(maxAABB.y, vertex.position.y);
-	//	maxAABB.z = std::max(maxAABB.z, vertex.position.z);
-	//}
+	bool any = false;
 
-	//return engine::AABB(minAABB, maxAABB);
+	for (size_t i = 0; i <= particleSystem->getMaxFilledIndex(); ++i)
+	{
+		if (!particleSystem->getFlags()[i]) continue;
 
-	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
-	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+		const glm::vec3 p = particleSystem->getParticleArray()[i].position;
+		minV = glm::min(minV, p - e);
+		maxV = glm::max(maxV, p + e);
+		any = true;
+	}
 
-	return engine::AABB(minAABB, maxAABB);
+	// If no particles alive: return a degenerate box (or mark invalid)
+	if (!any)
+	{
+		// Choose what makes sense in your engine:
+		// e.g. center at origin, extents 0.
+		return engine::AABB(glm::vec3(0.0f), glm::vec3(0.0f));
+	}
+
+	return engine::AABB(minV, maxV);
 }
 
 engine::AABB* engine::ParticleSystemComponent::getBoundingVolume()

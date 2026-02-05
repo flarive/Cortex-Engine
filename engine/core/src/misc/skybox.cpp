@@ -51,10 +51,6 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 
     m_skyboxShader.use();
     OpenGLDebug::checkGLError("shader.use77");
-   
-    
-
-    
     m_skyboxShader.setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
     m_skyboxShader.setMat4("projection", projection);
     m_skyboxShader.setInt("texture_skybox", 0);

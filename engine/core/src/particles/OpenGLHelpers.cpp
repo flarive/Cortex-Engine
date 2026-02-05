@@ -1,152 +1,20 @@
 #include "../../include/particles/OpenGLHelpers.h"
 
 #include "../../include/texture.h"
+#include "../../include/debug/opengl_debug.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
 
-//GLFWwindow* engine::OpenGLHelpers::initWindow(int width, int height) {
-//	
-//	glfwInit();
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//
-//#ifdef __APPLE__
-//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
-//#endif
-//
-//	GLFWwindow* window = glfwCreateWindow(width, height, "Particle System", NULL, NULL);
-//	if (window == NULL)
-//	{
-//		cout << "Failed to create GLFW window" << endl;
-//		glfwTerminate();
-//		return NULL;
-//	}
-//
-//	glfwMakeContextCurrent(window);
-//	return window;
-//}
 
-//bool engine::OpenGLHelpers::initOpenGL() {
-//	
-//	// glad: load all OpenGL function pointers
-//	// ---------------------------------------
-//	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-//		cout << "Failed to initialize GLAD" << endl;
-//		return false;
-//	}
-//	return true;
-//}
-
-char* slurp(const char *filename){
-	
-	ifstream in;
-	in.open(filename, ifstream::in);
-	stringstream sstr;
-	sstr << in.rdbuf();
-	in.close();
-	string s = sstr.str();
-	char* cstr = new char[s.size() + 1];
-	copy(s.begin(), s.end(), cstr);
-	cstr[s.size()] = '\0';
-	return cstr;
-}
-
-void engine::OpenGLHelpers::selectShaders(char* &vertexShaderSource, char* &fragmentShaderSource, char* &geometryShaderSource) {
-	
-	
-	
-	drawType drawtype = Global::drawtype;
-	ofstream myfile;
-
-
+void engine::OpenGLHelpers::selectShaders(char* &vertexShaderSource, char* &fragmentShaderSource, char* &geometryShaderSource)
+{
 	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
 	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSource.geom");
 	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
-
-
-	/*vertexShaderSource = NULL;
-	fragmentShaderSource = NULL;
-	geometryShaderSource = NULL;
-
-	if (drawtype == Basic) {
-		vertexShaderSource = slurp("Shaders/ParticleSourceBasic.vert");
-		fragmentShaderSource = slurp("Shaders/ParticleSourceBasic.frag");
-	}
-	else if (drawtype == Geometry) {
-		vertexShaderSource = slurp("Shaders/ParticleSourceGeometry.vert");
-		fragmentShaderSource = slurp("Shaders/ParticleSourceGeometry.frag");
-		geometryShaderSource = slurp("Shaders/ParticleSourceGeometry.geom");
-	}
-	else if (drawtype == Instanced) {
-		vertexShaderSource = slurp("Shaders/ParticleSourceInstanced.vert");
-		fragmentShaderSource = slurp("Shaders/ParticleSourceBasic.frag");
-	}*/
 }
 
-//int engine::OpenGLHelpers::compileShaders(char* vertexShaderSource, char* fragmentShaderSource, char* geometryShaderSource) {
-//	
-//	// geometry shader
-//	int geometryShader = 0;
-//	if (geometryShaderSource != NULL) {
-//		geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-//		glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
-//		compileShader(geometryShader);
-//	}
-//
-//	// vertex shader
-//	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-//	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-//	compileShader(vertexShader);
-//
-//	// fragment shader
-//	int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-//	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-//	compileShader(fragmentShader);
-//
-//	// link shaders
-//	int success;
-//	char infoLog[512];
-//
-//	int shaderProgram = glCreateProgram();
-//
-//	glAttachShader(shaderProgram, vertexShader);
-//	glAttachShader(shaderProgram, fragmentShader);
-//	if (geometryShaderSource != NULL) {
-//		glAttachShader(shaderProgram, geometryShader);
-//	}
-//
-//	glLinkProgram(shaderProgram);
-//
-//	// check for linking errors
-//	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-//	if (!success) {
-//		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-//		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-//	}
-//	return shaderProgram;
-//
-//	// delete shaders
-//	glDeleteShader(vertexShader);
-//	glDeleteShader(fragmentShader);
-//	glDeleteShader(geometryShader);
-//}
-//void engine::OpenGLHelpers::compileShader(int shader) {
-//	
-//	glCompileShader(shader);
-//	int success;
-//	char infoLog[512];
-//
-//	// check for shader compile errors
-//	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-//	if (!success)
-//	{
-//		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-//		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-//	}
-//}
 int engine::OpenGLHelpers::loadTexture() {
 
 	unsigned int texture = Texture::loadTexture("textures/particles/rect.jpg");
@@ -189,9 +57,8 @@ void engine::OpenGLHelpers::setUpVertexData(OpenGLData &glData) {
 	}
 }
 
-void engine::OpenGLHelpers::basicDataPrep(OpenGLData &glData, ParticleSystem &ps) {
-
-
+void engine::OpenGLHelpers::basicDataPrep(OpenGLData &glData, ParticleSystem &ps)
+{
 	std::vector<glm::vec3>  points = ps.getDataSquarePoints();
 	int currentDataSize = ps.getCurrentDataSize();
 
@@ -220,10 +87,9 @@ void engine::OpenGLHelpers::basicDataPrep(OpenGLData &glData, ParticleSystem &ps
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
 		glEnableVertexAttribArray(1);
-
 	}
-
 }
+
 void engine::OpenGLHelpers::geometryDataPrep(OpenGLData &glData, ParticleSystem &ps)
 {
 	std::vector<glm::vec3>  points = ps.getDataCenterPoints();
@@ -239,7 +105,6 @@ void engine::OpenGLHelpers::geometryDataPrep(OpenGLData &glData, ParticleSystem 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 		glEnableVertexAttribArray(0);
 	}
-
 }
 
 void engine::OpenGLHelpers::instancedDataPrep(OpenGLData & glData, ParticleSystem & ps)
@@ -258,46 +123,59 @@ void engine::OpenGLHelpers::instancedDataPrep(OpenGLData & glData, ParticleSyste
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
 	}
-
 }
 
 void engine::OpenGLHelpers::renderPrep(int mode, OpenGLData &glData, unsigned int VAO)
 {
-	if (mode == 0)
-	{
-		m_shaderSourceBasic.use();
-		m_shaderSourceBasic.setMat4("PVM", glData.PVM);
-	}
-	else if (mode == 1)
-	{
-		m_shaderSourceGeometry.use();
-		m_shaderSourceGeometry.setMat4("PVM", glData.PVM);
-		m_shaderSourceGeometry.setFloat("squareSize", Global::particleSize);
-	}
-	else if (mode == 2)
-	{
-		m_shaderSourceInstanced.use();
-		m_shaderSourceInstanced.setMat4("PVM", glData.PVM);
+	if (!m_shaderSourceBasic.isValid()) {
+		std::cerr << "Shader not valid. Skipping draw." << std::endl;
+		return;
 	}
 
+	if (glData.texture <= 0) {
+		std::cout << "Textures not loaded. Deferring draw." << std::endl;
+		return;
+	}
+
+	if (glData.VAO == 0 || glData.VBO == 0) {
+		std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
+		return;
+	}
 	
-	/*glUniformMatrix4fv(glData.id_shader_PVM_uniform, 1, GL_FALSE, glm::value_ptr(glData.PVM));
-	glUniform1f(glGetUniformLocation(glData.shaderProgram, "squareSize"), Global::particleSize);*/
+	//if (mode == 0)
+	//{
+		m_shaderSourceBasic.use();
+		OpenGLDebug::checkGLError("shader.use777888");
+		m_shaderSourceBasic.setMat4("PVM", glData.PVM);
+		m_shaderSourceBasic.setInt("texture1", 0);
+	//}
+	//else if (mode == 1)
+	//{
+	//	m_shaderSourceGeometry.use();
+	//	m_shaderSourceGeometry.setMat4("PVM", glData.PVM);
+	//	m_shaderSourceGeometry.setFloat("squareSize", Global::particleSize);
+	//	m_shaderSourceGeometry.setInt("texture1", 0);
+	//}
+	//else if (mode == 2)
+	//{
+	//	m_shaderSourceInstanced.use();
+	//	m_shaderSourceInstanced.setMat4("PVM", glData.PVM);
+	//	m_shaderSourceInstanced.setInt("texture1", 0);
+	//}
 
-	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	//glUseProgram(glData.shaderProgram);
-	//glBindTexture(GL_TEXTURE_2D, glData.texture);
+	//glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+	//glDepthMask(GL_FALSE);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 
+	// bind texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, glData.texture);
 
-
+	// Send skybox cube to GPU
 	glBindVertexArray(VAO);
 }
 
@@ -306,6 +184,7 @@ void engine::OpenGLHelpers::basicRender(OpenGLData &glData, int numOfSquares) {
 	renderPrep(0, glData, glData.VAO);
 	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
 
+	//glBindVertexArray(0);
 }
 
 void engine::OpenGLHelpers::geometryRender(OpenGLData & glData, int currentDataSize)

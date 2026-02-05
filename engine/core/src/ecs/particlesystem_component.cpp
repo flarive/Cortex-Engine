@@ -43,9 +43,9 @@ void engine::ParticleSystemComponent::update(float deltaTime, Transform& transfo
 	// recalculated each frame
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(m_particleSystem));
 
-	//auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
-	//m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
-	//m_debug_boundingBox->setup();
+	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
+	m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
+	m_debug_boundingBox->setup();
 
 
 
@@ -56,12 +56,12 @@ void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const gl
 {
 	//m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
-	//auto* singleton = engine::Singleton::getInstance();
-	//assert(singleton != nullptr && "Singleton not initialized !");
-	//SceneSettings& sceneSettings = singleton->sceneSettings();
+	auto* singleton = engine::Singleton::getInstance();
+	assert(singleton != nullptr && "Singleton not initialized !");
+	SceneSettings& sceneSettings = singleton->sceneSettings();
 
-	//if (sceneSettings.drawBoundingBoxesVisualHelpers)
-	//	m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
+	if (sceneSettings.drawBoundingBoxesVisualHelpers)
+		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
 
 
 	m_particleSystem->update();

@@ -27,12 +27,8 @@ namespace engine
 {
 	class OpenGLHelpers {
 	public:
-		//GLFWwindow* initWindow(int width, int height);
-		//bool initOpenGL();
 		void selectShaders(char*& vertexShaderSource, char*& fragmentShaderSource, char*& geometryShaderSource);
 
-		/*void compileShader(int shader);
-		int compileShaders(char* vertexShaderSource, char* fragmentShaderSource, char* geometryShaderSource);*/
 
 		void setUpVertexData(OpenGLData& glData);
 		int loadTexture();

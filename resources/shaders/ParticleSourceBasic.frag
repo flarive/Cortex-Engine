@@ -6,5 +6,5 @@ in vec2 TexCoords;
 
 void main()
 {
-	FragColor = vec4(1.0, 0.0, 0.0, 1.0); // texture(texture1, TexCoords);
+	FragColor = texture(texture1, TexCoords);
 };

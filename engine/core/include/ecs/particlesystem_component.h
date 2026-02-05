@@ -60,7 +60,7 @@ namespace engine
 		std::shared_ptr<ParticleSystem> m_particleSystem{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
-		//std::unique_ptr<DebugCube> m_debug_boundingBox{};
+		std::unique_ptr<DebugCube> m_debug_boundingBox{};
 
 		/// helper classes for OpenGl functions
 		//// -----------------------------------
@@ -69,8 +69,6 @@ namespace engine
 
 		int NMAX = 100;
 		int numOfParticlesPerSecond = 10;
-		//ParticleSystem ps{ NMAX, numOfParticlesPerSecond };
-
 
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};

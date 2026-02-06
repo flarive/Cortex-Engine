@@ -40,21 +40,24 @@ void engine::ParticleSystemComponent::init(Transform& transform)
 
 void engine::ParticleSystemComponent::update(float deltaTime, Transform& transform)
 {
+	m_particleSystem->update();
+	
 	// recalculated each frame
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(m_particleSystem));
 
 	auto [width, height, depth] = m_boundingVolume->getAABBDimensions();
 	m_debug_boundingBox = std::make_unique<DebugCube>(width, height, depth); // Cube at origin with dimensions of the AABB
 	m_debug_boundingBox->setup();
-
-
-
-
 }
 
 void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	//m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
+	
+	glData.PVM = projection;
+	
+	m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
+
+
 
 	auto* singleton = engine::Singleton::getInstance();
 	assert(singleton != nullptr && "Singleton not initialized !");
@@ -64,23 +67,22 @@ void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const gl
 		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
 
 
-	m_particleSystem->update();
-	glData.PVM = projection;
+	
 
 
-	if (Global::drawtype == Basic) {
-		glHelpers.basicDataPrep(glData, *m_particleSystem);
-		int numOfSquares = m_particleSystem->getCurrentDataSize() / 8;
-		glHelpers.basicRender(glData, numOfSquares);
-	}
-	else if (Global::drawtype == Geometry) {
-		glHelpers.geometryDataPrep(glData, *m_particleSystem);
-		glHelpers.geometryRender(glData, m_particleSystem->getCurrentDataSize());
-	}
-	else if (Global::drawtype == Instanced) {
-		glHelpers.instancedDataPrep(glData, *m_particleSystem);
-		glHelpers.instancedRender(glData, m_particleSystem->getCurrentDataSize());
-	}
+	//if (Global::drawtype == Basic) {
+	//	glHelpers.basicDataPrep(glData, *m_particleSystem);
+	//	int numOfSquares = m_particleSystem->getCurrentDataSize() / 8;
+	//	glHelpers.basicRender(glData, numOfSquares);
+	//}
+	//else if (Global::drawtype == Geometry) {
+	//	glHelpers.geometryDataPrep(glData, *m_particleSystem);
+	//	glHelpers.geometryRender(glData, m_particleSystem->getCurrentDataSize());
+	//}
+	//else if (Global::drawtype == Instanced) {
+	//	glHelpers.instancedDataPrep(glData, *m_particleSystem);
+	//	glHelpers.instancedRender(glData, m_particleSystem->getCurrentDataSize());
+	//}
 }
 
 engine::AABB engine::ParticleSystemComponent::generateBoundingVolume(const std::shared_ptr<ParticleSystem> particleSystem)

@@ -144,7 +144,7 @@ void MyScene1::init()
 
     // particle system
     auto myParticleSystem = make_shared<ParticleSystem>(100, 10);
-    //myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
     auto trsParticleSystem = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityParticleSystem = make_shared<Entity>("MyParticleSystem");
     entityParticleSystem->addComponent<TransformComponent>(trsParticleSystem);

@@ -21,8 +21,8 @@ int engine::OpenGLHelpers::loadTexture() {
 	return texture;
 }
 
-void engine::OpenGLHelpers::setUpVertexData(OpenGLData &glData) {
-
+void engine::OpenGLHelpers::setUpVertexData(OpenGLData &glData)
+{
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 	glGenVertexArrays(1, &glData.VAO);
@@ -179,8 +179,8 @@ void engine::OpenGLHelpers::renderPrep(int mode, OpenGLData &glData, unsigned in
 	glBindVertexArray(VAO);
 }
 
-void engine::OpenGLHelpers::basicRender(OpenGLData &glData, int numOfSquares) {
-
+void engine::OpenGLHelpers::basicRender(OpenGLData &glData, int numOfSquares)
+{
 	renderPrep(0, glData, glData.VAO);
 	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
 

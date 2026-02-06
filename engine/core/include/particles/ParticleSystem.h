@@ -5,6 +5,9 @@
 #include "../common_defines.h"
 
 #include "../shader.h"
+#include "../materials/material.h"
+#include "../uvmapping.h"
+#include "../transform.h"
 #include "../misc/ordered_map.h"
 
 #include<iostream>
@@ -38,23 +41,19 @@ namespace engine
 		int getCurrentDataSize();
 		std::vector<glm::vec3> getDataSquarePoints();
 		void getSquareFromCenter(glm::vec3 center);
-		void setup();
+		void init();
+		void setup(const std::shared_ptr<Material>& material, const UvMapping& uv);
 		void update();
+		void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform);
 		std::vector<glm::vec3> getDataCenterPoints();
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() {
 			return {
-				//{"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
-				//{"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
-				//{"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
 			};
 		}
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
 			return {
-				//{ "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
-				//{ "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
-				//{ "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
 			};
 		}
 
@@ -119,6 +118,8 @@ namespace engine
 		float m_squareSize{};
 		bool* m_flags{};
 
+		bool m_isEnabled{ true };
+
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
 
@@ -144,10 +145,22 @@ namespace engine
 
 		//void setUpVertexData();
 
-		bool m_isEnabled{true};
+		std::shared_ptr<Material> m_material{};
+
+		Color m_ambientColor{};
+
+		float m_uvScale{ 1.0f };
 
 		glm::vec3 m_position{};
 		glm::vec3 m_rotation{};
 		glm::vec3 m_scale{};
+
+		unsigned int m_VAO{};
+		unsigned int m_VBO{};
+		unsigned int m_EBO{};
+
+		void geometrySetup();
+
+		void basicDataPrep();
 	};
 }

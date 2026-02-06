@@ -190,6 +190,7 @@
     <ClCompile Include="app\myscene10.cpp" />
     <ClCompile Include="app\myscene11.cpp" />
     <ClCompile Include="app\myscene12.cpp" />
+    <ClCompile Include="app\myscene13.cpp" />
     <ClCompile Include="app\myscene2.cpp" />
     <ClCompile Include="app\myscene3.cpp" />
     <ClCompile Include="app\myscene4.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="app\myscene10.h" />
     <ClInclude Include="app\myscene11.h" />
     <ClInclude Include="app\myscene12.h" />
+    <ClInclude Include="app\myscene13.h" />
     <ClInclude Include="app\myscene2.h" />
     <ClInclude Include="app\myscene3.h" />
     <ClInclude Include="app\myscene4.h" />

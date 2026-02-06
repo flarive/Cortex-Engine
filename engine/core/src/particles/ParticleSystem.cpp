@@ -7,13 +7,13 @@
 using namespace std;
 
 engine::ParticleSystem::ParticleSystem()
-	: m_NMAX(100), m_numOfParticlesPerSecond(10)
+	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f)
 {
 	init();
 }
 
-engine::ParticleSystem::ParticleSystem(int _NMAX, int _numOfParticlesPerSecond)
-	: m_NMAX(_NMAX), m_numOfParticlesPerSecond(_numOfParticlesPerSecond)
+engine::ParticleSystem::ParticleSystem(int _maxParticles, int _numOfParticlesPerSecond, float _particleSize)
+	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize)
 {
 	init();
 }
@@ -82,10 +82,10 @@ void engine::ParticleSystem::init()
 	m_currentDataSize = 0;
 	m_squareSize = 0.25;
 
-	m_particlesArray = new Particle[m_NMAX];
-	m_flags = new bool[m_NMAX];
+	m_particlesArray = new Particle[m_maxParticles];
+	m_flags = new bool[m_maxParticles];
 
-	for (size_t i = 0; i < m_NMAX; i++)
+	for (size_t i = 0; i < m_maxParticles; i++)
 		m_flags[i] = false;
 }
 
@@ -249,7 +249,7 @@ void engine::ParticleSystem::initParticles(int n)
 	for (size_t i = 0; i < n; i++)
 	{
 		Particle particle{};
-		for (size_t j = 0; j < m_NMAX; j++)
+		for (size_t j = 0; j < m_maxParticles; j++)
 		{
 			if (m_flags[j] == false) {
 				m_particlesArray[j] = particle;

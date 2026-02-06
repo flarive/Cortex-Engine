@@ -30,31 +30,31 @@ void engine::OpenGLHelpers::setUpVertexData(OpenGLData &glData)
 	glGenBuffers(1, &glData.EBO);
 
 
-	if (Global::drawtype==Instanced) {
-		glGenVertexArrays(1, &glData.quadVAO);
-		glGenBuffers(1, &glData.quadVBO);
-		glBindVertexArray(glData.quadVAO);
+	//if (Global::drawtype==Instanced) {
+	//	glGenVertexArrays(1, &glData.quadVAO);
+	//	glGenBuffers(1, &glData.quadVBO);
+	//	glBindVertexArray(glData.quadVAO);
 
-		float particleSize = Global::particleSize;
-		glGenBuffers(1, &glData.instanceVBO);
+	//	float particleSize = Global::particleSize;
+	//	glGenBuffers(1, &glData.instanceVBO);
 
-		float quadVertices[] = {
-			// positions    
-			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-			 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
-			-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
+	//	float quadVertices[] = {
+	//		// positions    
+	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+	//		 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
+	//		-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
 
-			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-			 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
-			 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
-		};
-		glBindBuffer(GL_ARRAY_BUFFER, glData.quadVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-	}
+	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+	//		 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
+	//		 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
+	//	};
+	//	glBindBuffer(GL_ARRAY_BUFFER, glData.quadVBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	//	glEnableVertexAttribArray(0);
+	//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	//	glEnableVertexAttribArray(1);
+	//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	//}
 }
 
 void engine::OpenGLHelpers::basicDataPrep(OpenGLData &glData, ParticleSystem &ps)

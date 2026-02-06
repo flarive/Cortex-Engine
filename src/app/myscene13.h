@@ -7,7 +7,7 @@ using namespace std;
 using namespace engine;
 
 
-class MyScene1 final : public Scene
+class MyScene13 final : public Scene
 {
 private:
     bool firstMouse{ true };
@@ -21,7 +21,7 @@ private:
 
     Text textFPSCount{};
 
-    
+
 
     Text textPolyCount{};
     Text textMeshCount{};
@@ -34,7 +34,7 @@ private:
     float rotation{};
 
 public:
-    MyScene1(string _title, App* _app);
+    MyScene13(string _title, App* _app);
 
     void init() override;
     void update(Shader& shader) override;

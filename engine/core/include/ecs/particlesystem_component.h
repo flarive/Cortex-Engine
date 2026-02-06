@@ -11,9 +11,9 @@
 #include "../shader.h"
 
 #include "../particles/particlesystem.h"
-#include "../particles/global.h"
-#include "../particles/openGLData.h"
-#include "../particles/OpenGLHelpers.h"
+//#include "../particles/global.h"
+//#include "../particles/openGLData.h"
+//#include "../particles/OpenGLHelpers.h"
 
 namespace engine
 {
@@ -64,11 +64,15 @@ namespace engine
 
 		/// helper classes for OpenGl functions
 		//// -----------------------------------
-		OpenGLHelpers glHelpers;
-		OpenGLData glData{};
+		//OpenGLHelpers glHelpers;
+		//OpenGLData glData{};
 
-		int NMAX = 100;
-		int numOfParticlesPerSecond = 10;
+		//int NMAX = 100;
+		//int numOfParticlesPerSecond = 10;
+
+		//Shader m_shaderSourceBasic{};
+		//Shader m_shaderSourceGeometry{};
+		//Shader m_shaderSourceInstanced{};
 
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};

@@ -141,41 +141,6 @@ void MyScene1::init()
     getEntityManager().addChild(entityCube2);
 
 
-
-    // particle system
-    auto myParticleSystem = make_shared<ParticleSystem>(100, 10);
-    myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
-    auto trsParticleSystem = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entityParticleSystem = make_shared<Entity>("MyParticleSystem");
-    entityParticleSystem->addComponent<TransformComponent>(trsParticleSystem);
-    entityParticleSystem->addComponent<ParticleSystemComponent>(myParticleSystem);
-    getEntityManager().addChild(entityParticleSystem);
-
-
-    //Global::setDrawType(2);
-
-    //float squareSize = 0.25f;
-    //Global::setParticleSize(squareSize);
-
-
-
-
-    //////select shader sources based on drawtype
-    ////// --------------------------------------
-    //char* vert, * frag, * geom;
-    //glHelpers.selectShaders(vert, frag, geom);
-
-    ////glData.shaderProgram = glHelpers.compileShaders(vert, frag, geom);
-    //glData.texture = glHelpers.loadTexture();
-
-    //glHelpers.setUpVertexData(glData);
-
-    
-
-
-
-
-
     // skybox
     auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
     if (renderer)
@@ -312,27 +277,6 @@ void MyScene1::update(Shader& shader)
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCylinder->setTransform(trs);
     }
-
-    
-
-
-    //ps.update();
-    //glData.PVM = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
-    //
-
-    //if (Global::drawtype == Basic) {
-    //    glHelpers.basicDataPrep(glData, ps);
-    //    int numOfSquares = ps.getCurrentDataSize() / 8;
-    //    glHelpers.basicRender(glData, numOfSquares);
-    //}
-    //else if (Global::drawtype == Geometry) {
-    //    glHelpers.geometryDataPrep(glData, ps);
-    //    glHelpers.geometryRender(glData, ps.getCurrentDataSize());
-    //}
-    //else if (Global::drawtype == Instanced) {
-    //    glHelpers.instancedDataPrep(glData, ps);
-    //    glHelpers.instancedRender(glData, ps.getCurrentDataSize());
-    //}
 
     rotation += deltaTime * 10.0f;
 }

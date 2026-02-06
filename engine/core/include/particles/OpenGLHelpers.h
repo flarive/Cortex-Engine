@@ -1,22 +1,12 @@
 #pragma once
 
 #include "../common_defines.h"
-//
-//#include "stb_image.hpp"
-//#include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-//
-////GLM
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-//#include <glm/ext.hpp>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include "Global.h"
+//#include "Global.h"
 #include "ParticleSystem.h"
 #include "OpenGLData.h"
 

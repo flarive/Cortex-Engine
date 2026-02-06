@@ -19,23 +19,23 @@ void engine::ParticleSystemComponent::init(Transform& transform)
 
 
 
-	Global::setDrawType(0);
+	//Global::setDrawType(0);
 
-	float squareSize = 0.25f;
-	Global::setParticleSize(squareSize);
+	//float squareSize = 0.25f;
+	//Global::setParticleSize(squareSize);
 
-
+	//m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
+	//m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSource.geom");
+	//m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
 
 	////select shader sources based on drawtype
 	//// --------------------------------------
-	char* vert, * frag, * geom;
-	glHelpers.selectShaders(vert, frag, geom);
-	glData.texture = glHelpers.loadTexture();
+	//char* vert, * frag, * geom;
+	//glHelpers.selectShaders(vert, frag, geom);
+	//glData.texture = glHelpers.loadTexture();
 
-	glHelpers.setUpVertexData(glData);
-
-
+	//glHelpers.setUpVertexData(glData);
 }
 
 void engine::ParticleSystemComponent::update(float deltaTime, Transform& transform)
@@ -53,7 +53,7 @@ void engine::ParticleSystemComponent::update(float deltaTime, Transform& transfo
 void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	
-	glData.PVM = projection;
+	//glData.PVM = projection;
 	
 	m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
 

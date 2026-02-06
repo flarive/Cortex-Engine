@@ -34,7 +34,7 @@ namespace engine
 	{
 	public:
 		ParticleSystem();
-		ParticleSystem(int _NMAX, int _numOfParticlesPerSecond);
+		ParticleSystem(int _maxParticles, int _numOfParticlesPerSecond, float _particleSize);
 		~ParticleSystem();
 		void initParticles(int n);
 		void destroyParticle(int index);
@@ -105,7 +105,7 @@ namespace engine
 		//void instancedRender(int currentDataSize);
 
 	private:
-		int m_NMAX{};
+		int m_maxParticles{};
 		int m_numOfParticlesPerSecond{};
 		int m_nbFrames{};
 		int m_currentDataSize{};

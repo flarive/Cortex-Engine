@@ -16,6 +16,7 @@
 #include "app/myscene10.h" // area lights demo
 #include "app/myscene11.h" // blinnphong animated character
 #include "app/myscene12.h" // PBR wood plane with misc materials
+#include "app/myscene13.h" // Particles
 
 // https://github.com/Co3us/OpenGLParticleSystem
 // https://stackoverflow.com/questions/57454921/what-causes-glsl-recompilation-of-vertex-shader-based-on-state
@@ -24,7 +25,7 @@ using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene1;
+using MyScene = MyScene13;
 
 App* myApp{};
 Scene* myScene{};

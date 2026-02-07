@@ -67,7 +67,7 @@
 #include "primitives/billboard.h"
 
 #include "particles/particle.h"
-#include "particles/particlesystem.h"
+#include "particles/particle_system.h"
 
 #include "managers/log_manager.h"
 #include "managers/audio_manager.h"

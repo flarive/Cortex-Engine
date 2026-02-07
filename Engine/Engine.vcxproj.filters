@@ -420,19 +420,10 @@
     <ClCompile Include="core\src\tools\random.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\particles\Particle.cpp">
+    <ClCompile Include="core\src\particles\particle.cpp">
       <Filter>Fichiers sources\core\particles</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\particles\ParticleSystem.cpp">
-      <Filter>Fichiers sources\core\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\particles\Global.cpp">
-      <Filter>Fichiers sources\core\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\particles\OpenGLData.cpp">
-      <Filter>Fichiers sources\core\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\particles\OpenGLHelpers.cpp">
+    <ClCompile Include="core\src\particles\particle_system.cpp">
       <Filter>Fichiers sources\core\particles</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp">
@@ -716,19 +707,10 @@
     <ClInclude Include="core\include\tools\random.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\particles\Particle.h">
+    <ClInclude Include="core\include\particles\particle.h">
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\particles\ParticleSystem.h">
-      <Filter>Fichiers d%27en-tête\core\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\particles\Global.h">
-      <Filter>Fichiers d%27en-tête\core\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\particles\OpenGLData.h">
-      <Filter>Fichiers d%27en-tête\core\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\particles\OpenGLHelpers.h">
+    <ClInclude Include="core\include\particles\particle_system.h">
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\particlesystem_component.h">

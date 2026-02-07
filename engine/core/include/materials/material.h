@@ -33,7 +33,9 @@ namespace engine
 
 
         virtual bool bind(Shader& shader) const;
+        virtual bool bind2(engine::Shader& shader) const;
         virtual void unbind() const;
+
 
         virtual bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
         virtual bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }

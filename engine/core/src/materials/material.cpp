@@ -70,6 +70,49 @@ bool engine::Material::bind(engine::Shader& shader) const
     return success;
 }
 
+bool engine::Material::bind2(engine::Shader& shader) const
+{
+    unsigned int textureUnit = 0;
+    bool success = true;
+
+    for (const auto& texture : textures)
+    {
+        const std::string uniformName = std::format("{}", texture.type);
+
+
+        shader.use();
+
+        if (texture.id > 0)
+        {
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
+            glBindTexture(GL_TEXTURE_2D, texture.id);
+
+            GLenum error = glGetError();
+            if (error != GL_NO_ERROR)
+            {
+                std::cerr << "OpenGL error while binding texture '" << texture.type
+                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
+                success = false;
+                continue;
+            }
+
+            shader.setInt(uniformName, textureUnit);
+            textureUnit++;
+
+            break;
+        }
+        else
+        {
+            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
+            //success = false;
+            success = true;
+        }
+    }
+
+    glActiveTexture(GL_TEXTURE0); // Reset active texture
+    return success;
+}
+
 void engine::Material::unbind() const
 {
     for (size_t i = 0; i < textures.size(); ++i)

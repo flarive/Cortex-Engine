@@ -1,4 +1,4 @@
-#include "../../include/particles/particlesystem.h"
+#include "../../include/particles/particle_system.h"
 
 #include "../../include/texture.h"
 
@@ -28,6 +28,10 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 {
 	m_material = material;
 	m_uvScale = uv.getUvScale();
+
+	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
+	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSourceGeometry.geom");
+	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
 	geometrySetup();
 
@@ -124,6 +128,9 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		return;
 
 	ShaderType type = shader.getShaderType();
+	if (type != ShaderType::BlinnPhong && type != ShaderType::PBR) {
+		return;
+	}
 
 	if (!m_material || !shader.isValid()) {
 		std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
@@ -142,59 +149,41 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 
 	basicDataPrep();
 
-	shader.use();
-	OpenGLDebug::checkGLError("shader.use9999922");
-
 	setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-	if (m_material)
-	{
-		if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-		{
-			if (!m_material->bind(shader)) {
-				std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-				return;
-			}
-
-			shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-			shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-			shader.setVec3("material.specular_color", m_material->getSpecularColor());
-			shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-			shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-			shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-
-			shader.setBool("material.canCastShadows", false);
-			shader.setBool("material.canReceiveShadows", false);
-		}
-
-		// used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-		shader.setMat4("model", transformMatrix);
-
-		if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-		{
-			shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-			shader.setBool("hasTangents", true);
-		}
+	if (!m_material->bind2(m_shaderSourceBasic)) {
+		std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+		return;
 	}
+
+	m_shaderSourceBasic.setMat4("model", transformMatrix);
+	m_shaderSourceBasic.setMat4("view", view);
+	m_shaderSourceBasic.setMat4("projection", projection);
+
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	// Send to GPU
 	glBindVertexArray(m_VAO);
 	OpenGLDebug::checkGLError("glBindVertexArray");
 
-	
 	int numOfSquares = getCurrentDataSize() / 8;
 	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
 	OpenGLDebug::checkGLError("glDrawArrays");
 
-
 	glBindVertexArray(0);
 	OpenGLDebug::checkGLError("glBindVertexArray");
 
-	if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-	{
-		m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-		OpenGLDebug::checkGLError("Unbind");
-	}
+	m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+	OpenGLDebug::checkGLError("Unbind");
+
+
+	glDepthMask(GL_TRUE);
+
+	// important !!!
+	shader.use();
 }
 
 void engine::ParticleSystem::basicDataPrep()

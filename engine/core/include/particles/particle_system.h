@@ -162,5 +162,9 @@ namespace engine
 		void geometrySetup();
 
 		void basicDataPrep();
+
+		Shader m_shaderSourceBasic{};
+		Shader m_shaderSourceGeometry{};
+		Shader m_shaderSourceInstanced{};
 	};
 }

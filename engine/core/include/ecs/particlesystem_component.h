@@ -10,10 +10,7 @@
 #include "../debug/debug_cube.h"
 #include "../shader.h"
 
-#include "../particles/particlesystem.h"
-//#include "../particles/global.h"
-//#include "../particles/openGLData.h"
-//#include "../particles/OpenGLHelpers.h"
+#include "../particles/particle_system.h"
 
 namespace engine
 {
@@ -61,19 +58,6 @@ namespace engine
 		std::unique_ptr<AABB> m_boundingVolume{};
 
 		std::unique_ptr<DebugCube> m_debug_boundingBox{};
-
-		/// helper classes for OpenGl functions
-		//// -----------------------------------
-		//OpenGLHelpers glHelpers;
-		//OpenGLData glData{};
-
-		//int NMAX = 100;
-		//int numOfParticlesPerSecond = 10;
-
-		//Shader m_shaderSourceBasic{};
-		//Shader m_shaderSourceGeometry{};
-		//Shader m_shaderSourceInstanced{};
-
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};
 

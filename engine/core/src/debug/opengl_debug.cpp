@@ -1,5 +1,11 @@
 #include "../../include/debug/opengl_debug.h"
 
+#ifdef DEBUG
+#define CHECK_GL_ERROR(label) OpenGLDebug::checkGLError(label)
+#else
+#define CHECK_GL_ERROR(label)
+#endif
+
 /// <summary>
 /// //std::cout << "MY MESSAGE " << glGetError() << std::endl; // returns 1281 (invalid value)
 /// </summary>

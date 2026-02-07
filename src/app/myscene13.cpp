@@ -7,7 +7,6 @@ using namespace engine;
 MyScene13::MyScene13(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::BlinnPhong,
-        .backgroundColor = Color(0.1f, 0.8f, 0.1f, 1.0f),
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,

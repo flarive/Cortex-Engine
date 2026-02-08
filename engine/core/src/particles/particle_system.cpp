@@ -84,7 +84,6 @@ void engine::ParticleSystem::init()
 	m_nbFrames = 0;
 	m_maxFilledIndex = 0;
 	m_currentDataSize = 0;
-	m_squareSize = 0.25;
 
 	m_particlesArray = new Particle[m_maxParticles];
 	m_flags = new bool[m_maxParticles];

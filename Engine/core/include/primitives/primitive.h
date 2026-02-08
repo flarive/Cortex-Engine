@@ -63,11 +63,6 @@ namespace engine
         bool m_canReceiveShadows{ true };
 
     public:
-        
-        //glm::vec3 position{};
-        //glm::vec3 rotation{};
-        //glm::vec3 scale{};
-
         bool highlight{};
         
         Primitive(const glm::vec3& _position = glm::vec3());

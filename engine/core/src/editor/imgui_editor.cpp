@@ -463,6 +463,12 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
             auto animatorComponent = dynamic_pointer_cast<AnimatorComponent>(component);
             if (animatorComponent) renderAnimatorComponent(animatorComponent);
         }
+        else if (typeID == ComponentType::particleSystem)
+        {
+            // particle system component
+            auto particleSystemComponent = dynamic_pointer_cast<ParticleSystemComponent>(component);
+            if (particleSystemComponent) renderParticleSystemComponent(particleSystemComponent);
+        }
     }
 }
 

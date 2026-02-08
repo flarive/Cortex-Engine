@@ -49,11 +49,17 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() {
 			return {
+				{"maxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 100.0f, ""}},
+				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 100.0f, ""}},
+				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}}
 			};
 		}
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
 			return {
+				{ "maxParticlesCount", [this](EditorPropertyValue value) { getMaxParticles() = *(std::get_if<unsigned int>(&value)); } },
+				{ "NbrParticlesPerSecond", [this](EditorPropertyValue value) { getNumOfParticlesPerSecond() = *(std::get_if<unsigned int>(&value)); } },
+				{ "ParticleSize", [this](EditorPropertyValue value) { getParticleSize() = *(std::get_if<float>(&value)); } }
 			};
 		}
 
@@ -87,30 +93,28 @@ namespace engine
 
 		int getMaxFilledIndex() { return m_maxFilledIndex; }
 
+
 		bool* getFlags() { return m_flags; }
 	
 
-		void reSetup() {}
+		void reSetup() { init(); }
 
-		//void basicDataPrep();
-		//void geometryDataPrep();
-		//void instancedDataPrep();
+		unsigned int& getMaxParticles() { return m_maxParticles; }
+		void setMaxParticles(unsigned int _max) { m_maxParticles = _max; }
 
+		unsigned int& getNumOfParticlesPerSecond() { return m_numOfParticlesPerSecond; }
+		void setNumOfParticlesPerSecond(unsigned int _num) { m_numOfParticlesPerSecond = _num; }
 
-		//void renderPrep(unsigned int VAO);
-
-
-		//void basicRender(int numOfSquares);
-		//void geometryRender(int currentDataSize);
-		//void instancedRender(int currentDataSize);
+		float& getParticleSize() { return m_squareSize; }
+		void setParticleSize(float _size) { m_squareSize = _size; }
 
 	private:
-		int m_maxParticles{};
-		int m_numOfParticlesPerSecond{};
-		int m_nbFrames{};
-		int m_currentDataSize{};
-		int m_partCounter{};
-		int m_maxFilledIndex{};
+		unsigned int m_maxParticles{};
+		unsigned int m_numOfParticlesPerSecond{};
+		unsigned int m_nbFrames{};
+		unsigned int m_currentDataSize{};
+		unsigned int m_partCounter{};
+		unsigned int m_maxFilledIndex{};
 
 		double m_prevTime{};
 		double m_fpsTime{};
@@ -123,29 +127,11 @@ namespace engine
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
 
-		//Shader m_shaderSourceBasic{};
-		//Shader m_shaderSourceGeometry{};
-		//Shader m_shaderSourceInstanced{};
-
-
-
-		//unsigned int id_shader_PVM_uniform{};
-		//unsigned int id_shader_SquareSize_uniform{};
-		//unsigned int VAO{};
-		//unsigned int VBO{};
-		//unsigned int EBO{};
-		//unsigned int quadVAO{};
-		//unsigned int quadVBO{};
-		//unsigned int instanceVBO{};
-
-		////int shaderProgram{};
-		//int texture{};
-
-		//glm::mat4 PVM{};
-
-		//void setUpVertexData();
 
 		std::shared_ptr<Material> m_material{};
+		Shader m_shaderSourceBasic{};
+		Shader m_shaderSourceGeometry{};
+		Shader m_shaderSourceInstanced{};
 
 		Color m_ambientColor{};
 
@@ -163,8 +149,6 @@ namespace engine
 
 		void basicDataPrep();
 
-		Shader m_shaderSourceBasic{};
-		Shader m_shaderSourceGeometry{};
-		Shader m_shaderSourceInstanced{};
+
 	};
 }

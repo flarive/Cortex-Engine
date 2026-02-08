@@ -52,9 +52,6 @@ void engine::ParticleSystemComponent::update(float deltaTime, Transform& transfo
 
 void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	
-	//glData.PVM = projection;
-	
 	m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
 

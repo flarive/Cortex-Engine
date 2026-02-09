@@ -8,5 +8,5 @@ in Outputs{
 
 void main()
 {
-FragColor = texture(texture_diffuse, GeoOut.TexCoords);
+	FragColor = texture(texture_diffuse, GeoOut.TexCoords);
 };

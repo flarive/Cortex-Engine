@@ -16,26 +16,6 @@ void engine::ParticleSystemComponent::init(Transform& transform)
 	m_particleSystem->setPosition(transform.getLocalPosition());
 	m_particleSystem->setRotation(transform.getLocalRotation());
 	m_particleSystem->setScale(transform.getLocalScale());
-
-
-
-	//Global::setDrawType(0);
-
-	//float squareSize = 0.25f;
-	//Global::setParticleSize(squareSize);
-
-	//m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
-	//m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSource.geom");
-	//m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
-
-
-	////select shader sources based on drawtype
-	//// --------------------------------------
-	//char* vert, * frag, * geom;
-	//glHelpers.selectShaders(vert, frag, geom);
-	//glData.texture = glHelpers.loadTexture();
-
-	//glHelpers.setUpVertexData(glData);
 }
 
 void engine::ParticleSystemComponent::update(float deltaTime, Transform& transform)
@@ -62,24 +42,6 @@ void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const gl
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)
 		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);
-
-
-	
-
-
-	//if (Global::drawtype == Basic) {
-	//	glHelpers.basicDataPrep(glData, *m_particleSystem);
-	//	int numOfSquares = m_particleSystem->getCurrentDataSize() / 8;
-	//	glHelpers.basicRender(glData, numOfSquares);
-	//}
-	//else if (Global::drawtype == Geometry) {
-	//	glHelpers.geometryDataPrep(glData, *m_particleSystem);
-	//	glHelpers.geometryRender(glData, m_particleSystem->getCurrentDataSize());
-	//}
-	//else if (Global::drawtype == Instanced) {
-	//	glHelpers.instancedDataPrep(glData, *m_particleSystem);
-	//	glHelpers.instancedRender(glData, m_particleSystem->getCurrentDataSize());
-	//}
 }
 
 engine::AABB engine::ParticleSystemComponent::generateBoundingVolume(const std::shared_ptr<ParticleSystem> particleSystem)

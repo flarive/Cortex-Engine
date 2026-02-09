@@ -20,9 +20,9 @@ void main()
    mat4 PVM = projection * view * model;
    
    gl_Position = PVM * vec4(aPos.x, aPos.y, aPos.z, 1.0);
-   gs_in.location=aPos;
-   gs_in.dlPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(-squareSize,-squareSize,0,0));
-   gs_in.ulPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(-squareSize,squareSize,0,0));
-   gs_in.drPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(squareSize,-squareSize,0,0));
-   gs_in.urPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(squareSize,squareSize,0,0));
+   gs_in.location = aPos;
+   gs_in.dlPoint = PVM * (vec4(aPos.x, aPos.y, aPos.z, 1.0) + vec4(-squareSize,-squareSize, 0, 0));
+   gs_in.ulPoint = PVM * (vec4(aPos.x, aPos.y, aPos.z, 1.0) + vec4(-squareSize,squareSize, 0, 0));
+   gs_in.drPoint = PVM * (vec4(aPos.x, aPos.y, aPos.z, 1.0) + vec4(squareSize,-squareSize, 0, 0));
+   gs_in.urPoint = PVM * (vec4(aPos.x, aPos.y, aPos.z, 1.0) + vec4(squareSize,squareSize, 0, 0));
 }

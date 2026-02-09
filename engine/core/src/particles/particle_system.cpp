@@ -180,7 +180,7 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		m_shaderSourceGeometry.setMat4("model", transformMatrix);
 		m_shaderSourceGeometry.setMat4("view", view);
 		m_shaderSourceGeometry.setMat4("projection", projection);
-		m_shaderSourceGeometry.setMat4("squareSize", m_squareSize);
+		m_shaderSourceGeometry.setFloat("squareSize", m_squareSize);
 	}
 	else if (m_type == ParticleSystemType::instanced)
 	{

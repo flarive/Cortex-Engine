@@ -127,15 +127,13 @@ namespace engine
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
 
-		ParticleSystemType m_type = ParticleSystemType::basic;
+		ParticleSystemType m_type = ParticleSystemType::instanced;
 
 
 		std::shared_ptr<Material> m_material{};
 		Shader m_shaderSourceBasic{};
 		Shader m_shaderSourceGeometry{};
 		Shader m_shaderSourceInstanced{};
-
-		//Color m_ambientColor{};
 
 		float m_uvScale{ 1.0f };
 
@@ -154,8 +152,6 @@ namespace engine
 		
 		// instanced
 		unsigned int m_instanceVBO{};
-
-
 
 		void geometrySetup();
 

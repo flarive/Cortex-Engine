@@ -17,7 +17,7 @@
 
 namespace engine
 {
-	enum class ParticleSystemType { undefined = 0, basic = 1 };
+	enum class ParticleSystemType { undefined = 0, basic = 1, geometry = 2, instanced = 3 };
 
 	const std::unordered_map<ParticleSystemType, std::string> ParticleSystemTypeNames = {
 		{ParticleSystemType::undefined, "undefined"},
@@ -127,13 +127,15 @@ namespace engine
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
 
+		ParticleSystemType m_type = ParticleSystemType::basic;
+
 
 		std::shared_ptr<Material> m_material{};
 		Shader m_shaderSourceBasic{};
 		Shader m_shaderSourceGeometry{};
 		Shader m_shaderSourceInstanced{};
 
-		Color m_ambientColor{};
+		//Color m_ambientColor{};
 
 		float m_uvScale{ 1.0f };
 
@@ -141,14 +143,24 @@ namespace engine
 		glm::vec3 m_rotation{};
 		glm::vec3 m_scale{};
 
+		// basic
 		unsigned int m_VAO{};
 		unsigned int m_VBO{};
 		unsigned int m_EBO{};
 
+		// geometry
+		unsigned int m_quadVAO{};
+		unsigned int m_quadVBO{};
+		
+		// instanced
+		unsigned int m_instanceVBO{};
+
+
+
 		void geometrySetup();
 
 		void basicDataPrep();
-
-
+		void geometryDataPrep();
+		void instancedDataPrep();
 	};
 }

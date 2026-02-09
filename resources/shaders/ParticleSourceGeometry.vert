@@ -1,6 +1,10 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
-uniform mat4 PVM;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 uniform float squareSize;
 
 out VS_OUT{
@@ -13,7 +17,9 @@ vec4 urPoint;
 
 void main()
 {
-   gl_Position = PVM*vec4(aPos.x, aPos.y, aPos.z, 1.0);
+   mat4 PVM = projection * view * model;
+   
+   gl_Position = PVM * vec4(aPos.x, aPos.y, aPos.z, 1.0);
    gs_in.location=aPos;
    gs_in.dlPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(-squareSize,-squareSize,0,0));
    gs_in.ulPoint=PVM*(vec4(aPos.x, aPos.y, aPos.z, 1.0)+vec4(-squareSize,squareSize,0,0));

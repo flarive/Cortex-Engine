@@ -48,31 +48,32 @@ void engine::ParticleSystem::geometrySetup()
 	glGenBuffers(1, &m_EBO);
 
 
-	//if (Global::drawtype == Instanced) {
-	//	glGenVertexArrays(1, &glData.quadVAO);
-	//	glGenBuffers(1, &glData.quadVBO);
-	//	glBindVertexArray(glData.quadVAO);
+	if (m_type == ParticleSystemType::instanced)
+	{
+		glGenVertexArrays(1, &m_quadVAO);
+		glGenBuffers(1, &m_quadVBO);
+		glBindVertexArray(m_quadVAO);
 
-	//	float particleSize = Global::particleSize;
-	//	glGenBuffers(1, &glData.instanceVBO);
+		float particleSize = 10.0f; // ????????????
+		glGenBuffers(1, &m_instanceVBO);
 
-	//	float quadVertices[] = {
-	//		// positions    
-	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-	//		 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
-	//		-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
+		float quadVertices[] = {
+			// positions    
+			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+			 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
+			-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
 
-	//		-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-	//		 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
-	//		 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
-	//	};
-	//	glBindBuffer(GL_ARRAY_BUFFER, glData.quadVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-	//	glEnableVertexAttribArray(0);
-	//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	//	glEnableVertexAttribArray(1);
-	//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-	//}
+			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+			 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
+			 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
+		};
+		glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	}
 }
 
 void engine::ParticleSystem::init()
@@ -146,18 +147,55 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		return;
 	}
 
-	basicDataPrep();
+
+	if (m_type == ParticleSystemType::basic)
+		basicDataPrep();
+	else if (m_type == ParticleSystemType::geometry)
+		geometryDataPrep();
+	else if (m_type == ParticleSystemType::instanced)
+		instancedDataPrep();
 
 	setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-	if (!m_material->bind2(m_shaderSourceBasic)) {
-		std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-		return;
+
+	if (m_type == ParticleSystemType::basic)
+	{
+		if (!m_material->bind2(m_shaderSourceBasic)) {
+			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+			return;
+		}
+
+
+		m_shaderSourceBasic.setMat4("model", transformMatrix);
+		m_shaderSourceBasic.setMat4("view", view);
+		m_shaderSourceBasic.setMat4("projection", projection);
+	}
+	else if (m_type == ParticleSystemType::geometry)
+	{
+		if (!m_material->bind2(m_shaderSourceGeometry)) {
+			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+			return;
+		}
+
+		m_shaderSourceGeometry.setMat4("model", transformMatrix);
+		m_shaderSourceGeometry.setMat4("view", view);
+		m_shaderSourceGeometry.setMat4("projection", projection);
+		m_shaderSourceGeometry.setMat4("squareSize", m_squareSize);
+	}
+	else if (m_type == ParticleSystemType::instanced)
+	{
+		if (!m_material->bind2(m_shaderSourceInstanced)) {
+			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+			return;
+		}
+
+		m_shaderSourceInstanced.setMat4("model", transformMatrix);
+		m_shaderSourceInstanced.setMat4("view", view);
+		m_shaderSourceInstanced.setMat4("projection", projection);
 	}
 
-	m_shaderSourceBasic.setMat4("model", transformMatrix);
-	m_shaderSourceBasic.setMat4("view", view);
-	m_shaderSourceBasic.setMat4("projection", projection);
+
+
 
 
 	glDepthMask(GL_FALSE);
@@ -168,9 +206,22 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 	glBindVertexArray(m_VAO);
 	OpenGLDebug::checkGLError("glBindVertexArray");
 
-	int numOfSquares = getCurrentDataSize() / 8;
-	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
-	OpenGLDebug::checkGLError("glDrawArrays");
+
+	if (m_type == ParticleSystemType::basic)
+	{
+		int numOfSquares = getCurrentDataSize() / 8;
+		glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
+		OpenGLDebug::checkGLError("glDrawElements");
+	}
+	else if (m_type == ParticleSystemType::geometry)
+	{
+		glDrawArrays(GL_POINTS, 0, getCurrentDataSize());
+		OpenGLDebug::checkGLError("glDrawArrays");
+	}
+	else if (m_type == ParticleSystemType::instanced)
+	{
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCurrentDataSize());
+	}
 
 	glBindVertexArray(0);
 	OpenGLDebug::checkGLError("glBindVertexArray");
@@ -215,6 +266,41 @@ void engine::ParticleSystem::basicDataPrep()
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
 		glEnableVertexAttribArray(1);
+	}
+}
+
+void engine::ParticleSystem::geometryDataPrep()
+{
+	std::vector<glm::vec3>  points = getDataCenterPoints();
+	glm::vec3* data = points.data();
+	int currentDataSize = getCurrentDataSize();
+
+	int numOfSquares = (currentDataSize / 8);
+
+	if (currentDataSize > 0) {
+		glBindVertexArray(m_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glEnableVertexAttribArray(0);
+	}
+}
+
+void engine::ParticleSystem::instancedDataPrep()
+{
+	std::vector<glm::vec3>  points = getDataCenterPoints();
+	glm::vec3* data = points.data();
+	int currentDataSize = getCurrentDataSize();
+
+	if (currentDataSize > 0) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, m_instanceVBO); // this attribute comes from a different vertex buffer
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
 	}
 }
 

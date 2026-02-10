@@ -7,7 +7,7 @@
 
 namespace engine
 {
-	class Particle
+	class Particle final
 	{
 	public:
 		Particle();

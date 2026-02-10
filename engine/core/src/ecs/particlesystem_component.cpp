@@ -32,8 +32,10 @@ void engine::ParticleSystemComponent::update(float deltaTime, Transform& transfo
 
 void engine::ParticleSystemComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
+	m_particleSystem->resetDrawCallCount();
 	m_particleSystem->draw(shader, projection, view, worldTransformMatrix, localTransform);
-
+	unsigned int drawCalls = m_particleSystem->getDrawCallCount();
+	std::cout << "Draw calls: " << drawCalls << std::endl;
 
 
 	auto* singleton = engine::Singleton::getInstance();

@@ -7,13 +7,13 @@
 using namespace std;
 
 engine::ParticleSystem::ParticleSystem()
-	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f)
+	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_drawCallCount(0)
 {
 	init();
 }
 
-engine::ParticleSystem::ParticleSystem(int _maxParticles, int _numOfParticlesPerSecond, float _particleSize)
-	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize)
+engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize)
+	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_drawCallCount(0)
 {
 	init();
 }
@@ -52,27 +52,35 @@ void engine::ParticleSystem::geometrySetup()
 	{
 		glGenVertexArrays(1, &m_quadVAO);
 		glGenBuffers(1, &m_quadVBO);
+		glGenBuffers(1, &m_instanceVBO); // Generate the instanced VBO here
+
 		glBindVertexArray(m_quadVAO);
 
-		float particleSize = 0.25f; // ????????????
-		glGenBuffers(1, &m_instanceVBO);
 
+
+		float particleSize = m_squareSize;
 		float quadVertices[] = {
-			// positions    
+			// positions					// texture coords
 			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
 			 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
 			-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
-
 			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+			 particleSize,  particleSize,   1.0f, 1.0f,    // top right
 			 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
-			 particleSize,  particleSize,   1.0f, 1.0f,   // top right 
 		};
 		glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
+
+		
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(0);
+
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+
+		// Unbind the VBO and VAO
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
 }
 
@@ -104,13 +112,12 @@ void engine::ParticleSystem::update()
 	initParticles(m_partCounter);
 
 	if (currentTime - m_fpsTime >= 1.0) {
-		//cout << "FPS: " << nbFrames << "\n";
 		m_fpsTime += 1.0;
 		m_nbFrames = 0;
 		m_partCounter = 0;
 	}
 
-	for (size_t i = 0; i <= m_maxFilledIndex; i++)
+	for (unsigned int i = 0; i <= m_maxFilledIndex; i++)
 	{
 		if (m_flags[i] == true) {
 			m_particlesArray[i].lifeSpan -= deltaTime;
@@ -194,10 +201,6 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		m_shaderSourceInstanced.setMat4("projection", projection);
 	}
 
-
-
-
-
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -214,6 +217,8 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		int numOfSquares = getCurrentDataSize() / 8;
 		glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
 		OpenGLDebug::checkGLError("glDrawElements");
+
+		m_drawCallCount++; // Increment for each draw call
 	}
 	else if (m_type == ParticleSystemType::geometry)
 	{
@@ -223,6 +228,8 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 
 		glDrawArrays(GL_POINTS, 0, getCurrentDataSize());
 		OpenGLDebug::checkGLError("glDrawArrays");
+
+		m_drawCallCount++; // Increment for each draw call
 	}
 	else if (m_type == ParticleSystemType::instanced)
 	{
@@ -232,6 +239,8 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCurrentDataSize());
 		OpenGLDebug::checkGLError("glDrawArraysInstanced");
+
+		m_drawCallCount++; // Increment for each draw call
 	}
 
 	glBindVertexArray(0);
@@ -256,7 +265,7 @@ void engine::ParticleSystem::basicDataPrep()
 
 	int numOfSquares = (currentDataSize / 8);
 	std::vector<int> indices;
-	for (size_t i = 0; i < numOfSquares; i++)
+	for (int i = 0; i < numOfSquares; i++)
 	{
 		indices.push_back(i * 4);
 		indices.push_back(i * 4 + 1);
@@ -299,23 +308,28 @@ void engine::ParticleSystem::geometryDataPrep()
 
 void engine::ParticleSystem::instancedDataPrep()
 {
-	std::vector<glm::vec3>  points = getDataCenterPoints();
+	std::vector<glm::vec3> points = getDataCenterPoints();
 	glm::vec3* data = points.data();
 	int currentDataSize = getCurrentDataSize();
 
-	if (currentDataSize > 0) {
+	if (currentDataSize > 0)
+	{
+		glBindVertexArray(m_quadVAO); // Bind the VAO first
+
 		glBindBuffer(GL_ARRAY_BUFFER, m_instanceVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * currentDataSize, data, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, m_instanceVBO); // this attribute comes from a different vertex buffer
+
+		// Set up the vertex attribute for the instanced data
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+		glEnableVertexAttribArray(2);
+		glVertexAttribDivisor(2, 1); // Tell OpenGL this is an instanced vertex attribute
+
+		// Unbind the VBO, but keep the VAO bound
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
 	}
 }
 
-void engine::ParticleSystem::destroyParticle(int index)
+void engine::ParticleSystem::destroyParticle(unsigned int index)
 {
 	m_flags[index] = false;
 	if (index == m_maxFilledIndex) {
@@ -329,12 +343,12 @@ void engine::ParticleSystem::destroyParticle(int index)
 	}
 }
 
-void engine::ParticleSystem::initParticles(int n)
+void engine::ParticleSystem::initParticles(unsigned int n)
 {
-	for (size_t i = 0; i < n; i++)
+	for (unsigned int i = 0; i < n; i++)
 	{
 		Particle particle{};
-		for (size_t j = 0; j < m_maxParticles; j++)
+		for (unsigned int j = 0; j < m_maxParticles; j++)
 		{
 			if (m_flags[j] == false) {
 				m_particlesArray[j] = particle;
@@ -413,4 +427,31 @@ void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
 int engine::ParticleSystem::getCurrentDataSize()
 {
 	return m_currentDataSize;
+}
+
+std::vector<std::string> engine::ParticleSystem::getModesList()
+{
+	std::vector<std::string> names;
+	names.reserve(3); // avoids reallocation growth
+
+	names.emplace_back("Basic");
+	names.emplace_back("Geometry");
+	names.emplace_back("Instanced");
+
+	return names;
+}
+
+void engine::ParticleSystem::setModeAtIndex(unsigned short index)
+{
+	unsigned short loop = 0;
+	/*for (const auto& animation : m_animations)
+	{
+		if (loop == index)
+		{
+			playAnimation(animation);
+			break;
+		}
+
+		loop++;
+	}*/
 }

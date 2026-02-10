@@ -14,6 +14,7 @@
 #include <stdlib.h>   
 #include <time.h>       
 #include <vector>
+#include <string>
 
 namespace engine
 {
@@ -30,14 +31,14 @@ namespace engine
 	}
 
 
-	class ParticleSystem
+	class ParticleSystem final
 	{
 	public:
 		ParticleSystem();
-		ParticleSystem(int _maxParticles, int _numOfParticlesPerSecond, float _particleSize);
+		ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize);
 		~ParticleSystem();
-		void initParticles(int n);
-		void destroyParticle(int index);
+		void initParticles(unsigned int n);
+		void destroyParticle(unsigned int index);
 		int getCurrentDataSize();
 		std::vector<glm::vec3> getDataSquarePoints();
 		void getSquareFromCenter(glm::vec3 center);
@@ -49,15 +50,17 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() {
 			return {
-				{"maxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 100.0f, ""}},
+				{"MaxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 100.0f, ""}},
 				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 100.0f, ""}},
-				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}}
+				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
+				{"Mode", EditorProperty { "*", getModesList(), readonly, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { setModeAtIndex(index); }}},
+				{"DrawCalls", EditorProperty { "Draw calls", getDrawCallCount(), readonly }}
 			};
 		}
 
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
 			return {
-				{ "maxParticlesCount", [this](EditorPropertyValue value) { getMaxParticles() = *(std::get_if<unsigned int>(&value)); } },
+				{ "MaxParticlesCount", [this](EditorPropertyValue value) { getMaxParticles() = *(std::get_if<unsigned int>(&value)); } },
 				{ "NbrParticlesPerSecond", [this](EditorPropertyValue value) { getNumOfParticlesPerSecond() = *(std::get_if<unsigned int>(&value)); } },
 				{ "ParticleSize", [this](EditorPropertyValue value) { getParticleSize() = *(std::get_if<float>(&value)); } }
 			};
@@ -108,6 +111,12 @@ namespace engine
 		float& getParticleSize() { return m_squareSize; }
 		void setParticleSize(float _size) { m_squareSize = _size; }
 
+		void resetDrawCallCount() { m_drawCallCount = 0; }
+		unsigned int getDrawCallCount() const { return m_drawCallCount; }
+
+		std::vector<std::string> getModesList();
+		void setModeAtIndex(unsigned short index);
+
 	private:
 		unsigned int m_maxParticles{};
 		unsigned int m_numOfParticlesPerSecond{};
@@ -127,7 +136,7 @@ namespace engine
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
 
-		ParticleSystemType m_type = ParticleSystemType::instanced;
+		ParticleSystemType m_type = ParticleSystemType::basic;
 
 
 		std::shared_ptr<Material> m_material{};
@@ -152,6 +161,8 @@ namespace engine
 		
 		// instanced
 		unsigned int m_instanceVBO{};
+
+		unsigned int m_drawCallCount{};
 
 		void geometrySetup();
 

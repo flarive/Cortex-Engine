@@ -54,7 +54,7 @@ void engine::ParticleSystem::geometrySetup()
 		glGenBuffers(1, &m_quadVBO);
 		glBindVertexArray(m_quadVAO);
 
-		float particleSize = 10.0f; // ????????????
+		float particleSize = 0.25f; // ????????????
 		glGenBuffers(1, &m_instanceVBO);
 
 		float quadVertices[] = {
@@ -202,25 +202,36 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	// Send to GPU
-	glBindVertexArray(m_VAO);
-	OpenGLDebug::checkGLError("glBindVertexArray");
+	
 
 
 	if (m_type == ParticleSystemType::basic)
 	{
+		// Send to GPU
+		glBindVertexArray(m_VAO);
+		OpenGLDebug::checkGLError("glBindVertexArray");
+
 		int numOfSquares = getCurrentDataSize() / 8;
 		glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
 		OpenGLDebug::checkGLError("glDrawElements");
 	}
 	else if (m_type == ParticleSystemType::geometry)
 	{
+		// Send to GPU
+		glBindVertexArray(m_VAO);
+		OpenGLDebug::checkGLError("glBindVertexArray");
+
 		glDrawArrays(GL_POINTS, 0, getCurrentDataSize());
 		OpenGLDebug::checkGLError("glDrawArrays");
 	}
 	else if (m_type == ParticleSystemType::instanced)
 	{
+		// Send to GPU
+		glBindVertexArray(m_quadVAO);
+		OpenGLDebug::checkGLError("glBindVertexArray");
+
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCurrentDataSize());
+		OpenGLDebug::checkGLError("glDrawArraysInstanced");
 	}
 
 	glBindVertexArray(0);

@@ -53,7 +53,7 @@ namespace engine
 				{"MaxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 100.0f, ""}},
 				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 100.0f, ""}},
 				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
-				{"Mode", EditorProperty { "*", getModesList(), readonly, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { setModeAtIndex(index); }}},
+				{"Mode", EditorProperty { "*", getModesList(), editable | combobox, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { setModeAtIndex(index); }}},
 				{"DrawCalls", EditorProperty { "Draw calls", getDrawCallCount(), readonly }}
 			};
 		}

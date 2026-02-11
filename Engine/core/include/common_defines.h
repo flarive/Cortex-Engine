@@ -28,7 +28,8 @@ namespace engine
 		editable = 1 << 0, // 1
 		readonly = 1 << 1, // 2
 		label = 1 << 2, // 4
-		noheader = 1 << 3  // 8
+		noheader = 1 << 3, // 8,
+		combobox = 1 << 4 // 16
 	};
 
 	struct EditorProperty

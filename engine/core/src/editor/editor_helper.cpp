@@ -187,8 +187,13 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                     }
                     else if (std::vector<std::string>* pValue = std::get_if<std::vector<std::string>>(&property.value))
                     {
-                        if (property.type & readonly) {
-                            EditorHelper::renderVectorTable(*pValue, property);
+                        if (property.type & combobox) {
+                            // combobox list
+                            EditorHelper::renderStringVectorComboboxTable(*pValue, property);
+                        }
+                        else if (property.type & readonly) {
+                            // button list
+                            EditorHelper::renderStringVectorButtonListTable(*pValue, property);
                         }
                         else
                         {
@@ -334,7 +339,7 @@ void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const cha
     }
 }
 
-void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property)
+void engine::EditorHelper::renderStringVectorButtonListTable(const std::vector<std::string>& items, const EditorProperty& property)
 {
     static unsigned short prev_selected_row = -1;
     static unsigned short selected_row = -1;
@@ -406,6 +411,20 @@ void engine::EditorHelper::renderVectorTable(const std::vector<std::string>& ite
 
         ImGui::EndTable();
     }
+}
+
+void engine::EditorHelper::renderStringVectorComboboxTable(const std::vector<std::string>& items, const EditorProperty& property)
+{
+    static int current_item = 0;
+
+    // Convert std::vector<std::string> to const char*[]
+    std::vector<const char*> c_items;
+    for (const auto& item : items) {
+        c_items.push_back(item.c_str());
+    }
+
+    ImGui::Combo("Fruits", &current_item, c_items.data(), static_cast<int>(c_items.size()));
+    ImGui::Text("Selected: %s", c_items[current_item]);
 }
 
 void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::function<void()> onClick)

@@ -22,7 +22,9 @@ namespace engine
 	class EditorHelper final
 	{
 	public:
-		static void renderVectorTable(const std::vector<std::string>& items, const EditorProperty& property);
+		static void renderStringVectorButtonListTable(const std::vector<std::string>& items, const EditorProperty& property);
+		static void renderStringVectorComboboxTable(const std::vector<std::string>& items, const EditorProperty& property);
+
 		static void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
 
 		static bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);

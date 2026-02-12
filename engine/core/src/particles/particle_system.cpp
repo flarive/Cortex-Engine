@@ -56,8 +56,6 @@ void engine::ParticleSystem::geometrySetup()
 
 		glBindVertexArray(m_quadVAO);
 
-
-
 		float particleSize = m_squareSize;
 		float quadVertices[] = {
 			// positions					// texture coords
@@ -443,15 +441,12 @@ std::vector<std::string> engine::ParticleSystem::getModesList()
 
 void engine::ParticleSystem::setModeAtIndex(unsigned short index)
 {
-	unsigned short loop = 0;
-	/*for (const auto& animation : m_animations)
-	{
-		if (loop == index)
-		{
-			playAnimation(animation);
-			break;
-		}
+	if (index == 1)
+		m_type = ParticleSystemType::geometry;
+	else if (index == 2)
+		m_type = ParticleSystemType::instanced;
 
-		loop++;
-	}*/
+	m_type = ParticleSystemType::basic;
+
+	reSetup();
 }

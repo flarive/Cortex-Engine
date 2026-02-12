@@ -22,8 +22,8 @@ namespace engine
 	class EditorHelper final
 	{
 	public:
-		static void renderStringVectorButtonListTable(const std::vector<std::string>& items, const EditorProperty& property);
-		static void renderStringVectorComboboxTable(const std::vector<std::string>& items, const EditorProperty& property);
+		static void renderStringVectorButtonListTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property);
+		static void renderStringVectorComboboxTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property);
 
 		static void renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType);
 

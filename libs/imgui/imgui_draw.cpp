@@ -4360,35 +4360,119 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
 //-----------------------------------------------------------------------------
 
 // Render an arrow aimed to be aligned with text (p_min is a position in the same space text would be positioned). To e.g. denote expanded/collapsed state
+//void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
+//{
+//    const float h = draw_list->_Data->FontSize * 1.00f;
+//    float r = h * 0.40f * scale;
+//    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f * scale);
+//
+//    ImVec2 a, b, c;
+//    switch (dir)
+//    {
+//    case ImGuiDir_Up:
+//    case ImGuiDir_Down:
+//        if (dir == ImGuiDir_Up) r = -r;
+//        a = ImVec2(+0.000f, +0.750f) * r;
+//        b = ImVec2(-0.866f, -0.750f) * r;
+//        c = ImVec2(+0.866f, -0.750f) * r;
+//        break;
+//    case ImGuiDir_Left:
+//    case ImGuiDir_Right:
+//        if (dir == ImGuiDir_Left) r = -r;
+//        a = ImVec2(+0.750f, +0.000f) * r;
+//        b = ImVec2(-0.750f, +0.866f) * r;
+//        c = ImVec2(-0.750f, -0.866f) * r;
+//        break;
+//    case ImGuiDir_None:
+//    case ImGuiDir_COUNT:
+//        IM_ASSERT(0);
+//        break;
+//    }
+//    draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
+//}
+
+/// <summary>
+/// Custom Render Arrow FL !!!!
+/// https://github.com/ocornut/imgui/issues/2235
+/// </summary>
+/// <param name="draw_list"></param>
+/// <param name="pos"></param>
+/// <param name="col"></param>
+/// <param name="dir"></param>
+/// <param name="scale"></param>
+//void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
+//{
+//    const float h = draw_list->_Data->FontSize * 1.00f;
+//    float r = h * 0.40f * scale;
+//    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f * scale);
+//
+//    ImVec2 a, b, c, offset;
+//    switch (dir)
+//    {
+//    case ImGuiDir_Up:
+//    case ImGuiDir_Down:
+//        if (dir == ImGuiDir_Up) r = -r;
+//        a = ImVec2(+0.000f, +0.450f) * r;
+//        b = ImVec2(-0.800f, -0.450f) * r;
+//        c = ImVec2(+0.800f, -0.450f) * r;
+//        offset = ImVec2(1.0f, 0.0f);
+//        break;
+//    case ImGuiDir_Left:
+//    case ImGuiDir_Right:
+//        if (dir == ImGuiDir_Left) r = -r;
+//        a = ImVec2(+0.450f, +0.000f) * r;
+//        b = ImVec2(-0.450f, +0.800f) * r;
+//        c = ImVec2(-0.450f, -0.800f) * r;
+//        offset = ImVec2(0.0f, -1.0f);
+//        break;
+//    case ImGuiDir_None:
+//    case ImGuiDir_COUNT:
+//        IM_ASSERT(0);
+//        break;
+//    }
+//
+//    draw_list->AddLine(center + a + offset, center + b, col, 2.0f);
+//    draw_list->AddLine(center + a - offset, center + c, col, 2.0f);
+//}
+
 void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
 {
-    const float h = draw_list->_Data->FontSize * 1.00f;
-    float r = h * 0.40f * scale;
-    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f * scale);
+    // Base metrics
+    const float base_h = draw_list->_Data->FontSize * 1.00f;
 
-    ImVec2 a, b, c;
+    // Apply uniform scale to all dimensions
+    const float h = base_h * scale;
+    float r = h * 0.40f;                   // arrow triangle "radius" after scale
+    const float thickness = 2.0f * scale;  // scale line thickness too so it doesn't look too bold
+    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f);
+
+    ImVec2 a, b, c, offset;
     switch (dir)
     {
     case ImGuiDir_Up:
     case ImGuiDir_Down:
         if (dir == ImGuiDir_Up) r = -r;
-        a = ImVec2(+0.000f, +0.750f) * r;
-        b = ImVec2(-0.866f, -0.750f) * r;
-        c = ImVec2(+0.866f, -0.750f) * r;
+        a = ImVec2(+0.000f, +0.450f) * r;
+        b = ImVec2(-0.800f, -0.450f) * r;
+        c = ImVec2(+0.800f, -0.450f) * r;
+        offset = ImVec2(1.0f, 0.0f) * scale; // scale the “stem” offset too
         break;
     case ImGuiDir_Left:
     case ImGuiDir_Right:
         if (dir == ImGuiDir_Left) r = -r;
-        a = ImVec2(+0.750f, +0.000f) * r;
-        b = ImVec2(-0.750f, +0.866f) * r;
-        c = ImVec2(-0.750f, -0.866f) * r;
+        a = ImVec2(+0.450f, +0.000f) * r;
+        b = ImVec2(-0.450f, +0.800f) * r;
+        c = ImVec2(-0.450f, -0.800f) * r;
+        offset = ImVec2(0.0f, -1.0f) * scale;
         break;
     case ImGuiDir_None:
     case ImGuiDir_COUNT:
         IM_ASSERT(0);
         break;
     }
-    draw_list->AddTriangleFilled(center + a, center + b, center + c, col);
+
+    draw_list->AddLine(center + a + offset, center + b, col, thickness);
+    draw_list->AddLine(center + a - offset, center + c, col, thickness);
 }
 
 void ImGui::RenderBullet(ImDrawList* draw_list, ImVec2 pos, ImU32 col)

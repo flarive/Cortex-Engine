@@ -189,11 +189,11 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                     {
                         if (property.type & combobox) {
                             // combobox list
-                            EditorHelper::renderStringVectorComboboxTable(*pValue, property);
+                            EditorHelper::renderStringVectorComboboxTable(key, *pValue, property);
                         }
                         else if (property.type & readonly) {
                             // button list
-                            EditorHelper::renderStringVectorButtonListTable(*pValue, property);
+                            EditorHelper::renderStringVectorButtonListTable(key , *pValue, property);
                         }
                         else
                         {
@@ -339,12 +339,12 @@ void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const cha
     }
 }
 
-void engine::EditorHelper::renderStringVectorButtonListTable(const std::vector<std::string>& items, const EditorProperty& property)
+void engine::EditorHelper::renderStringVectorButtonListTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property)
 {
     static unsigned short prev_selected_row = -1;
     static unsigned short selected_row = -1;
 
-    if (ImGui::BeginTable("MyTable", 1, ImGuiTableFlags_SizingStretchSame))
+    if (ImGui::BeginTable(std::format("Table{}", key).c_str(), 1, ImGuiTableFlags_SizingStretchSame))
     {
         ImGui::TableSetupColumn("Column", ImGuiTableColumnFlags_WidthStretch);
 
@@ -413,18 +413,49 @@ void engine::EditorHelper::renderStringVectorButtonListTable(const std::vector<s
     }
 }
 
-void engine::EditorHelper::renderStringVectorComboboxTable(const std::vector<std::string>& items, const EditorProperty& property)
+void engine::EditorHelper::renderStringVectorComboboxTable(
+    const std::string& key,
+    const std::vector<std::string>& items,
+    const EditorProperty& property)
 {
-    static int current_item = 0;
+    // One selected index per combobox key
+    static std::unordered_map<std::string, int> selectedIndex;
+    int& currentIdx = selectedIndex[key];
 
-    // Convert std::vector<std::string> to const char*[]
-    std::vector<const char*> c_items;
-    for (const auto& item : items) {
-        c_items.push_back(item.c_str());
+    // Fix index if out of range
+    if (items.empty())
+    {
+        currentIdx = -1;
+        return;
     }
+    if (currentIdx < 0 || currentIdx >= (int)items.size())
+        currentIdx = 0;
 
-    ImGui::Combo("Fruits", &current_item, c_items.data(), static_cast<int>(c_items.size()));
-    ImGui::Text("Selected: %s", c_items[current_item]);
+    const std::string comboId = "##" + key;
+    const char* preview = items[currentIdx].c_str();
+
+    ImGui::SetNextItemWidth(200.0f);   // width in pixels
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 4)); // X, Y padding
+    if (ImGui::BeginCombo(comboId.c_str(), preview))
+    {
+        for (unsigned int i = 0; i < (int)items.size(); ++i)
+        {
+            bool isSelected = (i == currentIdx);
+
+            if (ImGui::Selectable(items[i].c_str(), isSelected))
+            {
+                currentIdx = i;
+
+                // Call property callback if needed
+                property.function(i);
+            }
+
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopStyleVar();
 }
 
 void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::function<void()> onClick)

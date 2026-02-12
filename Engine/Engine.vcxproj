@@ -170,6 +170,7 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
+    <ClCompile Include="..\libs\stb\stb_vorbis.c" />
     <ClCompile Include="core\src\aabb.cpp" />
     <ClCompile Include="core\src\animators\animator.cpp" />
     <ClCompile Include="core\src\animators\rotation_animator.cpp" />

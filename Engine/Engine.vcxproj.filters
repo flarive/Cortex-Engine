@@ -429,6 +429,9 @@
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\stb\stb_vorbis.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">

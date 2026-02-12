@@ -157,9 +157,6 @@
     <ClCompile Include="app\myscene10.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\stb\stb_vorbis.c">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="app\myscene11.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>

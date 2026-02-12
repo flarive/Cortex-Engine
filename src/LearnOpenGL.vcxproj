@@ -185,7 +185,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\stb\stb_vorbis.c" />
     <ClCompile Include="app\myscene1.cpp" />
     <ClCompile Include="app\myscene10.cpp" />
     <ClCompile Include="app\myscene11.cpp" />

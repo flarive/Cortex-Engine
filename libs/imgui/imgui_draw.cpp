@@ -4395,58 +4395,17 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, const ImVec2& pos, Im
 /// Custom Render Arrow FL !!!!
 /// https://github.com/ocornut/imgui/issues/2235
 /// </summary>
-/// <param name="draw_list"></param>
-/// <param name="pos"></param>
-/// <param name="col"></param>
-/// <param name="dir"></param>
-/// <param name="scale"></param>
-//void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
-//{
-//    const float h = draw_list->_Data->FontSize * 1.00f;
-//    float r = h * 0.40f * scale;
-//    ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f * scale);
-//
-//    ImVec2 a, b, c, offset;
-//    switch (dir)
-//    {
-//    case ImGuiDir_Up:
-//    case ImGuiDir_Down:
-//        if (dir == ImGuiDir_Up) r = -r;
-//        a = ImVec2(+0.000f, +0.450f) * r;
-//        b = ImVec2(-0.800f, -0.450f) * r;
-//        c = ImVec2(+0.800f, -0.450f) * r;
-//        offset = ImVec2(1.0f, 0.0f);
-//        break;
-//    case ImGuiDir_Left:
-//    case ImGuiDir_Right:
-//        if (dir == ImGuiDir_Left) r = -r;
-//        a = ImVec2(+0.450f, +0.000f) * r;
-//        b = ImVec2(-0.450f, +0.800f) * r;
-//        c = ImVec2(-0.450f, -0.800f) * r;
-//        offset = ImVec2(0.0f, -1.0f);
-//        break;
-//    case ImGuiDir_None:
-//    case ImGuiDir_COUNT:
-//        IM_ASSERT(0);
-//        break;
-//    }
-//
-//    draw_list->AddLine(center + a + offset, center + b, col, 2.0f);
-//    draw_list->AddLine(center + a - offset, center + c, col, 2.0f);
-//}
-
 void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir dir, float scale)
 {
-    // Base metrics
     const float base_h = draw_list->_Data->FontSize * 1.00f;
-
-    // Apply uniform scale to all dimensions
     const float h = base_h * scale;
-    float r = h * 0.40f;                   // arrow triangle "radius" after scale
-    const float thickness = 2.0f * scale;  // scale line thickness too so it doesn't look too bold
+    float r = h * 0.40f;
+    const float thickness = (2.0f * scale < 1.0f) ? 1.0f : 2.0f * scale;
     ImVec2 center = pos + ImVec2(h * 0.50f, h * 0.50f);
 
-    ImVec2 a, b, c, offset;
+    ImVec2 a, b, c;
+    ImVec2 offset(0.0f, 0.0f); // Initialize offset to zero
+
     switch (dir)
     {
     case ImGuiDir_Up:
@@ -4455,7 +4414,7 @@ void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir d
         a = ImVec2(+0.000f, +0.450f) * r;
         b = ImVec2(-0.800f, -0.450f) * r;
         c = ImVec2(+0.800f, -0.450f) * r;
-        offset = ImVec2(1.0f, 0.0f) * scale; // scale the “stem” offset too
+        offset = ImVec2(0.0f, 0.0f); // No offset for up/down arrows (or adjust as needed)
         break;
     case ImGuiDir_Left:
     case ImGuiDir_Right:
@@ -4463,7 +4422,7 @@ void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir d
         a = ImVec2(+0.450f, +0.000f) * r;
         b = ImVec2(-0.450f, +0.800f) * r;
         c = ImVec2(-0.450f, -0.800f) * r;
-        offset = ImVec2(0.0f, -1.0f) * scale;
+        offset = ImVec2(0.0f, 0.0f); // No offset for left/right arrows (or adjust as needed)
         break;
     case ImGuiDir_None:
     case ImGuiDir_COUNT:
@@ -4471,9 +4430,13 @@ void ImGui::RenderArrow(ImDrawList* draw_list, ImVec2 pos, ImU32 col, ImGuiDir d
         break;
     }
 
-    draw_list->AddLine(center + a + offset, center + b, col, thickness);
-    draw_list->AddLine(center + a - offset, center + c, col, thickness);
+    // Draw the two lines of the arrow
+    draw_list->AddLine(center + a, center + b, col, 0.2f);
+    draw_list->AddLine(center + a, center + c, col, 0.2f);
 }
+
+
+
 
 void ImGui::RenderBullet(ImDrawList* draw_list, ImVec2 pos, ImU32 col)
 {

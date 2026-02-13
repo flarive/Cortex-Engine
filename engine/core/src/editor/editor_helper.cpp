@@ -445,8 +445,6 @@ void engine::EditorHelper::renderStringVectorComboboxTable(
             if (ImGui::Selectable(items[i].c_str(), isSelected))
             {
                 currentIdx = i;
-
-                // Call property callback if needed
                 property.function(i);
             }
 

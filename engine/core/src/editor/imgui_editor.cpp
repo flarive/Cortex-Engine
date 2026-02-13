@@ -129,7 +129,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 
     ImGui::PopStyleVar();
 
-    //renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
+    renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 }
 
 

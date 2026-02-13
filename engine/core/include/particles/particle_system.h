@@ -35,7 +35,7 @@ namespace engine
 	{
 	public:
 		ParticleSystem();
-		ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize);
+		ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius = 1.0f);
 		~ParticleSystem();
 		void initParticles(unsigned int n);
 		void destroyParticle(unsigned int index);
@@ -50,9 +50,10 @@ namespace engine
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() {
 			return {
-				{"MaxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 100.0f, ""}},
-				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 100.0f, ""}},
+				{"MaxParticlesCount", EditorProperty { "Max particles count", getMaxParticles(), editable, 0.0f, 10000.0f, 10.0f, ""}},
+				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 10.0f, ""}},
 				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
+				{"EmitterRadius", EditorProperty { "Emitter radius", getEmitterRadius(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
 				{"RenderMode", EditorProperty { "Mode", getModesList(), editable | combobox, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { setModeAtIndex(index); }}}
 				/*{"DrawCalls", EditorProperty { "Draw calls", getDrawCallCount(), readonly }}*/
 			};
@@ -62,7 +63,8 @@ namespace engine
 			return {
 				{ "MaxParticlesCount", [this](EditorPropertyValue value) { getMaxParticles() = *(std::get_if<unsigned int>(&value)); } },
 				{ "NbrParticlesPerSecond", [this](EditorPropertyValue value) { getNumOfParticlesPerSecond() = *(std::get_if<unsigned int>(&value)); } },
-				{ "ParticleSize", [this](EditorPropertyValue value) { getParticleSize() = *(std::get_if<float>(&value)); } }
+				{ "ParticleSize", [this](EditorPropertyValue value) { getParticleSize() = *(std::get_if<float>(&value)); } },
+				{ "EmitterRadius", [this](EditorPropertyValue value) { getEmitterRadius() = *(std::get_if<float>(&value)); } }
 			};
 		}
 
@@ -111,6 +113,9 @@ namespace engine
 		float& getParticleSize() { return m_squareSize; }
 		void setParticleSize(float _size) { m_squareSize = _size; }
 
+		float& getEmitterRadius() { return m_emitterRadius; }
+		void setEmitterRadius(float _radius) { m_emitterRadius = _radius; }
+
 		void resetDrawCallCount() { m_drawCallCount = 0; }
 		unsigned int getDrawCallCount() const { return m_drawCallCount; }
 
@@ -124,6 +129,7 @@ namespace engine
 		unsigned int m_currentDataSize{};
 		unsigned int m_partCounter{};
 		unsigned int m_maxFilledIndex{};
+		float m_emitterRadius{};
 
 		double m_prevTime{};
 		double m_fpsTime{};

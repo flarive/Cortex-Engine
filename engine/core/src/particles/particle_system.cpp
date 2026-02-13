@@ -4,16 +4,19 @@
 
 #include "../../include/debug/opengl_debug.h"
 
+#define M_PI 3.14159265358979323846
+
+
 using namespace std;
 
 engine::ParticleSystem::ParticleSystem()
-	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_drawCallCount(0)
+	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_emitterRadius(1.0f), m_drawCallCount(0)
 {
 	init();
 }
 
-engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize)
-	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_drawCallCount(0)
+engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius)
+	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_emitterRadius(_emitterRadius), m_drawCallCount(0)
 {
 	init();
 }
@@ -52,18 +55,6 @@ void engine::ParticleSystem::geometrySetup()
 		glGenBuffers(1, &m_instanceVBO); // Generate the instanced VBO here
 
 		glBindVertexArray(m_quadVAO);
-
-		//float particleSize = m_squareSize;
-		//float quadVertices[] = {
-		//	// positions					// texture coords
-		//	-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-		//	 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
-		//	-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
-		//	-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-		//	 particleSize,  particleSize,   1.0f, 1.0f,    // top right
-		//	 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
-		//};
-
 
 		float s = m_squareSize;
 		float quadVertices[] = {
@@ -275,13 +266,6 @@ void engine::ParticleSystem::basicDataPrep()
 	std::vector<int> indices;
 	for (int i = 0; i < numOfSquares; i++)
 	{
-		//indices.push_back(i * 4);
-		//indices.push_back(i * 4 + 1);
-		//indices.push_back(i * 4 + 3);
-		//indices.push_back(i * 4 + 1);
-		//indices.push_back(i * 4 + 2);
-		//indices.push_back(i * 4 + 3);
-
 		// CCW triangles: (0,1,2) and (2,3,0)
 		indices.push_back(i * 4 + 0);
 		indices.push_back(i * 4 + 1);
@@ -364,8 +348,36 @@ void engine::ParticleSystem::initParticles(unsigned int n)
 	for (unsigned int i = 0; i < n; i++)
 	{
 		Particle particle{};
-		for (unsigned int j = 0; j < m_maxParticles; j++)
+		/*for (unsigned int j = 0; j < m_maxParticles; j++)
 		{
+			if (m_flags[j] == false) {
+				m_particlesArray[j] = particle;
+				m_flags[j] = true;
+				if (j >= m_maxFilledIndex) {
+					m_maxFilledIndex = j;
+				}
+				break;
+			}
+		}*/
+
+		// Random angle and distance within the emitter radius
+		float theta = rand() / (float)RAND_MAX * 2.0f * M_PI;
+		float phi = rand() / (float)RAND_MAX * 2.0f * M_PI;
+		float r = (rand() / (float)RAND_MAX) * m_emitterRadius;
+
+		// Convert spherical to Cartesian coordinates
+		particle.position.x = r * sin(phi) * cos(theta);
+		particle.position.y = r * sin(phi) * sin(theta);
+		particle.position.z = r * cos(phi);
+
+		//float theta = rand() / (float)RAND_MAX * 2.0f * M_PI;
+		//float r = (rand() / (float)RAND_MAX) * m_emitterRadius;
+		//particle.position.x = r * cos(theta);
+		//particle.position.y = r * sin(theta);
+		//particle.position.z = 0.0f;
+
+		// ... rest of your particle initialization ...
+		for (unsigned int j = 0; j < m_maxParticles; j++) {
 			if (m_flags[j] == false) {
 				m_particlesArray[j] = particle;
 				m_flags[j] = true;
@@ -426,19 +438,6 @@ std::vector<glm::vec3> engine::ParticleSystem::getDataCenterPoints()
 	}
 	return points;
 }
-
-//void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
-//{
-//	float dist = m_squareSize;
-//	//Point down-left
-//	m_squarePoints[0] = center + glm::vec3(dist, -dist, 0);
-//	//Point up-left
-//	m_squarePoints[1] = center + glm::vec3(-dist, -dist, 0);
-//	//Point down-right
-//	m_squarePoints[2] = center + glm::vec3(-dist, dist, 0);
-//	//Point up_right
-//	m_squarePoints[3] = center + glm::vec3(dist, dist, 0);
-//}
 
 void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
 {

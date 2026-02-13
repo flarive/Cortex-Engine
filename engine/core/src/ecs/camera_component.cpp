@@ -1,0 +1,66 @@
+#include "../../include/ecs/camera_component.h"
+
+engine::CameraComponent::CameraComponent(std::shared_ptr<Camera> camera)
+    : m_camera(camera)
+{
+	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(camera));
+
+	// Initialize property setters based on primitive type
+	m_propertySetters = m_camera->getPropertySetters();
+}
+
+
+void engine::CameraComponent::init(Transform& transform)
+{
+	m_camera->position = transform.getLocalPosition();
+}
+
+void engine::CameraComponent::update(float deltaTime, Transform& transform)
+{
+
+}
+
+void engine::CameraComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+{
+
+}
+
+engine::AABB engine::CameraComponent::generateBoundingVolume(const std::shared_ptr<Camera> camera)
+{
+	glm::vec3 minAABB = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 maxAABB = glm::vec3(std::numeric_limits<float>::min());
+
+	return engine::AABB(minAABB, maxAABB);
+}
+
+engine::AABB* engine::CameraComponent::getBoundingVolume()
+{
+	return m_boundingVolume.get();
+}
+
+engine::ordered_map<std::string, engine::EditorProperty> engine::CameraComponent::getPublicProperties()
+{
+	return m_camera->getPublicProperties();
+}
+
+std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>> engine::CameraComponent::getPropertySetters()
+{
+	return m_camera->getPropertySetters();
+}
+
+void engine::CameraComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
+{
+	auto it = m_propertySetters.find(key);
+	if (it != m_propertySetters.end())
+	{
+		it->second(value);
+		m_camera->reSetup(); // Assuming all primitives have a reSetup() method
+	}
+}
+
+void engine::CameraComponent::setEnabled(bool enabled)
+{
+	ComponentBase<CameraComponent>::setEnabled(enabled);
+
+	m_camera->setEnabled(enabled);
+}

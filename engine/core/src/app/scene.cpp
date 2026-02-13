@@ -210,8 +210,11 @@ void engine::Scene::listenForEditorChanges()
 {
     m_editor.setOnSelectionChanged([this](std::shared_ptr<Entity> entity)
         {
-            logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
-			m_selectedEntity = entity;
+            if (!m_selectedEntity || (m_selectedEntity->id != entity->id))
+            {
+                logger.info("Selected entity changed: {} (id {})", entity->name, entity->id);
+                m_selectedEntity = entity;
+            }
         });
 
     m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, unsigned int, float> value)
@@ -622,7 +625,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
 
     auto entityType = entity->getType(); // could be optimized/avoided
-    if (entityType == EntityType::primitive || entityType == EntityType::model)
+    if (entityType == EntityType::primitive || entityType == EntityType::model || entityType == EntityType::particleSystem)
     {
         totalFrustrumCount++;
     }

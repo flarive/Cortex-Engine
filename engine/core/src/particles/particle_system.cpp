@@ -33,8 +33,6 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSourceGeometry.geom");
 	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
-	geometrySetup();
-
 	if (material && material->hasDiffuseMap())
 		material->loadTexturesAsync();
 }
@@ -47,7 +45,6 @@ void engine::ParticleSystem::geometrySetup()
 	glGenBuffers(1, &m_VBO);
 	glGenBuffers(1, &m_EBO);
 
-
 	if (m_type == ParticleSystemType::instanced)
 	{
 		glGenVertexArrays(1, &m_quadVAO);
@@ -56,20 +53,34 @@ void engine::ParticleSystem::geometrySetup()
 
 		glBindVertexArray(m_quadVAO);
 
-		float particleSize = m_squareSize;
+		//float particleSize = m_squareSize;
+		//float quadVertices[] = {
+		//	// positions					// texture coords
+		//	-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+		//	 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
+		//	-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
+		//	-particleSize,  particleSize,   0.0f, 1.0f,    // top left
+		//	 particleSize,  particleSize,   1.0f, 1.0f,    // top right
+		//	 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
+		//};
+
+
+		float s = m_squareSize;
 		float quadVertices[] = {
-			// positions					// texture coords
-			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-			 particleSize, -particleSize,   1.0f, 0.0f,   // bottom right
-			-particleSize, -particleSize,   0.0f, 0.0f,   // bottom left
-			-particleSize,  particleSize,   0.0f, 1.0f,    // top left
-			 particleSize,  particleSize,   1.0f, 1.0f,    // top right
-			 particleSize,  -particleSize,  1.0f, 0.0f,   // bottom right
+			// positions (x,y)      // UVs     // CCW
+			-s, -s,   0.0f, 0.0f,   // BL
+			 s, -s,   1.0f, 0.0f,   // BR
+			 s,  s,   1.0f, 1.0f,   // TR
+
+			-s, -s,   0.0f, 0.0f,   // BL
+			 s,  s,   1.0f, 1.0f,   // TR
+			-s,  s,   0.0f, 1.0f,   // TL
 		};
+
+
 		glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
 
-		
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
@@ -84,6 +95,8 @@ void engine::ParticleSystem::geometrySetup()
 
 void engine::ParticleSystem::init()
 {
+	geometrySetup();
+	
 	m_prevTime = glfwGetTime();
 	m_fpsTime = glfwGetTime();
 
@@ -170,7 +183,6 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 			return;
 		}
 
-
 		m_shaderSourceBasic.setMat4("model", transformMatrix);
 		m_shaderSourceBasic.setMat4("view", view);
 		m_shaderSourceBasic.setMat4("projection", projection);
@@ -204,8 +216,6 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	
-
-
 	if (m_type == ParticleSystemType::basic)
 	{
 		// Send to GPU
@@ -265,12 +275,20 @@ void engine::ParticleSystem::basicDataPrep()
 	std::vector<int> indices;
 	for (int i = 0; i < numOfSquares; i++)
 	{
-		indices.push_back(i * 4);
-		indices.push_back(i * 4 + 1);
-		indices.push_back(i * 4 + 3);
+		//indices.push_back(i * 4);
+		//indices.push_back(i * 4 + 1);
+		//indices.push_back(i * 4 + 3);
+		//indices.push_back(i * 4 + 1);
+		//indices.push_back(i * 4 + 2);
+		//indices.push_back(i * 4 + 3);
+
+		// CCW triangles: (0,1,2) and (2,3,0)
+		indices.push_back(i * 4 + 0);
 		indices.push_back(i * 4 + 1);
 		indices.push_back(i * 4 + 2);
+		indices.push_back(i * 4 + 2);
 		indices.push_back(i * 4 + 3);
+		indices.push_back(i * 4 + 0);
 	}
 	int* indicesData = indices.data();
 
@@ -409,17 +427,28 @@ std::vector<glm::vec3> engine::ParticleSystem::getDataCenterPoints()
 	return points;
 }
 
+//void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
+//{
+//	float dist = m_squareSize;
+//	//Point down-left
+//	m_squarePoints[0] = center + glm::vec3(dist, -dist, 0);
+//	//Point up-left
+//	m_squarePoints[1] = center + glm::vec3(-dist, -dist, 0);
+//	//Point down-right
+//	m_squarePoints[2] = center + glm::vec3(-dist, dist, 0);
+//	//Point up_right
+//	m_squarePoints[3] = center + glm::vec3(dist, dist, 0);
+//}
+
 void engine::ParticleSystem::getSquareFromCenter(glm::vec3 center)
 {
-	float dist = m_squareSize;
-	//Point down-left
-	m_squarePoints[0] = center + glm::vec3(dist, -dist, 0);
-	//Point up-left
-	m_squarePoints[1] = center + glm::vec3(-dist, -dist, 0);
-	//Point down-right
-	m_squarePoints[2] = center + glm::vec3(-dist, dist, 0);
-	//Point up_right
-	m_squarePoints[3] = center + glm::vec3(dist, dist, 0);
+	float d = m_squareSize;
+	// CCW around the quad as seen from +Z (camera side):
+	// 0: bottom-left, 1: bottom-right, 2: top-right, 3: top-left
+	m_squarePoints[0] = center + glm::vec3(-d, -d, 0); // BL
+	m_squarePoints[1] = center + glm::vec3(d, -d, 0); // BR
+	m_squarePoints[2] = center + glm::vec3(d, d, 0); // TR
+	m_squarePoints[3] = center + glm::vec3(-d, d, 0); // TL
 }
 
 int engine::ParticleSystem::getCurrentDataSize()

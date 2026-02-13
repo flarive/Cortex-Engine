@@ -440,7 +440,7 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
     {
         std::cout << "Texture failed to load at path: " << path << "\n";
         std::cout << "SOIL error: " << SOIL_last_result() << "\n";
-        exit(EXIT_FAILURE);
+        //throw std::runtime_error("Texture failed to load");
     }
 
     // Set texture parameters manually, since SOIL does not handle all of them

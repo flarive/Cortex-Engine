@@ -930,6 +930,12 @@
     <CopyFileToFolders Include="..\resources\textures\particles\rect.jpg">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_5_48x48.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_5_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

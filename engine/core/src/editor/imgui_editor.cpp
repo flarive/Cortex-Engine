@@ -42,9 +42,7 @@
 
 #include <imgui_internal.h>
 
-//#include <format>
 #include <unordered_map>
-//#include <functional>
 
 #if EDITOR_MODE
 
@@ -131,7 +129,7 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 
     ImGui::PopStyleVar();
 
-    renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
+    //renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 }
 
 
@@ -345,7 +343,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     // Handle selection
     if (ImGui::IsItemClicked())
     {
-        m_selectedEntity = entity;
+        m_selectedEntity = entity; // here fix ???????????????
 
         if (m_onSelectionChanged)
             m_onSelectionChanged(m_selectedEntity);

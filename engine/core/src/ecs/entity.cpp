@@ -5,6 +5,7 @@
 #include "../../include/ecs/model_component.h"
 #include "../../include/ecs/camera_component.h"
 #include "../../include/ecs/light_component.h"
+#include "../../include/ecs/particlesystem_component.h"
 
 #include "../../include/managers/log_manager.h"
 
@@ -25,6 +26,7 @@ engine::EntityType engine::Entity::getType()
 	if (auto component = getComponent<PrimitiveComponent>()) return engine::EntityType::primitive;
 	if (auto component = getComponent<LightComponent>()) return engine::EntityType::light;
 	if (auto component = getComponent<CameraComponent>()) return engine::EntityType::camera;
+	if (auto component = getComponent<ParticleSystemComponent>()) return engine::EntityType::particleSystem;
 
 	return engine::EntityType::undefined;
 }
@@ -36,6 +38,7 @@ std::string engine::Entity::getTypeName()
 	if (entityType == engine::EntityType::primitive) return "Primitive";
 	if (entityType == engine::EntityType::light) return "Light";
 	if (entityType == engine::EntityType::camera) return "Camera";
+	if (entityType == engine::EntityType::particleSystem) return "Particle system";
 
 	return "";
 }
@@ -111,6 +114,10 @@ std::string engine::Entity::getTypeNameEx()
 		}
 
 		return "Camera";
+	}
+	else if (auto particleSystemComponent = getComponent<ParticleSystemComponent>())
+	{
+		return "Particle system";
 	}
 
 	return "";

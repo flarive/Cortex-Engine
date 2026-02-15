@@ -10,13 +10,13 @@
 using namespace std;
 
 engine::ParticleSystem::ParticleSystem()
-	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_emitterRadius(1.0f), m_drawCallCount(0)
+	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_emitterRadius(1.0f), m_lifeSpan(0.25f), m_infiniteEmission(true), m_drawCallCount(0)
 {
 	init();
 }
 
-engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius)
-	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_emitterRadius(_emitterRadius), m_drawCallCount(0)
+engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius, float _lifeSpan, bool _infiniteEmission)
+	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_emitterRadius(_emitterRadius), m_lifeSpan(_lifeSpan), m_infiniteEmission(_infiniteEmission), m_drawCallCount(0)
 {
 	init();
 }
@@ -122,7 +122,12 @@ void engine::ParticleSystem::update()
 	for (unsigned int i = 0; i <= m_maxFilledIndex; i++)
 	{
 		if (m_flags[i] == true) {
-			m_particlesArray[i].lifeSpan -= deltaTime;
+			
+			if (m_infiniteEmission)
+				m_particlesArray[i].lifeSpan -= deltaTime;
+			else
+				m_particlesArray[i].lifeSpan -= m_lifeSpan;
+
 			m_particlesArray[i].position = m_particlesArray[i].position + m_particlesArray[i].startVel * glm::vec3(deltaTime);
 			if (m_particlesArray[i].lifeSpan <= 0) {
 				destroyParticle(i);

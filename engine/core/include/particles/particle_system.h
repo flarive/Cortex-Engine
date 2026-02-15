@@ -35,7 +35,7 @@ namespace engine
 	{
 	public:
 		ParticleSystem();
-		ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius = 1.0f);
+		ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius = 1.0f, float _lifeSpan = -0.25f, bool _infiniteEmission = true);
 		~ParticleSystem();
 		void initParticles(unsigned int n);
 		void destroyParticle(unsigned int index);
@@ -54,8 +54,9 @@ namespace engine
 				{"NbrParticlesPerSecond", EditorProperty { "Nbr particles/sec", getNumOfParticlesPerSecond(), editable, 0.0f, 10000.0f, 10.0f, ""}},
 				{"ParticleSize", EditorProperty { "Particles size", getParticleSize(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
 				{"EmitterRadius", EditorProperty { "Emitter radius", getEmitterRadius(), editable, 0.0f, 10.0f, 0.1f, "%.2f"}},
+				{"LifeSpan", EditorProperty { "Life span", getLifeSpan(), editable, -1.0f, 1.0f, 0.01f, "%.2f"}},
+				{"InfiniteEmission", EditorProperty { "Infinite emission", getInfiniteEmission(), editable, 0.0f, 0.0f, 0.0f, ""}},
 				{"RenderMode", EditorProperty { "Mode", getModesList(), editable | combobox, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { setModeAtIndex(index); }}}
-				/*{"DrawCalls", EditorProperty { "Draw calls", getDrawCallCount(), readonly }}*/
 			};
 		}
 
@@ -64,7 +65,9 @@ namespace engine
 				{ "MaxParticlesCount", [this](EditorPropertyValue value) { getMaxParticles() = *(std::get_if<unsigned int>(&value)); } },
 				{ "NbrParticlesPerSecond", [this](EditorPropertyValue value) { getNumOfParticlesPerSecond() = *(std::get_if<unsigned int>(&value)); } },
 				{ "ParticleSize", [this](EditorPropertyValue value) { getParticleSize() = *(std::get_if<float>(&value)); } },
-				{ "EmitterRadius", [this](EditorPropertyValue value) { getEmitterRadius() = *(std::get_if<float>(&value)); } }
+				{ "EmitterRadius", [this](EditorPropertyValue value) { getEmitterRadius() = *(std::get_if<float>(&value)); } },
+				{ "LifeSpan", [this](EditorPropertyValue value) { getLifeSpan() = *(std::get_if<float>(&value)); } },
+				{ "InfiniteEmission", [this](EditorPropertyValue value) { getInfiniteEmission() = *(std::get_if<bool>(&value)); } }
 			};
 		}
 
@@ -116,6 +119,12 @@ namespace engine
 		float& getEmitterRadius() { return m_emitterRadius; }
 		void setEmitterRadius(float _radius) { m_emitterRadius = _radius; }
 
+		float& getLifeSpan() { return m_lifeSpan; }
+		void setLifeSpan(float _lifeSpan) { m_lifeSpan = _lifeSpan; }
+
+		bool& getInfiniteEmission() { return m_infiniteEmission; }
+		void setInfiniteEmission(bool _infiniteEmission) { m_infiniteEmission = _infiniteEmission; }
+
 		void resetDrawCallCount() { m_drawCallCount = 0; }
 		unsigned int getDrawCallCount() const { return m_drawCallCount; }
 
@@ -130,6 +139,8 @@ namespace engine
 		unsigned int m_partCounter{};
 		unsigned int m_maxFilledIndex{};
 		float m_emitterRadius{};
+		float m_lifeSpan{};
+		bool m_infiniteEmission{ true };
 
 		double m_prevTime{};
 		double m_fpsTime{};

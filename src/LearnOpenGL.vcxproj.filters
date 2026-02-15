@@ -936,6 +936,9 @@
     <CopyFileToFolders Include="..\resources\icons\icon_5_16x16.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\particles\explode.png">
+      <Filter>resources\textures\particles</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -980,5 +983,13 @@
     <ClInclude Include="app\myscene13.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\particles\fire.png">
+      <Filter>resources\textures\particles</Filter>
+    </Image>
+    <Image Include="..\resources\textures\particles\purple.png">
+      <Filter>resources\textures\particles</Filter>
+    </Image>
   </ItemGroup>
 </Project>

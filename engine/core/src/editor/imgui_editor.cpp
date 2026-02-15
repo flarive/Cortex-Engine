@@ -343,7 +343,7 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     // Handle selection
     if (ImGui::IsItemClicked())
     {
-        m_selectedEntity = entity; // here fix ???????????????
+        m_selectedEntity = entity;
 
         if (m_onSelectionChanged)
             m_onSelectionChanged(m_selectedEntity);
@@ -504,6 +504,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         std::shared_ptr<LightComponent> lightComponent{};
         std::shared_ptr<PrimitiveComponent> primitiveComponent{};
         std::shared_ptr<ModelComponent> modelComponent{};
+        std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
 
         if (cameraComponent = entity->getComponent<CameraComponent>())
         {
@@ -528,6 +529,12 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             position = modelComponent->getModel()->getPosition();
             scale = modelComponent->getModel()->getScale();
             rotation = modelComponent->getModel()->getRotation();
+        }
+        else if (particleSystemComponent = entity->getComponent<ParticleSystemComponent>())
+        {
+            position = particleSystemComponent->getParticleSystem()->getPosition();
+            scale = particleSystemComponent->getParticleSystem()->getScale();
+            rotation = particleSystemComponent->getParticleSystem()->getRotation();
         }
 
         // Local variables for ImGui

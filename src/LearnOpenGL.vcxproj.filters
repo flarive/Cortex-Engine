@@ -119,6 +119,9 @@
     <Filter Include="resources\textures\particles">
       <UniqueIdentifier>{539a2087-1c37-4419-a311-8236cfd4604d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\white-marble">
+      <UniqueIdentifier>{f55ab79b-28ae-497e-9292-f5f93b48d7d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -939,6 +942,11 @@
     <CopyFileToFolders Include="..\resources\textures\particles\explode.png">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\particles\fire.png" />
+    <CopyFileToFolders Include="..\resources\textures\particles\purple.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_albedo.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -985,11 +993,20 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\resources\textures\particles\fire.png">
-      <Filter>resources\textures\particles</Filter>
+    <Image Include="..\resources\textures\pbr\white-marble\white-marble_ao.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
     </Image>
-    <Image Include="..\resources\textures\particles\purple.png">
-      <Filter>resources\textures\particles</Filter>
+    <Image Include="..\resources\textures\pbr\white-marble\white-marble_height.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\white-marble\white-marble_metallic.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\white-marble\white-marble_normal.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\white-marble\white-marble_roughness.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
     </Image>
   </ItemGroup>
 </Project>

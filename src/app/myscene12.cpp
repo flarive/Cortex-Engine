@@ -123,7 +123,7 @@ void MyScene12::init()
 
     sphere1->setup(matSphere1, UvMapping(1.0f));
 
-    auto trsSphere1 = Transform(vec3(0.0f, -14.0f, -10.0f), vec3(1.0f));
+    auto trsSphere1 = Transform(vec3(-3.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(sphere1);
@@ -144,11 +144,31 @@ void MyScene12::init()
 
     sphere2->setup(matSphere2, UvMapping(1.0f));
 
-    auto trsSphere2 = Transform(vec3(3.0f, -14.0f, -10.0f), vec3(1.0f));
+    auto trsSphere2 = Transform(vec3(0.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere2 = make_shared<Entity>("MySphere2");
     entitySphere2->addComponent<TransformComponent>(trsSphere2);
     entitySphere2->addComponent<PrimitiveComponent>(sphere2);
     getEntityManager().addChild(entitySphere2);
+
+
+    auto sphere3 = make_shared<Sphere>();
+
+    auto matSphere3 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/white-marble/white-marble_albedo.png",
+        "textures/pbr/porcelain/white-marble_normal.png",
+        "textures/pbr/porcelain/white-marble_metallic.png",
+        "textures/pbr/porcelain/white-marble_roughness.png",
+        "textures/pbr/porcelain/white-marble_ao.png",
+        "textures/pbr/porcelain/white-marble_height.png", 0.5f);
+    matSphere3->setNormalIntensity(1.0f);
+
+    sphere3->setup(matSphere3, UvMapping(2.0f));
+
+    auto trsSphere3 = Transform(vec3(3.0f, -14.0f, -10.0f), vec3(1.0f));
+    auto entitySphere3 = make_shared<Entity>("MySphere3");
+    entitySphere3->addComponent<TransformComponent>(trsSphere3);
+    entitySphere3->addComponent<PrimitiveComponent>(sphere3);
+    getEntityManager().addChild(entitySphere3);
 }
 
 

@@ -15,7 +15,7 @@
 
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
-    : Renderer(window)
+    : Renderer(window, false)
 {
 }
 
@@ -90,8 +90,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebufferMSAA(width, height);
-    //initColorFramebuffer(width, height);
+    initColorFramebufferMSAA(width, height); // SDR and AA
+    //initColorFramebuffer(width, height); // SDR
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);

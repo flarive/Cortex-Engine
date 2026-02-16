@@ -61,7 +61,7 @@ void MyScene4::init()
 
     auto trsLight2 = Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
-    light2->intensity = 90.0f;
+    light2->intensity = 290.0f;
     auto entityLight2 = make_shared<Entity>("Light2");
     entityLight2->addComponent<TransformComponent>(trsLight2);
     entityLight2->addComponent<LightComponent>(light2);

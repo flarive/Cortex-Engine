@@ -50,7 +50,7 @@ namespace engine
 		
 
 		
-		Renderer(GLFWwindow* window);
+		Renderer(GLFWwindow* window, bool useHDR = false);
 		virtual ~Renderer() = default;
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
@@ -58,6 +58,7 @@ namespace engine
 
 		void initColorFramebuffer(int width, int height);
 		void initColorFramebufferMSAA(int width, int height);
+		void initHDRColorFramebufferMSAA(int width, int height);
 
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
@@ -105,8 +106,11 @@ namespace engine
 
 		Shader outlineColorShader{};
 
-		//Shader blurShader{};
-		//Shader depthToColorShader{};
+		
+
+		// HDR
+		//unsigned int resolvedHDRTex{};
+		unsigned int resolveFBO{};
 
 
 		unsigned int irradianceMap{};
@@ -149,6 +153,7 @@ namespace engine
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);
 
 		void computeColorFramebuffer();
+		void computeHDRColorFramebuffer(int width, int height);
 
 		void updateEditorPropertySettings();
 
@@ -174,6 +179,8 @@ namespace engine
 
 
 	private:
+		bool m_useHDR{};
+		
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light
 	};

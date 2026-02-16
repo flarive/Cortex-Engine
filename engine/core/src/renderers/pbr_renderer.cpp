@@ -14,7 +14,7 @@
 
 
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
-    : Renderer(window)
+    : Renderer(window, true)
 {
 }
 
@@ -70,8 +70,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     backgroundShader.setInt("environmentMap", 0); // Should be texture unit, not texture ID
     
     
-    screenShader.use();
-    screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
+    //screenShader.use();
+    //screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
@@ -79,8 +79,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebufferMSAA(width, height);
-    //initColorFramebuffer(width, height);
+    initHDRColorFramebufferMSAA(width, height); // HDR and AA
+    //initColorFramebufferMSAA(width, height); // no HDR
+    //initColorFramebuffer(width, height); // no AA
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
@@ -391,13 +392,24 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
             computeDepthMapFramebuffer(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
+    // SDR !!!!!!!!!!!!
     // render to framebuffer
-    computeColorFramebuffer();
+    //computeColorFramebuffer();
 
     // Resolve MSAA to screen or another texture FBO
+    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    // HDR !!!!!!
+    // render to framebuffer
+    computeHDRColorFramebuffer(width, height);
+    
+    // Resolve MSAA color to colorFramebuffer (HDR)
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    // Now colorFramebuffer contains the HDR image you can sample from
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

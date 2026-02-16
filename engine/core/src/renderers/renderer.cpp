@@ -6,8 +6,8 @@
 #include <memory>
 
 
-engine::Renderer::Renderer(GLFWwindow* window)
-    : m_window(window)
+engine::Renderer::Renderer(GLFWwindow* window, bool useHDR)
+    : m_window(window), m_useHDR(useHDR)
 {
 }
 
@@ -376,6 +376,51 @@ void engine::Renderer::initColorFramebufferMSAA(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
+{
+    const int samples = 4;
+
+    glGenFramebuffers(1, &colorFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+
+    // MSAA color renderbuffer — use FLOATING POINT for HDR
+    GLuint colorRBO = 0;
+    glGenRenderbuffers(1, &colorRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA16F, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRBO);
+
+    // MSAA depth-stencil
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "ERROR: MSAA HDR framebuffer incomplete\n";
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Create a non-MSAA floating-point COLOR TEXTURE to resolve into
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Create an FBO that attaches the resolved texture (to receive blit)
+    glGenFramebuffers(1, &resolveFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "ERROR: Resolve framebuffer incomplete\n";
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 
 
 
@@ -390,11 +435,54 @@ void engine::Renderer::computeColorFramebuffer()
     glClear(GL_COLOR_BUFFER_BIT);
 
     screenShader.use();
+    screenShader.setInt("screenTexture", 0);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
+    
+    // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
 }
+
+void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
+{
+    // Bind default framebuffer (usually SDR)
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, width, height);
+
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    float exposure = 1.0f;
+
+    screenShader.use();
+    screenShader.setInt("screenTexture", 0);
+    screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
+
+
+    std::vector<float> data(width * height * 4);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data.data());
+
+    // Sample the center pixel
+    int x = width / 2;
+    int y = height / 2;
+    int idx = (y * width + x) * 4;
+
+    float r = data[idx + 0];
+    float g = data[idx + 1];
+    float b = data[idx + 2];
+
+    if (r > 1.0 || g > 1.0f || b > 1.0f)
+        std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
+
+    // render HDR framebuffer to screen as a big fullscreen quad
+    renderQuad();
+}
+
 
 void engine::Renderer::updateEditorPropertySettings()
 {

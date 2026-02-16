@@ -1,21 +1,9 @@
 #version 330 core
-//out vec4 FragColor;
-//
-//in vec2 TexCoords;
-//
-//uniform sampler2D screenTexture;
-//
-//void main()
-//{
-//    vec3 col = texture(screenTexture, TexCoords).rgb;
-//    FragColor = vec4(col, 1.0);
-//
-//    // simple post processing effect to invert colors
-//    //FragColor = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
-//} 
 
 out vec4 FragColor;
 in vec2 TexCoords;
+
+uniform bool useHDR;
 
 // Resolved, non-MSAA floating-point texture (RGBA16F or RGBA32F)
 uniform sampler2D screenTexture;
@@ -35,22 +23,31 @@ vec3 ACESFilm(vec3 x) {
 
 void main()
 {
-    vec3 hdr = texture(screenTexture, TexCoords).rgb;
+//    vec3 color = vec3(0);
+//    
+//    if (useHDR)
+//    {
+        vec3 hdr = texture(screenTexture, TexCoords).rgb;
 
-    // 1) Exposure
-    vec3 color = hdr * exposure;
+        // 1) Exposure
+        vec3 color = hdr * exposure;
 
-    // 2) Tone map (choose one curve)
-    color = ACESFilm(color);
-    // Alternative simple Reinhard:
-    // color = color / (color + vec3(1.0));
+        // 2) Tone map (choose one curve)
+        color = ACESFilm(color);
+        // Alternative simple Reinhard:
+        // color = color / (color + vec3(1.0));
 
-    // 3) Gamma correct if your default framebuffer is *linear* (not sRGB)
-    // Remove this pow if you enable GL_FRAMEBUFFER_SRGB on the default framebuffer.
-    color = pow(color, vec3(1.0/2.2));
+        // 3) Gamma correct if your default framebuffer is *linear* (not sRGB)
+        // Remove this pow if you enable GL_FRAMEBUFFER_SRGB on the default framebuffer.
+        color = pow(color, vec3(1.0/2.2));
+//    }
+//    else
+//    {
+//        color = texture(screenTexture, TexCoords).rgb;
+//    }
 
     FragColor = vec4(color, 1.0);
-    
+        
     // simple post processing effect to invert colors
     //FragColor = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
 }

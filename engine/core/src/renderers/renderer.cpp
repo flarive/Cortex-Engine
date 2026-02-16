@@ -180,6 +180,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
     lightView = glm::lookAt(light->position, light->target, glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
+
     // render scene from light's point of view
     directionalDepthMapShader.use();
     directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
@@ -436,12 +437,16 @@ void engine::Renderer::computeColorFramebuffer()
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
+    //screenShader.setBool("useHDR", false);
+    screenShader.setFloat("exposure", 0.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
     
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
@@ -458,6 +463,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
+    //screenShader.setBool("useHDR", true);
     screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
 
     glActiveTexture(GL_TEXTURE0);
@@ -481,6 +487,8 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
 
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

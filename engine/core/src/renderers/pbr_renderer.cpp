@@ -392,16 +392,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
             computeDepthMapFramebuffer(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
-    // SDR !!!!!!!!!!!!
-    // render to framebuffer
-    //computeColorFramebuffer();
-
-    // Resolve MSAA to screen or another texture FBO
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-    // HDR !!!!!!
     // render to framebuffer
     computeHDRColorFramebuffer(width, height);
     

@@ -49,9 +49,9 @@ void MyScene8::init()
     //auto zzz2 = Color(0.5f);
     //auto zzz3 = Color(0.5f);
 
-    auto zzz = Color(1.0f, 0.5f, 0.31f, 1.0f); //ColorManager::hexToNormalizedRGB("#FFF1AD");
-    auto zzz2 = Color(1.0f, 0.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#FFFF99");
-    auto zzz3 = Color(0.0f, 1.0f, 0.0f, 1.0f); // ColorManager::hexToNormalizedRGB("#00FFFF");
+    auto zzz = Colors::hexToNormalizedRGB("#FFF1AD");
+    auto zzz2 = Colors::hexToNormalizedRGB("#FFFF99");
+    auto zzz3 = Colors::hexToNormalizedRGB("#00FFFF");
 
 
     // ground

@@ -85,12 +85,12 @@ void MyScene4::init()
 
 
     // cushion model
-    //shared_ptr<Model> cushionModel = make_shared<Model>("models/cushion/cushion.obj");
-    //auto trsCushion = Transform(vec3(0.0f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
-    //auto entityCushion = make_shared<Entity>("MyCushion");
-    //entityCushion->addComponent<TransformComponent>(trsCushion);
-    //entityCushion->addComponent<ModelComponent>(cushionModel);
-    //getEntityManager().addChild(entityCushion);
+    shared_ptr<Model> cushionModel = make_shared<Model>("models/cushion/cushion.obj");
+    auto trsCushion = Transform(vec3(0.0f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entityCushion = make_shared<Entity>("MyCushion");
+    entityCushion->addComponent<TransformComponent>(trsCushion);
+    entityCushion->addComponent<ModelComponent>(cushionModel);
+    getEntityManager().addChild(entityCushion);
 
     ourText.setup(app->window, FONT_PATH, 28);
 }

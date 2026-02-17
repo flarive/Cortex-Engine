@@ -15,8 +15,6 @@ namespace engine
 		// PBR environmentMap shader (for HDR skybox)
 		Shader backgroundShader{};
 
-		
-		
 		PbrRenderer(GLFWwindow* window);
 
 		void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights) override;
@@ -27,9 +25,12 @@ namespace engine
 		void clean() override;
 
 	private:
+
+		unsigned int captureFBO{};
+		unsigned int captureRBO{};
+
 		void loadShaders() override;
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;
 	};
 }
-

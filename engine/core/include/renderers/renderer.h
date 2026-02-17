@@ -181,7 +181,7 @@ namespace engine
 
 
 		// base
-		unsigned int U_BG_ENV = 0;
+		unsigned int U_BG_ENV = 5;
 		unsigned int U_SHADOW_MAP = 1; // pspot lights & dir lights
 		unsigned int U_SHADOW_MAP_CUBE = 2; // point lights
 		unsigned int U_LTC1 = 3; // area lights
@@ -195,6 +195,7 @@ namespace engine
 
 		// PBR
 		// Renderer-reserved units (example, but validate against GL_MAX_TEXTURE_IMAGE_UNITS):
+		
 		unsigned int U_IRR = 7;
 		unsigned int U_PREF = 8;
 		unsigned int U_BRDF = 9;

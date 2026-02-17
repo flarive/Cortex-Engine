@@ -6,23 +6,23 @@
 
 #include "app/myscene1.h" // blinnphong with skybox
 #include "app/myscene2.h" // blinnphong cushion
-#include "app/myscene3.h" // pbr balls with HDR background
-#include "app/myscene4.h" // pbr cushion
-#include "app/myscene5.h" // pbr buddha
-#include "app/myscene6.h" // pbr rotating helmet
-#include "app/myscene7.h" // pbr multiple helmets
-#include "app/myscene8.h" // monochromatic point shadow
-#include "app/myscene9.h" // orbit camera
-#include "app/myscene10.h" // area lights demo
+#include "app/myscene3.h" // PBR balls with HDR background
+#include "app/myscene4.h" // PBR cushion
+#include "app/myscene5.h" // PBR buddha
+#include "app/myscene6.h" // PBR rotating helmet
+#include "app/myscene7.h" // PBR multiple helmets
+#include "app/myscene8.h" // blinnphong monochromatic point shadow
+#include "app/myscene9.h" // PBR orbit camera
+#include "app/myscene10.h" // PBR area lights demo
 #include "app/myscene11.h" // blinnphong animated character
 #include "app/myscene12.h" // PBR wood plane with misc materials
-#include "app/myscene13.h" // Particles
+#include "app/myscene13.h" // blinnphong Particles
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene4;
+using MyScene = MyScene3;
 
 App* myApp{};
 Scene* myScene{};
@@ -49,8 +49,7 @@ static void gamepadUpdate();
 int main(int, char**)
 {
     // Init the app
-    //myApp = new MyApp("MyApp", 1280, 720, false);
-    myApp = new MyApp("MyApp", 320, 240, false);
+    myApp = new MyApp("MyApp", 1280, 720, false);
     if (myApp)
     {
         // Init a scene in the app

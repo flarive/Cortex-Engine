@@ -216,14 +216,8 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
 
 
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
-    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer); //blurColorBuffers[lastBlurIndex]
+    glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
     shader.setInt("texture_shadowMap", U_SHADOW_MAP);
-
-
-    // not needed but need to be reserved to avoid conflicts or overrides
-    //glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
-    //glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    //shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
 
 

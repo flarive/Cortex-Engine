@@ -74,6 +74,9 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     //blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
 
 
+    blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+    blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+
     // shader configuration
     // --------------------
     screenShader.use();
@@ -153,12 +156,12 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // should be moved in init !!!!!!!!!!!!!!!!!!!!!!
     // bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE0 + 20);
+    glActiveTexture(GL_TEXTURE0 + U_LTC1);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE0 + 21);
+    glActiveTexture(GL_TEXTURE0 + U_LTC2);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
-    blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
-    blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
+    //blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+    //blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
 
 
     // update user stuffs

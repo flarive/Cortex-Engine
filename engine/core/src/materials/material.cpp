@@ -2,6 +2,11 @@
 
 #include <format>
 
+
+#define NDEBUG // to remove !!!!!!!!!!!!!!!
+
+
+
 engine::Material::Material(std::vector<Texture> _textures, float _shininess)
     : textures(std::move(_textures)), m_shininess(_shininess)
 {
@@ -26,47 +31,114 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 
 }
 
-bool engine::Material::bind(engine::Shader& shader) const
+//bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
+//{
+//    unsigned int textureUnit = 0;
+//    bool success = true;
+//
+//    shader.use();
+//    for (const auto& texture : textures)
+//    {
+//        const std::string uniformName = std::format("material.{}", texture.type);
+//        const std::string hasMapName = std::format("material.has_{}_map", texture.type);
+//
+//        if (texture.id > 0)
+//        {
+//            glActiveTexture(GL_TEXTURE0 + textureUnit);
+//            glBindTexture(GL_TEXTURE_2D, texture.id);
+//
+//            GLenum error = glGetError();
+//            if (error != GL_NO_ERROR)
+//            {
+//                std::cerr << "OpenGL error while binding texture '" << texture.type
+//                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
+//                shader.setBool(hasMapName, false);
+//                success = false;
+//                continue;
+//            }
+//
+//            shader.setInt(uniformName, textureUnit);
+//            shader.setBool(hasMapName, true);
+//            textureUnit++;
+//        }
+//        else
+//        {
+//            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
+//            shader.setBool(hasMapName, false);
+//            //success = false;
+//            success = true;
+//        }
+//    }
+//
+//    glActiveTexture(GL_TEXTURE0); // Reset active texture
+//    return success;
+//}
+
+bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
 {
-    unsigned int textureUnit = 0;
+    // Query once per program startup and cache these caps, not every bind. TODO cache it !!!!!!!!!!!
+    GLint maxFragUnits = 16;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragUnits);
+
+    // Use shader once for the whole material
+    shader.use();
+
+    unsigned int unit = baseUnit;
     bool success = true;
 
-    for (const auto& texture : textures)
+    for (const auto& tex : textures)
     {
-        const std::string uniformName = std::format("material.{}", texture.type);
-        const std::string hasMapName = std::format("material.has_{}_map", texture.type);
+        // Example: tex.type could be "albedo", "normal", "metallic", ...
+        const std::string uniformName = std::format("material.{}", tex.type);
+        const std::string hasMapName = std::format("material.has_{}_map", tex.type);
 
-        shader.use();
-
-        if (texture.id > 0)
+        // If no texture, mark false and continue (don’t change unit).
+        if (tex.id == 0)
         {
-            glActiveTexture(GL_TEXTURE0 + textureUnit);
-            glBindTexture(GL_TEXTURE_2D, texture.id);
-
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR)
-            {
-                std::cerr << "OpenGL error while binding texture '" << texture.type
-                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
-                shader.setBool(hasMapName, false);
-                success = false;
-                continue;
-            }
-
-            shader.setInt(uniformName, textureUnit);
-            shader.setBool(hasMapName, true);
-            textureUnit++;
-        }
-        else
-        {
-            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
             shader.setBool(hasMapName, false);
-            //success = false;
-            success = true;
+            continue;
         }
+
+        // Ensure we have room on the device
+        if (unit >= maxFragUnits)
+        {
+            std::cerr << "[Material::bind] ERROR: Texture unit " << unit
+                << " exceeds GL_MAX_TEXTURE_IMAGE_UNITS=" << maxFragUnits
+                << " for uniform '" << uniformName << "'\n";
+            shader.setBool(hasMapName, false);
+            success = false;
+            break; // or return false;
+        }
+
+        // Bind using the right target. If you only use 2D textures for materials, keep GL_TEXTURE_2D.
+        GLenum target = GL_TEXTURE_2D; // TODO: extend your Texture to store its target.
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(target, tex.id);
+
+#ifndef NDEBUG
+        // Keep this in debug only; glGetError is expensive
+        if (GLenum error = glGetError(); error != GL_NO_ERROR)
+        {
+            std::cerr << std::hex
+                << "[Material::bind] GL error 0x" << error
+                << " binding '" << tex.type << "' to unit " << unit
+                << " (target=" << target << ")\n" << std::dec;
+            shader.setBool(hasMapName, false);
+            success = false;
+            // Continue to bind others, or break if you prefer fail-fast.
+            ++unit;
+            continue;
+        }
+#endif
+
+        // Assign the sampler to the unit and flag presence
+        shader.setInt(uniformName, static_cast<int>(unit));
+        shader.setBool(hasMapName, true);
+
+        ++unit;
     }
 
-    glActiveTexture(GL_TEXTURE0); // Reset active texture
+    // No need to reset glActiveTexture here.
     return success;
 }
 
@@ -75,12 +147,10 @@ bool engine::Material::bind2(engine::Shader& shader) const
     unsigned int textureUnit = 0;
     bool success = true;
 
+    shader.use();
     for (const auto& texture : textures)
     {
         const std::string uniformName = std::format("{}", texture.type);
-
-
-        shader.use();
 
         if (texture.id > 0)
         {
@@ -113,24 +183,39 @@ bool engine::Material::bind2(engine::Shader& shader) const
     return success;
 }
 
-void engine::Material::unbind() const
+//void engine::Material::unbind() const
+//{
+//    for (size_t i = 0; i < textures.size(); ++i)
+//    {
+//        if (textures[i].id > 0)
+//        {
+//            glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
+//            glBindTexture(GL_TEXTURE_2D, 0);
+//
+//            GLenum error = glGetError();
+//            if (error != GL_NO_ERROR)
+//            {
+//                std::cerr << "OpenGL error while unbinding texture unit " << i << ": " << std::hex << error << std::endl;
+//            }
+//        }
+//    }
+//
+//    glActiveTexture(GL_TEXTURE0); // Reset to default
+//}
+
+void engine::Material::unbind(int baseUnit) const
 {
-    for (size_t i = 0; i < textures.size(); ++i)
+    unsigned int unit = baseUnit;
+    for (const auto& tex : textures)
     {
-        if (textures[i].id > 0)
-        {
-            glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-            glBindTexture(GL_TEXTURE_2D, 0);
+        if (tex.id == 0)
+            continue;
 
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR)
-            {
-                std::cerr << "OpenGL error while unbinding texture unit " << i << ": " << std::hex << error << std::endl;
-            }
-        }
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(GL_TEXTURE_2D /* or tex.target */, 0);
+        ++unit;
     }
-
-    glActiveTexture(GL_TEXTURE0); // Reset to default
+    // No need to set back to GL_TEXTURE0
 }
 
 void engine::Material::loadTextures()

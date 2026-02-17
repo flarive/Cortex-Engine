@@ -23,27 +23,27 @@ vec3 ACESFilm(vec3 x) {
 
 void main()
 {
-//    vec3 color = vec3(0);
+    vec3 color = vec3(0);
 //    
 //    if (useHDR)
 //    {
-        vec3 hdr = texture(screenTexture, TexCoords).rgb;
-
-        // 1) Exposure
-        vec3 color = hdr * exposure;
-
-        // 2) Tone map (choose one curve)
-        color = ACESFilm(color);
-        // Alternative simple Reinhard:
-        // color = color / (color + vec3(1.0));
-
-        // 3) Gamma correct if your default framebuffer is *linear* (not sRGB)
-        // Remove this pow if you enable GL_FRAMEBUFFER_SRGB on the default framebuffer.
-        color = pow(color, vec3(1.0/2.2));
+//        vec3 hdr = texture(screenTexture, TexCoords).rgb;
+//
+//        // 1) Exposure
+//        vec3 color = hdr * exposure;
+//
+//        // 2) Tone map (choose one curve)
+//        color = ACESFilm(color);
+//        // Alternative simple Reinhard:
+//        // color = color / (color + vec3(1.0));
+//
+//        // 3) Gamma correct if your default framebuffer is *linear* (not sRGB)
+//        // Remove this pow if you enable GL_FRAMEBUFFER_SRGB on the default framebuffer.
+//        color = pow(color, vec3(1.0/2.2));
 //    }
 //    else
 //    {
-//        color = texture(screenTexture, TexCoords).rgb;
+        color = texture(screenTexture, TexCoords).rgb;
 //    }
 
     FragColor = vec4(color, 1.0);

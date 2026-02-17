@@ -18,6 +18,15 @@ engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
 {
 }
 
+/// <summary>
+/// Query once per program startup and cache these caps, not every bind.
+/// GLint maxFragUnits = 16;
+/// glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragUnits);
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="camera"></param>
+/// <param name="lights"></param>
 void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights; // copy ?????????
@@ -48,13 +57,12 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // -------------------------
     loadShaders();
 
-
     // shader configuration
     // --------------------
     pbrShader.use();
-    pbrShader.setInt("material.texture_irradiance", 7); // Should be texture unit, not texture ID
-    pbrShader.setInt("material.texture_prefilter", 8); // Should be texture unit, not texture ID
-    pbrShader.setInt("material.texture_brdfLUT", 9); // Should be texture unit, not texture ID
+    pbrShader.setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+    pbrShader.setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+    pbrShader.setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
     pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
@@ -62,16 +70,21 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
-    pbrShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
-    pbrShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
+    // generate on the fly textues in memory
+    LTC1Map = Texture::loadMTexture();
+    LTC2Map = Texture::loadLUTTexture();
+
+
+    pbrShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 14 for LTC1
+    pbrShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 15 for LTC2
 
 
     backgroundShader.use();
-    backgroundShader.setInt("environmentMap", 0); // Should be texture unit, not texture ID
+    backgroundShader.setInt("environmentMap", U_BG_ENV); // Should be texture unit, not texture ID
     
     
-    //screenShader.use();
-    //screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
+    screenShader.use();
+    screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
@@ -79,8 +92,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    initHDRColorFramebufferMSAA(width, height); // HDR and AA
-    //initColorFramebufferMSAA(width, height); // no HDR
+    //initHDRColorFramebufferMSAA(width, height); // HDR and AA
+    initColorFramebufferMSAA(width, height); // no HDR
     //initColorFramebuffer(width, height); // no AA
 
     // solid/wireframe polygons
@@ -289,10 +302,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
 
-    LTC1Map = Texture::loadMTexture();
-    LTC2Map = Texture::loadLUTTexture();
-    pbrShader.setInt("LTC1", 20); // Should be texture unit, not texture ID
-    pbrShader.setInt("LTC2", 21); // Should be texture unit, not texture ID
+
 
     backgroundShader.use();
     backgroundShader.setMat4("projection", projection);
@@ -343,23 +353,23 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // bind pre-computed IBL data
-    glActiveTexture(GL_TEXTURE0 + 7);
+    glActiveTexture(GL_TEXTURE0 + U_IRR);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-    glActiveTexture(GL_TEXTURE0 + 8);
+    glActiveTexture(GL_TEXTURE0 + U_PREF);
     glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-    glActiveTexture(GL_TEXTURE0 + 9);
+    glActiveTexture(GL_TEXTURE0 + U_BRDF);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
     // bind pre-computed area light LTC data
-    glActiveTexture(GL_TEXTURE0 + 20);
+    glActiveTexture(GL_TEXTURE0 + U_LTC1);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE0 + 21);
+    glActiveTexture(GL_TEXTURE0 + U_LTC2);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
 
     // update user stuffs
     update(pbrShader);
-    update(outlineColorShader);
+    //update(outlineColorShader);
 
 
 
@@ -370,7 +380,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
     // Bind the cube map texture to texture unit 0
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + U_BG_ENV);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap); // display irradiance map
     //glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
@@ -393,13 +403,20 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     }
 
     // render to framebuffer
-    computeHDRColorFramebuffer(width, height);
+    //computeHDRColorFramebuffer(width, height);
+    computeColorFramebuffer();
+
+
+    // Resolve MSAA to screen or another texture FBO (SDR old)
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
     
     // Resolve MSAA color to colorFramebuffer (HDR)
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    // Now colorFramebuffer contains the HDR image you can sample from
+    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

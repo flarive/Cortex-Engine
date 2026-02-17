@@ -9,8 +9,7 @@ struct Material {
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
     sampler2D texture_emissive; // 7
-    sampler2D texture_shadowMap; // 10
-    samplerCube texture_shadowMapCube; // 11
+
 
     sampler2D texture_metalness_from_combined;
     //sampler2D texture_roughness_from_combined;
@@ -128,6 +127,8 @@ uniform bool hasTangents; // does the primitive to render has tangents and bitan
 uniform Material material;
 uniform mat4 lightSpaceMatrix;
 
+
+
 // shader output
 out vec4 FragColor;
 
@@ -144,6 +145,9 @@ uniform DirLight dirLights[NBR_MAX_LIGHTS];
 uniform SpotLight spotLights[NBR_MAX_LIGHTS];
 uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
+
+uniform sampler2D texture_shadowMap;
+uniform samplerCube texture_shadowMapCube;
 
 // area light only
 uniform sampler2D LTC1; // 20 (for inverse M)
@@ -345,7 +349,7 @@ float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r; 
+    float closestDepth = texture(texture_shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
@@ -357,12 +361,12 @@ float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF (shadow anti aliasing))
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
         }    
     }
@@ -388,7 +392,7 @@ float ShadowCalculationSimple(vec4 fragPosLightSpace)
     float bias = 0.005;
     float shadow = 0.0;
 
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     float currentDepth = projCoords.z;
 
     // PCF sampling - average of multiple nearby depth comparisons
@@ -396,7 +400,7 @@ float ShadowCalculationSimple(vec4 fragPosLightSpace)
     {
         for (int y = -1; y <= 1; ++y)
         {
-            float closestDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float closestDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
         }
     }
@@ -415,7 +419,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
     float shadow = 0.0;
     float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
 
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     float diskRadius = 1.0 * texelSize.x; // Tweak diskRadius to control softness
 
     // Combine Poisson disk with 3x3 PCF sampling
@@ -426,7 +430,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
             for (int y = -1; y <= 1; ++y)
             {
                 vec2 offset = poissonDisk16[i] * diskRadius + vec2(x, y) * texelSize;
-                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
                 shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
             }
         }
@@ -454,7 +458,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
     // Dynamic bias based on angle to light
     float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
 
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
     // === Controls for softness ===
     float shadowSoftness = material.shadowMapsBlur;  // Larger => softer
@@ -473,7 +477,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
             for (int y = -1; y <= 1; ++y)
             {
                 vec2 offset = poissonOffset + vec2(x, y) * texelSize;
-                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
                 shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
                 totalSamples++;
             }
@@ -546,7 +550,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     float bias = material.shadowMapsBias; // 0.001
 
     // Shadow map texel size
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
     // =========================================================
     // 1. BLOCKER SEARCH
@@ -560,7 +564,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     for (int i = 0; i < PCSS_SAMPLES; ++i)
     {
         vec2 disk = poissonDiskPCSS[i] * searchRadius;
-        float depthSample = texture(material.texture_shadowMap, projCoords.xy + disk).r;
+        float depthSample = texture(texture_shadowMap, projCoords.xy + disk).r;
 
         if (depthSample < currentDepth - bias)
         {
@@ -601,7 +605,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
         vec2 disk = rot * poissonDiskPCSS[i];
         vec2 offset = disk * filterRadius;
 
-        float sampleDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+        float sampleDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
 
         shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
     }
@@ -620,7 +624,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
 //    vec3 fragToLight = fragPos - lightPos;
 //
 //    // use the light to fragment vector to sample from the depth map    
-//    float closestDepth = texture(material.texture_shadowMapCube, fragToLight).r;
+//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
 //    // it is currently in linear range between [0,1]. Re-transform back to original value
 //    closestDepth *= far_plane;
 //    // now get current linear depth as the length between the fragment and light position
@@ -649,7 +653,7 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
     float totalWeight = 0.0;
 
     // Shadow map texel size for cube map
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMapCube, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0);
 
     // 3D sampling around fragToLight direction
     for (int x = -radius; x <= radius; ++x) {
@@ -662,7 +666,7 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
                 float weight = exp(-(x*x + y*y + z*z) / (2.0 * sigma * sigma));
 
                 // Sample cube shadow map
-                float closestDepth = texture(material.texture_shadowMapCube, offset).r * far_plane;
+                float closestDepth = texture(texture_shadowMapCube, offset).r * far_plane;
 
                 shadow += weight * ((currentDepth - bias > closestDepth) ? 1.0 : 0.0);
                 totalWeight += weight;
@@ -706,7 +710,7 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
     float bias = material.shadowMapsBias;
 
     vec3 baseDir = normalize(fragToLight);
-    float texelSizeCube = 1.0 / float(textureSize(material.texture_shadowMapCube, 0));
+    float texelSizeCube = 1.0 / float(textureSize(texture_shadowMapCube, 0));
 
     int radius = int(material.shadowMapsBlur); // controls blur strength
     float sigma = float(radius) * 0.75;
@@ -721,7 +725,7 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
         float dist2 = dot(sampleOffsets[i], sampleOffsets[i]);
         float weight = exp(-dist2 / (2.0 * sigma * sigma));
 
-        float closestDepth = texture(material.texture_shadowMapCube, offsetDir).r * far_plane;
+        float closestDepth = texture(texture_shadowMapCube, offsetDir).r * far_plane;
 
         shadow += weight * ((currentDepth - bias > closestDepth) ? 1.0 : 0.0);
         totalWeight += weight;
@@ -742,7 +746,7 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
 //    vec3 fragToLight = fragPos - lightPos;
 //
 //    // use the light to fragment vector to sample from the depth map    
-//    float closestDepth = texture(material.texture_shadowMapCube, fragToLight).r;
+//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
 //    // it is currently in linear range between [0,1]. Re-transform back to original value
 //    closestDepth *= far_plane;
 //    // now get current linear depth as the length between the fragment and light position
@@ -767,7 +771,7 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
 //		offset.xy += noise * jitterStrength;
 //		vec3 sampleDir = fragToLight + offset * diskRadius;
 //
-//		float closestDepth = texture(material.texture_shadowMapCube, sampleDir).r;
+//		float closestDepth = texture(texture_shadowMapCube, sampleDir).r;
 //		closestDepth *= far_plane;
 //
 //		if (currentDepth - bias > closestDepth)
@@ -910,7 +914,7 @@ void main()
     //FragColor = vec4(ToSRGB(result), alpha);
     FragColor = vec4(result, alpha);
 
-    //FragColor = texture(material.texture_shadowMap,  fs_in.TexCoords);
+    //FragColor = texture(texture_shadowMap,  fs_in.TexCoords);
 
     // Discard transparent fragments (optional)
     if (alpha < 0.1)

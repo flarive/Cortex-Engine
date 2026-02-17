@@ -215,15 +215,15 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     update(shader);
 
 
-    glActiveTexture(GL_TEXTURE0 + 10);
+    glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer); //blurColorBuffers[lastBlurIndex]
-    shader.setInt("material.texture_shadowMap", 10);
+    shader.setInt("texture_shadowMap", U_SHADOW_MAP);
 
 
     // not needed but need to be reserved to avoid conflicts or overrides
-    glActiveTexture(GL_TEXTURE0 + 11);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    shader.setInt("material.texture_shadowMapCube", 11);
+    //glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
+    //glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    //shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
 
 
@@ -302,13 +302,13 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
 
 
     // not needed but need to be reserved to avoid conflicts or overrides
-    glActiveTexture(GL_TEXTURE0 + 10);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    shader.setInt("material.texture_shadowMap", 10);
+    //glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    //shader.setInt("texture_shadowMap", U_SHADOW_MAP);
 
-    glActiveTexture(GL_TEXTURE0 + 11);
+    glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
-    shader.setInt("material.texture_shadowMapCube", 11);
+    shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
 
     // render Depth map to quad for visual debugging
@@ -438,15 +438,13 @@ void engine::Renderer::computeColorFramebuffer()
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
     //screenShader.setBool("useHDR", false);
-    screenShader.setFloat("exposure", 0.0f);
+    //screenShader.setFloat("exposure", 0.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
     
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
@@ -464,7 +462,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
     //screenShader.setBool("useHDR", true);
-    screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
+    //screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
@@ -487,8 +485,6 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
 
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

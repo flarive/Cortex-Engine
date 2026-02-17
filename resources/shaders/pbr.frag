@@ -16,6 +16,9 @@ in VS_OUT {
 
 // material parameters
 struct Material {
+    
+
+    
     sampler2D texture_diffuse; // 0
     sampler2D texture_specular; // 1
     sampler2D texture_normal; // 2
@@ -24,8 +27,7 @@ struct Material {
     sampler2D texture_ao; // 5
     sampler2D texture_height; // 6
     sampler2D texture_emissive; // ?????
-    sampler2D texture_shadowMap; // 10
-    samplerCube texture_shadowMapCube; // 11 NOT IMPLEMENTED YET !!!!!!!!!!!!
+    
 
     sampler2D texture_metalness_from_combined;
     //sampler2D texture_roughness_from_combined;
@@ -130,6 +132,10 @@ uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
 uniform mat4 lightSpaceMatrix;
+
+
+uniform sampler2D texture_shadowMap;
+uniform samplerCube texture_shadowMapCube;
 
 // area light only
 uniform sampler2D LTC1; // 20 (for inverse M)
@@ -423,7 +429,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(material.texture_shadowMap, projCoords.xy).r; 
+    float closestDepth = texture(texture_shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
@@ -449,14 +455,14 @@ float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
     float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
 
     // Optional: scale bias by shadow map texel size for directional lights
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     bias += length(texelSize) * 0.5;
 
     // Percentage-Closer Filtering (3x3)
     float shadow = 0.0;
     for (int x = -1; x <= 1; ++x) {
         for (int y = -1; y <= 1; ++y) {
-            float pcfDepth = texture(material.texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
         }
     }
@@ -489,7 +495,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
     float bias = max(0.005 * (1.0 - dot(normal, normalize(lightDir))), 0.0005);
 
     // Shadow map texel size
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
     // Fixed blur radius and Gaussian sigma
     int radius = int(material.shadowMapsBlur);        // e.g., 2 for 5x5 kernel
@@ -504,7 +510,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
             float weight = exp(-(x*x + y*y) / (2.0 * sigma * sigma));
 
             // Sample shadow map
-            float pcfDepth = texture(material.texture_shadowMap, offsetProjCoords.xy + vec2(x, y) * texelSize).r;
+            float pcfDepth = texture(texture_shadowMap, offsetProjCoords.xy + vec2(x, y) * texelSize).r;
 
             shadow += weight * ((offsetProjCoords.z - bias > pcfDepth) ? 1.0 : 0.0);
             totalWeight += weight;
@@ -533,7 +539,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
     // Dynamic bias based on angle to light
     float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
 
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
     // === Controls for softness ===
     float shadowSoftness = material.shadowMapsBlur;  // Larger => softer
@@ -552,7 +558,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
             for (int y = -1; y <= 1; ++y)
             {
                 vec2 offset = poissonOffset + vec2(x, y) * texelSize;
-                float closestDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+                float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
                 shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
                 totalSamples++;
             }
@@ -625,7 +631,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     float bias = material.shadowMapsBias; // 0.001
 
     // Shadow map texel size
-    vec2 texelSize = 1.0 / textureSize(material.texture_shadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
     // =========================================================
     // 1. BLOCKER SEARCH
@@ -639,7 +645,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     for (int i = 0; i < PCSS_SAMPLES; ++i)
     {
         vec2 disk = poissonDiskPCSS[i] * searchRadius;
-        float depthSample = texture(material.texture_shadowMap, projCoords.xy + disk).r;
+        float depthSample = texture(texture_shadowMap, projCoords.xy + disk).r;
 
         if (depthSample < currentDepth - bias)
         {
@@ -680,7 +686,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
         vec2 disk = rot * poissonDiskPCSS[i];
         vec2 offset = disk * filterRadius;
 
-        float sampleDepth = texture(material.texture_shadowMap, projCoords.xy + offset).r;
+        float sampleDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
 
         shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
     }
@@ -694,10 +700,10 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
 bool checkUnusedUniforms()
 {
     if (material.ambient_color == vec3(0.0) && material.ambient_intensity == 0.0
-    && material.diffuse_color == vec3(0.0)
+    && material.diffuse_color == vec3(0.8)
     && material.specular_color == vec3(0.0) && far_plane == 1.0f)
     {
-        vec2 texelSize = 1.0 / textureSize(material.texture_shadowMapCube, 0);
+        vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0) / textureSize(material.texture_specular, 0) / textureSize(material.texture_height, 0);
         return material.shininess > 0 && material.canCastShadows && texelSize == vec2(0.0) && lightPos == vec3(0.0);
     }
     

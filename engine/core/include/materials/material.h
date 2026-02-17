@@ -16,10 +16,7 @@ namespace engine
     class Material : public NonCopyable
     {
     public:
-
         std::vector<Texture> textures{}; // Store textures
-
-
 
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
         Material(const Color& ambientColor);
@@ -32,9 +29,9 @@ namespace engine
         virtual void loadTexturesAsync();
 
 
-        virtual bool bind(Shader& shader) const;
+        virtual bool bind(Shader& shader, unsigned int baseUnit = 12) const; // TODO !!!! use MATERIAL_BASE_UNIT
         virtual bool bind2(engine::Shader& shader) const;
-        virtual void unbind() const;
+        virtual void unbind(int baseUnit = 12) const; // TODO !!!! use MATERIAL_BASE_UNIT
 
 
         virtual bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
@@ -117,5 +114,7 @@ namespace engine
   //      bool m_canReceiveShadows{ true };
 
         bool m_allTexturesLoaded{};
+
+        
     };
 }

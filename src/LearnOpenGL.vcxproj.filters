@@ -945,16 +945,26 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_albedo.png">
       <Filter>resources\textures\pbr\white-marble</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_ao.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_height.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_metallic.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_normal.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_roughness.png" />
     <CopyFileToFolders Include="..\resources\textures\particles\fire.png">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\particles\purple.png">
       <Filter>resources\textures\particles</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_ao.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_height.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_metallic.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_normal.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_roughness.png">
+      <Filter>resources\textures\pbr\white-marble</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

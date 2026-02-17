@@ -158,6 +158,8 @@ namespace engine
 		void updateEditorPropertySettings();
 
 
+		
+
 		// renderCube() renders a 1x1 3D cube in NDC.
 		// -------------------------------------------------
 		unsigned int m_cubeVAO{};
@@ -178,8 +180,38 @@ namespace engine
 		void renderSphere();
 
 
+		// base
+		unsigned int U_BG_ENV = 0;
+		unsigned int U_SHADOW_MAP = 1; // pspot lights & dir lights
+		unsigned int U_SHADOW_MAP_CUBE = 2; // point lights
+		unsigned int U_LTC1 = 3; // area lights
+		unsigned int U_LTC2 = 4; // area lights
+
+
+		// BlinnPhong
+		// Renderer-reserved units (example, but validate against GL_MAX_TEXTURE_IMAGE_UNITS):
+
+
+
+		// PBR
+		// Renderer-reserved units (example, but validate against GL_MAX_TEXTURE_IMAGE_UNITS):
+		unsigned int U_IRR = 7;
+		unsigned int U_PREF = 8;
+		unsigned int U_BRDF = 9;
+
+
 	private:
 		bool m_useHDR{};
+
+		
+
+
+
+		
+		
+		// Materials begin here:
+		unsigned int MATERIAL_BASE_UNIT = 12;
+		
 		
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light

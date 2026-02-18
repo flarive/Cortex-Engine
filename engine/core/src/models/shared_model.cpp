@@ -6,6 +6,9 @@
 
 #include "../../include/models/assimp_glm_helpers.h"
 
+
+#include "../../include/singleton.h"
+
 #include <filesystem>
 #include <string>
 
@@ -198,34 +201,56 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
 
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+
     std::shared_ptr<Material> meshMaterial{};
 
     // get textures
+	if (sceneSettings.method == RenderMethod::PBR)
+    {
+        // 1. diffuse maps
+        std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
+        for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
+        // 3. normal maps
+        std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
+        for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
+        // 4. metallic maps (now tagged as "texture_metalness_from_combined")
+        std::vector<engine::Texture> metallicMaps = loadMaterialTextures(scene, material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
+        for (auto& texture : metallicMaps) { textures.push_back(std::move(texture)); }
+        // 5. roughness maps (now tagged as "texture_roughness_from_combined")
+        std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
+        for (auto& texture : roughnessMaps) { textures.push_back(std::move(texture)); }
+        // 6. ambient occlusion maps
+        std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(scene, material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
+        for (auto& texture : ambientOcclusionMaps) { textures.push_back(std::move(texture)); }
+        // 7. height maps
+        std::vector<engine::Texture> heightMaps = loadMaterialTextures(scene, material, aiTextureType_HEIGHT, "texture_height"); // bump
+        for (auto& texture : heightMaps) { textures.push_back(std::move(texture)); }
+        // 8. emissive maps
+        std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
+        for (auto& texture : emissiveMaps) { textures.push_back(std::move(texture)); }
+    }
+    else
+    {
+        // 1. diffuse maps
+        std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
+        for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
+        // 2. specular maps
+        std::vector<engine::Texture> specularMaps = loadMaterialTextures(scene, material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
+        for (auto& texture : specularMaps) { textures.push_back(std::move(texture)); }
+        // 3. normal maps
+        std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
+        for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
+    }
+
     
-    // 1. diffuse maps
-    std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
-    for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
-    // 2. specular maps
-    std::vector<engine::Texture> specularMaps = loadMaterialTextures(scene, material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
-    for (auto& texture : specularMaps) { textures.push_back(std::move(texture)); }
-    // 3. normal maps
-    std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
-    for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
-    // 4. metallic maps (now tagged as "texture_metalness_from_combined")
-    std::vector<engine::Texture> metallicMaps = loadMaterialTextures(scene, material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
-    for (auto& texture : metallicMaps) { textures.push_back(std::move(texture)); }
-    // 5. roughness maps (now tagged as "texture_roughness_from_combined")
-    std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
-    for (auto& texture : roughnessMaps) { textures.push_back(std::move(texture)); }
-    // 6. ambient occlusion maps
-    std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(scene, material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
-    for (auto& texture : ambientOcclusionMaps) { textures.push_back(std::move(texture)); }
-    // 7. height maps
-    std::vector<engine::Texture> heightMaps = loadMaterialTextures(scene, material, aiTextureType_HEIGHT, "texture_height"); // bump
-    for (auto& texture : heightMaps) { textures.push_back(std::move(texture)); }
-    // 8. emissive maps
-    std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
-    for (auto& texture : emissiveMaps) { textures.push_back(std::move(texture)); }
+
+    
+    
+    
 
     float shininess{};
     if (AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) || shininess <= 0.0f)

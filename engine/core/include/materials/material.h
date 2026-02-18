@@ -10,6 +10,8 @@
 
 namespace engine
 {
+    enum class MaterialType { undefined = 0, blinnphong = 1, PBR = 2 };
+    
     /// <summary>
     /// Abstract class for materials
     /// </summary>
@@ -28,6 +30,11 @@ namespace engine
         Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 1.0f);
 
         virtual ~Material() = default;
+
+        virtual MaterialType getTypeID() const
+        {
+            return MaterialType::undefined;
+        }
 
         void loadTextures();
         void loadTexturesAsync();

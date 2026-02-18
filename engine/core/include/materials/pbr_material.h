@@ -13,5 +13,10 @@ namespace engine
 		PBRMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath = ""
 			, const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = ""
 			, const std::string& heightTexPath = "", float shininess = 0.0f);
+
+		MaterialType getTypeID() const override
+		{
+			return MaterialType::PBR;
+		}
 	};
 }

@@ -697,18 +697,18 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
 }
 
 // fake usage to avoid unused uniform removal
-bool checkUnusedUniforms()
-{
-    if (material.ambient_color == vec3(0.0) && material.ambient_intensity == 0.0
-    && material.diffuse_color == vec3(0.8)
-    && material.specular_color == vec3(0.0) && far_plane == 1.0f)
-    {
-        vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0) / textureSize(material.texture_specular, 0) / textureSize(material.texture_height, 0);
-        return material.shininess > 0 && material.canCastShadows && texelSize == vec2(0.0) && lightPos == vec3(0.0);
-    }
-    
-    return material.has_texture_specular_map && material.has_texture_normal_map && material.has_texture_height_map;
-}
+//bool checkUnusedUniforms()
+//{
+//    if (material.ambient_color == vec3(0.0) && material.ambient_intensity == 0.0
+//    && material.diffuse_color == vec3(0.8)
+//    && material.specular_color == vec3(0.0) && far_plane == 1.0f)
+//    {
+//        vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0) / textureSize(material.texture_specular, 0) / textureSize(material.texture_height, 0);
+//        return material.shininess > 0 && material.canCastShadows && texelSize == vec2(0.0) && lightPos == vec3(0.0);
+//    }
+//    
+//    return material.has_texture_specular_map && material.has_texture_normal_map && material.has_texture_height_map;
+//}
 
 // ----------------------------------------------------------------------------
 void main()
@@ -760,10 +760,10 @@ void main()
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
 
-    if (checkUnusedUniforms())
-    {
-        ao += 0.000001;
-    }
+//    if (checkUnusedUniforms())
+//    {
+//        ao += 0.000001;
+//    }
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

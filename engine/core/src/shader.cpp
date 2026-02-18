@@ -187,7 +187,7 @@ void engine::Shader::use() const
         glUseProgram(ID);
     }
     else {
-        std::cerr << "Shader::use(): Shader is not valid!" << std::endl;
+        std::cerr << "Shader::use(): Shader is not valid !" << std::endl;
     }
 }
 

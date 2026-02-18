@@ -16,11 +16,11 @@ struct Material {
 
     //float heightScale;
 
-    vec3 ambient_color;
+    //vec3 ambient_color;
     vec3 diffuse_color;
     vec3 specular_color;
 
-    float ambient_intensity;
+    //float ambient_intensity;
 
     float shininess;
 
@@ -40,7 +40,7 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-    float emissiveIntensity;
+    //float emissiveIntensity;
 
 
 
@@ -783,35 +783,35 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
 //}
 
 // fake usage to avoid unused uniform removal
-bool checkUnusedUniforms()
-{
-    // fake not needed in blinn phong
-    float metallic = 0;
-    float roughness = 0;
-
-    if (material.has_texture_metalness_from_combined_map)
-    {
-        // Sample the combined texture
-        vec4 metalRoughness = texture(material.texture_metalness_from_combined, fs_in.TexCoords);
-        metallic = metalRoughness.b; // Extract metallic from Blue channel
-        roughness = metalRoughness.g; // Extract roughness from Green channel
-    }
-    else
-    {
-        // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, fs_in.TexCoords).r : 0.0; // Non-metallic;
-        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, fs_in.TexCoords).r : 0.5; // Moderate roughness
-    }
-
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, fs_in.TexCoords).r : 0.0; // Full ambient occlusion
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, fs_in.TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    float height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).r : 0.0;
-
-    bool aaa = material.canCastShadows;
-    vec3 fakeAmbient = material.ambient_color * material.ambient_intensity;
-
-    return aaa ? (metallic + roughness + ao + emissive.x + height + fakeAmbient.x > 0.0 ? true : false) : false;
-}
+//bool checkUnusedUniforms()
+//{
+//    // fake not needed in blinn phong
+//    float metallic = 0;
+//    float roughness = 0;
+//
+//    if (material.has_texture_metalness_from_combined_map)
+//    {
+//        // Sample the combined texture
+//        vec4 metalRoughness = texture(material.texture_metalness_from_combined, fs_in.TexCoords);
+//        metallic = metalRoughness.b; // Extract metallic from Blue channel
+//        roughness = metalRoughness.g; // Extract roughness from Green channel
+//    }
+//    else
+//    {
+//        // 2 distinct textures
+//        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, fs_in.TexCoords).r : 0.0; // Non-metallic;
+//        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, fs_in.TexCoords).r : 0.5; // Moderate roughness
+//    }
+//
+//    float ao = material.has_texture_ao_map ? texture(material.texture_ao, fs_in.TexCoords).r : 0.0; // Full ambient occlusion
+//    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, fs_in.TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
+//    float height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).r : 0.0;
+//
+//    bool aaa = material.canCastShadows;
+//    vec3 fakeAmbient = material.ambient_color * material.ambient_intensity;
+//
+//    return aaa ? (metallic + roughness + ao + emissive.x + height + fakeAmbient.x > 0.0 ? true : false) : false;
+//}
 
 void main()
 {
@@ -856,10 +856,10 @@ void main()
     vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
-    if (checkUnusedUniforms())
-    {
-        mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
-    }
+//    if (checkUnusedUniforms())
+//    {
+//        mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
+//    }
     
 
 	vec3 N = normalize(fs_in.Normal);
@@ -938,8 +938,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // Ambient, Diffuse, and Specular components
-    float ambientStrength = 0.5;
-    //vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
     vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
     vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
@@ -983,8 +981,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     // Ambient, Diffuse, and Specular components
-    float ambientStrength = 0.5;
-    //vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? (mix(material.ambient_color, vec3(texture(material.texture_diffuse, fs_in.TexCoords)), ambientStrength)) : material.ambient_color);
     vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
     vec3 diffuse = light.diffuse * max(diff, 0.1) * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)) : material.diffuse_color);
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
@@ -1037,8 +1033,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     // Ambient, Diffuse, and Specular components
-    //vec3 ambient = light.ambient * vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb;
-    float ambientStrength = 0.5;
     vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
     vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
     vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);

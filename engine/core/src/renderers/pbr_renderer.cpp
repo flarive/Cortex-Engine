@@ -157,10 +157,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     };
 
 
-
-
-
-
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
     equirectangularToCubemapShader.use();

@@ -120,16 +120,20 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
                 return;
             }
 
-            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            
             shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
             shader.setVec3("material.specular_color", m_material->getSpecularColor());
 
             shader.setFloat("material.shininess", m_material->getShininessIntensity());
 
-            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-
             shader.setBool("material.canCastShadows", canCastShadows());
             shader.setBool("material.canReceiveShadows", canReceiveShadows());
+
+            if (type == ShaderType::PBR)
+            {
+                shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+                shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+            }
         }
     }
 

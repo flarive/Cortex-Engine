@@ -15,7 +15,7 @@
 
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
-    : Renderer(window, false)
+    : Renderer(window)
 {
 }
 

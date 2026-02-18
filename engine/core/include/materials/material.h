@@ -16,7 +16,11 @@ namespace engine
     class Material : public NonCopyable
     {
     public:
-        std::vector<Texture> textures{}; // Store textures
+        std::vector<Texture> textures{}; // Store all material textures
+
+        // Materials begin here
+        static inline constexpr int MATERIAL_BASE_UNIT = 12;
+
 
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
         Material(const Color& ambientColor);
@@ -25,25 +29,24 @@ namespace engine
 
         virtual ~Material() = default;
 
-        virtual void loadTextures();
-        virtual void loadTexturesAsync();
+        void loadTextures();
+        void loadTexturesAsync();
+
+        bool bind(Shader& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
+        bool bind2(engine::Shader& shader) const;
+        void unbind(int baseUnit = MATERIAL_BASE_UNIT) const;
 
 
-        virtual bool bind(Shader& shader, unsigned int baseUnit = 12) const; // TODO !!!! use MATERIAL_BASE_UNIT
-        virtual bool bind2(engine::Shader& shader) const;
-        virtual void unbind(int baseUnit = 12) const; // TODO !!!! use MATERIAL_BASE_UNIT
+        bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
+        bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
+        bool hasNormalMap() const { return !std::empty(m_normalTexPath); }
+        bool hasMetallicMap() const { return !std::empty(m_metallicTexPath); }
+        bool hasRoughnessMap() const { return !std::empty(m_roughnessTexPath); }
+        bool hasAoMap() const { return !std::empty(m_aoTexPath); }
+        bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
+        bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
 
-
-        virtual bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
-        virtual bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
-        virtual bool hasNormalMap() const { return !std::empty(m_normalTexPath); }
-        virtual bool hasMetallicMap() const { return !std::empty(m_metallicTexPath); }
-        virtual bool hasRoughnessMap() const { return !std::empty(m_roughnessTexPath); }
-        virtual bool hasAoMap() const { return !std::empty(m_aoTexPath); }
-        virtual bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
-        virtual bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
-
-        virtual bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
+        bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
         bool areAllTexturesLoaded() const { return !hasTextures() || (hasTextures() && m_allTexturesLoaded); }
         void setAllTexturesLoaded(bool state) { m_allTexturesLoaded = state; }
@@ -55,40 +58,39 @@ namespace engine
 
 
 
-        const virtual engine::Color& getAmbientColor() const { return m_ambientColor; }
-        const virtual engine::Color& getDiffuseColor() const { return m_diffuseColor; }
-        const virtual engine::Color& getSpecularColor() const { return m_specularColor; }
+        const engine::Color& getAmbientColor() const { return m_ambientColor; }
+        const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
+        const engine::Color& getSpecularColor() const { return m_specularColor; }
 
-        const virtual std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
-        const virtual std::string& getSpecularTexPath() const { return m_specularTexPath; }
-        const virtual std::string& getNormalTexPath() const { return m_normalTexPath; }
-        const virtual std::string& getMetallicTexPath() const { return m_metallicTexPath; }
-        const virtual std::string& getRoughnessTexPath() const { return m_roughnessTexPath; }
-        const virtual std::string& getAoTexPath() const { return m_aoTexPath; }
-        const virtual std::string& getHeightTexPath() const { return m_heightTexPath; }
-        const virtual std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
-
-
-        const virtual float getNormalIntensity() const { return m_normalIntensity; }
-        const virtual float getHeightIntensity() const { return m_heightIntensity; }
-        const virtual float getShininessIntensity() const { return m_shininess; }
-        const virtual float getAmbientIntensity() const { return m_ambientIntensity; }
-        const virtual float getEmissiveIntensity() const { return m_emissiveIntensity; }
+        const std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
+        const std::string& getSpecularTexPath() const { return m_specularTexPath; }
+        const std::string& getNormalTexPath() const { return m_normalTexPath; }
+        const std::string& getMetallicTexPath() const { return m_metallicTexPath; }
+        const std::string& getRoughnessTexPath() const { return m_roughnessTexPath; }
+        const std::string& getAoTexPath() const { return m_aoTexPath; }
+        const std::string& getHeightTexPath() const { return m_heightTexPath; }
+        const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
 
 
-        virtual void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
-        virtual void setHeightIntensity(float height) { m_heightIntensity = height; }
-        virtual void setShininessIntensity(float intensity) { m_shininess = intensity; }
-        virtual void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
-        virtual void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
+        const float getNormalIntensity() const { return m_normalIntensity; }
+        const float getHeightIntensity() const { return m_heightIntensity; }
+        const float getShininessIntensity() const { return m_shininess; }
+        const float getAmbientIntensity() const { return m_ambientIntensity; }
+        const float getEmissiveIntensity() const { return m_emissiveIntensity; }
 
-        const virtual std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
-        virtual void setCubeMapTexs(const std::vector<std::string>& faces);
+        void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
+        void setHeightIntensity(float height) { m_heightIntensity = height; }
+        void setShininessIntensity(float intensity) { m_shininess = intensity; }
+        void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
+        void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
+
+        const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
+
+        void setCubeMapTexs(const std::vector<std::string>& faces);
 
 
     protected:
-
         Color m_ambientColor{ Color(0.1f) };
         Color m_diffuseColor{ Color(1.0f) };
         Color m_specularColor{ Color(0.0f) };
@@ -109,12 +111,9 @@ namespace engine
         float m_emissiveIntensity{ 1.0f };
 
         float m_shininess{};
-
-		//bool m_canCastShadows{ true };
-  //      bool m_canReceiveShadows{ true };
-
         bool m_allTexturesLoaded{};
 
-        
+    private:
+        //GLint m_maxFragUnits{ 0 }; // max texture unit supported by current OpenGL driver (32 most of the time)
     };
 }

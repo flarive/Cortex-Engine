@@ -1,6 +1,7 @@
 #include "../../include/app/app.h"
 
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/singleton.h"
 
 #include <format>
 

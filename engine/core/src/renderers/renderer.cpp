@@ -6,8 +6,8 @@
 #include <memory>
 
 
-engine::Renderer::Renderer(GLFWwindow* window, bool useHDR)
-    : m_window(window), m_useHDR(useHDR)
+engine::Renderer::Renderer(GLFWwindow* window)
+    : m_window(window)
 {
 }
 
@@ -431,8 +431,8 @@ void engine::Renderer::computeColorFramebuffer()
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-    //screenShader.setBool("useHDR", false);
-    //screenShader.setFloat("exposure", 0.0f);
+    screenShader.setBool("useHDR", false);
+    screenShader.setFloat("exposure", 0.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
@@ -455,8 +455,8 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-    //screenShader.setBool("useHDR", true);
-    //screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
+    screenShader.setBool("useHDR", true);
+    screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture

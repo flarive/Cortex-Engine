@@ -129,12 +129,12 @@ void engine::Sphere::geometrySetup()
     glEnableVertexAttribArray(4);
 
     // Bones ids (not really needed here)
-    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
-    glEnableVertexAttribArray(5);
+    /*glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+    glEnableVertexAttribArray(5);*/
 
     // Bones weights (not really needed here)
-    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
-    glEnableVertexAttribArray(6);
+    /*glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
+    glEnableVertexAttribArray(6);*/
 
     glBindVertexArray(0);
 }
@@ -206,6 +206,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
+        shader.setBool("isAnimated", false);
     }
 
     // Send to GPU
@@ -213,7 +214,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     OpenGLDebug::checkGLError("glBindVertexArray");
 
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawElements");
 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
@@ -227,5 +228,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
 void engine::Sphere::clean()
 {
-
+    if(m_EBO) { glDeleteBuffers(1, &m_EBO); m_EBO = 0; }
+    if (m_VBO) { glDeleteBuffers(1, &m_VBO); m_VBO = 0; }
+    if (m_VAO) { glDeleteVertexArrays(1, &m_VAO); m_VAO = 0; }
 }

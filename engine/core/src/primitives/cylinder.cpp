@@ -141,12 +141,12 @@ void engine::Cylinder::geometrySetup()
     glEnableVertexAttribArray(4);
 
     // Bones ids (not really needed here)
-    glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
-    glEnableVertexAttribArray(5);
+    //glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+    //glEnableVertexAttribArray(5);
 
-    // Bones weights (not really needed here)
-    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
-    glEnableVertexAttribArray(6);
+    //// Bones weights (not really needed here)
+    //glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
+    //glEnableVertexAttribArray(6);
 
     glBindVertexArray(0);
 }
@@ -212,6 +212,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
         {
             shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
             shader.setBool("hasTangents", true);
+            shader.setBool("isAnimated", false);
         }
     }
 

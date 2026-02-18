@@ -34,6 +34,9 @@ namespace engine
 	{
 	public:
 		
+		
+
+
 		// shaders accessible publicly
 
 		// Shader that renders the color framebuffer to the screen
@@ -50,7 +53,7 @@ namespace engine
 		
 
 		
-		Renderer(GLFWwindow* window, bool useHDR = false);
+		Renderer(GLFWwindow* window);
 		virtual ~Renderer() = default;
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
@@ -201,18 +204,11 @@ namespace engine
 		unsigned int U_BRDF = 9;
 
 
+		
+
+
 	private:
-		bool m_useHDR{};
-
-		
-
-
-
-		
-		
-		// Materials begin here:
-		unsigned int MATERIAL_BASE_UNIT = 12;
-		
+		//bool m_useHDR{};
 		
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light

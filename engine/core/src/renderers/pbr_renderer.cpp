@@ -14,7 +14,7 @@
 
 
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
-    : Renderer(window, true)
+    : Renderer(window)
 {
 }
 
@@ -91,8 +91,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // color framebuffer configuration
     // -------------------------
-    //initHDRColorFramebufferMSAA(width, height); // HDR and AA
-    initColorFramebufferMSAA(width, height); // no HDR
+    initHDRColorFramebufferMSAA(width, height); // HDR and AA
+    //initColorFramebufferMSAA(width, height); // no HDR
     //initColorFramebuffer(width, height); // no AA
 
     // solid/wireframe polygons
@@ -438,20 +438,20 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     }
 
     // render to framebuffer
-    //computeHDRColorFramebuffer(width, height);
-    computeColorFramebuffer();
-
+    computeHDRColorFramebuffer(width, height);
+    //computeColorFramebuffer();
+    
 
     // Resolve MSAA to screen or another texture FBO (SDR old)
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     
     // Resolve MSAA color to colorFramebuffer (HDR)
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

@@ -3,87 +3,45 @@
 #include <format>
 
 
-#define NDEBUG // to remove !!!!!!!!!!!!!!!
-
 
 
 engine::Material::Material(std::vector<Texture> _textures, float _shininess)
     : textures(std::move(_textures)), m_shininess(_shininess)
 {
-
 }
 
 engine::Material::Material(const Color& ambientColor)
     : m_ambientColor(ambientColor), m_diffuseTexPath(""), m_specularTexPath(""), m_normalTexPath(""), m_metallicTexPath(""), m_roughnessTexPath(""), m_aoTexPath(""), m_heightTexPath(""), m_shininess(0.0f)
 {
-
 }
 
 engine::Material::Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess)
     : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_specularColor(specularColor), m_shininess(shininess)
 {
-
 }
 
 engine::Material::Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
     : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_metallicTexPath(metallicTexPath), m_roughnessTexPath(roughnessTexPath), m_aoTexPath(aoTexPath), m_heightTexPath(heightTexPath), m_shininess(shininess)
 {
-
 }
 
-//bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
-//{
-//    unsigned int textureUnit = 0;
-//    bool success = true;
-//
-//    shader.use();
-//    for (const auto& texture : textures)
-//    {
-//        const std::string uniformName = std::format("material.{}", texture.type);
-//        const std::string hasMapName = std::format("material.has_{}_map", texture.type);
-//
-//        if (texture.id > 0)
-//        {
-//            glActiveTexture(GL_TEXTURE0 + textureUnit);
-//            glBindTexture(GL_TEXTURE_2D, texture.id);
-//
-//            GLenum error = glGetError();
-//            if (error != GL_NO_ERROR)
-//            {
-//                std::cerr << "OpenGL error while binding texture '" << texture.type
-//                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
-//                shader.setBool(hasMapName, false);
-//                success = false;
-//                continue;
-//            }
-//
-//            shader.setInt(uniformName, textureUnit);
-//            shader.setBool(hasMapName, true);
-//            textureUnit++;
-//        }
-//        else
-//        {
-//            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
-//            shader.setBool(hasMapName, false);
-//            //success = false;
-//            success = true;
-//        }
-//    }
-//
-//    glActiveTexture(GL_TEXTURE0); // Reset active texture
-//    return success;
-//}
 
-bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
+bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
 {
-    // Query once per program startup and cache these caps, not every bind. TODO cache it !!!!!!!!!!!
-    GLint maxFragUnits = 16;
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragUnits);
+    static int m_maxFragUnits{};
+    
+    // Query once per program startup and cache these caps, not every bind
+    if (m_maxFragUnits == 0)
+    {
+        GLint maxFragUnits = 16;
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxFragUnits);
+        m_maxFragUnits = maxFragUnits;
+    }
 
     // Use shader once for the whole material
     shader.use();
 
-    unsigned int unit = baseUnit;
+    int unit = baseUnit;
     bool success = true;
 
     for (const auto& tex : textures)
@@ -100,11 +58,9 @@ bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
         }
 
         // Ensure we have room on the device
-        if (unit >= maxFragUnits)
+        if (unit >= m_maxFragUnits)
         {
-            std::cerr << "[Material::bind] ERROR: Texture unit " << unit
-                << " exceeds GL_MAX_TEXTURE_IMAGE_UNITS=" << maxFragUnits
-                << " for uniform '" << uniformName << "'\n";
+            std::cerr << "[Material::bind] ERROR: Texture unit " << unit << " exceeds GL_MAX_TEXTURE_IMAGE_UNITS=" << m_maxFragUnits << " for uniform '" << uniformName << "'\n";
             shader.setBool(hasMapName, false);
             success = false;
             break; // or return false;
@@ -115,14 +71,12 @@ bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(target, tex.id);
 
-#ifndef NDEBUG
+#ifdef DEBUG
         // Keep this in debug only; glGetError is expensive
         if (GLenum error = glGetError(); error != GL_NO_ERROR)
         {
             std::cerr << std::hex
-                << "[Material::bind] GL error 0x" << error
-                << " binding '" << tex.type << "' to unit " << unit
-                << " (target=" << target << ")\n" << std::dec;
+                << "[Material::bind] GL error 0x" << error << " binding '" << tex.type << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
             shader.setBool(hasMapName, false);
             success = false;
             // Continue to bind others, or break if you prefer fail-fast.
@@ -132,7 +86,7 @@ bool engine::Material::bind(engine::Shader& shader, unsigned int baseUnit) const
 #endif
 
         // Assign the sampler to the unit and flag presence
-        shader.setInt(uniformName, static_cast<int>(unit));
+        shader.setInt(uniformName, unit);
         shader.setBool(hasMapName, true);
 
         ++unit;

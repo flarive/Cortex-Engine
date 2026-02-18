@@ -12,8 +12,6 @@ namespace engine
     class Sphere final : public Primitive
     {
     public:
-        
-
         Sphere(const glm::vec3& _position = glm::vec3());
         ~Sphere() = default;
 

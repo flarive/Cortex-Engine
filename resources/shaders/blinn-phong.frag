@@ -4,14 +4,14 @@ struct Material {
     sampler2D texture_diffuse; // 0
     sampler2D texture_specular; // 1
     sampler2D texture_normal; // 2
-    //sampler2D texture_metalness; // 3
-    //sampler2D texture_roughness; // 4
-    //sampler2D texture_ao; // 5
-    //sampler2D texture_height; // 6
-    //sampler2D texture_emissive; // 7
+    sampler2D texture_metalness; // 3
+    sampler2D texture_roughness; // 4
+    sampler2D texture_ao; // 5
+    sampler2D texture_height; // 6
+    sampler2D texture_emissive; // 7
 
 
-    //sampler2D texture_metalness_from_combined;
+    sampler2D texture_metalness_from_combined;
     //sampler2D texture_roughness_from_combined;
 
     //float heightScale;
@@ -27,12 +27,12 @@ struct Material {
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
-    //bool has_texture_metalness_map; // not used in shader
-    //bool has_texture_roughness_map;
-    //bool has_texture_metalness_from_combined_map;
-    //bool has_texture_ao_map;
-    //bool has_texture_height_map;
-    //bool has_texture_emissive_map;
+    bool has_texture_metalness_map; // not used in shader
+    bool has_texture_roughness_map;
+    bool has_texture_metalness_from_combined_map;
+    bool has_texture_ao_map;
+    bool has_texture_height_map;
+    bool has_texture_emissive_map;
 
 
     int shadowCalculationMethod;
@@ -947,11 +947,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
@@ -993,7 +993,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // calculate shadow
     vec2 screenSize = vec2(1280, 720);
-    float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+    float shadow = enableShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
     //float shadow = enableShadows ? ShadowCalculationCubeMap2(fragPos, light.position, normal, lightDir, screenSize) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
@@ -1044,17 +1044,18 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = 0.0;
+    //float temp = 0.0; // fake usage of material.canCastShadows
     if (material.shadowCalculationMethod == 1)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 2)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 3)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
     }
 
     // Apply shadow intensity for darker/lighter shadows

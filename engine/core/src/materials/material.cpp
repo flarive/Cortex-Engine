@@ -44,6 +44,19 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
     int unit = baseUnit;
     bool success = true;
 
+	// cleanup any previous bindings for this shader's material uniforms
+	if (shader.getShaderType() == ShaderType::PBR)
+    {
+        shader.setBool("material.has_texture_diffuse_map", false);
+        shader.setBool("material.has_texture_normal_map", false);
+    }
+    else
+    {
+        shader.setBool("material.has_texture_diffuse_map", false);
+        shader.setBool("material.has_texture_specular_map", false);
+        shader.setBool("material.has_texture_normal_map", false);
+    }
+
     for (const auto& tex : textures)
     {
         // Example: tex.type could be "albedo", "normal", "metallic", ...
@@ -266,7 +279,7 @@ void engine::Material::loadTexturesAsync()
 
     // should always be added even if id = 0 (to set has_normal_map = false in shader)
     normalMapId = engine::TextureManager::textureIDCache[getNormalTexPath()];
-    //if (normalMapId > 0)
+    if (normalMapId > 0)
 	    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
 
     metallicMapId = engine::TextureManager::textureIDCache[getMetallicTexPath()];

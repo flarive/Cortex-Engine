@@ -808,7 +808,7 @@ void main()
     }
 
     // Sample the alpha value from the diffuse texture
-    float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
+    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).a : 1.0;
 
     //FragColor = vec4(ToSRGB(result), alpha);
     FragColor = vec4(result, alpha);

@@ -133,10 +133,14 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
 
         m_material->bind(shader);
         
-        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        
 
-        shader.setFloat("material.shininess", m_material->getShininessIntensity());
+        if (type == ShaderType::BlinnPhong)
+        {
+            shader.setFloat("material.shininess", m_material->getShininessIntensity());
+            shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+            shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        }
 
         
 

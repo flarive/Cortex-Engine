@@ -207,7 +207,13 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     shader.use();
-    shader.setVec3("lightPos", light->position);
+
+    // bofff
+    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    {
+        shader.setVec3("lightPos", light->position);
+    }
+
     shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     shader.setBool("enableShadows", enableShadows);
 
@@ -286,7 +292,13 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
     shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
-    shader.setVec3("lightPos", light->position);
+
+    // bofff
+    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    {
+        shader.setVec3("lightPos", light->position);
+	}
+
     shader.setVec3("viewPos", m_camera->position);
     shader.setBool("enableShadows", enableShadows);
     shader.setFloat("far_plane", far_plane);

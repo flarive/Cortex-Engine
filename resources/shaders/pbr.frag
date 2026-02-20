@@ -18,21 +18,17 @@ in VS_OUT {
 struct Material {
     
 
-    
-    sampler2D texture_diffuse; // 0
-    //sampler2D texture_specular; // 1
-    sampler2D texture_normal; // 2
-    sampler2D texture_metalness; // 3
-    sampler2D texture_roughness; // 4
-    sampler2D texture_ao; // 5
-    sampler2D texture_height; // 6
-    sampler2D texture_emissive; // ?????
+  
+    sampler2D texture_diffuse;
+    sampler2D texture_normal;
+    sampler2D texture_metalness;
+    sampler2D texture_roughness;
+    sampler2D texture_ao;
+    sampler2D texture_height;
+    sampler2D texture_emissive;
     
 
     sampler2D texture_metalness_from_combined;
-    //sampler2D texture_roughness_from_combined;
-
-    //float heightScale;
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -42,12 +38,10 @@ struct Material {
     float emissiveIntensity;
 
     vec3 ambient_color;
-    //vec3 diffuse_color;
-    //vec3 specular_color;
+
 
     float ambient_intensity;
 
-    //float shininess;
 
 
     float iblDiffuseIntensity;  // New uniform for diffuse IBL intensity
@@ -61,7 +55,6 @@ struct Material {
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
     bool has_texture_diffuse_map;
-    //bool has_texture_specular_map;
     bool has_texture_normal_map;
     bool has_texture_metalness_map;
     bool has_texture_roughness_map;
@@ -696,20 +689,6 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     return shadow;
 }
 
-// fake usage to avoid unused uniform removal
-//bool checkUnusedUniforms()
-//{
-//    if (material.ambient_color == vec3(0.0) && material.ambient_intensity == 0.0
-//    && material.diffuse_color == vec3(0.8)
-//    && material.specular_color == vec3(0.0) && far_plane == 1.0f)
-//    {
-//        vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0) / textureSize(material.texture_specular, 0) / textureSize(material.texture_height, 0);
-//        return material.shininess > 0 && material.canCastShadows && texelSize == vec2(0.0) && lightPos == vec3(0.0);
-//    }
-//    
-//    return material.has_texture_specular_map && material.has_texture_normal_map && material.has_texture_height_map;
-//}
-
 // ----------------------------------------------------------------------------
 void main()
 {		
@@ -759,12 +738,7 @@ void main()
 
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, texCoords).rgb : vec3(0.0);
-
-//    if (checkUnusedUniforms())
-//    {
-//        ao += 0.000001;
-//    }
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, texCoords).rgb : vec3(0.0); // waiting to be used
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

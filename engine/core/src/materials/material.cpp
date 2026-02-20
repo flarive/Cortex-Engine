@@ -70,8 +70,6 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
             break; // or return false;
         }
 
-        // Bind using the right target. If you only use 2D textures for materials, keep GL_TEXTURE_2D.
-        //GLenum target = GL_TEXTURE_2D; // TODO: extend your Texture to store its target.
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_2D, tex.id);
 

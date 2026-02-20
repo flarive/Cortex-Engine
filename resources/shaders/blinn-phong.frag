@@ -1,38 +1,19 @@
 #version 330 core
 
 struct Material {
-    sampler2D texture_diffuse; // 0
-    sampler2D texture_specular; // 1
-    sampler2D texture_normal; // 2
-    //sampler2D texture_metalness; // 3
-    //sampler2D texture_roughness; // 4
-    //sampler2D texture_ao; // 5
-    //sampler2D texture_height; // 6
-    //sampler2D texture_emissive; // 7
+    sampler2D texture_diffuse;
+    sampler2D texture_specular;
+    sampler2D texture_normal;
 
-
-    //sampler2D texture_metalness_from_combined;
-    //sampler2D texture_roughness_from_combined;
-
-    //float heightScale;
-
-    //vec3 ambient_color;
     vec3 diffuse_color;
     vec3 specular_color;
 
-    //float ambient_intensity;
 
     float shininess;
 
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
-    //bool has_texture_metalness_map; // not used in shader
-    //bool has_texture_roughness_map;
-    //bool has_texture_metalness_from_combined_map;
-    //bool has_texture_ao_map;
-    //bool has_texture_height_map;
-    //bool has_texture_emissive_map;
 
 
     int shadowCalculationMethod;
@@ -40,7 +21,6 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-    //float emissiveIntensity;
 
 
 
@@ -737,81 +717,6 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
     return shadow;
 }
 
-//float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
-//{
-//    float shadow = 0.0;
-//	int samples = 19;
-//
-//    // get vector between fragment position and light position
-//    vec3 fragToLight = fragPos - lightPos;
-//
-//    // use the light to fragment vector to sample from the depth map    
-//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
-//    // it is currently in linear range between [0,1]. Re-transform back to original value
-//    closestDepth *= far_plane;
-//    // now get current linear depth as the length between the fragment and light position
-//    float currentDepth = length(fragToLight);
-//
-//
-//	// Angle-dependent bias
-//	//float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-//    float bias = material.shadowMapsBias; //0.001
-//
-//	// View-dependent disk radius
-//	float viewDistance = length(viewPos - fragPos);
-//	float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0;
-//
-//	// Procedural noise for jitter
-//	vec2 noise = rand(gl_FragCoord.xy / screenSize);
-//	float jitterStrength = 0.1;
-//
-//	for (int i = 0; i < samples; ++i)
-//	{
-//		vec3 offset = gridSamplingDisk[i];
-//		offset.xy += noise * jitterStrength;
-//		vec3 sampleDir = fragToLight + offset * diskRadius;
-//
-//		float closestDepth = texture(texture_shadowMapCube, sampleDir).r;
-//		closestDepth *= far_plane;
-//
-//		if (currentDepth - bias > closestDepth)
-//		shadow += 1.0;
-//	}
-//
-//    shadow /= float(samples);
-//    return shadow;
-//}
-
-// fake usage to avoid unused uniform removal
-//bool checkUnusedUniforms()
-//{
-//    // fake not needed in blinn phong
-//    float metallic = 0;
-//    float roughness = 0;
-//
-//    if (material.has_texture_metalness_from_combined_map)
-//    {
-//        // Sample the combined texture
-//        vec4 metalRoughness = texture(material.texture_metalness_from_combined, fs_in.TexCoords);
-//        metallic = metalRoughness.b; // Extract metallic from Blue channel
-//        roughness = metalRoughness.g; // Extract roughness from Green channel
-//    }
-//    else
-//    {
-//        // 2 distinct textures
-//        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, fs_in.TexCoords).r : 0.0; // Non-metallic;
-//        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, fs_in.TexCoords).r : 0.5; // Moderate roughness
-//    }
-//
-//    float ao = material.has_texture_ao_map ? texture(material.texture_ao, fs_in.TexCoords).r : 0.0; // Full ambient occlusion
-//    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, fs_in.TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
-//    float height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).r : 0.0;
-//
-//    bool aaa = material.canCastShadows;
-//    vec3 fakeAmbient = material.ambient_color * material.ambient_intensity;
-//
-//    return aaa ? (metallic + roughness + ao + emissive.x + height + fakeAmbient.x > 0.0 ? true : false) : false;
-//}
 
 void main()
 {
@@ -853,14 +758,8 @@ void main()
     //vec3 mDiffuse = ToLinear(texture(material.texture_diffuse, fs_in.TexCoords).rgb); // gamma correction
     //vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
     
-    vec3 mDiffuse = texture(material.texture_diffuse, fs_in.TexCoords).rgb;
+    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
-
-//    if (checkUnusedUniforms())
-//    {
-//        mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
-//    }
-    
 
 	vec3 N = normalize(fs_in.Normal);
 	vec3 V = normalize(viewPos - fs_in.FragPos);

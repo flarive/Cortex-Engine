@@ -20,7 +20,7 @@ private:
  
 
     Text ourText{};
-
+    Sprite ourSprite{};
 
     float rotation{};
 

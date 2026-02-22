@@ -241,11 +241,12 @@ void MyScene3::init()
 
 
     ourText.setup(app->window, FONT_PATH, 28);
+    ourSprite.setup(app->window, "UI/cortex-logo.png");
 }
 
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-    // ---------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------
 void MyScene3::key_callback(int key, int scancode, int action, int mods)
 {
     Scene::key_callback(key, scancode, action, mods);
@@ -340,6 +341,7 @@ void MyScene3::clean()
 {
     // clean up any resources
     ourText.clean();
+    ourSprite.clean();
 }
 
 void MyScene3::drawScene(Shader& shader)
@@ -353,4 +355,5 @@ void MyScene3::drawUI()
 {
     // render HUD / UI
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+    ourSprite.draw(vec2(40, app->height - 40), vec2(128.0f, -128.0f), 0.0f, vec3(1.0f));
 }

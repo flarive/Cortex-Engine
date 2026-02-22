@@ -67,14 +67,14 @@ void engine::Renderer::enableFaceCulling(bool enable)
     }
 }
 
-void engine::Renderer::enableGammaCorrection(bool enable)
-{
-    // gamma correction (default 2.2 gamma correction)
-    if (enable)
-        glEnable(GL_FRAMEBUFFER_SRGB);
-    else
-        glDisable(GL_FRAMEBUFFER_SRGB);
-}
+//void engine::Renderer::enableGammaCorrection(bool enable)
+//{
+//    // gamma correction (default 2.2 gamma correction)
+//    //if (enable)
+//    //    glEnable(GL_FRAMEBUFFER_SRGB);
+//    //else
+//    //    glDisable(GL_FRAMEBUFFER_SRGB);
+//}
 
 void engine::Renderer::initDebugPlaneGrid()
 {
@@ -353,6 +353,36 @@ void engine::Renderer::initColorFramebuffer(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+//void engine::Renderer::initColorFramebufferMSAA(int width, int height)
+//{
+//    const int samples = 4; // Change this to your desired MSAA level
+//
+//    // 1. Create multisampled framebuffer
+//    glGenFramebuffers(1, &colorFramebuffer);
+//    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+//
+//    // 2. Create a multisampled color renderbuffer
+//    GLuint colorRBO;
+//    glGenRenderbuffers(1, &colorRBO);
+//    glBindRenderbuffer(GL_RENDERBUFFER, colorRBO);
+//    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGB8, width, height);
+//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRBO);
+//
+//    // 3. Create a multisampled depth+stencil renderbuffer
+//    glGenRenderbuffers(1, &rbo);
+//    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+//    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+//
+//    // 4. Check completeness
+//    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+//    {
+//        std::cerr << "ERROR::FRAMEBUFFER:: MSAA Framebuffer is not complete!" << std::endl;
+//    }
+//
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//}
+
 void engine::Renderer::initColorFramebufferMSAA(int width, int height)
 {
     const int samples = 4; // Change this to your desired MSAA level
@@ -381,7 +411,28 @@ void engine::Renderer::initColorFramebufferMSAA(int width, int height)
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Create a non-MSAA COLOR TEXTURE to resolve into
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Create an FBO that attaches the resolved texture (to receive blit)
+    glGenFramebuffers(1, &resolveFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cerr << "ERROR::FRAMEBUFFER:: Resolve Framebuffer is not complete!" << std::endl;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+
 
 void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
 {
@@ -431,7 +482,7 @@ void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
 
 
 
-void engine::Renderer::computeColorFramebuffer()
+void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 {
      //draw color framebuffer to screen
      //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
@@ -445,6 +496,7 @@ void engine::Renderer::computeColorFramebuffer()
     screenShader.setInt("screenTexture", 0);
     screenShader.setBool("useHDR", false);
     screenShader.setFloat("exposure", 0.0f);
+    screenShader.setBool("useGamma", settings.enableGammaCorrection);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
@@ -453,7 +505,7 @@ void engine::Renderer::computeColorFramebuffer()
     renderQuad();
 }
 
-void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
+void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings)
 {
     // Bind default framebuffer (usually SDR)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -469,6 +521,8 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height)
     screenShader.setInt("screenTexture", 0);
     screenShader.setBool("useHDR", true);
     screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
+    screenShader.setBool("useGamma", settings.enableGammaCorrection);
+
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
@@ -513,7 +567,7 @@ void engine::Renderer::updateEditorPropertySettings()
     static bool lastEnableGammaCorrection = settings.enableGammaCorrection;
     if (lastEnableGammaCorrection != settings.enableGammaCorrection)
     {
-        enableGammaCorrection(settings.enableGammaCorrection);
+        //enableGammaCorrection(settings.enableGammaCorrection);
         lastEnableGammaCorrection = settings.enableGammaCorrection;
     }
     

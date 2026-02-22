@@ -45,7 +45,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     enableFaceCulling(settings.enableFaceCulling);
     
     // automatic color correction
-    enableGammaCorrection(settings.enableGammaCorrection);
+    //enableGammaCorrection(settings.enableGammaCorrection);
    
 
     // build and compile shaders
@@ -179,13 +179,16 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
             computeDepthMapFramebuffer(blinnPhongShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
-    // render to framebuffer
-    computeColorFramebuffer();
 
     // Resolve MSAA to screen or another texture FBO
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    // render to framebuffer
+    computeColorFramebuffer(settings);
+
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

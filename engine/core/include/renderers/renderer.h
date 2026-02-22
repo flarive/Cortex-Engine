@@ -68,7 +68,7 @@ namespace engine
 
 		virtual Shader& getShader() = 0;
 
-		void enableGammaCorrection(bool enable);
+		//void enableGammaCorrection(bool enable);
 
 		virtual void clean() = 0;
 
@@ -114,6 +114,7 @@ namespace engine
 		// HDR
 		//unsigned int resolvedHDRTex{};
 		unsigned int resolveFBO{};
+		//unsigned int resolveFBOTexture{};
 
 
 		unsigned int irradianceMap{};
@@ -155,8 +156,8 @@ namespace engine
 		void initDebugPlaneGrid();
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);
 
-		void computeColorFramebuffer();
-		void computeHDRColorFramebuffer(int width, int height);
+		void computeColorFramebuffer(const SceneSettings& settings);
+		void computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings);
 
 		void updateEditorPropertySettings();
 

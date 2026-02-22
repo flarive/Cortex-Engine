@@ -51,7 +51,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // avoid computing back faces not visible by camera
     enableFaceCulling(settings.enableFaceCulling);
     // automatic color correction
-    enableGammaCorrection(settings.enableGammaCorrection);
+    //enableGammaCorrection(settings.enableGammaCorrection);
 
     // build and compile shaders
     // -------------------------
@@ -433,9 +433,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
             computeDepthMapFramebuffer(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
-    // render to framebuffer
-    computeHDRColorFramebuffer(width, height);
-    //computeColorFramebuffer();
+
     
 
     // Resolve MSAA to screen or another texture FBO (SDR old)
@@ -448,6 +446,10 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    // render to framebuffer
+    computeHDRColorFramebuffer(width, height, settings);
+    //computeColorFramebuffer();
 
     // display UI/HUD above the scene and outside the framebuffer
     updateUI();

@@ -10,6 +10,7 @@ uniform sampler2D screenTexture;
 
 // Exposure control from CPU (e.g., 0.5–4.0)
 uniform float exposure;
+uniform bool useGamma;
 
 // ACES filmic tone mapper (Narkowicz 2015)
 vec3 ACESFilm(vec3 x) {
@@ -27,23 +28,26 @@ void main()
     
     if (useHDR)
     {
-        vec3 hdr = texture(screenTexture, TexCoords).rgb;
+        //vec3 hdr = texture(screenTexture, TexCoords).rgb;
+        vec3 hdr = vec3(1.0 - texture(screenTexture, TexCoords));
 
         // 1) Exposure
         color = hdr * exposure;
 
         // 2) Tone map (choose one curve)
         color = ACESFilm(color);
-        // Alternative simple Reinhard:
-        // color = color / (color + vec3(1.0));
+            //Alternative simple Reinhard:
+            //color = color / (color + vec3(1.0));
 
         // 3) Gamma correct if your default framebuffer is *linear* (not sRGB)
         // Remove this pow if you enable GL_FRAMEBUFFER_SRGB on the default framebuffer.
-        color = pow(color, vec3(1.0/2.2));
+        if (useGamma)
+            color = pow(color, vec3(1.0/2.2));
     }
     else
     {
-        color = texture(screenTexture, TexCoords).rgb;
+        //color = texture(screenTexture, TexCoords).rgb;
+        color = vec3(1.0 - texture(screenTexture, TexCoords));
     }
 
     FragColor = vec4(color, 1.0);

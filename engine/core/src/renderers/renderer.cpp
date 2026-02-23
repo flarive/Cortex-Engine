@@ -67,15 +67,6 @@ void engine::Renderer::enableFaceCulling(bool enable)
     }
 }
 
-//void engine::Renderer::enableGammaCorrection(bool enable)
-//{
-//    // gamma correction (default 2.2 gamma correction)
-//    //if (enable)
-//    //    glEnable(GL_FRAMEBUFFER_SRGB);
-//    //else
-//    //    glDisable(GL_FRAMEBUFFER_SRGB);
-//}
-
 void engine::Renderer::initDebugPlaneGrid()
 {
     m_debugPlaneGrid.init(10, 0.5f);
@@ -494,9 +485,11 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-    screenShader.setBool("useHDR", false);
-    screenShader.setFloat("exposure", 0.0f);
+    screenShader.setFloat("exposure", settings.exposure);
     screenShader.setBool("useGamma", settings.enableGammaCorrection);
+    screenShader.setBool("useToneMapping", settings.enableToneMapping);
+    screenShader.setInt("applyPostProcessFx", settings.applyPostProcessFx);
+    
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
@@ -515,19 +508,26 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    float exposure = 1.0f;
-
     screenShader.use();
     screenShader.setInt("screenTexture", 0);
-    screenShader.setBool("useHDR", true);
-    screenShader.setFloat("exposure", exposure); // e.g., 1.0–2.0
+    screenShader.setFloat("exposure", settings.exposure);
     screenShader.setBool("useGamma", settings.enableGammaCorrection);
+    screenShader.setBool("useToneMapping", settings.enableToneMapping);
+    screenShader.setInt("applyPostProcessFx", settings.applyPostProcessFx);
 
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
+    // test that HDR is working
+    testHDR(width, height);
+    
+    // render HDR framebuffer to screen as a big fullscreen quad
+    renderQuad();
+}
 
+void engine::Renderer::testHDR(int width, int height)
+{
     std::vector<float> data(width * height * 4);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data.data());
 
@@ -542,11 +542,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
 
     if (r > 1.0 || g > 1.0f || b > 1.0f)
         std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
-
-    // render HDR framebuffer to screen as a big fullscreen quad
-    renderQuad();
 }
-
 
 void engine::Renderer::updateEditorPropertySettings()
 {
@@ -563,14 +559,6 @@ void engine::Renderer::updateEditorPropertySettings()
         lastRenderModeWireframe = settings.drawAsWireframe;
     }
 
-    // enable gamma correction
-    static bool lastEnableGammaCorrection = settings.enableGammaCorrection;
-    if (lastEnableGammaCorrection != settings.enableGammaCorrection)
-    {
-        //enableGammaCorrection(settings.enableGammaCorrection);
-        lastEnableGammaCorrection = settings.enableGammaCorrection;
-    }
-    
     // enable/disable back face culling
     static bool lastEnableFaceCulling = settings.enableFaceCulling;
     if (lastEnableFaceCulling != settings.enableFaceCulling)

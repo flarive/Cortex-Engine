@@ -96,7 +96,10 @@ namespace engine
 
 	protected:
 		bool sceneSetting_drawAsWireframe{ false };
+		float sceneSetting_exposure{ 1.0f };
 		bool sceneSetting_enableGammaCorrection{ false };
+		bool sceneSetting_enableToneMapping{ false };
+		int sceneSetting_applyPostProcessFx{ 0 };
 		bool sceneSetting_enableFaceCulling{ true };
 		bool sceneSetting_enableCameraFrustrumCulling{ true };
 		bool sceneSetting_drawLightsVisualHelpers{ false };

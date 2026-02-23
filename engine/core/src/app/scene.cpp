@@ -250,6 +250,15 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "enable_gamma_correction") {
                 sceneSettings.enableGammaCorrection = boolValue;
             }
+            else if (key == "enable_tone_mapping") {
+                sceneSettings.enableToneMapping = boolValue;
+            }
+            else if (key == "post_process") {
+                sceneSettings.applyPostProcessFx = intValue;
+            }
+            else if (key == "exposure") {
+                sceneSettings.exposure = floatValue;
+            }
             else if (key == "enable_face_culling") {
                 sceneSettings.enableFaceCulling = boolValue;
             }
@@ -372,8 +381,6 @@ void engine::Scene::gameLoop()
     // measure ui time (part 2 begin)
     auto uiStart2 = Clock::now();
 
-    //m_renderer->enableGammaCorrection(false);
-
     // ImGUI rendering
     ImGui::Render();
 
@@ -402,8 +409,6 @@ void engine::Scene::gameLoop()
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
     SceneSettings& sceneSettings = singleton->sceneSettings();
-
-    //m_renderer->enableGammaCorrection(sceneSettings.enableGammaCorrection);
 
     // measure ui time (part 2 end)
     auto uiEnd2 = Clock::now();

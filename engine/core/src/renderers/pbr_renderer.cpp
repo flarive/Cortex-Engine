@@ -50,8 +50,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     // avoid computing back faces not visible by camera
     enableFaceCulling(settings.enableFaceCulling);
-    // automatic color correction
-    //enableGammaCorrection(settings.enableGammaCorrection);
 
     // build and compile shaders
     // -------------------------

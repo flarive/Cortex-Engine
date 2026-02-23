@@ -68,8 +68,6 @@ namespace engine
 
 		virtual Shader& getShader() = 0;
 
-		//void enableGammaCorrection(bool enable);
-
 		virtual void clean() = 0;
 
 	protected:
@@ -209,8 +207,8 @@ namespace engine
 
 
 	private:
-		//bool m_useHDR{};
-		
+		void testHDR(int width, int height);
+
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light
 	};

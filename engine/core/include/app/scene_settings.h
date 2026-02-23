@@ -47,7 +47,10 @@ namespace engine
         float iblDiffuseIntensity{ 1.0f };
         float iblSpecularIntensity{ 1.0f };
 
+        float exposure{ 1.0f };
         bool enableGammaCorrection{ false };
+        bool enableToneMapping{ false };
+        int applyPostProcessFx{ 0 };
         bool enableFaceCulling{ true };
         bool enableCameraFrustrumCulling{ true };
         bool drawAsWireframe{ false };

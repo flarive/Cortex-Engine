@@ -268,6 +268,8 @@ void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const cha
 {
     static bool isDraggingSlider = false;
 
+    ImGui::SetNextItemWidth(FIELD_WIDTH);
+
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::SliderInt(
         label,
@@ -291,6 +293,8 @@ void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const cha
 void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::SetNextItemWidth(FIELD_WIDTH);
 
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::SliderFloat(
@@ -316,6 +320,8 @@ void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const c
 void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::SetNextItemWidth(FIELD_WIDTH);
 
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::DragFloat(

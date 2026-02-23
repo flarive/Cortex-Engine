@@ -44,10 +44,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // avoid computing back faces not visible by camera
     enableFaceCulling(settings.enableFaceCulling);
     
-    // automatic color correction
-    //enableGammaCorrection(settings.enableGammaCorrection);
-   
-
     // build and compile shaders
     // -------------------------
     loadShaders();

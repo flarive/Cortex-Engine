@@ -215,6 +215,19 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
+    static bool lastEnableToneMapping = false;
+    if (ImGui::Toggle("Tone mapping", &sceneSetting_enableToneMapping, toggle_config))
+    {
+        if (m_onSceneSettingChanged && lastEnableToneMapping != sceneSetting_enableToneMapping)
+        {
+            m_onSceneSettingChanged("enable_tone_mapping", sceneSetting_enableToneMapping);
+            lastEnableToneMapping = sceneSetting_enableToneMapping;
+        }
+    }
+
+    static int lastApplyPostProcessFx = 0.0f;
+    EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 1, 3, m_onSceneSettingChanged);
+
     static bool lastEnableFaceCulling = true;
     if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))
     {
@@ -224,6 +237,10 @@ void engine::ImGuiEditor::renderTabSettings()
 			lastEnableFaceCulling = sceneSetting_enableFaceCulling;
         }
     }
+
+    static float lastExposure = 1.0f;
+    EditorHelper::renderDragFloatWithLabel("Exposure", "exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+
 
     static bool lastEnableCameraFrustrumCulling = true;
     if (ImGui::Toggle("Camera frustrum culling", &sceneSetting_enableCameraFrustrumCulling, toggle_config))

@@ -47,6 +47,7 @@ namespace engine
 		inline static const float ROUNDING = 3.0f;
 		inline static const ImVec2 SIZE{ 21.0f, 21.0f };
 		inline static const float ITEM_LABEL_WIDTH{ 100.0f }; // pixels
+		inline static const float FIELD_WIDTH = 120.0f;
 
 		static GLuint getIcon(const std::string& key);
 		static GLuint getEntityTypeSmallIcon(const EntityType entityType);

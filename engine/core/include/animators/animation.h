@@ -63,6 +63,7 @@ namespace engine
 		unsigned int m_desiredFPS{30u};
 		unsigned int m_numFrames{};
 		std::vector<Bone> m_bones{};
+		//std::unordered_map<std::string, Bone> m_BoneKeys;
 		AssimpNodeData m_rootNode{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		

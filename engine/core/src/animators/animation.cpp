@@ -29,6 +29,11 @@ engine::Bone* engine::Animation::findBone(const std::string& name)
 	);
 	if (iter == m_bones.end()) return nullptr;
 	else return &(*iter);
+
+	/*auto iter = m_BoneKeys.find(name);
+	if (iter != m_BoneKeys.end())
+		return &(iter->second);
+	return nullptr;*/
 }
 
 void engine::Animation::readMissingBones(const aiAnimation* animation, Model& model)

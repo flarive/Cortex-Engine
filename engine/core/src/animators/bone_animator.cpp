@@ -149,7 +149,7 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 		auto boneInfoMap = m_CurrentAnimation->getBoneIDMap();
 		if (boneInfoMap.find(nodeName) != boneInfoMap.end())
 		{
-			int index = boneInfoMap[nodeName].id;
+			int index = boneInfoMap[nodeName].id; // &&&&&&&&&&&&& ???????????????
 			glm::mat4 offset = boneInfoMap[nodeName].offset;
 			m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * offset;
 		}

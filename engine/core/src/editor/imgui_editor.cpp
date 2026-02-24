@@ -225,8 +225,8 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static int lastApplyPostProcessFx = 0;
-    EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 1, 3, m_onSceneSettingChanged);
+    static int lastApplyPostProcessFx = static_cast<int>(PostProcessingEffect::None);
+    EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10, m_onSceneSettingChanged);
 
     static bool lastEnableFaceCulling = true;
     if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))

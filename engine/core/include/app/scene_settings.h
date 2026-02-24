@@ -22,7 +22,21 @@ namespace engine
         Color bottomColor{ Colors::Black };
         float ySplit{ 0.5f };
     };
-    
+
+    enum class PostProcessingEffect : int
+    {
+        None = 0,
+        InvertColors = 1,
+		Grayscale = 2,
+		Sepia = 3,
+		Blur = 4,
+		EdgeDetection = 5,
+		Vignette = 6,
+		ChromaticAberration = 7,
+		Pixelate = 8,
+		Scanlines = 9,
+		Bloom = 10
+    };
 
     struct SceneSettings final
     {
@@ -50,7 +64,7 @@ namespace engine
         float exposure{ 1.0f };
         bool enableGammaCorrection{ false };
         bool enableToneMapping{ false };
-        int applyPostProcessFx{ 0 };
+        int applyPostProcessFx{ static_cast<int>(PostProcessingEffect::None) };
         bool enableFaceCulling{ true };
         bool enableCameraFrustrumCulling{ true };
         bool drawAsWireframe{ false };

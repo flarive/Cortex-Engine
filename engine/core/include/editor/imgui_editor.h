@@ -11,6 +11,8 @@
 #include "../ecs/animator_component.h"
 #include "../ecs/particlesystem_component.h"
 
+#include "../app/scene_settings.h"
+
 #include "../lights/light.h"
 
 #include "editor_helper.h"
@@ -99,7 +101,7 @@ namespace engine
 		float sceneSetting_exposure{ 1.0f };
 		bool sceneSetting_enableGammaCorrection{ false };
 		bool sceneSetting_enableToneMapping{ false };
-		int sceneSetting_applyPostProcessFx{ 0 };
+		int sceneSetting_applyPostProcessFx{ static_cast<int>(PostProcessingEffect::None) };
 		bool sceneSetting_enableFaceCulling{ true };
 		bool sceneSetting_enableCameraFrustrumCulling{ true };
 		bool sceneSetting_drawLightsVisualHelpers{ false };

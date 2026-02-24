@@ -488,7 +488,7 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     screenShader.setFloat("exposure", settings.exposure);
     screenShader.setBool("useGamma", settings.enableGammaCorrection);
     screenShader.setBool("useToneMapping", settings.enableToneMapping);
-    screenShader.setInt("applyPostProcessFx", settings.applyPostProcessFx);
+    screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
     
 
     glActiveTexture(GL_TEXTURE0);
@@ -513,7 +513,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     screenShader.setFloat("exposure", settings.exposure);
     screenShader.setBool("useGamma", settings.enableGammaCorrection);
     screenShader.setBool("useToneMapping", settings.enableToneMapping);
-    screenShader.setInt("applyPostProcessFx", settings.applyPostProcessFx);
+    screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
 
 
     glActiveTexture(GL_TEXTURE0);

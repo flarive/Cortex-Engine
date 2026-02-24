@@ -72,7 +72,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
     pbrShader.setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    pbrShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
@@ -380,7 +380,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->position);
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    pbrShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 

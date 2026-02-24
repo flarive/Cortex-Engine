@@ -52,7 +52,7 @@ namespace engine
         float HDRSkyboxBlurStrength{ 0.0f };
 
         bool enableShadows{ true };
-        int shadowCalculationMethod{ static_cast<int>(ShadowCalculationMethod::PCFSoft) };
+        ShadowCalculationMethod shadowCalculationMethod{ ShadowCalculationMethod::PCFSoft };
         float shadowIntensity{ 1.5f };
         float shadowMapsTextureSize{ 2048.0f };
         float shadowMapsBiasFactor{ 0.001f };
@@ -64,7 +64,7 @@ namespace engine
         float exposure{ 1.0f };
         bool enableGammaCorrection{ false };
         bool enableToneMapping{ false };
-        int applyPostProcessFx{ static_cast<int>(PostProcessingEffect::None) };
+        PostProcessingEffect applyPostProcessFx{ PostProcessingEffect::None };
         bool enableFaceCulling{ true };
         bool enableCameraFrustrumCulling{ true };
         bool drawAsWireframe{ false };
@@ -73,6 +73,4 @@ namespace engine
         bool drawBoundingBoxesVisualHelpers{ false };
         bool drawNormalsVisualHelpers{ false };
     };
-
-    
 }

@@ -8,6 +8,8 @@
 #include "../../include/tools/helpers.h"
 #include "../../include/aabb.h"
 
+#include "../../include/lights/light.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -254,7 +256,7 @@ void engine::Scene::listenForEditorChanges()
                 sceneSettings.enableToneMapping = boolValue;
             }
             else if (key == "post_process") {
-                sceneSettings.applyPostProcessFx = intValue;
+                sceneSettings.applyPostProcessFx = static_cast<PostProcessingEffect>(intValue);
             }
             else if (key == "exposure") {
                 sceneSettings.exposure = floatValue;
@@ -278,7 +280,7 @@ void engine::Scene::listenForEditorChanges()
                 sceneSettings.enableShadows = boolValue;
             }
             else if (key == "shadow_calculation_method") {
-                sceneSettings.shadowCalculationMethod = intValue;
+                sceneSettings.shadowCalculationMethod = static_cast<ShadowCalculationMethod>(intValue);
             }
             else if (key == "shadow_intensity") {
                 sceneSettings.shadowIntensity = floatValue;

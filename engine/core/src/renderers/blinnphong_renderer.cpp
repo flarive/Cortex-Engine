@@ -52,7 +52,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    blinnPhongShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
@@ -144,7 +144,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setMat4("view", view);
     blinnPhongShader.setVec3("viewPos", camera->position);
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    blinnPhongShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     

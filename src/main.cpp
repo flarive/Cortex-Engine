@@ -22,7 +22,7 @@ using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene3;
+using MyScene = MyScene11;
 
 App* myApp{};
 Scene* myScene{};
@@ -49,6 +49,7 @@ static void gamepadUpdate();
 int main(int, char**)
 {
     // Init the app
+    //myApp = new MyApp("MyApp", 320, 240, false);
     myApp = new MyApp("MyApp", 1280, 720, false);
     if (myApp)
     {

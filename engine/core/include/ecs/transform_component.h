@@ -30,7 +30,7 @@ namespace engine
 			return "Transform";
 		}
 
-		Transform getTransform() { return m_transform; }
+		Transform& getTransform() { return m_transform; }
 		glm::mat4& getWorldTransformMatrix() { return m_worldTransform; }
 
 

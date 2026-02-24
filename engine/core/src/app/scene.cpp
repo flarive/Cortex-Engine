@@ -461,10 +461,9 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
     // new way
     for (const auto& [typeID, component] : entity->components)
     {
-        auto trs = entity->getTransform();
-        
         if (typeID != ComponentType::transform)
         {
+            auto& trs = entity->getTransform();
             component->init(trs);
         }
     }
@@ -571,7 +570,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
         }
 
-        auto transform = entity->getTransform();
+        auto& transform = entity->getTransform();
 
         // looping over entity components
         for (const auto& [typeID, component] : entity->components)
@@ -606,7 +605,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             }
             else if (typeID == ComponentType::animator)
             {
-				component->update(deltaTime, transform);
+                component->update(deltaTime, transform);
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
             else if (typeID == ComponentType::particleSystem)

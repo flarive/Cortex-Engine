@@ -4,17 +4,22 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 	: Animator(animation)
 {
 	m_animationsFinalBoneMatrices.clear();
-	
-	auto animmFinalBoneMatrices = std::vector<glm::mat4>();
-	animmFinalBoneMatrices.reserve(100);
 
-	for (int i = 0; i < 100; i++)
+	m_boneCount = 100; // temp
+
+	if (m_boneCount > 0)
 	{
-		animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
-	}
+		auto animmFinalBoneMatrices = std::vector<glm::mat4>();
+		animmFinalBoneMatrices.reserve(m_boneCount);
 
-	// create a new entry
-	m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+		for (unsigned int i = 0; i < m_boneCount; i++)
+		{
+			animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
+		}
+
+		// create a new entry
+		m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+	}
 }
 
 engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations)
@@ -22,18 +27,23 @@ engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& an
 {
 	m_animationsFinalBoneMatrices.clear();
 
-	for (const auto& animation : m_animations)
+	m_boneCount = 100; // temp
+
+	if (m_boneCount > 0)
 	{
-		auto animmFinalBoneMatrices = std::vector<glm::mat4>();
-		animmFinalBoneMatrices.reserve(100);
-
-		for (int i = 0; i < 100; i++)
+		for (const auto& animation : m_animations)
 		{
-			animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
-		}
+			auto animmFinalBoneMatrices = std::vector<glm::mat4>();
+			animmFinalBoneMatrices.reserve(m_boneCount);
 
-		// create a new entry
-		m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+			for (unsigned int i = 0; i < m_boneCount; i++)
+			{
+				animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
+			}
+
+			// create a new entry
+			m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+		}
 	}
 }
 
@@ -115,20 +125,20 @@ const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() cons
 
 void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
-	std::string nodeName = node->name;
+	const std::string& nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;
 
-	Bone* Bone = m_CurrentAnimation->findBone(nodeName);
+	Bone* bone = m_CurrentAnimation->findBone(nodeName);
 
-	if (Bone)
+	if (bone)
 	{
-		Bone->update(m_CurrentTime);
-		nodeTransform = Bone->getLocalTransform();
+		bone->update(m_CurrentTime);
+		nodeTransform = bone->getLocalTransform();
 	}
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-	std::string currentAnimName = m_CurrentAnimation->getName();
+	const std::string& currentAnimName = m_CurrentAnimation->getName();
 
 	bool keyExists = m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end();
 

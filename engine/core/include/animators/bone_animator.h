@@ -59,7 +59,14 @@ namespace engine
 
 		const std::vector<glm::mat4>& getFinalBoneMatrices() const override;
 
+
+		
+
+
 	private:
+		
+		
+		
 		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
 
 		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);

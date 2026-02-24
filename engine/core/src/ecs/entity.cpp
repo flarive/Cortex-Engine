@@ -169,7 +169,7 @@ void engine::Entity::updateSelfAndChild(const glm::mat4& parentTransform)
 //}
 
 
-engine::Transform engine::Entity::getTransform()
+engine::Transform& engine::Entity::getTransform()
 {
 	auto trsComponent = getComponent<engine::TransformComponent>();
 	if (trsComponent)
@@ -179,7 +179,7 @@ engine::Transform engine::Entity::getTransform()
 
 	logger.warn("Entity getTransform() error, entity {} has no transform component", this->name);
 
-	return Transform{};
+	return m_emptyTransform;
 }
 
 void engine::Entity::setTransform(const engine::Transform& transform)

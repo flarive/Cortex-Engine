@@ -40,7 +40,7 @@ namespace engine
 
 
 		// fast helpers
-		Transform getTransform();
+		Transform& getTransform();
 		void setTransform(const engine::Transform& transform);
 		
 		glm::mat4& getWorldTransform();
@@ -102,6 +102,6 @@ namespace engine
 
 		//SphereVolume generateSphereBV(const Model& model);
 
-		
+		Transform m_emptyTransform{};
 	};
 }

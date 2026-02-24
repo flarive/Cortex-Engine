@@ -13,6 +13,12 @@ engine::AnimatorComponent::AnimatorComponent(std::shared_ptr<Animator> animator)
 void engine::AnimatorComponent::init(Transform& transform)
 {
 	m_animator->playAnimationAtIndex(0);
+
+	
+	// retreive model component
+	
+
+	
 }
 
 void engine::AnimatorComponent::update(float deltaTime, Transform& transform)

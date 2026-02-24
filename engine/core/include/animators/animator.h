@@ -52,11 +52,17 @@ namespace engine
 
 		virtual const std::vector<glm::mat4>& getFinalBoneMatrices() const = 0;
 
+		void setBoneCount(unsigned int boneCount) { m_boneCount = boneCount; }
+
+
 	protected:
 		std::vector<std::shared_ptr<Animation>> m_animations{};
 		std::shared_ptr<Animation> m_CurrentAnimation{};
 		float m_CurrentTime{};
 		float m_DeltaTime{};
 		bool m_isPlaying{ false };
+
+		unsigned int m_boneCount{};
+
     };
 }

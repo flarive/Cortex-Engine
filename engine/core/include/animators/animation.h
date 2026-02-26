@@ -50,6 +50,8 @@ namespace engine
 		void setSpeedFactor(float speedFactor) { m_speedFactor = speedFactor; }
 
 		std::string getFilepath() { return m_filepath; }
+
+		size_t getBoneCount() { return m_bones.size(); }
 		
 
 

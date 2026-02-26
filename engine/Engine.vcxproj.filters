@@ -184,6 +184,12 @@
     <Filter Include="Fichiers sources\core\particles">
       <UniqueIdentifier>{237a199b-cb27-4d0b-b2a5-cf03a6f5b857}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\terrain">
+      <UniqueIdentifier>{2f2f3e69-50ca-406d-b443-b4056bbec323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\terrain">
+      <UniqueIdentifier>{c97c2514-2a1d-49eb-a60d-0a079119a77f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -431,6 +437,12 @@
     </ClCompile>
     <ClCompile Include="..\libs\stb\stb_vorbis.c">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\terrain\Terrain.cpp">
+      <Filter>Fichiers sources\core\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ecs\terrain_component.cpp">
+      <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -717,6 +729,12 @@
       <Filter>Fichiers d%27en-tête\core\particles</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\particlesystem_component.h">
+      <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\terrain\Terrain.h">
+      <Filter>Fichiers d%27en-tête\core\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ecs\terrain_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
   </ItemGroup>

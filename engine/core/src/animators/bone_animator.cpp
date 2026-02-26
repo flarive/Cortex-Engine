@@ -5,8 +5,7 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 {
 	m_animationsFinalBoneMatrices.clear();
 
-	m_boneCount = 100; // temp
-
+	m_boneCount = animation->getBoneCount();
 	if (m_boneCount > 0)
 	{
 		auto animmFinalBoneMatrices = std::vector<glm::mat4>();
@@ -27,22 +26,24 @@ engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& an
 {
 	m_animationsFinalBoneMatrices.clear();
 
-	m_boneCount = 100; // temp
-
-	if (m_boneCount > 0)
+	if (animations.size() > 0)
 	{
-		for (const auto& animation : m_animations)
+		m_boneCount = animations[0]->getBoneCount();
+		if (m_boneCount > 0)
 		{
-			auto animmFinalBoneMatrices = std::vector<glm::mat4>();
-			animmFinalBoneMatrices.reserve(m_boneCount);
-
-			for (unsigned int i = 0; i < m_boneCount; i++)
+			for (const auto& animation : m_animations)
 			{
-				animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
-			}
+				auto animmFinalBoneMatrices = std::vector<glm::mat4>();
+				animmFinalBoneMatrices.reserve(m_boneCount);
 
-			// create a new entry
-			m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+				for (unsigned int i = 0; i < m_boneCount; i++)
+				{
+					animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
+				}
+
+				// create a new entry
+				m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+			}
 		}
 	}
 }

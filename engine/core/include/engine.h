@@ -34,6 +34,7 @@
 #include "ecs/model_component.h"
 #include "ecs/animator_component.h"
 #include "ecs/particlesystem_component.h"
+#include "ecs/terrain_component.h"
 
 
 #include "models/model.h"
@@ -68,6 +69,8 @@
 
 #include "particles/particle.h"
 #include "particles/particle_system.h"
+
+#include "terrain/terrain.h"
 
 #include "managers/log_manager.h"
 #include "managers/audio_manager.h"

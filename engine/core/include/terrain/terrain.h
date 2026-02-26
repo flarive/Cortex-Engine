@@ -19,43 +19,71 @@
 #include "../../include/debug/opengl_debug.h"
 #include "../../include/debug/debug_draw_line.h"
 
-namespace Engine
+namespace engine
 {
-	class Terrain final
+    enum class TerrainType { undefined = 0, terrain = 1 };
+    
+    class Terrain final
 	{
 	public:
 		Terrain() = default;
 		~Terrain() = default;
 
-        void setup() override;
-        void setup(const std::shared_ptr<Terrain>& material) override;
-        void setup(const std::shared_ptr<Terrain>& material, const UvMapping& uv) override;
+        void setup();
+        void setup(const std::shared_ptr<Terrain>& material);
+        void setup(const std::shared_ptr<Terrain>& material, const UvMapping& uv);
 
-        ordered_map<std::string, EditorProperty> getPublicProperties() override {
+        ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
             };
         }
 
-        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
+        std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
             return {
             };
         }
 
 
-        std::vector<Vertex> generateVertices() override;
+        std::vector<Vertex> generateVertices();
 
         // draws the model, and thus all its meshes
-        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
+        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform);
 
 
-        PrimitiveType getTypeID() const override
+        TerrainType getTypeID() const
         {
-            return PrimitiveType::billboard;
+            return TerrainType::terrain;
         }
 
-        void clean() override;
+        bool isEnabled() const { return m_isEnabled; }
+        void setEnabled(bool enabled) { m_isEnabled = enabled; }
+
+        glm::vec3& getPosition() { return m_position; }
+        glm::vec3& getRotation() { return m_rotation; }
+        glm::vec3& getScale() { return m_scale; }
+
+        void setPosition(const glm::vec3& position) { m_position = position; }
+        void setRotation(const glm::vec3& rotation) { m_rotation = rotation; }
+        void setScale(const glm::vec3& scale) { m_scale = scale; }
+
+        void setTransform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale) {
+            m_position = position;
+            m_rotation = rotation;
+            m_scale = scale;
+        }
+
+        void clean();
 
     private:
+
+		bool m_isEnabled{ true };
+
+        float m_uvScale{ 1.0f };
+
+        glm::vec3 m_position{};
+        glm::vec3 m_rotation{};
+        glm::vec3 m_scale{};
+        
         void geometrySetup();
 	};
 }

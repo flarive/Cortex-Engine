@@ -52,7 +52,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
     blinnPhongShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
@@ -94,6 +94,9 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // solid/wireframe polygons
     glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+
+	// tesselation configuration
+    glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)

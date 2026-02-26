@@ -17,7 +17,7 @@
 
 namespace engine
 {
-    enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5, animator = 6, particleSystem = 7, Terrain = 8 };
+    enum class ComponentType { undefined = 0, transform = 1, camera = 2, primitive = 3, model = 4, light = 5, animator = 6, particleSystem = 7, terrain = 8 };
 
 
 

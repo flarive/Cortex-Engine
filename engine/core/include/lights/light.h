@@ -31,7 +31,8 @@ namespace engine
         return it != LightTypeNames.end() ? it->second : "unknown";
     }
 
-    enum class ShadowCalculationMethod : int {
+	// simple enum to send to shader for shadow calculation method selection
+    enum ShadowCalculationMethod {
         Unknown,
         PCF,
         PCFSoft,

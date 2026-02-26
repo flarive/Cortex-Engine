@@ -23,7 +23,8 @@ namespace engine
         float ySplit{ 0.5f };
     };
 
-    enum class PostProcessingEffect : int
+    // simple enum to send to shader
+    enum PostProcessingEffect
     {
         None = 0,
         InvertColors = 1,

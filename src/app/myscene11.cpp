@@ -9,8 +9,7 @@ MyScene11::MyScene11(string _title, App* _app) : Scene(_title, _app, SceneSettin
         .method = RenderMethod::BlinnPhong,
         .backgroundGradientColors{true, Colors::hexToNormalizedRGB("#a0a0a0"), Colors::hexToNormalizedRGB("#cccccc"), 0.75f},
         .showDebugGrid = true,
-        .shadowIntensity = 2.0f,
-        .applyPostProcessFx = PostProcessingEffect::InvertColors
+        .shadowIntensity = 2.0f
     })
 {
     // my application specific state gets initialized here

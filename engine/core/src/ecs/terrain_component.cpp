@@ -5,7 +5,7 @@
 #include "../../include/terrain/terrain.h"
 
 
-engine::TerrainComponent::TerrainComponent(std::shared_ptr<Terrain> primitive) : m_terrain(terrain)
+engine::TerrainComponent::TerrainComponent(std::shared_ptr<Terrain> terrain) : m_terrain(terrain)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(terrain));
 
@@ -88,9 +88,9 @@ void engine::TerrainComponent::setProperty(const std::string& key, engine::Edito
 	}
 }
 
-void engine::PrimitiveComponent::setEnabled(bool enabled)
+void engine::TerrainComponent::setEnabled(bool enabled)
 {
-	ComponentBase<PrimitiveComponent>::setEnabled(enabled);
+	ComponentBase<TerrainComponent>::setEnabled(enabled);
 
-	m_primitive->setEnabled(enabled);
+	m_terrain->setEnabled(enabled);
 }

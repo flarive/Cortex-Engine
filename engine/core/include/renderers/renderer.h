@@ -50,7 +50,7 @@ namespace engine
 		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes
 
 		
-		
+		const unsigned int NUM_PATCH_PTS = 4;
 
 		
 		Renderer(GLFWwindow* window);
@@ -203,10 +203,10 @@ namespace engine
 		unsigned int U_BRDF = 9;
 
 
-		
-
 
 	private:
+		
+		
 		void testHDR(int width, int height);
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light

@@ -225,7 +225,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static int lastApplyPostProcessFx = static_cast<int>(PostProcessingEffect::None);
+    static int lastApplyPostProcessFx = PostProcessingEffect::None;
     EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10, m_onSceneSettingChanged);
 
     static bool lastEnableFaceCulling = true;
@@ -295,7 +295,7 @@ void engine::ImGuiEditor::renderTabSettings()
 
     
 
-    static int lastShadowCalculationMethod = static_cast<int>(ShadowCalculationMethod::PCFSoft);
+    static int lastShadowCalculationMethod = ShadowCalculationMethod::PCFSoft;
     EditorHelper::renderSliderIntWithLabel("Shadow maps method", "shadow_calculation_method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3, m_onSceneSettingChanged);
 
     static int lastShadowMapTextureSize = 2048;

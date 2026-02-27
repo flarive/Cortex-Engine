@@ -484,6 +484,12 @@ void engine::ImGuiEditor::renderComponents(const std::shared_ptr<Entity>& entity
             auto particleSystemComponent = dynamic_pointer_cast<ParticleSystemComponent>(component);
             if (particleSystemComponent) renderParticleSystemComponent(particleSystemComponent);
         }
+        else if (typeID == ComponentType::terrain)
+        {
+            // terrain component
+            auto terrainComponent = dynamic_pointer_cast<TerrainComponent>(component);
+            if (terrainComponent) renderTerrainComponent(terrainComponent);
+        }
     }
 }
 
@@ -815,6 +821,28 @@ void engine::ImGuiEditor::renderParticleSystemComponent(std::shared_ptr<Particle
     if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(particleSystem->getTypeID()));
+    }
+}
+
+void engine::ImGuiEditor::renderTerrainComponent(std::shared_ptr<TerrainComponent>& component)
+{
+    auto terrain = component->getTerrain();
+    if (!terrain)
+        return;
+
+    bool enabled = component->isEnabled();
+
+    std::function<void(bool)> onCheck = [component, &enabled](bool checked) {
+        component->setEnabled(checked);
+        enabled = component->isEnabled();
+        };
+
+    static bool isHeaderExpanded = true; // Set to true to start expanded
+
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
+    {
+        EditorHelper::renderDynamicProperties(component, to_string(terrain->getTypeID()));
     }
 }
 

@@ -11,6 +11,8 @@
 
 namespace engine
 {
+    using TextureData = std::tuple<unsigned int, unsigned char*, int, int, int>;
+
     struct TextureLoadResult final {
         std::future<std::tuple<unsigned char*, int, int, int>> future;
         bool ready = false;
@@ -24,6 +26,8 @@ namespace engine
         extern std::mutex textureQueueMutex;
         extern std::unordered_map<std::string, unsigned int> textureIDCache;
     }
+
+    
 
     
     class Texture final : private NonCopyableButMovable
@@ -43,7 +47,7 @@ namespace engine
 
         void bind() const;
 
-        static std::tuple<unsigned int, unsigned char*, int, int, int> loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
+        static TextureData loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTextureAsync(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);

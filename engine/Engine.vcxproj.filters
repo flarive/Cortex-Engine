@@ -438,7 +438,7 @@
     <ClCompile Include="..\libs\stb\stb_vorbis.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\terrain\Terrain.cpp">
+    <ClCompile Include="core\src\terrain\terrain.cpp">
       <Filter>Fichiers sources\core\terrain</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ecs\terrain_component.cpp">
@@ -731,7 +731,7 @@
     <ClInclude Include="core\include\ecs\particlesystem_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\terrain\Terrain.h">
+    <ClInclude Include="core\include\terrain\terrain.h">
       <Filter>Fichiers d%27en-tête\core\terrain</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ecs\terrain_component.h">

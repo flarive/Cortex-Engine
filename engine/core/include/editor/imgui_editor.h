@@ -10,6 +10,7 @@
 #include "../ecs/primitive_component.h"
 #include "../ecs/animator_component.h"
 #include "../ecs/particlesystem_component.h"
+#include "../ecs/terrain_component.h"
 
 #include "../app/scene_settings.h"
 
@@ -90,6 +91,7 @@ namespace engine
 		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
 		void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
 		void renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component);
+		void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
 
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 

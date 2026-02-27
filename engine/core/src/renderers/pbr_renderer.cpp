@@ -341,10 +341,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     backgroundShader.setMat4("projection", projection);
 
 
-    // tesselation configuration
-    glPatchParameteri(GL_PATCH_VERTICES, NUM_PATCH_PTS);
-
-
     // then before rendering, configure the viewport to the original framebuffer's screen dimensions
     int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);

@@ -16,13 +16,14 @@
 #include "app/myscene10.h" // PBR area lights demo
 #include "app/myscene11.h" // blinnphong animated character
 #include "app/myscene12.h" // PBR wood plane with misc materials
-#include "app/myscene13.h" // blinnphong Particles
+#include "app/myscene13.h" // blinnphong particles
+#include "app/myscene14.h" // blinnphong terrain
 
 using namespace engine;
 
 // make it easier to switch between apps
 using MyApp = MyApp1;
-using MyScene = MyScene2;
+using MyScene = MyScene14;
 
 App* myApp{};
 Scene* myScene{};

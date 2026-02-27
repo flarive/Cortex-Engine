@@ -123,14 +123,12 @@ void engine::Scene::initialize()
 
     lights = m_entityManager.findEntitiesOfType<Light>();
 	if (lights.size() == 0) logger.warn("Scene has no light !");
-    //assert(lights.size() > 0 && "Scene has no light !");
 
     // assign light indexes
     computeLightsIndexes();
 
     cameras = m_entityManager.findEntitiesOfType<Camera>();
     if (cameras.size() == 0) logger.warn("Scene has no camera !");
-    //assert(cameras.size() > 0 && "Scene has no camera !");
 
     m_editor.initRenderGuizmo(getActiveCamera());
 
@@ -460,13 +458,11 @@ void engine::Scene::initEntities()
 
 void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& entity)
 {
-    // new way
     for (const auto& [typeID, component] : entity->components)
     {
         if (typeID != ComponentType::transform)
         {
-            auto& trs = entity->getTransform();
-            component->init(trs);
+            component->init(entity->getTransform());
         }
     }
 
@@ -611,6 +607,11 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
             else if (typeID == ComponentType::particleSystem)
+            {
+                component->update(deltaTime, transform);
+                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            }
+            else if (typeID == ComponentType::terrain)
             {
                 component->update(deltaTime, transform);
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());

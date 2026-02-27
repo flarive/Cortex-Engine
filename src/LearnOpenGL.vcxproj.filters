@@ -122,6 +122,9 @@
     <Filter Include="resources\textures\pbr\white-marble">
       <UniqueIdentifier>{f55ab79b-28ae-497e-9292-f5f93b48d7d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\height">
+      <UniqueIdentifier>{1c0a823e-ce6f-49af-9f7e-e95da2335f40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -167,6 +170,9 @@
       <Filter>sources\app</Filter>
     </ClCompile>
     <ClCompile Include="app\myscene13.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\myscene14.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>
   </ItemGroup>
@@ -747,9 +753,6 @@
     <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\phong.vertex">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\concrete_normal.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
@@ -757,9 +760,6 @@
       <Filter>resources\sounds</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\phong.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\gaussianblur.frag">
@@ -966,6 +966,27 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_roughness.png">
       <Filter>resources\textures\pbr\white-marble</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\height.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\height.tcs">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\height.tes">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\height.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\iceland_heightmap.png">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\river_heightmap.png">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\river2_heightmap.png">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -1008,6 +1029,9 @@
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\myscene13.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\myscene14.h">
       <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>

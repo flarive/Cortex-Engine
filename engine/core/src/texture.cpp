@@ -79,7 +79,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool repe
 /// <summary>
 /// Synchronous texture loading
 /// </summary>
-std::tuple<unsigned int, unsigned char*, int, int, int> engine::Texture::loadTextureExtended(const std::string& filename, bool repeat, bool gammaCorrection)
+engine::TextureData engine::Texture::loadTextureExtended(const std::string& filename, bool repeat, bool gammaCorrection)
 {
     unsigned int textureID{};
     glGenTextures(1, &textureID);

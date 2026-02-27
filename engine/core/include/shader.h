@@ -27,6 +27,7 @@ namespace engine
 
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath, const char* tessControlPath, const char* tessEvalPath);
 
         bool isValid() const;
 

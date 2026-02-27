@@ -22,16 +22,27 @@
 namespace engine
 {
     enum class TerrainType { undefined = 0, terrain = 1 };
+
+
+    const std::unordered_map<TerrainType, std::string> terrainTypeNames = {
+        {TerrainType::undefined, "undefined"},
+        {TerrainType::terrain, "Terrain"}
+    };
+
+    inline std::string to_string(TerrainType type) {
+        auto it = terrainTypeNames.find(type);
+        return it != terrainTypeNames.end() ? it->second : "unknown";
+    }
     
     class Terrain final
 	{
 	public:
-		Terrain() = default;
+		Terrain(unsigned int width = 512, unsigned int height = 512, unsigned int patchCount = 4);
 		~Terrain() = default;
 
         void setup();
-        void setup(const std::shared_ptr<Terrain>& material);
-        void setup(const std::shared_ptr<Terrain>& material, const UvMapping& uv);
+        void setup(const std::shared_ptr<Material>& material);
+        void setup(const std::shared_ptr<Material>& material, const UvMapping& uv);
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
@@ -43,11 +54,12 @@ namespace engine
             };
         }
 
-
-        std::vector<Vertex> generateVertices();
+        
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform);
+
+        std::vector<engine::Vertex> generateVertices();
 
 
         TerrainType getTypeID() const
@@ -78,13 +90,29 @@ namespace engine
 
 		bool m_isEnabled{ true };
 
+        int m_width{};
+        int m_height{};
+        int m_patchCount{};
+
+        std::shared_ptr<Material> m_material{};
         float m_uvScale{ 1.0f };
 
         glm::vec3 m_position{};
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
         
+        Shader m_tessHeightMapShader{};
+
+        unsigned int m_textureId{};
+        int m_textureWidth{};
+        int m_textureHeight{};
+
+        unsigned int m_terrainVAO{};
+        unsigned int m_terrainVBO{};
+
+        unsigned int m_rez{ 20 };
+
+        void loadShaders();
         void geometrySetup();
 	};
 }
-

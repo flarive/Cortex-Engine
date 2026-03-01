@@ -6,6 +6,7 @@
 #include "../../include/ecs/camera_component.h"
 #include "../../include/ecs/light_component.h"
 #include "../../include/ecs/particlesystem_component.h"
+#include "../../include/ecs/terrain_component.h"
 
 #include "../../include/managers/log_manager.h"
 
@@ -27,6 +28,7 @@ engine::EntityType engine::Entity::getType()
 	if (auto component = getComponent<LightComponent>()) return engine::EntityType::light;
 	if (auto component = getComponent<CameraComponent>()) return engine::EntityType::camera;
 	if (auto component = getComponent<ParticleSystemComponent>()) return engine::EntityType::particleSystem;
+	if (auto component = getComponent<TerrainComponent>()) return engine::EntityType::terrain;
 
 	return engine::EntityType::undefined;
 }
@@ -39,6 +41,7 @@ std::string engine::Entity::getTypeName()
 	if (entityType == engine::EntityType::light) return "Light";
 	if (entityType == engine::EntityType::camera) return "Camera";
 	if (entityType == engine::EntityType::particleSystem) return "Particle system";
+	if (entityType == engine::EntityType::terrain) return "terrain";
 
 	return "";
 }
@@ -118,6 +121,10 @@ std::string engine::Entity::getTypeNameEx()
 	else if (auto particleSystemComponent = getComponent<ParticleSystemComponent>())
 	{
 		return "Particle system";
+	}
+	else if (auto terrainComponent = getComponent<TerrainComponent>())
+	{
+		return "Terrain";
 	}
 
 	return "";
@@ -234,6 +241,14 @@ engine::AABB* engine::Entity::getBoundingVolume()
 	else if (auto modelComponent = getComponent<engine::ModelComponent>())
 	{
 		return modelComponent->getBoundingVolume();
+	}
+	else if (auto particleSystemComponent = getComponent<engine::ParticleSystemComponent>())
+	{
+		return particleSystemComponent->getBoundingVolume();
+	}
+	else if (auto terrainComponent = getComponent<engine::TerrainComponent>())
+	{
+		return terrainComponent->getBoundingVolume();
 	}
 
 	return nullptr;

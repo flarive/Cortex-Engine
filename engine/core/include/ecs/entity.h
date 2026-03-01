@@ -12,7 +12,7 @@
 
 namespace engine
 {
-	enum class EntityType { undefined = 0, model = 1, primitive = 2, light = 3, camera = 4, particleSystem = 5 };
+	enum class EntityType { undefined = 0, model = 1, primitive = 2, light = 3, camera = 4, particleSystem = 5, terrain = 6 };
 
 	class Entity final
 	{

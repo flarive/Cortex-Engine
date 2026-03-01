@@ -610,11 +610,13 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             {
                 component->update(deltaTime, transform);
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+                inFrustrumCount++;
             }
             else if (typeID == ComponentType::terrain)
             {
                 component->update(deltaTime, transform);
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+                inFrustrumCount++;
             }
         }
 
@@ -633,7 +635,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
 
     auto entityType = entity->getType(); // could be optimized/avoided
-    if (entityType == EntityType::primitive || entityType == EntityType::model || entityType == EntityType::particleSystem)
+    if (entityType != EntityType::undefined && entityType != EntityType::light && entityType != EntityType::camera)
     {
         totalFrustrumCount++;
     }

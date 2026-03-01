@@ -888,12 +888,6 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Roughness.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\particles.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\particles.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\particle.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>

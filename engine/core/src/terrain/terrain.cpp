@@ -235,8 +235,26 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
 
 void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
 {
-    // be sure to activate shader when setting uniforms/drawing objects
+    if (!m_isEnabled)
+        return;
+
+    if (!m_material || !shader.isValid()) {
+        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
+        return;
+    }
+
+    if (!m_material->areAllTexturesLoaded()) {
+        std::cout << "Textures not ready. Deferring draw." << std::endl;
+        return;
+    }
+
+    if (m_terrainVAO == 0 || m_terrainVBO == 0) {
+        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
+        return;
+    }
+
     m_tessHeightMapShader.use();
+    OpenGLDebug::checkGLError("m_tessHeightMapShader.use");
 
     // view/projection transformations
     //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100000.0f);
@@ -250,6 +268,9 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
     glDrawArrays(GL_PATCHES, 0, m_patchCount * m_rez * m_rez);
+    glBindVertexArray(0);
+
+    shader.use();
 }
 
 void engine::Terrain::clean()

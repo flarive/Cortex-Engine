@@ -25,8 +25,8 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {7.0f, 27.5f, -169.9f} };
-    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
+    auto trsCamera1 = Transform{ {0.0f, 27.5f, 0.9f} };
+    auto camera1 = make_shared<FlyCamera>(5.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);

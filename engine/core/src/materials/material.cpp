@@ -55,6 +55,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_diffuse_map", false);
         shader.setBool("material.has_texture_specular_map", false);
         shader.setBool("material.has_texture_normal_map", false);
+        //shader.setBool("material.has_texture_height_map", false);
     }
 
     for (const auto& tex : textures)
@@ -256,11 +257,13 @@ void engine::Material::loadTexturesAsync()
         engine::Texture::loadTextureAsync(getDiffuseTexPath());
         engine::Texture::loadTextureAsync(getSpecularTexPath());
         engine::Texture::loadTextureAsync(getNormalTexPath());
+        engine::Texture::loadTextureAsync(getHeightTexPath());
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
         specularMapId = hasSpecularMap() ? engine::Texture::enqueueTextureCreation(getSpecularTexPath(), true) : 0;
         normalMapId = hasNormalMap() ? engine::Texture::enqueueTextureCreation(getNormalTexPath(), true) : 0;
+        heightMapId = hasHeightMap() ? engine::Texture::enqueueTextureCreation(getHeightTexPath(), true) : 0;
     }
 
 

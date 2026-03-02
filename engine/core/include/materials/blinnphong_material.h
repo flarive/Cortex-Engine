@@ -10,7 +10,7 @@ namespace engine
 		
 		BlinnPhongMaterial(const Color& ambientColor);
 		BlinnPhongMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess = 1.0f);
-		BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", float shininess = 1.0f);
+		BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& heightTexPath = "", float shininess = 1.0f);
 
 		MaterialType getTypeID() const override
 		{

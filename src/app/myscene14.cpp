@@ -45,8 +45,8 @@ void MyScene14::init()
 
 
     // terrain
-    auto myTerrain = make_shared<Terrain>(10, 10, 4);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    auto myTerrain = make_shared<Terrain>(20, 20, 4);
+    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(6.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);

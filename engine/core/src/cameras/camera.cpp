@@ -25,10 +25,10 @@ glm::mat4& engine::Camera::getViewMatrix()
     return m_viewMatrix;
 }
 
-glm::mat4& engine::Camera::getProjectionMatrix(float width, float height, float near, float far)
+glm::mat4& engine::Camera::getProjectionMatrix(float width, float height)
 {
     if (m_enabled)
-        m_projection = glm::perspective(glm::radians(zoom), width / height, near, far);
+        m_projection = glm::perspective(glm::radians(zoom), width / height, m_nearPlane, m_farPlane);
     else
 		m_projection = glm::mat4(0.0f);
     

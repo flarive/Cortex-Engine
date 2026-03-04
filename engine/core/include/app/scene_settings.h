@@ -11,8 +11,9 @@ namespace engine
 {
     enum class RenderMethod
     {
-        BlinnPhong = 0, // legacy
-        PBR = 1 // mainstream
+        Phong = 0,
+        BlinnPhong = 1, // legacy
+        PBR = 2 // mainstream
     };
 
     struct GradientBackgroundSettings final

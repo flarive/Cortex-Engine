@@ -85,6 +85,8 @@ namespace engine
 
 		bool isPerspective{ true };
 
+
+
         // constructor with vectors
         Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _speed = SPEED, float _sensitivity = SENSITIVITY);
 
@@ -98,7 +100,7 @@ namespace engine
 
         void setFromViewMatrix(const glm::mat4& view);
 
-        glm::mat4& getProjectionMatrix(float width, float height, float near = 0.1f, float far = 100.0f);
+        glm::mat4& getProjectionMatrix(float width, float height);
 
         // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
         virtual void processKeyboard(CameraMovement direction, float deltaTime, GLboolean constrainPitch = true) = 0;
@@ -134,13 +136,19 @@ namespace engine
         bool getEnabled() const { return m_enabled; }
         void setEnabled(bool enabled) { m_enabled = enabled; }
 
+        float& getNearPlane() { return m_nearPlane; }
+        float& getFarPlane() { return m_farPlane; }
+        void setNearPlane(float near) { m_nearPlane = near; }
+        void setFarPlane(float far) { m_farPlane = far; }
+
     protected:
+        bool m_enabled{ true };
 
         glm::mat4 m_viewMatrix{}; // Store the view matrix
         glm::mat4 m_projection{};
 
-		bool m_enabled{ true };
-
+        float m_nearPlane{ 0.1f };
+        float m_farPlane{ 100.0f };
 
         // calculates the front vector from the Camera's (updated) Euler Angles
         virtual void updateCameraVectors() = 0;

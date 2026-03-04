@@ -23,6 +23,7 @@
 #include "materials/pbr_material.h"
 
 #include "renderers/blinnphong_renderer.h"
+#include "renderers/phong_renderer.h"
 #include "renderers/pbr_renderer.h"
 
 #include "ecs/entity.h"

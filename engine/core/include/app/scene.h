@@ -4,6 +4,7 @@
 #include "../engine.h"
 
 #include "../renderers/renderer.h"
+#include "../renderers/phong_renderer.h"
 #include "../renderers/blinnphong_renderer.h"
 #include "../renderers/pbr_renderer.h"
 

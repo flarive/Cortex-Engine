@@ -25,28 +25,32 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {0.0f, 27.5f, 0.9f} };
-    auto camera1 = make_shared<FlyCamera>(5.0f, -90.0f, 0.0f, 10.0f);
+    auto trsCamera1 = Transform{ {0.0f, 27.5f, 25.0f} };
+    auto camera1 = make_shared<FlyCamera>(10.0f, 0.0f, 0.0f, 10.0f);
+    camera1->setNearPlane(0.1f);
+    camera1->setFarPlane(100000.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
+    //FlyCamera camera(10.0f, -128.1f, -42.4f, 10.0f, 1.0f, glm::vec3(67.0f, 627.5f, 169.9f));
+
 
     // light
-    auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
-    auto light1 = make_shared<PointLight>();
-    light1->intensity = 10.0f;
-    light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
-    auto entityLight1 = make_shared<Entity>("Light1");
-    entityLight1->addComponent<TransformComponent>(trsLight1);
-    entityLight1->addComponent<LightComponent>(light1);
-    getEntityManager().addChild(entityLight1);
+    //auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    //auto light1 = make_shared<PointLight>();
+    //light1->intensity = 10.0f;
+    //light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
+    //auto entityLight1 = make_shared<Entity>("Light1");
+    //entityLight1->addComponent<TransformComponent>(trsLight1);
+    //entityLight1->addComponent<LightComponent>(light1);
+    //getEntityManager().addChild(entityLight1);
 
 
     // terrain
     auto myTerrain = make_shared<Terrain>(20, 20, 4);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(6.0f));
+    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
@@ -57,14 +61,14 @@ void MyScene14::init()
 
 
 
-    textFPSCount.setup(app->window, FONT_PATH, 28);
+    //textFPSCount.setup(app->window, FONT_PATH, 28);
 
-    textPolyCount.setup(app->window, FONT_PATH, 28);
-    textMeshCount.setup(app->window, FONT_PATH, 28);
-    textPrimitiveCount.setup(app->window, FONT_PATH, 28);
+    //textPolyCount.setup(app->window, FONT_PATH, 28);
+    //textMeshCount.setup(app->window, FONT_PATH, 28);
+    //textPrimitiveCount.setup(app->window, FONT_PATH, 28);
 
-    textDrawnCount.setup(app->window, FONT_PATH, 28);
-    textTotalCount.setup(app->window, FONT_PATH, 28);
+    //textDrawnCount.setup(app->window, FONT_PATH, 28);
+    //textTotalCount.setup(app->window, FONT_PATH, 28);
 }
 
 
@@ -147,23 +151,23 @@ void MyScene14::update(Shader& shader)
 void MyScene14::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    //textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
+    //textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    //textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    //textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
-    textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
+    //textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
+    //textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
 }
 
 void MyScene14::clean()
 {
     // clean up any resources
-    textFPSCount.clean();
-    textPolyCount.clean();
-    textMeshCount.clean();
-    textPrimitiveCount.clean();
-    textDrawnCount.clean();
-    textTotalCount.clean();
+    //textFPSCount.clean();
+    //textPolyCount.clean();
+    //textMeshCount.clean();
+    //textPrimitiveCount.clean();
+    //textDrawnCount.clean();
+    //textTotalCount.clean();
 }

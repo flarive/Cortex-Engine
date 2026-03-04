@@ -214,6 +214,7 @@
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
     <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\phong_renderer.cpp" />
     <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
     <ClCompile Include="core\src\renderers\renderer.cpp" />
     <ClCompile Include="core\src\singleton.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="core\include\particles\particle_system.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
     <ClInclude Include="core\include\renderers\blinnphong_renderer.h" />
+    <ClInclude Include="core\include\renderers\phong_renderer.h" />
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />
     <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\singleton.h" />

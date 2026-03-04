@@ -37,8 +37,11 @@ engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
     if (_settings.method == RenderMethod::PBR) {
         m_renderer = new PbrRenderer(app->window);
     }
-    else {
+    else if (_settings.method == RenderMethod::BlinnPhong) {
         m_renderer = new BlinnPhongRenderer(app->window);
+    }
+    else {
+        m_renderer = new PhongRenderer(app->window);
     }
 
     // create scene entities hierarchy
@@ -313,7 +316,7 @@ void engine::Scene::gameLoop()
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
-    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height);
     glm::mat4 view = getActiveCamera()->getViewMatrix();
 
     // Start the Dear ImGui frame
@@ -485,7 +488,7 @@ void engine::Scene::drawEntities(Shader& shader)
 
 
     auto cam = getActiveCamera();
-    glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height, 0.1f, 100.0f);
+    glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height);
     glm::mat4 view = cam->getViewMatrix();
     const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
 

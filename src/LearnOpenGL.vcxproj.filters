@@ -981,6 +981,12 @@
     <CopyFileToFolders Include="..\resources\textures\height\river2_heightmap.png">
       <Filter>resources\textures\height</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\phong.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\phong.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

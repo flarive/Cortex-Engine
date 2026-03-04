@@ -6,7 +6,7 @@ using namespace engine;
 
 MyScene1::MyScene1(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::BlinnPhong,
+        .method = RenderMethod::Phong,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,

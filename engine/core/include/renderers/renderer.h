@@ -33,10 +33,6 @@ namespace engine
 	class Renderer
 	{
 	public:
-		
-		
-
-
 		// shaders accessible publicly
 
 		// Shader that renders the color framebuffer to the screen

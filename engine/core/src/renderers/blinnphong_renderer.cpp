@@ -108,7 +108,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
-    glm::mat4 projection = camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
+    glm::mat4 projection = camera->getProjectionMatrix(width, height);
     glm::mat4 view = camera->getViewMatrix();
 
     

@@ -444,6 +444,9 @@
     <ClCompile Include="core\src\ecs\terrain_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\renderers\phong_renderer.cpp">
+      <Filter>Fichiers sources\core\renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -736,6 +739,9 @@
     </ClInclude>
     <ClInclude Include="core\include\ecs\terrain_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\phong_renderer.h">
+      <Filter>Fichiers d%27en-tête\core\renderers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

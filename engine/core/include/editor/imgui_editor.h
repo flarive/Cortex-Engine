@@ -116,7 +116,7 @@ namespace engine
 		float sceneSetting_shadowMapBiasFactor{ 0.001f };
 		float sceneSetting_shadowMapBlur{ 1.0f };
 
-
+		// guizmo
 		float viewWidth{ 10.0f }; // for orthographic
 		const float camYAngle{ 165.f / 180.f * 3.14159f };
 		const float camXAngle{ 32.f / 180.f * 3.14159f };

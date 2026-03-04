@@ -276,7 +276,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     
-    glm::mat4 projection = m_camera->getProjectionMatrix(width, height, 0.1f, 100.0f);
+    glm::mat4 projection = m_camera->getProjectionMatrix(width, height);
     glm::mat4 view = m_camera->getViewMatrix();
 
 

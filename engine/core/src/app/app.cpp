@@ -72,7 +72,7 @@ void engine::App::initGLFW()
 
     glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
 
-    //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
 }
 
 const char* engine::App::initOpenGL()

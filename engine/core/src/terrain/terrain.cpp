@@ -25,10 +25,6 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
     m_uvScale = uv.getUvScale();
 
 
-    engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
-    m_textureId = std::get<0>(data);
-    m_textureWidth = std::get<2>(data);
-    m_textureHeight = std::get<3>(data);
 
 
     loadShaders();
@@ -40,88 +36,100 @@ void engine::Terrain::loadShaders()
 {
     m_tessHeightMapShader.init("height", "shaders/height.vert", "shaders/height.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
 
-    if (m_textureId > 0)
-        m_tessHeightMapShader.setInt("heightMap", m_textureId);
+
+    engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
+    m_textureId = std::get<0>(data);
+    m_textureWidth = std::get<2>(data);
+    m_textureHeight = std::get<3>(data);
+
+    //if (m_textureId > 0)
+    //{
+    //    m_tessHeightMapShader.use();
+    //    glActiveTexture(GL_TEXTURE0 + 18);
+    //    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    //    m_tessHeightMapShader.setInt("heightMap", 18);
+    //}
 }
 
 void engine::Terrain::geometrySetup()
 {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    //std::vector<float> vertices;
+    std::vector<float> vertices;
 
-    //
-    //for (unsigned i = 0; i <= m_rez - 1; i++)
-    //{
-    //    for (unsigned j = 0; j <= m_rez - 1; j++)
-    //    {
-    //        vertices.push_back(-m_width / 2.0f + m_width * i / (float)m_rez); // v.x
-    //        vertices.push_back(0.0f); // v.y
-    //        vertices.push_back(-m_height / 2.0f + m_height * j / (float)m_rez); // v.z
-    //        vertices.push_back(i / (float)m_rez); // u
-    //        vertices.push_back(j / (float)m_rez); // v
+    
+    for (unsigned i = 0; i <= m_rez - 1; i++)
+    {
+        for (unsigned j = 0; j <= m_rez - 1; j++)
+        {
+            vertices.push_back(-m_textureWidth / 2.0f + m_textureWidth * i / (float)m_rez); // v.x
+            vertices.push_back(0.0f); // v.y
+            vertices.push_back(-m_textureHeight / 2.0f + m_textureHeight * j / (float)m_rez); // v.z
+            vertices.push_back(i / (float)m_rez); // u
+            vertices.push_back(j / (float)m_rez); // v
 
-    //        vertices.push_back(-m_width / 2.0f + m_width * (i + 1) / (float)m_rez); // v.x
-    //        vertices.push_back(0.0f); // v.y
-    //        vertices.push_back(-m_height / 2.0f + m_height * j / (float)m_rez); // v.z
-    //        vertices.push_back((i + 1) / (float)m_rez); // u
-    //        vertices.push_back(j / (float)m_rez); // v
+            vertices.push_back(-m_textureWidth / 2.0f + m_textureWidth * (i + 1) / (float)m_rez); // v.x
+            vertices.push_back(0.0f); // v.y
+            vertices.push_back(-m_textureHeight / 2.0f + m_textureHeight * j / (float)m_rez); // v.z
+            vertices.push_back((i + 1) / (float)m_rez); // u
+            vertices.push_back(j / (float)m_rez); // v
 
-    //        vertices.push_back(-m_width / 2.0f + m_width * i / (float)m_rez); // v.x
-    //        vertices.push_back(0.0f); // v.y
-    //        vertices.push_back(-m_height / 2.0f + m_height * (j + 1) / (float)m_rez); // v.z
-    //        vertices.push_back(i / (float)m_rez); // u
-    //        vertices.push_back((j + 1) / (float)m_rez); // v
+            vertices.push_back(-m_textureWidth / 2.0f + m_textureWidth * i / (float)m_rez); // v.x
+            vertices.push_back(0.0f); // v.y
+            vertices.push_back(-m_textureHeight / 2.0f + m_textureHeight * (j + 1) / (float)m_rez); // v.z
+            vertices.push_back(i / (float)m_rez); // u
+            vertices.push_back((j + 1) / (float)m_rez); // v
 
-    //        vertices.push_back(-m_width / 2.0f + m_width * (i + 1) / (float)m_rez); // v.x
-    //        vertices.push_back(0.0f); // v.y
-    //        vertices.push_back(-m_height / 2.0f + m_height * (j + 1) / (float)m_rez); // v.z
-    //        vertices.push_back((i + 1) / (float)m_rez); // u
-    //        vertices.push_back((j + 1) / (float)m_rez); // v
-    //    }
-    //}
-    //std::cout << "Loaded " << m_rez * m_rez << " patches of 4 control points each" << std::endl;
-    //std::cout << "Processing " << m_rez * m_rez * 4 << " vertices in vertex shader" << std::endl;
-
-
-    //// first, configure the cube's VAO (and terrainVBO)
-    //glGenVertexArrays(1, &m_terrainVAO);
-    //glBindVertexArray(m_terrainVAO);
-
-    //glGenBuffers(1, &m_terrainVBO);
-    //glBindBuffer(GL_ARRAY_BUFFER, m_terrainVBO);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
-
-    //// position attribute
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    //glEnableVertexAttribArray(0);
-    //// texCoord attribute
-    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(sizeof(float) * 3));
-    //glEnableVertexAttribArray(1);
-
-    //glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
+            vertices.push_back(-m_textureWidth / 2.0f + m_textureWidth * (i + 1) / (float)m_rez); // v.x
+            vertices.push_back(0.0f); // v.y
+            vertices.push_back(-m_textureHeight / 2.0f + m_textureHeight * (j + 1) / (float)m_rez); // v.z
+            vertices.push_back((i + 1) / (float)m_rez); // u
+            vertices.push_back((j + 1) / (float)m_rez); // v
+        }
+    }
+    std::cout << "Loaded " << m_rez * m_rez << " patches of 4 control points each" << std::endl;
+    std::cout << "Processing " << m_rez * m_rez * 4 << " vertices in vertex shader" << std::endl;
 
 
-    std::vector<engine::Vertex> vertices = generateVertices();
-
+    // first, configure the cube's VAO (and terrainVBO)
     glGenVertexArrays(1, &m_terrainVAO);
     glBindVertexArray(m_terrainVAO);
 
     glGenBuffers(1, &m_terrainVBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_terrainVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-    // Upload full Vertex structs
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(engine::Vertex), vertices.data(), GL_STATIC_DRAW);
-
-    GLsizei stride = sizeof(engine::Vertex);
-
-    // --- Position (location = 0) ---
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, position));
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // --- TexCoords (location = 1) ---
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, texCoords));
+    // texCoord attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
+
+    glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
+
+
+    //std::vector<engine::Vertex> vertices = generateVertices();
+
+    //glGenVertexArrays(1, &m_terrainVAO);
+    //glBindVertexArray(m_terrainVAO);
+
+    //glGenBuffers(1, &m_terrainVBO);
+    //glBindBuffer(GL_ARRAY_BUFFER, m_terrainVBO);
+
+    //// Upload full Vertex structs
+    //glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(engine::Vertex), vertices.data(), GL_STATIC_DRAW);
+
+    //GLsizei stride = sizeof(engine::Vertex);
+
+    //// --- Position (location = 0) ---
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, position));
+    //glEnableVertexAttribArray(0);
+
+    //// --- TexCoords (location = 1) ---
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, texCoords));
+    //glEnableVertexAttribArray(1);
 
 
 
@@ -175,7 +183,7 @@ void engine::Terrain::geometrySetup()
     //    (void*)offsetof(engine::Vertex, weights)
     //);
 
-    glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
+    //glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
 }
 
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
@@ -256,6 +264,13 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     m_tessHeightMapShader.use();
     OpenGLDebug::checkGLError("m_tessHeightMapShader.use");
 
+    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
+
+    /*if (!m_material->bind(shader)) {
+        std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+        return;
+    }*/
+
     // view/projection transformations
     //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100000.0f);
     //glm::mat4 view = camera.GetViewMatrix();
@@ -265,10 +280,25 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     // world transformation
     m_tessHeightMapShader.setMat4("model", transformMatrix);
 
+
+    // world transformation
+    //glm::mat4 model = glm::mat4(1.0f);
+    //m_tessHeightMapShader.setMat4("model", model);
+
+    if (m_textureId > 0)
+    {
+        //m_tessHeightMapShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_textureId);
+        m_tessHeightMapShader.setInt("heightMap", 0);
+    }
+
     // render the terrain
     glBindVertexArray(m_terrainVAO);
     glDrawArrays(GL_PATCHES, 0, m_patchCount * m_rez * m_rez);
     glBindVertexArray(0);
+
+    //glBindTexture(GL_TEXTURE_2D, 0);
 
     shader.use();
 }

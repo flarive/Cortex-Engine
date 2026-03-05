@@ -93,7 +93,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     //initColorFramebuffer(width, height); // SDR
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -119,6 +119,16 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
 
     renderBackground(settings); // Render your gradient or custom background
+
+
+
+    // Apply wireframe *only for the scene pass* if enabled
+    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
+
+    if (settings.drawAsWireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
     
     if (settings.showDebugGrid)
         renderDebugPlaneGrid(projection, view);
@@ -150,14 +160,11 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     
 
 
-    // should be moved in init !!!!!!!!!!!!!!!!!!!!!!
-    // bind pre-computed area light LTC data
+    
     glActiveTexture(GL_TEXTURE0 + U_LTC1);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
     glActiveTexture(GL_TEXTURE0 + U_LTC2);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
-    //blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
-    //blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
 
 
     // update user stuffs
@@ -181,6 +188,13 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+
+
+    // Restore whatever polygon mode was active before
+    if (settings.drawAsWireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]); // both front/back are same in core usage
+
 
     // render to framebuffer
     computeColorFramebuffer(settings);

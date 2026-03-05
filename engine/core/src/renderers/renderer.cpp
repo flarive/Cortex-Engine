@@ -475,8 +475,12 @@ void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
 
 void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 {
-     //draw color framebuffer to screen
-     //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+    //draw color framebuffer to screen
+    
+    // IMPORTANT: restore to fill before drawing the screen quad
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
     // clear all relevant buffers
@@ -493,13 +497,16 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
-    
+
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
 }
 
 void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings)
 {
+    // IMPORTANT: restore to fill before drawing the screen quad
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
     // Bind default framebuffer (usually SDR)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
@@ -672,10 +679,12 @@ void engine::Renderer::renderQuad()
         glBindVertexArray(m_quadVAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
+        
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(0);
+        
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
     }
 
     // Send to GPU

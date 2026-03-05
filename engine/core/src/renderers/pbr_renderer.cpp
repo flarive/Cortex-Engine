@@ -62,6 +62,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     glm::mat4 projection = m_camera->getProjectionMatrix(width, height);
 
+
+
     // shader configuration
     // --------------------
     pbrShader.use();
@@ -94,7 +96,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     //initColorFramebuffer(width, height); // no AA
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
 
 
     int vsize{ 512 };
@@ -366,6 +368,17 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     glm::mat4 projection = camera->getProjectionMatrix(width, height);
     glm::mat4 view = camera->getViewMatrix();
+
+
+
+
+    // Apply wireframe *only for the scene pass* if enabled
+    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
+
+    if (settings.drawAsWireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
     
     if (settings.showDebugGrid)
         renderDebugPlaneGrid(projection, view);
@@ -445,6 +458,16 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+
+
+
+    // Restore whatever polygon mode was active before
+    if (settings.drawAsWireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]); // both front/back are same in core usage
+
+
+
 
     // render to framebuffer
     computeHDRColorFramebuffer(width, height, settings);

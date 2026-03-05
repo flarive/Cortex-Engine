@@ -92,7 +92,7 @@ namespace engine
 		unsigned int textureDepthMapBuffer{};
 
 		
-		
+		GLint m_prevPolyModes[2];
 
 		// internal shaders (not accessible)
 		// PBR

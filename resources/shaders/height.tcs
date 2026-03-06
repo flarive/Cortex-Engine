@@ -1,47 +1,73 @@
 #version 410 core
 
+// We output patches made of 4 control points (quads)
 layout(vertices=4) out;
 
-uniform mat4 model;
-uniform mat4 view;
+uniform mat4 model;  // Object->World
+uniform mat4 view;   // World->View (eye space)
 
-in vec2 TexCoord[];
-out vec2 TextureCoord[];
+in vec2 TexCoord[];      // Per-vertex UVs from the vertex shader (array of 4 for the patch)
+out vec2 TextureCoord[]; // Forwarded UVs to the TES (same indexing as input)
 
 void main()
 {
+    // Pass through the control point position that came from the previous stage.
+    // IMPORTANT: For displacement in TES, this should be OBJECT-SPACE position.
+    // Your VS should set gl_Position = vec4(aPosOS, 1.0) for tessellation path.
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+
+    // Pass through the corresponding UV for this control point
     TextureCoord[gl_InvocationID] = TexCoord[gl_InvocationID];
 
+    // Tessellation levels are set once per patch; do it only from invocation 0
     if(gl_InvocationID == 0)
     {
-        const int MIN_TESS_LEVEL = 4;
-        const int MAX_TESS_LEVEL = 64;
-        const float MIN_DISTANCE = 20;
-        const float MAX_DISTANCE = 800;
+        // --- Tuning constants for screen-space adaptive tessellation ---
+        const int   MIN_TESS_LEVEL = 4;    // Minimum tessellation (coarser)
+        const int   MAX_TESS_LEVEL = 64;   // Maximum tessellation (finer)
+        const float MIN_DISTANCE   = 20.0; // Distance at which we begin reducing tess
+        const float MAX_DISTANCE   = 800.0;// Distance at which we reach MIN_TESS_LEVEL
 
+        // Transform patch corners to EYE (view) space to estimate distance to camera.
+        // NOTE: We multiply model * position because positions are object-space here.
+        //       Using eye-space Z as a distance proxy (abs(z))—cheap & common approach.
         vec4 eyeSpacePos00 = view * model * gl_in[0].gl_Position;
         vec4 eyeSpacePos01 = view * model * gl_in[1].gl_Position;
         vec4 eyeSpacePos10 = view * model * gl_in[2].gl_Position;
         vec4 eyeSpacePos11 = view * model * gl_in[3].gl_Position;
 
-        // "distance" from camera scaled between 0 and 1
-        float distance00 = clamp( (abs(eyeSpacePos00.z) - MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0 );
-        float distance01 = clamp( (abs(eyeSpacePos01.z) - MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0 );
-        float distance10 = clamp( (abs(eyeSpacePos10.z) - MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0 );
-        float distance11 = clamp( (abs(eyeSpacePos11.z) - MIN_DISTANCE) / (MAX_DISTANCE-MIN_DISTANCE), 0.0, 1.0 );
+        // Map the absolute Z of each corner from [MIN_DISTANCE, MAX_DISTANCE] to [0,1].
+        // 0 = close (use MAX_TESS_LEVEL), 1 = far (use MIN_TESS_LEVEL).
+        float distance00 = clamp((abs(eyeSpacePos00.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float distance01 = clamp((abs(eyeSpacePos01.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float distance10 = clamp((abs(eyeSpacePos10.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float distance11 = clamp((abs(eyeSpacePos11.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
 
-        float tessLevel0 = mix( MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance10, distance00) );
-        float tessLevel1 = mix( MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance00, distance01) );
-        float tessLevel2 = mix( MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance01, distance11) );
-        float tessLevel3 = mix( MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance11, distance10) );
+        // Edge tess levels. We pick the MIN of distances for the edge's two end points,
+        // so if *either* end is close, we keep it finely tessellated.
+        //
+        // Edge indexing for layout(quads):
+        //   Outer[0] = edge between CP (0,1)
+        //   Outer[1] = edge between CP (1,3)
+        //   Outer[2] = edge between CP (3,2)
+        //   Outer[3] = edge between CP (2,0)
+        //
+        // Your CPU order is [0:00, 1:10, 2:01, 3:11]. The mapping below is consistent with that.
+        float tessLevel0 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(distance10, distance00)); // edge (0-1)
+        float tessLevel1 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(distance00, distance01)); // edge (1-3)
+        float tessLevel2 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(distance01, distance11)); // edge (3-2)
+        float tessLevel3 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(distance11, distance10)); // edge (2-0)
 
+        // Assign outer tessellation levels (edges)
         gl_TessLevelOuter[0] = tessLevel0;
         gl_TessLevelOuter[1] = tessLevel1;
         gl_TessLevelOuter[2] = tessLevel2;
         gl_TessLevelOuter[3] = tessLevel3;
 
-        gl_TessLevelInner[0] = max(tessLevel1, tessLevel3);
-        gl_TessLevelInner[1] = max(tessLevel0, tessLevel2);
+        // Inner tess levels for quads:
+        // A common choice is to relate each inner level to the max of the two opposite edges
+        // so the interior density roughly matches the boundary density.
+        gl_TessLevelInner[0] = max(tessLevel1, tessLevel3); // "u-direction" inner level
+        gl_TessLevelInner[1] = max(tessLevel0, tessLevel2); // "v-direction" inner level
     }
 }

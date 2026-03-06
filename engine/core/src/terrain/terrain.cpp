@@ -76,8 +76,17 @@ void engine::Terrain::geometrySetup()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, texCoords));
     glEnableVertexAttribArray(1);
 
+    // --- Normal (location = 2) ---
+    //glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, normal));
+    //glEnableVertexAttribArray(2);
+
 
     glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
+
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
@@ -183,6 +192,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
     glDrawArrays(GL_PATCHES, 0, m_patchCount * m_resolution * m_resolution);
+    //glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(vertices.size()));
     glBindVertexArray(0);
 
     //glBindTexture(GL_TEXTURE_2D, 0);

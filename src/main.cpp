@@ -50,7 +50,6 @@ static void gamepadUpdate();
 int main(int, char**)
 {
     // Init the app
-    //myApp = new MyApp("MyApp", 320, 240, false);
     myApp = new MyApp("MyApp", 1280, 720, false);
     if (myApp)
     {

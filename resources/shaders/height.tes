@@ -1,7 +1,7 @@
 #version 410 core
 // We tessellate QUADS. The tessellation spacing is fractional-odd.
 // Winding is CCW (counter‑clockwise).
-layout(quads, fractional_odd_spacing, ccw) in;
+layout(quads, fractional_odd_spacing, cw) in;
 
 struct Material {
     sampler2D texture_diffuse;

@@ -55,7 +55,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_diffuse_map", false);
         shader.setBool("material.has_texture_specular_map", false);
         shader.setBool("material.has_texture_normal_map", false);
-        //shader.setBool("material.has_texture_height_map", false);
+        shader.setBool("material.has_texture_height_map", false);
     }
 
     for (const auto& tex : textures)

@@ -37,7 +37,7 @@ namespace engine
     class Terrain final
 	{
 	public:
-		Terrain(unsigned int width = 512, unsigned int height = 512, unsigned int patchCount = 4);
+		Terrain(unsigned int width = 512, unsigned int height = 512, unsigned int patchCount = 4, unsigned int resolution = 20);
 		~Terrain() = default;
 
         void setup();
@@ -93,6 +93,7 @@ namespace engine
         int m_width{};
         int m_height{};
         int m_patchCount{};
+        unsigned int m_resolution{};
 
         std::shared_ptr<Material> m_material{};
         float m_uvScale{ 1.0f };
@@ -109,8 +110,6 @@ namespace engine
 
         unsigned int m_terrainVAO{};
         unsigned int m_terrainVBO{};
-
-        unsigned int m_rez{ 20 };
 
         void loadShaders();
         void geometrySetup();

@@ -6,13 +6,15 @@ using namespace engine;
 
 MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::PBR,
+        .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048
+        .shadowMapsTextureSize = 2048,
+        .enableFaceCulling = true,
+        .drawAsWireframe = false
     })
 {
     // my application specific state gets initialized here
@@ -34,8 +36,6 @@ void MyScene14::init()
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
-    //FlyCamera camera(10.0f, -128.1f, -42.4f, 10.0f, 1.0f, glm::vec3(67.0f, 627.5f, 169.9f));
-
 
     // light
     //auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
@@ -49,7 +49,7 @@ void MyScene14::init()
 
 
     // terrain
-    auto myTerrain = make_shared<Terrain>(20, 20, 4);
+    auto myTerrain = make_shared<Terrain>(1, 1, 4, 20);
     myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");

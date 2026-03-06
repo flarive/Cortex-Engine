@@ -61,11 +61,11 @@ void main()
     // Bilinear UV interpolation (works only if corner indexing is correct)
     vec2 t0 = (t01 - t00) * u + t00;
     vec2 t1 = (t11 - t10) * u + t10;
-    vec2 texCoord = (t1 - t0) * v + t0;
+    vec2 texCoords = (t1 - t0) * v + t0;
 
     // Height sampling (also incorrect to use .y for grayscale height maps)
     Height = material.has_texture_height_map
-        ? texture(material.texture_height, texCoord).y * 64.0 - 16.0 
+        ? texture(material.texture_height, texCoords).y * 64.0 - 16.0 
         : 0.0;
 
     // -------------------------------------------------------------------------

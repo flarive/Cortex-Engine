@@ -38,24 +38,14 @@ void engine::Terrain::loadShaders()
 
     // to remove !!!!
     engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
-    //m_textureId = std::get<0>(data);
     m_textureWidth = std::get<2>(data);
     m_textureHeight = std::get<3>(data);
-
-    //if (m_textureId > 0)
-    //{
-    //    //m_tessHeightMapShader.use();
-    //    //glActiveTexture(GL_TEXTURE0 + 18);
-    //    //glBindTexture(GL_TEXTURE_2D, m_textureId);
-    //    //m_tessHeightMapShader.setInt("heightMap", 18);
-    //}
 }
 
 void engine::Terrain::geometrySetup()
 {
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    
-    std::vector<engine::Vertex> vertices = generateVertices();
+    m_vertices = generateVertices();
 
     glGenVertexArrays(1, &m_terrainVAO);
     glBindVertexArray(m_terrainVAO);
@@ -64,7 +54,7 @@ void engine::Terrain::geometrySetup()
     glBindBuffer(GL_ARRAY_BUFFER, m_terrainVBO);
 
     // Upload full Vertex structs
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(engine::Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(engine::Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     GLsizei stride = sizeof(engine::Vertex);
 
@@ -72,13 +62,13 @@ void engine::Terrain::geometrySetup()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, position));
     glEnableVertexAttribArray(0);
 
-    // --- TexCoords (location = 1) ---
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, texCoords));
+    // --- Normal (location = 1) ---
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, normal));
     glEnableVertexAttribArray(1);
 
-    // --- Normal (location = 2) ---
-    //glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, normal));
-    //glEnableVertexAttribArray(2);
+    // --- TexCoords (location = 2) ---
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(engine::Vertex, texCoords));
+    glEnableVertexAttribArray(2);
 
 
     glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
@@ -86,7 +76,6 @@ void engine::Terrain::geometrySetup()
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 }
 
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
@@ -109,6 +98,12 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
             float u1 = (i + 1) / float(m_resolution);
             float v0 = j / float(m_resolution);
             float v1 = (j + 1) / float(m_resolution);
+
+            //float u0 = (i / float(m_resolution)) * m_uvScale;
+            //float u1 = ((i + 1) / float(m_resolution)) * m_uvScale;
+            //float v0 = (j / float(m_resolution)) * m_uvScale;
+            //float v1 = ((j + 1) / float(m_resolution)) * m_uvScale;
+
 
             // Vertex 1
             vertices.emplace_back(
@@ -173,32 +168,28 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
         return;
     }
+    OpenGLDebug::checkGLError("m_tessHeightMapShader.bind");
 
     
     m_tessHeightMapShader.setMat4("projection", projection);
     m_tessHeightMapShader.setMat4("view", view);
-
-    // world transformation
     m_tessHeightMapShader.setMat4("model", transformMatrix);
 
-    //if (m_textureId > 0)
-    //{
-    //    //m_tessHeightMapShader.use();
-    //    //glActiveTexture(GL_TEXTURE0);
-    //    //glBindTexture(GL_TEXTURE_2D, m_textureId);
-    //    //m_tessHeightMapShader.setInt("heightMap", 0);
-    //}
+
+    m_tessHeightMapShader.setVec3("light.position", glm::vec3(0.0f, 100.0f, 0.0f));
+    m_tessHeightMapShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);  // Increase ambient light
+    m_tessHeightMapShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);  // Increase diffuse light
+    m_tessHeightMapShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f); // Increase specular light
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
-    glDrawArrays(GL_PATCHES, 0, m_patchCount * m_resolution * m_resolution);
-    //glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(vertices.size()));
+    //glDrawArrays(GL_PATCHES, 0, m_patchCount * m_resolution * m_resolution);
+    glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
     glBindVertexArray(0);
 
-    //glBindTexture(GL_TEXTURE_2D, 0);
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("Unbind");
+    OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
 
     shader.use();
 }

@@ -98,13 +98,15 @@ namespace engine
         std::shared_ptr<Material> m_material{};
         float m_uvScale{ 1.0f };
 
+        std::vector<engine::Vertex> m_vertices{};
+
         glm::vec3 m_position{};
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
         
         Shader m_tessHeightMapShader{};
 
-        unsigned int m_textureId{};
+        //unsigned int m_textureId{};
         int m_textureWidth{};
         int m_textureHeight{};
 

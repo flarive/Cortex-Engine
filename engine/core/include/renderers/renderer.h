@@ -73,9 +73,6 @@ namespace engine
 
 		std::vector<std::shared_ptr<Light>> m_lights{};
 
-		// shadow maps texture size
-		//const unsigned int SHADOW_WIDTH{ 2048 }, SHADOW_HEIGHT{ 2048 };
-
 		// renderbuffer object to render the main framebuffer
 		unsigned int rbo{};
 
@@ -92,7 +89,7 @@ namespace engine
 		unsigned int textureDepthMapBuffer{};
 
 		
-		GLint m_prevPolyModes[2];
+		GLint m_prevPolyModes[2]{};
 
 		// internal shaders (not accessible)
 		// PBR
@@ -201,8 +198,6 @@ namespace engine
 
 
 	private:
-		
-		
 		void testHDR(int width, int height);
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light

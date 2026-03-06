@@ -6,7 +6,7 @@ layout(vertices=4) out;
 uniform mat4 model;  // Object->World
 uniform mat4 view;   // World->View (eye space)
 
-in vec2 TexCoord[];      // Per-vertex UVs from the vertex shader (array of 4 for the patch)
+in vec2 TexCoords[];      // Per-vertex UVs from the vertex shader (array of 4 for the patch)
 out vec2 TextureCoord[]; // Forwarded UVs to the TES (same indexing as input)
 
 void main()
@@ -17,7 +17,7 @@ void main()
     gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
     // Pass through the corresponding UV for this control point
-    TextureCoord[gl_InvocationID] = TexCoord[gl_InvocationID];
+    TextureCoord[gl_InvocationID] = TexCoords[gl_InvocationID];
 
     // Tessellation levels are set once per patch; do it only from invocation 0
     if(gl_InvocationID == 0)

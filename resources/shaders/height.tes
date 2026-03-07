@@ -1,6 +1,4 @@
 #version 410 core
-// We tessellate QUADS. The tessellation spacing is fractional-odd.
-// Winding is CCW (counter‑clockwise).
 layout(quads, fractional_odd_spacing, cw) in;
 
 struct Material {
@@ -16,102 +14,56 @@ struct Material {
 };
 
 uniform Material material;
-
-// Model/View/Projection matrices for transforming the final displaced position.
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-// Incoming UV coordinates from the TCS for each of the 4 control points.
-in vec2 TextureCoord[];
+in vec2 TextureCoord[]; // From TCS
 
-// Only output from this TES currently: the height value.
-// (You probably want to output worldPos, normal, uv for lighting later.)
 out float Height;
+out vec2 TexCoords; // Pass to fragment shader
 
 void main()
 {
-    // Tessellator barycentrics: for quads (u,v,w,t) → but the first two are u, v.
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-    // -------------------------------------------------------------------------
-    // PROBLEM: YOU ARE USING THE WRONG UV CORNER INDEXING
-    //
-    // Your CPU code generates vertices in this order per patch:
-    //   0: (u0, v0) → SOUTH‑WEST (00)
-    //   1: (u1, v0) → SOUTH‑EAST (10)
-    //   2: (u0, v1) → NORTH‑WEST (01)
-    //   3: (u1, v1) → NORTH‑EAST (11)
-    //
-    // But here you treat them as:
-    //   t00 = CP0
-    //   t01 = CP1   ← WRONG (this is actually (10), not (01))
-    //   t10 = CP2   ← WRONG (this is actually (01), not (10))
-    //   t11 = CP3
-    //
-    // THIS SWAPS THE MIDDLE TWO CORNERS AND TWISTS THE SURFACE.
-    // -------------------------------------------------------------------------
+    // Correct corner indexing for texture coordinates
+    vec2 t00 = TextureCoord[0]; // (u0,v0)
+    vec2 t10 = TextureCoord[1]; // (u1,v0)
+    vec2 t01 = TextureCoord[2]; // (u0,v1)
+    vec2 t11 = TextureCoord[3]; // (u1,v1)
 
-    vec2 t00 = TextureCoord[0]; // correctly (u0,v0)
-    vec2 t01 = TextureCoord[1]; // WRONG: this is actually (u1,v0) i.e. (10)
-    vec2 t10 = TextureCoord[2]; // WRONG: this is actually (u0,v1) i.e. (01)
-    vec2 t11 = TextureCoord[3]; // correctly (u1,v1)
-
-    // Bilinear UV interpolation (works only if corner indexing is correct)
-    vec2 t0 = (t01 - t00) * u + t00;
-    vec2 t1 = (t11 - t10) * u + t10;
+    // Correct bilinear interpolation
+    vec2 t0 = (t10 - t00) * u + t00;
+    vec2 t1 = (t11 - t01) * u + t01;
     vec2 texCoords = (t1 - t0) * v + t0;
+    TexCoords = texCoords; // Pass to fragment shader
 
-    // Height sampling (also incorrect to use .y for grayscale height maps)
+    // Sample height from heightmap
     Height = material.has_texture_height_map
-        ? texture(material.texture_height, texCoords).y * 64.0 - 16.0 
+        ? texture(material.texture_height, texCoords).r * 64.0 - 16.0
         : 0.0;
 
-    // -------------------------------------------------------------------------
-    // IMPORTANT SPACE NOTE:
-    //
-    // gl_in[i].gl_Position MUST be OBJECT‑SPACE positions for tessellation.
-    // Your vertex shader currently does this correctly:
-    //    gl_Position = vec4(aPos,1)
-    //
-    // Good.
-    // -------------------------------------------------------------------------
+    // Correct corner indexing for positions
+    vec4 p00 = gl_in[0].gl_Position; // (u0,v0)
+    vec4 p10 = gl_in[1].gl_Position; // (u1,v0)
+    vec4 p01 = gl_in[2].gl_Position; // (u0,v1)
+    vec4 p11 = gl_in[3].gl_Position; // (u1,v1)
 
-    vec4 p00 = gl_in[0].gl_Position;
-    vec4 p01 = gl_in[1].gl_Position; // WRONG corner meaning (same as UV problem)
-    vec4 p10 = gl_in[2].gl_Position; // WRONG corner meaning
-    vec4 p11 = gl_in[3].gl_Position;
-
-    // -------------------------------------------------------------------------
-    // NORMAL CALCULATION IS INCORRECT
-    //
-    // You compute:
-    //    vec4 uVec = p01 - p00;
-    //    vec4 vVec = p10 - p00;
-    // But because p01/p10 are SWAPPED, the normal flips unpredictably.
-    //
-    // Also: cross(v, u) uses reverse winding vs CCW.
-    // You should use cross(du, dv) in the SAME order as your patch.
-    // -------------------------------------------------------------------------
-
-    vec4 uVec = p01 - p00; 
-    vec4 vVec = p10 - p00; 
+    // Correct tangent vectors for normal calculation
+    vec4 uVec = p10 - p00; // (u1,v0) - (u0,v0)
+    vec4 vVec = p01 - p00; // (u0,v1) - (u0,v0)
     vec4 normal = normalize(vec4(cross(vVec.xyz, uVec.xyz), 0));
 
-    // -------------------------------------------------------------------------
-    // POSITION INTERPOLATION IS ALSO USING THE WRONG CORNERS
-    //     (p01 & p10 are swapped)
-    //
-    // Bilinear blending is only correct when all 4 corners match the CPU order.
-    // -------------------------------------------------------------------------
+    // Correct bilinear interpolation for position
+    vec4 p0 = (p10 - p00) * u + p00;
+    vec4 p1 = (p11 - p01) * u + p01;
+    vec4 p = (p1 - p0) * v + p0;
 
-    vec4 p0 = (p01 - p00) * u + p00;
-    vec4 p1 = (p11 - p10) * u + p10;
+    // Add displacement along the normal
+    p += normal * Height;
 
-    // Add displacement along the (incorrect) normal
-    vec4 p = (p1 - p0) * v + p0 + normal * Height;
-
-    // Final clip‑space position
+    // Final clip-space position
     gl_Position = projection * view * model * p;
 }

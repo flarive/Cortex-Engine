@@ -37,7 +37,7 @@ namespace engine
         }
 
         void loadTextures();
-        void loadTexturesAsync();
+        void loadTexturesAsync(std::function<void(bool)> texturesLoaded = nullptr);
 
         bool bind(Shader& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
         bool bind2(engine::Shader& shader) const;

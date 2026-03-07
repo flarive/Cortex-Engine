@@ -212,7 +212,7 @@ void engine::Material::loadTextures()
 }
 
 
-void engine::Material::loadTexturesAsync()
+void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoaded)
 {
     textures.clear();
     
@@ -311,6 +311,9 @@ void engine::Material::loadTexturesAsync()
         //std::cout << "All textures loaded !!!!!" << std::endl;
         m_allTexturesLoaded = true;
     }
+
+    if (texturesLoaded)
+        texturesLoaded(m_allTexturesLoaded);
 }
 
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)

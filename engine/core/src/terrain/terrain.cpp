@@ -1,7 +1,7 @@
 #include "../../include/terrain/terrain.h"
 
-engine::Terrain::Terrain(unsigned int width, unsigned int height, unsigned int patchCount, unsigned int resolution)
-    : m_width(width), m_height(height), m_patchCount(patchCount), m_resolution(resolution)
+engine::Terrain::Terrain(float sizeFactor, unsigned int patchCount, unsigned int resolution)
+	: m_patchCount(patchCount), m_resolution(resolution), m_sizeFactor(sizeFactor)
 {
 }
 
@@ -26,20 +26,33 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
 
     loadShaders();
 
-    geometrySetup();
+    auto allTexturesLoaded = [this](bool) {
+        TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
+		m_textureWidth = std::get<2>(data);
+        m_textureHeight = std::get<3>(data);
 
-    if (material && material->hasDiffuseMap())
-        material->loadTexturesAsync();
+        init();
+    };
+
+    if (m_material && m_material->hasDiffuseMap())
+        m_material->loadTexturesAsync(allTexturesLoaded);
+}
+
+void engine::Terrain::init()
+{
+    geometrySetup();
 }
 
 void engine::Terrain::loadShaders()
 {
     m_tessHeightMapShader.init("height", "shaders/height.vert", "shaders/height.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
 
+    
+
     // to remove !!!!
-    engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
-    m_textureWidth = std::get<2>(data);
-    m_textureHeight = std::get<3>(data);
+    //engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
+    //m_textureWidth = std::get<2>(data) / 3;
+    //m_textureHeight = std::get<3>(data) / 3;
 }
 
 void engine::Terrain::geometrySetup()
@@ -81,28 +94,27 @@ void engine::Terrain::geometrySetup()
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
 {
     std::vector<engine::Vertex> vertices;
-    vertices.reserve(m_resolution * m_resolution * 4); // 4 vertices per quad
+    vertices.reserve(m_resolution * m_resolution * m_patchCount); // 4 vertices per quad
 
     const glm::vec3 normal(0.0f, 1.0f, 0.0f);
+
+
+	int width = static_cast<int>(m_textureWidth * m_sizeFactor);
+    int height = static_cast<int>(m_textureHeight * m_sizeFactor);
 
     for (unsigned i = 0; i <= m_resolution - 1; i++)
     {
         for (unsigned j = 0; j <= m_resolution - 1; j++)
         {
-            float x0 = -m_textureWidth / 2.0f + m_textureWidth * i / float(m_resolution);
-            float x1 = -m_textureWidth / 2.0f + m_textureWidth * (i + 1) / float(m_resolution);
-            float z0 = -m_textureHeight / 2.0f + m_textureHeight * j / float(m_resolution);
-            float z1 = -m_textureHeight / 2.0f + m_textureHeight * (j + 1) / float(m_resolution);
+            float x0 = -width / 2.0f + width * i / float(m_resolution);
+            float x1 = -width / 2.0f + width * (i + 1) / float(m_resolution);
+            float z0 = -height / 2.0f + height * j / float(m_resolution);
+            float z1 = -height / 2.0f + height * (j + 1) / float(m_resolution);
 
-            float u0 = i / float(m_resolution);
-            float u1 = (i + 1) / float(m_resolution);
-            float v0 = j / float(m_resolution);
-            float v1 = (j + 1) / float(m_resolution);
-
-            //float u0 = (i / float(m_resolution)) * m_uvScale;
-            //float u1 = ((i + 1) / float(m_resolution)) * m_uvScale;
-            //float v0 = (j / float(m_resolution)) * m_uvScale;
-            //float v1 = ((j + 1) / float(m_resolution)) * m_uvScale;
+            float u0 = (i / float(m_resolution)) * m_uvScale;
+            float u1 = ((i + 1) / float(m_resolution)) * m_uvScale;
+            float v0 = (j / float(m_resolution)) * m_uvScale;
+            float v1 = ((j + 1) / float(m_resolution)) * m_uvScale;
 
 
             // Vertex 1
@@ -183,7 +195,6 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
-    //glDrawArrays(GL_PATCHES, 0, m_patchCount * m_resolution * m_resolution);
     glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
     glBindVertexArray(0);
 
@@ -196,5 +207,14 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
 void engine::Terrain::clean()
 {
-    // TODO
+    if (m_terrainVAO != 0) {
+        glDeleteVertexArrays(1, &m_terrainVAO);
+        m_terrainVAO = 0;
+    }
+    if (m_terrainVBO != 0) {
+        glDeleteBuffers(1, &m_terrainVBO);
+        m_terrainVBO = 0;
+    }
+
+	m_tessHeightMapShader.clean();
 }

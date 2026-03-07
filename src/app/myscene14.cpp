@@ -25,7 +25,7 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {0.0f, 27.5f, 25.0f} };
+    auto trsCamera1 = Transform{ {0.0f, 270.5f, 250.0f} };
     auto camera1 = make_shared<FlyCamera>(10.0f, 0.0f, 0.0f, 10.0f);
     camera1->setNearPlane(0.1f);
     camera1->setFarPlane(100000.0f);
@@ -47,8 +47,9 @@ void MyScene14::init()
 
 
     // terrain
-    auto myTerrain = make_shared<Terrain>(1, 1, 4, 20);
+    auto myTerrain = make_shared<Terrain>(1.0f, 4, 20);
     myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
+    //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);

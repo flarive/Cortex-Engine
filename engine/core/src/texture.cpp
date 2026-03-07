@@ -20,6 +20,7 @@ namespace engine {
         std::mutex textureCacheMutex;
         std::mutex textureQueueMutex;
         std::unordered_map<std::string, unsigned int> textureIDCache;
+        std::unordered_map<std::string, TextureData> textureDataCache;
     }
 }
 
@@ -221,6 +222,7 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
             unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, generateMipmaps, repeat, gammaCorrection);
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
+            engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
 
             SOIL_free_image_data(data);  // Free after OpenGL upload
 
@@ -568,7 +570,7 @@ GLuint engine::Texture::loadLUTTexture()
     return texture;
 }
 
-void engine::Texture::CheckTextureIsValid(unsigned int textureID)
+void engine::Texture::checkTextureIsValid(unsigned int textureID)
 {
     // After loading the textures, check if they are valid
     GLint width2, height2, internalFormat;
@@ -577,5 +579,14 @@ void engine::Texture::CheckTextureIsValid(unsigned int textureID)
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height2);
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalFormat);
     std::cout << "textureID: " << textureID << ", width: " << width2 << ", height: " << height2 << ", format: " << internalFormat << std::endl;
+}
+
+engine::TextureData engine::Texture::getTextureData(const std::string& texturePath)
+{
+    if (engine::TextureManager::textureDataCache.find(texturePath) != engine::TextureManager::textureDataCache.end()) {
+        return engine::TextureManager::textureDataCache[texturePath];
+    }
+
+	return {}; // Return default if not found
 }
 

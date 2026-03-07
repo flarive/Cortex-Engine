@@ -68,6 +68,8 @@ namespace engine
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();
 
-        static void CheckTextureIsValid(unsigned int textureID);
+        static void checkTextureIsValid(unsigned int textureID);
+
+        static engine::TextureData getTextureData(const std::string& texturePath);
     };
 }

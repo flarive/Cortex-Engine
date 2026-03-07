@@ -37,7 +37,7 @@ namespace engine
     class Terrain final
 	{
 	public:
-		Terrain(unsigned int width = 512, unsigned int height = 512, unsigned int patchCount = 4, unsigned int resolution = 20);
+		Terrain(float sizeFactor = 1.0f, unsigned int patchCount = 4, unsigned int resolution = 20);
 		~Terrain() = default;
 
         void setup();
@@ -46,15 +46,25 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
+                {"sizefactor", EditorProperty { "Size factor", getSizeFactor(), editable, 0.0f, 10.0f, 1.0f, "%.1f" }},
+                {"resolution", EditorProperty { "Resolution", getResolution(), editable, 0.0f, 100.0f, 1.0f, "%.0f" }},
+                {"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
+                {"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
+                {"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
             };
         }
 
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
             return {
+                { "sizefactor", [this](EditorPropertyValue value) { getSizeFactor() = *(std::get_if<float>(&value)); } },
+                { "resolution", [this](EditorPropertyValue value) { getResolution() = *(std::get_if<unsigned int>(&value)); } },
+                { "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
+                { "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
+                { "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
             };
         }
 
-        
+        void init();
 
         // draws the model, and thus all its meshes
         void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform);
@@ -84,16 +94,34 @@ namespace engine
             m_scale = scale;
         }
 
+        float& getUvScale() { return m_uvScale; }
+        void setUvScale(float uvScale) { m_uvScale = uvScale; }
+
+        bool& canCastShadows() { return m_canCastShadows; }
+        bool& canReceiveShadows() { return m_canReceiveShadows; }
+
+        void setCanCastShadows(bool canCast) { m_canCastShadows = canCast; }
+        void setCanReceiveShadows(bool canReceive) { m_canReceiveShadows = canReceive; }
+
+        float& getSizeFactor() { return m_sizeFactor; }
+        void setSizeFactor(float factor) { m_sizeFactor = factor; }
+
+        unsigned int& getResolution() { return m_resolution; }
+        void setResolution(unsigned int resolution) { m_resolution = resolution; }
+
+        void reSetup() { init(); };
+
         void clean();
 
     private:
 
 		bool m_isEnabled{ true };
 
-        int m_width{};
-        int m_height{};
         int m_patchCount{};
         unsigned int m_resolution{};
+
+        bool m_canCastShadows{ true };
+		bool m_canReceiveShadows{ true };
 
         std::shared_ptr<Material> m_material{};
         float m_uvScale{ 1.0f };
@@ -109,11 +137,14 @@ namespace engine
         //unsigned int m_textureId{};
         int m_textureWidth{};
         int m_textureHeight{};
+		float m_sizeFactor{ 1.0f };
 
         unsigned int m_terrainVAO{};
         unsigned int m_terrainVBO{};
 
         void loadShaders();
         void geometrySetup();
+
+        //std::function<void()> m_allTexturesLoaded; // << callback
 	};
 }

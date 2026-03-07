@@ -84,7 +84,7 @@ void engine::TerrainComponent::setProperty(const std::string& key, engine::Edito
 	if (it != m_propertySetters.end())
 	{
 		it->second(value);
-		//m_terrain->reSetup(); // Assuming all primitives have a reSetup() method
+		m_terrain->reSetup(); // Assuming all primitives have a reSetup() method
 	}
 }
 

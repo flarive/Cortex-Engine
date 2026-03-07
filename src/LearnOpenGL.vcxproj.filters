@@ -987,6 +987,18 @@
     <CopyFileToFolders Include="..\resources\shaders\phong.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\mountain_diffuse.jpg">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\mountain_height.jpg">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\mountain_normal.jpg">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\height\mountain_specular.jpg">
+      <Filter>resources\textures\height</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

@@ -75,11 +75,6 @@ void main()
     vec3 heightEffect = vec3(h, h, h);
 
     // Blend the height effect with the lighting result
-    FragColor = vec4(mix(result, heightEffect, 0.3), 1.0);
-
-
-//    vec4 texDiffuse2 = texture(material.texture_diffuse, TexCoords);
-//    FragColor = vec4(texDiffuse2.rgb, 1.0); // Use the texture color
-
-    //FragColor = vec4(TexCoords, 0.0, 1.0); // Debug texture coordinates
+    //FragColor = vec4(mix(result, heightEffect, 0.6), 1.0);
+    FragColor = vec4(mix(result, heightEffect, 0.6), 1.0);
 }

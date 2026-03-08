@@ -4,6 +4,7 @@ struct Material {
     sampler2D texture_diffuse;
     sampler2D texture_specular;
     sampler2D texture_normal;
+    sampler2D texture_height;
 
     vec3 diffuse_color;
     vec3 specular_color;
@@ -14,6 +15,7 @@ struct Material {
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
+    bool has_texture_height_map;
 
 
     int shadowCalculationMethod;
@@ -97,6 +99,8 @@ in VS_OUT {
     vec3 TangentViewPos;
     vec3 TangentFragPos;
 } fs_in;
+
+in float Height;
 
 // coming from code
 uniform vec3 viewPos;

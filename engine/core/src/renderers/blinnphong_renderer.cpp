@@ -158,6 +158,8 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
+    blinnPhongShader.setBool("isTessellated", false); // should be moved into each primitive
+    
 
 
     
@@ -207,7 +209,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
+    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
 
     // skybox reflection shader
     skyboxReflectionShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");

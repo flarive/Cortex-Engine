@@ -45,7 +45,7 @@ void engine::Terrain::init()
 
 void engine::Terrain::loadShaders()
 {
-    m_tessHeightMapShader.init("height", "shaders/height.vert", "shaders/height.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
+    //m_tessHeightMapShader.init("height", "shaders/height.vert", "shaders/height.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
 
     
 
@@ -156,7 +156,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     if (!m_isEnabled)
         return;
 
-    if (!m_material || !m_tessHeightMapShader.isValid()) {
+    if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -171,30 +171,30 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         return;
     }
 
-    m_tessHeightMapShader.use();
+    shader.use();
     OpenGLDebug::checkGLError("m_tessHeightMapShader.use");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-    if (!m_material->bind(m_tessHeightMapShader)) {
+    if (!m_material->bind(shader)) {
         std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
         return;
     }
     OpenGLDebug::checkGLError("m_tessHeightMapShader.bind");
 
     
-    m_tessHeightMapShader.setMat4("projection", projection);
-    m_tessHeightMapShader.setMat4("view", view);
-    m_tessHeightMapShader.setMat4("model", transformMatrix);
+    //shader.setMat4("projection", projection);
+    //shader.setMat4("view", view);
+    shader.setMat4("model", transformMatrix);
 
-    m_tessHeightMapShader.setFloat("heightFactor", m_heightFactor);
-    m_tessHeightMapShader.setVec2("heightOffset", m_heightOffset);
+    shader.setFloat("heightFactor", m_heightFactor);
+    shader.setVec2("heightOffset", m_heightOffset);
 
     // temp
-    m_tessHeightMapShader.setVec3("light.position", glm::vec3(0.0f, 100.0f, 0.0f));
-    m_tessHeightMapShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);  // Increase ambient light
-    m_tessHeightMapShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);  // Increase diffuse light
-    m_tessHeightMapShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f); // Increase specular light
+    //m_tessHeightMapShader.setVec3("light.position", glm::vec3(0.0f, 100.0f, 0.0f));
+    //m_tessHeightMapShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);  // Increase ambient light
+    //m_tessHeightMapShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);  // Increase diffuse light
+    //m_tessHeightMapShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f); // Increase specular light
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
@@ -205,7 +205,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
     OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
 
-    shader.use();
+    //shader.use();
 }
 
 void engine::Terrain::clean()
@@ -219,5 +219,5 @@ void engine::Terrain::clean()
         m_terrainVBO = 0;
     }
 
-	m_tessHeightMapShader.clean();
+	//m_tessHeightMapShader.clean();
 }

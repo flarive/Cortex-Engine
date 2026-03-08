@@ -36,14 +36,14 @@ void MyScene14::init()
 
 
     // light
-    //auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
-    //auto light1 = make_shared<PointLight>();
-    //light1->intensity = 10.0f;
-    //light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
-    //auto entityLight1 = make_shared<Entity>("Light1");
-    //entityLight1->addComponent<TransformComponent>(trsLight1);
-    //entityLight1->addComponent<LightComponent>(light1);
-    //getEntityManager().addChild(entityLight1);
+    auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    auto light1 = make_shared<PointLight>();
+    light1->intensity = 10.0f;
+    light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
+    getEntityManager().addChild(entityLight1);
 
 
     // terrain

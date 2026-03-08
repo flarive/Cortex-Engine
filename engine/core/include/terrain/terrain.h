@@ -142,7 +142,7 @@ namespace engine
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
         
-        Shader m_tessHeightMapShader{};
+        //Shader m_tessHeightMapShader{};
 
         int m_textureWidth{};
         int m_textureHeight{};

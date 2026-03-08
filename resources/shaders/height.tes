@@ -5,17 +5,47 @@
 
 layout(quads, fractional_odd_spacing, cw) in;
 
+//struct Material {
+//    sampler2D texture_diffuse;
+//    sampler2D texture_specular;
+//    sampler2D texture_normal;
+//    sampler2D texture_height;
+
+//    bool has_texture_diffuse_map;
+//    bool has_texture_specular_map;
+//    bool has_texture_normal_map;
+//    bool has_texture_height_map;
+//};
+
 struct Material {
     sampler2D texture_diffuse;
     sampler2D texture_specular;
     sampler2D texture_normal;
-    sampler2D texture_height;
+
+    vec3 diffuse_color;
+    vec3 specular_color;
+
+
+    float shininess;
 
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
-    bool has_texture_height_map;
-};
+
+
+    int shadowCalculationMethod;
+    float shadowIntensity; // Adjust to make shadows darker
+    float shadowMapsBias; // Offset to reduce shadow acne
+    float shadowMapsBlur;
+    float normalMapIntensity;
+
+
+
+    vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+
+    bool canCastShadows;
+    bool canReceiveShadows;
+}; 
 
 uniform Material material;
 uniform mat4 model;

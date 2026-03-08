@@ -879,28 +879,28 @@ void engine::ImGuiEditor::renderModelComponent(std::shared_ptr<ModelComponent>& 
 
 ImVec4 engine::ImGuiEditor::getEntityColor(const engine::EntityType entityType)
 {
-    if (entityType == engine::EntityType::model)
-    {
-        auto purple = engine::Colors::hexToNormalizedRGB("#d478ff");
-        return ImVec4(purple.r, purple.g, purple.b, purple.a);
+    auto color = engine::Colors::hexToNormalizedRGB("#969696");
+    
+    if (entityType == engine::EntityType::model) {
+        color = engine::Colors::hexToNormalizedRGB("#d478ff");
     }
-    else if (entityType == engine::EntityType::primitive)
-    {
-        auto green = engine::Colors::hexToNormalizedRGB("#abff78");
-        return ImVec4(green.r, green.g, green.b, green.a);
+    else if (entityType == engine::EntityType::primitive) {
+        color = engine::Colors::hexToNormalizedRGB("#abff78");
     }
-    else if (entityType == engine::EntityType::light)
-    {
-        auto yellow = engine::Colors::hexToNormalizedRGB("#ffd83b");
-        return ImVec4(yellow.r, yellow.g, yellow.b, yellow.a);
+    else if (entityType == engine::EntityType::light) {
+        color = engine::Colors::hexToNormalizedRGB("#ffd83b");
     }
-    else if (entityType == engine::EntityType::camera)
-    {
-        auto blue = engine::Colors::hexToNormalizedRGB("#0f9cff");
-        return ImVec4(blue.r, blue.g, blue.b, blue.a);
+    else if (entityType == engine::EntityType::camera) {
+        color = engine::Colors::hexToNormalizedRGB("#0f9cff");
+    }
+    else if (entityType == engine::EntityType::particleSystem) {
+        color = engine::Colors::hexToNormalizedRGB("#ff9228");
+    }
+    else if (entityType == engine::EntityType::terrain) {
+        color = engine::Colors::hexToNormalizedRGB("#ff28a7");
     }
 
-    return ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+    return ImVec4(color.r, color.g, color.b, color.a);
 }
 
 #endif

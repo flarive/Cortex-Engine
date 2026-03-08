@@ -1,4 +1,8 @@
 #version 410 core
+
+// Tessellation Evaluation Shader for height mapping
+// https://wikis.khronos.org/opengl/Tessellation_Evaluation_Shader
+
 layout(quads, fractional_odd_spacing, cw) in;
 
 struct Material {
@@ -17,6 +21,9 @@ uniform Material material;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+uniform float heightFactor;
+uniform vec2 heightOffset; 
 
 in vec2 TextureCoord[]; // From TCS
 
@@ -40,10 +47,17 @@ void main()
     vec2 texCoords = (t1 - t0) * v + t0;
     TexCoords = texCoords; // Pass to fragment shader
 
+
     // Sample height from heightmap
-    Height = material.has_texture_height_map
-        ? texture(material.texture_height, texCoords).r * 64.0 - 16.0
+    float rawHeight = material.has_texture_height_map
+        ? texture(material.texture_height, texCoords).r
         : 0.0;
+
+    // Scale the height (no offset here)
+    Height = (rawHeight * 64.0 - 16.0) * heightFactor;
+
+
+
 
     // Correct corner indexing for positions
     vec4 p00 = gl_in[0].gl_Position; // (u0,v0)
@@ -63,6 +77,10 @@ void main()
 
     // Add displacement along the normal
     p += normal * Height;
+
+    // Apply the 2D offset to the position (X and Z axes)
+    p.x += heightOffset.x; // Offset in X direction
+    p.z += heightOffset.y; // Offset in Z direction (or Y if you prefer)
 
     // Final clip-space position
     gl_Position = projection * view * model * p;

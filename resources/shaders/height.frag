@@ -71,10 +71,12 @@ void main()
     vec3 result = ambient + diffuse + specular;
 
     // Use height to modify the final color (e.g., grayscale overlay)
+    // The height value is in the range [-16, 48] after sampling and scaling in the TES.
+    // Adding 16.0 shifts the range to [0, 64].
+    // Dividing by 64.0 scales the range [0, 64] back to [0, 1].
     float h = (Height + 16.0) / 64.0;
     vec3 heightEffect = vec3(h, h, h);
 
     // Blend the height effect with the lighting result
-    //FragColor = vec4(mix(result, heightEffect, 0.6), 1.0);
     FragColor = vec4(mix(result, heightEffect, 0.6), 1.0);
 }

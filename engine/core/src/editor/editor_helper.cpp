@@ -137,6 +137,34 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                             }
                         }
                     }
+                    else if (glm::vec2* pValue = std::get_if<glm::vec2>(&property.value))
+                    {
+                        if (property.type & readonly) {
+                            ImGui::Text("%i", *pValue);
+                        }
+                        else
+                        {
+                            if (ImGui::BeginTable("MyTable", 2, ImGuiTableFlags_SizingStretchSame))
+                            {
+                                ImGui::TableSetupColumn("vx", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+                                ImGui::TableSetupColumn("vy", ImGuiTableColumnFlags_WidthFixed, 75.0f);
+
+                                ImGui::TableNextRow();
+
+                                ImGui::TableSetColumnIndex(0);
+                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                    component->setProperty(key, *pValue);
+                                }
+
+                                ImGui::TableSetColumnIndex(1);
+                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                    component->setProperty(key, *pValue);
+                                }
+
+                                ImGui::EndTable();
+                            }
+                        }
+                    }
                     else if (glm::vec3* pValue = std::get_if<glm::vec3>(&property.value))
                     {
                         if (property.type & readonly) {
@@ -646,7 +674,7 @@ GLuint engine::EditorHelper::getEntityTypeSmallIcon(const engine::EntityType ent
     else
     {
         auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false);
 
         m_iconSmallTextureCache.insert(std::make_pair(entityType, iconTexture));
 
@@ -663,7 +691,7 @@ GLuint engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType en
     }
     else {
         auto iconName = std::format("icon_{}_48x48.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons");
+        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false);
 
         m_iconMediumTextureCache.insert(std::make_pair(entityType, iconTexture));
 

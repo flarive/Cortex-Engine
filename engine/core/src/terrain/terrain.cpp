@@ -187,7 +187,10 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     m_tessHeightMapShader.setMat4("view", view);
     m_tessHeightMapShader.setMat4("model", transformMatrix);
 
+    m_tessHeightMapShader.setFloat("heightFactor", m_heightFactor);
+    m_tessHeightMapShader.setVec2("heightOffset", m_heightOffset);
 
+    // temp
     m_tessHeightMapShader.setVec3("light.position", glm::vec3(0.0f, 100.0f, 0.0f));
     m_tessHeightMapShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);  // Increase ambient light
     m_tessHeightMapShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);  // Increase diffuse light

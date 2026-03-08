@@ -1,5 +1,8 @@
 #version 410 core
 
+// Tessellation Control Shader for height mapping
+// https://wikis.khronos.org/opengl/Tessellation_Control_Shader
+
 // We output patches made of 4 control points (quads)
 layout(vertices=4) out;
 

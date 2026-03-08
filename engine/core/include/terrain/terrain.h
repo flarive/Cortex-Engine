@@ -46,8 +46,10 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
-                {"sizefactor", EditorProperty { "Size factor", getSizeFactor(), editable, 0.0f, 10.0f, 1.0f, "%.1f" }},
+                {"sizefactor", EditorProperty { "Size", getSizeFactor(), editable, 0.0f, 10.0f, 0.1f, "%.1f" }},
                 {"resolution", EditorProperty { "Resolution", getResolution(), editable, 0.0f, 100.0f, 1.0f, "%.0f" }},
+                {"heightfactor", EditorProperty { "Height", getHeightFactor(), editable, 0.0f, 10.0f, 0.1f, "%.1f" }},
+                {"offset", EditorProperty { "Offset", getHeightOffset(), editable, 0.0f, 1000.0f, 10.0f, "%.0f" }},
                 {"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
                 {"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
                 {"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
@@ -58,6 +60,8 @@ namespace engine
             return {
                 { "sizefactor", [this](EditorPropertyValue value) { getSizeFactor() = *(std::get_if<float>(&value)); } },
                 { "resolution", [this](EditorPropertyValue value) { getResolution() = *(std::get_if<unsigned int>(&value)); } },
+                { "heightfactor", [this](EditorPropertyValue value) { getHeightFactor() = *(std::get_if<float>(&value)); } },
+                { "offset", [this](EditorPropertyValue value) { getHeightOffset() = *(std::get_if<glm::vec2>(&value)); } },
                 { "uvscale", [this](EditorPropertyValue value) { getUvScale() = *(std::get_if<float>(&value)); } },
                 { "canCastShadows", [this](EditorPropertyValue value) { canCastShadows() = *(std::get_if<bool>(&value)); } },
                 { "canReceiveShadows", [this](EditorPropertyValue value) { canReceiveShadows() = *(std::get_if<bool>(&value)); } }
@@ -109,6 +113,12 @@ namespace engine
         unsigned int& getResolution() { return m_resolution; }
         void setResolution(unsigned int resolution) { m_resolution = resolution; }
 
+        float& getHeightFactor() { return m_heightFactor; }
+        void setHeightFactor(float factor) { m_heightFactor = factor; }
+
+        glm::vec2& getHeightOffset() { return m_heightOffset; }
+        void setHeightOffset(glm::vec2 offset) { m_heightOffset = offset; }
+
         void reSetup() { init(); };
 
         void clean();
@@ -134,17 +144,16 @@ namespace engine
         
         Shader m_tessHeightMapShader{};
 
-        //unsigned int m_textureId{};
         int m_textureWidth{};
         int m_textureHeight{};
 		float m_sizeFactor{ 1.0f };
+		float m_heightFactor{ 1.0f };
+        glm::vec2 m_heightOffset{};
 
         unsigned int m_terrainVAO{};
         unsigned int m_terrainVBO{};
 
         void loadShaders();
         void geometrySetup();
-
-        //std::function<void()> m_allTexturesLoaded; // << callback
 	};
 }

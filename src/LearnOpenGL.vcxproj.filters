@@ -999,6 +999,12 @@
     <CopyFileToFolders Include="..\resources\textures\height\mountain_specular.jpg">
       <Filter>resources\textures\height</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_6_16x16.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\icon_6_48x48.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

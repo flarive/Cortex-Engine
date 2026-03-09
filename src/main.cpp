@@ -443,3 +443,148 @@ static void gamepadUpdate()
 //{
 //    camera.processMouseScroll(yoffset);
 //}
+
+
+
+
+
+// BlinnPhong.tcs
+//#version 400 core
+//
+//layout(vertices = 3) out; // Example: 3 control points per patch
+//
+//in gl_PerVertex{
+//    vec3 worldPos;
+//    vec3 worldNormal;
+//    vec2 texCoord;
+//} gl_in[]; // Input from vertex shader
+//
+//out TCS_OUT{
+//    vec3 worldPos;
+//    vec3 worldNormal;
+//    vec2 texCoord;
+//} tcs_out[]; // Output to TES
+//
+//uniform float tessLevelInner = 4.0;
+//uniform float tessLevelOuter = 4.0;
+//
+//void main() {
+//    if (gl_InvocationID == 0) {
+//        gl_TessLevelInner[0] = tessLevelInner;
+//        gl_TessLevelOuter[0] = tessLevelOuter;
+//        gl_TessLevelOuter[1] = tessLevelOuter;
+//        gl_TessLevelOuter[2] = tessLevelOuter;
+//    }
+//
+//    // Pass through data
+//    tcs_out[gl_InvocationID].worldPos = gl_in[gl_InvocationID].worldPos;
+//    tcs_out[gl_InvocationID].worldNormal = gl_in[gl_InvocationID].worldNormal;
+//    tcs_out[gl_InvocationID].texCoord = gl_in[gl_InvocationID].texCoord;
+//
+//    // Required for TCS
+//    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+//}
+//
+//
+//
+//// BlinnPhong.tes
+//#version 400 core
+//
+//layout(triangles, equal_spacing, cw) in;
+//
+//in TCS_OUT{
+//    vec3 worldPos;
+//    vec3 worldNormal;
+//    vec2 texCoord;
+//} tes_in[]; // Input from TCS
+//
+//out VS_OUT{
+//    vec3 FragPos;
+//    vec3 Normal;
+//    vec2 TexCoords;
+//    vec3 Tangent;
+//    vec3 Bitangent;
+//    vec4 FragPosLightSpace;
+//    vec3 TangentLightPos;
+//    vec3 TangentViewPos;
+//    vec3 TangentFragPos;
+//} vs_out; // Output to fragment shader
+//
+//uniform mat4 model;
+//uniform mat4 view;
+//uniform mat4 projection;
+//uniform mat4 lightSpaceMatrix;
+//uniform vec3 lightPos;
+//uniform vec3 viewPos;
+//
+//void main() {
+//    // Interpolate control points
+//    vec3 p0 = tes_in[0].worldPos;
+//    vec3 p1 = tes_in[1].worldPos;
+//    vec3 p2 = tes_in[2].worldPos;
+//    vec3 worldPos = mix(mix(p0, p1, gl_TessCoord.x), p2, gl_TessCoord.y);
+//
+//    // Interpolate normals and UVs
+//    vec3 worldNormal = mix(mix(tes_in[0].worldNormal, tes_in[1].worldNormal, gl_TessCoord.x),
+//        tes_in[2].worldNormal, gl_TessCoord.y);
+//    vec2 texCoord = mix(mix(tes_in[0].texCoord, tes_in[1].texCoord, gl_TessCoord.x),
+//        tes_in[2].texCoord, gl_TessCoord.y);
+//
+//    // Compute TBN matrix (simplified)
+//    vec3 T = normalize(gl_TessCoord.x * tes_in[1].worldPos - tes_in[0].worldPos);
+//    vec3 B = normalize(gl_TessCoord.y * tes_in[2].worldPos - tes_in[0].worldPos);
+//    vec3 N = normalize(worldNormal);
+//    mat3 TBN = transpose(mat3(T, B, N));
+//
+//    // Output to fragment shader
+//    vs_out.FragPos = worldPos;
+//    vs_out.Normal = worldNormal;
+//    vs_out.TexCoords = texCoord;
+//    vs_out.Tangent = T;
+//    vs_out.Bitangent = B;
+//    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
+//    vs_out.TangentLightPos = TBN * lightPos;
+//    vs_out.TangentViewPos = TBN * viewPos;
+//    vs_out.TangentFragPos = TBN * worldPos;
+//
+//    // Final clip-space position
+//    gl_Position = projection * view * vec4(worldPos, 1.0);
+//}
+//
+//
+//// VertexShader.vert
+//out VS_OUT{
+//    vec3 FragPos;
+//    vec3 Normal;
+//    vec2 TexCoords;
+//    vec3 Tangent;
+//    vec3 Bitangent;
+//    vec4 FragPosLightSpace;
+//    vec3 TangentLightPos;
+//    vec3 TangentViewPos;
+//    vec3 TangentFragPos;
+//} vs_out;
+//
+//
+//8. Summary of Fixes
+//
+//Vertex Shader :
+//
+//Output gl_out[] for tessellation.
+//Output vs_out for non - tessellated rendering.
+//
+//TCS :
+//
+//    Input : gl_in[](from vertex shader).
+//    Output : tcs_out[](for TES).
+//
+//    TES :
+//
+//    Input : tes_in[](from TCS).
+//    Output : vs_out(for fragment shader).
+//
+//    Fragment Shader :
+//
+//Input: fs_in(from TES or vertex shader).
+//
+//

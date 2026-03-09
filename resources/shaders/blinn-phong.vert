@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
 layout (location = 1) in vec3 aNormal; // the normal variable has attribute position 1
@@ -9,9 +9,9 @@ layout (location = 5) in ivec4 aBoneIds;  // Only used for animated models
 layout (location = 6) in vec4 aWeights;    // Only used for animated models
 
 out VS_OUT {
-    vec3 FragPos; // vertex position in world space, same as worldPosition
-    vec3 Normal; // same as worldNormal when reverse_normals is false
-    vec2 TexCoords;
+    //vec3 FragPos; // vertex position in world space, same as worldPosition
+    //vec3 Normal; // same as worldNormal when reverse_normals is false
+    //vec2 TexCoords;
     vec3 Tangent;
     vec3 Bitangent;
     vec4 FragPosLightSpace;
@@ -20,7 +20,6 @@ out VS_OUT {
     vec3 TangentViewPos;
     vec3 TangentFragPos;
 } vs_out;
-
 
 uniform mat4 model;
 uniform mat4 view;

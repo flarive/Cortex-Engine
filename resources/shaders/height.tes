@@ -48,7 +48,20 @@ uniform vec2 heightOffset;
 in vec2 TextureCoord[]; // From TCS
 
 out float Height;
-out vec2 TexCoords; // Pass to fragment shader
+//out vec2 TexCoords; // Pass to fragment shader
+
+out VS_OUT {
+    vec3 FragPos; // vertex position in world space, same as worldPosition
+    vec3 Normal; // same as worldNormal when reverse_normals is false
+    vec2 TexCoords;
+    vec3 Tangent;
+    vec3 Bitangent;
+    vec4 FragPosLightSpace;
+
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
 
 void main()
 {
@@ -65,7 +78,7 @@ void main()
     vec2 t0 = (t10 - t00) * u + t00;
     vec2 t1 = (t11 - t01) * u + t01;
     vec2 texCoords = (t1 - t0) * v + t0;
-    TexCoords = texCoords; // Pass to fragment shader
+    vs_out.TexCoords = texCoords; // Pass to fragment shader
 
 
     // Sample height from heightmap

@@ -156,6 +156,8 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     if (!m_isEnabled)
         return;
 
+    ShaderType type = shader.getShaderType();
+
     if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
@@ -176,25 +178,48 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-    if (!m_material->bind(shader)) {
-        std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-        return;
-    }
-    OpenGLDebug::checkGLError("m_tessHeightMapShader.bind");
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        if (!m_material->bind(shader)) {
+            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+            return;
+        }
 
+        if (type == ShaderType::BlinnPhong)
+        {
+            shader.setFloat("material.shininess", m_material->getShininessIntensity());
+            shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+            shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        }
+
+        //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
+        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+
+
+        shader.setBool("material.canCastShadows", canCastShadows());
+        shader.setBool("material.canReceiveShadows", canReceiveShadows());
+
+
+        if (type == ShaderType::PBR)
+        {
+            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
+            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+        }
+    }
     
-    //shader.setMat4("projection", projection);
-    //shader.setMat4("view", view);
+
     shader.setMat4("model", transformMatrix);
+
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader.setBool("hasTangents", true);
+        shader.setBool("isAnimated", false);
+    }
 
     shader.setFloat("heightFactor", m_heightFactor);
     shader.setVec2("heightOffset", m_heightOffset);
-
-    // temp
-    //m_tessHeightMapShader.setVec3("light.position", glm::vec3(0.0f, 100.0f, 0.0f));
-    //m_tessHeightMapShader.setVec3("light.ambient", 0.3f, 0.3f, 0.3f);  // Increase ambient light
-    //m_tessHeightMapShader.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);  // Increase diffuse light
-    //m_tessHeightMapShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f); // Increase specular light
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);
@@ -204,8 +229,6 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     m_material->unbind(); // Unbind textures to prevent OpenGL state retention
     OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
-
-    //shader.use();
 }
 
 void engine::Terrain::clean()

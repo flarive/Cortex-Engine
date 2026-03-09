@@ -23,9 +23,9 @@ out VS_OUT {
 
 
 uniform mat4 model;
-uniform mat3 normalMatrix;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat3 normalMatrix;
 uniform mat4 lightSpaceMatrix;
 
 uniform bool reverse_normals;
@@ -37,7 +37,7 @@ const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 uniform bool isAnimated; // Flag to determine if the model is animated with bones animation
-uniform bool isTessellated; // New uniform to toggle tessellation
+uniform bool isTessellated;
 
 
 void main()

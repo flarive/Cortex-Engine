@@ -15,6 +15,7 @@ const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 uniform bool isAnimated; // Flag to determine if the model is animated with bones animation
+uniform bool isTessellated;
 
 void main()
 {
@@ -49,5 +50,15 @@ void main()
         totalNormal = aNormal;
     }
 
-    gl_Position = lightSpaceMatrix * model * totalPosition;
+    // Handle gl_Position based on tessellation mode
+    if (isTessellated)
+    {
+        // For tessellation, output world space position
+        gl_Position = vec4(aPos, 1.0);
+    }
+    else
+    {
+        // For standard rendering, output clip space position
+        gl_Position = lightSpaceMatrix * model * totalPosition;
+    }
 }

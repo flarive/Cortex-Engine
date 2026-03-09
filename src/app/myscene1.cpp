@@ -49,10 +49,6 @@ void MyScene1::init()
     getEntityManager().addChild(entityLight1);
 
 
-
-    
-
-
     // ground
     auto myPlane = make_shared<Plane>();
     myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));

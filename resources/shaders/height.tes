@@ -5,22 +5,11 @@
 
 layout(quads, fractional_odd_spacing, cw) in;
 
-//struct Material {
-//    sampler2D texture_diffuse;
-//    sampler2D texture_specular;
-//    sampler2D texture_normal;
-//    sampler2D texture_height;
-
-//    bool has_texture_diffuse_map;
-//    bool has_texture_specular_map;
-//    bool has_texture_normal_map;
-//    bool has_texture_height_map;
-//};
-
 struct Material {
     sampler2D texture_diffuse;
     sampler2D texture_specular;
     sampler2D texture_normal;
+    sampler2D texture_height;
 
     vec3 diffuse_color;
     vec3 specular_color;
@@ -31,6 +20,7 @@ struct Material {
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
+    bool has_texture_height_map;
 
 
     int shadowCalculationMethod;
@@ -83,7 +73,7 @@ void main()
         ? texture(material.texture_height, texCoords).r
         : 0.0;
 
-    // Scale the height (no offset here)
+    // Scale the height
     Height = (rawHeight * 64.0 - 16.0) * heightFactor;
 
 

@@ -109,7 +109,9 @@ uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
-uniform mat4 lightSpaceMatrix;
+
+//uniform mat3 normalMatrix; // ????
+//uniform mat4 lightSpaceMatrix; // ????
 
 
 
@@ -765,6 +767,8 @@ void main()
     vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).rgb : vec3(0);
+
 	vec3 N = normalize(fs_in.Normal);
 	vec3 V = normalize(viewPos - fs_in.FragPos);
 	vec3 P = fs_in.FragPos;
@@ -814,8 +818,10 @@ void main()
     // Sample the alpha value from the diffuse texture
     float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).a : 1.0;
 
+
+
     //FragColor = vec4(ToSRGB(result), alpha);
-    FragColor = vec4(result, alpha);
+    FragColor = vec4(result, alpha + (height * vec3(0.01))); // fak usage of height map
 
     //FragColor = texture(texture_shadowMap,  fs_in.TexCoords);
 

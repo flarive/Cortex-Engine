@@ -551,3 +551,84 @@ engine::ShaderType engine::Shader::getShaderType()
     if (name == "pbr") return ShaderType::PBR;
     return ShaderType::Unknown;
 }
+
+void engine::Shader::getActiveUniformsList(const std::string& uniformName)
+{
+    GLint count = 0;
+    glGetProgramInterfaceiv(ID, GL_UNIFORM, GL_ACTIVE_RESOURCES, &count);
+
+    // Query a few helpful properties.
+    const GLenum props[] = {
+        GL_NAME_LENGTH,
+        GL_TYPE,
+        GL_LOCATION,
+        GL_BLOCK_INDEX,
+        GL_ARRAY_SIZE,             // helpful for arrays
+        GL_REFERENCED_BY_VERTEX_SHADER,
+        GL_REFERENCED_BY_TESS_CONTROL_SHADER,
+        GL_REFERENCED_BY_TESS_EVALUATION_SHADER,
+        GL_REFERENCED_BY_GEOMETRY_SHADER,
+        GL_REFERENCED_BY_FRAGMENT_SHADER,
+        GL_REFERENCED_BY_COMPUTE_SHADER
+    };
+
+    for (GLint i = 0; i < count; ++i)
+    {
+        GLint values[sizeof(props) / sizeof(props[0])] = {};
+        glGetProgramResourceiv(ID, GL_UNIFORM, i,
+            static_cast<GLsizei>(std::size(props)),
+            props,
+            static_cast<GLsizei>(std::size(values)),
+            nullptr,
+            values);
+
+        const GLint nameLen = values[0];
+        const GLenum type = static_cast<GLenum>(values[1]);
+        const GLint location = values[2];
+        const GLint blockIndex = values[3];
+        const GLint arraySize = values[4];
+
+        // Get the name
+        std::string uname(nameLen, '\0');
+        glGetProgramResourceName(ID, GL_UNIFORM, i, nameLen, nullptr, uname.data());
+        if (!uname.empty() && uname.back() == '\0') uname.pop_back();
+
+        if (uname != uniformName)
+            continue;
+
+        // Determine if it "survived"
+        // - Default-block uniform: survives if listed; location != -1 means assignable via glUniform*
+        // - Block member: survives if listed; location will be -1 by definition
+        bool survived = true; // if it's in the interface, it's active
+
+        const bool inBlock = (blockIndex >= 0);
+        const bool hasLocation = (location != -1);
+
+        // Optional: stage usage (can help you see where it is live)
+        const bool refVS = values[5] != 0;
+        const bool refTCS = values[6] != 0;
+        const bool refTES = values[7] != 0;
+        const bool refGS = values[8] != 0;
+        const bool refFS = values[9] != 0;
+        const bool refCS = values[10] != 0;
+
+        logger.info(
+            "Uniform '{}' | type=0x{:04X} | arraySize={} | location={} | blockIndex={} | used(VS/TCS/TES/GS/FS/CS)={}/{}/{}/{}/{}/{} | survived={}",
+            uname, type, arraySize, location, blockIndex,
+            refVS, refTCS, refTES, refGS, refFS, refCS,
+            survived
+        );
+
+        // If you specifically want to know whether you can set it with glUniform*:
+        if (!inBlock && hasLocation) {
+            // Assignable via glUniform*
+        }
+        else if (inBlock) {
+            // It's a UBO member; query the block/binding and set via buffer data, not glUniform*
+        }
+        else {
+            // Not assignable (e.g., special/opaque, or driver reports location -1)
+        }
+    }
+}
+

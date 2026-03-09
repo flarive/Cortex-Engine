@@ -350,6 +350,8 @@ void engine::ParticleSystem::destroyParticle(unsigned int index)
 
 void engine::ParticleSystem::initParticles(unsigned int n)
 {
+	float randMax = (float)RAND_MAX;
+	
 	for (unsigned int i = 0; i < n; i++)
 	{
 		Particle particle{};
@@ -366,13 +368,15 @@ void engine::ParticleSystem::initParticles(unsigned int n)
 		}*/
 
 		// Random angle and distance within the emitter radius
-		float theta = rand() / (float)RAND_MAX * 2.0f * M_PI;
-		float phi = rand() / (float)RAND_MAX * 2.0f * M_PI;
-		float r = (rand() / (float)RAND_MAX) * m_emitterRadius;
+		float theta = rand() / randMax * 2.0f * M_PI;
+		float phi = rand() / randMax * 2.0f * M_PI;
+		float r = (rand() / randMax) * m_emitterRadius;
+
+		float sinPhi = sin(phi);
 
 		// Convert spherical to Cartesian coordinates
-		particle.position.x = r * sin(phi) * cos(theta);
-		particle.position.y = r * sin(phi) * sin(theta);
+		particle.position.x = r * sinPhi * cos(theta);
+		particle.position.y = r * sinPhi * sin(theta);
 		particle.position.z = r * cos(phi);
 
 		//float theta = rand() / (float)RAND_MAX * 2.0f * M_PI;

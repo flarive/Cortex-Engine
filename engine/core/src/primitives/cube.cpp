@@ -131,10 +131,6 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
             return;
         }
 
-        m_material->bind(shader);
-        
-        
-
         if (type == ShaderType::BlinnPhong)
         {
             shader.setFloat("material.shininess", m_material->getShininessIntensity());

@@ -56,6 +56,7 @@ namespace engine
         void clean();
 
         ShaderType getShaderType();
+        void getActiveUniformsList(const std::string& uniformName);
 
 
     private:

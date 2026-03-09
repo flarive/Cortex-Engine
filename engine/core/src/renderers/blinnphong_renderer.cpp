@@ -210,6 +210,7 @@ void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
     blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
+    //blinnPhongShader.getActiveUniformsList("lightSpaceMatrix");// "normalMatrix");
 
     // skybox reflection shader
     skyboxReflectionShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");

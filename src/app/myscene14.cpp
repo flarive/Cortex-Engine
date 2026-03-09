@@ -36,10 +36,25 @@ void MyScene14::init()
 
 
     // light
-    auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
-    auto light1 = make_shared<PointLight>();
-    light1->intensity = 10.0f;
-    light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
+    //auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    //auto light1 = make_shared<PointLight>();
+    //light1->intensity = 10.0f;
+    //light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
+    //auto entityLight1 = make_shared<Entity>("Light1");
+    //entityLight1->addComponent<TransformComponent>(trsLight1);
+    //entityLight1->addComponent<LightComponent>(light1);
+    //getEntityManager().addChild(entityLight1);
+
+    // light
+    auto trsLight1 = Transform{ {0.0f, 5.0f, 3.0f} };
+    auto light1 = make_shared<SpotLight>();
+    light1->intensity = 1.0f;
+    light1->cutoff = 12.0f;
+    light1->outerCutoff = 48.0f;
+    light1->target = vec3(0.0f, 0.0f, 0.0f);
+    light1->ambientColor = Color(1.0f);
+    light1->diffuseColor = Color(1.0f);
+    light1->specularColor = Color(1.0f);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);

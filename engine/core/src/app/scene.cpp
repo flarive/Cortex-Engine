@@ -623,6 +623,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::terrain)
             {
                 component->update(deltaTime, transform);
+                shaderTessellation.use();
                 component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;
             }

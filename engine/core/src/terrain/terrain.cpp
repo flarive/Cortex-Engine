@@ -212,7 +212,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        //shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
         shader.setBool("isTessellated", true);

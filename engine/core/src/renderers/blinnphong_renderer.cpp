@@ -48,6 +48,10 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // -------------------------
     loadShaders();
 
+
+    LTC1Map = Texture::loadMTexture();
+    LTC2Map = Texture::loadLUTTexture();
+
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
     blinnPhongShader.use();
@@ -55,13 +59,18 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    
-
-    LTC1Map = Texture::loadMTexture();
-    LTC2Map = Texture::loadLUTTexture();
-
     blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
     blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+
+
+    blinnPhongShaderTessellation.use();
+    blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    blinnPhongShaderTessellation.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+    blinnPhongShaderTessellation.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+
 
     // shader configuration
     // --------------------
@@ -149,7 +158,14 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
     
-    
+    blinnPhongShaderTessellation.use();
+    blinnPhongShaderTessellation.setMat4("projection", projection);
+    blinnPhongShaderTessellation.setMat4("view", view);
+    blinnPhongShaderTessellation.setVec3("viewPos", camera->position);
+    blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
 
     
@@ -274,6 +290,12 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
     blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
     blinnPhongShader.setInt("areaLightsCount", m_areaLightCount);
+
+    blinnPhongShaderTessellation.use();
+    blinnPhongShaderTessellation.setInt("pointLightsCount", m_pointLightCount);
+    blinnPhongShaderTessellation.setInt("dirLightsCount", m_dirLightCount);
+    blinnPhongShaderTessellation.setInt("spotLightsCount", m_spotLightCount);
+    blinnPhongShaderTessellation.setInt("areaLightsCount", m_areaLightCount);
 }
 
 engine::Shader& engine::BlinnPhongRenderer::getShader()

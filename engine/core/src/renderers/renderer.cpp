@@ -200,7 +200,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     shader.use();
 
     // bofff
-    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    if (shader.getShaderType() == ShaderType::BlinnPhong || shader.getShaderType() == ShaderType::BlinnPhongTessellation)
     {
         shader.setVec3("lightPos", light->position);
     }

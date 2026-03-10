@@ -349,7 +349,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
-void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
+void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -415,7 +415,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // update user stuffs
-    update(pbrShader);
+    update(pbrShader, pbrShaderTesselation);
     //update(outlineColorShader);
 
 
@@ -481,6 +481,8 @@ void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
     pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
+    pbrShaderTesselation.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
+
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");
     prefilterShader.init("prefilterShader", "shaders/cubemap2.vert", "shaders/prefilter.frag");

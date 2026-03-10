@@ -60,16 +60,6 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
 
-    //glActiveTexture(GL_TEXTURE0 + 20);
-    //glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    //glActiveTexture(GL_TEXTURE0 + 21);
-    //glBindTexture(GL_TEXTURE_2D, LTC2Map);
-
-
-    //blinnPhongShader.setInt("LTC1", 20); // Tell the shader to use texture unit 20 for LTC1
-    //blinnPhongShader.setInt("LTC2", 21); // Tell the shader to use texture unit 21 for LTC2
-
-
     blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
     blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
 
@@ -102,7 +92,7 @@ void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces
     m_skybox->setup(faces);
 }
 
-void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
+void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -158,7 +148,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
-    blinnPhongShader.setBool("isTessellated", false); // should be moved into each primitive
+    
     
 
 
@@ -170,7 +160,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
 
     // update user stuffs
-    update(blinnPhongShader);
+    update(blinnPhongShader, blinnPhongShaderTessellation);
     //update(outlineColorShader);
 
 
@@ -209,7 +199,9 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
+    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
+    blinnPhongShaderTessellation.init("blinnphongtessellation", "shaders/blinn-phong.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/blinn-phong.frag");
+    
 
     // skybox reflection shader
     skyboxReflectionShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
@@ -295,6 +287,7 @@ void engine::BlinnPhongRenderer::clean()
     
     // delete shaders
     blinnPhongShader.clean();
+    blinnPhongShaderTessellation.clean();
     skyboxReflectionShader.clean();
     backgroundShader.clean();
 

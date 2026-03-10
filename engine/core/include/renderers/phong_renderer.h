@@ -17,7 +17,7 @@ namespace engine
 		PhongRenderer(GLFWwindow* window);
 		
 		void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) override;
 
 		Shader& getShader() override;
 

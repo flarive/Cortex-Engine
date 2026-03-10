@@ -11,6 +11,7 @@ namespace engine
 	public:
 		// Main PBR shader
 		Shader pbrShader{};
+		Shader pbrShaderTesselation{};
 
 		// PBR environmentMap shader (for HDR skybox)
 		Shader backgroundShader{};
@@ -18,7 +19,7 @@ namespace engine
 		PbrRenderer(GLFWwindow* window);
 
 		void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) override;
 
 		Shader& getShader() override;
 

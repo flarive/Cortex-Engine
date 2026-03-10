@@ -33,7 +33,7 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 	m_uvScale = uv.getUvScale();
 
 	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
-	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.frag", "shaders/ParticleSourceGeometry.geom");
+	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.geom", "shaders/ParticleSourceGeometry.frag");
 	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
 	if (material && material->hasDiffuseMap())

@@ -210,6 +210,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
+        shader.setBool("isTessellated", false);
     }
 
     // Send to GPU

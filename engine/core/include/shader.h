@@ -10,8 +10,11 @@ namespace engine
 {
     enum class ShaderType {
         Unknown,
+        Phong,
         BlinnPhong,
-        PBR
+        BlinnPhongTessellation,
+        PBR,
+        PBRTessellation
     };
 
     
@@ -27,7 +30,7 @@ namespace engine
 
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath);
         void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath);
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath, const char* tessControlPath, const char* tessEvalPath);
+        void init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath);
 
         bool isValid() const;
 

@@ -154,8 +154,8 @@ namespace engine
         void initEntities();
         void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
-        void drawEntities(Shader& shader);
-        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum);
+        void drawEntities(Shader& shader, Shader& shaderTessellation);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum);
 
 
 

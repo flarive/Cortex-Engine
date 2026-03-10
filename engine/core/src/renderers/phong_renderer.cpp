@@ -41,7 +41,7 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);// settings.drawAsWireframe ? GL_LINE : GL_FILL);
 }
 
-void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI)
+void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
     glm::mat4 projection = camera->getProjectionMatrix(width, height);
     glm::mat4 view = camera->getViewMatrix();
@@ -63,7 +63,7 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
     
 
     // update user stuffs
-    update(phongShader);
+    update(phongShader, phongShader);
 
     // Resolve MSAA to screen or another texture FBO
     //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);

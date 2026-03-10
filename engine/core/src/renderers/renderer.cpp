@@ -21,7 +21,7 @@ void engine::Renderer::loadShaders()
     directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vert", "shaders/shadow_mapping_depth.frag");
 
     // for point lights
-    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.frag", "shaders/point_shadow_depth.geom");
+    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
 
 
     // debug only
@@ -160,7 +160,7 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Spotlight only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -175,8 +175,8 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     // render scene from light's point of view
     directionalDepthMapShader.use();
     directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    directionalDepthMapShader.setBool("isTessellated", false);
     
-
     glViewport(0, 0, (GLsizei)shadowSize, (GLsizei)shadowSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -184,7 +184,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
 
     glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
     glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-    update(directionalDepthMapShader);
+    update(directionalDepthMapShader, directionalDepthMapShader); // ??????????????
     glDisable(GL_POLYGON_OFFSET_FILL);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -209,7 +209,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
     shader.setBool("enableShadows", enableShadows);
 
     // update user stuffs
-    update(shader);
+    update(shader, shader);// ???????????????
 
 
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
@@ -234,7 +234,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, float width, f
 /// <summary>
 /// Omnilight only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
     // -----------------------------------------------
@@ -266,7 +266,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
     pointDepthMapShader.setVec3("lightPos", light->position);
 
     // update user stuffs
-    update(pointDepthMapShader);
+    update(pointDepthMapShader, pointDepthMapShader); // ?????????????????????????
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -295,7 +295,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, float width, 
     shader.setFloat("far_plane", far_plane);
 
     // update user stuffs
-    update(shader);
+    update(shader, shader); // ???????????????
 
 
     // not needed but need to be reserved to avoid conflicts or overrides

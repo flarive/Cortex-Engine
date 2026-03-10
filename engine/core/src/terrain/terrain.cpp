@@ -178,21 +178,20 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
         if (!m_material->bind(shader)) {
             std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
             return;
         }
 
-        if (type == ShaderType::BlinnPhong)
+        if (type == ShaderType::BlinnPhongTessellation)
         {
             shader.setFloat("material.shininess", m_material->getShininessIntensity());
             shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
             shader.setVec3("material.specular_color", m_material->getSpecularColor());
         }
 
-        //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
 
 
@@ -200,7 +199,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         shader.setBool("material.canReceiveShadows", canReceiveShadows());
 
 
-        if (type == ShaderType::PBR)
+        if (type == ShaderType::PBRTessellation)
         {
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
             shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
@@ -211,15 +210,16 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     shader.setMat4("model", transformMatrix);
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
-    }
+        shader.setBool("isTessellated", true);
 
-    shader.setFloat("heightFactor", m_heightFactor);
-    shader.setVec2("heightOffset", m_heightOffset);
+        shader.setFloat("heightFactor", m_heightFactor);
+        shader.setVec2("heightOffset", m_heightOffset);
+    }
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);

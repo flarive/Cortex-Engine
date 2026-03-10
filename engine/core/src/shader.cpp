@@ -7,6 +7,10 @@
 #include "../include/common_defines.h"
 #include "../include/managers/log_manager.h"
 
+/// <summary>
+/// OpenGL simple pipeline
+/// VS => FS
+/// </summary>
 void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
 {
     name = shaderName;
@@ -73,8 +77,11 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glDeleteShader(fragment);
 }
 
-
-void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath)
+/// <summary>
+/// OpenGL pipeline without tessellation
+/// VS => (optional GS) => FS
+/// </summary>
+void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* geometryPath, const char* fragmentPath)
 {
     name = shaderName;
 
@@ -155,7 +162,11 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glDeleteShader(geometry);
 }
 
-void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath, const char* tessControlPath, const char* tessEvalPath)
+/// <summary>
+/// OpenGL pipeline with tessellation
+/// VS => TCS => TES => (optional GS) => FS
+/// </summary>
+void engine::Shader::init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath)
 {
     name = shaderName;
 
@@ -231,11 +242,6 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
-    // fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
-    glCompileShader(fragment);
-    checkCompileErrors(fragment, "FRAGMENT");
     // if geometry shader is given, compile geometry shader
     unsigned int geometry;
     if (geometryPath != nullptr)
@@ -265,16 +271,22 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
         glCompileShader(tessEval);
         checkCompileErrors(tessEval, "TESS_EVALUATION");
     }
+    // fragment Shader
+    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment, 1, &fShaderCode, NULL);
+    glCompileShader(fragment);
+    checkCompileErrors(fragment, "FRAGMENT");
+
     // shader Program
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
-    if (geometryPath != nullptr)
-        glAttachShader(ID, geometry);
     if (tessControlPath != nullptr)
         glAttachShader(ID, tessControl);
     if (tessEvalPath != nullptr)
         glAttachShader(ID, tessEval);
+    if (geometryPath != nullptr)
+        glAttachShader(ID, geometry);
+    glAttachShader(ID, fragment);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
     
@@ -284,9 +296,13 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
-    glDeleteShader(fragment);
+    if (tessControlPath != nullptr)
+        glDeleteShader(tessControl);
+    if (tessEvalPath != nullptr)
+        glDeleteShader(tessEval);
     if (geometryPath != nullptr)
         glDeleteShader(geometry);
+    glDeleteShader(fragment);
 }
 
 bool engine::Shader::isValid() const
@@ -547,8 +563,11 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
 
 engine::ShaderType engine::Shader::getShaderType()
 {
+    if (name == "phong") return ShaderType::Phong;
     if (name == "blinnphong") return ShaderType::BlinnPhong;
+    if (name == "blinnphongtessellation") return ShaderType::BlinnPhongTessellation;
     if (name == "pbr") return ShaderType::PBR;
+    if (name == "pbrtessellation") return ShaderType::PBRTessellation;
     return ShaderType::Unknown;
 }
 

@@ -46,6 +46,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
     shader.use();
     shader.setBool("isAnimated", hasBones());
+    shader.setBool("isTessellated", false);
 
     if (!m_shared_model)
     {

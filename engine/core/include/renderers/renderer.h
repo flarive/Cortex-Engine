@@ -53,7 +53,7 @@ namespace engine
 		virtual ~Renderer() = default;
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
-		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&)> update, std::function<void()> updateUI) = 0;
+		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) = 0;
 
 		void initColorFramebuffer(int width, int height);
 		void initColorFramebufferMSAA(int width, int height);
@@ -141,8 +141,8 @@ namespace engine
 
 
 
-		void computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<Light> light);
-		void computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&)> update, std::shared_ptr<engine::Light> light);
+		void computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
+		void computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
 		
 		void initDebugPlaneGrid();
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);

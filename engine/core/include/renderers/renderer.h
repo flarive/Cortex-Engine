@@ -40,6 +40,8 @@ namespace engine
 
 		// Shader that renders a depth framebuffer for shadow maps
 		Shader directionalDepthMapShader{};
+		Shader directionalDepthMapTessellationShader{};
+
 		Shader pointDepthMapShader{};
 		
 		Shader depthMapToQuadShader{}; // for depth map texture debugging purposes
@@ -141,8 +143,8 @@ namespace engine
 
 
 
-		void computeDepthMapFramebuffer(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
-		void computeDepthMapFramebuffer2(Shader& shader, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
+		void computeDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
+		void computeDepthMapFramebuffer2(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
 		
 		void initDebugPlaneGrid();
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);

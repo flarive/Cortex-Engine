@@ -1,0 +1,20 @@
+#version 440 core
+
+layout(triangles, equal_spacing, cw) in;
+
+in TCS_OUT {
+    vec3 worldPos;
+} tes_in[];
+
+uniform mat4 lightSpaceMatrix;
+
+void main()
+{
+    // Barycentric interpolation in world space
+    vec3 worldPos =
+          tes_in[0].worldPos * gl_TessCoord.x
+        + tes_in[1].worldPos * gl_TessCoord.y
+        + tes_in[2].worldPos * gl_TessCoord.z;
+
+    gl_Position = lightSpaceMatrix * vec4(worldPos, 1.0);
+}

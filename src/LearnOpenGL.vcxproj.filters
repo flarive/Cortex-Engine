@@ -1005,6 +1005,18 @@
     <CopyFileToFolders Include="..\resources\icons\icon_6_48x48.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.tcs">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.tes">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.vert">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.frag">
+      <Filter>resources\shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

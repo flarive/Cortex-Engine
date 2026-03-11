@@ -440,9 +440,9 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     {
         auto firstLight = m_lights[0];
         if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            computeDepthMapFramebuffer2(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
+            computeDepthMapFramebuffer2(pbrShader, pbrShaderTesselation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
         else
-            computeDepthMapFramebuffer(pbrShader, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
+            computeDepthMapFramebuffer(pbrShader, pbrShaderTesselation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
     }
 
 

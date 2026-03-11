@@ -29,7 +29,8 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
 {
     ShaderType type = shader.getShaderType();
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation
+        || type == ShaderType::PBR)
     {
         std::string base = std::format("spotLights[{}]", m_index);
         

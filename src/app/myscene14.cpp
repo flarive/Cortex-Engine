@@ -36,9 +36,9 @@ void MyScene14::init()
 
 
     // light
-    //auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    //auto trsLight1 = Transform{ { 0.0f, 20.0f, 10.0f } };
     //auto light1 = make_shared<PointLight>();
-    //light1->intensity = 10.0f;
+    //light1->intensity = 50.0f;
     //light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
     //auto entityLight1 = make_shared<Entity>("Light1");
     //entityLight1->addComponent<TransformComponent>(trsLight1);
@@ -48,7 +48,7 @@ void MyScene14::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 5.0f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 1.0f;
+    light1->intensity = 10.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);
@@ -75,14 +75,14 @@ void MyScene14::init()
 
 
 
-    //textFPSCount.setup(app->window, FONT_PATH, 28);
+    textFPSCount.setup(app->window, FONT_PATH, 20);
 
-    //textPolyCount.setup(app->window, FONT_PATH, 28);
-    //textMeshCount.setup(app->window, FONT_PATH, 28);
-    //textPrimitiveCount.setup(app->window, FONT_PATH, 28);
+    textPolyCount.setup(app->window, FONT_PATH, 20);
+    textMeshCount.setup(app->window, FONT_PATH, 20);
+    textPrimitiveCount.setup(app->window, FONT_PATH, 20);
 
-    //textDrawnCount.setup(app->window, FONT_PATH, 28);
-    //textTotalCount.setup(app->window, FONT_PATH, 28);
+    textDrawnCount.setup(app->window, FONT_PATH, 20);
+    textTotalCount.setup(app->window, FONT_PATH, 20);
 }
 
 
@@ -165,23 +165,23 @@ void MyScene14::update(Shader& shader)
 void MyScene14::updateUI()
 {
     // render HUD / UI
-    //textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    //textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    //textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
-    //textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
 
-    //textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
-    //textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
+    textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
+    textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
 }
 
 void MyScene14::clean()
 {
     // clean up any resources
-    //textFPSCount.clean();
-    //textPolyCount.clean();
-    //textMeshCount.clean();
-    //textPrimitiveCount.clean();
-    //textDrawnCount.clean();
-    //textTotalCount.clean();
+    textFPSCount.clean();
+    textPolyCount.clean();
+    textMeshCount.clean();
+    textPrimitiveCount.clean();
+    textDrawnCount.clean();
+    textTotalCount.clean();
 }

@@ -48,6 +48,7 @@ uniform mat4 finalBonesMatrices[MAX_BONES];
 uniform bool isAnimated; // Flag to determine if the model is animated with bones animation
 uniform bool isTessellated;
 
+out float Height;
 
 void main()
 {

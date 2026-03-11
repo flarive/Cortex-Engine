@@ -19,17 +19,17 @@ private:
     const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    //Text textFPSCount{};
+    Text textFPSCount{};
 
 
 
-    //Text textPolyCount{};
-    //Text textMeshCount{};
-    //Text textPrimitiveCount{};
+    Text textPolyCount{};
+    Text textMeshCount{};
+    Text textPrimitiveCount{};
 
 
-    //Text textDrawnCount{};
-    //Text textTotalCount{};
+    Text textDrawnCount{};
+    Text textTotalCount{};
 
     float rotation{};
 

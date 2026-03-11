@@ -607,7 +607,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             }
             else if (typeID == ComponentType::light)
             {
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+                shaderTessellation.use(); // ???????????????
+                component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
             }
             else if (typeID == ComponentType::animator)
             {
@@ -623,7 +624,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::terrain)
             {
                 component->update(deltaTime, transform);
-                shaderTessellation.use();
+                shaderTessellation.use(); // ?????????????????
                 component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;
             }

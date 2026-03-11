@@ -110,6 +110,9 @@ uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
 
+uniform bool isTessellated;
+
+
 //uniform mat3 normalMatrix; // ????
 //uniform mat4 lightSpaceMatrix; // ????
 
@@ -821,7 +824,20 @@ void main()
 
 
     //FragColor = vec4(ToSRGB(result), alpha);
-    FragColor = vec4(result, alpha + (height * vec3(0.01))); // fak usage of height map
+    //FragColor = vec4(result, alpha + (height * vec3(0.01))); // fake usage of height map
+
+    if (isTessellated)
+    {
+        float h = (Height + 16.0) / 64.0;
+        vec3 heightEffect = vec3(h, h, h);
+
+        // Blend the height effect with the lighting result
+        FragColor = vec4(mix(result, heightEffect, 0.6), alpha + (height * vec3(0.0001)));
+    }
+    else
+    {
+        FragColor = vec4(result, alpha + (height * vec3(0.0001))); // fake usage of height map
+    }
 
     //FragColor = texture(texture_shadowMap,  fs_in.TexCoords);
 

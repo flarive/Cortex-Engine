@@ -857,7 +857,7 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
                         countItems(child);
 					}
                 }
-                else if (child->getComponent<PrimitiveComponent>())
+                else if (child->getComponent<PrimitiveComponent>() || child->getComponent<ParticleSystemComponent>() || child->getComponent<TerrainComponent>())
                 {
                     primitivecount += 1;
                 }

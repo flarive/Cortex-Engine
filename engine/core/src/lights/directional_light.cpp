@@ -32,7 +32,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 {
     ShaderType type = shader.getShaderType();
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
         std::string base = std::format("dirLights[{}]", m_index);
 

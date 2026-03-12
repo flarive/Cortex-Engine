@@ -176,9 +176,6 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
                 return;
             }
 
-            
-            
-
             if (type == ShaderType::BlinnPhong)
             {
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());
@@ -186,7 +183,6 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
             }
 
-            //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             
 

@@ -199,11 +199,6 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
             }
 
-            
-            
-            
-
-            //shader.setFloat("material.heightScale", m_material->getHeightIntensity());
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             
 

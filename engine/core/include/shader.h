@@ -14,7 +14,9 @@ namespace engine
         BlinnPhong,
         BlinnPhongTessellation,
         PBR,
-        PBRTessellation
+        PBRTessellation,
+        DepthBufferDirectionalLights,
+        DepthBufferPointLights
     };
 
     

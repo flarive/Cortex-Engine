@@ -568,6 +568,8 @@ engine::ShaderType engine::Shader::getShaderType()
     if (name == "blinnphongTessellation") return ShaderType::BlinnPhongTessellation;
     if (name == "pbr") return ShaderType::PBR;
     if (name == "pbrTessellation") return ShaderType::PBRTessellation;
+    if (name == "simpleDepthBuffer1") return ShaderType::DepthBufferDirectionalLights;
+    if (name == "simpleDepthBuffer2") return ShaderType::DepthBufferPointLights;
     return ShaderType::Unknown;
 }
 

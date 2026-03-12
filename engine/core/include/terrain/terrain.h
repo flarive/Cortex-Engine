@@ -21,6 +21,8 @@
 
 namespace engine
 {
+    const int TERRAIN_TESSELLATION_PATCH_COUNT = 4;
+    
     enum class TerrainType { undefined = 0, terrain = 1 };
 
 
@@ -37,7 +39,7 @@ namespace engine
     class Terrain final
 	{
 	public:
-		Terrain(float sizeFactor = 1.0f, unsigned int patchCount = 4, unsigned int resolution = 20);
+		Terrain(float sizeFactor = 1.0f, unsigned int resolution = 20);
 		~Terrain() = default;
 
         void setup();
@@ -126,8 +128,7 @@ namespace engine
     private:
 
 		bool m_isEnabled{ true };
-
-        int m_patchCount{};
+        
         unsigned int m_resolution{};
 
         bool m_canCastShadows{ true };
@@ -142,8 +143,6 @@ namespace engine
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
         
-        //Shader m_tessHeightMapShader{};
-
         int m_textureWidth{};
         int m_textureHeight{};
 		float m_sizeFactor{ 1.0f };
@@ -153,7 +152,6 @@ namespace engine
         unsigned int m_terrainVAO{};
         unsigned int m_terrainVBO{};
 
-        void loadShaders();
         void geometrySetup();
 	};
 }

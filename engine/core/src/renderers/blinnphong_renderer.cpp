@@ -216,7 +216,7 @@ void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
     blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
-    blinnPhongShaderTessellation.init("blinnphongtessellation", "shaders/blinn-phong.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/blinn-phong.frag");
+    blinnPhongShaderTessellation.init("blinnphongTessellation", "shaders/blinn-phong.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/blinn-phong.frag");
     
 
     // skybox reflection shader

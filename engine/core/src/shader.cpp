@@ -565,9 +565,9 @@ engine::ShaderType engine::Shader::getShaderType()
 {
     if (name == "phong") return ShaderType::Phong;
     if (name == "blinnphong") return ShaderType::BlinnPhong;
-    if (name == "blinnphongtessellation") return ShaderType::BlinnPhongTessellation;
+    if (name == "blinnphongTessellation") return ShaderType::BlinnPhongTessellation;
     if (name == "pbr") return ShaderType::PBR;
-    if (name == "pbrtessellation") return ShaderType::PBRTessellation;
+    if (name == "pbrTessellation") return ShaderType::PBRTessellation;
     return ShaderType::Unknown;
 }
 

@@ -365,10 +365,8 @@ void engine::Scene::gameLoop()
         // execute scene update
         if (shader.name != "outline")
         {
-            //if (shader.name == "blinnphong")
-                update(shader);
-            //if (shaderTessellation.name == "blinnphongtessellation")
-                update(shaderTessellation);
+            update(shader);
+            update(shaderTessellation);
         }
 
         // draw our scene graph

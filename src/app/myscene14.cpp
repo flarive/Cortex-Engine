@@ -62,7 +62,7 @@ void MyScene14::init()
 
 
     // terrain
-    auto myTerrain = make_shared<Terrain>(1.0f, 4, 20);
+    auto myTerrain = make_shared<Terrain>(1.0f, 20);
     myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
@@ -73,6 +73,14 @@ void MyScene14::init()
 
 
 
+    // sphere
+    auto mySphere = make_shared<Sphere>();
+    mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsSphere = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.2f));
+    auto entitySphere = make_shared<Entity>("MySphere");
+    entitySphere->addComponent<TransformComponent>(trsSphere);
+    entitySphere->addComponent<PrimitiveComponent>(mySphere);
+    getEntityManager().addChild(entitySphere);
 
 
     textFPSCount.setup(app->window, FONT_PATH, 20);

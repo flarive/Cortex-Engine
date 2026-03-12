@@ -1,7 +1,7 @@
 #include "../../include/terrain/terrain.h"
 
-engine::Terrain::Terrain(float sizeFactor, unsigned int patchCount, unsigned int resolution)
-	: m_patchCount(patchCount), m_resolution(resolution), m_sizeFactor(sizeFactor)
+engine::Terrain::Terrain(float sizeFactor, unsigned int resolution)
+	: m_resolution(resolution), m_sizeFactor(sizeFactor)
 {
 }
 
@@ -24,8 +24,6 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
     m_material = material; // Store material reference
     m_uvScale = uv.getUvScale();
 
-    loadShaders();
-
     auto allTexturesLoaded = [this](bool) {
         TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
 		m_textureWidth = std::get<2>(data);
@@ -41,18 +39,6 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
 void engine::Terrain::init()
 {
     geometrySetup();
-}
-
-void engine::Terrain::loadShaders()
-{
-    //m_tessHeightMapShader.init("height", "shaders/height.vert", "shaders/height.frag", nullptr, "shaders/height.tcs", "shaders/height.tes");
-
-    
-
-    // to remove !!!!
-    //engine::TextureData data = Texture::loadTextureExtended("textures/height/iceland_heightmap.png", true, false);
-    //m_textureWidth = std::get<2>(data) / 3;
-    //m_textureHeight = std::get<3>(data) / 3;
 }
 
 void engine::Terrain::geometrySetup()
@@ -84,7 +70,7 @@ void engine::Terrain::geometrySetup()
     glEnableVertexAttribArray(2);
 
 
-    glPatchParameteri(GL_PATCH_VERTICES, m_patchCount);
+    glPatchParameteri(GL_PATCH_VERTICES, TERRAIN_TESSELLATION_PATCH_COUNT);
 
 
     glBindVertexArray(0);
@@ -94,7 +80,7 @@ void engine::Terrain::geometrySetup()
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
 {
     std::vector<engine::Vertex> vertices;
-    vertices.reserve(m_resolution * m_resolution * m_patchCount); // 4 vertices per quad
+    vertices.reserve(m_resolution * m_resolution * TERRAIN_TESSELLATION_PATCH_COUNT); // 4 vertices per quad
 
     const glm::vec3 normal(0.0f, 1.0f, 0.0f);
 

@@ -48,7 +48,7 @@ void MyScene14::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 5.0f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 10.0f;
+    light1->intensity = 2.0f;
     light1->cutoff = 12.0f;
     light1->outerCutoff = 48.0f;
     light1->target = vec3(0.0f, 0.0f, 0.0f);
@@ -63,7 +63,7 @@ void MyScene14::init()
 
     // terrain
     auto myTerrain = make_shared<Terrain>(1.0f, 4, 20);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
+    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");

@@ -83,9 +83,6 @@ struct AreaLight
 	bool twoSided;
 };
 
-
-
-
 // coming from vertex shader
 in VS_OUT {
     vec3 FragPos; // same as worldPosition
@@ -100,12 +97,12 @@ in VS_OUT {
     vec3 TangentFragPos;
 } fs_in;
 
-in float Height;
-
-// ??????????? to use !!!!
+// coming from TES shader (tesselation)
 in vec3 FragPos;
 in vec2 TexCoords;
 in vec3 Normal;
+
+in float Height;
 
 // coming from code
 uniform vec3 viewPos;
@@ -116,11 +113,6 @@ uniform bool hasTangents; // does the primitive to render has tangents and bitan
 uniform Material material;
 
 uniform bool isTessellated;
-
-
-//uniform mat3 normalMatrix; // ????
-//uniform mat4 lightSpaceMatrix; // ????
-
 
 
 // shader output
@@ -153,9 +145,9 @@ const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
 
@@ -336,7 +328,7 @@ vec2 rand(vec2 co)
     return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
 }
 
-float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -347,10 +339,10 @@ float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
-    vec3 normal = normalize(fs_in.Normal);
-    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    vec3 n_normal = normalize(normal);
+    vec3 lightDir = normalize(lightPos - fragPos);
     //float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
-    float bias = clamp(0.0005 * tan(acos(dot(normal, lightDir))), 0.0001, 0.01);
+    float bias = clamp(0.0005 * tan(acos(dot(n_normal, lightDir))), 0.0001, 0.01);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     // PCF (shadow anti aliasing))
@@ -404,14 +396,14 @@ float ShadowCalculationSimple(vec4 fragPosLightSpace)
 }
 
 // nice but possibly slow
-float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
     float currentDepth = projCoords.z;
     float shadow = 0.0;
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
+    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
 
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     float diskRadius = 1.0 * texelSize.x; // Tweak diskRadius to control softness
@@ -437,7 +429,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightPos)
     return shadow;
 }
 
-float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
+float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
     // Project fragment position from light space to [0,1]
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -450,7 +442,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
     float currentDepth = projCoords.z;
 
     // Dynamic bias based on angle to light
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
+    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
 
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
@@ -822,19 +814,19 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, l_FragPos, viewDir);
+            result += CalcPointLight(pointLights[i], norm, l_FragPos, l_TexCoords, viewDir);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, viewDir);
+            result += CalcDirLight(dirLights[i], norm, l_FragPos, l_TexCoords, viewDir);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, viewDir);
+            result += CalcSpotLight(spotLights[i], norm, l_FragPos, l_TexCoords, viewDir);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
@@ -846,25 +838,18 @@ void main()
     // Sample the alpha value from the diffuse texture
     float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, l_TexCoords).a : 1.0;
 
-
-
-    //FragColor = vec4(ToSRGB(result), alpha);
-    //FragColor = vec4(result, alpha + (height * vec3(0.01))); // fake usage of height map
-
     if (isTessellated)
     {
         float h = (Height + 16.0) / 64.0;
         vec3 heightEffect = vec3(h, h, h);
 
         // Blend the height effect with the lighting result
-        FragColor = vec4(mix(result, heightEffect, 0.6), alpha + (height * vec3(0.0001)));
+        FragColor = vec4(mix(result, heightEffect, 0.5), alpha);
     }
     else
     {
-        FragColor = vec4(result, alpha + (height * vec3(0.0001))); // fake usage of height map
+        FragColor = vec4(result, alpha + (height * vec3(0.0001))); // fake usage of height map because not needed for non tessellated objects
     }
-
-    //FragColor = texture(texture_shadowMap,  l_TexCoords);
 
     // Discard transparent fragments (optional)
     if (alpha < 0.1)
@@ -875,7 +860,7 @@ void main()
 
 
 // calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
     // Light direction (inverted because light.direction points where the light is going)
     vec3 lightDir = normalize(-light.direction);
@@ -888,18 +873,18 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
 
     
 
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
 
@@ -914,7 +899,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 
 // calculates the color when using a point light.
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
     vec3 lightDir = normalize(lightPos - fragPos);
@@ -931,9 +916,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * max(diff, 0.1) * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+    vec3 diffuse = light.diffuse * max(diff, 0.1) * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)) : material.diffuse_color);
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
 
     float intensity = 1.0;
     // apply attenuation
@@ -955,7 +940,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
     // Direction from fragment to light
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
@@ -983,9 +968,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, fs_in.TexCoords)).rgb) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, fs_in.TexCoords)).rgb) : material.specular_color);
+    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
+    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
 
     // Apply attenuation and spotlight intensity
     ambient *= attenuation * intensity;
@@ -996,11 +981,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 2)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 3)
     {

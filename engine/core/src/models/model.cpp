@@ -41,12 +41,18 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 {
     if (!m_isEnabled)
         return;
+
+    ShaderType type = shader.getShaderType();
     
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
     shader.use();
     shader.setBool("isAnimated", hasBones());
-    shader.setBool("isTessellated", false);
+    
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
+        shader.setBool("isTessellated", false);
+    }
 
     if (!m_shared_model)
     {

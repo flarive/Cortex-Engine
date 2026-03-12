@@ -46,27 +46,11 @@ uniform bool isTessellated;
 uniform float heightFactor;
 uniform vec2 heightOffset; 
 
+in vec2 TextureCoord[]; // From TCS
 
 out float Height;
 
-
-in TCS_OUT{
-    vec3 worldPos;
-    vec3 worldNormal;
-    vec2 texCoord;
-} tes_in[]; // Input from TCS
-
-out VS_OUT{
-    vec3 FragPos;
-    vec3 Normal;
-    vec2 TexCoords;
-    vec3 Tangent;
-    vec3 Bitangent;
-    vec4 FragPosLightSpace;
-    vec3 TangentLightPos;
-    vec3 TangentViewPos;
-    vec3 TangentFragPos;
-} vs_out; // Output to fragment shader
+out vec2 TexCoords; // Pass to fragment shader
 
 void main()
 {
@@ -74,16 +58,16 @@ void main()
     float v = gl_TessCoord.y;
 
     // Correct corner indexing for texture coordinates
-    vec2 t00 = tes_in[0].texCoord; // (u0,v0)
-    vec2 t10 = tes_in[1].texCoord; // (u1,v0)
-    vec2 t01 = tes_in[2].texCoord; // (u0,v1)
-    vec2 t11 = tes_in[3].texCoord; // (u1,v1)
+    vec2 t00 = TextureCoord[0]; // (u0,v0)
+    vec2 t10 = TextureCoord[1]; // (u1,v0)
+    vec2 t01 = TextureCoord[2]; // (u0,v1)
+    vec2 t11 = TextureCoord[3]; // (u1,v1)
 
     // Correct bilinear interpolation
     vec2 t0 = (t10 - t00) * u + t00;
     vec2 t1 = (t11 - t01) * u + t01;
     vec2 texCoords = (t1 - t0) * v + t0;
-    vs_out.TexCoords = texCoords; // Pass to fragment shader
+    TexCoords = texCoords; // Pass to fragment shader
 
 
     // Sample height from heightmap

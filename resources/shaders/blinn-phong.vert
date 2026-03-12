@@ -22,13 +22,9 @@ out VS_OUT {
 } vs2fs;
 
 // for tessellation, send to TCS shader
-out VS2TCS {
-    vec3 worldPos;
-    vec3 worldNormal;
-    vec2 texCoord;
-} vs2tcs; // <-- NOT an array in the VS
-
-
+out vec3 FragPos;
+out vec2 TexCoords;
+out vec3 Normal;
 
 
 uniform mat4 model;
@@ -86,7 +82,7 @@ void main()
     // World space position
     vec3 worldPos = vec3(model * totalPosition);
     vs2fs.FragPos = worldPos;
-    vs2tcs.worldPos = worldPos;
+    FragPos = worldPos;
 
     // Normal handling
     vec3 worldNormal;
@@ -102,11 +98,11 @@ void main()
     }
 
     vs2fs.Normal = worldNormal;
-    vs2tcs.worldNormal = worldNormal;
+    Normal = worldNormal;
 
     // Pass through other attributes
     vs2fs.TexCoords = aTexCoords;
-    vs2tcs.texCoord = aTexCoords;
+    TexCoords = aTexCoords;
 
     vs2fs.Tangent = aTangents;
     vs2fs.Bitangent = aBitangents;

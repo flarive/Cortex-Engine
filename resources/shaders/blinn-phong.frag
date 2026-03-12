@@ -102,6 +102,11 @@ in VS_OUT {
 
 in float Height;
 
+// ??????????? to use !!!!
+in vec3 FragPos;
+in vec2 TexCoords;
+in vec3 Normal;
+
 // coming from code
 uniform vec3 viewPos;
 uniform vec3 lightPos;
@@ -729,27 +734,47 @@ float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
 
 void main()
 {
+    vec2 l_TexCoords;
+    vec3 l_FragPos;
+    vec3 l_Normal;
+    
+    if (isTessellated)
+    {
+        // coming from TES shader (tesselation)
+        l_TexCoords = TexCoords;
+        l_FragPos = FragPos;
+        l_Normal = Normal;
+    }
+    else
+    {
+        // coming from vertex shader (no tess)
+        l_TexCoords = fs_in.TexCoords;
+        l_FragPos = fs_in.FragPos;
+        l_Normal = fs_in.Normal;
+    }
+    
+    
     vec3 norm;
     if (material.has_texture_normal_map && hasTangents)
     {
         // Sample the normal map texture
-        norm = texture(material.texture_normal, fs_in.TexCoords).rgb;
+        norm = texture(material.texture_normal, l_TexCoords).rgb;
         norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
 
         // Transform normal from tangent space to world space
         vec3 T = normalize(fs_in.Tangent);
         vec3 B = normalize(fs_in.Bitangent);
 
-        vec3 N = normalize(fs_in.Normal);
+        vec3 N = normalize(l_Normal);
         mat3 TBN = mat3(T, B, N);
         norm = normalize(TBN * norm) * material.normalMapIntensity;
     }
     else
     {
-        norm = normalize(fs_in.Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
+        norm = normalize(l_Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
     }
 
-    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    vec3 viewDir = normalize(viewPos - l_FragPos);
 
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
@@ -767,14 +792,14 @@ void main()
     //vec3 mDiffuse = ToLinear(texture(material.texture_diffuse, fs_in.TexCoords).rgb); // gamma correction
     //vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
     
-    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).rgb : vec3(0);
+    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, l_TexCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, fs_in.TexCoords).rgb : vec3(0);
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, l_TexCoords).rgb : vec3(0);
 
-	vec3 N = normalize(fs_in.Normal);
-	vec3 V = normalize(viewPos - fs_in.FragPos);
-	vec3 P = fs_in.FragPos;
+	vec3 N = normalize(l_Normal);
+	vec3 V = normalize(viewPos - l_FragPos);
+	vec3 P = l_FragPos;
 	float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
     // use roughness and sqrt(1-cos_theta) to sample M_texture
@@ -797,29 +822,29 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, fs_in.FragPos, viewDir);
+            result += CalcPointLight(pointLights[i], norm, l_FragPos, viewDir);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, fs_in.FragPos, viewDir);
+            result += CalcDirLight(dirLights[i], norm, l_FragPos, viewDir);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, fs_in.FragPos, viewDir);
+            result += CalcSpotLight(spotLights[i], norm, l_FragPos, viewDir);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
     {
         if (areaLights[i].use)
-            result += CalcAreaLight(areaLights[i], norm, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+            result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
     }
 
     // Sample the alpha value from the diffuse texture
-    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, fs_in.TexCoords).a : 1.0;
+    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, l_TexCoords).a : 1.0;
 
 
 
@@ -839,7 +864,7 @@ void main()
         FragColor = vec4(result, alpha + (height * vec3(0.0001))); // fake usage of height map
     }
 
-    //FragColor = texture(texture_shadowMap,  fs_in.TexCoords);
+    //FragColor = texture(texture_shadowMap,  l_TexCoords);
 
     // Discard transparent fragments (optional)
     if (alpha < 0.1)

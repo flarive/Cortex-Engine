@@ -8,9 +8,6 @@ namespace engine
     class SpotLight final : public Light
     {
     public:
-        float cutoff = 12.5f;
-        float outerCutoff = 15.0f;
-        
         SpotLight();
         SpotLight(glm::vec3 _position);
 
@@ -42,17 +39,44 @@ namespace engine
             };
         }
 
-        float& getCutoff() { return cutoff; }
-        void setCutoff(float _cutoff) { cutoff = _cutoff; }
+        float& getCutoff() { return m_cutoff; }
+        void setCutoff(float _cutoff) { m_cutoff = _cutoff; }
 
-        float& getOuterCutoff() { return outerCutoff; }
-        void setOuterCutoff(float _outerCutoff) { outerCutoff = _outerCutoff; }
+        float& getOuterCutoff() { return m_outerCutoff; }
+        void setOuterCutoff(float _outerCutoff) { m_outerCutoff = _outerCutoff; }
+
+        bool getUseAttenuation() const { return m_useAttenuation; }
+        void setUseAttenuation(bool use) { m_useAttenuation = use; }
+
+        float getConstantAttenuation() const { return m_constantAttenuation; }
+        void setConstantAttenuation(float value) { m_constantAttenuation = value; }
+
+        float getLinearAttenuation() const { return m_linearAttenuation; }
+        void setLinearAttenuation(float value) { m_linearAttenuation = value; }
+
+        float getQuadraticAttenuation() const { return m_quadraticAttenuation; }
+        void setQuadraticAttenuation(float value) { m_quadraticAttenuation = value; }
 
         void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) override;
 
         void clean() override;
 
     private:
+        bool m_useAttenuation{ true };
+
+        // constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
+        // Usually 1.0 so the denominator never goes to zero.
+        float m_constantAttenuation{ 1.0f };
+
+        // linear: Controls how quickly the light falls off linearly with distance.
+        float m_linearAttenuation{ 0.09f }; //0.09, 0.045, 0.0014
+
+        // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
+        float m_quadraticAttenuation{ 0.032f }; // 0.032, 0.0075, 0.000007
+
+        float m_cutoff{ 12.5f };
+        float m_outerCutoff{ 15.0f };
+        
         Cone m_debug_cone{};
 
         void setup() override;

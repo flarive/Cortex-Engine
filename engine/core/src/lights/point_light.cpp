@@ -37,32 +37,28 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         std::string base = std::format("pointLights[{}]", m_index);
 
         shader.use();
-        shader.setBool(std::format("{}.use", base), getEnabled());
+        shader.setBool(std::format("{}.use", base), m_enabled);
 
-        shader.setVec3(std::format("{}.position", base), position);
+        shader.setVec3(std::format("{}.position", base), m_position);
 
         shader.setVec3(std::format("{}.ambient", base), ambient);
         shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
         shader.setVec3(std::format("{}.specular", base), specular);
 
 
-
-        // no attenuation values
-        //shader.setFloat(std::format("{}.constant", base), 1.0f);
-        //shader.setFloat(std::format("{}.linear", base), 0.0f);
-        //shader.setFloat(std::format("{}.quadratic", base), 0.0f);
-
-
-
-        //constant: A constant factor.Even if the light is very close, this ensures some base attenuation.
-        //Usually 1.0 so the denominator never goes to zero.
-        shader.setFloat(std::format("{}.constant", base), 1.0f);
-
-        // linear: Controls how quickly the light falls off linearly with distance.
-        shader.setFloat(std::format("{}.linear", base), 0.09f); //0.09, 0.045, 0.0014
-
-        // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
-        shader.setFloat(std::format("{}.quadratic", base), 0.032f); // 0.032, 0.0075, 0.000007
+        if (m_useAttenuation)
+        {
+            shader.setFloat(std::format("{}.constant", base), m_constantAttenuation);
+            shader.setFloat(std::format("{}.linear", base), m_linearAttenuation);
+            shader.setFloat(std::format("{}.quadratic", base), m_quadraticAttenuation);
+        }
+        else
+        {
+            // no attenuation values
+            shader.setFloat(std::format("{}.constant", base), 1.0f);
+            shader.setFloat(std::format("{}.linear", base), 0.0f);
+            shader.setFloat(std::format("{}.quadratic", base), 0.0f);
+        }
     }
 
 
@@ -72,7 +68,7 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
 
     if (sceneSettings.drawLightsVisualHelpers)
     {
-        glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 direction = glm::normalize(target - m_position);
         glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
 
         // Compute quaternion rotation between default axis and desired direction
@@ -82,7 +78,7 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
 
         // Compose final model matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
         model *= rotationMatrix;
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE));
 
@@ -92,7 +88,7 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         m_lightDebugShader.setMat4("view", view);
         m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
 
-        auto localTransform = Transform(position, glm::vec3(0.0f), glm::vec3(1.0f));
+        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
         m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);
     }
 }

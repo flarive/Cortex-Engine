@@ -10,6 +10,7 @@ namespace engine
     public:
         // constructor with vectors
         FpsCamera(float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _speed = SPEED, float _sensitivity = SENSITIVITY, glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f));
+        ~FpsCamera() = default;
 
         CameraType getTypeID() const override
         {
@@ -31,8 +32,7 @@ namespace engine
             };
         }
 
-        float& getZoom() { return zoom; }
-        void setZoom(float _zoom) { zoom = _zoom; }
+
 
         float& getYaw() { return yaw; }
         void setYaw(float _yaw) { yaw = _yaw; }

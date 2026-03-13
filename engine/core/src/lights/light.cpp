@@ -1,10 +1,10 @@
 #include "../../include/lights/light.h"
 
-engine::Light::Light() : position(glm::vec3())
+engine::Light::Light() : m_position(glm::vec3())
 {
 }
 
-engine::Light::Light(glm::vec3 _position) : position(_position)
+engine::Light::Light(glm::vec3 _position) : m_position(_position)
 {
 }
 

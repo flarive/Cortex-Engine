@@ -10,16 +10,9 @@ namespace engine
     class OrbitCamera final : public Camera
     {
     public:
-        glm::vec3 target{ 0.0f, 0.0f, 0.0f };
-
-        // spherical coordinates
-        float radius;
-        float theta;   // horizontal angle
-        float phi;     // vertical angle
-
         // constructor
         OrbitCamera(glm::vec3 _target = glm::vec3(0.0f, 0.0f, 0.0f), float _radius = 10.0f, float _theta = 90.0f, float _phi = 0.0f, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f));
-        
+        ~OrbitCamera() = default;
 
         CameraType getTypeID() const override
         {
@@ -28,27 +21,33 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() override {
             return {
+                {"target", EditorProperty { "Target", getTarget(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
                 {"radius", EditorProperty { "Radius", getRadius(), editable, 0.0f, 100.0f, 1.0f, "%.2f" }},
                 {"theta", EditorProperty { "Theta", getTheta(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"phi", EditorProperty { "Phi", getPhi(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }}
+                {"phi", EditorProperty { "Phi", getPhi(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
+                
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
+                { "target", [this](EditorPropertyValue value) { getTarget() = *(std::get_if<glm::vec3>(&value)); } },
                 { "radius", [this](EditorPropertyValue value) { getRadius() = *(std::get_if<float>(&value)); } },
                 { "theta", [this](EditorPropertyValue value) { getTheta() = *(std::get_if<float>(&value)); } },
                 { "phi", [this](EditorPropertyValue value) { getPhi() = *(std::get_if<float>(&value)); } }
             };
         }
 
-        float& getRadius() { return radius; }
-        void setRadius(float _radius) { radius = _radius; }
+        float& getRadius() { return m_radius; }
+        void setRadius(float _radius) { m_radius = _radius; }
 
-        float& getTheta() { return theta; }
-        void setTheta(float _theta) { theta = _theta; }
+        float& getTheta() { return m_theta; }
+        void setTheta(float _theta) { m_theta = _theta; }
 
-        float& getPhi() { return phi; }
-        void setPhi(float _phi) { phi = _phi; }
+        float& getPhi() { return m_phi; }
+        void setPhi(float _phi) { m_phi = _phi; }
+
+        glm::vec3& getTarget() { return m_target; }
+        void setTarget(glm::vec3 target) { m_target = target; }
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
         glm::mat4 getViewMatrix();
@@ -67,6 +66,14 @@ namespace engine
 
 
     private:
+        glm::vec3 m_target{};
+        
+        // spherical coordinates
+        float m_radius{};
+        float m_theta{};   // horizontal angle
+        float m_phi{};     // vertical angle
+
+        
         // calculates the camera's position and orientation based on spherical coordinates
         void updateCameraVectors() override;
 

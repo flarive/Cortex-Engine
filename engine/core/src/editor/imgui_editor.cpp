@@ -537,7 +537,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         }
         else if (lightComponent = entity->getComponent<LightComponent>())
         {
-            position = lightComponent->getLight()->position;
+            position = lightComponent->getLight()->getPosition();
             displayRotation = false;
             displayScale = false;
         }
@@ -690,7 +690,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         }
         else if (lightComponent)
         {
-            lightComponent->getLight()->position = position;
+            lightComponent->getLight()->setPosition(position);
         }
         else if (primitiveComponent)
         {
@@ -929,7 +929,7 @@ void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& p
 
     if (displayObjectTransformGuizmo)
     {
-        ImGuizmo::SetOrthographic(!m_guizmoCamera->isPerspective);
+        ImGuizmo::SetOrthographic(!m_guizmoCamera->getIsPerspective());
 
         // Render the Editor window (no-decoration, for gizmo)
         ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);

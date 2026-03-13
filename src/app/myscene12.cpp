@@ -37,10 +37,10 @@ void MyScene12::init()
     // lights
     auto trsLight5 = Transform{ { 0.0f, 4.0f, -2.0f } };
     auto light5 = make_shared<SpotLight>();
-    light5->intensity = 10.0f;
-    light5->cutoff = 12.5f;
-    light5->outerCutoff = 27.5f;
-    light5->target = vec3(0.0f, 0.0f, -4.0f);
+    light5->setIntensity(10.0f);
+    light5->setCutoff(12.5f);
+    light5->setOuterCutoff(27.5f);
+    light5->setTarget(vec3(0.0f, 0.0f, -4.0f));
     auto entityLight5 = make_shared<Entity>("Light5");
     entityLight5->addComponent<TransformComponent>(trsLight5);
     entityLight5->addComponent<LightComponent>(light5);
@@ -50,8 +50,8 @@ void MyScene12::init()
 
     auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light1 = make_shared<PointLight>();
-    light1->intensity = 10.0f;
-    light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
+    light1->setIntensity(10.0f);
+    light1->setDiffuseColor(Color(0.8f, 0.2f, 0.1f, 1.0f));
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
@@ -61,7 +61,7 @@ void MyScene12::init()
 
     auto trsLight2 = Transform{ { 10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
-    light2->intensity = 10.0f;
+    light2->setIntensity(10.0f);
     auto entityLight2 = make_shared<Entity>("Light2");
     entityLight2->addComponent<TransformComponent>(trsLight2);
     entityLight2->addComponent<LightComponent>(light2);
@@ -71,7 +71,7 @@ void MyScene12::init()
 
     auto trsLight3 = Transform{ { -10.0f, -10.0f, 10.0f } };
     auto light3 = make_shared<PointLight>();
-    light3->intensity = 10.0f;
+    light3->setIntensity(10.0f);
     auto entityLight3 = make_shared<Entity>("Light3");
     entityLight3->addComponent<TransformComponent>(trsLight3);
     entityLight3->addComponent<LightComponent>(light3);
@@ -81,7 +81,7 @@ void MyScene12::init()
 
     auto trsLight4 = Transform{ { 10.0f, -10.0f, 10.0f } };
     auto light4 = make_shared<PointLight>();
-    light4->intensity = 10.0f;
+    light4->setIntensity(10.0f);
     auto entityLight4 = make_shared<Entity>("Light4");
     entityLight4->addComponent<TransformComponent>(trsLight4);
     entityLight4->addComponent<LightComponent>(light4);

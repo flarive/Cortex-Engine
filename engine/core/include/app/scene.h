@@ -75,10 +75,6 @@ namespace engine
         GLint inFrustrumCount{};
         GLint totalFrustrumCount{};
 
-        
-
-
-
         // settings
         std::string title{};
 

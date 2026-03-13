@@ -7,7 +7,7 @@
 #include <memory> //std::unique_ptr
 
 engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _zoom, float _yaw, float _pitch, float _speed, float _sensitivity)
-	: front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(_speed), mouseSensitivity(_sensitivity), zoom(_zoom), yaw(_yaw), pitch(_pitch)
+	: front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(_speed), mouseSensitivity(_sensitivity), m_zoom(_zoom), yaw(_yaw), pitch(_pitch)
 {
     position = _position;
     worldUp = _up;
@@ -28,7 +28,7 @@ glm::mat4& engine::Camera::getViewMatrix()
 glm::mat4& engine::Camera::getProjectionMatrix(float width, float height)
 {
     if (m_enabled)
-        m_projection = glm::perspective(glm::radians(zoom), width / height, m_nearPlane, m_farPlane);
+        m_projection = glm::perspective(glm::radians(m_zoom), width / height, m_nearPlane, m_farPlane);
     else
 		m_projection = glm::mat4(0.0f);
     

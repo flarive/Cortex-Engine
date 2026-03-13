@@ -81,14 +81,16 @@ namespace engine
         // camera options
         float movementSpeed{};
         float mouseSensitivity{};
-        float zoom{}; // fov
+        
 
-		bool isPerspective{ true };
+		
 
 
 
         // constructor with vectors
         Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _speed = SPEED, float _sensitivity = SENSITIVITY);
+        ~Camera() = default;
+
 
         virtual CameraType getTypeID() const
         {
@@ -141,8 +143,20 @@ namespace engine
         void setNearPlane(float near) { m_nearPlane = near; }
         void setFarPlane(float far) { m_farPlane = far; }
 
+        bool getIsPerspective() const { return m_isPerspective; }
+        void setIsPerspective(bool is) { m_isPerspective = is; }
+
+
+        float& getZoom() { return m_zoom; }
+        void setZoom(float zoom) { m_zoom = zoom; }
+
+
     protected:
         bool m_enabled{ true };
+
+        bool m_isPerspective{ true };
+
+        float m_zoom{}; // fov
 
         glm::mat4 m_viewMatrix{}; // Store the view matrix
         glm::mat4 m_projection{};

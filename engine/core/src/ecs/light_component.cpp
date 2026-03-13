@@ -13,7 +13,7 @@ engine::LightComponent::LightComponent(std::shared_ptr<Light> light)
 
 void engine::LightComponent::init(Transform& transform)
 {
-    m_light->position = transform.getLocalPosition();
+    m_light->setPosition(transform.getLocalPosition());
 }
 
 void engine::LightComponent::update(float deltaTime, Transform& transform)
@@ -26,11 +26,11 @@ void engine::LightComponent::draw(const glm::mat4& projection, const glm::mat4& 
     m_light->draw(shader,
         projection,
         view,
-        m_light->ambientColor,
-        m_light->diffuseColor,
-        m_light->specularColor,
-        m_light->intensity,
-        m_light->target,
+        m_light->getAmbientColor(),
+        m_light->getDiffuseColor(),
+        m_light->getSpecularColor(),
+        m_light->getIntensity(),
+        m_light->getTarget(),
         worldTransformMatrix,
         localTransform);
 }

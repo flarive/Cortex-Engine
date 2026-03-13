@@ -43,6 +43,7 @@ namespace engine
 		Shader directionalDepthMapTessellationShader{};
 
 		Shader pointDepthMapShader{};
+		Shader pointDepthMapTessellationShader{};
 		
 		Shader depthMapToQuadShader{}; // for depth map texture debugging purposes
 		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes

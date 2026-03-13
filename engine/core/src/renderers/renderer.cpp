@@ -23,7 +23,7 @@ void engine::Renderer::loadShaders()
 
     // for point lights
     pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
-
+    pointDepthMapTessellationShader.init("simpleDepthBuffer2Tess", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
 
     // debug only
     depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vert", "shaders/debug/debug_quad_depth.frag");
@@ -170,7 +170,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     float near_plane = 0.1f;  // Previously 1.0f
     float far_plane = 100.0f;  // Previously 7.5f
     lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-    lightView = glm::lookAt(light->position, light->target, glm::vec3(0.0, 1.0, 0.0));
+    lightView = glm::lookAt(light->getPosition(), light->getTarget(), glm::vec3(0.0, 1.0, 0.0));
     lightSpaceMatrix = lightProjection * lightView;
 
     // render scene from light's point of view
@@ -207,7 +207,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     if (shader.getShaderType() == ShaderType::BlinnPhong)
     {
         shader.use();
-        shader.setVec3("lightPos", light->position);
+        shader.setVec3("lightPos", light->getPosition());
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
     }
@@ -215,7 +215,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     if (shaderTessellation.getShaderType() == ShaderType::BlinnPhongTessellation)
     {
         shaderTessellation.use();
-        shaderTessellation.setVec3("lightPos", light->position);
+        shaderTessellation.setVec3("lightPos", light->getPosition());
         //shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
@@ -257,13 +257,15 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     float far_plane = 25.0f;  // Previously 25.0f
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, near_plane, far_plane);
 
+    auto pos = light->getPosition();
+
     std::vector<glm::mat4> shadowTransforms;
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
-    shadowTransforms.push_back(shadowProj * glm::lookAt(light->position, light->position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
 
 
 
@@ -278,10 +280,10 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
         pointDepthMapShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
     }
     pointDepthMapShader.setFloat("far_plane", far_plane);
-    pointDepthMapShader.setVec3("lightPos", light->position);
+    pointDepthMapShader.setVec3("lightPos", light->getPosition());
 
     // update user stuffs
-    update(pointDepthMapShader, pointDepthMapShader); // ?????????????????????????
+    update(pointDepthMapShader, pointDepthMapTessellationShader);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -302,7 +304,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     // bofff
     if (shader.getShaderType() == ShaderType::BlinnPhong)
     {
-        shader.setVec3("lightPos", light->position);
+        shader.setVec3("lightPos", light->getPosition());
 	}
 
     shader.setVec3("viewPos", m_camera->position);

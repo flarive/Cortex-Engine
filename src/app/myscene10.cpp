@@ -52,7 +52,7 @@ void MyScene10::init()
         auto light = make_shared<AreaLight>();
         light->color = vec3(fn(), fn(), fn());
         light->roughness = 0.5f;
-        light->intensity = 1.0f;
+        light->setIntensity(1.0f);
         light->twoSided = false;
         auto entityLight = make_shared<Entity>(format("AreaLight{}", i + 1));
         entityLight->addComponent<TransformComponent>(trsLight);
@@ -203,7 +203,7 @@ void MyScene10::incrementLightIntensity(float step)
     {
         for (const auto& areaLight : areaLights)
         {
-            areaLight->intensity = intensity;
+            areaLight->setIntensity(intensity);
         }
     }
 }

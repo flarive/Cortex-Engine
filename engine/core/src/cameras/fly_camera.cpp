@@ -117,7 +117,7 @@ void engine::FlyCamera::processMouseScroll(float yoffset)
     if (!m_enabled)
         return;
     
-    zoom -= (float)yoffset;
+    m_zoom -= yoffset;
 }
 
 void engine::FlyCamera::updateCameraVectors()

@@ -25,34 +25,18 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    //auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
+    //auto trsCamera1 = Transform{ {0.0f, 100.0f, 50.0f} };
     //auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
+    //camera1->setNearPlane(0.1f);
+    //camera1->setFarPlane(100000.0f);
     //auto entityCamera1 = make_shared<Entity>("Camera1");
     //entityCamera1->addComponent<TransformComponent>(trsCamera1);
     //entityCamera1->addComponent<CameraComponent>(camera1);
     //getEntityManager().addChild(entityCamera1);
 
 
-    // light
-    auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
-    auto light1 = make_shared<SpotLight>();
-    light1->intensity = 1.0f;
-    light1->cutoff = 12.0f;
-    light1->outerCutoff = 48.0f;
-    light1->target = vec3(0.0f, 0.0f, 0.0f);
-    light1->ambientColor = Color(1.0f);
-    light1->diffuseColor = Color(1.0f);
-    light1->specularColor = Color(1.0f);
-    auto entityLight1 = make_shared<Entity>("Light1");
-    entityLight1->addComponent<TransformComponent>(trsLight1);
-    entityLight1->addComponent<LightComponent>(light1);
-    getEntityManager().addChild(entityLight1);
-
-
-
-    // camera
-    auto trsCamera1 = Transform{ {0.0f, 270.5f, 250.0f} };
-    auto camera1 = make_shared<FlyCamera>(100.0f, 0.0f, 0.0f, 10.0f);
+    auto trsCamera1 = Transform{ {0.32f, 102.46f, 52.10f} };
+    auto camera1 = make_shared<FlyCamera>(82.0f, -86.10f, -39.90f, 10.0f);
     camera1->setNearPlane(0.1f);
     camera1->setFarPlane(100000.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
@@ -61,37 +45,68 @@ void MyScene14::init()
     getEntityManager().addChild(entityCamera1);
 
 
-    //// light
-    //auto trsLight1 = Transform{ { 0.0f, 20.0f, 10.0f } };
-    //auto light1 = make_shared<PointLight>();
-    //light1->intensity = 50.0f;
-    //light1->diffuseColor = Color(0.8f, 0.2f, 0.1f, 1.0f);
-    //auto entityLight1 = make_shared<Entity>("Light1");
-    //entityLight1->addComponent<TransformComponent>(trsLight1);
-    //entityLight1->addComponent<LightComponent>(light1);
-    //getEntityManager().addChild(entityLight1);
 
     // light
-    //auto trsLight1 = Transform{ {0.0f, 5.0f, 3.0f} };
-    //auto light1 = make_shared<SpotLight>();
-    //light1->intensity = 2.0f;
-    //light1->cutoff = 12.0f;
-    //light1->outerCutoff = 48.0f;
-    //light1->target = vec3(0.0f, 0.0f, 0.0f);
-    //light1->ambientColor = Color(1.0f);
-    //light1->diffuseColor = Color(1.0f);
-    //light1->specularColor = Color(1.0f);
-    //auto entityLight1 = make_shared<Entity>("Light1");
-    //entityLight1->addComponent<TransformComponent>(trsLight1);
-    //entityLight1->addComponent<LightComponent>(light1);
-    //getEntityManager().addChild(entityLight1);
+    auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
+    auto light1 = make_shared<SpotLight>();
+    light1->setIntensity(1.0f);
+    light1->setCutoff(12.0f);
+    light1->setOuterCutoff(48.0f);
+    light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
+    light1->setAmbientColor(Color(1.0f));
+    light1->setDiffuseColor(Color(1.0f));
+    light1->setSpecularColor(Color(1.0f));
+    light1->setUseAttenuation(false);
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
+    getEntityManager().addChild(entityLight1);
+
+
+    /*auto trsLight1 = Transform{ { -10.0f, 10.0f, 10.0f } };
+    auto light1 = make_shared<PointLight>();
+    light1->intensity = 1.0f;
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
+    getEntityManager().addChild(entityLight1);
+
+
+
+    auto trsLight2 = Transform{ { 10.0f, 10.0f, 10.0f } };
+    auto light2 = make_shared<PointLight>();
+    light2->intensity = 1.0f;
+    auto entityLight2 = make_shared<Entity>("Light2");
+    entityLight2->addComponent<TransformComponent>(trsLight2);
+    entityLight2->addComponent<LightComponent>(light2);
+    getEntityManager().addChild(entityLight2);
+
+
+
+    auto trsLight3 = Transform{ { -10.0f, -10.0f, 10.0f } };
+    auto light3 = make_shared<PointLight>();
+    light3->intensity = 1.0f;
+    auto entityLight3 = make_shared<Entity>("Light3");
+    entityLight3->addComponent<TransformComponent>(trsLight3);
+    entityLight3->addComponent<LightComponent>(light3);
+    getEntityManager().addChild(entityLight3);
+
+
+
+    auto trsLight4 = Transform{ { 10.0f, -10.0f, 10.0f } };
+    auto light4 = make_shared<PointLight>();
+    light4->intensity = 1.0f;
+    auto entityLight4 = make_shared<Entity>("Light4");
+    entityLight4->addComponent<TransformComponent>(trsLight4);
+    entityLight4->addComponent<LightComponent>(light4);
+    getEntityManager().addChild(entityLight4);*/
 
 
     // terrain
     auto myTerrain = make_shared<Terrain>(1.0f, 20);
     myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
-    auto trsTerrain = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f));
+    auto trsTerrain = Transform(vec3(20.0f, 0.0f, 0.0f), vec3(1.0f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
     entityTerrain->addComponent<TerrainComponent>(myTerrain);
@@ -102,7 +117,7 @@ void MyScene14::init()
     // sphere
     auto mySphere = make_shared<Sphere>();
     mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    auto trsSphere = Transform(vec3(0.0f, 150.0f, 250.0f), vec3(1.0f));
+    auto trsSphere = Transform(vec3(0.0f, 10.0f, 0.0f), vec3(20.0f));
     auto entitySphere = make_shared<Entity>("MySphere");
     entitySphere->addComponent<TransformComponent>(trsSphere);
     entitySphere->addComponent<PrimitiveComponent>(mySphere);

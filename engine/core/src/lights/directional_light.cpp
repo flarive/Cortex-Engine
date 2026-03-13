@@ -37,15 +37,15 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         std::string base = std::format("dirLights[{}]", m_index);
 
         shader.use();
-        shader.setBool(std::format("{}.use", base), getEnabled());
+        shader.setBool(std::format("{}.use", base), m_enabled);
 
-        shader.setVec3(std::format("{}.position", base), position);
+        shader.setVec3(std::format("{}.position", base), m_position);
 
         shader.setVec3(std::format("{}.ambient", base), ambient);
         shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
         shader.setVec3(std::format("{}.specular", base), specular);
 
-        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(position, target));
+        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(m_position, target));
     }
 
     auto* singleton = engine::Singleton::getInstance();
@@ -54,7 +54,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 
     if (sceneSettings.drawLightsVisualHelpers)
     {
-        glm::vec3 direction = glm::normalize(target - position);
+        glm::vec3 direction = glm::normalize(target - m_position);
         glm::vec3 defaultAxis = glm::vec3(0.0f, 1.0f, 0.0f); // cylinder points up
 
         // Compute quaternion rotation between default axis and desired direction
@@ -64,9 +64,9 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
 
         // Compose final model matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
         model *= rotationMatrix;
-        model = glm::scale(model, glm::vec3(0.05f, glm::length(target - position), 0.05f)); // scale lengthwise toward target
+        model = glm::scale(model, glm::vec3(0.05f, glm::length(target - m_position), 0.05f)); // scale lengthwise toward target
 
         // Pass model matrix to shader
         m_lightDebugShader.use();
@@ -75,7 +75,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
 
         // You can pass glm::vec3(0) for rotation since model is already transformed
-        auto localTransform = Transform(position, glm::vec3(0.0f), glm::vec3(1.0f));
+        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
         m_debug_cylinder.draw(m_lightDebugShader, projection, view, model, localTransform);
     }
 }

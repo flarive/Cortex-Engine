@@ -33,9 +33,7 @@ void MyScene4::init()
     getEntityManager().addChild(entityCamera1);
 
     auto trsCamera2 = Transform{ { 0.0f, -9.0f, 2.0f } };
-    auto camera2 = make_shared<FlyCamera>();
-    camera2->zoom = 20.0f;
-    camera2->movementSpeed = 10.0f;
+    auto camera2 = make_shared<FlyCamera>(20.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera2 = make_shared<Entity>("Camera2");
     entityCamera2->addComponent<TransformComponent>(trsCamera2);
     entityCamera2->addComponent<CameraComponent>(camera2);
@@ -48,11 +46,11 @@ void MyScene4::init()
     // lights
     auto trsLight1 = Transform{ { 0.0f, 8.0f, 0.0f } };
     auto light1 = make_shared<SpotLight>();
-    light1->intensity = 20.0f;
-    light1->cutoff = 12.5f;
-    light1->outerCutoff = 15.0f;
-    light1->target = vec3(0.0f, 0.0f, -5.0f);
-    light1->ambientColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+    light1->setIntensity(20.0f);
+    light1->setCutoff(12.5f);
+    light1->setOuterCutoff(15.0f);
+    light1->setTarget(vec3(0.0f, 0.0f, -5.0f));
+    light1->setAmbientColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
@@ -61,7 +59,7 @@ void MyScene4::init()
 
     auto trsLight2 = Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
-    light2->intensity = 290.0f;
+    light2->setIntensity(290.0f);
     auto entityLight2 = make_shared<Entity>("Light2");
     entityLight2->addComponent<TransformComponent>(trsLight2);
     entityLight2->addComponent<LightComponent>(light2);

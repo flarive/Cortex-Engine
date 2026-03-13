@@ -493,7 +493,7 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     auto cam = getActiveCamera();
     glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height);
     glm::mat4 view = cam->getViewMatrix();
-    const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->zoom), 0.1f, 100.0f);
+    const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
 
     // Draw using stored world transforms
@@ -598,8 +598,9 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                 }
                 
                 // primitive and model
-                if (shouldDraw)
+                if (shouldDraw) {
                     component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+                }
 
                 inFrustrumCount++;
             }

@@ -35,10 +35,10 @@ void MyScene8::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
-    light1->intensity = 1.0f;
-    light1->ambientColor = Color(1.0f);
-    light1->diffuseColor = Color(1.0f);
-    light1->specularColor = Color(1.0f);
+    light1->setIntensity(1.0f);
+    light1->setAmbientColor(Color(1.0f));
+    light1->setDiffuseColor(Color(1.0f));
+    light1->setSpecularColor(Color(1.0f));
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);

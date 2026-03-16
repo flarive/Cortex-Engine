@@ -11,7 +11,6 @@ engine::Renderer::Renderer(GLFWwindow* window)
 {
 }
 
-
 void engine::Renderer::loadShaders()
 {
     // color framebuffer to screen shader
@@ -32,7 +31,6 @@ void engine::Renderer::loadShaders()
     // Editor mode outline shader
     outlineColorShader.init("outline", "shaders/debug/stencil_testing.vert", "shaders/debug/stencil_testing.frag");
 }
-
 
 void engine::Renderer::enableDepthTest(bool enable)
 {
@@ -94,8 +92,21 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     }
 }
 
+void engine::Renderer::computeDepthMapFramebuffer(int width, int height, bool enableShadows, GLsizei shadowMapsTextureSize, Shader& shader, Shader& shaderTessellation, std::function<void(Shader&, Shader&)> update)
+{
+    if (m_lights.size() > 0)
+    {
+        auto firstLight = m_lights[0];
+
+        if (firstLight->getTypeID() == LightType::point)
+            computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
+        else
+            computeSpotLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
+    }
+}
+
 /// <summary>
-/// Spotlight only !!!!
+/// Spot light and directional light only !!!!
 /// </summary>
 void engine::Renderer::initSpotLightDepthMapFramebuffer(GLsizei shadowSize)
 {
@@ -159,21 +170,21 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 }
 
 /// <summary>
-/// Spotlight only !!!!!
+/// Spotlight and directional lights only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
     float near_plane = 0.1f;  // Previously 1.0f
-    float far_plane = 1000.0f;  // Previously 7.5f
+    float far_plane = 100.0f;  // Previously 7.5f
     glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
 
- //   float cutOff = 38.0f;
+    // more accurate ???
+    //float cutOff = 38.0f;
 	//float outerCutOff = 90.0f;
-
- //   float spotlightCutoff = glm::cos(glm::radians(cutOff)); // Assuming `getCutOff()` returns the spotlight's cutoff angle
- //   glm::mat4 lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
+    //float spotlightCutoff = glm::cos(glm::radians(cutOff)); // Assuming `getCutOff()` returns the spotlight's cutoff angle
+    //glm::mat4 lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
 
 
     glm::mat4 lightView = glm::lookAt(light->getPosition(), light->getTarget(), glm::vec3(0.0, 1.0, 0.0));
@@ -207,10 +218,9 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
 
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
-    //shader.use();
+    ShaderType type = shader.getShaderType();
 
-    // bofff
-    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
         shader.setVec3("lightPos", light->getPosition());
@@ -218,15 +228,13 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
         shader.setBool("enableShadows", enableShadows);
     }
     
-    if (shaderTessellation.getShaderType() == ShaderType::BlinnPhongTessellation)
+    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setVec3("lightPos", light->getPosition());
         //shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
-
-    
 
     // update user stuffs
     update(shader, shaderTessellation);
@@ -247,14 +255,14 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     //depthMapToQuadShader.setInt("depthMap", 0);
 
 
-    ////// test depth map (also comment computeColorFramebuffer);
+    //// test depth map (also comment computeColorFramebuffer);
     //renderQuad();
 }
 
 /// <summary>
 /// Omnilight only !!!!!
 /// </summary>
-void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
     // -----------------------------------------------
@@ -272,8 +280,6 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
     shadowTransforms.push_back(shadowProj * glm::lookAt(pos, pos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
 
-
-
     // 1. render scene to depth cubemap
     // --------------------------------
     glViewport(0, 0, shadowSize, shadowSize);
@@ -283,9 +289,14 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     for (unsigned int i = 0; i < 6; ++i)
     {
         pointDepthMapShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+        pointDepthMapTessellationShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
     }
+    
     pointDepthMapShader.setFloat("far_plane", far_plane);
     pointDepthMapShader.setVec3("lightPos", light->getPosition());
+
+    pointDepthMapTessellationShader.setFloat("far_plane", far_plane);
+    pointDepthMapTessellationShader.setVec3("lightPos", light->getPosition());
 
     // update user stuffs
     update(pointDepthMapShader, pointDepthMapTessellationShader);
@@ -302,19 +313,29 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     glm::mat4 view = m_camera->getViewMatrix();
 
 
-    shader.use();
-    shader.setMat4("projection", projection);
-    shader.setMat4("view", view);
+    ShaderType type = shader.getShaderType();
 
-    // bofff
-    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
+        shader.use();
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
         shader.setVec3("lightPos", light->getPosition());
+        shader.setVec3("viewPos", m_camera->position);
+        shader.setBool("enableShadows", enableShadows);
+        shader.setFloat("far_plane", far_plane);
 	}
 
-    shader.setVec3("viewPos", m_camera->position);
-    shader.setBool("enableShadows", enableShadows);
-    shader.setFloat("far_plane", far_plane);
+    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
+    {
+        shaderTessellation.use();
+        shaderTessellation.setMat4("projection", projection);
+        shader.setMat4("view", view);
+        shaderTessellation.setVec3("lightPos", light->getPosition());
+        shaderTessellation.setVec3("viewPos", m_camera->position);
+        shaderTessellation.setBool("enableShadows", enableShadows);
+        shaderTessellation.setFloat("far_plane", far_plane);
+    }
 
     // update user stuffs
     update(shader, shaderTessellation);
@@ -323,6 +344,7 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
     shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
 
     // render Depth map to quad for visual debugging
@@ -334,7 +356,6 @@ void engine::Renderer::computeDepthMapFramebuffer2(Shader& shader, Shader& shade
     //// test depth map (also comment computeColorFramebuffer);
     //renderQuad();
 }
-
 
 void engine::Renderer::initColorFramebuffer(int width, int height)
 {
@@ -360,36 +381,6 @@ void engine::Renderer::initColorFramebuffer(int width, int height)
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
-//void engine::Renderer::initColorFramebufferMSAA(int width, int height)
-//{
-//    const int samples = 4; // Change this to your desired MSAA level
-//
-//    // 1. Create multisampled framebuffer
-//    glGenFramebuffers(1, &colorFramebuffer);
-//    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-//
-//    // 2. Create a multisampled color renderbuffer
-//    GLuint colorRBO;
-//    glGenRenderbuffers(1, &colorRBO);
-//    glBindRenderbuffer(GL_RENDERBUFFER, colorRBO);
-//    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGB8, width, height);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRBO);
-//
-//    // 3. Create a multisampled depth+stencil renderbuffer
-//    glGenRenderbuffers(1, &rbo);
-//    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-//    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
-//    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-//
-//    // 4. Check completeness
-//    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-//    {
-//        std::cerr << "ERROR::FRAMEBUFFER:: MSAA Framebuffer is not complete!" << std::endl;
-//    }
-//
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//}
 
 void engine::Renderer::initColorFramebufferMSAA(int width, int height)
 {
@@ -440,8 +431,6 @@ void engine::Renderer::initColorFramebufferMSAA(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-
 void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
 {
     const int samples = 4;
@@ -487,9 +476,6 @@ void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-
-
 void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 {
     //draw color framebuffer to screen
@@ -511,7 +497,6 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     screenShader.setBool("useToneMapping", settings.enableToneMapping);
     screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
     
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
 
@@ -539,12 +524,11 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     screenShader.setBool("useToneMapping", settings.enableToneMapping);
     screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
 
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
     // test that HDR is working
-    testHDR(width, height);
+    //testHDR(width, height);
     
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();

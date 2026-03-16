@@ -384,10 +384,6 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
         renderDebugPlaneGrid(projection, view);
 
 
-    
-
-
-
     // PBR shader
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
@@ -436,14 +432,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // compute light shadows using a depth map framebuffer
-    if (m_lights.size() > 0)
-    {
-        auto firstLight = m_lights[0];
-        if (std::dynamic_pointer_cast<PointLight>(firstLight))
-            computeDepthMapFramebuffer2(pbrShader, pbrShaderTesselation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
-        else
-            computeDepthMapFramebuffer(pbrShader, pbrShaderTesselation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
-    }
+    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, pbrShader, pbrShaderTesselation, update);
 
 
     
@@ -481,7 +470,8 @@ void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
     pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
-    pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
+    //pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
+    pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/pbr.frag");
 
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");
@@ -502,11 +492,22 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    pbrShader.use();
-    pbrShader.setInt("pointLightsCount", m_pointLightCount);
-    pbrShader.setInt("dirLightsCount", m_dirLightCount);
-    pbrShader.setInt("spotLightsCount", m_spotLightCount);
-    pbrShader.setInt("areaLightsCount", m_areaLightCount);
+    //pbrShader.use();
+    //pbrShader.setInt("pointLightsCount", m_pointLightCount);
+    //pbrShader.setInt("dirLightsCount", m_dirLightCount);
+    //pbrShader.setInt("spotLightsCount", m_spotLightCount);
+    //pbrShader.setInt("areaLightsCount", m_areaLightCount);
+
+    auto setCounts = [this](Shader& sh) {
+        sh.use();
+        sh.setInt("pointLightsCount", m_pointLightCount);
+        sh.setInt("dirLightsCount", m_dirLightCount);
+        sh.setInt("spotLightsCount", m_spotLightCount);
+        sh.setInt("areaLightsCount", m_areaLightCount);
+        };
+
+    setCounts(pbrShader);
+    setCounts(pbrShaderTesselation);
 }
 
 engine::Shader& engine::PbrRenderer::getShader()

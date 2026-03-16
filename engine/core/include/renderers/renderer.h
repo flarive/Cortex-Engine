@@ -49,7 +49,7 @@ namespace engine
 		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes
 
 		
-		const unsigned int NUM_PATCH_PTS = 4;
+		
 
 		
 		Renderer(GLFWwindow* window);
@@ -61,6 +61,9 @@ namespace engine
 		void initColorFramebuffer(int width, int height);
 		void initColorFramebufferMSAA(int width, int height);
 		void initHDRColorFramebufferMSAA(int width, int height);
+
+		//void computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
+		//void computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
 
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
@@ -140,13 +143,11 @@ namespace engine
 		
 
 		void initDepthMapFramebuffer(GLsizei shadowSize);
+		void computeDepthMapFramebuffer(int width, int height, bool enableShadows, GLsizei shadowMapsTextureSize, Shader& shader, Shader& shaderTessellation, std::function<void(Shader&, Shader&)> update);
 
 
 
 
-		void computeDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
-		void computeDepthMapFramebuffer2(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
-		
 		void initDebugPlaneGrid();
 		void renderDebugPlaneGrid(const glm::mat4& projection, const glm::mat4& view);
 
@@ -205,5 +206,8 @@ namespace engine
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light
+
+		void computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
+		void computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
 	};
 }

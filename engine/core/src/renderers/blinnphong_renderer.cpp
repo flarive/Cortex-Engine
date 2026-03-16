@@ -181,15 +181,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
 
     // compute light shadows using a depth map framebuffer
-    if (m_lights.size() > 0)
-    {
-        auto firstLight = m_lights[0];
-
-        if (firstLight->getTypeID() == LightType::point)
-            computeDepthMapFramebuffer2(blinnPhongShader, blinnPhongShaderTessellation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
-        else
-            computeDepthMapFramebuffer(blinnPhongShader, blinnPhongShaderTessellation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
-    }
+    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, blinnPhongShader, blinnPhongShaderTessellation, update);
 
 
     // Resolve MSAA to screen or another texture FBO
@@ -286,17 +278,29 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    blinnPhongShader.use();
-    blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
-    blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
-    blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
-    blinnPhongShader.setInt("areaLightsCount", m_areaLightCount);
+    //blinnPhongShader.use();
+    //blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
+    //blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
+    //blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
+    //blinnPhongShader.setInt("areaLightsCount", m_areaLightCount);
 
-    blinnPhongShaderTessellation.use();
-    blinnPhongShaderTessellation.setInt("pointLightsCount", m_pointLightCount);
-    blinnPhongShaderTessellation.setInt("dirLightsCount", m_dirLightCount);
-    blinnPhongShaderTessellation.setInt("spotLightsCount", m_spotLightCount);
-    blinnPhongShaderTessellation.setInt("areaLightsCount", m_areaLightCount);
+    //blinnPhongShaderTessellation.use();
+    //blinnPhongShaderTessellation.setInt("pointLightsCount", m_pointLightCount);
+    //blinnPhongShaderTessellation.setInt("dirLightsCount", m_dirLightCount);
+    //blinnPhongShaderTessellation.setInt("spotLightsCount", m_spotLightCount);
+    //blinnPhongShaderTessellation.setInt("areaLightsCount", m_areaLightCount);
+
+
+    auto setCounts = [this](Shader& sh) {
+            sh.use();
+            sh.setInt("pointLightsCount", m_pointLightCount);
+            sh.setInt("dirLightsCount", m_dirLightCount);
+            sh.setInt("spotLightsCount", m_spotLightCount);
+            sh.setInt("areaLightsCount", m_areaLightCount);
+    };
+
+    setCounts(blinnPhongShader);
+    setCounts(blinnPhongShaderTessellation);
 }
 
 engine::Shader& engine::BlinnPhongRenderer::getShader()

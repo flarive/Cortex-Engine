@@ -840,7 +840,7 @@ void main()
 
     if (isTessellated)
     {
-        float h = (Height + 16.0) / 64.0;
+        float h = 0.0;//(Height + 16.0) / 64.0;
         vec3 heightEffect = vec3(h, h, h);
 
         // Blend the height effect with the lighting result

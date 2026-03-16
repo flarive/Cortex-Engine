@@ -165,13 +165,19 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
-    glm::mat4 lightProjection, lightView;
-    glm::mat4 lightSpaceMatrix;
     float near_plane = 0.1f;  // Previously 1.0f
-    float far_plane = 100.0f;  // Previously 7.5f
-    lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-    lightView = glm::lookAt(light->getPosition(), light->getTarget(), glm::vec3(0.0, 1.0, 0.0));
-    lightSpaceMatrix = lightProjection * lightView;
+    float far_plane = 1000.0f;  // Previously 7.5f
+    glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+
+ //   float cutOff = 38.0f;
+	//float outerCutOff = 90.0f;
+
+ //   float spotlightCutoff = glm::cos(glm::radians(cutOff)); // Assuming `getCutOff()` returns the spotlight's cutoff angle
+ //   glm::mat4 lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
+
+
+    glm::mat4 lightView = glm::lookAt(light->getPosition(), light->getTarget(), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
     // render scene from light's point of view
     directionalDepthMapShader.use();
@@ -231,8 +237,6 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     shader.setInt("texture_shadowMap", U_SHADOW_MAP);
     shaderTessellation.setInt("texture_shadowMap", U_SHADOW_MAP);
 
-
-
     // render Depth map to quad for visual debugging
     // ---------------------------------------------
     //depthMapToQuadShader.use();
@@ -240,6 +244,7 @@ void engine::Renderer::computeDepthMapFramebuffer(Shader& shader, Shader& shader
     //depthMapToQuadShader.setFloat("far_plane", far_plane);
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+    //depthMapToQuadShader.setInt("depthMap", 0);
 
 
     ////// test depth map (also comment computeColorFramebuffer);

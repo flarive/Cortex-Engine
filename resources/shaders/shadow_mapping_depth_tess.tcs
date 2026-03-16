@@ -1,36 +1,25 @@
 #version 440 core
-layout (vertices = 3) out;   // Use 4 here if you run a quad TES
+layout(vertices = 4) out;
 
-in VS_OUT {
-    vec3 worldPos;
-} tcs_in[];
+uniform mat4 model;
 
-out TCS_OUT {
-    vec3 worldPos;
-} tcs_out[];
+in vec3 FragPos[];  // Object-space positions from the vertex shader
 
-//
-// Option A: Set tess levels via uniforms
-//
-uniform vec4 uTessLevelOuter; // (o0, o1, o2, o3) - o3 ignored for triangles
-uniform vec2 uTessLevelInner; // (i0, i1) - i1 ignored for triangles
+out vec3 tcFragPos[];  // Pass object-space positions to TES
 
 void main()
 {
-    // Pass-through world positions
-    tcs_out[gl_InvocationID].worldPos = tcs_in[gl_InvocationID].worldPos;
+    tcFragPos[gl_InvocationID] = FragPos[gl_InvocationID];
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
-    // One invocation sets tessellation levels
+    // Fixed tessellation levels for shadow mapping
     if (gl_InvocationID == 0)
     {
-        // Triangles use 3 outer + 1 inner
-        gl_TessLevelOuter[0] = uTessLevelOuter.x;
-        gl_TessLevelOuter[1] = uTessLevelOuter.y;
-        gl_TessLevelOuter[2] = uTessLevelOuter.z;
-        gl_TessLevelInner[0] = uTessLevelInner.x;
-
-        // If you switch to quads (layout(vertices=4)), also set:
-        // gl_TessLevelOuter[3] = uTessLevelOuter.w;
-        // gl_TessLevelInner[1] = uTessLevelInner.y;
+        gl_TessLevelOuter[0] = 16.0;
+        gl_TessLevelOuter[1] = 16.0;
+        gl_TessLevelOuter[2] = 16.0;
+        gl_TessLevelOuter[3] = 16.0;
+        gl_TessLevelInner[0] = 16.0;
+        gl_TessLevelInner[1] = 16.0;
     }
 }

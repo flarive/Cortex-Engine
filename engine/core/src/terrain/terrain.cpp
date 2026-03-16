@@ -1,7 +1,7 @@
 #include "../../include/terrain/terrain.h"
 
-engine::Terrain::Terrain(float sizeFactor, unsigned int resolution)
-	: m_resolution(resolution), m_sizeFactor(sizeFactor)
+engine::Terrain::Terrain(float sizeFactor, float heightFactor, unsigned int resolution)
+	: m_resolution(resolution), m_sizeFactor(sizeFactor), m_heightFactor(heightFactor)
 {
 }
 

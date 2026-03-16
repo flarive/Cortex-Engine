@@ -184,7 +184,8 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
-        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+
+        if (firstLight->getTypeID() == LightType::point)
             computeDepthMapFramebuffer2(blinnPhongShader, blinnPhongShaderTessellation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);
         else
             computeDepthMapFramebuffer(blinnPhongShader, blinnPhongShaderTessellation, width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, update, firstLight);

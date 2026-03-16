@@ -25,34 +25,21 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    //auto trsCamera1 = Transform{ {0.0f, 100.0f, 50.0f} };
-    //auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
-    //camera1->setNearPlane(0.1f);
-    //camera1->setFarPlane(100000.0f);
-    //auto entityCamera1 = make_shared<Entity>("Camera1");
-    //entityCamera1->addComponent<TransformComponent>(trsCamera1);
-    //entityCamera1->addComponent<CameraComponent>(camera1);
-    //getEntityManager().addChild(entityCamera1);
-
-
-    auto trsCamera1 = Transform{ {0.32f, 102.46f, 52.10f} };
-    auto camera1 = make_shared<FlyCamera>(82.0f, -86.10f, -39.90f, 10.0f);
-    camera1->setNearPlane(0.1f);
-    camera1->setFarPlane(100000.0f);
+    auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
+    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
 
-
     // light
-    auto trsLight1 = Transform{ {0.0f, 20.0f, 0.0f} };
+    auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
     light1->setIntensity(1.0f);
-    light1->setCutoff(50.0f);
-    light1->setOuterCutoff(120.0f);
-    light1->setTarget(vec3(0.0f, 10.0f, 0.0f));
+    light1->setCutoff(100.0f);
+    light1->setOuterCutoff(200.0f);
+    light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
@@ -103,11 +90,22 @@ void MyScene14::init()
     getEntityManager().addChild(entityLight4);*/
 
 
+    // ground
+    //auto myPlane = make_shared<Plane>();
+    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(28.0f));
+    //auto entityPlane = make_shared<Entity>("MyPlane");
+    //entityPlane->addComponent<TransformComponent>(trsPlane);
+    //entityPlane->addComponent<PrimitiveComponent>(myPlane);
+    //getEntityManager().addChild(entityPlane);
+
+
+
     // terrain
-    auto myTerrain = make_shared<Terrain>(1.0f, 10);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
-    //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
-    auto trsTerrain = Transform(vec3(20.0f, 0.0f, 0.0f), vec3(1.0f));
+    auto myTerrain = make_shared<Terrain>(1.0f, 1.0f, 10);
+    //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg", "textures/concrete_specular.png", "textures/concrete_normal.png", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
+    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
+    auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
     entityTerrain->addComponent<TerrainComponent>(myTerrain);
@@ -116,13 +114,21 @@ void MyScene14::init()
 
 
     // sphere
-    auto mySphere = make_shared<Sphere>();
-    mySphere->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    auto trsSphere = Transform(vec3(0.0f, 10.0f, 0.0f), vec3(20.0f));
-    auto entitySphere = make_shared<Entity>("MySphere");
-    entitySphere->addComponent<TransformComponent>(trsSphere);
-    entitySphere->addComponent<PrimitiveComponent>(mySphere);
-    getEntityManager().addChild(entitySphere);
+    auto mySphere1 = make_shared<Sphere>();
+    mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 2.15f), vec3(0.4f));
+    auto entitySphere1 = make_shared<Entity>("MySphere1");
+    entitySphere1->addComponent<TransformComponent>(trsSphere1);
+    entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
+    getEntityManager().addChild(entitySphere1);
+
+    auto mySphere2 = make_shared<Sphere>();
+    mySphere2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsSphere2 = Transform(vec3(2.0f, 1.8f, -10.0f), vec3(1.2f));
+    auto entitySphere2 = make_shared<Entity>("MySphere2");
+    entitySphere2->addComponent<TransformComponent>(trsSphere2);
+    entitySphere2->addComponent<PrimitiveComponent>(mySphere2);
+    getEntityManager().addChild(entitySphere2);
 
 
     textFPSCount.setup(app->window, FONT_PATH, 20);

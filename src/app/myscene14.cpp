@@ -25,7 +25,7 @@ MyScene14::MyScene14(string _title, App* _app) : Scene(_title, _app, SceneSettin
 void MyScene14::init()
 {
     // camera
-    auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
+    auto trsCamera1 = Transform{ {0.0f, 1.0f, 5.0f} };
     auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
@@ -37,13 +37,13 @@ void MyScene14::init()
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
     light1->setIntensity(1.0f);
-    light1->setCutoff(100.0f);
-    light1->setOuterCutoff(200.0f);
+    light1->setCutoff(12.0f);
+    light1->setOuterCutoff(48.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(false);
+    light1->setUseAttenuation(true);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);

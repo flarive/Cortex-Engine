@@ -19,7 +19,7 @@ out VS_OUT {
     vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;
-} vs_out;
+} vs2fs;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -72,14 +72,14 @@ void main()
     }
 
     // World space position
-    vs_out.FragPos = vec3(model * totalPosition);
+    vs2fs.FragPos = vec3(model * totalPosition);
     
-    vs_out.TexCoords = aTexCoords;
-    //vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
-    vs_out.Normal = normalMatrix * aNormal;
-    vs_out.Tangent = aTangents;
-    vs_out.Bitangent = aBitangents;
-    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
+    vs2fs.TexCoords = aTexCoords;
+    //vs2fs.FragPos = vec3(model * vec4(aPos, 1.0));
+    vs2fs.Normal = normalMatrix * aNormal;
+    vs2fs.Tangent = aTangents;
+    vs2fs.Bitangent = aBitangents;
+    vs2fs.FragPosLightSpace = lightSpaceMatrix * vec4(vs2fs.FragPos, 1.0);
 
 
     vec3 T = normalize(mat3(model) * aTangents);
@@ -87,9 +87,9 @@ void main()
     vec3 N = normalize(mat3(model) * aNormal);
     mat3 TBN = transpose(mat3(T, B, N));
 
-    vs_out.TangentLightPos = TBN * lightPos;
-    vs_out.TangentViewPos  = TBN * viewPos;
-    vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+    vs2fs.TangentLightPos = TBN * lightPos;
+    vs2fs.TangentViewPos  = TBN * viewPos;
+    vs2fs.TangentFragPos  = TBN * vs2fs.FragPos;
 
         // Handle gl_Position based on tessellation mode
     if (isTessellated)

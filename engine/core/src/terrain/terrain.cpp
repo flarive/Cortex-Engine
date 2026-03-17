@@ -1,7 +1,7 @@
 #include "../../include/terrain/terrain.h"
 
-engine::Terrain::Terrain(float sizeFactor, float heightFactor, unsigned int resolution)
-	: m_resolution(resolution), m_sizeFactor(sizeFactor), m_heightFactor(heightFactor)
+engine::Terrain::Terrain(float heightFactor, unsigned int resolution)
+	: m_heightFactor(heightFactor), m_resolution(resolution)
 {
 }
 
@@ -85,8 +85,8 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
     const glm::vec3 normal(0.0f, 1.0f, 0.0f);
 
 
-	int width = static_cast<int>(m_textureWidth * m_sizeFactor);
-    int height = static_cast<int>(m_textureHeight * m_sizeFactor);
+	int width = static_cast<int>(m_textureWidth);
+    int height = static_cast<int>(m_textureHeight);
 
     for (unsigned i = 0; i <= m_resolution - 1; i++)
     {

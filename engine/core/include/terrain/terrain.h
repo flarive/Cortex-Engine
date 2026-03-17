@@ -39,7 +39,7 @@ namespace engine
     class Terrain final
 	{
 	public:
-		Terrain(float sizeFactor = 1.0f, float heightFactor = 1.0f, unsigned int resolution = 20);
+		Terrain(float heightFactor = 1.0f, unsigned int resolution = 20);
 		~Terrain() = default;
 
         void setup();
@@ -48,10 +48,9 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
-                {"sizefactor", EditorProperty { "Size", getSizeFactor(), editable, 0.0f, 10.0f, 0.01f, "%.2f" }},
-                {"resolution", EditorProperty { "Resolution", getResolution(), editable, 1.0f, 50.0f, 1.0f, "%.0f" }},
+                {"resolution", EditorProperty { "Resolution", getResolution(), editable, 1.0f, 25.0f, 1.0f, "%.0f" }},
                 {"heightfactor", EditorProperty { "Height", getHeightFactor(), editable, 0.1f, 100.0f, 0.1f, "%.1f" }},
-                {"offset", EditorProperty { "Offset", getHeightOffset(), editable, 0.0f, 1000.0f, 10.0f, "%.0f" }},
+                {"offset", EditorProperty { "Offset", getHeightOffset(), editable, 0.0f, 100.0f, 1.0f, "%.0f" }},
                 {"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
                 {"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},
                 {"canReceiveShadows", EditorProperty { "Receive shadows", canReceiveShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }}
@@ -60,7 +59,6 @@ namespace engine
 
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() {
             return {
-                { "sizefactor", [this](EditorPropertyValue value) { getSizeFactor() = *(std::get_if<float>(&value)); } },
                 { "resolution", [this](EditorPropertyValue value) { getResolution() = *(std::get_if<unsigned int>(&value)); } },
                 { "heightfactor", [this](EditorPropertyValue value) { getHeightFactor() = *(std::get_if<float>(&value)); } },
                 { "offset", [this](EditorPropertyValue value) { getHeightOffset() = *(std::get_if<glm::vec2>(&value)); } },
@@ -109,9 +107,6 @@ namespace engine
         void setCanCastShadows(bool canCast) { m_canCastShadows = canCast; }
         void setCanReceiveShadows(bool canReceive) { m_canReceiveShadows = canReceive; }
 
-        float& getSizeFactor() { return m_sizeFactor; }
-        void setSizeFactor(float factor) { m_sizeFactor = factor; }
-
         unsigned int& getResolution() { return m_resolution; }
         void setResolution(unsigned int resolution) { m_resolution = resolution; }
 
@@ -145,7 +140,6 @@ namespace engine
         
         int m_textureWidth{};
         int m_textureHeight{};
-		float m_sizeFactor{ 1.0f };
 		float m_heightFactor{ 1.0f };
         glm::vec2 m_heightOffset{};
 

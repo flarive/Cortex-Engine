@@ -152,12 +152,12 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                                 ImGui::TableNextRow();
 
                                 ImGui::TableSetColumnIndex(0);
-                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, property.step)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::TableSetColumnIndex(1);
-                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, property.step)) {
                                     component->setProperty(key, *pValue);
                                 }
 
@@ -181,17 +181,17 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                                 ImGui::TableNextRow();
 
                                 ImGui::TableSetColumnIndex(0);
-                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, 0.01f)) {
+                                if (drawCustomDragFloat("X", std::format("##{}{}{}X", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, green, white, &pValue->x, property.step)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::TableSetColumnIndex(1);
-                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, 0.01f)) {
+                                if (drawCustomDragFloat("Y", std::format("##{}{}{}Y", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, red, white, &pValue->y, property.step)) {
                                     component->setProperty(key, *pValue);
                                 }
 
                                 ImGui::TableSetColumnIndex(2);
-                                if (drawCustomDragFloat("Z", std::format("##{}{}{}Z", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, 0.01f)) {
+                                if (drawCustomDragFloat("Z", std::format("##{}{}{}Z", componentName, componentType, key).c_str(), ImGui::GetCursorScreenPos(), SIZE, ROUNDING, 50.0f, blue, white, &pValue->z, property.step)) {
                                     component->setProperty(key, *pValue);
                                 }
 

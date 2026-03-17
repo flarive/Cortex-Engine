@@ -528,6 +528,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         std::shared_ptr<PrimitiveComponent> primitiveComponent{};
         std::shared_ptr<ModelComponent> modelComponent{};
         std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
+        std::shared_ptr<TerrainComponent> terrainComponent{};
 
         if (cameraComponent = entity->getComponent<CameraComponent>())
         {
@@ -558,6 +559,12 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
             position = particleSystemComponent->getParticleSystem()->getPosition();
             scale = particleSystemComponent->getParticleSystem()->getScale();
             rotation = particleSystemComponent->getParticleSystem()->getRotation();
+        }
+        else if (terrainComponent = entity->getComponent<TerrainComponent>())
+        {
+            position = terrainComponent->getTerrain()->getPosition();
+            scale = terrainComponent->getTerrain()->getScale();
+            rotation = terrainComponent->getTerrain()->getRotation();
         }
 
         // Local variables for ImGui
@@ -702,6 +709,20 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
         else if (modelComponent)
         {
             auto p = modelComponent->getModel();
+            p->setPosition(position);
+            p->setRotation(rotation);
+            p->setScale(scale);
+        }
+        else if (particleSystemComponent)
+        {
+            auto p = particleSystemComponent->getParticleSystem();
+            p->setPosition(position);
+            p->setRotation(rotation);
+            p->setScale(scale);
+        }
+        else if (terrainComponent)
+        {
+            auto p = terrainComponent->getTerrain();
             p->setPosition(position);
             p->setRotation(rotation);
             p->setScale(scale);

@@ -85,7 +85,8 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
-        if (std::dynamic_pointer_cast<PointLight>(firstLight))
+        //if (std::dynamic_pointer_cast<PointLight>(firstLight))
+        if (firstLight->getTypeID() == LightType::point)
             initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
         else
             initSpotLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
@@ -97,7 +98,6 @@ void engine::Renderer::computeDepthMapFramebuffer(int width, int height, bool en
     if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
-
         if (firstLight->getTypeID() == LightType::point)
             computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
         else
@@ -219,6 +219,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     ShaderType type = shader.getShaderType();
+    ShaderType typeTesselation = shaderTessellation.getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
@@ -228,7 +229,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
         shader.setBool("enableShadows", enableShadows);
     }
     
-    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
+    if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setVec3("lightPos", light->getPosition());
@@ -314,6 +315,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
 
     ShaderType type = shader.getShaderType();
+    ShaderType typeTesselation = shaderTessellation.getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
@@ -326,7 +328,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.setFloat("far_plane", far_plane);
 	}
 
-    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
+    if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);

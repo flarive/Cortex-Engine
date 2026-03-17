@@ -62,10 +62,6 @@ namespace engine
 		void initColorFramebufferMSAA(int width, int height);
 		void initHDRColorFramebufferMSAA(int width, int height);
 
-		//void computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<Light> light);
-		//void computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light);
-
-
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
 
 		virtual Shader& getShader() = 0;

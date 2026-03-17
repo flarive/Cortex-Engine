@@ -278,19 +278,6 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    //blinnPhongShader.use();
-    //blinnPhongShader.setInt("pointLightsCount", m_pointLightCount);
-    //blinnPhongShader.setInt("dirLightsCount", m_dirLightCount);
-    //blinnPhongShader.setInt("spotLightsCount", m_spotLightCount);
-    //blinnPhongShader.setInt("areaLightsCount", m_areaLightCount);
-
-    //blinnPhongShaderTessellation.use();
-    //blinnPhongShaderTessellation.setInt("pointLightsCount", m_pointLightCount);
-    //blinnPhongShaderTessellation.setInt("dirLightsCount", m_dirLightCount);
-    //blinnPhongShaderTessellation.setInt("spotLightsCount", m_spotLightCount);
-    //blinnPhongShaderTessellation.setInt("areaLightsCount", m_areaLightCount);
-
-
     auto setCounts = [this](Shader& sh) {
             sh.use();
             sh.setInt("pointLightsCount", m_pointLightCount);

@@ -137,7 +137,7 @@ void engine::Scene::initialize()
 
 
     // renderer setup
-    m_renderer->setup(app->width, app->height, getActiveCamera(), lights);
+    m_renderer->setup(static_cast<int>(app->width), static_cast<int>(app->height), getActiveCamera(), lights);
 
     // listen for editor selected entity changed
     #if EDITOR_MODE
@@ -316,7 +316,7 @@ void engine::Scene::gameLoop()
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
-    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width, app->height);
+    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width / app->height);
     glm::mat4 view = getActiveCamera()->getViewMatrix();
 
     // Start the Dear ImGui frame
@@ -379,7 +379,7 @@ void engine::Scene::gameLoop()
         };
 
     // Call the renderer loop
-    m_renderer->loop(app->width, app->height, getActiveCamera(), updateLambda, updateUILambda);
+    m_renderer->loop(static_cast<int>(app->width), static_cast<int>(app->height), getActiveCamera(), updateLambda, updateUILambda);
 
     // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
@@ -491,7 +491,7 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
 
 
     auto cam = getActiveCamera();
-    glm::mat4 projection = cam->getProjectionMatrix(app->width, app->height);
+    glm::mat4 projection = cam->getProjectionMatrix(app->width / app->height);
     glm::mat4 view = cam->getViewMatrix();
     const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
@@ -780,7 +780,7 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
 void engine::Scene::refreshFullscreen()
 {
     // reinit framebuffers because width and height changed
-    m_renderer->initColorFramebuffer(app->width, app->height); // TODO use MSAA version instead !!!
+    m_renderer->initColorFramebuffer(static_cast<int>(app->width), static_cast<int>(app->height)); // TODO use MSAA version instead !!!
 }
 
 void engine::Scene::glfw_error_callback(int error, const char* description)

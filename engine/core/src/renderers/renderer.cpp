@@ -93,7 +93,7 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     }
 }
 
-void engine::Renderer::computeDepthMapFramebuffer(int width, int height, bool enableShadows, GLsizei shadowMapsTextureSize, Shader& shader, Shader& shaderTessellation, std::function<void(Shader&, Shader&)> update)
+void engine::Renderer::computeDepthMapFramebuffer(GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowMapsTextureSize, Shader& shader, Shader& shaderTessellation, std::function<void(Shader&, Shader&)> update)
 {
     if (m_lights.size() > 0)
     {
@@ -172,7 +172,7 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Spotlight and directional lights only !!!!!
 /// </summary>
-void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -211,7 +211,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // reset viewport
-    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     
@@ -263,7 +263,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 /// <summary>
 /// Omnilight only !!!!!
 /// </summary>
-void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, float width, float height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
     // -----------------------------------------------
@@ -306,11 +306,11 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
     // 2. render scene as normal 
     // -------------------------
-    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     
-    glm::mat4 projection = m_camera->getProjectionMatrix(width, height);
+    glm::mat4 projection = m_camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
     glm::mat4 view = m_camera->getViewMatrix();
 
 

@@ -4,7 +4,7 @@
 
 #include "../../include/debug/opengl_debug.h"
 
-#define M_PI 3.14159265358979323846
+const float M_PI_F = 3.1415927f;
 
 
 using namespace std;
@@ -110,7 +110,7 @@ void engine::ParticleSystem::update()
 	m_prevTime = currentTime;
 	m_nbFrames++;
 
-	m_partCounter += ceil(m_numOfParticlesPerSecond * deltaTime);
+	m_partCounter += static_cast<unsigned int>(ceil(m_numOfParticlesPerSecond * deltaTime));
 	initParticles(m_partCounter);
 
 	if (currentTime - m_fpsTime >= 1.0) {
@@ -128,7 +128,7 @@ void engine::ParticleSystem::update()
 			else
 				m_particlesArray[i].lifeSpan -= m_lifeSpan;
 
-			m_particlesArray[i].position = m_particlesArray[i].position + m_particlesArray[i].startVel * glm::vec3(deltaTime);
+			m_particlesArray[i].position = m_particlesArray[i].position + m_particlesArray[i].startVel * glm::vec3((float)deltaTime);
 			if (m_particlesArray[i].lifeSpan <= 0) {
 				destroyParticle(i);
 			}
@@ -368,8 +368,8 @@ void engine::ParticleSystem::initParticles(unsigned int n)
 		}*/
 
 		// Random angle and distance within the emitter radius
-		float theta = rand() / randMax * 2.0f * M_PI;
-		float phi = rand() / randMax * 2.0f * M_PI;
+		float theta = rand() / randMax * 2.0f * M_PI_F;
+		float phi = rand() / randMax * 2.0f * M_PI_F;
 		float r = (rand() / randMax) * m_emitterRadius;
 
 		float sinPhi = sin(phi);

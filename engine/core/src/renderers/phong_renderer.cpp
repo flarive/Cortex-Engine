@@ -43,7 +43,7 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
 
 void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
-    glm::mat4 projection = camera->getProjectionMatrix(width, height);
+    glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
     glm::mat4 view = camera->getViewMatrix();
 
     // solid color background

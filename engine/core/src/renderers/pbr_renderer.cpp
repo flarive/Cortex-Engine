@@ -60,7 +60,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     LTC1Map = Texture::loadMTexture();
     LTC2Map = Texture::loadLUTTexture();
 
-    glm::mat4 projection = m_camera->getProjectionMatrix(width, height);
+    glm::mat4 projection = m_camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
 
 
 
@@ -366,7 +366,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     updateEditorPropertySettings();
 
-    glm::mat4 projection = camera->getProjectionMatrix(width, height);
+    glm::mat4 projection = camera->getProjectionMatrix(width* 1.0f / height * 1.0f);
     glm::mat4 view = camera->getViewMatrix();
 
 

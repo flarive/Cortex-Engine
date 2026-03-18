@@ -85,7 +85,7 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                             ImGui::Text("%i%s", *pValue, !property.suffix.empty() ? std::format(" {}", property.suffix).c_str() : "");
                         }
                         else {
-                            if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, property.min, property.max, property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
+                            if (ImGui::DragInt(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, property.step, static_cast<int>(property.min), static_cast<int>(property.max), property.format.c_str(), ImGuiSliderFlags_NoRoundToFormat))
                             {
                                 // int value changed
                                 component->setProperty(key, *pValue);

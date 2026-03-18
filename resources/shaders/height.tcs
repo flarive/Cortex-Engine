@@ -12,8 +12,31 @@ uniform mat4 view;   // World->View (eye space)
 in vec2 TexCoords[];      // Per-vertex UVs from the vertex shader (array of 4 for the patch)
 out vec2 TextureCoord[]; // Forwarded UVs to the TES (same indexing as input)
 
+in vec3 vsTangent[];  // Receive tangents from VS (array of 4)
+in vec3 vsBitangent[];  // Receive bitangents from VS (array of 4)
+in vec4 vsFragPosLightSpace[]; // Receive frag pos in light space from VS (array of 4)
+in vec3 vsTangentLightPos[]; // Receive light pos in tangent space from VS (array of 4)
+in vec3 vsTangentViewPos[]; // Receive view pos in tangent space from VS (array of 4)
+in vec3 vsTangentFragPos[]; // Receive frag pos in tangent space from VS (array of 4)  
+
+out vec3 tcTangent[];  // Pass tangents to TES (array of 4)
+out vec3 tcBitangent[];  // Pass bitangents to TES (array of 4)
+out vec4 tcFragPosLightSpace[]; // Pass frag pos in light space to TES (array of 4)
+out vec3 tcTangentLightPos[]; // Pass light pos in tangent space to TES (array of 4)
+out vec3 tcTangentViewPos[]; // Pass view pos in tangent space to TES (array of 4)
+out vec3 tcTangentFragPos[]; // Pass frag pos in tangent space to TES (array of 4)
+
+
 void main()
 {
+    // Pass through the input variables to the TES
+    tcTangent[gl_InvocationID] = vsTangent[gl_InvocationID];
+    tcBitangent[gl_InvocationID] = vsBitangent[gl_InvocationID];
+    tcFragPosLightSpace[gl_InvocationID] = vsFragPosLightSpace[gl_InvocationID];
+    tcTangentLightPos[gl_InvocationID] = vsTangentLightPos[gl_InvocationID];
+    tcTangentViewPos[gl_InvocationID] = vsTangentViewPos[gl_InvocationID];
+    tcTangentFragPos[gl_InvocationID] = vsTangentFragPos[gl_InvocationID];
+    
     // Pass through the control point position that came from the previous stage.
     // IMPORTANT: For displacement in TES, this should be OBJECT-SPACE position.
     // Your VS should set gl_Position = vec4(aPosOS, 1.0) for tessellation path.

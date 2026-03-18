@@ -47,10 +47,23 @@ uniform float heightFactor;
 uniform vec2 heightOffset; 
 
 in vec2 TextureCoord[]; // From TCS
+in vec3 tcTangent[];  // Receive tangents from TCS (array of 4)
+in vec3 tcBitangent[];  // Receive bitangents from TCS (array of 4)
+in vec4 tcFragPosLightSpace[]; // Receive frag pos in light space from TCS (array of 4)
+in vec3 tcTangentLightPos[]; // Receive light pos in tangent space from TCS (array of 4)
+in vec3 tcTangentViewPos[]; // Receive view pos in tangent space from TCS (array of 4)
+in vec3 tcTangentFragPos[]; // Receive frag pos in tangent space from TCS (array of 4)
 
-out float Height;
+
 
 out vec2 TexCoords; // Pass to fragment shader
+out vec3 teTangent;  // Pass tangent to fragment shader
+out vec3 teBitangent;  // Pass bitangent to fragment shader
+out vec4 teFragPosLightSpace; // Pass frag pos in light space to fragment shader
+out vec3 teTangentLightPos; // Pass light pos in tangent space to fragment shader
+out vec3 teTangentViewPos; // Pass view pos in tangent space to fragment shader
+out vec3 teTangentFragPos; // Pass frag pos in tangent space to fragment shader
+out float Height;
 
 void main()
 {
@@ -58,16 +71,76 @@ void main()
     float v = gl_TessCoord.y;
 
     // Correct corner indexing for texture coordinates
-    vec2 t00 = TextureCoord[0]; // (u0,v0)
-    vec2 t10 = TextureCoord[1]; // (u1,v0)
-    vec2 t01 = TextureCoord[2]; // (u0,v1)
-    vec2 t11 = TextureCoord[3]; // (u1,v1)
+    vec2 tc00 = TextureCoord[0]; // (u0,v0)
+    vec2 tc10 = TextureCoord[1]; // (u1,v0)
+    vec2 tc01 = TextureCoord[2]; // (u0,v1)
+    vec2 tc11 = TextureCoord[3]; // (u1,v1)
 
     // Correct bilinear interpolation
-    vec2 t0 = (t10 - t00) * u + t00;
-    vec2 t1 = (t11 - t01) * u + t01;
-    vec2 texCoords = (t1 - t0) * v + t0;
+    vec2 tc0 = (tc10 - tc00) * u + tc00;
+    vec2 tc1 = (tc11 - tc01) * u + tc01;
+    vec2 texCoords = (tc1 - tc0) * v + tc0;
     TexCoords = texCoords; // Pass to fragment shader
+
+
+    // Interpolate tangents and bitangents
+    vec3 t00 = tcTangent[0];
+    vec3 t10 = tcTangent[1];
+    vec3 t01 = tcTangent[2];
+    vec3 t11 = tcTangent[3];
+
+    vec3 t0 = mix(t00, t10, u);
+    vec3 t1 = mix(t01, t11, u);
+    teTangent = mix(t0, t1, v);
+
+    vec3 b00 = tcBitangent[0];
+    vec3 b10 = tcBitangent[1];
+    vec3 b01 = tcBitangent[2];
+    vec3 b11 = tcBitangent[3];
+
+    vec3 b0 = mix(b00, b10, u);
+    vec3 b1 = mix(b01, b11, u);
+    teBitangent = mix(b0, b1, v);
+
+
+    // Interpolate FragPosLightSpace
+    vec4 f00 = tcFragPosLightSpace[0];
+    vec4 f10 = tcFragPosLightSpace[1];
+    vec4 f01 = tcFragPosLightSpace[2];
+    vec4 f11 = tcFragPosLightSpace[3];
+
+    vec4 f0 = mix(f00, f10, u);
+    vec4 f1 = mix(f01, f11, u);
+    teFragPosLightSpace = mix(f0, f1, v);
+
+
+    // Interpolate tangent-space variables
+    vec3 l00 = tcTangentLightPos[0];
+    vec3 l10 = tcTangentLightPos[1];
+    vec3 l01 = tcTangentLightPos[2];
+    vec3 l11 = tcTangentLightPos[3];
+
+    vec3 l0 = mix(l00, l10, u);
+    vec3 l1 = mix(l01, l11, u);
+    teTangentLightPos = mix(l0, l1, v);
+
+    vec3 v00 = tcTangentViewPos[0];
+    vec3 v10 = tcTangentViewPos[1];
+    vec3 v01 = tcTangentViewPos[2];
+    vec3 v11 = tcTangentViewPos[3];
+
+    vec3 v0 = mix(v00, v10, u);
+    vec3 v1 = mix(v01, v11, u);
+    teTangentViewPos = mix(v0, v1, v);
+
+    vec3 g00 = tcTangentFragPos[0];
+    vec3 g10 = tcTangentFragPos[1];
+    vec3 g01 = tcTangentFragPos[2];
+    vec3 g11 = tcTangentFragPos[3];
+
+    vec3 g0 = mix(g00, g10, u);
+    vec3 g1 = mix(g01, g11, u);
+    teTangentFragPos = mix(g0, g1, v);
 
 
     // Sample height from heightmap

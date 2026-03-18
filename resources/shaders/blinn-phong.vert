@@ -25,6 +25,12 @@ out VS_OUT {
 out vec3 FragPos;
 out vec2 TexCoords;
 out vec3 Normal;
+out vec3 vsTangent;
+out vec3 vsBitangent;
+out vec4 vsFragPosLightSpace;
+out vec3 vsTangentLightPos;
+out vec3 vsTangentViewPos;
+out vec3 vsTangentFragPos;
 
 
 uniform mat4 model;
@@ -105,11 +111,14 @@ void main()
     TexCoords = aTexCoords;
 
     vs2fs.Tangent = aTangents;
-    vs2fs.Bitangent = aBitangents;
+    vsTangent = aTangents;
 
+    vs2fs.Bitangent = aBitangents;
+    vsBitangent = aBitangents;
 
     // Light space position for shadow mapping
     vs2fs.FragPosLightSpace = lightSpaceMatrix * vec4(vs2fs.FragPos, 1.0);
+    vsFragPosLightSpace = lightSpaceMatrix * vec4(vs2fs.FragPos, 1.0); // possible optim !
 
     // TBN matrix for normal mapping
     vec3 T = normalize(mat3(model) * aTangents);
@@ -119,8 +128,13 @@ void main()
 
     // Tangent space positions
     vs2fs.TangentLightPos = TBN * lightPos;
+    vsTangentLightPos = TBN * lightPos; // possible optim !
+
     vs2fs.TangentViewPos = TBN * viewPos;
+    vsTangentViewPos = TBN * viewPos; // possible optim !
+
     vs2fs.TangentFragPos = TBN * vs2fs.FragPos;
+    vsTangentFragPos = TBN * vs2fs.FragPos; // possible optim !
 
     // Handle gl_Position based on tessellation mode
     if (isTessellated)

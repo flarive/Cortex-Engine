@@ -91,16 +91,23 @@ in VS_OUT {
     vec3 Tangent;
     vec3 Bitangent;
     vec4 FragPosLightSpace;
-
     vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;
 } fs_in;
 
 // coming from TES shader (tesselation)
+#ifdef IS_TESSELLATED
 in vec3 FragPos;
 in vec2 TexCoords;
 in vec3 Normal;
+in vec3 teTangent;  // Receive tangent from TES
+in vec3 teBitangent;  // Receive bitangent from TES
+in vec4 teFragPosLightSpace;
+in vec3 teTangentLightPos;
+in vec3 teTangentViewPos;
+in vec3 teTangentFragPos;
+#endif
 
 in float Height;
 
@@ -145,9 +152,9 @@ const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
 
@@ -323,10 +330,10 @@ vec3 ToLinear(vec3 v) { return PowVec3(v, gamma); }
 vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 
 
-vec2 rand(vec2 co)
-{
-    return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
-}
+//vec2 rand(vec2 co)
+//{
+//    return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
+//}
 
 float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
@@ -729,22 +736,27 @@ void main()
     vec2 l_TexCoords;
     vec3 l_FragPos;
     vec3 l_Normal;
+    vec3 l_Tangent;
+    vec3 l_Bitangent;
+    vec4 l_FragPosLightSpace;
     
-    if (isTessellated)
-    {
-        // coming from TES shader (tesselation)
-        l_TexCoords = TexCoords;
-        l_FragPos = FragPos;
-        l_Normal = Normal;
-    }
-    else
-    {
-        // coming from vertex shader (no tess)
-        l_TexCoords = fs_in.TexCoords;
-        l_FragPos = fs_in.FragPos;
-        l_Normal = fs_in.Normal;
-    }
-    
+#ifdef IS_TESSELLATED
+    // coming from TES shader (tesselation)
+    l_TexCoords = TexCoords;
+    l_FragPos = FragPos;
+    l_Normal = Normal;
+    l_Tangent = normalize(teTangent);
+    l_Bitangent = normalize(teBitangent);
+    l_FragPosLightSpace = teFragPosLightSpace;
+#else
+    // coming from vertex shader (no tess)
+    l_TexCoords = fs_in.TexCoords;
+    l_FragPos = fs_in.FragPos;
+    l_Normal = fs_in.Normal;
+    l_Tangent = fs_in.Tangent;
+    l_Bitangent = fs_in.Bitangent;
+    l_FragPosLightSpace = fs_in.FragPosLightSpace;
+#endif
     
     vec3 norm;
     if (material.has_texture_normal_map && hasTangents)
@@ -754,11 +766,11 @@ void main()
         norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
 
         // Transform normal from tangent space to world space
-        vec3 T = normalize(fs_in.Tangent);
-        vec3 B = normalize(fs_in.Bitangent);
-
+        vec3 T = normalize(l_Tangent);
+        vec3 B = normalize(l_Bitangent);
         vec3 N = normalize(l_Normal);
         mat3 TBN = mat3(T, B, N);
+
         norm = normalize(TBN * norm) * material.normalMapIntensity;
     }
     else
@@ -820,13 +832,13 @@ void main()
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, l_TexCoords, viewDir);
+            result += CalcDirLight(dirLights[i], norm, l_FragPos, l_TexCoords, viewDir, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, l_TexCoords, viewDir);
+            result += CalcSpotLight(spotLights[i], norm, l_FragPos, l_TexCoords, viewDir, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
@@ -860,7 +872,7 @@ void main()
 
 
 // calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
     // Light direction (inverted because light.direction points where the light is going)
     vec3 lightDir = normalize(-light.direction);
@@ -882,11 +894,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
@@ -940,7 +952,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords,
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
     // Direction from fragment to light
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
@@ -981,15 +993,15 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 2)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     }
     else if (material.shadowCalculationMethod == 3)
     {
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
     }
 
     // Apply shadow intensity for darker/lighter shadows

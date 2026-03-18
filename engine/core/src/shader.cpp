@@ -273,6 +273,10 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     }
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    std::string fragmentSource = fragmentCode;
+    if (tessEvalPath != nullptr) {
+        fragmentSource = std::string("#define IS_TESSELLATED\n") + fragmentCode;
+    }
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
@@ -545,7 +549,7 @@ void engine::Shader::checkCompileErrors(unsigned int shader, std::string type)
         if (!success)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            logger.error("Shader {} SHADER_COMPILATION_ERROR of type: {}", shader, infoLog);
+            logger.error("Shader {} SHADER_COMPILATION_ERROR of type {}: {}", shader, type, infoLog);
             throw std::runtime_error("Shader compilation error");
         }
     }

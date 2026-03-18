@@ -608,27 +608,6 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     return shadow;
 }
 
-
-
-
-//float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
-//{
-//    // get vector between fragment position and light position
-//    vec3 fragToLight = fragPos - lightPos;
-//
-//    // use the light to fragment vector to sample from the depth map    
-//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
-//    // it is currently in linear range between [0,1]. Re-transform back to original value
-//    closestDepth *= far_plane;
-//    // now get current linear depth as the length between the fragment and light position
-//    float currentDepth = length(fragToLight);
-//
-//    float bias = material.shadowMapsBias;
-//    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-//
-//    return shadow;
-//}
-
 float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 {
     // Vector from light to fragment

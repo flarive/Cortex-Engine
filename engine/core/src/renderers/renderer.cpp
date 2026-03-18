@@ -243,7 +243,11 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
+
+    shader.use();
     shader.setInt("texture_shadowMap", U_SHADOW_MAP);
+
+    shaderTessellation.use();
     shaderTessellation.setInt("texture_shadowMap", U_SHADOW_MAP);
 
     // render Depth map to quad for visual debugging
@@ -332,7 +336,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     {
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);
-        shader.setMat4("view", view);
+        shaderTessellation.setMat4("view", view);
         shaderTessellation.setVec3("lightPos", light->getPosition());
         shaderTessellation.setVec3("viewPos", m_camera->position);
         shaderTessellation.setBool("enableShadows", enableShadows);
@@ -345,7 +349,11 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
+
+    shader.use();
     shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+
+    shaderTessellation.use();
     shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
 

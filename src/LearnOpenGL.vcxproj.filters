@@ -1017,6 +1017,9 @@
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\uv_mapper_big.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">

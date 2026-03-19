@@ -97,10 +97,10 @@ in VS_OUT {
 } fs_in;
 
 // coming from TES shader (tesselation)
-#ifdef IS_TESSELLATED
 in vec3 FragPos;
 in vec2 TexCoords;
 in vec3 Normal;
+#ifdef IS_TESSELLATED
 in vec3 teTangent;  // Receive tangent from TES
 in vec3 teBitangent;  // Receive bitangent from TES
 in vec4 teFragPosLightSpace;
@@ -718,20 +718,28 @@ void main()
     vec3 l_Tangent;
     vec3 l_Bitangent;
     vec4 l_FragPosLightSpace;
-    
-#ifdef IS_TESSELLATED
-    // coming from TES shader (tesselation)
+
+
+if (isTessellated)
+{
     l_TexCoords = TexCoords;
     l_FragPos = FragPos;
     l_Normal = Normal;
+}
+else
+{
+    l_TexCoords = fs_in.TexCoords;
+    l_FragPos = fs_in.FragPos;
+    l_Normal = fs_in.Normal;
+}
+    
+#ifdef IS_TESSELLATED
+    // coming from TES shader (tesselation)
     l_Tangent = normalize(teTangent);
     l_Bitangent = normalize(teBitangent);
     l_FragPosLightSpace = teFragPosLightSpace;
 #else
     // coming from vertex shader (no tess)
-    l_TexCoords = fs_in.TexCoords;
-    l_FragPos = fs_in.FragPos;
-    l_Normal = fs_in.Normal;
     l_Tangent = fs_in.Tangent;
     l_Bitangent = fs_in.Bitangent;
     l_FragPosLightSpace = fs_in.FragPosLightSpace;
@@ -835,7 +843,7 @@ void main()
         vec3 heightEffect = vec3(h, h, h);
 
         // Blend the height effect with the lighting result
-        FragColor = vec4(mix(result, heightEffect, 0.5), alpha);
+        FragColor = vec4(mix(result, heightEffect, 0.0), alpha);
     }
     else
     {

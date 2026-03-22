@@ -116,19 +116,19 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
     if (m_material)
     {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
+        //if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+        //{
             if (!m_material->bind(shader)) {
                 std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
                 return;
             }
 
-            if (type == ShaderType::BlinnPhong)
-            {
+            /*if (type == ShaderType::BlinnPhong)
+            {*/
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());
                 shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
-            }
+            //}
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             
@@ -136,26 +136,26 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
             shader.setBool("material.canCastShadows", canCastShadows());
             shader.setBool("material.canReceiveShadows", canReceiveShadows());
 
-            if (type == ShaderType::PBR)
-            {
+            /*if (type == ShaderType::PBR)
+            {*/
                 shader.setVec3("material.ambient_color", m_material->getAmbientColor());
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
                 shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-            }
+            //}
         }
-    }
+    //}
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
 
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
+    //if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    //{
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
         shader.setBool("isTessellated", false);
-    }
+    //}
 
 
     // Send to GPU

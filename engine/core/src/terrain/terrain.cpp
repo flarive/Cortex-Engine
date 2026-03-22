@@ -215,9 +215,11 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
     glBindVertexArray(0);
 
-
-    m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-    OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
+    if (m_material && (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation))
+    {
+        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+        OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
+    }
 }
 
 void engine::Terrain::clean()

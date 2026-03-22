@@ -85,7 +85,6 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     if (m_lights.size() > 0)
     {
         auto firstLight = m_lights[0];
-        //if (std::dynamic_pointer_cast<PointLight>(firstLight))
         if (firstLight->getTypeID() == LightType::point)
             initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
         else
@@ -290,10 +289,13 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     glViewport(0, 0, shadowSize, shadowSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
-    pointDepthMapShader.use();
+    
     for (unsigned int i = 0; i < 6; ++i)
     {
+        pointDepthMapShader.use();
         pointDepthMapShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+        
+        pointDepthMapTessellationShader.use();
         pointDepthMapTessellationShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
     }
     

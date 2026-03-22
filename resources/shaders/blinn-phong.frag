@@ -926,9 +926,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords,
     specular *= attenuation * intensity;
 
     // calculate shadow
-    vec2 screenSize = vec2(1280, 720);
+    //vec2 screenSize = vec2(1280, 720);
     float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
-    //float shadow = enableShadows ? ShadowCalculationCubeMap2(fragPos, light.position, normal, lightDir, screenSize) : 0.0;
+    //float shadow = enableShadows ? ShadowCalculationCubeMap2(fragPos, light.position) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

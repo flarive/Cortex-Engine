@@ -330,10 +330,10 @@ vec3 ToLinear(vec3 v) { return PowVec3(v, gamma); }
 vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 
 
-//vec2 rand(vec2 co)
-//{
-//    return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
-//}
+vec2 rand(vec2 co)
+{
+    return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
+}
 
 float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
@@ -608,47 +608,131 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     return shadow;
 }
 
+
+
 float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 {
-    // Vector from light to fragment
+    // get vector between fragment position and light position
     vec3 fragToLight = fragPos - lightPos;
+
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= far_plane;
+    // now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
 
-    // Bias
     float bias = material.shadowMapsBias;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 
-    // Adjustable blur radius and Gaussian sigma
-    int radius = int(material.shadowMapsBlur);        // e.g., 2 for 5x5x5 samples
-    float sigma = float(radius) * 0.75;
 
+     
+     // PCF
+//     float shadow = 0.0;
+//     float bias = 0.05; 
+//     float samples = 4.0;
+//     float offset = 0.1;
+//     for(float x = -offset; x < offset; x += offset / (samples * 0.5))
+//     {
+//         for(float y = -offset; y < offset; y += offset / (samples * 0.5))
+//         {
+//             for(float z = -offset; z < offset; z += offset / (samples * 0.5))
+//             {
+//                 float closestDepth = texture(material.texture_shadowMapCube, fragToLight + vec3(x, y, z)).r; // use lightdir to lookup cubemap
+//                 closestDepth *= far_plane;   // Undo mapping [0;1]
+//                 if(currentDepth - bias > closestDepth)
+//                     shadow += 1.0;
+//             }
+//         }
+//     }
+//     shadow /= (samples * samples * samples);
+
+
+//    float shadow = 0.0;
+//    float bias = 0.15;
+//    int samples = 20;
+//    float viewDistance = length(viewPos - fragPos);
+//    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+//    for(int i = 0; i < samples; ++i)
+//    {
+//        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+//        closestDepth *= far_plane;   // undo mapping [0;1]
+//        if(currentDepth - bias > closestDepth)
+//            shadow += 1.0;
+//    }
+//    shadow /= float(samples);
+
+
+//    float shadow = 0.0;
+//    float bias = max(0.05 * (1.0 - dot(fs_in.Normal, normalize(lightPos - fs_in.FragPos))), 0.005); // angle-dependent bias
+//    int samples = 20;
+//    float viewDistance = length(viewPos - fragPos);
+//    float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0; // slightly smaller radius
+//
+//    for (int i = 0; i < samples; ++i)
+//    {
+//        vec3 sampleOffset = gridSamplingDisk[i] * diskRadius;
+//        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + sampleOffset).r;
+//        closestDepth *= far_plane; // undo [0,1] mapping
+//
+//        if (currentDepth - bias > closestDepth)
+//            shadow += 1.0;
+//    }
+//
+//    shadow /= float(samples);
+
+
+
+        
+    // display closestDepth as debug (to visualize depth cubemap)
+    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0); 
+        
+    return shadow;
+}
+
+
+float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
+{
     float shadow = 0.0;
-    float totalWeight = 0.0;
+	int samples = 19;
 
-    // Shadow map texel size for cube map
-    vec2 texelSize = 1.0 / textureSize(texture_shadowMapCube, 0);
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
 
-    // 3D sampling around fragToLight direction
-    for (int x = -radius; x <= radius; ++x) {
-        for (int y = -radius; y <= radius; ++y) {
-            for (int z = -radius; z <= radius; ++z) {
-                // Offset direction
-                vec3 offset = fragToLight + vec3(x, y, z) * texelSize.x * far_plane;
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
+    // it is currently in linear range between [0,1]. Re-transform back to original value
+    closestDepth *= far_plane;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
 
-                // Gaussian weight
-                float weight = exp(-(x*x + y*y + z*z) / (2.0 * sigma * sigma));
 
-                // Sample cube shadow map
-                float closestDepth = texture(texture_shadowMapCube, offset).r * far_plane;
+	// Angle-dependent bias
+	//float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float bias = material.shadowMapsBias; //0.001
 
-                shadow += weight * ((currentDepth - bias > closestDepth) ? 1.0 : 0.0);
-                totalWeight += weight;
-            }
-        }
-    }
+	// View-dependent disk radius
+	float viewDistance = length(viewPos - fragPos);
+	float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0;
 
-    shadow /= totalWeight;
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+	// Procedural noise for jitter
+	vec2 noise = rand(gl_FragCoord.xy / screenSize);
+	float jitterStrength = 0.1;
 
+	for (int i = 0; i < samples; ++i)
+	{
+		vec3 offset = gridSamplingDisk[i];
+		offset.xy += noise * jitterStrength;
+		vec3 sampleDir = fragToLight + offset * diskRadius;
+
+		float closestDepth = texture(texture_shadowMapCube, sampleDir).r;
+		closestDepth *= far_plane;
+
+		if (currentDepth - bias > closestDepth)
+		shadow += 1.0;
+	}
+
+    shadow /= float(samples);
     return shadow;
 }
 
@@ -673,41 +757,6 @@ vec3 sampleOffsets[SAMPLE_COUNT] = vec3[](
     vec3(-0.577, -0.577, -0.577)
     );
 
-
-
-float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos)
-{
-    vec3 fragToLight = fragPos - lightPos;
-    float currentDepth = length(fragToLight);
-    float bias = material.shadowMapsBias;
-
-    vec3 baseDir = normalize(fragToLight);
-    float texelSizeCube = 1.0 / float(textureSize(texture_shadowMapCube, 0));
-
-    int radius = int(material.shadowMapsBlur); // controls blur strength
-    float sigma = float(radius) * 0.75;
-
-    float shadow = 0.0;
-    float totalWeight = 0.0;
-
-    for (int i = 0; i < SAMPLE_COUNT; ++i) {
-        vec3 offsetDir = normalize(baseDir + sampleOffsets[i] * texelSizeCube * float(radius));
-
-        // Gaussian weight based on offset magnitude
-        float dist2 = dot(sampleOffsets[i], sampleOffsets[i]);
-        float weight = exp(-dist2 / (2.0 * sigma * sigma));
-
-        float closestDepth = texture(texture_shadowMapCube, offsetDir).r * far_plane;
-
-        shadow += weight * ((currentDepth - bias > closestDepth) ? 1.0 : 0.0);
-        totalWeight += weight;
-    }
-
-    shadow /= totalWeight;
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
-
-    return shadow;
-}
 
 
 void main()
@@ -926,9 +975,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords,
     specular *= attenuation * intensity;
 
     // calculate shadow
-    //vec2 screenSize = vec2(1280, 720);
+//    //vec2 screenSize = vec2(1280, 720);
     float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
-    //float shadow = enableShadows ? ShadowCalculationCubeMap2(fragPos, light.position) : 0.0;
+//    //float shadow = enableShadows ? ShadowCalculationCubeMap2(fragPos, light.position) : 0.0;
+
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

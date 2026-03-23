@@ -49,26 +49,22 @@ namespace engine
 		
 
 		void updateAnimation(float dt) override;
+		void draw(Shader& shader, Transform& localTransform) override;
+
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 		
 		void playAnimationAtIndex(unsigned short index) override;
 		
-	
 
-		const std::vector<glm::mat4>& getFinalBoneMatrices() const override;
-
-
-		
 
 
 	private:
-		
-		
-		
 		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
 
 		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+
+		const std::vector<glm::mat4>& getFinalBoneMatrices() const;
 	};
 }

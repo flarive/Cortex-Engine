@@ -5,6 +5,7 @@
 
 #include "../misc/ordered_map.h"
 #include "animation.h"
+#include "../shader.h"
 
 #include <vector>
 #include <map>
@@ -44,13 +45,13 @@ namespace engine
 		virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
 		virtual void updateAnimation(float dt) = 0;
+		virtual void draw(Shader& shader, Transform& localTransform) = 0;
+
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
 		virtual void playAnimation() = 0;
 		virtual void stopAnimation() = 0;
 
 		virtual void playAnimationAtIndex(unsigned short index) = 0;
-
-		virtual const std::vector<glm::mat4>& getFinalBoneMatrices() const = 0;
 
 		void setBoneCount(unsigned int boneCount) { m_boneCount = boneCount; }
 
@@ -63,6 +64,5 @@ namespace engine
 		bool m_isPlaying{ false };
 
 		size_t m_boneCount{};
-
     };
 }

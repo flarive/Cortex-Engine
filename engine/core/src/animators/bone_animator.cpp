@@ -71,6 +71,16 @@ void engine::BonesAnimator::updateAnimation(float dt)
 	}
 }
 
+void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
+{
+	auto transforms = getFinalBoneMatrices();
+
+	for (int i = 0; i < transforms.size(); ++i)
+	{
+		shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+	}
+}
+
 void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
 	m_CurrentAnimation = pAnimation;

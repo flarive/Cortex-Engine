@@ -22,12 +22,7 @@ void engine::AnimatorComponent::update(float deltaTime, Transform& transform)
 
 void engine::AnimatorComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	auto transforms = m_animator->getFinalBoneMatrices();
-
-	for (int i = 0; i < transforms.size(); ++i)
-	{
-		shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-	}
+	m_animator->draw(shader, localTransform);
 }
 
 engine::AABB engine::AnimatorComponent::generateBoundingVolume(const std::shared_ptr<Animator> animator)
@@ -61,12 +56,10 @@ void engine::AnimatorComponent::setEnabled(bool enabled)
 {
 	ComponentBase<AnimatorComponent>::setEnabled(enabled);
 
-	if (!enabled)
-	{
+	if (!enabled) {
 		m_animator->stopAnimation();
 	}
-	else
-	{
+	else {
 		m_animator->playAnimation();
 	}
 }

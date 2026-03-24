@@ -1,8 +1,8 @@
-#include "../../include/animators/animation.h"
+#include "../../include/animations/bone_animation.h"
 
 
-engine::Animation::Animation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
-	: m_name(animationName), m_filepath(animationPath), m_speedFactor(speedFactor)
+engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
+	: Animation(animationName, animationPath, model, speedFactor)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
@@ -19,7 +19,7 @@ engine::Animation::Animation(const std::string& animationName, const std::string
 	readMissingBones(animation, *model.get());
 }
 
-engine::Bone* engine::Animation::findBone(const std::string& name)
+engine::Bone* engine::BoneAnimation::findBone(const std::string& name)
 {
 	auto iter = std::find_if(m_bones.begin(), m_bones.end(),
 		[&](const Bone& Bone)
@@ -29,14 +29,9 @@ engine::Bone* engine::Animation::findBone(const std::string& name)
 	);
 	if (iter == m_bones.end()) return nullptr;
 	else return &(*iter);
-
-	/*auto iter = m_BoneKeys.find(name);
-	if (iter != m_BoneKeys.end())
-		return &(iter->second);
-	return nullptr;*/
 }
 
-void engine::Animation::readMissingBones(const aiAnimation* animation, Model& model)
+void engine::BoneAnimation::readMissingBones(const aiAnimation* animation, Model& model)
 {
 	int size = animation->mNumChannels;
 
@@ -60,7 +55,7 @@ void engine::Animation::readMissingBones(const aiAnimation* animation, Model& mo
 	m_boneInfoMap = boneInfoMap;
 }
 
-void engine::Animation::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
+void engine::BoneAnimation::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
 {
 	assert(src);
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "animator.h"
-#include "animation.h"
+#include "../animations/bone_animation.h"
 
 namespace engine
 {
@@ -29,7 +29,7 @@ namespace engine
 		void updateAnimation(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
-		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
+		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 

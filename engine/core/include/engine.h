@@ -39,9 +39,11 @@
 
 
 #include "models/model.h"
+
 #include "animators/bone_animator.h"
 #include "animators/rotation_animator.h"
-#include "animators/animation.h"
+
+#include "animations/bone_animation.h"
 
 #include "cameras/camera.h"
 #include "cameras/fly_camera.h"

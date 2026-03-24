@@ -4,18 +4,15 @@
 engine::RotationAnimator::RotationAnimator(const glm::vec3& rotation)
 	: Animator(nullptr), m_rotation(rotation)
 {
-
 }
-
-
 
 void engine::RotationAnimator::updateAnimation(float dt)
 {
 	m_DeltaTime = dt;
-	if (m_CurrentAnimation && m_isPlaying)
+	if (m_isPlaying)
 	{
-		m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
-		m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
+		//m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
+		//m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
 
 		m_internalRotation += dt * 0.002f;
 	}
@@ -27,19 +24,19 @@ void engine::RotationAnimator::draw(Shader& shader, Transform& localTransform)
 	localTransform.setLocalRotation(glm::vec3(rot.x, rot.y + m_internalRotation, rot.z));
 }
 
-void engine::RotationAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
+void engine::RotationAnimator::playAnimation(std::shared_ptr<BoneAnimation> pAnimation)
 {
-	m_CurrentAnimation = pAnimation;
+	//m_CurrentAnimation = pAnimation;
 	m_CurrentTime = 0.0f;
 	m_isPlaying = true;
 }
 
 void engine::RotationAnimator::playAnimation()
 {
-	if (m_CurrentAnimation)
+	//if (m_CurrentAnimation)
 		m_isPlaying = true;
-	else
-		m_isPlaying = false;
+	/*else
+		m_isPlaying = false;*/
 }
 
 void engine::RotationAnimator::stopAnimation()

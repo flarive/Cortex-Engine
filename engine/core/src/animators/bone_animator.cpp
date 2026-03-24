@@ -1,6 +1,6 @@
 #include "../../include/animators/bone_animator.h"
 
-engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
+engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 	: Animator(animation)
 {
 	m_animationsFinalBoneMatrices.clear();
@@ -21,7 +21,7 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<Animation> animation)
 	}
 }
 
-engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations)
+engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<BoneAnimation>>& animations)
 	: Animator(animations)
 {
 	m_animationsFinalBoneMatrices.clear();
@@ -81,7 +81,7 @@ void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
 	}
 }
 
-void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
+void engine::BonesAnimator::playAnimation(std::shared_ptr<BoneAnimation> pAnimation)
 {
 	m_CurrentAnimation = pAnimation;
 	m_CurrentTime = 0.0f;

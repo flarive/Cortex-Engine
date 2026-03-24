@@ -190,6 +190,18 @@
     <Filter Include="Fichiers sources\core\terrain">
       <UniqueIdentifier>{c97c2514-2a1d-49eb-a60d-0a079119a77f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core\animations">
+      <UniqueIdentifier>{f405f255-0212-45aa-be3b-73d13a1efc5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\animations">
+      <UniqueIdentifier>{294603ec-eee9-42b8-bcc4-e8763d7b57af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\animations\base">
+      <UniqueIdentifier>{faedd392-0c2b-46f9-9086-e0cf133932a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\animations\base">
+      <UniqueIdentifier>{b96df43b-a689-4261-9329-1df493edaaf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -405,9 +417,6 @@
     <ClCompile Include="core\src\animators\bone_animator.cpp">
       <Filter>Fichiers sources\core\animators</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\animators\animation.cpp">
-      <Filter>Fichiers sources\core\animators</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\animators\animator.cpp">
       <Filter>Fichiers sources\core\animators\base</Filter>
     </ClCompile>
@@ -446,6 +455,12 @@
     </ClCompile>
     <ClCompile Include="core\src\renderers\phong_renderer.cpp">
       <Filter>Fichiers sources\core\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\animation.cpp">
+      <Filter>Fichiers sources\core\animations\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\bone_animation.cpp">
+      <Filter>Fichiers sources\core\animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -701,9 +716,6 @@
     <ClInclude Include="core\include\debug\debug_plane_grid.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\animators\animation.h">
-      <Filter>Fichiers d%27en-tête\core\animators</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\animators\bone_animator.h">
       <Filter>Fichiers d%27en-tête\core\animators</Filter>
     </ClInclude>
@@ -742,6 +754,12 @@
     </ClInclude>
     <ClInclude Include="core\include\renderers\phong_renderer.h">
       <Filter>Fichiers d%27en-tête\core\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animations\animation.h">
+      <Filter>Fichiers d%27en-tête\core\animations\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animations\bone_animation.h">
+      <Filter>Fichiers d%27en-tête\core\animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

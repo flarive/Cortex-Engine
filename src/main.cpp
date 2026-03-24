@@ -21,7 +21,7 @@
 
 using namespace engine;
 
-// make it easier to switch between apps
+// make it easier to switch between scenes
 using MyApp = MyApp1;
 using MyScene = MyScene8;
 
@@ -45,12 +45,12 @@ static void windowRefreshCallback(GLFWwindow* window);
 static void gamepadUpdate();
 
 
-
 // Startup method
 int main(int, char**)
 {
     // Init the app
-    myApp = new MyApp("MyApp", 1280, 720, false);
+    //myApp = new MyApp("MyApp", 1280, 720, false);
+    myApp = new MyApp("MyApp", 320, 240, false);
     if (myApp)
     {
         // Init a scene in the app

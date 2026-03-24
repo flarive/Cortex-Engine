@@ -8,7 +8,7 @@
 #include <assimp/importer.hpp>
 
 #include "animator.h"
-#include "animation.h"
+#include "../animations/bone_animation.h"
 #include "../models/bone.h"
 
 namespace engine
@@ -16,8 +16,8 @@ namespace engine
 	class BonesAnimator final : public Animator
 	{
 	public:
-		BonesAnimator(std::shared_ptr<Animation> animation);
-		BonesAnimator(std::vector<std::shared_ptr<Animation>>& animations);
+		BonesAnimator(std::shared_ptr<BoneAnimation> animation);
+		BonesAnimator(std::vector<std::shared_ptr<BoneAnimation>>& animations);
 		~BonesAnimator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -43,15 +43,15 @@ namespace engine
 			};
 		}
 
-		std::shared_ptr<Animation>& getCurrentAnimation() { return m_CurrentAnimation; }
-		std::vector<std::shared_ptr<Animation>>& getAnimations() { return m_animations; }
+		std::shared_ptr<BoneAnimation>& getCurrentAnimation() { return m_CurrentAnimation; }
+		std::vector<std::shared_ptr<BoneAnimation>>& getAnimations() { return m_animations; }
 		std::vector<std::string> getAnimationsStringList();
 		
 
 		void updateAnimation(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
-		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
+		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 		

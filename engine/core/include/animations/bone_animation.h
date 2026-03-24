@@ -8,6 +8,7 @@
 #include <assimp/scene.h>
 #include <assimp/matrix4x4.h>
 
+#include "animation.h"
 #include "../models/model.h"
 #include "../models/bone.h"
 #include "../models/assimp_glm_helpers.h"
@@ -23,13 +24,13 @@ namespace engine
 		std::vector<AssimpNodeData> children{};
 	};
 
-	class Animation : private NonCopyable
+	class BoneAnimation final : public Animation
 	{
 	public:
-		Animation() = default;
-		Animation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor = 1.0f);
+		BoneAnimation() = default;
+		BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor = 1.0f);
 
-		~Animation() = default;
+		~BoneAnimation() = default;
 
 		Bone* findBone(const std::string& name);
 
@@ -43,21 +44,22 @@ namespace engine
 		inline const AssimpNodeData& getRootNode() { return m_rootNode; }
 		inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return m_boneInfoMap; }
 
-		std::string& getName() { return m_name; }
-		void setName(std::string name) { m_name = name; }
+		//std::string& getName() { return m_name; }
+		//void setName(const std::string& name) { m_name = name; }
 
 		float& getSpeedFactor() { return m_speedFactor; }
 		void setSpeedFactor(float speedFactor) { m_speedFactor = speedFactor; }
 
-		std::string getFilepath() { return m_filepath; }
+		//std::string& getFilepath() { return m_filepath; }
+		//void setFilepath(const std::string& filepath) { m_filepath = filepath; }
 
 		size_t getBoneCount() { return m_bones.size(); }
 		
 
 
 	private:
-		std::string m_name{};
-		std::string m_filepath{};
+		//std::string m_name{};
+		//std::string m_filepath{};
 		float m_speedFactor{};
 		float m_duration{};
 		float m_durationInSeconds{};
@@ -65,7 +67,6 @@ namespace engine
 		unsigned int m_desiredFPS{30u};
 		unsigned int m_numFrames{};
 		std::vector<Bone> m_bones{};
-		//std::unordered_map<std::string, Bone> m_BoneKeys;
 		AssimpNodeData m_rootNode{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		

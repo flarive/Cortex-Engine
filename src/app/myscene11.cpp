@@ -65,7 +65,7 @@ void MyScene11::init()
 
     // animated vampire model
     //auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
-    //auto vampireAnimation = make_shared<Animation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
+    //auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
     //auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
     //auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
     //auto entityVampire = make_shared<Entity>("MyVampire");
@@ -78,10 +78,10 @@ void MyScene11::init()
     // mixamo twist dance model
     auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
-    auto mixamoAnimation1 = make_shared<Animation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
-    auto mixamoAnimation2 = make_shared<Animation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
+    auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
+    auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
 
-    auto mixamoAnimations = std::vector<std::shared_ptr<Animation>>();
+    auto mixamoAnimations = std::vector<std::shared_ptr<BoneAnimation>>();
     mixamoAnimations.push_back(mixamoAnimation1);
     mixamoAnimations.push_back(mixamoAnimation2);
 

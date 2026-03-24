@@ -4,7 +4,7 @@
 #include "../common_defines.h"
 
 #include "../misc/ordered_map.h"
-#include "animation.h"
+#include "../animations/bone_animation.h"
 #include "../shader.h"
 
 #include <vector>
@@ -32,8 +32,8 @@ namespace engine
     class Animator : private NonCopyable
     {
     public:
-		Animator(std::shared_ptr<Animation> animation);
-		Animator(std::vector<std::shared_ptr<Animation>>& animations);
+		Animator(std::shared_ptr<BoneAnimation> animation);
+		Animator(std::vector<std::shared_ptr<BoneAnimation>>& animations);
 		~Animator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -47,7 +47,7 @@ namespace engine
 		virtual void updateAnimation(float dt) = 0;
 		virtual void draw(Shader& shader, Transform& localTransform) = 0;
 
-		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
+		virtual void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) = 0;
 		virtual void playAnimation() = 0;
 		virtual void stopAnimation() = 0;
 
@@ -57,8 +57,8 @@ namespace engine
 
 
 	protected:
-		std::vector<std::shared_ptr<Animation>> m_animations{};
-		std::shared_ptr<Animation> m_CurrentAnimation{};
+		std::vector<std::shared_ptr<BoneAnimation>> m_animations{};
+		std::shared_ptr<BoneAnimation> m_CurrentAnimation{};
 		float m_CurrentTime{};
 		float m_DeltaTime{};
 		bool m_isPlaying{ false };

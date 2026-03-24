@@ -1,19 +1,19 @@
 #pragma once
 
 #include "animator.h"
-#include "../animations/bone_animation.h"
+#include "../animations/animation.h"
 
 namespace engine
 {
-	class RotationAnimator final : public Animator
+	class TransformAnimator final : public Animator
 	{
 	public:
-		RotationAnimator(const glm::vec3& rotation);
-		~RotationAnimator() = default;
+		TransformAnimator(const glm::vec3& rotation);
+		~TransformAnimator() = default;
 
 		virtual AnimatorType getTypeID() const
 		{
-			return AnimatorType::rotation;
+			return AnimatorType::transform;
 		}
 
 		ordered_map<std::string, EditorProperty> getPublicProperties() override {
@@ -26,7 +26,7 @@ namespace engine
 			};
 		}
 
-		void updateAnimation(float dt) override;
+		void update(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
 		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;

@@ -423,7 +423,7 @@
     <ClCompile Include="core\src\editor\editor_helper.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\animators\rotation_animator.cpp">
+    <ClCompile Include="core\src\animators\transfom_animator.cpp">
       <Filter>Fichiers sources\core\animators</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp">
@@ -460,6 +460,9 @@
       <Filter>Fichiers sources\core\animations\base</Filter>
     </ClCompile>
     <ClCompile Include="core\src\animations\bone_animation.cpp">
+      <Filter>Fichiers sources\core\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\transform_animation.cpp">
       <Filter>Fichiers sources\core\animations</Filter>
     </ClCompile>
   </ItemGroup>
@@ -725,7 +728,7 @@
     <ClInclude Include="core\include\editor\editor_helper.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\animators\rotation_animator.h">
+    <ClInclude Include="core\include\animators\transform_animator.h">
       <Filter>Fichiers d%27en-tête\core\animators</Filter>
     </ClInclude>
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h">
@@ -759,6 +762,9 @@
       <Filter>Fichiers d%27en-tête\core\animations\base</Filter>
     </ClInclude>
     <ClInclude Include="core\include\animations\bone_animation.h">
+      <Filter>Fichiers d%27en-tête\core\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animations\transform_animation.h">
       <Filter>Fichiers d%27en-tête\core\animations</Filter>
     </ClInclude>
   </ItemGroup>

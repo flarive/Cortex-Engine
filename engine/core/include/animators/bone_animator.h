@@ -17,7 +17,7 @@ namespace engine
 	{
 	public:
 		BonesAnimator(std::shared_ptr<BoneAnimation> animation);
-		BonesAnimator(std::vector<std::shared_ptr<BoneAnimation>>& animations);
+		BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations);
 		~BonesAnimator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -43,12 +43,12 @@ namespace engine
 			};
 		}
 
-		std::shared_ptr<BoneAnimation>& getCurrentAnimation() { return m_CurrentAnimation; }
+		std::shared_ptr<BoneAnimation>& getCurrentAnimation() { return m_currentAnimation; }
 		std::vector<std::shared_ptr<BoneAnimation>>& getAnimations() { return m_animations; }
 		std::vector<std::string> getAnimationsStringList();
 		
 
-		void updateAnimation(float dt) override;
+		void update(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
 		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;

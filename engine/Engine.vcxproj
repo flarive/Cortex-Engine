@@ -174,8 +174,9 @@
     <ClCompile Include="core\src\aabb.cpp" />
     <ClCompile Include="core\src\animations\animation.cpp" />
     <ClCompile Include="core\src\animations\bone_animation.cpp" />
+    <ClCompile Include="core\src\animations\transform_animation.cpp" />
     <ClCompile Include="core\src\animators\animator.cpp" />
-    <ClCompile Include="core\src\animators\rotation_animator.cpp" />
+    <ClCompile Include="core\src\animators\transfom_animator.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
@@ -264,8 +265,9 @@
     <ClInclude Include="core\include\aabb.h" />
     <ClInclude Include="core\include\animations\animation.h" />
     <ClInclude Include="core\include\animations\bone_animation.h" />
+    <ClInclude Include="core\include\animations\transform_animation.h" />
     <ClInclude Include="core\include\animators\animator.h" />
-    <ClInclude Include="core\include\animators\rotation_animator.h" />
+    <ClInclude Include="core\include\animators\transform_animator.h" />
     <ClInclude Include="core\include\app\app.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />

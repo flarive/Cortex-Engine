@@ -4,6 +4,8 @@
 engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
 	: Animation(animationName, animationPath, model, speedFactor)
 {
+	m_filepath = animationPath;
+	
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);

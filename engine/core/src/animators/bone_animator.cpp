@@ -21,7 +21,7 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 	}
 }
 
-engine::BonesAnimator::BonesAnimator(std::vector<std::shared_ptr<BoneAnimation>>& animations)
+engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations)
 	: Animator(animations)
 {
 	m_animationsFinalBoneMatrices.clear();
@@ -60,14 +60,14 @@ std::vector<std::string> engine::BonesAnimator::getAnimationsStringList()
 	return names; // NRVO/move elision
 }
 
-void engine::BonesAnimator::updateAnimation(float dt)
+void engine::BonesAnimator::update(float dt)
 {
 	m_DeltaTime = dt;
-	if (m_CurrentAnimation && m_isPlaying)
+	if (m_currentAnimation && m_isPlaying)
 	{
-		m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
-		m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
-		calculateBoneTransform(&m_CurrentAnimation->getRootNode(), glm::mat4(1.0f));
+		m_CurrentTime += m_currentAnimation->getTicksPerSecond() * dt;
+		m_CurrentTime = fmod(m_CurrentTime, m_currentAnimation->getDuration());
+		calculateBoneTransform(&m_currentAnimation->getRootNode(), glm::mat4(1.0f));
 	}
 }
 
@@ -83,14 +83,14 @@ void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
 
 void engine::BonesAnimator::playAnimation(std::shared_ptr<BoneAnimation> pAnimation)
 {
-	m_CurrentAnimation = pAnimation;
+	m_currentAnimation = pAnimation;
 	m_CurrentTime = 0.0f;
 	m_isPlaying = true;
 }
 
 void engine::BonesAnimator::playAnimation()
 {
-	if (m_CurrentAnimation)
+	if (m_currentAnimation)
 		m_isPlaying = true;
 	else
 		m_isPlaying = false;
@@ -120,7 +120,7 @@ const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() cons
 {
 	static const std::vector<glm::mat4> kEmpty; // lives forever
 
-	std::string currentAnimName = m_CurrentAnimation->getName();
+	std::string currentAnimName = m_currentAnimation->getName();
 
 	bool keyExists = m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end();
 
@@ -139,7 +139,7 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 	const std::string& nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;
 
-	Bone* bone = m_CurrentAnimation->findBone(nodeName);
+	Bone* bone = m_currentAnimation->findBone(nodeName);
 
 	if (bone)
 	{
@@ -149,7 +149,7 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 
 	glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-	const std::string& currentAnimName = m_CurrentAnimation->getName();
+	const std::string& currentAnimName = m_currentAnimation->getName();
 
 	bool keyExists = m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end();
 
@@ -157,7 +157,7 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 
 	if (keyExists)
 	{
-		auto boneInfoMap = m_CurrentAnimation->getBoneIDMap();
+		auto boneInfoMap = m_currentAnimation->getBoneIDMap();
 		if (boneInfoMap.find(nodeName) != boneInfoMap.end())
 		{
 			int index = boneInfoMap[nodeName].id; // &&&&&&&&&&&&& ???????????????

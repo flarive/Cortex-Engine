@@ -1,7 +1,7 @@
 #include "../../include/animators/bone_animator.h"
 
 engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
-	: Animator(std::static_pointer_cast<Animation>(animation))
+	: Animator(std::static_pointer_cast<Animation>(animation)), m_currentBoneAnimation(std::static_pointer_cast<BoneAnimation>(m_currentAnimation))
 {
 	m_boneCount = animation->getBoneCount();
 	if (m_boneCount > 0)
@@ -20,7 +20,7 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 }
 
 engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations)
-	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end()))
+	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end())), m_currentBoneAnimation(std::static_pointer_cast<BoneAnimation>(m_currentAnimation))
 {
 	if (animations.size() > 0)
 	{
@@ -79,8 +79,10 @@ void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
 
 void engine::BonesAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
+	// force current animation to be the one we want to play
 	m_currentAnimation = pAnimation;
 	m_currentBoneAnimation = std::static_pointer_cast<BoneAnimation>(m_currentAnimation);
+	
 	m_currentTime = 0.0f;
 	m_isPlaying = true;
 }

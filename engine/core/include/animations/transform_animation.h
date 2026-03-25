@@ -13,8 +13,7 @@ namespace engine
 	{
 	public:
 		TransformAnimation() = default;
-		TransformAnimation(const std::string& animationName, const glm::vec3& rotation, float speedFactor = 1.0f);
-
+		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform, float duration = 1.0f);
 		~TransformAnimation() = default;
 
 		AnimationType getTypeID() const override
@@ -22,11 +21,12 @@ namespace engine
 			return AnimationType::transform;
 		}
 
-		glm::vec3& getRotation() { return m_rotation; }
+		AnimTransform& getAnimTransform() { return m_animTransform; }
 		float& getInternalRotation() { return m_internalRotation; }
 
 	private:
-		glm::vec3 m_rotation{};
+		AnimTransform m_animTransform{};
+		float m_duration{}; // duration in frames
 		float m_internalRotation{};
 	};
 }

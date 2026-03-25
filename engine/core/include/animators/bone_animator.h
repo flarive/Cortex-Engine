@@ -52,13 +52,10 @@ namespace engine
 		void draw(Shader& shader, Transform& localTransform) override;
 
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
+		void playAnimationAtIndex(unsigned short index) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 		
-		void playAnimationAtIndex(unsigned short index) override;
-		
-
-
 
 	private:
 		std::shared_ptr<BoneAnimation> m_currentBoneAnimation{};

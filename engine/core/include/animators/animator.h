@@ -50,10 +50,9 @@ namespace engine
 		virtual void draw(Shader& shader, Transform& localTransform) = 0;
 
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
+		virtual void playAnimationAtIndex(unsigned short index) = 0;
 		virtual void playAnimation() = 0;
 		virtual void stopAnimation() = 0;
-
-		virtual void playAnimationAtIndex(unsigned short index) = 0;
 
 		void setBoneCount(unsigned int boneCount) { m_boneCount = boneCount; }
 

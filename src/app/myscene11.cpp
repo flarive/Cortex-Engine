@@ -80,7 +80,6 @@ void MyScene11::init()
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
-
     auto mixamoAnimations = std::vector<std::shared_ptr<BoneAnimation>>();
     mixamoAnimations.push_back(mixamoAnimation1);
     mixamoAnimations.push_back(mixamoAnimation2);
@@ -183,7 +182,7 @@ void MyScene11::update(Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        auto trs = myCushion->getTransform();
+        auto& trs = myCushion->getTransform();
         trs.setLocalRotation(vec3(0.0f, rotation, 0.0f));
         myCushion->setTransform(trs);
     }

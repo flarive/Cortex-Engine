@@ -38,3 +38,7 @@ glm::vec3 Transform::getGlobalScale(const glm::mat4& world) const
              glm::length(getUp(world)),
              glm::length(getBackward(world)) };
 }
+
+AnimTransform::AnimTransform(const Transform& from, const Transform& to) : m_from(from), m_to(to)
+{
+}

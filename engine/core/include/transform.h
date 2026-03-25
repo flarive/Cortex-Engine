@@ -9,7 +9,7 @@
 
 namespace engine
 {
-    struct Transform final// : private NonCopyableButMovable
+    struct Transform
     {
     public:
         Transform(glm::vec3 pos = { 0,0,0 }, glm::vec3 scale = { 1,1,1 }, glm::vec3 rot = { 0,0,0 });
@@ -46,5 +46,20 @@ namespace engine
         glm::vec3 m_pos{};
         glm::vec3 m_scale{};
         glm::vec3 m_eulerRot{};
+    };
+
+    struct AnimTransform final : public Transform
+    {
+    public:
+        AnimTransform() = default;
+        AnimTransform(const Transform& from, const Transform& to);
+        ~AnimTransform() = default;
+
+        void setFrom(const Transform& from) { m_from = from; }
+        void setTo(const Transform& to) { m_to = to; }
+    
+    private:
+        Transform m_from{};
+        Transform m_to{};
     };
 }

@@ -2,27 +2,23 @@
 
 
 engine::TransformAnimator::TransformAnimator(std::shared_ptr<TransformAnimation> animation)
-	: Animator(std::static_pointer_cast<Animation>(animation))
+	: Animator(std::static_pointer_cast<Animation>(animation)), m_currentTransformAnimation(std::static_pointer_cast<TransformAnimation>(m_currentAnimation))
 {
-	m_currentTransformAnimation = std::static_pointer_cast<TransformAnimation>(m_currentAnimation);
 }
 
 engine::TransformAnimator::TransformAnimator(const std::vector<std::shared_ptr<TransformAnimation>>& animations)
-	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end()))
+	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end())), m_currentTransformAnimation(std::static_pointer_cast<TransformAnimation>(m_currentAnimation))
 {
-	m_currentTransformAnimation = std::static_pointer_cast<TransformAnimation>(m_currentAnimation);
 }
 
 void engine::TransformAnimator::update(float dt)
 {
 	m_deltaTime = dt;
-	if (m_isPlaying)
+	if (m_isPlaying && m_currentTransformAnimation)
 	{
 		//m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
 		//m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
 
-		//m_internalRotation += dt * 0.002f;
-		
 		m_currentTransformAnimation->getInternalRotation() += dt * 0.002f;
 	}
 }
@@ -35,7 +31,10 @@ void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)
 
 void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
+	// force current animation to be the one we want to play
 	m_currentAnimation = pAnimation;
+	m_currentTransformAnimation = std::static_pointer_cast<TransformAnimation>(m_currentAnimation);
+
 	m_currentTime = 0.0f;
 	m_isPlaying = true;
 }

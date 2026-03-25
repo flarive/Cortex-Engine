@@ -21,8 +21,7 @@ namespace engine
 	{
 	public:
 		Animation() = default;
-		Animation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor = 1.0f);
-		Animation(const std::string& animationName, const glm::vec3& rotation, std::shared_ptr<Model> model, float speedFactor = 1.0f);
+		Animation(const std::string& animationName, std::shared_ptr<Model> model, float speedFactor = 1.0f);
 
 		~Animation() = default;
 
@@ -40,11 +39,11 @@ namespace engine
 		inline float& getSpeedFactor() { return m_speedFactor; }
 		void setSpeedFactor(float speedFactor) { m_speedFactor = speedFactor; }
 
-		inline int getTicksPerSecond() { return m_ticksPerSecond; }
-		inline float getDuration() { return m_duration; }
-		inline float getDurationInSeconds() { return m_durationInSeconds; }
-		inline unsigned int getFramesCount() { return m_numFrames; }
-		inline unsigned int getFPS() { return m_desiredFPS; }
+		inline unsigned int getTicksPerSecond() const { return m_ticksPerSecond; }
+		inline float getDuration() const { return m_duration; }
+		inline float getDurationInSeconds() const { return m_durationInSeconds; }
+		inline unsigned int getFramesCount() const { return m_numFrames; }
+		inline unsigned int getFPS() const { return m_desiredFPS; }
 		
 
 
@@ -55,7 +54,7 @@ namespace engine
 
 		float m_duration{};
 		float m_durationInSeconds{};
-		int m_ticksPerSecond{};
+		unsigned int m_ticksPerSecond{};
 		unsigned int m_desiredFPS{ 30u };
 		unsigned int m_numFrames{};
 	};

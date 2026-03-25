@@ -43,15 +43,15 @@ namespace engine
 			};
 		}
 
-		std::shared_ptr<BoneAnimation>& getCurrentAnimation() { return m_currentAnimation; }
-		std::vector<std::shared_ptr<BoneAnimation>>& getAnimations() { return m_animations; }
+		std::shared_ptr<BoneAnimation>& getCurrentAnimation() { return m_currentBoneAnimation; }
+		std::vector<std::shared_ptr<Animation>>& getAnimations() { return m_animations; }
 		std::vector<std::string> getAnimationsStringList();
 		
 
 		void update(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
-		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;
+		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 		
@@ -61,10 +61,10 @@ namespace engine
 
 
 	private:
+		std::shared_ptr<BoneAnimation> m_currentBoneAnimation{};
+		
 		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
-
 		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
-
 		const std::vector<glm::mat4>& getFinalBoneMatrices() const;
 	};
 }

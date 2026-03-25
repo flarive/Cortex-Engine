@@ -69,7 +69,8 @@ void MyScene8::init()
     auto myCube1 = make_shared<Cube>();
     myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
-    auto rotateAnimator = make_shared<TransformAnimator>(vec3(0.0f, 10.0f, 0.0f));
+    auto rotateAnimation = make_shared<TransformAnimation>("anim1", vec3(0.0f, 10.0f, 0.0f), 1.0f);
+    auto rotateAnimator = make_shared<TransformAnimator>(rotateAnimation);
     auto entityCube1 = make_shared<Entity>("MyCube1");
     entityCube1->addComponent<TransformComponent>(trsCube1);
     entityCube1->addComponent<PrimitiveComponent>(myCube1);

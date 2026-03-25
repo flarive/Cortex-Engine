@@ -34,8 +34,8 @@ namespace engine
     class Animator : private NonCopyable
     {
     public:
-		Animator(std::shared_ptr<BoneAnimation> animation);
-		Animator(const std::vector<std::shared_ptr<BoneAnimation>>& animations);
+		Animator(std::shared_ptr<Animation> animation);
+		Animator(const std::vector<std::shared_ptr<Animation>>& animations);
 		~Animator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -49,7 +49,7 @@ namespace engine
 		virtual void update(float dt) = 0;
 		virtual void draw(Shader& shader, Transform& localTransform) = 0;
 
-		virtual void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) = 0;
+		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
 		virtual void playAnimation() = 0;
 		virtual void stopAnimation() = 0;
 
@@ -59,10 +59,10 @@ namespace engine
 
 
 	protected:
-		std::vector<std::shared_ptr<BoneAnimation>> m_animations{};
-		std::shared_ptr<BoneAnimation> m_currentAnimation{};
-		float m_CurrentTime{};
-		float m_DeltaTime{};
+		std::vector<std::shared_ptr<Animation>> m_animations{};
+		std::shared_ptr<Animation> m_currentAnimation{};
+		float m_currentTime{};
+		float m_deltaTime{};
 		bool m_isPlaying{ false };
 
 		size_t m_boneCount{};

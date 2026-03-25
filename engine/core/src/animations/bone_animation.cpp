@@ -2,16 +2,14 @@
 
 
 engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
-	: Animation(animationName, animationPath, model, speedFactor)
+	: Animation(animationName, model, speedFactor), m_filepath(animationPath)
 {
-	m_filepath = animationPath;
-	
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	aiAnimation* animation = scene->mAnimations[0];
 	m_duration = static_cast<float>(animation->mDuration); //ms
-	m_ticksPerSecond = static_cast<int>(animation->mTicksPerSecond * speedFactor);
+	m_ticksPerSecond = static_cast<unsigned int>(animation->mTicksPerSecond * speedFactor);
 	m_durationInSeconds = static_cast<float>(animation->mDuration / animation->mTicksPerSecond);
 	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 
@@ -24,9 +22,9 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 engine::Bone* engine::BoneAnimation::findBone(const std::string& name)
 {
 	auto iter = std::find_if(m_bones.begin(), m_bones.end(),
-		[&](const Bone& Bone)
+		[&](const Bone& bone)
 		{
-			return Bone.getBoneName() == name;
+			return bone.getBoneName() == name;
 		}
 	);
 	if (iter == m_bones.end()) return nullptr;

@@ -1,14 +1,15 @@
 #pragma once
 
 #include "animator.h"
-#include "../animations/animation.h"
+#include "../animations/transform_animation.h"
 
 namespace engine
 {
 	class TransformAnimator final : public Animator
 	{
 	public:
-		TransformAnimator(const glm::vec3& rotation);
+		TransformAnimator(std::shared_ptr<TransformAnimation> animation);
+		TransformAnimator(const std::vector<std::shared_ptr<TransformAnimation>>& animations);
 		~TransformAnimator() = default;
 
 		virtual AnimatorType getTypeID() const
@@ -29,7 +30,7 @@ namespace engine
 		void update(float dt) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
-		void playAnimation(std::shared_ptr<BoneAnimation> pAnimation) override;
+		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 		void playAnimation() override;
 		void stopAnimation() override;
 
@@ -38,7 +39,6 @@ namespace engine
 
 
 	private:
-		glm::vec3 m_rotation{};
-		float m_internalRotation{};
+		std::shared_ptr<TransformAnimation> m_currentTransformAnimation{};
 	};
 }

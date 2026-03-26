@@ -17,16 +17,6 @@ glm::mat4 Transform::getLocalModelMatrix() const {
         * glm::scale(glm::mat4(1.0f), m_scale);
 }
 
-void Transform::setLocalPosition(const glm::vec3& newPosition) { m_pos = newPosition; }
-void Transform::setLocalRotation(const glm::vec3& newRotation) { m_eulerRot = newRotation; }
-void Transform::setLocalScale(const glm::vec3 & newScale) { m_scale = newScale; }
-
-glm::vec3& Transform::getLocalPosition() { return m_pos; }
-glm::vec3& Transform::getLocalRotation() { return m_eulerRot; }
-glm::vec3& Transform::getLocalScale() { return m_scale; }
-
-
-
 glm::vec3 Transform::getRight(const glm::mat4& world) const { return glm::vec3(world[0]); }
 glm::vec3 Transform::getUp(const glm::mat4& world) const { return glm::vec3(world[1]); }
 glm::vec3 Transform::getBackward(const glm::mat4& world) const { return glm::vec3(world[2]); }
@@ -37,8 +27,4 @@ glm::vec3 Transform::getGlobalScale(const glm::mat4& world) const
     return { glm::length(getRight(world)),
              glm::length(getUp(world)),
              glm::length(getBackward(world)) };
-}
-
-AnimTransform::AnimTransform(const Transform& from, const Transform& to) : m_from(from), m_to(to)
-{
 }

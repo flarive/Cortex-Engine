@@ -13,7 +13,7 @@ namespace engine
 	{
 	public:
 		TransformAnimation() = default;
-		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform, float duration = 1.0f);
+		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform);
 		~TransformAnimation() = default;
 
 		AnimationType getTypeID() const override
@@ -22,11 +22,11 @@ namespace engine
 		}
 
 		AnimTransform& getAnimTransform() { return m_animTransform; }
-		float& getInternalRotation() { return m_internalRotation; }
+		//Transform& getAnimatedResult() { return m_animatedResult; }
 
 	private:
 		AnimTransform m_animTransform{};
-		float m_duration{}; // duration in frames
-		float m_internalRotation{};
+		//float m_internalRotation{};
+		//Transform     m_animatedResult;   // Temporary storage for each frame
 	};
 }

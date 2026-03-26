@@ -56,7 +56,12 @@ std::vector<std::string> engine::BonesAnimator::getAnimationsStringList()
 	return names; // NRVO/move elision
 }
 
-void engine::BonesAnimator::update(float dt)
+void engine::BonesAnimator::init(Transform& transform)
+{
+	m_initialTransform = transform;
+}
+
+void engine::BonesAnimator::update(float dt, Transform& transform)
 {
 	m_deltaTime = dt;
 	if (m_currentAnimation && m_isPlaying)

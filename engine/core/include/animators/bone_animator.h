@@ -47,8 +47,8 @@ namespace engine
 		std::vector<std::shared_ptr<Animation>>& getAnimations() { return m_animations; }
 		std::vector<std::string> getAnimationsStringList();
 		
-
-		void update(float dt) override;
+		void init(Transform& transform) override;
+		void update(float dt, Transform& transform) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;

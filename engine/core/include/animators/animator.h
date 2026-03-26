@@ -46,7 +46,8 @@ namespace engine
 		virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
 		virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;
 
-		virtual void update(float dt) = 0;
+		virtual void init(Transform& transform) = 0;
+		virtual void update(float dt, Transform& transform) = 0;
 		virtual void draw(Shader& shader, Transform& localTransform) = 0;
 
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
@@ -65,5 +66,7 @@ namespace engine
 		bool m_isPlaying{ false };
 
 		size_t m_boneCount{};
+
+		Transform m_initialTransform{};
     };
 }

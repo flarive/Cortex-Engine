@@ -27,7 +27,8 @@ namespace engine
 			};
 		}
 
-		void update(float dt) override;
+		void init(Transform& transform) override;
+		void update(float dt, Transform& transform) override;
 		void draw(Shader& shader, Transform& localTransform) override;
 
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
@@ -38,5 +39,6 @@ namespace engine
 
 	private:
 		std::shared_ptr<TransformAnimation> m_currentTransformAnimation{};
+		Transform m_animatedResult{};   // Temporary storage for each frame
 	};
 }

@@ -69,21 +69,22 @@ void MyScene8::init()
     auto myCube1 = make_shared<Cube>();
     myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
-    auto translateAnimation1 = make_shared<TransformAnimation>("anim1", AnimTransform({ glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f) }, { glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f) }), 1.0f); // translation animation
-    auto rotateAnimation1 = make_shared<TransformAnimation>("anim2", AnimTransform({ glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f) }, { glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), glm::vec3(1.0f) }), 1.0f); // rotation animation
-    auto scaleAnimation1 = make_shared<TransformAnimation>("anim3", AnimTransform({ glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), glm::vec3(1.0f) }, { glm::vec3(10.0f, 0.0f, 0.0f), glm::vec3(0.0f, 90.0f, 0.0f), glm::vec3(2.0f) }), 1.0f); // scale animation
-    
-    auto trsAnimations = std::vector<std::shared_ptr<TransformAnimation>>();
-    trsAnimations.push_back(translateAnimation1);
-    trsAnimations.push_back(rotateAnimation1);
-    trsAnimations.push_back(scaleAnimation1);
 
-    auto rotateAnimator = make_shared<TransformAnimator>(trsAnimations);
+    AnimTransform anim1;
+    anim1.from = trsCube1;
+    anim1.to = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(52.0f, 74.0f, 0.0f));
+    anim1.mode = AnimMode::Absolute;
+    anim1.duration = 10.0f;
+
+    auto translateAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
+
+
+    auto trsAnimator = make_shared<TransformAnimator>(translateAnimation1);
 
     auto entityCube1 = make_shared<Entity>("MyCube1");
     entityCube1->addComponent<TransformComponent>(trsCube1);
     entityCube1->addComponent<PrimitiveComponent>(myCube1);
-    entityCube1->addComponent<AnimatorComponent>(rotateAnimator);
+    entityCube1->addComponent<AnimatorComponent>(trsAnimator);
     getEntityManager().addChild(entityCube1);
 
 

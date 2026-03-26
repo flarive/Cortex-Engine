@@ -8,6 +8,8 @@
 #include <assimp/scene.h>
 #include <assimp/matrix4x4.h>
 
+#include "../anim_transform.h"
+
 #include "../models/model.h"
 #include "../models/bone.h"
 #include "../models/assimp_glm_helpers.h"

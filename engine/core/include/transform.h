@@ -40,6 +40,26 @@ namespace engine
         glm::vec3 getBackward(const glm::mat4& world) const;
         glm::vec3 getGlobalScale(const glm::mat4& world) const;
 
+
+        // Fluent add methods
+        Transform& addTranslationX(float amount) { m_pos.x += amount; return *this; }
+        Transform& addTranslationY(float amount) { m_pos.y += amount; return *this; }
+        Transform& addTranslationZ(float amount) { m_pos.z += amount; return *this; }
+        Transform& addTranslation(float amount) { m_pos += glm::vec3(amount); return *this; }
+        Transform& addTranslation(const glm::vec3& amount) { m_pos += amount; return *this; }
+
+        Transform& addRotationX(float amount) { m_eulerRot.x += amount; return *this; }
+        Transform& addRotationY(float amount) { m_eulerRot.y += amount; return *this; }
+        Transform& addRotationZ(float amount) { m_eulerRot.z += amount; return *this; }
+        Transform& addRotation(float amount) { m_eulerRot += glm::vec3(amount); return *this; }
+        Transform& addRotation(const glm::vec3& amount) { m_eulerRot += amount; return *this; }
+
+        Transform& addScaleX(float amount) { m_scale.x += amount; return *this; }
+        Transform& addScaleY(float amount) { m_scale.y += amount; return *this; }
+        Transform& addScaleZ(float amount) { m_scale.z += amount; return *this; }
+        Transform& addScale(float amount) { m_scale += glm::vec3(amount); return *this; }
+        Transform& addScale(const glm::vec3& amount) { m_scale += amount; return *this; }
+
     private:
         glm::vec3 m_pos{};
         glm::vec3 m_scale{};

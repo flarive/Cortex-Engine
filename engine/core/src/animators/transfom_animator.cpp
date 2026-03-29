@@ -24,6 +24,8 @@ void engine::TransformAnimator::update(float dt, Transform& transform)
 		//m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
 		//m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
 
+		std::cout << "[TransformAnimator::update] dt: " << dt << "s" << std::endl;
+
 
 		auto& animTransform = m_currentTransformAnimation->getAnimTransform();
 		bool finished = animTransform.update(dt, m_animatedResult);
@@ -43,31 +45,6 @@ void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)
 	}
 }
 
-//void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
-//{
-//	// force current animation to be the one we want to play
-//	m_currentAnimation = pAnimation;
-//	m_currentTransformAnimation = std::static_pointer_cast<TransformAnimation>(m_currentAnimation);
-//
-//	m_currentTime = 0.0f;
-//	m_isPlaying = true;
-//
-//	//if (m_currentTransformAnimation)
-//	//{
-//	//	auto& animTransform = m_currentTransformAnimation->getAnimTransform();
-//	//	
-//	//	// Setup the TRS animation
-//	//	m_animTransform.duration = 5.0f;
-//	//	m_animTransform.setup(
-//	//		m_currentTransformAnimation->currentTransform,       // entity's current TRS
-//	//		m_currentTransformAnimation->from,
-//	//		m_currentTransformAnimation->to,
-//	//		m_currentTransformAnimation->mode
-//	//	);
-//	//}
-//	
-//}
-
 void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
 	m_currentAnimation = pAnimation;
@@ -82,6 +59,8 @@ void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimat
 
 		// Reset elapsed every time
 		anim.elapsed = 0.0f;
+
+		std::cout << "[TransformAnimator::playAnimation] duration: " << anim.duration << "s" << std::endl;
 
 		// Make sure duration is valid
 		if (anim.duration <= 0.0f)

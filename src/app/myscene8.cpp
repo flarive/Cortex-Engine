@@ -72,9 +72,9 @@ void MyScene8::init()
 
     AnimTransform anim1;
     anim1.from = trsCube1;
-    anim1.to = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(52.0f, 74.0f, 0.0f));
+    anim1.to = Transform(anim1.from).addRotationX(152.0f).addRotationY(174.0f);
     anim1.mode = AnimMode::Absolute;
-    anim1.duration = 10.0f;
+    anim1.duration = 5.0f; // 5s
 
     auto translateAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
 

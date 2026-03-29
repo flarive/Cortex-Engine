@@ -8,6 +8,6 @@ namespace engine
 		ImGuiPerfOverlay() = default;
 		~ImGuiPerfOverlay() = default;
 
-		void renderPerfOverlay(bool* p_open, const float& fps, const double& cpuTime, const double& gpuTime, const double& uiTime);
+		void renderPerfOverlay(bool* p_open, const float& fps, const float& deltaTime, const double& cpuTime, const double& gpuTime, const double& uiTime);
 	};
 }

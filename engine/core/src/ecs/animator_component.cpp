@@ -12,6 +12,7 @@ engine::AnimatorComponent::AnimatorComponent(std::shared_ptr<Animator> animator)
 
 void engine::AnimatorComponent::init(Transform& transform)
 {
+	m_animator->init(transform);
 	m_animator->playAnimationAtIndex(0);
 }
 

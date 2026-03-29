@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 
-void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps, const double& cpuTime, const double& gpuTime, const double& uiTime)
+void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps, const float& deltaTime, const double& cpuTime, const double& gpuTime, const double& uiTime)
 {
     static int location = -2;
     ImGuiIO& io = ImGui::GetIO();
@@ -40,7 +40,8 @@ void engine::ImGuiPerfOverlay::renderPerfOverlay(bool* p_open, const float& fps,
         ImGui::Text("CPU time: %.2f ms", cpuTime);
         ImGui::Text("GPU time: %.2f ms", gpuTime);
         ImGui::Text("UI time: %.2f ms", uiTime);
-
+        ImGui::Text("Delta time: %.2f ms", deltaTime);
+        
         if (ImGui::BeginPopupContextWindow())
         {
             if (ImGui::MenuItem("Custom", NULL, location == -1)) location = -1;

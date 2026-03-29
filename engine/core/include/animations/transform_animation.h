@@ -22,11 +22,8 @@ namespace engine
 		}
 
 		AnimTransform& getAnimTransform() { return m_animTransform; }
-		//Transform& getAnimatedResult() { return m_animatedResult; }
 
 	private:
 		AnimTransform m_animTransform{};
-		//float m_internalRotation{};
-		//Transform     m_animatedResult;   // Temporary storage for each frame
 	};
 }

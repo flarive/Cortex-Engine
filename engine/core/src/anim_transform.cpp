@@ -27,6 +27,12 @@ void engine::AnimTransform::setup(const Transform& current,
 
 bool engine::AnimTransform::update(float dt, Transform& outTransform)
 {
+    std::cout << "[AnimTransform::update] dt: " << dt
+        << "s, elapsed: " << elapsed
+        << "s, duration: " << duration
+        << "s, t: " << (elapsed / duration)
+        << std::endl;
+    
     elapsed += dt;
 
     float t = glm::clamp(elapsed / duration, 0.0f, 1.0f);

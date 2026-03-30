@@ -116,6 +116,9 @@ void engine::Scene::after_init_internal()
     countItems(m_entityManager.getRootEntity());
 
     initQueries();
+
+    // avoid a big deltatime (nearly 3s) the first time
+    lastFrameTime = (float)glfwGetTime();
 }
 
 void engine::Scene::initialize()
@@ -307,11 +310,25 @@ void engine::Scene::gameLoop()
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
+    ImGuiIO& io = ImGui::GetIO();
+
     if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
     {
+        // Even if minimized, update ImGui deltaTime to avoid huge spikes
+        float currentFrame = (float)glfwGetTime();
+        deltaTime = currentFrame - lastFrameTime;
+        lastFrameTime = currentFrame;
+        io.DeltaTime = deltaTime;
+
         ImGui_ImplGlfw_Sleep(10);
         return;
     }
+    
+    float currentFrameTime = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrameTime - lastFrameTime; // Should be arround 0.016–0.020s (60–50 fps)
+    lastFrameTime = currentFrameTime;
+    io.DeltaTime = deltaTime;
+
 
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
@@ -319,41 +336,35 @@ void engine::Scene::gameLoop()
     glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width / app->height);
     glm::mat4 view = getActiveCamera()->getViewMatrix();
 
+    
+
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    framerate = ImGui::GetIO().Framerate;
+    framerate = io.Framerate;
 
-    
+    // Switch to Editor mode if needed
     setEditorMode(projection, view);
     
-
-    
-    
-    if (show_perf_overlay && !is_editor_mode)
-        m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, cpuTime, gpuTime, uiTime);
 
     // Dear ImGui demo windows
     //if (show_demo_window)
     //    ImGui::ShowDemoWindow(&show_demo_window);
-    
-
 
     // measure ui time (part 1 end)
     auto uiEnd1 = Clock::now();
     std::chrono::duration<double, std::milli> uiDuration1 = uiEnd1 - uiStart1;
     uiTime = uiDuration1.count();
 
-    float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+
+    if (show_perf_overlay && !is_editor_mode)
+        m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, deltaTime, cpuTime, gpuTime, uiTime);
 
     // fps capping (begin)
     std::chrono::steady_clock::time_point start_time{};
-    if (app->capFramerate())
-    {
+    if (app->capFramerate()) {
         start_time = Clock::now();
     }
 
@@ -401,7 +412,7 @@ void engine::Scene::gameLoop()
     // Update and Render additional Platform Windows
     // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
     // For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //ImGuiIO& io = ImGui::GetIO(); (void)io;
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         GLFWwindow* backup_current_context = glfwGetCurrentContext();

@@ -70,16 +70,18 @@ void MyScene8::init()
     myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
 
-    AnimTransform anim1;
-    anim1.from = trsCube1;
-    anim1.to = Transform(anim1.from).addRotationX(152.0f).addRotationY(174.0f);
-    anim1.mode = AnimMode::Absolute;
-    anim1.duration = 10.0f; // 5s
+    AnimTransform anim1{ trsCube1, Transform(trsCube1).addRotationX(152.0f).addRotationY(174.0f) , AnimMode::Absolute , 10.0f };
+    auto trsAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
 
-    auto translateAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
+    AnimTransform anim2{ trsCube1, Transform(trsCube1).addTranslationX(10.0f) , AnimMode::Absolute , 10.0f };
+    auto trsAnimation2 = make_shared<TransformAnimation>("anim2", anim2);
 
 
-    auto trsAnimator = make_shared<TransformAnimator>(translateAnimation1);
+    auto transformAnimations = std::vector<std::shared_ptr<TransformAnimation>>();
+    transformAnimations.push_back(trsAnimation1);
+    transformAnimations.push_back(trsAnimation2);
+
+    auto trsAnimator = make_shared<TransformAnimator>(transformAnimations);
 
     auto entityCube1 = make_shared<Entity>("MyCube1");
     entityCube1->addComponent<TransformComponent>(trsCube1);

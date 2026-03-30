@@ -24,7 +24,7 @@ void engine::TransformAnimator::update(float dt, Transform& transform)
 		//m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
 		//m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
 
-		std::cout << "[TransformAnimator::update] dt: " << dt << "s" << std::endl;
+		//std::cout << "[TransformAnimator::update] dt: " << dt << "s" << std::endl;
 
 
 		auto& animTransform = m_currentTransformAnimation->getAnimTransform();
@@ -45,6 +45,18 @@ void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)
 	}
 }
 
+std::vector<std::string> engine::TransformAnimator::getAnimationsStringList()
+{
+	std::vector<std::string> names;
+	names.reserve(m_animations.size()); // avoids reallocation growth
+
+	for (const auto& animation : m_animations) {
+		names.emplace_back(animation->getName()); // copies/moves the returned string
+	}
+
+	return names; // NRVO/move elision
+}
+
 void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimation)
 {
 	m_currentAnimation = pAnimation;
@@ -60,7 +72,7 @@ void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimat
 		// Reset elapsed every time
 		anim.elapsed = 0.0f;
 
-		std::cout << "[TransformAnimator::playAnimation] duration: " << anim.duration << "s" << std::endl;
+		//std::cout << "[TransformAnimator::playAnimation] duration: " << anim.duration << "s" << std::endl;
 
 		// Make sure duration is valid
 		if (anim.duration <= 0.0f)

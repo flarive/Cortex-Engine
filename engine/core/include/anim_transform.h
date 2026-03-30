@@ -12,6 +12,13 @@ namespace engine
 
     struct AnimTransform
     {
+        AnimTransform() = default;
+		AnimTransform(const Transform& from_, const Transform& to_, AnimMode mode_, float duration_)
+            : from(from_), to(to_), mode(mode_), duration(duration_)
+        {
+        }
+        ~AnimTransform() = default;
+        
         Transform from{};
         Transform to{};
         AnimMode mode = AnimMode::Absolute;

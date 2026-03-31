@@ -8,9 +8,11 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
 	aiAnimation* animation = scene->mAnimations[0];
-	m_duration = static_cast<float>(animation->mDuration); //ms
-	m_ticksPerSecond = static_cast<unsigned int>(animation->mTicksPerSecond * speedFactor);
-	m_durationInSeconds = static_cast<float>(animation->mDuration / animation->mTicksPerSecond);
+
+	m_ticksPerSecond = static_cast<unsigned int>(animation->mTicksPerSecond > 0 ? animation->mTicksPerSecond : 1000.0); // mTicksPerSecond = 1000 => ticks are in milliseconds
+	m_duration = static_cast<float>(animation->mDuration); // duration in ticks
+	m_durationInSeconds = static_cast<unsigned int>(m_duration / m_ticksPerSecond);
+	m_desiredFPS = computeFPS(animation); // usually 30 FPS for mixamo animations
 	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 
 	aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
@@ -69,4 +71,37 @@ void engine::BoneAnimation::readHierarchyData(AssimpNodeData& dest, const aiNode
 		readHierarchyData(newData, src->mChildren[i]);
 		dest.children.push_back(newData);
 	}
+}
+
+// ensure anim was exported at 30 FPS (should be always the case for mixamo anims)
+// should be 0, 33.3333, 66.6667, 100...
+// 33.33 ms = 1/30s
+double engine::BoneAnimation::computeFPS(const aiAnimation* anim)
+{
+	if (anim->mNumChannels == 0)
+		return 0.0;
+
+	const aiNodeAnim* channel = anim->mChannels[0];
+
+	if (channel->mNumPositionKeys < 2)
+		return 0.0;
+
+	double t0 = channel->mPositionKeys[0].mTime;
+	double t1 = channel->mPositionKeys[1].mTime;
+
+	double deltaTicks = t1 - t0;
+
+	double ticksPerSecond = anim->mTicksPerSecond;
+	if (ticksPerSecond <= 0.0)
+		ticksPerSecond = 1000.0; // Assimp fallback for FBX
+
+	double deltaSeconds = deltaTicks / ticksPerSecond;
+
+
+	//const aiNodeAnim* channel = animation->mChannels[0];
+	//for (int i = 0; i < channel->mNumPositionKeys; i++) {
+	//	std::cout << channel->mPositionKeys[i].mTime << std::endl;
+	//}
+
+	return static_cast<unsigned int>(std::round(1.0 / deltaSeconds));
 }

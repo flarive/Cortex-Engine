@@ -55,5 +55,7 @@ namespace engine
 		
 		void readMissingBones(const aiAnimation* animation, Model& model);
 		void readHierarchyData(AssimpNodeData& dest, const aiNode* src);
+
+		double computeFPS(const aiAnimation* anim);
 	};
 }

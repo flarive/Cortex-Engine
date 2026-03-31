@@ -24,7 +24,11 @@ namespace engine
         AnimMode mode = AnimMode::Absolute;
 
         float duration = 1.0f;
+        float durationSeconds;
+
         float elapsed = 0.0f;
+
+        
 
         // Configure animation
         void setup(const Transform& current,

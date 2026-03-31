@@ -66,7 +66,7 @@ void engine::BonesAnimator::update(float dt, Transform& transform)
 	m_deltaTime = dt;
 	if (m_currentAnimation && m_isPlaying)
 	{
-		m_currentTime += m_currentAnimation->getTicksPerSecond() * dt;
+		m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_currentAnimation->getSpeedFactor();
 		m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
 		calculateBoneTransform(&(std::static_pointer_cast<BoneAnimation>(m_currentAnimation)->getRootNode()), glm::mat4(1.0f));
 	}

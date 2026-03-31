@@ -14,7 +14,7 @@ namespace engine
     {
         AnimTransform() = default;
 		AnimTransform(const Transform& from_, const Transform& to_, AnimMode mode_, float duration_)
-            : from(from_), to(to_), mode(mode_), duration(duration_)
+            : from(from_), to(to_), mode(mode_), duration(duration_)//, durationSeconds(duration_ / 1000.0f)
         {
         }
         ~AnimTransform() = default;
@@ -23,10 +23,10 @@ namespace engine
         Transform to{};
         AnimMode mode = AnimMode::Absolute;
 
-        float duration = 1.0f;
-        float durationSeconds;
+        float duration{ 1.0f }; // s
+        //float durationSeconds {1.0f}; // s
 
-        float elapsed = 0.0f;
+        float elapsed{};
 
         
 

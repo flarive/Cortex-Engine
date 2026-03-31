@@ -4,11 +4,11 @@ engine::TransformAnimation::TransformAnimation(const std::string & animationName
 	: Animation(animationName, nullptr, 1.0f), m_animTransform(animationTransform)
 {
 
-    m_durationInSeconds = m_animTransform.durationSeconds;
+    m_durationInSeconds = m_animTransform.duration;
 
-    m_ticksPerSecond = 1000.0;                // use millisecond tick convention
+    m_ticksPerSecond = 1000;                // use millisecond tick convention
     m_duration = m_durationInSeconds * m_ticksPerSecond;
 
-    m_desiredFPS = 60; // or 30, or any FPS you decide for TRS animations
-    m_numFrames = m_durationInSeconds * m_desiredFPS;
+    m_desiredFPS = 30; // or 30, or any FPS you decide for TRS animations
+    m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 }

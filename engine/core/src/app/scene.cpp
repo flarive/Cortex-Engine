@@ -436,7 +436,8 @@ void engine::Scene::gameLoop()
     if (app->capFramerate())
     {
         auto end_time = Clock::now();
-        std::this_thread::sleep_for(std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time));
+        auto zzz = std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time);
+        std::this_thread::sleep_for(zzz);
     }
 
     // End CPU timer

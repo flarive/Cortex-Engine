@@ -42,16 +42,18 @@ bool engine::AnimTransform::update(float dt, Transform& outTransform)
         << std::endl;*/
 
     if (dt > (1 / 60.0f))
-        dt = 1 / 60.0f;
+        return false;
+    else
+		dt = 0.011f; // strange but usefull to have a fixed dt here, otherwise the animation is very inconsistent when the framerate drops (eg. when dragging the window around)
 
 
-    std::ostringstream oss2;
-    oss2 << "[AnimTransform::update] dt: " << dt
-        << "s, elapsed: " << elapsed
-        << "s, duration: " << duration
-        << "s, t: " << (elapsed / duration);
+    //std::ostringstream oss2;
+    //oss2 << "[AnimTransform::update] dt: " << dt
+    //    << "s, elapsed: " << elapsed
+    //    << "s, duration: " << duration
+    //    << "s, t: " << (elapsed / duration);
 
-    logger.info("aaa {}", oss2.str());
+    //logger.info("aaa {}", oss2.str());
 
     
     elapsed += dt;
@@ -71,9 +73,9 @@ bool engine::AnimTransform::update(float dt, Transform& outTransform)
         glm::mix(from.getLocalScale(), to.getLocalScale(), t)
     );
 
-    std::ostringstream oss;
-    oss << "Frame dt=" << dt << " now=" << timeNow();
-    logger.info("{}", oss.str());
+    //std::ostringstream oss;
+    //oss << "Frame dt=" << dt << " now=" << timeNow();
+    //logger.info("{}", oss.str());
 
     return (t >= 1.0f); // finished?
 }

@@ -1,5 +1,13 @@
 #include "../include/anim_transform.h"
 
+
+#include "../include/managers/log_manager.h"
+
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
 void engine::AnimTransform::setup(const Transform& current,
     const Transform& from_,
     const Transform& to_,
@@ -27,11 +35,24 @@ void engine::AnimTransform::setup(const Transform& current,
 
 bool engine::AnimTransform::update(float dt, Transform& outTransform)
 {
-    std::cout << "[AnimTransform::update] dt: " << dt
+    /*std::cout << "[AnimTransform::update] dt: " << dt
         << "s, elapsed: " << elapsed
         << "s, duration: " << duration
         << "s, t: " << (elapsed / duration)
-        << std::endl;
+        << std::endl;*/
+
+    if (dt > (1 / 60.0f))
+        dt = 1 / 60.0f;
+
+
+    std::ostringstream oss2;
+    oss2 << "[AnimTransform::update] dt: " << dt
+        << "s, elapsed: " << elapsed
+        << "s, duration: " << duration
+        << "s, t: " << (elapsed / duration);
+
+    logger.info("aaa {}", oss2.str());
+
     
     elapsed += dt;
 
@@ -50,5 +71,31 @@ bool engine::AnimTransform::update(float dt, Transform& outTransform)
         glm::mix(from.getLocalScale(), to.getLocalScale(), t)
     );
 
+    std::ostringstream oss;
+    oss << "Frame dt=" << dt << " now=" << timeNow();
+    logger.info("{}", oss.str());
+
     return (t >= 1.0f); // finished?
+}
+
+
+
+std::string engine::AnimTransform::timeNow()
+{
+    using namespace std::chrono;
+
+    auto now = system_clock::now();
+    std::time_t now_c = system_clock::to_time_t(now);
+
+    std::tm local_tm;
+#if defined(_WIN32)
+    localtime_s(&local_tm, &now_c);
+#else
+    localtime_r(&now_c, &local_tm);
+#endif
+
+    std::ostringstream oss;
+    oss << std::put_time(&local_tm, "%H:%M:%S");
+
+    return oss.str();
 }

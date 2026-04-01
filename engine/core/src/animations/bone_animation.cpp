@@ -76,15 +76,15 @@ void engine::BoneAnimation::readHierarchyData(AssimpNodeData& dest, const aiNode
 // ensure anim was exported at 30 FPS (should be always the case for mixamo anims)
 // should be 0, 33.3333, 66.6667, 100...
 // 33.33 ms = 1/30s
-double engine::BoneAnimation::computeFPS(const aiAnimation* anim)
+unsigned int engine::BoneAnimation::computeFPS(const aiAnimation* anim)
 {
 	if (anim->mNumChannels == 0)
-		return 0.0;
+		return 0;
 
 	const aiNodeAnim* channel = anim->mChannels[0];
 
 	if (channel->mNumPositionKeys < 2)
-		return 0.0;
+		return 0;
 
 	double t0 = channel->mPositionKeys[0].mTime;
 	double t1 = channel->mPositionKeys[1].mTime;

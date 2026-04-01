@@ -9,7 +9,7 @@
 #include <memory>
 #include <source_location>
 
-#define DISABLE_LOGGING_FILE
+//#define DISABLE_LOGGING_FILE
 
 namespace engine
 {

@@ -70,10 +70,10 @@ void MyScene8::init()
     myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
 
-    AnimTransform anim1{ trsCube1, Transform(trsCube1).addRotationX(152.0f).addRotationY(174.0f) , AnimMode::Absolute , 13.0f };
+    AnimTransform anim1{ trsCube1, Transform(trsCube1).addRotationX(90.0f).addRotationY(90.0f), AnimMode::Absolute, 10.0f };
     auto trsAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
 
-    AnimTransform anim2{ trsCube1, Transform(trsCube1).addTranslationX(10.0f) , AnimMode::Absolute , 5000.0f };
+    AnimTransform anim2{ trsCube1, Transform(trsCube1).addTranslationX(10.0f) , AnimMode::Absolute , 5.0f };
     auto trsAnimation2 = make_shared<TransformAnimation>("anim2", anim2);
 
 

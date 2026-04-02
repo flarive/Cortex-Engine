@@ -153,8 +153,6 @@ namespace engine
 		void updateEditorPropertySettings();
 
 
-		
-
 		// renderCube() renders a 1x1 3D cube in NDC.
 		// -------------------------------------------------
 		unsigned int m_cubeVAO{};
@@ -199,6 +197,8 @@ namespace engine
 
 	private:
 		void testHDR(int width, int height);
+
+		
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light

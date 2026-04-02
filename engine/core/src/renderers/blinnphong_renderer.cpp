@@ -4,6 +4,7 @@
 
 #include "../../include/tools/file_system.h"
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/debug/debug_frame.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -103,6 +104,8 @@ void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces
 
 void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
+    //DebugFrame::ensureIsCalledOncePerFrame("BlinnPhongRenderer", "loop");
+    
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();

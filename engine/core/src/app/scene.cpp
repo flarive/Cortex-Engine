@@ -4,6 +4,7 @@
 #include "../../include/singleton.h"
 
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/debug/debug_frame.h"
 
 #include "../../include/tools/helpers.h"
 #include "../../include/aabb.h"
@@ -22,6 +23,11 @@
 #include <iostream>
 #include <limits>
 #include <format>
+#include <cstdint>
+
+
+uint64_t globalFrameIndex = 0;
+
 
 
 namespace engine {
@@ -29,6 +35,7 @@ namespace engine {
 }
 
 using Clock = std::chrono::high_resolution_clock;
+
 
 
 engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
@@ -323,6 +330,10 @@ void engine::Scene::gameLoop()
         ImGui_ImplGlfw_Sleep(10);
         return;
     }
+
+    globalFrameIndex++; // once per frame
+
+    
     
     float currentFrameTime = static_cast<float>(glfwGetTime());
     deltaTime = currentFrameTime - lastFrameTime; // Should be arround 0.016–0.020s (60–50 fps)
@@ -381,6 +392,7 @@ void engine::Scene::gameLoop()
         }
 
         // draw our scene graph
+        // called 2 times, one for renderer and another one for shadow maps
         drawEntities(shader, shaderTessellation);
         };
 
@@ -493,6 +505,8 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
 void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
 {
+    //DebugFrame::ensureIsCalledOncePerFrame("Scene", "drawEntities");
+    
     inFrustrumCount = 0;
     totalFrustrumCount = 0;
     
@@ -519,6 +533,26 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
     bool shouldTestFrustrumForEntity = false;
     bool frustrumOk = false;
+
+
+    extern uint64_t globalFrameIndex;
+    static uint64_t lastFrameSeen = UINT64_MAX;
+    static int callsThisFrame = 0;
+
+    if (globalFrameIndex != lastFrameSeen)
+    {
+        // New frame
+        //if (callsThisFrame > 1)
+        //{
+        //}
+
+        callsThisFrame = 0;
+        lastFrameSeen = globalFrameIndex;
+    }
+
+    callsThisFrame++;
+
+
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -623,18 +657,27 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             }
             else if (typeID == ComponentType::animator)
             {
+                // update should be called only one time per frame
+                //if (callsThisFrame == 1)
                 component->update(deltaTime, transform);
+
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
             else if (typeID == ComponentType::particleSystem)
             {
-                component->update(deltaTime, transform);
+                // update should be called only one time per frame
+                if (callsThisFrame == 1 && shader.getShaderType() == ShaderType::BlinnPhong)
+                    component->update(deltaTime, transform);
+                
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;
             }
             else if (typeID == ComponentType::terrain)
             {
-                component->update(deltaTime, transform);
+                // update should be called only one time per frame
+                if (callsThisFrame == 1 && shader.getShaderType() == ShaderType::BlinnPhong)
+                    component->update(deltaTime, transform);
+
                 component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
                 inFrustrumCount++;
             }

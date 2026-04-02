@@ -19,11 +19,17 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <cstdint>
+
+
 
 namespace engine
 {
     class EntityManager;
+
     
+
+
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>

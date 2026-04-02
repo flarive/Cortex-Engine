@@ -4,6 +4,7 @@
 
 #include "../../include/tools/file_system.h"
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/debug/debug_frame.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -351,6 +352,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
+    //DebugFrame::ensureIsCalledOncePerFrame("PbrRenderer", "loop");
+
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();

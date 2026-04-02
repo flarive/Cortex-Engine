@@ -468,6 +468,9 @@
     <ClCompile Include="core\src\anim_transform.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\debug\debug_frame.cpp">
+      <Filter>Fichiers sources\core\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -772,6 +775,9 @@
     </ClInclude>
     <ClInclude Include="core\include\anim_transform.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\debug\debug_frame.h">
+      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

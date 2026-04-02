@@ -4,6 +4,7 @@
 
 #include "../../include/tools/file_system.h"
 #include "../../include/debug/opengl_debug.h"
+#include "../../include/debug/debug_frame.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
@@ -43,6 +44,8 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
 
 void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
+    //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
+
     glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
     glm::mat4 view = camera->getViewMatrix();
 

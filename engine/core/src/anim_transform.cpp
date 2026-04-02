@@ -2,6 +2,7 @@
 
 
 #include "../include/managers/log_manager.h"
+#include "../include/debug/debug_frame.h"
 
 #include <chrono>
 #include <ctime>
@@ -41,10 +42,10 @@ bool engine::AnimTransform::update(float dt, Transform& outTransform)
         << "s, t: " << (elapsed / duration)
         << std::endl;*/
 
-    if (dt > (1 / 60.0f))
-        return false;
-    else
-		dt = 0.011f; // strange but usefull to have a fixed dt here, otherwise the animation is very inconsistent when the framerate drops (eg. when dragging the window around)
+  //  if (dt > (1 / 60.0f))
+  //      return false;
+  //  else
+		//dt = 0.011f; // strange but usefull to have a fixed dt here, otherwise the animation is very inconsistent when the framerate drops (eg. when dragging the window around)
 
 
     //std::ostringstream oss2;
@@ -55,6 +56,9 @@ bool engine::AnimTransform::update(float dt, Transform& outTransform)
 
     //logger.info("aaa {}", oss2.str());
 
+
+
+    //DebugFrame::ensureIsCalledOncePerFrame("AnimTransform", "update");
     
     elapsed += dt;
 

@@ -84,7 +84,7 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
 
     if (m_lights.size() > 0)
     {
-        auto firstLight = m_lights[0];
+        std::shared_ptr<Light> firstLight = m_lights[0];
         if (firstLight->getTypeID() == LightType::point)
             initPointLightDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
         else
@@ -96,7 +96,7 @@ void engine::Renderer::computeDepthMapFramebuffer(GLsizei width, GLsizei height,
 {
     if (m_lights.size() > 0)
     {
-        auto firstLight = m_lights[0];
+        std::shared_ptr<Light> firstLight = m_lights[0];
         if (firstLight->getTypeID() == LightType::point)
             computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
         else

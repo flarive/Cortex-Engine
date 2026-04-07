@@ -20,6 +20,7 @@ private:
 
 
     Text textFPSCount{};
+    Text textTotalElapsedFramesCount{};
 
     
 

@@ -521,17 +521,14 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     glm::mat4 view = cam->getViewMatrix();
     const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
+    
+    // check the number of times entities are drawn per frame (should be called only once !)
     extern uint64_t globalFrameIndex;
     static uint64_t lastFrameSeen = UINT64_MAX;
     static int callsThisFrame = 0;
 
     if (globalFrameIndex != lastFrameSeen)
     {
-        // New frame
-        //if (callsThisFrame > 1)
-        //{
-        //}
-
         callsThisFrame = 0;
         lastFrameSeen = globalFrameIndex;
     }
@@ -663,7 +660,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::particleSystem)
             {
                 // update should be called only one time per frame
-                if (callsThisFrame == 1 && shader.getShaderType() == ShaderType::BlinnPhong)
+                if (callsThisFrame == 1)
                     component->update(deltaTime, transform);
                 
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
@@ -672,7 +669,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::terrain)
             {
                 // update should be called only one time per frame
-                if (callsThisFrame == 1 && shader.getShaderType() == ShaderType::BlinnPhong)
+                if (callsThisFrame == 1)
                     component->update(deltaTime, transform);
 
                 component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
@@ -891,6 +888,11 @@ void engine::Scene::cleanupQueries()
 {
     glDeleteQueries(2, m_timerQuery);
     glDeleteQueries(2, m_primitiveQuery);
+}
+
+uint64_t engine::Scene::getTotalElapsedFrames()
+{
+    return globalFrameIndex;
 }
 
 

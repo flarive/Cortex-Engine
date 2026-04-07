@@ -77,6 +77,8 @@ namespace engine
         GLint meshcount{};
         GLint primitivecount{};
 
+        GLint64 totalElapsedFrames{};
+
         // camera frustrum culling
         GLint inFrustrumCount{};
         GLint totalFrustrumCount{};
@@ -188,6 +190,8 @@ namespace engine
 
 
         void refreshFullscreen();
+
+        uint64_t getTotalElapsedFrames();
 
         //static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 

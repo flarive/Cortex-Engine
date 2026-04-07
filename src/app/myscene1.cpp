@@ -156,6 +156,7 @@ void MyScene1::init()
 
 
     textFPSCount.setup(app->window, FONT_PATH, 28);
+    textTotalElapsedFramesCount.setup(app->window, FONT_PATH, 28);
 
     textPolyCount.setup(app->window, FONT_PATH, 28);
     textMeshCount.setup(app->window, FONT_PATH, 28);
@@ -281,6 +282,7 @@ void MyScene1::updateUI()
 {
     // render HUD / UI
     textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textTotalElapsedFramesCount.draw(format("{:.0f} frames", getTotalElapsedFrames()), 25.0f, 25.0f, 1.0f, vec3(1.0f));
 
     textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
     textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
@@ -294,6 +296,7 @@ void MyScene1::clean()
 {
     // clean up any resources
     textFPSCount.clean();
+    textTotalElapsedFramesCount.clean();
     textPolyCount.clean();
     textMeshCount.clean();
     textPrimitiveCount.clean();

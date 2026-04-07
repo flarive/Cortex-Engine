@@ -10,4 +10,3 @@ namespace engine
 		static void ensureIsCalledOncePerFrame(const std::string& className, const std::string& methodName);
 	};
 }
-

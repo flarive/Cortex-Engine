@@ -45,17 +45,12 @@ static void windowRefreshCallback(GLFWwindow* window);
 static void gamepadUpdate();
 
 
-// DEBUG ONLY
-//uint64_t gFrameIndex;
-
-
-
 // Startup method
 int main(int, char**)
 {
     // Init the app
-    //myApp = new MyApp("MyApp", 1280, 720, false);
-    myApp = new MyApp("MyApp", 320, 240, false);
+    myApp = new MyApp("MyApp", 1280, 720, false);
+    //myApp = new MyApp("MyApp", 320, 240, false);
     if (myApp)
     {
         // Init a scene in the app

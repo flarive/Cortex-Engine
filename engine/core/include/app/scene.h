@@ -157,7 +157,7 @@ namespace engine
         void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
         void drawEntities(Shader& shader, Shader& shaderTessellation);
-        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
 
 
 
@@ -199,6 +199,11 @@ namespace engine
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
 
         void computeLightsIndexes();
+
+
+
+        
+
         
         static void glfw_error_callback(int error, const char* description);
 

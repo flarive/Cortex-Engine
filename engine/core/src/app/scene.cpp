@@ -521,20 +521,6 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     glm::mat4 view = cam->getViewMatrix();
     const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
-
-    // Draw using stored world transforms
-    drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum);
-}
-
-void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum)
-{
-    if (!entity->enabled)
-        return;
-
-    bool shouldTestFrustrumForEntity = false;
-    bool frustrumOk = false;
-
-
     extern uint64_t globalFrameIndex;
     static uint64_t lastFrameSeen = UINT64_MAX;
     static int callsThisFrame = 0;
@@ -553,6 +539,17 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     callsThisFrame++;
 
 
+    // Draw using stored world transforms
+    drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
+}
+
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
+{
+    if (!entity->enabled)
+        return;
+
+    bool shouldTestFrustrumForEntity = false;
+    bool frustrumOk = false;
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -658,8 +655,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::animator)
             {
                 // update should be called only one time per frame
-                //if (callsThisFrame == 1)
-                component->update(deltaTime, transform);
+                if (callsThisFrame == 1)
+                    component->update(deltaTime, transform);
 
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
             }
@@ -693,7 +690,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         // Draw children
         for (const auto& child : entity->children)
         {
-            drawEntityRecursive(child, shader, shaderTessellation, projection, view, camFrustum);
+            drawEntityRecursive(child, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
         }
     }
 

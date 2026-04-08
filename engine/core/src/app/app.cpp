@@ -5,7 +5,7 @@
 
 #include <format>
 
-engine::App::App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
+engine::App::App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
     : m_title(_title), width(static_cast<float>(_width)), height(static_cast<float>(_height)), fullscreen(_fullscreen), settings(_settings)
 {
     logger.info("Engine startup");
@@ -203,18 +203,16 @@ void engine::App::glfw_error_callback(int error, const char* description)
 
 void engine::App::setWindowTitle(bool appendFps)
 {
-    std::string aa{};
+    std::string title{};
     
-    if (appendFps)
-    {
-        aa = std::format("{} {} {:.0f} FPS {}", m_title_prefix, m_title, ImGui::GetIO().Framerate, m_title_suffix);
+    if (appendFps) {
+        title = std::format("{} {} {:.0f} FPS {}", m_title_prefix, m_title, ImGui::GetIO().Framerate, m_title_suffix);
     }
-    else
-    {
-        aa = std::format("{} {} {}", m_title_prefix, m_title, m_title_suffix);
+    else {
+        title = std::format("{} {} {}", m_title_prefix, m_title, m_title_suffix);
     }
 
-    glfwSetWindowTitle(window, aa.c_str());
+    glfwSetWindowTitle(window, title.c_str());
 }
 
 void engine::App::setWindowTitle(const std::string& title)
@@ -254,7 +252,6 @@ void engine::App::resetWindowTitleSuffix()
     m_title_suffix.clear();
 }
 
-
 void engine::App::exit()
 {
     logger.info("Engine exit");
@@ -268,7 +265,6 @@ void engine::App::exit()
 
     glfwTerminate();
 }
-
 
 // Toggle Fullscreen
 void engine::App::toggleFullscreen(std::function<void()> func)

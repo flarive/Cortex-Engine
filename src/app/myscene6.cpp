@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene6::MyScene6(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene6::MyScene6(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -224,8 +224,8 @@ void MyScene6::drawScene(Shader& shader)
     auto myHelmet = getEntityManager().findEntityByName("MyHelmet");
     if (myHelmet)
     {
-        auto trs = myHelmet->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = myHelmet->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rot.y + rotation, rot.z));
         myHelmet->setTransform(trs);
     }
@@ -236,7 +236,7 @@ void MyScene6::drawScene(Shader& shader)
 void MyScene6::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
-    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    ourSprite.draw(vec2(40, app->height - 40), vec2(128.0f, -128.0f), 0.0f, vec3(1.0f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
+    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    ourSprite.draw(vec2(40, app->height - 40), vec2(128.0f, -128.0f), 0.0f, Colors::White);
 }

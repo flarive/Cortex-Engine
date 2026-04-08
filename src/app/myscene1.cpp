@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene1::MyScene1(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene1::MyScene1(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
@@ -155,15 +155,15 @@ void MyScene1::init()
 
 
 
-    textFPSCount.setup(app->window, FONT_PATH, 28);
-    textTotalElapsedFramesCount.setup(app->window, FONT_PATH, 28);
+    textFPSCount.setup(app->window, FONT_PATH, 20);
+    textElapsedFramesCount.setup(app->window, FONT_PATH, 20);
 
-    textPolyCount.setup(app->window, FONT_PATH, 28);
-    textMeshCount.setup(app->window, FONT_PATH, 28);
-    textPrimitiveCount.setup(app->window, FONT_PATH, 28);
+    textPolyCount.setup(app->window, FONT_PATH, 20);
+    textMeshCount.setup(app->window, FONT_PATH, 20);
+    textPrimitiveCount.setup(app->window, FONT_PATH, 20);
 
-    textDrawnCount.setup(app->window, FONT_PATH, 28);
-    textTotalCount.setup(app->window, FONT_PATH, 28);
+    textDrawnCount.setup(app->window, FONT_PATH, 20);
+    textTotalCount.setup(app->window, FONT_PATH, 20);
 }
 
 
@@ -251,8 +251,8 @@ void MyScene1::update(Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        auto trs = myCushion->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = myCushion->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCushion->setTransform(trs);
     }
@@ -260,8 +260,8 @@ void MyScene1::update(Shader& shader)
     auto myBackpack = getEntityManager().findEntityByName("MyBackpack");
     if (myBackpack)
     {
-        auto trs = myBackpack->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = myBackpack->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myBackpack->setTransform(trs);
     }
@@ -269,8 +269,8 @@ void MyScene1::update(Shader& shader)
     auto myCylinder = getEntityManager().findEntityByName("MyCylinder");
     if (myCylinder)
     {
-        auto trs = myCylinder->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = myCylinder->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCylinder->setTransform(trs);
     }
@@ -281,22 +281,22 @@ void MyScene1::update(Shader& shader)
 void MyScene1::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
-    textTotalElapsedFramesCount.draw(format("{:.0f} frames", getTotalElapsedFrames()), 25.0f, 25.0f, 1.0f, vec3(1.0f));
+    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
+    textElapsedFramesCount.draw(format("{} frames", getTotalElapsedFrames()), 250.0f, 25.0f, 1.0f, Colors::White);
 
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
+    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, Colors::White);
 
-    textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, vec3(1.0f));
-    textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, vec3(1.0f));
+    textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
+    textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 }
 
 void MyScene1::clean()
 {
     // clean up any resources
     textFPSCount.clean();
-    textTotalElapsedFramesCount.clean();
+    textElapsedFramesCount.clean();
     textPolyCount.clean();
     textMeshCount.clean();
     textPrimitiveCount.clean();

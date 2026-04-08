@@ -33,7 +33,7 @@ namespace engine
 		}
 
 		inline std::string& getName() { return m_name; }
-		void setName(std::string name) { m_name = name; }
+		void setName(const std::string& name) { m_name = name; }
 
 		inline std::shared_ptr<Model> getModel() { return m_model; }
 		void setModel(std::shared_ptr<Model> model) { m_model = model; }

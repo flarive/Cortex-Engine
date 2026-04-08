@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene3::MyScene3(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene3::MyScene3(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -354,6 +354,6 @@ void MyScene3::drawScene(Shader& shader)
 void MyScene3::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
-    ourSprite.draw(vec2(40, app->height - 40), vec2(128.0f, -128.0f), 0.0f, vec3(1.0f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
+    ourSprite.draw(vec2(40, app->height - 40), vec2(128.0f, -128.0f), 0.0f, Colors::White);
 }

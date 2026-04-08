@@ -36,7 +36,7 @@ void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
     initRenderData();
 }
 
-void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
+void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& color)
 {
     int width{ 0 };
     int height{ 0 };
@@ -60,7 +60,7 @@ void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, glm:
     m_spriteShader.setMat4("model", model);
 
     // render textured quad
-    m_spriteShader.setVec3("spriteColor", color);
+    m_spriteShader.setVec3("spriteColor", glm::vec3(color.r, color.g, color.b));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);

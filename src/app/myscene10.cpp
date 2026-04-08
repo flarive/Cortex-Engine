@@ -6,7 +6,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene10::MyScene10(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene10::MyScene10(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,

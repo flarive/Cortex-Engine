@@ -26,7 +26,7 @@ private:
 
 
 public:
-    MyScene5(string _title, App* _app);
+    MyScene5(const string& _title, App* _app);
 
     void init() override;
  

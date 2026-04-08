@@ -32,7 +32,7 @@ private:
 
 
 public:
-    MyScene9(string _title, App* _app);
+    MyScene9(const string& _title, App* _app);
 
     void init() override;
     

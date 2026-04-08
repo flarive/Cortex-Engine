@@ -41,7 +41,7 @@ namespace engine
 		}
 
 		// Let parent register a callback
-		void setOnSceneSettingChanged(std::function<void(std::string, SceneSetting)> callback) {
+		void setOnSceneSettingChanged(std::function<void(const std::string&, SceneSetting)> callback) {
 			m_onSceneSettingChanged = std::move(callback);
 		}
 

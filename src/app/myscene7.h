@@ -33,7 +33,7 @@ private:
 
 
 public:
-    MyScene7(string _title, App* _app);
+    MyScene7(const string& _title, App* _app);
 
     void before_init_hook() override;
     void init() override;

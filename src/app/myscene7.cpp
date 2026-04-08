@@ -5,7 +5,7 @@ using namespace glm;
 using namespace engine;
 
 
-MyScene7::MyScene7(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene7::MyScene7(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -335,8 +335,8 @@ void MyScene7::update(Shader& shader)
     auto child2 = getEntityManager().findEntityByName("Child1");
     if (child2)
     {
-        auto trs = child2->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = child2->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         child2->setTransform(trs);
     }
@@ -345,8 +345,8 @@ void MyScene7::update(Shader& shader)
     auto mySphere = getEntityManager().findEntityByName("MySphere");
     if (mySphere)
     {
-        auto trs = mySphere->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = mySphere->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         mySphere->setTransform(trs);
     }
@@ -357,11 +357,11 @@ void MyScene7::update(Shader& shader)
 void MyScene7::updateUI()
 {
     // render HUD / UI
-    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(1.0f));
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, vec3(1.0f));
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, vec3(1.0f));
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, vec3(1.0f));
-    ourSprite.draw(vec2(50, app->height - 50), vec2(50.0f, -50.0f), 0.0f, vec3(1.0f));
+    textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
+    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, Colors::White);
+    ourSprite.draw(vec2(50, app->height - 50), vec2(50.0f, -50.0f), 0.0f, Colors::White);
 }
 
 void MyScene7::clean()

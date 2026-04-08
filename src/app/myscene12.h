@@ -19,7 +19,7 @@ private:
 
 
 public:
-    MyScene12(string _title, App* _app);
+    MyScene12(const string& _title, App* _app);
 
     void init() override;
     void update(Shader& shader) override;

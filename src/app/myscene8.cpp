@@ -5,7 +5,7 @@ using namespace glm;
 using namespace engine;
 
 
-MyScene8::MyScene8(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene8::MyScene8(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::BlinnPhong,
         .shadowIntensity = 5.0f
@@ -132,7 +132,7 @@ void MyScene8::init()
 
 
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(app->window, FONT_PATH, 20);
 }
 
 
@@ -209,7 +209,7 @@ void MyScene8::framebuffer_size_callback(int newWidth, int newHeight)
 {
     Scene::framebuffer_size_callback(newWidth, newHeight);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(app->window, FONT_PATH, 20);
 }
 
 void MyScene8::update(Shader& shader)
@@ -238,5 +238,5 @@ void MyScene8::drawScene(Shader& shader)
 void MyScene8::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
 }

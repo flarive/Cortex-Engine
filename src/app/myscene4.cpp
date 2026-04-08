@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene4::MyScene4(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene4::MyScene4(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -195,8 +195,8 @@ void MyScene4::drawScene(Shader& shader)
     auto myCushion = getEntityManager().findEntityByName("MyCushion");
     if (myCushion)
     {
-        auto trs = myCushion->getTransform();
-        auto rot = trs.getLocalRotation();
+        auto& trs = myCushion->getTransform();
+        auto& rot = trs.getLocalRotation();
         trs.setLocalRotation(vec3(rot.x, rotation, rot.z));
         myCushion->setTransform(trs);
     }
@@ -207,5 +207,5 @@ void MyScene4::drawScene(Shader& shader)
 void MyScene4::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
 }

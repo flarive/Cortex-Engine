@@ -4,6 +4,7 @@
 #include FT_FREETYPE_H
 
 #include "../misc/noncopyable.h"
+#include "../misc/colors.h"
 #include "../common_defines.h"
 #include "../debug/opengl_debug.h"
 
@@ -32,7 +33,7 @@ namespace engine
         // draws the model, and thus all its meshes
         // render line of text
         // -------------------
-        void draw(std::string text, float x, float y, float scale, glm::vec3 color);
+        void draw(const std::string& text, float x, float y, float scale, const Color& color = Colors::White);
 
         void clean();
     };

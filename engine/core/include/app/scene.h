@@ -21,14 +21,9 @@
 #include <thread>
 #include <cstdint>
 
-
-
 namespace engine
 {
     class EntityManager;
-
-    
-
 
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
@@ -113,7 +108,7 @@ namespace engine
 
 
 
-        Scene(std::string _title, App* _app, SceneSettings _settings);
+        Scene(const std::string& _title, App* _app, SceneSettings _settings);
 
         void initialize();
 
@@ -191,7 +186,7 @@ namespace engine
 
         void refreshFullscreen();
 
-        uint64_t getTotalElapsedFrames();
+        uint64_t getTotalElapsedFrames() const;
 
         //static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
@@ -212,9 +207,9 @@ namespace engine
         static void glfw_error_callback(int error, const char* description);
 
         void initQueries();
-        void beginQuery();
+        void beginQuery() const;
         void endQuery();
-        void cleanupQueries();
+        void cleanupQueries() const;
 
         void countItems(std::shared_ptr<Entity>& entity);
 

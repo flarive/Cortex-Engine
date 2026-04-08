@@ -30,7 +30,7 @@ private:
     float rotation{};
 
 public:
-    MyScene11(string _title, App* _app);
+    MyScene11(const string& _title, App* _app);
 
     void init() override;
     void update(Shader& shader) override;

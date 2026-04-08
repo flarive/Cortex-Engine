@@ -25,7 +25,7 @@ private:
 
 
 public:
-    MyScene4(std::string _title, App* _app);
+    MyScene4(const std::string& _title, App* _app);
 
     void init() override;
    

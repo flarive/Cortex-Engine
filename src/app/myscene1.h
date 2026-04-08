@@ -20,7 +20,7 @@ private:
 
 
     Text textFPSCount{};
-    Text textTotalElapsedFramesCount{};
+    Text textElapsedFramesCount{};
 
     
 
@@ -35,7 +35,7 @@ private:
     float rotation{};
 
 public:
-    MyScene1(string _title, App* _app);
+    MyScene1(const string& _title, App* _app);
 
     void init() override;
     void update(Shader& shader) override;

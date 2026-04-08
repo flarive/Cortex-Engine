@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene5::MyScene5(string _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene5::MyScene5(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -222,7 +222,7 @@ void MyScene5::drawScene(Shader& shader)
     auto myBuddha = getEntityManager().findEntityByName("MyBuddha");
     if (myBuddha)
     {
-        auto trs = myBuddha->getTransform();
+        auto& trs = myBuddha->getTransform();
         trs.setLocalRotation(vec3(0.0f, rotation, 0.0f));
         myBuddha->setTransform(trs);
     }
@@ -233,5 +233,5 @@ void MyScene5::drawScene(Shader& shader)
 void MyScene5::drawUI()
 {
     // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, vec3(0.5, 0.8f, 0.2f));
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
 }

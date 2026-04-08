@@ -31,7 +31,7 @@ namespace engine
         AppSettings settings;
 
        
-        App(std::string _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
+        App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
            
 
         const int getFrameDelay();

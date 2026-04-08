@@ -38,7 +38,7 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 
-engine::Scene::Scene(std::string _title, App* _app, SceneSettings _settings)
+engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app)
 {
     if (_settings.method == RenderMethod::PBR) {
@@ -230,7 +230,7 @@ void engine::Scene::listenForEditorChanges()
             }
         });
 
-    m_editor.setOnSceneSettingChanged([this](std::string key, std::variant<bool, int, unsigned int, float> value)
+    m_editor.setOnSceneSettingChanged([this](const std::string& key, std::variant<bool, int, unsigned int, float> value)
         {
             auto* singleton = engine::Singleton::getInstance();
             assert(singleton != nullptr && "Singleton not initialized !");
@@ -629,7 +629,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
                     auto properties = component->getPublicProperties();
                     if (properties.contains("canCastShadows"))
                     {
-                        auto canCastShadows = properties.at("canCastShadows");
+                        auto& canCastShadows = properties.at("canCastShadows");
                         if (auto pBool = std::get_if<bool>(&canCastShadows.value))
                         {
                             shouldDraw = *pBool;
@@ -844,7 +844,7 @@ void engine::Scene::initQueries()
     glGenQueries(2, m_timerQuery);       // double-buffered GPU timer
 }
 
-void engine::Scene::beginQuery()
+void engine::Scene::beginQuery() const
 {
     glBeginQuery(GL_PRIMITIVES_GENERATED, m_primitiveQuery[m_queryFrameIndex]);
     glBeginQuery(GL_TIME_ELAPSED, m_timerQuery[m_queryFrameIndex]);
@@ -884,13 +884,13 @@ void engine::Scene::endQuery()
 }
 
 
-void engine::Scene::cleanupQueries()
+void engine::Scene::cleanupQueries() const
 {
     glDeleteQueries(2, m_timerQuery);
     glDeleteQueries(2, m_primitiveQuery);
 }
 
-uint64_t engine::Scene::getTotalElapsedFrames()
+uint64_t engine::Scene::getTotalElapsedFrames() const
 {
     return globalFrameIndex;
 }

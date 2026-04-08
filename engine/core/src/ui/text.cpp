@@ -115,7 +115,7 @@ void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fo
 // draws the model, and thus all its meshes
 // render line of text
 // -------------------
-void engine::Text::draw(std::string text, float x, float y, float scale, glm::vec3 color)
+void engine::Text::draw(const std::string& text, float x, float y, float scale, const Color& color)
 {
     int width{ 0 };
     int height{ 0 };
@@ -129,7 +129,7 @@ void engine::Text::draw(std::string text, float x, float y, float scale, glm::ve
     // update for fullscreen toggle
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_textShader.setMat4("projection", projection2);
-    m_textShader.setVec3("textColor", color);
+    m_textShader.setVec3("textColor", glm::vec3(color.r, color.g, color.b));
 
     glActiveTexture(GL_TEXTURE0);
 

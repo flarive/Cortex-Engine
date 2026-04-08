@@ -25,7 +25,7 @@ private:
     float rotation{};
 
 public:
-    MyScene3(string _title, App* _app);
+    MyScene3(const string& _title, App* _app);
        
 
 

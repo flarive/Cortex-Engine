@@ -18,12 +18,13 @@
 #include "app/myscene12.h" // PBR wood plane with misc materials
 #include "app/myscene13.h" // blinnphong particles
 #include "app/myscene14.h" // blinnphong terrain
+#include "app/myscene15.h" // parallax mapping
 
 using namespace engine;
 
 // make it easier to switch between scenes
 using MyApp = MyApp1;
-using MyScene = MyScene14;
+using MyScene = MyScene15;
 
 App* myApp{};
 Scene* myScene{};

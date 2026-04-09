@@ -16,7 +16,8 @@ namespace engine
         PBR,
         PBRTessellation,
         DepthBufferDirectionalLights,
-        DepthBufferPointLights
+        DepthBufferPointLights,
+        Parallax
     };
 
     

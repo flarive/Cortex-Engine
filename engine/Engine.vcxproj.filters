@@ -471,6 +471,9 @@
     <ClCompile Include="core\src\debug\debug_frame.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\renderers\parallax_renderer.cpp">
+      <Filter>Fichiers sources\core\renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -778,6 +781,9 @@
     </ClInclude>
     <ClInclude Include="core\include\debug\debug_frame.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\parallax_renderer.h">
+      <Filter>Fichiers d%27en-tête\core\renderers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

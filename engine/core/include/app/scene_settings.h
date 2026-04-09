@@ -13,7 +13,8 @@ namespace engine
     {
         Phong = 0,
         BlinnPhong = 1, // legacy
-        PBR = 2 // mainstream
+        PBR = 2, // mainstream,
+        Parallax = 3 // temp test
     };
 
     struct GradientBackgroundSettings final

@@ -7,6 +7,7 @@
 #include "../renderers/phong_renderer.h"
 #include "../renderers/blinnphong_renderer.h"
 #include "../renderers/pbr_renderer.h"
+#include "../renderers/parallax_renderer.h"
 
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"

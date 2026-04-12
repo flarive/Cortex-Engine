@@ -1,4 +1,37 @@
 #version 330 core
+
+struct Material {
+    sampler2D texture_diffuse;
+    sampler2D texture_specular;
+    sampler2D texture_normal;
+    sampler2D texture_height;
+
+    vec3 diffuse_color;
+    vec3 specular_color;
+
+
+    float shininess;
+
+    bool has_texture_diffuse_map;
+    bool has_texture_specular_map;
+    bool has_texture_normal_map;
+    bool has_texture_height_map;
+
+
+    int shadowCalculationMethod;
+    float shadowIntensity; // Adjust to make shadows darker
+    float shadowMapsBias; // Offset to reduce shadow acne
+    float shadowMapsBlur;
+    float normalMapIntensity;
+
+
+
+    vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
+
+    bool canCastShadows;
+    bool canReceiveShadows;
+}; 
+
 out vec4 FragColor;
 
 in VS_OUT {
@@ -9,9 +42,11 @@ in VS_OUT {
     vec3 TangentFragPos;
 } fs_in;
 
-uniform sampler2D diffuseMap;
-uniform sampler2D normalMap;
-uniform sampler2D depthMap;
+
+
+uniform Material material;
+
+
 
 uniform float heightScale;
 
@@ -31,24 +66,24 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
   
     // get initial values
     vec2  currentTexCoords     = texCoords;
-    float currentDepthMapValue = texture(depthMap, currentTexCoords).r;
+    float currentDepthMapValue = texture(material.texture_height, currentTexCoords).r;
       
-    while(currentLayerDepth < currentDepthMapValue)
-    {
-        // shift texture coordinates along direction of P
-        currentTexCoords -= deltaTexCoords;
-        // get depthmap value at current texture coordinates
-        currentDepthMapValue = texture(depthMap, currentTexCoords).r;  
-        // get depth of next layer
-        currentLayerDepth += layerDepth;  
-    }
+//    while(currentLayerDepth < currentDepthMapValue)
+//    {
+//        // shift texture coordinates along direction of P
+//        currentTexCoords -= deltaTexCoords;
+//        // get depthmap value at current texture coordinates
+//        currentDepthMapValue = texture(material.texture_height, currentTexCoords).r;  
+//        // get depth of next layer
+//        currentLayerDepth += layerDepth;  
+//    }
     
     // get texture coordinates before collision (reverse operations)
     vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
 
     // get depth after and before collision for linear interpolation
     float afterDepth  = currentDepthMapValue - currentLayerDepth;
-    float beforeDepth = texture(depthMap, prevTexCoords).r - currentLayerDepth + layerDepth;
+    float beforeDepth = texture(material.texture_height, prevTexCoords).r - currentLayerDepth + layerDepth;
  
     // interpolation of texture coordinates
     float weight = afterDepth / (afterDepth - beforeDepth);
@@ -63,16 +98,16 @@ void main()
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
     vec2 texCoords = fs_in.TexCoords;
     
-    texCoords = ParallaxMapping(fs_in.TexCoords,  viewDir);       
-    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-        discard;
+//    texCoords = ParallaxMapping(fs_in.TexCoords, viewDir);       
+//    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+//        discard;
 
     // obtain normal from normal map
-    vec3 normal = texture(normalMap, texCoords).rgb;
+    vec3 normal = texture(material.texture_normal, texCoords).rgb;
     normal = normalize(normal * 2.0 - 1.0);   
    
     // get diffuse color
-    vec3 color = texture(diffuseMap, texCoords).rgb;
+    vec3 color = texture(material.texture_diffuse, texCoords).rgb;
     // ambient
     vec3 ambient = 0.1 * color;
     // diffuse

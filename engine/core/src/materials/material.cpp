@@ -208,6 +208,9 @@ void engine::Material::loadTextures()
 
         unsigned int normalMapId = hasNormalMap() ? engine::Texture::loadTexture(getNormalTexPath(), true, false) : 0;
         textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+
+        unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(getHeightTexPath(), true, false) : 0;
+        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
     }
 }
 
@@ -252,7 +255,7 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     }
     else
     {
-        textures.reserve(3);
+        textures.reserve(4);
         
         engine::Texture::loadTextureAsync(getDiffuseTexPath());
         engine::Texture::loadTextureAsync(getSpecularTexPath());

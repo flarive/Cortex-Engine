@@ -52,11 +52,11 @@ void engine::ParallaxRenderer::setup(int width, int height, std::shared_ptr<Came
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
-    parallaxShader.use();
-    parallaxShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    parallaxShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-    parallaxShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    parallaxShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    //parallaxShader.use();
+    //parallaxShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    //parallaxShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    //parallaxShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    //parallaxShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     
 
 
@@ -121,12 +121,13 @@ void engine::ParallaxRenderer::loop(int width, int height, std::shared_ptr<Camer
     parallaxShader.setMat4("projection", projection);
     parallaxShader.setMat4("view", view);
     parallaxShader.setVec3("viewPos", camera->position);
-    parallaxShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    parallaxShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
-    parallaxShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    parallaxShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    //parallaxShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    //parallaxShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    //parallaxShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    //parallaxShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
-
+    parallaxShader.setFloat("heightScale", 0.5f);
+    
 
 
     // update user stuffs
@@ -182,11 +183,11 @@ void engine::ParallaxRenderer::setLightsCount(unsigned short pointLightCount, un
     m_areaLightCount = areaLightCount;
 
     auto setCounts = [this](Shader& sh) {
-        sh.use();
-        sh.setInt("pointLightsCount", m_pointLightCount);
-        sh.setInt("dirLightsCount", m_dirLightCount);
-        sh.setInt("spotLightsCount", m_spotLightCount);
-        sh.setInt("areaLightsCount", m_areaLightCount);
+        //sh.use();
+        //sh.setInt("pointLightsCount", m_pointLightCount);
+        //sh.setInt("dirLightsCount", m_dirLightCount);
+        //sh.setInt("spotLightsCount", m_spotLightCount);
+        //sh.setInt("areaLightsCount", m_areaLightCount);
         };
 
     setCounts(parallaxShader);

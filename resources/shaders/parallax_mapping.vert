@@ -1,9 +1,11 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 aTexCoords;
-layout (location = 3) in vec3 aTangent;
-layout (location = 4) in vec3 aBitangent;
+layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
+layout (location = 1) in vec3 aNormal; // the normal variable has attribute position 1
+layout (location = 2) in vec2 aTexCoords; // the uv variable has attribute position 2
+layout (location = 3) in vec3 aTangents; // the tangent variable has attribute position 3
+layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
+
+
 
 out VS_OUT {
     vec3 FragPos;
@@ -25,8 +27,8 @@ void main()
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
     vs_out.TexCoords = aTexCoords;   
     
-    vec3 T = normalize(mat3(model) * aTangent);
-    vec3 B = normalize(mat3(model) * aBitangent);
+    vec3 T = normalize(mat3(model) * aTangents);
+    vec3 B = normalize(mat3(model) * aBitangents);
     vec3 N = normalize(mat3(model) * aNormal);
     mat3 TBN = transpose(mat3(T, B, N));
 

@@ -255,12 +255,16 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     ShaderType type = shader.getShaderType();
     ShaderType typeTesselation = shaderTessellation.getShaderType();
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
     {
         shader.use();
         shader.setVec3("lightPos", light->getPosition());
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        shader.setBool("enableShadows", enableShadows);
+
+        if (type != ShaderType::Parallax)
+        {
+            shader.setBool("enableShadows", enableShadows);
+        }
     }
     
     if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
@@ -362,16 +366,22 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     ShaderType type = shader.getShaderType();
     ShaderType typeTesselation = shaderTessellation.getShaderType();
     
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
     {
         shader.use();
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         shader.setVec3("lightPos", light->getPosition());
         shader.setVec3("viewPos", m_camera->position);
-        shader.setBool("enableShadows", enableShadows);
-        shader.setFloat("far_plane", far_plane);
+
+        if (type != ShaderType::Parallax)
+        {
+            shader.setBool("enableShadows", enableShadows);
+            shader.setFloat("far_plane", far_plane);
+        }
     }
+
+
     
     if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
     {
@@ -392,12 +402,14 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
 
-    shader.use();
-    shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    if (shader.getShaderType() != ShaderType::Parallax)
+    {
+        shader.use();
+        shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
 
-    shaderTessellation.use();
-    shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-
+        shaderTessellation.use();
+        shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    }
 
     // render Depth map to quad for visual debugging
     // ---------------------------------------------

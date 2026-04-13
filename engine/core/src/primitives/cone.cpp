@@ -123,14 +123,6 @@ void engine::Cone::geometrySetup()
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, bitangent));
     glEnableVertexAttribArray(4);
 
-    // Bones ids (not really needed here)
-    //glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
-    //glEnableVertexAttribArray(5);
-
-    //// Bones weights (not really needed here)
-    //glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
-    //glEnableVertexAttribArray(6);
-
     glBindVertexArray(0);
 }
 

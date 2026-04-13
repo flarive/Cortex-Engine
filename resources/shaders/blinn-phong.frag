@@ -23,13 +23,15 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-
+    float heightScale;
 
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
     bool canCastShadows;
     bool canReceiveShadows;
+
+    bool useParallaxMapping;
 }; 
 
 struct DirLight {
@@ -758,6 +760,49 @@ vec3 sampleOffsets[SAMPLE_COUNT] = vec3[](
     );
 
 
+vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
+{
+    // Prevent division instability at grazing angles
+    viewDir.z = max(viewDir.z, 0.05);
+
+    // Number of layers
+    const float minLayers = 8.0;
+    const float maxLayers = 32.0;
+    float numLayers = mix(
+        maxLayers,
+        minLayers,
+        abs(dot(vec3(0.0, 0.0, 1.0), viewDir))
+    );
+
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+
+    // Direction & per-layer texcoord shift
+    vec2 P = viewDir.xy / viewDir.z * material.heightScale;
+    vec2 deltaTexCoords = P / numLayers;
+
+    vec2 currentTexCoords = texCoords;
+    float depthMapValue = material.has_texture_height_map
+        ? texture(material.texture_height, currentTexCoords).r
+        : 0.0;
+
+    // --- Steep Parallax Loop ---
+    for (int i = 0; i < int(numLayers); ++i)
+    {
+        if (currentLayerDepth >= depthMapValue)
+            break;
+
+        currentTexCoords -= deltaTexCoords;
+        depthMapValue = material.has_texture_height_map
+            ? texture(material.texture_height, currentTexCoords).r
+            : 0.0;
+
+        currentLayerDepth += layerDepth;
+    }
+
+    return currentTexCoords;
+}
+
 
 void main()
 {
@@ -815,6 +860,14 @@ else
     }
 
     vec3 viewDir = normalize(viewPos - l_FragPos);
+
+    //vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    l_TexCoords = material.useParallaxMapping && material.has_texture_height_map ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
+    
+//    if (l_TexCoords.x < 0.0 || l_TexCoords.x > 1.0 || l_TexCoords.y < 0.0 || l_TexCoords.y > 1.0)
+//    {
+//        discard;
+//    }
 
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight

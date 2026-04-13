@@ -431,41 +431,41 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     return shadow;
 }
 
-float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
-{
-    // Transform fragment position to light space
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords = projCoords * 0.5 + 0.5;
-
-    // If outside shadow map, return no shadow
-    if (projCoords.z > 1.0)
-        return 0.0;
-
-    // Compute light direction
-    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
-
-    // Compute bias (resolution-independent)
-    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
-
-    // Optional: scale bias by shadow map texel size for directional lights
-    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
-    bias += length(texelSize) * 0.5;
-
-    // Percentage-Closer Filtering (3x3)
-    float shadow = 0.0;
-    for (int x = -1; x <= 1; ++x) {
-        for (int y = -1; y <= 1; ++y) {
-            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-            shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
-        }
-    }
-    shadow /= 9.0;
-
-    // Apply shadow intensity and clamp
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
-
-    return shadow;
-}
+//float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 lightPos)
+//{
+//    // Transform fragment position to light space
+//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+//    projCoords = projCoords * 0.5 + 0.5;
+//
+//    // If outside shadow map, return no shadow
+//    if (projCoords.z > 1.0)
+//        return 0.0;
+//
+//    // Compute light direction
+//    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+//
+//    // Compute bias (resolution-independent)
+//    float bias = max(0.005 * (1.0 - dot(normalize(fs_in.Normal), lightDir)), 0.0005);
+//
+//    // Optional: scale bias by shadow map texel size for directional lights
+//    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
+//    bias += length(texelSize) * 0.5;
+//
+//    // Percentage-Closer Filtering (3x3)
+//    float shadow = 0.0;
+//    for (int x = -1; x <= 1; ++x) {
+//        for (int y = -1; y <= 1; ++y) {
+//            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+//            shadow += (projCoords.z - bias > pcfDepth) ? 1.0 : 0.0;
+//        }
+//    }
+//    shadow /= 9.0;
+//
+//    // Apply shadow intensity and clamp
+//    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+//
+//    return shadow;
+//}
 
 float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
 {

@@ -91,7 +91,7 @@ void MyScene12::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>();
+    auto myPlane = make_shared<Plane>(true); // TODO why should i have to flip normals to have shadows ???
     auto matPlane = make_shared<PBRMaterial>(Color(0.2f),
         "textures/pbr/painted-wood/PaintedWood_Color.jpg",
         "textures/pbr/painted-wood/PaintedWood_Normal.jpg",

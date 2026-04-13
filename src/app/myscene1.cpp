@@ -50,7 +50,7 @@ void MyScene1::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>();
+    auto myPlane = make_shared<Plane>(true);
     myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
     auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");

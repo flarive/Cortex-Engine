@@ -23,7 +23,7 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-
+    float heightScale;
 
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
@@ -48,7 +48,7 @@ uniform Material material;
 
 
 
-uniform float heightScale;
+
 
 //vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 //{ 
@@ -110,7 +110,7 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / viewDir.z * heightScale;
+    vec2 P = viewDir.xy / viewDir.z * material.heightScale;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;

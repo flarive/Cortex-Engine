@@ -28,13 +28,15 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-
+    float heightScale;
 
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
     bool canCastShadows;
     bool canReceiveShadows;
+
+    bool useParallaxMapping;
 }; 
 
 uniform Material material;

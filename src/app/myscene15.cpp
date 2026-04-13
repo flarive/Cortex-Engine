@@ -62,15 +62,11 @@ void MyScene15::init()
     // ground
     auto myPlane = make_shared<Plane>();
     myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg"), UvMapping(1.0f));
-    auto trsPlane = Transform(vec3(1.0f, -0.5f, -1.0f), vec3(2.0f), vec3(0.0f, 25.0f, 0.0f));
+    auto trsPlane = Transform(vec3(1.0f, -0.5f, -1.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
-
-
-
-
 
 
     // sphere

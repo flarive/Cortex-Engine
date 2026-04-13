@@ -258,7 +258,10 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
     {
         shader.use();
-        shader.setVec3("lightPos", light->getPosition());
+
+        if (type != ShaderType::PBR)
+            shader.setVec3("lightPos", light->getPosition());
+
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
         if (type != ShaderType::Parallax)
@@ -371,13 +374,19 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.use();
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-        shader.setVec3("lightPos", light->getPosition());
+
+        if (type != ShaderType::PBR)
+        {
+            shader.setVec3("lightPos", light->getPosition());
+            shader.setFloat("far_plane", far_plane);
+        }
+
         shader.setVec3("viewPos", m_camera->position);
 
         if (type != ShaderType::Parallax)
         {
             shader.setBool("enableShadows", enableShadows);
-            shader.setFloat("far_plane", far_plane);
+            
         }
     }
 
@@ -402,7 +411,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
 
-    if (shader.getShaderType() != ShaderType::Parallax)
+    if (shader.getShaderType() == ShaderType::BlinnPhong)
     {
         shader.use();
         shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);

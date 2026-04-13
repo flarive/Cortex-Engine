@@ -90,7 +90,7 @@ void MyScene3::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>();
+    auto myPlane = make_shared<Plane>(true); // TODO why should i have to flip normals to have shadows ???
     auto matPlane = make_shared<PBRMaterial>(Color(1.0f),
         "models/sphere/cliff/albedo.jpg",
         "models/sphere/cliff/normal.jpg",

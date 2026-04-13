@@ -9,7 +9,7 @@ namespace engine
     class Plane final : public Primitive
     {
     public:
-        Plane(bool _flipNormals = true, const glm::vec3& _position = glm::vec3());
+        Plane(bool _flipNormals = false, const glm::vec3& _position = glm::vec3());
         ~Plane() = default;
 
         void setup() override;

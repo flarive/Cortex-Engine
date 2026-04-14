@@ -135,7 +135,7 @@ namespace engine
         float m_normalIntensity{ 1.0f };
         float m_ambientIntensity{ 1.0f };
         float m_emissiveIntensity{ 1.0f };
-        float m_parallaxIntensity{ 0.05f };
+        float m_parallaxIntensity{ -0.01f };
 
 
         bool m_useParallaxMapping{ false };

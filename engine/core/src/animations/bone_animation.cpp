@@ -11,7 +11,7 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 
 	m_ticksPerSecond = static_cast<unsigned int>(animation->mTicksPerSecond > 0 ? animation->mTicksPerSecond : 1000.0); // mTicksPerSecond = 1000 => ticks are in milliseconds
 	m_duration = static_cast<float>(animation->mDuration); // duration in ticks
-	m_durationInSeconds = static_cast<unsigned int>(m_duration / m_ticksPerSecond);
+	m_durationInSeconds = m_duration / m_ticksPerSecond;
 	m_desiredFPS = computeFPS(animation); // usually 30 FPS for mixamo animations
 	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 

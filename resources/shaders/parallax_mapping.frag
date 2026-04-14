@@ -110,7 +110,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / viewDir.z * material.heightScale;
+    //vec2 P = viewDir.xy / viewDir.z * material.heightScale;
+    vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;
@@ -141,10 +142,10 @@ void main()
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
     vec2 texCoords = SteepParallaxMapping(fs_in.TexCoords, viewDir);
     
-//    if (texCoords.x < 0.0 || texCoords.x > 1.0 || texCoords.y < 0.0 || texCoords.y > 1.0)
-//    {
-//        discard;
-//    }
+    if (texCoords.x < 0.0 || texCoords.x > 1.0 || texCoords.y < 0.0 || texCoords.y > 1.0)
+    {
+        discard;
+    }
 
 
 

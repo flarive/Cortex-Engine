@@ -778,7 +778,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / viewDir.z * material.heightScale;
+    //vec2 P = viewDir.xy / viewDir.z * material.heightScale;
+    vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;
@@ -862,8 +863,7 @@ else
     // offset texture coordinates with Parallax Mapping
     //vec3 viewDir = normalize(viewPos - l_FragPos);
     vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    //l_TexCoords = material.useParallaxMapping && material.has_texture_height_map ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
-    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(fs_in.TexCoords, viewDir) : fs_in.TexCoords;
+    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
 
 
     // == =====================================================

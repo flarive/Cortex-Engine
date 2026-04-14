@@ -6,7 +6,7 @@ using namespace engine;
 
 MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::PBR,
+        .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -34,7 +34,7 @@ void MyScene15::init()
 
     //auto trsLight2 = Transform{ {0.0f, 10.0f, 2.0f} };
     //auto light2 = make_shared<PointLight>();
-    //light2->setIntensity(50.0f);
+    //light2->setIntensity(5.0f);
     //auto entityLight2 = make_shared<Entity>("Light2");
     //entityLight2->addComponent<TransformComponent>(trsLight2);
     //entityLight2->addComponent<LightComponent>(light2);
@@ -44,14 +44,14 @@ void MyScene15::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(2.0f);
-    light1->setCutoff(12.0f);
-    light1->setOuterCutoff(38.0f);
+    light1->setIntensity(0.5f);
+    light1->setCutoff(10.0f);
+    light1->setOuterCutoff(18.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(false);
+    light1->setUseAttenuation(true);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
@@ -64,7 +64,7 @@ void MyScene15::init()
     auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
     matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(1.0f));
-    auto trsPlane = Transform(vec3(1.0f, -0.5f, -1.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(1.5f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -152,9 +152,9 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
     }
 
     if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        incrementParallaxIntensity(-0.05f);
+        incrementParallaxIntensity(-0.01f);
     else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        incrementParallaxIntensity(0.05f);
+        incrementParallaxIntensity(0.01f);
 }
 
 void MyScene15::mouse_callback(double xposIn, double yposIn)
@@ -224,6 +224,19 @@ void MyScene15::incrementParallaxIntensity(float intensity)
     if (sphere)
     {
         if (auto component = sphere->getComponent<PrimitiveComponent>())
+        {
+            if (auto material = component->getPrimitive()->getMaterial())
+            {
+                float current = material->getParallaxIntensity();
+                material->setParallaxIntensity(current + intensity);
+            }
+        }
+    }
+
+    auto plane = getEntityManager().findEntityByName("MyPlane");
+    if (plane)
+    {
+        if (auto component = plane->getComponent<PrimitiveComponent>())
         {
             if (auto material = component->getPrimitive()->getMaterial())
             {

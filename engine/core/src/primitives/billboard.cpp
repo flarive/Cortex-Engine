@@ -17,7 +17,7 @@ void engine::Billboard::setup()
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 {
-    m_material = material; // Store material reference
+    Primitive::setMaterial(material);
 
     const UvMapping uv{};
     setup(material, uv);
@@ -25,7 +25,7 @@ void engine::Billboard::setup(const std::shared_ptr<Material>& material)
 
 void engine::Billboard::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
-    m_material = material;
+    Primitive::setMaterial(material);
     m_uvScale = uv.getUvScale();
 
     geometrySetup(); // Geometry setup
@@ -112,14 +112,17 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
                 return;
             }
 
-            
-            
-
             if (type == ShaderType::BlinnPhong)
             {
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());
                 shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
+            }
+
+            if (type == ShaderType::BlinnPhong || type == ShaderType::Parallax)
+            {
+                shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+                shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
             }
 
             shader.setBool("material.canCastShadows", canCastShadows());

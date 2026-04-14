@@ -859,15 +859,12 @@ else
         norm = normalize(l_Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
     }
 
-    vec3 viewDir = normalize(viewPos - l_FragPos);
+    // offset texture coordinates with Parallax Mapping
+    //vec3 viewDir = normalize(viewPos - l_FragPos);
+    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    //l_TexCoords = material.useParallaxMapping && material.has_texture_height_map ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
+    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(fs_in.TexCoords, viewDir) : fs_in.TexCoords;
 
-    //vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    l_TexCoords = material.useParallaxMapping && material.has_texture_height_map ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
-    
-//    if (l_TexCoords.x < 0.0 || l_TexCoords.x > 1.0 || l_TexCoords.y < 0.0 || l_TexCoords.y > 1.0)
-//    {
-//        discard;
-//    }
 
     // == =====================================================
     // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
@@ -885,10 +882,10 @@ else
     //vec3 mDiffuse = ToLinear(texture(material.texture_diffuse, fs_in.TexCoords).rgb); // gamma correction
     //vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
     
-    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, l_TexCoords).rgb : vec3(0);
+    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, l_TexCoords).rgb : vec3(0);
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0);
 
 	vec3 N = normalize(l_Normal);
 	vec3 V = normalize(viewPos - l_FragPos);
@@ -915,19 +912,19 @@ else
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, l_FragPos, l_TexCoords, viewDir);
+            result += CalcPointLight(pointLights[i], norm, l_FragPos, ll_TexCoords, viewDir);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, l_TexCoords, viewDir, l_FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], norm, l_FragPos, ll_TexCoords, viewDir, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, l_TexCoords, viewDir, l_FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], norm, l_FragPos, ll_TexCoords, viewDir, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
@@ -937,7 +934,7 @@ else
     }
 
     // Sample the alpha value from the diffuse texture
-    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, l_TexCoords).a : 1.0;
+    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).a : 1.0;
 
     if (isTessellated)
     {

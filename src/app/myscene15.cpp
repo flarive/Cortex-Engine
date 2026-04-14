@@ -6,7 +6,7 @@ using namespace engine;
 
 MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::Parallax,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -44,9 +44,9 @@ void MyScene15::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(1.0f);
+    light1->setIntensity(2.0f);
     light1->setCutoff(12.0f);
-    light1->setOuterCutoff(48.0f);
+    light1->setOuterCutoff(38.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
@@ -61,7 +61,9 @@ void MyScene15::init()
 
     // ground
     auto myPlane = make_shared<Plane>();
-    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg"), UvMapping(1.0f));
+    auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    matPlane->useParallaxMapping(true);
+    myPlane->setup(matPlane, UvMapping(1.0f));
     auto trsPlane = Transform(vec3(1.0f, -0.5f, -1.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
@@ -71,7 +73,9 @@ void MyScene15::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
-    mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg"), UvMapping(1.0f));
+    auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    matSphere1->useParallaxMapping(true);
+    mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 0.0f), vec3(0.4f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
@@ -93,30 +97,64 @@ void MyScene15::init()
 
 void MyScene15::key_callback(int key, int scancode, int action, int mods)
 {
+    //Scene::key_callback(key, scancode, action, mods);
+
+    //// Detect Shift key state
+    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+
+    //if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
+    //else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(LEFT, deltaTime);
+
+    //if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
+    //else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+
+    //if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
+    //else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+
+    //if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
+    //else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    //    getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+
+
+
     Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
     bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
-    if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
-    else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
         getActiveCamera()->processKeyboard(LEFT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
+    }
 
-    if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
-    else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
         getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
+    }
 
-    if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
-    else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
         getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+    }
 
-    if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
-    else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    {
         getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+    }
+
+    if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementParallaxIntensity(-0.05f);
+    else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        incrementParallaxIntensity(0.05f);
 }
 
 void MyScene15::mouse_callback(double xposIn, double yposIn)
@@ -178,6 +216,22 @@ void MyScene15::updateUI()
 
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
+}
+
+void MyScene15::incrementParallaxIntensity(float intensity)
+{
+    auto sphere = getEntityManager().findEntityByName("MySphere1");
+    if (sphere)
+    {
+        if (auto component = sphere->getComponent<PrimitiveComponent>())
+        {
+            if (auto material = component->getPrimitive()->getMaterial())
+            {
+                float current = material->getParallaxIntensity();
+                material->setParallaxIntensity(current + intensity);
+            }
+        }
+    }
 }
 
 void MyScene15::clean()

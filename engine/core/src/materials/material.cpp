@@ -3,8 +3,6 @@
 #include <format>
 
 
-
-
 engine::Material::Material(std::vector<Texture> _textures, float _shininess)
     : textures(std::move(_textures)), m_shininess(_shininess)
 {
@@ -24,7 +22,6 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
     : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_metallicTexPath(metallicTexPath), m_roughnessTexPath(roughnessTexPath), m_aoTexPath(aoTexPath), m_heightTexPath(heightTexPath), m_shininess(shininess)
 {
 }
-
 
 bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
 {
@@ -200,6 +197,7 @@ void engine::Material::loadTextures()
     }
     else
     {
+        // BlinnPhong, Phong...
         unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(getDiffuseTexPath(), true, false) : 0;
         textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
 
@@ -214,12 +212,10 @@ void engine::Material::loadTextures()
     }
 }
 
-
 void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoaded)
 {
     textures.clear();
     
-
     unsigned int diffuseMapId{};
     unsigned int specularMapId{};
     unsigned int normalMapId{};

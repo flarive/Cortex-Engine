@@ -1,7 +1,30 @@
 #include "../../include/primitives/primitive.h"
 
+#include "../../include/singleton.h"
+#include "../../include/managers/log_manager.h"
+
 engine::Primitive::Primitive(const glm::vec3& _position) : m_position(_position)
 {
+}
+
+void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
+{
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    auto materialType = material->getTypeID();
+    if (sceneSettings.method == RenderMethod::Phong && materialType != MaterialType::blinnphong) {
+        logger.warn("BlinnPhong material expected when using Phong renderer !");
+    }
+    else if (sceneSettings.method == RenderMethod::BlinnPhong && materialType != MaterialType::blinnphong) {
+        logger.warn("BlinnPhong material expected when using BlinnPhong renderer !");
+    }
+    else if (sceneSettings.method == RenderMethod::PBR && materialType != MaterialType::PBR) {
+        logger.warn("PBR material expected when using PBR renderer !");
+    }
+
+    m_material = material;
 }
 
 void engine::Primitive::clean()

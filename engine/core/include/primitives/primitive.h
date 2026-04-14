@@ -84,6 +84,8 @@ namespace engine
         virtual std::vector<Vertex> generateVertices() = 0;
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
+        
+
 
 		float& getUvScale() { return m_uvScale; }
         void setUvScale(float uvScale) { m_uvScale = uvScale; }
@@ -130,6 +132,8 @@ namespace engine
 
     protected:
         bool m_isEnabled{ true };
+
+        void setMaterial(const std::shared_ptr<Material>& material);
 
 
     private:

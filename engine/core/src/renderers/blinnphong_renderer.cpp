@@ -160,9 +160,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
-    blinnPhongShader.setFloat("material.heightScale", 0.05f); // todo move in primitives
-    blinnPhongShader.setBool("material.useParallaxMapping", true); // todo move in primitives
-    
+
     blinnPhongShaderTessellation.use();
     blinnPhongShaderTessellation.setMat4("projection", projection);
     blinnPhongShaderTessellation.setMat4("view", view);

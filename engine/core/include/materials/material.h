@@ -79,22 +79,40 @@ namespace engine
         const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
 
 
-        const float getNormalIntensity() const { return m_normalIntensity; }
-        const float getHeightIntensity() const { return m_heightIntensity; }
+        
+        
+        float& getHeightIntensity() { return m_heightIntensity; }
+        void setHeightIntensity(float height) { m_heightIntensity = height; }
+        
         const float getShininessIntensity() const { return m_shininess; }
         const float getAmbientIntensity() const { return m_ambientIntensity; }
         const float getEmissiveIntensity() const { return m_emissiveIntensity; }
 
 
-        void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
-        void setHeightIntensity(float height) { m_heightIntensity = height; }
         void setShininessIntensity(float intensity) { m_shininess = intensity; }
         void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
+
+
+        // normal mapping
+        float& getNormalIntensity() { return m_normalIntensity; }
+        void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
+        
+        
+        
         void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
+
+
+        // parallax mapping
+        void useParallaxMapping(bool use) { m_useParallaxMapping = use; }
+        bool& useParallaxMapping() { return m_useParallaxMapping; }
+
+        float& getParallaxIntensity() { return m_parallaxIntensity; }
+        void setParallaxIntensity(float intensity) { m_parallaxIntensity = intensity; }
 
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
         void setCubeMapTexs(const std::vector<std::string>& faces);
+
 
 
     protected:
@@ -112,15 +130,17 @@ namespace engine
         std::string m_emissiveTexPath{};
 
 
+        // intensities
         float m_heightIntensity{};
         float m_normalIntensity{ 1.0f };
         float m_ambientIntensity{ 1.0f };
         float m_emissiveIntensity{ 1.0f };
+        float m_parallaxIntensity{ 0.05f };
+
+
+        bool m_useParallaxMapping{ false };
 
         float m_shininess{};
         bool m_allTexturesLoaded{};
-
-    private:
-        //GLint m_maxFragUnits{ 0 }; // max texture unit supported by current OpenGL driver (32 most of the time)
     };
 }

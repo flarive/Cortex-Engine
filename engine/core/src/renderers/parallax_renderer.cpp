@@ -126,8 +126,6 @@ void engine::ParallaxRenderer::loop(int width, int height, std::shared_ptr<Camer
     //parallaxShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     //parallaxShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
-    parallaxShader.setFloat("material.heightScale", 0.05f); // todo move in primitives
-    //parallaxShader.setBool("material.useParallaxMapping", true); // todo move in primitives
     
 
 

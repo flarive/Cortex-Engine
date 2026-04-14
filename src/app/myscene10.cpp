@@ -62,9 +62,6 @@ void MyScene10::init()
 
     // ground
     auto myPlane = make_shared<Plane>(false);
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/concrete_diffuse.png", "textures/concrete_specular.png", "textures/concrete_normal.png"), UvMapping(1.0f));
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(10.0f), "textures/concrete_diffuse.png"), UvMapping(6.0f));
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(1.0f), Colors::Red, Colors::Crimson, 1.0f));
     myPlane->setup(make_shared<PBRMaterial>(Color(10.0f), "textures/concrete_diffuse.png", "textures/concrete_normal.png"), UvMapping(6.0f));
     auto trsPlane = Transform(vec3(0.0f, 0.2f, 0.0f), vec3(16.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
@@ -125,7 +122,6 @@ void MyScene10::key_callback(int key, int scancode, int action, int mods)
         playOggFile();
 }
     
-
 void MyScene10::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);

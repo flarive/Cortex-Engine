@@ -15,7 +15,7 @@ void engine::Cone::setup()
 
 void engine::Cone::setup(const std::shared_ptr<Material>& material)
 {
-    m_material = material;
+    Primitive::setMaterial(material);
 
     const UvMapping uv{};
     setup(material, uv);
@@ -23,7 +23,7 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material)
 
 void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
-    m_material = material;
+    Primitive::setMaterial(material);
     m_uvScale = uv.getUvScale();
 
     geometrySetup();
@@ -173,6 +173,12 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());
                 shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
+            }
+
+            if (type == ShaderType::BlinnPhong || type == ShaderType::Parallax)
+            {
+                shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+                shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
             }
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());

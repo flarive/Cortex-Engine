@@ -43,9 +43,9 @@ std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvSca
 
     // Define positions (XZ plane, facing +Y)
     glm::vec3 pos1(-1.0f, 0.0f, -1.0f); // Bottom-left
-    glm::vec3 pos2(1.0f, 0.0f, -1.0f); // Bottom-right
-    glm::vec3 pos3(1.0f, 0.0f, 1.0f); // Top-right
-    glm::vec3 pos4(-1.0f, 0.0f, 1.0f); // Top-left
+    glm::vec3 pos2(1.0f, 0.0f, -1.0f);  // Bottom-right
+    glm::vec3 pos3(1.0f, 0.0f, 1.0f);   // Top-right
+    glm::vec3 pos4(-1.0f, 0.0f, 1.0f);  // Top-left
 
     // Texture coordinates (standard UV mapping)
     glm::vec2 uv1(0.0f, 0.0f);
@@ -56,7 +56,7 @@ std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvSca
     // Normal vector (facing up)
     glm::vec3 normal = flipNormal ? glm::vec3(0.0f, -1.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
 
-    // --- Compute tangent and bitangent for the first triangle ---
+    // --- Compute tangent and bitangent (once for the plane) ---
     glm::vec3 edge1 = pos2 - pos1;
     glm::vec3 edge2 = pos4 - pos1;
     glm::vec2 deltaUV1 = uv2 - uv1;
@@ -64,56 +64,33 @@ std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvSca
 
     float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
 
-    glm::vec3 tangent1, bitangent1;
-    tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-    tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-    tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-    tangent1 = glm::normalize(tangent1);
+    glm::vec3 tangent, bitangent;
+    tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+    tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+    tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+    tangent = glm::normalize(tangent);
 
-    bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-    bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-    bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-    bitangent1 = glm::normalize(bitangent1);
-
-    // --- Compute tangent and bitangent for the second triangle ---
-    edge1 = pos3 - pos2;
-    edge2 = pos4 - pos2;
-    deltaUV1 = uv3 - uv2;
-    deltaUV2 = uv4 - uv2;
-
-    f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-    glm::vec3 tangent2, bitangent2;
-    tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-    tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-    tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-    tangent2 = glm::normalize(tangent2);
-
-    bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-    bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-    bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-    bitangent2 = glm::normalize(bitangent2);
-
+    bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+    bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+    bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+    bitangent = glm::normalize(bitangent);
 
     if (flipNormal) {
-        tangent1 = -tangent1;
-        bitangent1 = -bitangent1;
-        tangent2 = -tangent2;
-        bitangent2 = -bitangent2;
+        tangent = -tangent;
+        bitangent = -bitangent;
     }
 
-    // Corrected CCW winding for upward (+Y) facing plane
-    vertices.emplace_back(pos1, normal, uv1, tangent1, bitangent1);
-    vertices.emplace_back(pos4, normal, uv4, tangent1, bitangent1);
-    vertices.emplace_back(pos2, normal, uv2, tangent1, bitangent1);
+    // CCW winding for upward (+Y) facing plane
+    vertices.emplace_back(pos1, normal, uv1, tangent, bitangent);
+    vertices.emplace_back(pos4, normal, uv4, tangent, bitangent);
+    vertices.emplace_back(pos2, normal, uv2, tangent, bitangent);
 
-    vertices.emplace_back(pos2, normal, uv2, tangent2, bitangent2);
-    vertices.emplace_back(pos4, normal, uv4, tangent2, bitangent2);
-    vertices.emplace_back(pos3, normal, uv3, tangent2, bitangent2);
+    vertices.emplace_back(pos2, normal, uv2, tangent, bitangent);
+    vertices.emplace_back(pos4, normal, uv4, tangent, bitangent);
+    vertices.emplace_back(pos3, normal, uv3, tangent, bitangent);
 
     return vertices;
 }
-
 
 std::vector<engine::Vertex> engine::Primitive::generateBillboardVertices(float uvScale)
 {

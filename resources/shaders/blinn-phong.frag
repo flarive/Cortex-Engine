@@ -1093,7 +1093,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     {
         vec3 color = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0);
 
-            
         vec3 parallaxNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).rgb : vec3(0);
         parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);  
 

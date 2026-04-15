@@ -60,7 +60,7 @@ void MyScene15::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>();
+    auto myPlane = make_shared<Plane>(false);
     auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
     matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(1.0f));

@@ -6,7 +6,6 @@
 
 #include "../../include/models/assimp_glm_helpers.h"
 
-
 #include "../../include/singleton.h"
 
 #include <filesystem>
@@ -247,11 +246,6 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     }
 
 
-
-
-
-
-
     float shininess{};
     if (AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) || shininess <= 0.0f)
     {
@@ -271,15 +265,19 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         // use material data embedded into model file
         if (textures.size() > 0)
         {
-            meshMaterial = std::make_shared<Material>(std::move(textures), shininess);
+            if (sceneSettings.method == RenderMethod::PBR)
+                meshMaterial = std::make_shared<PBRMaterial>(std::move(textures), shininess);
+            else
+                meshMaterial = std::make_shared<BlinnPhongMaterial>(std::move(textures), shininess);
+
             meshMaterial->setAllTexturesLoaded(true);
         }
         else
         {
-            meshMaterial = std::make_shared<Material>
-                (Color(ambient.r, ambient.g, ambient.b, ambient.a),
-                    Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a),
-                    Color(specular.r, specular.g, specular.b, specular.a), shininess);
+            if (sceneSettings.method == RenderMethod::PBR)
+                meshMaterial = std::make_shared<PBRMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
+            else
+                meshMaterial = std::make_shared<BlinnPhongMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
         }
     }
 

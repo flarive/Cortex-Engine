@@ -2,6 +2,8 @@
 
 #include "../misc/noncopyable.h"
 #include "../materials/material.h"
+#include "../materials/blinnphong_material.h"
+#include "../materials/pbr_material.h"
 #include "../texture.h"
 #include "mesh.h"
 #include "../shader.h"

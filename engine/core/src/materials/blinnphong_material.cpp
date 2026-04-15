@@ -1,5 +1,8 @@
 #include "../../include/materials/blinnphong_material.h"
 
+engine::BlinnPhongMaterial::BlinnPhongMaterial(std::vector<Texture> _textures, float _shininess)
+	: Material(std::move(_textures), _shininess)
+{}
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor) 
 	: Material(ambientColor)

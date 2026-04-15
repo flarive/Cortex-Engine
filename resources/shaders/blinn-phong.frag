@@ -845,13 +845,15 @@ else
     vec3 T = normalize(l_Tangent);
     vec3 B = normalize(l_Bitangent);
     vec3 N = normalize(l_Normal);
-    mat3 TBN = mat3(T, B, N);
+    
 
 
     
     vec3 norm;
     if (material.has_texture_normal_map && hasTangents)
     {
+        mat3 TBN = mat3(T, B, N);
+
         // Sample the normal map texture
         norm = texture(material.texture_normal, l_TexCoords).rgb;
         norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
@@ -862,19 +864,13 @@ else
         norm = normalize(l_Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
     }
 
- 
-
-    // offset texture coordinates with Parallax Mapping
-    //vec3 viewDir = normalize(viewPos - l_FragPos);
-    //vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-
     // Use world-space viewDir for lighting and shadows
     vec3 viewDirWS = normalize(viewPos - l_FragPos);
     
     // Use tangent-space viewDir only for parallax
     vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 
-
+    // offset texture coordinates with Parallax Mapping
     vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(l_TexCoords, viewDirTS) : l_TexCoords;
 
 
@@ -962,7 +958,7 @@ else
     }
     else
     {
-        FragColor = vec4(result, alpha + (height * vec3(0.0001))); // fake usage of height map because not needed for non tessellated objects
+        FragColor = vec4(result, alpha);// + (height * vec3(0.0001))); // fake usage of height map because not needed for non tessellated objects
     }
 
     // Discard transparent fragments (optional)

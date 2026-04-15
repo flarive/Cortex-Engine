@@ -840,19 +840,21 @@ else
     l_FragPosLightSpace = fs_in.FragPosLightSpace;
 #endif
     
+    
+    // Transform normal from tangent space to world space
+    vec3 T = normalize(l_Tangent);
+    vec3 B = normalize(l_Bitangent);
+    vec3 N = normalize(l_Normal);
+    mat3 TBN = mat3(T, B, N);
+
+
+    
     vec3 norm;
     if (material.has_texture_normal_map && hasTangents)
     {
         // Sample the normal map texture
         norm = texture(material.texture_normal, l_TexCoords).rgb;
         norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
-
-        // Transform normal from tangent space to world space
-        vec3 T = normalize(l_Tangent);
-        vec3 B = normalize(l_Bitangent);
-        vec3 N = normalize(l_Normal);
-        mat3 TBN = mat3(T, B, N);
-
         norm = normalize(TBN * norm) * material.normalMapIntensity;
     }
     else
@@ -860,10 +862,22 @@ else
         norm = normalize(l_Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
     }
 
+ 
+
     // offset texture coordinates with Parallax Mapping
     //vec3 viewDir = normalize(viewPos - l_FragPos);
-    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(l_TexCoords, viewDir) : l_TexCoords;
+    //vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
+    // Use world-space viewDir for lighting and shadows
+    vec3 viewDirWS = normalize(viewPos - l_FragPos);
+    
+    // Use tangent-space viewDir only for parallax
+    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
+
+    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(l_TexCoords, viewDirTS) : l_TexCoords;
+
+
 
 
     // == =====================================================
@@ -887,7 +901,6 @@ else
 
     vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0);
 
-	vec3 N = normalize(l_Normal);
 	vec3 V = normalize(viewPos - l_FragPos);
 	vec3 P = l_FragPos;
 	float dotNV = clamp(dot(N, V), 0.0, 1.0);
@@ -912,26 +925,29 @@ else
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, l_FragPos, ll_TexCoords, viewDir);
+            result += CalcPointLight(pointLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, ll_TexCoords, viewDir, l_FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, ll_TexCoords, viewDir, l_FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
     {
         if (areaLights[i].use)
-            result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+            result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
     }
+
+
+
 
     // Sample the alpha value from the diffuse texture
     float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).a : 1.0;
@@ -1066,10 +1082,38 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
+    vec3 ambient = vec3(0);
+    vec3 diffuse = vec3(0);
+    vec3 specular = vec3(0);
+
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+    if (!material.useParallaxMapping)
+    {
+        ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+        diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
+        specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+    }
+    else
+    {
+        vec3 color = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0);
+
+            
+        vec3 parallaxNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).rgb : vec3(0);
+        parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);  
+
+        // ambient
+        ambient = 0.1 * color;
+        // diffuse
+        vec3 lightDir2 = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        float diff2 = max(dot(lightDir2, parallaxNormal), 0.0);
+        diffuse = diff2 * color;
+        // specular    
+        vec3 reflectDir = reflect(-lightDir2, parallaxNormal);
+        vec3 halfwayDir2 = normalize(lightDir2 + viewDir);  
+        float spec2 = pow(max(dot(parallaxNormal, halfwayDir2), 0.0), 32.0);
+
+        specular = vec3(0.2) * spec2;
+    }
 
     // Apply attenuation and spotlight intensity
     ambient *= attenuation * intensity;
@@ -1096,9 +1140,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
 
     // Final lighting with shadow applied
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
-
-    // debug shadows
-    //FragColor = vec4(vec3(shadow), 1.0);
 
     return lighting;
 }

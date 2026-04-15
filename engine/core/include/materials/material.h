@@ -106,8 +106,8 @@ namespace engine
         void useParallaxMapping(bool use) { m_useParallaxMapping = use; }
         bool& useParallaxMapping() { return m_useParallaxMapping; }
 
-        float& getParallaxIntensity() { return m_parallaxIntensity; }
         void setParallaxIntensity(float intensity) { m_parallaxIntensity = intensity; }
+        float& getParallaxIntensity() { return m_parallaxIntensity; }
 
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 

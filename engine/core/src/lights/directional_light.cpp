@@ -39,7 +39,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         shader.use();
         shader.setBool(std::format("{}.use", base), m_enabled);
 
-        shader.setVec3(std::format("{}.position", base), m_position);
+        //shader.setVec3(std::format("{}.position", base), m_position);
 
         shader.setVec3(std::format("{}.ambient", base), ambient);
         shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);

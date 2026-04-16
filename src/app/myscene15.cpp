@@ -32,26 +32,41 @@ void MyScene15::init()
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
-    //auto trsLight2 = Transform{ {0.0f, 10.0f, 2.0f} };
+    // light
+    //auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
+    //auto light1 = make_shared<SpotLight>();
+    //light1->setIntensity(2.0f);
+    //light1->setCutoff(10.0f);
+    //light1->setOuterCutoff(18.0f);
+    //light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
+    //light1->setAmbientColor(Color(1.0f));
+    //light1->setDiffuseColor(Color(1.0f));
+    //light1->setSpecularColor(Color(1.0f));
+    //light1->setUseAttenuation(true);
+    //auto entityLight1 = make_shared<Entity>("Light1");
+    //entityLight1->addComponent<TransformComponent>(trsLight1);
+    //entityLight1->addComponent<LightComponent>(light1);
+    //getEntityManager().addChild(entityLight1);
+
+
+    //auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
     //auto light2 = make_shared<PointLight>();
-    //light2->setIntensity(5.0f);
+    //light2->setIntensity(2.0f);
+    //light2->setAmbientColor(Color(1.0f));
+    //light2->setDiffuseColor(Color(1.0f));
+    //light2->setSpecularColor(Color(1.0f));
     //auto entityLight2 = make_shared<Entity>("Light2");
     //entityLight2->addComponent<TransformComponent>(trsLight2);
     //entityLight2->addComponent<LightComponent>(light2);
     //getEntityManager().addChild(entityLight2);
 
-
-    // light
     auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
-    auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(2.0f);
-    light1->setCutoff(10.0f);
-    light1->setOuterCutoff(18.0f);
+    auto light1 = make_shared<DirectionalLight>();
+    light1->setIntensity(1.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(true);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);

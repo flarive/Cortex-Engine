@@ -304,8 +304,11 @@ void engine::ImGuiEditor::renderTabSettings()
     static float lastShadowIntensity = 1.5f;
     EditorHelper::renderDragFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
-    static float lastShadowMapsBiasFactor = 0.001f;
-    EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.0001f, 0.001f, 0.0001f, "%.3f", m_onSceneSettingChanged);
+    // Typical values(tune slightly per scene)
+    // material.shadowMapsBias = 0.02;   // indoor
+    // material.shadowMapsBias = 0.05;   // outdoor / large scenes
+    static float lastShadowMapsBiasFactor = 0.02f; // 0.001f
+    EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f", m_onSceneSettingChanged);
 
     static float lastShadowMapsBlur = 1.0f;
     EditorHelper::renderDragFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f", m_onSceneSettingChanged);

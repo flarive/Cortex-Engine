@@ -154,9 +154,9 @@ const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
 
@@ -337,6 +337,31 @@ vec2 rand(vec2 co)
     return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
 }
 
+
+float ComputeShadowBias(vec3 geomNormal, vec3 lightDir, float baseBias, float heightScale)
+{
+    float ndotl = max(dot(geomNormal, lightDir), 0.0);
+
+    // slope-based bias
+    float slopeBias = baseBias * (1.0 - ndotl);
+
+    // parallax / normal amplification
+    float parallaxBias = heightScale * 0.5 * baseBias;
+
+    // clamp to prevent peter-panning
+    return clamp(
+        slopeBias + parallaxBias,
+        baseBias * 0.25,
+        baseBias * 4.0
+    );
+}
+
+float ComputePointShadowBias(vec3 geomNormal, vec3 lightDir, float baseBias)
+{
+    float ndotl = max(dot(geomNormal, lightDir), 0.0);
+    return clamp(baseBias * (1.5 - ndotl), baseBias, baseBias * 6.0);
+}
+
 float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
     // perform perspective divide
@@ -438,50 +463,114 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
     return shadow;
 }
 
-float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
+//float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
+//{
+//    // Project fragment position from light space to [0,1]
+//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+//    projCoords = projCoords * 0.5 + 0.5;
+//
+//    // If outside the light frustum, no shadow
+//    if (projCoords.z > 1.0)
+//        return 0.0;
+//
+//    float currentDepth = projCoords.z;
+//
+//    // Dynamic bias based on angle to light
+//    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
+//
+//    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
+//
+//    // === Controls for softness ===
+//    float shadowSoftness = material.shadowMapsBlur;  // Larger => softer
+//    float diskRadius = shadowSoftness * texelSize.x;
+//
+//    float shadow = 0.0;
+//    int totalSamples = 0;
+//
+//    // Combine Poisson offsets + small PCF kernel
+//    for (int i = 0; i < 16; ++i)
+//    {
+//        vec2 poissonOffset = (poissonDisk16[i] - 0.5) * diskRadius;
+//
+//        for (int x = -1; x <= 1; ++x)
+//        {
+//            for (int y = -1; y <= 1; ++y)
+//            {
+//                vec2 offset = poissonOffset + vec2(x, y) * texelSize;
+//                float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
+//                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+//                totalSamples++;
+//            }
+//        }
+//    }
+//
+//    shadow /= float(totalSamples);
+//
+//    return shadow;
+//}
+
+float ShadowCalculationSoft(
+    vec4 fragPosLightSpace,
+    vec3 fragPos,
+    vec3 geomNormal,   // geometric normal
+    vec3 lightPos      // position for spot / direction dot computation
+)
 {
     // Project fragment position from light space to [0,1]
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // If outside the light frustum, no shadow
-    if (projCoords.z > 1.0)
+    // Outside light frustum -> no shadow
+    if (projCoords.z > 1.0 ||
+        projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0)
         return 0.0;
 
     float currentDepth = projCoords.z;
 
-    // Dynamic bias based on angle to light
-    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
+    // =========================================================
+    // Correct bias computation
+    // =========================================================
+    vec3 lightDir = normalize(lightPos - fragPos);
+
+    float bias = ComputeShadowBias(
+        normalize(geomNormal),
+        lightDir,
+        material.shadowMapsBias,
+        material.useParallaxMapping ? material.heightScale : 0.0
+    );
+
+    // Apply bias ONCE to receiver depth (PCF-correct)
+    float receiverDepth = currentDepth - bias;
 
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
-    // === Controls for softness ===
-    float shadowSoftness = material.shadowMapsBlur;  // Larger => softer
-    float diskRadius = shadowSoftness * texelSize.x;
+    // Softness control
+    float diskRadius = material.shadowMapsBlur * texelSize.x;
 
     float shadow = 0.0;
     int totalSamples = 0;
 
-    // Combine Poisson offsets + small PCF kernel
+    // =========================================================
+    // Poisson + 3x3 PCF
+    // =========================================================
     for (int i = 0; i < 16; ++i)
     {
-        vec2 poissonOffset = (poissonDisk16[i] - 0.5) * diskRadius;
+        vec2 poissonOffset = poissonDisk16[i] * diskRadius;
 
         for (int x = -1; x <= 1; ++x)
+        for (int y = -1; y <= 1; ++y)
         {
-            for (int y = -1; y <= 1; ++y)
-            {
-                vec2 offset = poissonOffset + vec2(x, y) * texelSize;
-                float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
-                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
-                totalSamples++;
-            }
+            vec2 offset = poissonOffset + vec2(x, y) * texelSize;
+            float closestDepth =
+                texture(texture_shadowMap, projCoords.xy + offset).r;
+
+            shadow += receiverDepth > closestDepth ? 1.0 : 0.0;
+            totalSamples++;
         }
     }
 
-    shadow /= float(totalSamples);
-
-    return shadow;
+    return shadow / float(totalSamples);
 }
 
 float rand2(vec2 co)
@@ -518,6 +607,9 @@ const vec2 poissonDiskPCSS[PCSS_SAMPLES] = vec2[](
     vec2( 0.19984126,  0.78641367),
     vec2( 0.14383161, -0.14100790)
 );
+
+
+
 
 
 // PCSS (Percentage-Closer Soft Shadows) is a PCF better variant
@@ -611,86 +703,180 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
 }
 
 
-
-float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
-{
-    // get vector between fragment position and light position
-    vec3 fragToLight = fragPos - lightPos;
-
-    // use the light to fragment vector to sample from the depth map    
-    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
-    // it is currently in linear range between [0,1]. Re-transform back to original value
-    closestDepth *= far_plane;
-    // now get current linear depth as the length between the fragment and light position
-    float currentDepth = length(fragToLight);
-
-    float bias = material.shadowMapsBias;
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-
-
-     
-     // PCF
-//     float shadow = 0.0;
-//     float bias = 0.05; 
-//     float samples = 4.0;
-//     float offset = 0.1;
-//     for(float x = -offset; x < offset; x += offset / (samples * 0.5))
-//     {
-//         for(float y = -offset; y < offset; y += offset / (samples * 0.5))
-//         {
-//             for(float z = -offset; z < offset; z += offset / (samples * 0.5))
-//             {
-//                 float closestDepth = texture(material.texture_shadowMapCube, fragToLight + vec3(x, y, z)).r; // use lightdir to lookup cubemap
-//                 closestDepth *= far_plane;   // Undo mapping [0;1]
-//                 if(currentDepth - bias > closestDepth)
-//                     shadow += 1.0;
-//             }
-//         }
-//     }
-//     shadow /= (samples * samples * samples);
-
-
-//    float shadow = 0.0;
-//    float bias = 0.15;
+//float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
+//{
+//    // Vector from light to fragment
+//    vec3 fragToLight = fragPos - lightPos;
+//
+//    // Current fragment depth (linear distance)
+//    float currentDepth = length(fragToLight);
+//
+//    // =========================================================
+//    // Fixed bias (do NOT use normal-mapped normals here)
+//    // =========================================================
+//    float bias = material.shadowMapsBias;
+//
+//    // Apply bias ONCE to the receiver depth
+//    float receiverDepth = currentDepth - bias;
+//
+//    // =========================================================
+//    // PCF sampling
+//    // =========================================================
 //    int samples = 20;
-//    float viewDistance = length(viewPos - fragPos);
-//    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
-//    for(int i = 0; i < samples; ++i)
-//    {
-//        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-//        closestDepth *= far_plane;   // undo mapping [0;1]
-//        if(currentDepth - bias > closestDepth)
-//            shadow += 1.0;
-//    }
-//    shadow /= float(samples);
-
-
 //    float shadow = 0.0;
-//    float bias = max(0.05 * (1.0 - dot(fs_in.Normal, normalize(lightPos - fs_in.FragPos))), 0.005); // angle-dependent bias
-//    int samples = 20;
+//
+//    // Scale sampling radius with distance to reduce swimming
 //    float viewDistance = length(viewPos - fragPos);
-//    float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0; // slightly smaller radius
+//    float diskRadius =
+//        (1.0 + viewDistance / far_plane) * 0.03;
 //
 //    for (int i = 0; i < samples; ++i)
 //    {
-//        vec3 sampleOffset = gridSamplingDisk[i] * diskRadius;
-//        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + sampleOffset).r;
-//        closestDepth *= far_plane; // undo [0,1] mapping
+//        vec3 sampleDir =
+//            fragToLight + gridSamplingDisk[i] * diskRadius;
 //
-//        if (currentDepth - bias > closestDepth)
-//            shadow += 1.0;
+//        float closestDepth =
+//            texture(texture_shadowMapCube, sampleDir).r;
+//
+//        // Convert back from [0,1] to world units
+//        closestDepth *= far_plane;
+//
+//        shadow += receiverDepth > closestDepth ? 1.0 : 0.0;
 //    }
 //
 //    shadow /= float(samples);
+//
+//    return shadow;
+//}
 
+float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos, vec3 geomNormal)
+{
+    // Vector from light to fragment
+    vec3 fragToLight = fragPos - lightPos;
+    float currentDepth = length(fragToLight);
 
+    // Direction from fragment to light (unit)
+    vec3 lightDir = normalize(-fragToLight);
 
-        
-    // display closestDepth as debug (to visualize depth cubemap)
-    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0); 
-        
+    // =========================================================
+    // Compute robust point-light bias
+    // =========================================================
+    float bias = ComputePointShadowBias(
+        normalize(geomNormal),
+        lightDir,
+        material.shadowMapsBias
+    );
+
+    // Apply bias ONCE to receiver depth (correct PCF usage)
+    float receiverDepth = currentDepth - bias;
+
+    // =========================================================
+    // PCF sampling
+    // =========================================================
+    int samples = 20;
+    float shadow = 0.0;
+
+    // Distance-based filter radius (reduces swimming)
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius =
+        (1.0 + viewDistance / far_plane) * 0.03;
+
+    for (int i = 0; i < samples; ++i)
+    {
+        vec3 sampleDir =
+            fragToLight + gridSamplingDisk[i] * diskRadius;
+
+        float closestDepth =
+            texture(texture_shadowMapCube, sampleDir).r;
+
+        // Convert from [0,1] back to world units
+        closestDepth *= far_plane;
+
+        shadow += receiverDepth > closestDepth ? 1.0 : 0.0;
+    }
+
+    shadow /= float(samples);
+
     return shadow;
 }
+
+//float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
+//{
+//    // get vector between fragment position and light position
+//    vec3 fragToLight = fragPos - lightPos;
+//
+//    // use the light to fragment vector to sample from the depth map    
+//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
+//    // it is currently in linear range between [0,1]. Re-transform back to original value
+//    closestDepth *= far_plane;
+//    // now get current linear depth as the length between the fragment and light position
+//    float currentDepth = length(fragToLight);
+//
+//    float bias = material.shadowMapsBias;
+//    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+//
+//     // PCF
+////     float shadow = 0.0;
+////     float bias = 0.05; 
+////     float samples = 4.0;
+////     float offset = 0.1;
+////     for(float x = -offset; x < offset; x += offset / (samples * 0.5))
+////     {
+////         for(float y = -offset; y < offset; y += offset / (samples * 0.5))
+////         {
+////             for(float z = -offset; z < offset; z += offset / (samples * 0.5))
+////             {
+////                 float closestDepth = texture(material.texture_shadowMapCube, fragToLight + vec3(x, y, z)).r; // use lightdir to lookup cubemap
+////                 closestDepth *= far_plane;   // Undo mapping [0;1]
+////                 if(currentDepth - bias > closestDepth)
+////                     shadow += 1.0;
+////             }
+////         }
+////     }
+////     shadow /= (samples * samples * samples);
+//
+//
+////    float shadow = 0.0;
+////    float bias = 0.15;
+////    int samples = 20;
+////    float viewDistance = length(viewPos - fragPos);
+////    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+////    for(int i = 0; i < samples; ++i)
+////    {
+////        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+////        closestDepth *= far_plane;   // undo mapping [0;1]
+////        if(currentDepth - bias > closestDepth)
+////            shadow += 1.0;
+////    }
+////    shadow /= float(samples);
+//
+//
+////    float shadow = 0.0;
+////    float bias = max(0.05 * (1.0 - dot(fs_in.Normal, normalize(lightPos - fs_in.FragPos))), 0.005); // angle-dependent bias
+////    int samples = 20;
+////    float viewDistance = length(viewPos - fragPos);
+////    float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0; // slightly smaller radius
+////
+////    for (int i = 0; i < samples; ++i)
+////    {
+////        vec3 sampleOffset = gridSamplingDisk[i] * diskRadius;
+////        float closestDepth = texture(material.texture_shadowMapCube, fragToLight + sampleOffset).r;
+////        closestDepth *= far_plane; // undo [0,1] mapping
+////
+////        if (currentDepth - bias > closestDepth)
+////            shadow += 1.0;
+////    }
+////
+////    shadow /= float(samples);
+//
+//
+//
+//        
+//    // display closestDepth as debug (to visualize depth cubemap)
+//    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0); 
+//        
+//    return shadow;
+//}
 
 
 float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
@@ -927,13 +1113,13 @@ else
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < areaLightsCount; i++)
@@ -958,7 +1144,7 @@ else
     }
     else
     {
-        FragColor = vec4(result, alpha);// + (height * vec3(0.0001))); // fake usage of height map because not needed for non tessellated objects
+        FragColor = vec4(result, alpha);
     }
 
     // Discard transparent fragments (optional)
@@ -968,119 +1154,262 @@ else
 
 
 
+// calculates the color when using a directional light.
+//vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
+//{
+//    // Light direction (inverted because light.direction points where the light is going)
+//    vec3 lightDir = normalize(-light.direction);
+//
+//    // Diffuse shading
+//    float diff = max(dot(normal, lightDir), 0.0);
+//
+//    // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
+//    vec3 halfwayDir = normalize(lightDir + viewDir);  
+//    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+//
+//    // Ambient, Diffuse, and Specular components
+//    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+//    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
+//    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+//
+//    
+//
+//    // Shadow Calculation (no light position needed)
+//    float shadow = 0.0;
+//    if (material.shadowCalculationMethod == 1)
+//        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+//    else if (material.shadowCalculationMethod == 2)
+//        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
+//    else if (material.shadowCalculationMethod == 3)
+//        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
+//
+//    // Apply shadow intensity for darker/lighter shadows
+//    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
+//    
+//    // Final lighting with shadow applied
+//    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
+//
+//    return lighting;
+//}
+
 
 // calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
+vec3 CalcDirLight(
+    DirLight light,
+    vec3 normal,        // shading normal (may be normal-mapped)
+    vec3 geoNormal,     // geometric normal (for shadow bias)
+    vec3 fragPos,
+    vec2 texCoords,
+    vec3 viewDir,
+    vec4 fragPosLightSpace
+)
 {
-    // Light direction (inverted because light.direction points where the light is going)
+    // =========================================================
+    // Light direction (directional light)
+    // =========================================================
     vec3 lightDir = normalize(-light.direction);
 
-    // Diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 ambient  = vec3(0.0);
+    vec3 diffuse  = vec3(0.0);
+    vec3 specular = vec3(0.0);
 
-    // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+    if (!material.useParallaxMapping)
+    {
+        // =========================================================
+        // NON‑PARALLAX PATH (world‑space lighting)
+        // =========================================================
+        float diff = max(dot(normal, lightDir), 0.0);
 
-    // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        float spec =
+            pow(max(dot(normal, halfwayDir), 0.0),
+                material.shininess);
 
-    // Shadow Calculation (no light position needed)
+        vec3 albedo =
+            material.has_texture_diffuse_map
+                ? texture(material.texture_diffuse, texCoords).rgb
+                : material.diffuse_color;
+
+        ambient  = light.ambient * albedo;
+        diffuse  = light.diffuse * diff * albedo;
+
+        specular =
+            light.specular *
+            spec *
+            (material.has_texture_specular_map
+                ? texture(material.texture_specular, texCoords).rgb
+                : material.specular_color);
+    }
+    else
+    {
+        // =========================================================
+        // PARALLAX PATH (tangent‑space lighting)
+        // =========================================================
+
+        // Albedo
+        vec3 color =
+            material.has_texture_diffuse_map
+                ? texture(material.texture_diffuse, texCoords).rgb
+                : material.diffuse_color;
+
+        // Tangent‑space normal
+        vec3 parallaxNormal =
+            material.has_texture_normal_map
+                ? texture(material.texture_normal, texCoords).rgb
+                : vec3(0.5, 0.5, 1.0);
+
+        parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);
+
+        // Tangent‑space light & view directions
+        vec3 lightDirTS =
+            normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+
+        vec3 viewDirTS =
+            normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
+        // Ambient
+        ambient = light.ambient * color;
+
+        // Diffuse (Lambert, tangent space)
+        float diffTS =
+            max(dot(parallaxNormal, lightDirTS), 0.0);
+
+        diffuse = light.diffuse * diffTS * color;
+
+        // Specular (Blinn‑Phong, tangent space)
+        vec3 halfwayTS = normalize(lightDirTS + viewDirTS);
+        float specTS =
+            pow(max(dot(parallaxNormal, halfwayTS), 0.0),
+                material.shininess);
+
+        specular = light.specular * specTS;
+    }
+
+    // =========================================================
+    // SHADOWS (geometric normal only)
+    // =========================================================
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
 
-    // Apply shadow intensity for darker/lighter shadows
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
-    
-    // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
 
-    return lighting;
+    // =========================================================
+    // FINAL LIGHTING
+    // =========================================================
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 
 // calculates the color when using a point light.
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
-    // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
+    // Light direction in world space (used for non-parallax path)
     vec3 lightDir = normalize(light.position - fragPos);
-    
-    // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
 
-    // specular shading
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    // World-space diffuse & specular (non-parallax)
+    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
-    // distance attenuation
+    // Distance attenuation
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float attenuation =
+        1.0 / (light.constant +
+               light.linear * distance +
+               light.quadratic * distance * distance);
 
-    
     vec3 ambient  = vec3(0.0);
-    vec3 diffuse  = vec3(0.0); // (Lambert)
-    vec3 specular = vec3(0.0); // (Blinn-Phong)
+    vec3 diffuse  = vec3(0.0);
+    vec3 specular = vec3(0.0);
+
 
     if (!material.useParallaxMapping)
     {
-        // Ambient, Diffuse, and Specular components
-        ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
-        diffuse = light.diffuse * max(diff, 0.1) * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)) : material.diffuse_color);
-        specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+        // ============================================================
+        // Non-parallax path (world-space lighting)
+        // ============================================================
+
+        vec3 albedo =
+            material.has_texture_diffuse_map
+                ? texture(material.texture_diffuse, texCoords).rgb
+                : material.diffuse_color;
+
+        ambient  = light.ambient * albedo;
+        diffuse  = light.diffuse * diff * albedo;
+
+        specular =
+            light.specular *
+            spec *
+            (material.has_texture_specular_map
+                ? texture(material.texture_specular, texCoords).rgb
+                : material.specular_color);
     }
     else
     {
+        // ============================================================
+        // Parallax-mapped path (tangent-space lighting)
+        // ============================================================
+
         // Albedo
-        vec3 color = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : material.diffuse_color;
+        vec3 color =
+            material.has_texture_diffuse_map
+                ? texture(material.texture_diffuse, texCoords).rgb
+                : material.diffuse_color;
 
         // Normal from normal map (tangent space)
-        vec3 parallaxNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).rgb : vec3(0.5, 0.5, 1.0);
+        vec3 parallaxNormal =
+            material.has_texture_normal_map
+                ? texture(material.texture_normal, texCoords).rgb
+                : vec3(0.5, 0.5, 1.0);
+
         parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);
 
         // Tangent-space light direction
-        vec3 lightDirTS = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        vec3 lightDirTS =
+            normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+
         // Tangent-space view direction
-        vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+        vec3 viewDirTS =
+            normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 
         // Ambient
         ambient = 0.1 * color;
-        // Diffuse
+
+        // Diffuse (Lambert)
         float diffTS = max(dot(parallaxNormal, lightDirTS), 0.0);
         diffuse = diffTS * color;
-        // Specular
+
+        // Specular (Blinn-Phong)
         vec3 halfwayTS = normalize(lightDirTS + viewDirTS);
         float specTS = pow(max(dot(parallaxNormal, halfwayTS), 0.0), material.shininess);
 
         specular = vec3(0.2) * specTS;
     }
 
-    float intensity = 1.0;
-    // apply attenuation
-    ambient *= attenuation * intensity;
-    diffuse *= attenuation * intensity;
-    specular *= attenuation * intensity;
+    // ============================================================
+    // Apply attenuation
+    // ============================================================
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
 
-    // calculate shadow
-    float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+    // ============================================================
+    // Point-light shadow (cubemap)
+    // ============================================================
+    float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position, normalize(normal)) : 0.0;
 
-    // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
-    
-    // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
 
-    return lighting;
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
     // Direction from fragment to light
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
@@ -1108,8 +1437,8 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
 
     vec3 ambient = vec3(0);
-    vec3 diffuse = vec3(0); // (Lambert)
-    vec3 specular = vec3(0); // (Blinn-Phong)
+    vec3 diffuse = vec3(0);
+    vec3 specular = vec3(0);
 
     // Ambient, Diffuse, and Specular components
     if (!material.useParallaxMapping)
@@ -1135,6 +1464,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
         vec3 reflectDir = reflect(-lightDir2, parallaxNormal);
         vec3 halfwayDir2 = normalize(lightDir2 + viewDir);  
         float spec2 = pow(max(dot(parallaxNormal, halfwayDir2), 0.0), 32.0);
+
         specular = vec3(0.2) * spec2;
     }
 
@@ -1148,7 +1478,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     if (material.shadowCalculationMethod == 1)
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
 

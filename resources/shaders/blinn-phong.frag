@@ -982,10 +982,41 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
+    vec3 ambient  = vec3(0.0);
+    vec3 diffuse  = vec3(0.0); // (Lambert)
+    vec3 specular = vec3(0.0); // (Blinn-Phong)
+
     // Ambient, Diffuse, and Specular components
-    vec3 ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
-    vec3 diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
-    vec3 specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+    if (!material.useParallaxMapping)
+    {
+        ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+        diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
+        specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+    }
+    else
+    {
+        // Albedo
+        vec3 color = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : material.diffuse_color;
+
+        // Tangent-space normal
+        vec3 parallaxNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).rgb : vec3(0.5, 0.5, 1.0);
+        parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);
+
+        // Tangent-space light direction
+        vec3 lightDirTS = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        // Tangent-space view direction
+        vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
+        // ambient
+        ambient = light.ambient * color;
+        // diffuse
+        float diffTS = max(dot(parallaxNormal, lightDirTS), 0.0);
+        diffuse = light.diffuse * diffTS * color;
+        // specular
+        vec3 halfwayTS = normalize(lightDirTS + viewDirTS);
+        float specTS = pow(max(dot(parallaxNormal, halfwayTS), 0.0), material.shininess);
+        specular = light.specular * specTS;
+    }
 
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
@@ -1005,12 +1036,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec
     return lighting;
 }
 
-
 // calculates the color when using a point light.
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir = normalize(lightPos - fragPos);
     
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
@@ -1082,7 +1112,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords,
 // Calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
-    // Direction from fragment to light
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
     vec3 lightDir = normalize(lightPos - fragPos);
 

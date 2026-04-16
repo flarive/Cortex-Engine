@@ -48,7 +48,6 @@ void MyScene15::init()
     //entityLight1->addComponent<LightComponent>(light1);
     //getEntityManager().addChild(entityLight1);
 
-
     //auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
     //auto light2 = make_shared<PointLight>();
     //light2->setIntensity(2.0f);

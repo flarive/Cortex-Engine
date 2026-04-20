@@ -154,9 +154,9 @@ const float LUT_BIAS  = 0.5/LUT_SIZE;
 
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
 
@@ -337,42 +337,67 @@ vec2 rand(vec2 co)
     return fract(sin(vec2(dot(co, vec2(12.9898, 78.233)), dot(co, vec2(39.3468, 11.135)))) * 43758.5453);
 }
 
-float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
-{
-    // perform perspective divide
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5 + 0.5;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(texture_shadowMap, projCoords.xy).r; 
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    // calculate bias (based on depth map resolution and slope)
-    vec3 n_normal = normalize(normal);
-    vec3 lightDir = normalize(lightPos - fragPos);
-    //float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
-    float bias = clamp(0.0005 * tan(acos(dot(n_normal, lightDir))), 0.0001, 0.01);
-    // check whether current frag pos is in shadow
-    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-    // PCF (shadow anti aliasing))
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
 
-    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-    if(projCoords.z > 1.0)
-        shadow = 0.0;
-        
-    return shadow;
+float ComputeShadowBias(vec3 geomNormal, vec3 lightDir, float baseBias, float heightScale)
+{
+    float ndotl = max(dot(geomNormal, lightDir), 0.0);
+
+    // slope-based bias
+    float slopeBias = baseBias * (1.0 - ndotl);
+
+    // parallax / normal amplification
+    float parallaxBias = heightScale * 0.5 * baseBias;
+
+    // clamp to prevent peter-panning
+    return clamp(
+        slopeBias + parallaxBias,
+        baseBias * 0.25,
+        baseBias * 4.0
+    );
 }
+
+float ComputePointShadowBias(vec3 geomNormal, vec3 lightDir, float baseBias)
+{
+    float ndotl = max(dot(geomNormal, lightDir), 0.0);
+    return clamp(baseBias * (1.5 - ndotl), baseBias, baseBias * 6.0);
+}
+
+//float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
+//{
+//    // perform perspective divide
+//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+//    // transform to [0,1] range
+//    projCoords = projCoords * 0.5 + 0.5;
+//    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+//    float closestDepth = texture(texture_shadowMap, projCoords.xy).r; 
+//    // get depth of current fragment from light's perspective
+//    float currentDepth = projCoords.z;
+//    // calculate bias (based on depth map resolution and slope)
+//    vec3 n_normal = normalize(normal);
+//    vec3 lightDir = normalize(lightPos - fragPos);
+//    //float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
+//    float bias = clamp(0.0005 * tan(acos(dot(n_normal, lightDir))), 0.0001, 0.01);
+//    // check whether current frag pos is in shadow
+//    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+//    // PCF (shadow anti aliasing))
+//    float shadow = 0.0;
+//    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
+//    for(int x = -1; x <= 1; ++x)
+//    {
+//        for(int y = -1; y <= 1; ++y)
+//        {
+//            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+//            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+//        }    
+//    }
+//    shadow /= 9.0;
+//
+//    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+//    if(projCoords.z > 1.0)
+//        shadow = 0.0;
+//        
+//    return shadow;
+//}
 
 // hard edged shadow calculation
 float ShadowCalculationSimple(vec4 fragPosLightSpace)
@@ -410,10 +435,22 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    float currentDepth = projCoords.z;
-    float shadow = 0.0;
-    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
+    // Outside light frustum -> no shadow
+    if (projCoords.z > 1.0 ||
+        projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0)
+        return 0.0;
 
+    float shadow = 0.0;
+
+    // Bias computation (to avoid shadow acne)
+    vec3 lightDir = normalize(lightPos - fragPos);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
+
+    // Apply bias ONCE to receiver depth (PCF-correct)
+    float currentDepth = projCoords.z;
+    float receiverDepth = currentDepth - bias;
+    
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
     float diskRadius = 1.0 * texelSize.x; // Tweak diskRadius to control softness
 
@@ -426,7 +463,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
             {
                 vec2 offset = poissonDisk16[i] * diskRadius + vec2(x, y) * texelSize;
                 float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
-                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+                shadow += receiverDepth > closestDepth ? 1.0 : 0.0;
             }
         }
     }
@@ -444,14 +481,19 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // If outside the light frustum, no shadow
-    if (projCoords.z > 1.0)
+    // Outside light frustum -> no shadow
+    if (projCoords.z > 1.0 ||
+        projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0)
         return 0.0;
 
-    float currentDepth = projCoords.z;
+    // Bias computation (to avoid shadow acne)
+    vec3 lightDir = normalize(lightPos - fragPos);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
 
-    // Dynamic bias based on angle to light
-    float bias = max(0.0005 * (1.0 - dot(normalize(normal), normalize(lightPos - fragPos))), 0.0001);
+    // Apply bias ONCE to receiver depth (PCF-correct)
+    float currentDepth = projCoords.z;
+    float receiverDepth = currentDepth - bias;
 
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
@@ -473,7 +515,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
             {
                 vec2 offset = poissonOffset + vec2(x, y) * texelSize;
                 float closestDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
-                shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+                shadow += receiverDepth > closestDepth ? 1.0 : 0.0;
                 totalSamples++;
             }
         }
@@ -521,28 +563,25 @@ const vec2 poissonDiskPCSS[PCSS_SAMPLES] = vec2[](
 
 
 // PCSS (Percentage-Closer Soft Shadows) is a PCF better variant
-// Crisp shadows (like Sun at noon):
-// float searchRadius = 4.0 * texelSize.x;
-// float filterRadius = penumbra * 18.0 * texelSize.x;
-// Realistic daylight:
-// float searchRadius = 5.0 * texelSize.x;
-// float filterRadius = penumbra * 30.0 * texelSize.x;
-// Very soft cloudy-day shadows:
-// float searchRadius = 7.0 * texelSize.x;
-// float filterRadius = penumbra * 55.0 * texelSize.x;
-float ShadowCalculationPCSS(vec4 fragPosLightSpace)
+float ShadowCalculationPCSS(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
 {
     // Project fragment from light space to shadow map UV
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    if (projCoords.z > 1.0)
+    // Outside light frustum -> no shadow
+    if (projCoords.z > 1.0 ||
+        projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0)
         return 0.0;
 
-    float currentDepth = projCoords.z;
+    // Bias computation (to avoid shadow acne)
+    vec3 lightDir = normalize(lightPos - fragPos);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
 
-    // Bias
-    float bias = material.shadowMapsBias; // 0.001
+    // Apply bias ONCE to receiver depth (PCF-correct)
+    float currentDepth = projCoords.z;
+    float receiverDepth = currentDepth - bias;
 
     // Shadow map texel size
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
@@ -554,7 +593,10 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     int blockerCount = 0;
 
     //float searchRadius = 3.0 * texelSize.x; // tighter
-    float searchRadius = 6.0 * texelSize.x; // broader penumbra
+    // Crisp shadows (like Sun at noon): float searchRadius = 4.0 * texelSize.x;
+    // Realistic daylight: float searchRadius = 5.0 * texelSize.x;
+    // Very soft cloudy-day shadows: float searchRadius = 7.0 * texelSize.x;
+    float searchRadius = 7.0 * texelSize.x; // broader penumbra
 
     for (int i = 0; i < PCSS_SAMPLES; ++i)
     {
@@ -582,7 +624,6 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     //float filterRadius = penumbra * 15.0 * texelSize.x; // crisp
     //float filterRadius = penumbra * 25.0 * texelSize.x; // medium soft
     //float filterRadius = penumbra * 50.0 * texelSize.x; // very soft
-
     float filterRadius = penumbra * material.shadowMapsBlur * texelSize.x; // very soft
 
     // =========================================================
@@ -599,10 +640,8 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     {
         vec2 disk = rot * poissonDiskPCSS[i];
         vec2 offset = disk * filterRadius;
-
         float sampleDepth = texture(texture_shadowMap, projCoords.xy + offset).r;
-
-        shadow += currentDepth - bias > sampleDepth ? 1.0 : 0.0;
+        shadow += receiverDepth > sampleDepth ? 1.0 : 0.0;
     }
 
     shadow /= float(PCSS_SAMPLES);
@@ -693,50 +732,50 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
 }
 
 
-float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
-{
-    float shadow = 0.0;
-	int samples = 19;
-
-    // get vector between fragment position and light position
-    vec3 fragToLight = fragPos - lightPos;
-
-    // use the light to fragment vector to sample from the depth map    
-    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
-    // it is currently in linear range between [0,1]. Re-transform back to original value
-    closestDepth *= far_plane;
-    // now get current linear depth as the length between the fragment and light position
-    float currentDepth = length(fragToLight);
-
-
-	// Angle-dependent bias
-	//float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-    float bias = material.shadowMapsBias; //0.001
-
-	// View-dependent disk radius
-	float viewDistance = length(viewPos - fragPos);
-	float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0;
-
-	// Procedural noise for jitter
-	vec2 noise = rand(gl_FragCoord.xy / screenSize);
-	float jitterStrength = 0.1;
-
-	for (int i = 0; i < samples; ++i)
-	{
-		vec3 offset = gridSamplingDisk[i];
-		offset.xy += noise * jitterStrength;
-		vec3 sampleDir = fragToLight + offset * diskRadius;
-
-		float closestDepth = texture(texture_shadowMapCube, sampleDir).r;
-		closestDepth *= far_plane;
-
-		if (currentDepth - bias > closestDepth)
-		shadow += 1.0;
-	}
-
-    shadow /= float(samples);
-    return shadow;
-}
+//float ShadowCalculationCubeMap2(vec3 fragPos, vec3 lightPos, vec3 normal, vec3 lightDir, vec2 screenSize)
+//{
+//    float shadow = 0.0;
+//	int samples = 19;
+//
+//    // get vector between fragment position and light position
+//    vec3 fragToLight = fragPos - lightPos;
+//
+//    // use the light to fragment vector to sample from the depth map    
+//    float closestDepth = texture(texture_shadowMapCube, fragToLight).r;
+//    // it is currently in linear range between [0,1]. Re-transform back to original value
+//    closestDepth *= far_plane;
+//    // now get current linear depth as the length between the fragment and light position
+//    float currentDepth = length(fragToLight);
+//
+//
+//	// Angle-dependent bias
+//	//float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+//    float bias = material.shadowMapsBias; //0.001
+//
+//	// View-dependent disk radius
+//	float viewDistance = length(viewPos - fragPos);
+//	float diskRadius = (1.0 + (viewDistance / far_plane)) / 30.0;
+//
+//	// Procedural noise for jitter
+//	vec2 noise = rand(gl_FragCoord.xy / screenSize);
+//	float jitterStrength = 0.1;
+//
+//	for (int i = 0; i < samples; ++i)
+//	{
+//		vec3 offset = gridSamplingDisk[i];
+//		offset.xy += noise * jitterStrength;
+//		vec3 sampleDir = fragToLight + offset * diskRadius;
+//
+//		float closestDepth = texture(texture_shadowMapCube, sampleDir).r;
+//		closestDepth *= far_plane;
+//
+//		if (currentDepth - bias > closestDepth)
+//		shadow += 1.0;
+//	}
+//
+//    shadow /= float(samples);
+//    return shadow;
+//}
 
 
 const int SAMPLE_COUNT = 16;
@@ -778,7 +817,6 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    //vec2 P = viewDir.xy / viewDir.z * material.heightScale;
     vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
     vec2 deltaTexCoords = P / numLayers;
 
@@ -895,51 +933,52 @@ else
     vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0);
-
-	vec3 V = normalize(viewPos - l_FragPos);
-	vec3 P = l_FragPos;
-	float dotNV = clamp(dot(N, V), 0.0, 1.0);
-
-    // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
-    uv = uv * LUT_SCALE + LUT_BIAS;
-
-    // get 4 parameters for inverse_M
-    vec4 t1 = texture(LTC1, uv);
-
-    // Get 2 parameters for Fresnel calculation
-    vec4 t2 = texture(LTC2, uv);
-
-    mat3 Minv = mat3(
-        vec3(t1.x, 0, t1.y),
-        vec3(  0,  1,    0),
-        vec3(t1.z, 0, t1.w)
-    );
-
     // Lighting
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS);
+            result += CalcPointLight(pointLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
     }
 
-    for (int i = 0; i < areaLightsCount; i++)
+    if (areaLightsCount > 0)
     {
-        if (areaLights[i].use)
-            result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+        vec3 V = normalize(viewPos - l_FragPos);
+	    vec3 P = l_FragPos;
+        float dotNV = clamp(dot(N, V), 0.0, 1.0);
+
+        // use roughness and sqrt(1-cos_theta) to sample M_texture
+        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0 - dotNV));
+        uv = uv * LUT_SCALE + LUT_BIAS;
+
+        // get 4 parameters for inverse_M
+        vec4 t1 = texture(LTC1, uv);
+
+        // Get 2 parameters for Fresnel calculation
+        vec4 t2 = texture(LTC2, uv);
+
+        mat3 Minv = mat3(
+            vec3(t1.x, 0, t1.y),
+            vec3(  0,  1,    0),
+            vec3(t1.z, 0, t1.w)
+        );
+
+        for (int i = 0; i < areaLightsCount; i++)
+        {
+            if (areaLights[i].use)
+                result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+        }
     }
 
 
@@ -958,7 +997,7 @@ else
     }
     else
     {
-        FragColor = vec4(result, alpha);// + (height * vec3(0.0001))); // fake usage of height map because not needed for non tessellated objects
+        FragColor = vec4(result, alpha);
     }
 
     // Discard transparent fragments (optional)
@@ -970,7 +1009,7 @@ else
 
 
 // calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
     // Light direction (inverted because light.direction points where the light is going)
     vec3 lightDir = normalize(-light.direction);
@@ -1021,23 +1060,23 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
     
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));// * color;
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
 
     return lighting;
 }
 
 // calculates the color when using a point light.
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir)
 {
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
     vec3 lightDir = normalize(lightPos - fragPos);
@@ -1110,7 +1149,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec2 texCoords,
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
 {
     // using lightPos instead of light.position (same but avoid having it removed by compiler because not used)
     vec3 lightDir = normalize(lightPos - fragPos);
@@ -1175,11 +1214,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec2 texCoords, v
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, normal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

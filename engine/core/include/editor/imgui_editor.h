@@ -113,7 +113,7 @@ namespace engine
 		int sceneSetting_shadowCalculationMethod{ static_cast<int>(ShadowCalculationMethod::PCFSoft) };
 		float sceneSetting_shadowIntensity{ 1.5f };
 		int sceneSetting_shadowMapTextureSize{ 2048 };
-		float sceneSetting_shadowMapBiasFactor{ 0.02f }; // 0.001f
+		float sceneSetting_shadowMapBiasFactor{ DEFAULT_SHADOW_MAPS_BIAS };
 		float sceneSetting_shadowMapBlur{ 1.0f };
 
 		// guizmo

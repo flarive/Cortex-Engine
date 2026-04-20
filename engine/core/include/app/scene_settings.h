@@ -41,6 +41,8 @@ namespace engine
 		Bloom = 10
     };
 
+    const float DEFAULT_SHADOW_MAPS_BIAS = 0.001f;
+
     struct SceneSettings final
     {
         RenderMethod method{};
@@ -58,7 +60,7 @@ namespace engine
         ShadowCalculationMethod shadowCalculationMethod{ ShadowCalculationMethod::PCFSoft };
         float shadowIntensity{ 1.5f };
         float shadowMapsTextureSize{ 2048.0f };
-        float shadowMapsBiasFactor{ 0.02f }; // 0.001f
+        float shadowMapsBiasFactor{ DEFAULT_SHADOW_MAPS_BIAS };
         float shadowMapsBlur{ 1.0f };
         
         float iblDiffuseIntensity{ 1.0f };

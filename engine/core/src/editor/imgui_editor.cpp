@@ -307,7 +307,7 @@ void engine::ImGuiEditor::renderTabSettings()
     // Typical values(tune slightly per scene)
     // material.shadowMapsBias = 0.02;   // indoor
     // material.shadowMapsBias = 0.05;   // outdoor / large scenes
-    static float lastShadowMapsBiasFactor = 0.02f; // 0.001f
+    static float lastShadowMapsBiasFactor = DEFAULT_SHADOW_MAPS_BIAS;
     EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f", m_onSceneSettingChanged);
 
     static float lastShadowMapsBlur = 1.0f;

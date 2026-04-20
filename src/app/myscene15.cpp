@@ -106,38 +106,14 @@ void MyScene15::init()
 
     textDrawnCount.setup(app->window, FONT_PATH, 20);
     textTotalCount.setup(app->window, FONT_PATH, 20);
+
+    textIncrease.setup(app->window, FONT_PATH, 20);
+    textDecrease.setup(app->window, FONT_PATH, 20);
 }
 
 
 void MyScene15::key_callback(int key, int scancode, int action, int mods)
 {
-    //Scene::key_callback(key, scancode, action, mods);
-
-    //// Detect Shift key state
-    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
-
-    //if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
-    //else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(LEFT, deltaTime);
-
-    //if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
-    //else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-
-    //if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
-    //else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(FORWARD, deltaTime);
-
-    //if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
-    //else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //    getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
-
-
-
     Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
@@ -230,6 +206,9 @@ void MyScene15::updateUI()
 
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
+
+    textIncrease.draw("R : increase parallax", 25.0f, 160.0f, 1.0f, Colors::White);
+    textDecrease.draw("Shift + R : decrease parallax", 25.0f, 200.0f, 1.0f, Colors::White);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
@@ -270,4 +249,6 @@ void MyScene15::clean()
     textPrimitiveCount.clean();
     textDrawnCount.clean();
     textTotalCount.clean();
+    textIncrease.clean();
+    textDecrease.clean();
 }

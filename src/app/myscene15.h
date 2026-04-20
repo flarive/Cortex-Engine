@@ -31,6 +31,9 @@ private:
     Text textDrawnCount{};
     Text textTotalCount{};
 
+    Text textIncrease{};
+    Text textDecrease{};
+
     float rotation{};
 
 public:

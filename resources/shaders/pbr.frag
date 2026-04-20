@@ -748,23 +748,7 @@ void main()
     // reflectance equation
     vec3 Lo = vec3(0.0);
 
-    // BEGIN area light only
-    // use roughness and sqrt(1-cos_theta) to sample M_texture
-    vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV)); // use roughness instead ?
-    uv = uv * LUT_SCALE + LUT_BIAS;
 
-    // get 4 parameters for inverse_M
-    vec4 t1 = texture(LTC1, uv);
-
-    // Get 2 parameters for Fresnel calculation
-    vec4 t2 = texture(LTC2, uv);
-
-    mat3 Minv = mat3(
-        vec3(t1.x, 0, t1.y),
-        vec3(   0, 1,    0),
-        vec3(t1.z, 0, t1.w)
-    );
-    // END area light only
 
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
@@ -809,10 +793,29 @@ void main()
             Lo += CalcDirLight(dirLights[i], normal, fs_in.FragPos, V, vec3(1.0));
     }
 
-    for (int i = 0; i < areaLightsCount; i++)
+    if (areaLightsCount > 0)
     {
-        if (areaLights[i].use)
-            Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+        // use roughness and sqrt(1-cos_theta) to sample M_texture
+        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV)); // use roughness instead ?
+        uv = uv * LUT_SCALE + LUT_BIAS;
+
+        // get 4 parameters for inverse_M
+        vec4 t1 = texture(LTC1, uv);
+
+        // Get 2 parameters for Fresnel calculation
+        vec4 t2 = texture(LTC2, uv);
+
+        mat3 Minv = mat3(
+            vec3(t1.x, 0, t1.y),
+            vec3(   0, 1,    0),
+            vec3(t1.z, 0, t1.w)
+        );
+
+        for (int i = 0; i < areaLightsCount; i++)
+        {
+            if (areaLights[i].use)
+                Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+        }
     }
 
     // add light and shadow contribution

@@ -255,7 +255,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     ShaderType type = shader.getShaderType();
     ShaderType typeTesselation = shaderTessellation.getShaderType();
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
 
@@ -263,18 +263,13 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
             shader.setVec3("lightPos", light->getPosition());
 
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-        if (type != ShaderType::Parallax)
-        {
-            shader.setBool("enableShadows", enableShadows);
-        }
+        shader.setBool("enableShadows", enableShadows);
     }
     
     if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setVec3("lightPos", light->getPosition());
-        //shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
 
@@ -369,7 +364,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
     ShaderType type = shader.getShaderType();
     ShaderType typeTesselation = shaderTessellation.getShaderType();
     
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
         shader.setMat4("projection", projection);
@@ -382,12 +377,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         }
 
         shader.setVec3("viewPos", m_camera->position);
-
-        if (type != ShaderType::Parallax)
-        {
-            shader.setBool("enableShadows", enableShadows);
-            
-        }
+        shader.setBool("enableShadows", enableShadows);
     }
 
 

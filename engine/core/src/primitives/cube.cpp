@@ -130,11 +130,11 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
             shader.setVec3("material.specular_color", m_material->getSpecularColor());
         }
 
-        if (type == ShaderType::BlinnPhong || type == ShaderType::Parallax)
-        {
-            shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-            shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
-        }
+        
+        
+        shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+        shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
+        
 
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
         

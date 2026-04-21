@@ -474,6 +474,9 @@
     <ClCompile Include="core\src\renderers\parallax_renderer.cpp">
       <Filter>Fichiers sources\core\renderers</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\ui\rectangle.cpp">
+      <Filter>Fichiers sources\core\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -784,6 +787,9 @@
     </ClInclude>
     <ClInclude Include="core\include\renderers\parallax_renderer.h">
       <Filter>Fichiers d%27en-tête\core\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ui\rectangle.h">
+      <Filter>Fichiers d%27en-tête\core\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

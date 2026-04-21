@@ -15,7 +15,7 @@
 
 namespace engine
 {
-    class Text final : private NonCopyable
+    class UIText final : private NonCopyable
     {
     private:
         GLFWwindow* m_window{};
@@ -25,8 +25,8 @@ namespace engine
 
 
     public:
-        Text() = default;
-        ~Text() = default;
+        UIText() = default;
+        ~UIText() = default;
 
         void setup(GLFWwindow* window, const std::string& fontPath, int fontSize);
 

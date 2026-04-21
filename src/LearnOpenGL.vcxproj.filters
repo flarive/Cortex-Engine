@@ -125,6 +125,9 @@
     <Filter Include="resources\textures\height">
       <UniqueIdentifier>{1c0a823e-ce6f-49af-9f7e-e95da2335f40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\shaders\ui">
+      <UniqueIdentifier>{2b0a93b5-6cba-4acc-93b5-ce2ab1d1e19d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -753,17 +756,11 @@
     <CopyFileToFolders Include="..\resources\shaders\debug\debug_line.vert">
       <Filter>resources\shaders\debug</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\concrete_normal.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\sounds\Example.ogg">
       <Filter>resources\sounds</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\parallax_mapping.vert">
-      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\gaussianblur.frag">
       <Filter>resources\shaders</Filter>
@@ -1028,6 +1025,12 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\toy_box_normal.png">
       <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\rectangle.frag">
+      <Filter>resources\shaders\ui</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\rectangle.vert">
+      <Filter>resources\shaders\ui</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

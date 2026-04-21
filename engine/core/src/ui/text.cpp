@@ -2,9 +2,9 @@
 
 #include "../../include/tools/file_system.h"
 
-engine::Shader engine::Text::m_textShader; // Define the static member
+engine::Shader engine::UIText::m_textShader; // Define the static member
 
-void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
+void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
 {
     m_window = window;
 
@@ -115,7 +115,7 @@ void engine::Text::setup(GLFWwindow* window, const std::string& fontPath, int fo
 // draws the model, and thus all its meshes
 // render line of text
 // -------------------
-void engine::Text::draw(const std::string& text, float x, float y, float scale, const Color& color)
+void engine::UIText::draw(const std::string& text, float x, float y, float scale, const Color& color)
 {
     int width{ 0 };
     int height{ 0 };
@@ -176,7 +176,7 @@ void engine::Text::draw(const std::string& text, float x, float y, float scale, 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void engine::Text::clean()
+void engine::UIText::clean()
 {
     // Delete textures
     for (auto& pair : m_characters) {

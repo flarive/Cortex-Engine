@@ -36,6 +36,7 @@ struct Material {
     float shadowMapsBlur;
     float normalMapIntensity;
     float emissiveIntensity;
+    float heightScale;
 
     vec3 ambient_color;
 
@@ -65,6 +66,8 @@ struct Material {
 
     bool canCastShadows;
     bool canReceiveShadows;
+
+    bool useParallaxMapping;
 };
 
 struct DirLight {
@@ -161,10 +164,13 @@ const float PI = 3.14159265359;
 
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 color);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
+
+
+
 
 
 const int POISSON_SAMPLES = 4;
@@ -380,39 +386,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 {
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}   
-// ----------------------------------------------------------------------------
-//vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
-//{ 
-//    float height =  texture(material.texture_height, texCoords).r;    
-//    vec2 p = viewDir.xy / viewDir.z * (height * material.heightScale);
-//    return texCoords - p;
-//
-//    float height =  texture(material.texture_height, texCoords).r;     
-//    return texCoords - viewDir.xy * (height * material.heightScale); 
-//} 
-
-//
-//vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
-//    const float minLayers = 8.0;
-//    const float maxLayers = 32.0;
-//    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
-//
-//    float layerDepth = 1.0 / numLayers;
-//    float currentLayerDepth = 0.0;
-//    vec2 deltaTexCoords = viewDir.xy * material.heightScale / numLayers;
-//    vec2 currentTexCoords = texCoords;
-//
-//    float heightFromTexture = texture(material.texture_height, currentTexCoords).r;
-//
-//    while (currentLayerDepth < heightFromTexture) {
-//        currentTexCoords -= deltaTexCoords;
-//        heightFromTexture = texture(material.texture_height, currentTexCoords).r;
-//        currentLayerDepth += layerDepth;
-//    }
-//
-//    return currentTexCoords;
-//}
+}
 
 // hard shadows
 float ShadowCalculation(vec4 fragPosLightSpace)
@@ -689,6 +663,49 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace)
     return shadow;
 }
 
+vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
+{
+    // Prevent division instability at grazing angles
+    viewDir.z = max(viewDir.z, 0.05);
+
+    // Number of layers
+    const float minLayers = 8.0;
+    const float maxLayers = 32.0;
+    float numLayers = mix(
+        maxLayers,
+        minLayers,
+        abs(dot(vec3(0.0, 0.0, 1.0), viewDir))
+    );
+
+    float layerDepth = 1.0 / numLayers;
+    float currentLayerDepth = 0.0;
+
+    // Direction & per-layer texcoord shift
+    vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
+    vec2 deltaTexCoords = P / numLayers;
+
+    vec2 currentTexCoords = texCoords;
+    float depthMapValue = material.has_texture_height_map
+        ? texture(material.texture_height, currentTexCoords).r
+        : 0.0;
+
+    // --- Steep Parallax Loop ---
+    for (int i = 0; i < int(numLayers); ++i)
+    {
+        if (currentLayerDepth >= depthMapValue)
+            break;
+
+        currentTexCoords -= deltaTexCoords;
+        depthMapValue = material.has_texture_height_map
+            ? texture(material.texture_height, currentTexCoords).r
+            : 0.0;
+
+        currentLayerDepth += layerDepth;
+    }
+
+    return currentTexCoords;
+}
+
 // ----------------------------------------------------------------------------
 void main()
 {		
@@ -702,22 +719,21 @@ void main()
     
     vec2 texCoords = fs_in.TexCoords;
 
+    // Use world-space viewDir for lighting and shadows
+    vec3 viewDirWS = normalize(viewPos - fs_in.FragPos);
+    
+    // Use tangent-space viewDir only for parallax
+    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
     // offset texture coordinates with Parallax Mapping
-    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-
-    // Modify TexCoords using Parallax Mapping
-    //texCoords = parallaxMapping(texCoords, V);
-    //texCoords = parallaxMapping(fs_in.TexCoords, viewDir);
-//    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-//        discard;
-
+    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(texCoords, viewDirTS) : texCoords;
 
     // still usefull ??????????
-    vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
+    vec3 mDiffuse = texture(material.texture_diffuse, ll_TexCoords).xyz;
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5); // A neutral gray color
+    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0.5); // A neutral gray color
 
     float metallic = 0;
     float roughness = 0;
@@ -732,13 +748,13 @@ void main()
     else
     {
         // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0; // Non-metallic;
-        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5; // Moderate roughness
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, ll_TexCoords).r : 0.0; // Non-metallic;
+        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, ll_TexCoords).r : 0.5; // Moderate roughness
     }
 
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Full ambient occlusion
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, texCoords).rgb : vec3(0.0); // waiting to be used
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, ll_TexCoords).r : 0.0; // Full ambient occlusion
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, ll_TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0.0); // waiting to be used
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -775,28 +791,27 @@ void main()
 
 
     // lights
-    for (int i = 0; i < spotLightsCount; i++)
-    {
-        if (spotLights[i].use)
-            Lo += CalcSpotLight(spotLights[i], normal, V, albedo, metallic, roughness);
-    }
-
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], normal, fs_in.FragPos, V, albedo, metallic, roughness);
+            Lo += CalcPointLight(pointLights[i], normal, N, fs_in.FragPos, ll_TexCoords, viewDirWS, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            Lo += CalcDirLight(dirLights[i], normal, fs_in.FragPos, V, vec3(1.0));
+            Lo += CalcDirLight(dirLights[i], normal, N, fs_in.FragPos, ll_TexCoords, viewDirWS, vec3(1.0));
+    }
+
+    for (int i = 0; i < spotLightsCount; i++)
+    {
+        if (spotLights[i].use)
+            Lo += CalcSpotLight(spotLights[i], normal, N, fs_in.FragPos, ll_TexCoords, fs_in.FragPos, albedo, metallic, roughness);
     }
 
     if (areaLightsCount > 0)
     {
-        // use roughness and sqrt(1-cos_theta) to sample M_texture
-        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV)); // use roughness instead ?
+        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
         uv = uv * LUT_SCALE + LUT_BIAS;
 
         // get 4 parameters for inverse_M
@@ -814,7 +829,7 @@ void main()
         for (int i = 0; i < areaLightsCount; i++)
         {
             if (areaLights[i].use)
-                Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, viewDir, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+                Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 
@@ -849,7 +864,7 @@ void main()
 }
 
 // Calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, float metallic, float roughness)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
     vec3 L = normalize(light.position - fs_in.FragPos);
     float theta = dot(L, normalize(-light.direction));
@@ -898,7 +913,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 albedo, floa
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 albedo, float metallic, float roughness)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
     vec3 L = normalize(light.position - fragPos);
     float distance = length(light.position - fragPos);
@@ -925,7 +940,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 color)
 {
     vec3 L = normalize(-light.direction);
     vec3 H = normalize(viewDir + L);

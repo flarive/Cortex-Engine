@@ -19,18 +19,18 @@ private:
     const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    Text textFPSCount{};
-    Text textElapsedFramesCount{};
+    UIText textFPSCount{};
+    UIText textElapsedFramesCount{};
 
     
 
-    Text textPolyCount{};
-    Text textMeshCount{};
-    Text textPrimitiveCount{};
+    UIText textPolyCount{};
+    UIText textMeshCount{};
+    UIText textPrimitiveCount{};
 
 
-    Text textDrawnCount{};
-    Text textTotalCount{};
+    UIText textDrawnCount{};
+    UIText textTotalCount{};
 
     float rotation{};
 

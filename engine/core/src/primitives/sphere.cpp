@@ -167,7 +167,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
     if (m_material)
     {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax)
+        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
         {
             if (!m_material->bind(shader)) {
                 std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
@@ -181,19 +181,17 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
             }
 
-            if (type == ShaderType::BlinnPhong || type == ShaderType::Parallax)
-            {
-                shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-                shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
-            }
+            
+            shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+            shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
+            
+            
+            
+            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
 
-            if (type != ShaderType::Parallax)
-            {
-                shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-
-                shader.setBool("material.canCastShadows", canCastShadows());
-                shader.setBool("material.canReceiveShadows", canReceiveShadows());
-            }
+            shader.setBool("material.canCastShadows", canCastShadows());
+            shader.setBool("material.canReceiveShadows", canReceiveShadows());
+            
 
             if (type == ShaderType::PBR)
             {
@@ -225,7 +223,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray");
 
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::Parallax))
+    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");

@@ -47,9 +47,9 @@ engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settin
     else if (_settings.method == RenderMethod::BlinnPhong) {
         m_renderer = new BlinnPhongRenderer(app->window);
     }
-    else if (_settings.method == RenderMethod::Parallax) {
-        m_renderer = new ParallaxRenderer(app->window);
-    }
+    //else if (_settings.method == RenderMethod::Parallax) {
+    //    m_renderer = new ParallaxRenderer(app->window);
+    //}
     else {
         m_renderer = new PhongRenderer(app->window);
     }

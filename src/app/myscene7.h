@@ -20,11 +20,11 @@ private:
   
 
 
-    Text textFPSCount{};
-    Text textPolyCount{};
-    Text textMeshCount{};
-    Text textPrimitiveCount{};
-    Sprite ourSprite{};
+    UIText textFPSCount{};
+    UIText textPolyCount{};
+    UIText textMeshCount{};
+    UIText textPrimitiveCount{};
+    UISprite ourSprite{};
 
 
     float rotation{};

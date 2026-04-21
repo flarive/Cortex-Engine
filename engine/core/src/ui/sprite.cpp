@@ -4,14 +4,14 @@
 
 #include <tuple>
 
-engine::Shader engine::Sprite::m_spriteShader; // Define the static member
+engine::Shader engine::UISprite::m_spriteShader; // Define the static member
 
-engine::Sprite::~Sprite()
+engine::UISprite::~UISprite()
 {
     glDeleteVertexArrays(1, &m_quadVAO);
 }
 
-void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
+void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
 {
     m_window = window;
 
@@ -36,7 +36,7 @@ void engine::Sprite::setup(GLFWwindow* window, const std::string& filepath)
     initRenderData();
 }
 
-void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& color)
+void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& color)
 {
     int width{ 0 };
     int height{ 0 };
@@ -79,7 +79,7 @@ void engine::Sprite::draw(glm::vec2 position, glm::vec2 size, float rotate, cons
     }
 }
 
-void engine::Sprite::initRenderData()
+void engine::UISprite::initRenderData()
 {
     // configure VAO/VBO
     unsigned int VBO{0};
@@ -108,7 +108,7 @@ void engine::Sprite::initRenderData()
     glBindVertexArray(0);
 }
 
-void engine::Sprite::clean()
+void engine::UISprite::clean()
 {
     glDeleteVertexArrays(1, &m_quadVAO);
     glDeleteTextures(1, &m_texture_id);

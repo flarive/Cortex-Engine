@@ -10,7 +10,7 @@
 
 namespace engine
 {
-    class Sprite final
+    class UISprite final : private NonCopyable
     {
     public:
         
@@ -18,9 +18,9 @@ namespace engine
         unsigned int height{};
         
         // Constructor (inits shaders/shapes)
-        Sprite() = default;
+        UISprite() = default;
         // Destructor
-        ~Sprite();
+        ~UISprite();
         void setup(GLFWwindow* window, const std::string& filepath);
         // Renders a defined quad textured with given sprite
         void draw(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, const Color& color = Colors::White);

@@ -19,9 +19,9 @@ private:
 
 
 
-    Text ourText{};
-    Text ourText2{};
-    Sprite ourSprite{};
+    UIText ourText{};
+    UIText ourText2{};
+    UISprite ourSprite{};
 
     
 

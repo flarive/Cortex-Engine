@@ -19,10 +19,10 @@ private:
 
 
 
-    Text ourText{};
-    Text ourText2{};
-    Sprite ourSprite{};
-    Text textMeshCount{};
+    UIText ourText{};
+    UIText ourText2{};
+    UISprite ourSprite{};
+    UISprite textMeshCount{};
 
     
 

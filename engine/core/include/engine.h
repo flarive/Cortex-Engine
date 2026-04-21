@@ -62,6 +62,7 @@
 
 #include "ui/text.h"
 #include "ui/sprite.h"
+#include "ui/rectangle.h"
 
 #include "primitives/primitive.h"
 #include "primitives/cube.h"

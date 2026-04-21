@@ -119,11 +119,11 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
                 shader.setVec3("material.specular_color", m_material->getSpecularColor());
             }
 
-            if (type == ShaderType::BlinnPhong || type == ShaderType::Parallax)
-            {
-                shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-                shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
-            }
+            
+            
+            shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+            shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
+            
 
             shader.setBool("material.canCastShadows", canCastShadows());
             shader.setBool("material.canReceiveShadows", canReceiveShadows());

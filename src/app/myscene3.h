@@ -19,8 +19,8 @@ private:
 
  
 
-    Text ourText{};
-    Sprite ourSprite{};
+    UIText ourText{};
+    UISprite ourSprite{};
 
     float rotation{};
 

@@ -18,7 +18,7 @@ private:
     const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
-    Text ourText{};
+    UIText ourText{};
 
     float rotation{};
 

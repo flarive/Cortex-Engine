@@ -6,7 +6,7 @@ using namespace engine;
 
 MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::BlinnPhong,
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
@@ -107,8 +107,10 @@ void MyScene15::init()
     textDrawnCount.setup(app->window, FONT_PATH, 20);
     textTotalCount.setup(app->window, FONT_PATH, 20);
 
-    textIncrease.setup(app->window, FONT_PATH, 20);
-    textDecrease.setup(app->window, FONT_PATH, 20);
+    textIncrease.setup(app->window, FONT_PATH, 18);
+    textDecrease.setup(app->window, FONT_PATH, 18);
+
+    rect.setup(app->window);
 }
 
 
@@ -207,8 +209,10 @@ void MyScene15::updateUI()
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 
-    textIncrease.draw("R : increase parallax", 25.0f, 160.0f, 1.0f, Colors::White);
-    textDecrease.draw("Shift + R : decrease parallax", 25.0f, 200.0f, 1.0f, Colors::White);
+    rect.draw(glm::vec2(100, 100), glm::vec2(180, 100), 0.0f, Colors::PapayaWhip, Colors::Yellow, 0.02f);
+
+    textIncrease.draw("R : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::AliceBlue);
+    textDecrease.draw("Shift + R : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::AliceBlue);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
@@ -249,6 +253,8 @@ void MyScene15::clean()
     textPrimitiveCount.clean();
     textDrawnCount.clean();
     textTotalCount.clean();
+
+    rect.clean();
     textIncrease.clean();
     textDecrease.clean();
 }

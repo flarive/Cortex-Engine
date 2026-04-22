@@ -76,8 +76,6 @@ void MyScene15::init()
     // ground
     auto myPlane = make_shared<Plane>(true);
     //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-
-
     auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/harshbricks/harshbricks-albedo.png",
         "textures/pbr/harshbricks/harshbricks-normal.png",
@@ -99,8 +97,6 @@ void MyScene15::init()
     // sphere
     auto mySphere1 = make_shared<Sphere>();
     //auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-
-
     auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/planks/albedo.jpg",
         "textures/pbr/planks/normal.jpg",
@@ -133,6 +129,39 @@ void MyScene15::init()
     textDecrease.setup(app->window, FONT_PATH, 18);
 
     rect.setup(app->window);
+
+    // Setup
+
+    /*engine::UIButton button;
+
+    button.setup(window);
+    button.setPosition({ 100, 100 });
+    button.setSize({ 200, 50 });
+
+    button.setColors(
+        Color(0.2f, 0.2f, 0.2f, 0.9f),
+        Color(0.3f, 0.3f, 0.3f, 0.9f),
+        Color(0.1f, 0.1f, 0.1f, 0.9f),
+        Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+
+    button.setOnClick({
+        std::cout << "Button clicked!\n";
+        });*/
+
+
+
+    // In main loop
+
+    //double mouseX, mouseY;
+    //glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    //bool mousePressed =
+    //    glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+    //button.update(mouseX, mouseY, mousePressed);
+    //button.draw();
+
 }
 
 

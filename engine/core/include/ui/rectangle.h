@@ -1,16 +1,10 @@
 #pragma once
 
-#include "../misc/noncopyable.h"
-#include "../common_defines.h"
-#include "../misc/colors.h"
-
-#include "../shader.h"
-
-#include <glm/glm.hpp>
+#include "ui.h"
 
 namespace engine
 {
-    class UIRectangle final : private NonCopyable
+    class UIRectangle final : public UIBase
     {
     public:
         unsigned int width{};
@@ -24,10 +18,9 @@ namespace engine
         void setup(GLFWwindow* window);
         void draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& fillColor, const Color& borderColor, float borderThickness = 0.02f);
 
-        void clean();
+        void clean() override;
 
     private:
-        GLFWwindow* m_window{};
         unsigned int m_quadVAO{};
 
         static Shader m_rectShader;

@@ -202,6 +202,12 @@
     <Filter Include="Fichiers sources\core\animations\base">
       <UniqueIdentifier>{b96df43b-a689-4261-9329-1df493edaaf0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\ui\base">
+      <UniqueIdentifier>{c6eb194e-5007-4b64-867a-9f3efcbeb8e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\ui\base">
+      <UniqueIdentifier>{1d332bc9-267a-444b-a9de-ec9e86cad6cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -471,10 +477,13 @@
     <ClCompile Include="core\src\debug\debug_frame.cpp">
       <Filter>Fichiers sources\core\debug</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\renderers\parallax_renderer.cpp">
-      <Filter>Fichiers sources\core\renderers</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\ui\rectangle.cpp">
+      <Filter>Fichiers sources\core\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ui\ui.cpp">
+      <Filter>Fichiers sources\core\ui\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\ui\button.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -785,10 +794,13 @@
     <ClInclude Include="core\include\debug\debug_frame.h">
       <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\renderers\parallax_renderer.h">
-      <Filter>Fichiers d%27en-tête\core\renderers</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\ui\rectangle.h">
+      <Filter>Fichiers d%27en-tête\core\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ui\ui.h">
+      <Filter>Fichiers d%27en-tête\core\ui\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\ui\button.h">
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
     </ClInclude>
   </ItemGroup>

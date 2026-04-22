@@ -3,27 +3,18 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "../misc/noncopyable.h"
-#include "../misc/colors.h"
-#include "../common_defines.h"
 #include "../debug/opengl_debug.h"
 
 #include <map>
 
 #include "../character.h"
-#include "../shader.h"
+
+#include "ui.h"
 
 namespace engine
 {
-    class UIText final : private NonCopyable
+    class UIText final : public UIBase
     {
-    private:
-        GLFWwindow* m_window{};
-        std::map<GLchar, Character> m_characters{};
-        unsigned int m_VAO{}, m_VBO{};
-        static Shader m_textShader; // Shared across all instances
-
-
     public:
         UIText() = default;
         ~UIText() = default;
@@ -35,6 +26,11 @@ namespace engine
         // -------------------
         void draw(const std::string& text, float x, float y, float scale, const Color& color = Colors::White);
 
-        void clean();
+        void clean() override;
+
+    private:
+        std::map<GLchar, Character> m_characters{};
+        unsigned int m_VAO{}, m_VBO{};
+        static Shader m_textShader; // Shared across all instances
     };
 }

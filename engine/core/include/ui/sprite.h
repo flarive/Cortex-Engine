@@ -1,16 +1,10 @@
 #pragma once
 
-#include "../misc/noncopyable.h"
-#include "../common_defines.h"
-#include "../misc/colors.h"
-
-#include "../shader.h"
-
-#include <glm/glm.hpp>
+#include "ui.h"
 
 namespace engine
 {
-    class UISprite final : private NonCopyable
+    class UISprite final : public UIBase
     {
     public:
         
@@ -26,11 +20,9 @@ namespace engine
         void draw(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, const Color& color = Colors::White);
 
 
-        void clean();
+        void clean() override;
 
     private:
-        // Render state
-        GLFWwindow* m_window{};
         std::string m_filepath{};
         static Shader m_spriteShader; // Shared across all instances
         unsigned int m_texture_id{};

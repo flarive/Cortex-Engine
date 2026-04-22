@@ -124,8 +124,6 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     // activate corresponding render state	
     m_textShader.use();
 
-
-
     // update for fullscreen toggle
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
     m_textShader.setMat4("projection", projection2);

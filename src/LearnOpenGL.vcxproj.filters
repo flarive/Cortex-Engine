@@ -128,6 +128,9 @@
     <Filter Include="resources\shaders\ui">
       <UniqueIdentifier>{2b0a93b5-6cba-4acc-93b5-ce2ab1d1e19d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\harshbricks">
+      <UniqueIdentifier>{db1f6c65-965d-4099-8624-c462913fc448}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -234,14 +237,8 @@
     <CopyFileToFolders Include="..\resources\models\backpack\specular.jpg">
       <Filter>resources\models\backpack</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\text.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\fonts\Antonio-Regular.ttf">
       <Filter>resources\fonts</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\text.vert">
-      <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\rusted_metal_diffuse.jpg">
       <Filter>resources\textures</Filter>
@@ -630,12 +627,6 @@
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_normal.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\sprite.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\sprite.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_AO2.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
@@ -891,12 +882,6 @@
     <CopyFileToFolders Include="..\resources\textures\particle.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\sprite_renderer.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\sprite_renderer.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_AmbientOcclusion.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
     </CopyFileToFolders>
@@ -1032,6 +1017,21 @@
     <CopyFileToFolders Include="..\resources\shaders\ui\rectangle.vert">
       <Filter>resources\shaders\ui</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\sprite.frag">
+      <Filter>resources\shaders\ui</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\sprite.vert">
+      <Filter>resources\shaders\ui</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\text.frag">
+      <Filter>resources\shaders\ui</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\ui\text.vert">
+      <Filter>resources\shaders\ui</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-albedo.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -1082,5 +1082,22 @@
     <ClInclude Include="app\myscene15.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-ao.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-height.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-metalness.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-normal.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </Image>
+    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-roughness.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </Image>
   </ItemGroup>
 </Project>

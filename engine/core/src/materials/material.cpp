@@ -46,6 +46,10 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
     {
         shader.setBool("material.has_texture_diffuse_map", false);
         shader.setBool("material.has_texture_normal_map", false);
+        shader.setBool("material.has_texture_metalness_map", false);
+        shader.setBool("material.has_texture_roughness_map", false);
+        shader.setBool("material.has_texture_ao_map", false);
+        shader.setBool("material.has_texture_height_map", false);
     }
     else
     {

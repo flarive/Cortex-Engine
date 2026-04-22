@@ -16,9 +16,6 @@ in VS_OUT {
 
 // material parameters
 struct Material {
-    
-
-  
     sampler2D texture_diffuse;
     sampler2D texture_normal;
     sampler2D texture_metalness;

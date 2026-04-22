@@ -14,7 +14,7 @@ void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int 
 
 
     if (!m_textShader.isInitialized()) {
-        m_textShader.init("UITextShader", "shaders/text.vert", "shaders/text.frag");
+        m_textShader.init("UITextShader", "shaders/ui/text.vert", "shaders/ui/text.frag");
     }
 
 

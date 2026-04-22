@@ -22,7 +22,7 @@ private:
     UIText ourText{};
     UIText ourText2{};
     UISprite ourSprite{};
-    UISprite textMeshCount{};
+    UIText textMeshCount{};
 
     
 

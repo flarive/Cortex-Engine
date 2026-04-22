@@ -50,7 +50,7 @@ void MyScene15::init()
 
     //auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
     //auto light2 = make_shared<PointLight>();
-    //light2->setIntensity(2.0f);
+    //light2->setIntensity(10.0f);
     //light2->setAmbientColor(Color(1.0f));
     //light2->setDiffuseColor(Color(1.0f));
     //light2->setSpecularColor(Color(1.0f));
@@ -74,8 +74,19 @@ void MyScene15::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>(false);
-    auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    auto myPlane = make_shared<Plane>(true);
+    //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+
+
+    auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/harshbricks/harshbricks-albedo.png",
+        "textures/pbr/harshbricks/harshbricks-normal.png",
+        "textures/pbr/harshbricks/harshbricks-metalness.png",
+        "textures/pbr/harshbricks/harshbricks-roughness.png",
+        "textures/pbr/harshbricks/harshbricks-ao.png",
+        "textures/pbr/harshbricks/harshbricks-height.png");
+
+
     matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(1.0f));
     auto trsPlane = Transform(vec3(1.5f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
@@ -87,7 +98,18 @@ void MyScene15::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
-    auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    //auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+
+
+    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/planks/albedo.jpg",
+        "textures/pbr/planks/normal.jpg",
+        "textures/pbr/planks/metallic.jpg",
+        "textures/pbr/planks/roughness.jpg",
+        "textures/pbr/planks/ao.jpg",
+        "textures/pbr/planks/displace.jpg");
+
+
     matSphere1->useParallaxMapping(true);
     mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 0.0f), vec3(0.4f));
@@ -209,7 +231,7 @@ void MyScene15::updateUI()
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 
-    rect.draw(glm::vec2(100, 100), glm::vec2(180, 100), 0.0f, Colors::PapayaWhip, Colors::Yellow, 0.02f);
+    rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Colors::PapayaWhip, Colors::Yellow, 0.02f);
 
     textIncrease.draw("R : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::AliceBlue);
     textDecrease.draw("Shift + R : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::AliceBlue);

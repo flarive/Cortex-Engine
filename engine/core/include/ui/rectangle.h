@@ -13,6 +13,9 @@ namespace engine
     class UIRectangle final : private NonCopyable
     {
     public:
+        unsigned int width{};
+        unsigned int height{};
+
         // Constructor (inits shaders/shapes)
         UIRectangle() = default;
         // Destructor
@@ -24,11 +27,11 @@ namespace engine
         void clean();
 
     private:
-        void initRenderData();
-
-        GLFWwindow* m_window{ nullptr };
-        unsigned int m_quadVAO{ 0 };
+        GLFWwindow* m_window{};
+        unsigned int m_quadVAO{};
 
         static Shader m_rectShader;
+
+        void initRenderData();
     };
 }

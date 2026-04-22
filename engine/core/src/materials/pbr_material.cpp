@@ -14,6 +14,6 @@ engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuse
 }
 
 engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
-	: Material(ambientColor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath)
+	: Material(ambientColor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath)
 {
 }

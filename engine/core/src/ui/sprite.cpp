@@ -20,7 +20,7 @@ void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
     glfwGetWindowSize(m_window, &width, &height);
     
     if (!m_spriteShader.isInitialized()) {
-        m_spriteShader.init("UISpriteShader", "shaders/sprite.vert", "shaders/sprite.frag");
+        m_spriteShader.init("UISpriteShader", "shaders/ui/sprite.vert", "shaders/ui/sprite.frag");
     }
     
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
@@ -82,7 +82,7 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
 void engine::UISprite::initRenderData()
 {
     // configure VAO/VBO
-    unsigned int VBO{0};
+    unsigned int VBO{};
     float vertices[] = {
         // pos      // tex
         0.0f, 1.0f, 0.0f, 1.0f,

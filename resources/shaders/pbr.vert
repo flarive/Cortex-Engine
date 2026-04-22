@@ -73,9 +73,8 @@ void main()
 
     // World space position
     vs2fs.FragPos = vec3(model * totalPosition);
-    
+   
     vs2fs.TexCoords = aTexCoords;
-    //vs2fs.FragPos = vec3(model * vec4(aPos, 1.0));
     vs2fs.Normal = normalMatrix * aNormal;
     vs2fs.Tangent = aTangents;
     vs2fs.Bitangent = aBitangents;
@@ -91,7 +90,7 @@ void main()
     vs2fs.TangentViewPos  = TBN * viewPos;
     vs2fs.TangentFragPos  = TBN * vs2fs.FragPos;
 
-        // Handle gl_Position based on tessellation mode
+    // Handle gl_Position based on tessellation mode
     if (isTessellated)
     {
         // For tessellation, output world space position

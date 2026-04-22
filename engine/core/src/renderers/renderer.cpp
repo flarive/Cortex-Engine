@@ -168,41 +168,6 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
     //cubeFaceDebugShader.setInt("uFaceIndex", 1);
 }
 
-
-/// <summary>
-/// Omnilight only !!!!
-/// </summary>
-//void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
-//{
-//    glGenFramebuffers(1, &depthMapFramebuffer);
-//    // create depth cubemap texture
-//    glGenTextures(1, &textureDepthMapBuffer);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
-//    for (unsigned int i = 0; i < 6; ++i)
-//    {
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, shadowSize, shadowSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-//    }
-//
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-//    // attach depth texture as FBO's depth buffer
-//    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
-//    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, textureDepthMapBuffer, 0);
-//    glDrawBuffer(GL_NONE);
-//    glReadBuffer(GL_NONE);
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//
-//    // shader configuration
-//    // --------------------
-//    //cubeFaceDebugShader.use();
-//    //cubeFaceDebugShader.setInt("uCubeMap", 0);
-//    //cubeFaceDebugShader.setInt("uFaceIndex", 1);
-//}
-
 /// <summary>
 /// Spotlight and directional lights only !!!!!
 /// </summary>

@@ -21,8 +21,6 @@ namespace engine
         void clean() override;
 
     private:
-        unsigned int m_quadVAO{};
-
         static Shader m_rectShader;
 
         void initRenderData();

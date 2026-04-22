@@ -30,7 +30,6 @@ namespace engine
 
     private:
         std::map<GLchar, Character> m_characters{};
-        unsigned int m_VAO{}, m_VBO{};
         static Shader m_textShader; // Shared across all instances
     };
 }

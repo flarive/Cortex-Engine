@@ -181,15 +181,6 @@ void engine::UIText::clean()
         glDeleteTextures(1, &pair.second.TextureID);
     }
     m_characters.clear();
-    // Delete VAO and VBO
-    if (m_VAO != 0) {
-        glDeleteVertexArrays(1, &m_VAO);
-        m_VAO = 0;
-    }
-    if (m_VBO != 0) {
-        glDeleteBuffers(1, &m_VBO);
-        m_VBO = 0;
-    }
 
     m_textShader.clean();
 }

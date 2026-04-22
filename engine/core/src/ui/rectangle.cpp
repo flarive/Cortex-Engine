@@ -4,7 +4,7 @@ engine::Shader engine::UIRectangle::m_rectShader;
 
 engine::UIRectangle::~UIRectangle()
 {
-    glDeleteVertexArrays(1, &m_quadVAO);
+    glDeleteVertexArrays(1, &m_VAO);
 }
 
 void engine::UIRectangle::setup(GLFWwindow* window)
@@ -56,7 +56,7 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Send to GPU
-    glBindVertexArray(m_quadVAO);
+    glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
@@ -76,11 +76,11 @@ void engine::UIRectangle::initRenderData()
         1.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &m_quadVAO);
+    glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &VBO);
 
     // Bind VAO FIRST
-    glBindVertexArray(m_quadVAO);
+    glBindVertexArray(m_VAO);
 
     // Then bind VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -103,6 +103,5 @@ void engine::UIRectangle::initRenderData()
 
 void engine::UIRectangle::clean()
 {
-    glDeleteVertexArrays(1, &m_quadVAO);
     m_rectShader.clean();
 }

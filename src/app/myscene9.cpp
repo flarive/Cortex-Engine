@@ -212,6 +212,6 @@ void MyScene9::drawUI()
     // render HUD / UI
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
     ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
-    ourSprite.draw(vec2(50, app->height - 100), vec2(50.0f, 50.0f), 0.0f, Colors::White);
+    ourSprite.draw(vec2(50, 50), vec2(50.0f), 0.0f, Colors::White);
     textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
 }

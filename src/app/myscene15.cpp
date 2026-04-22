@@ -260,7 +260,7 @@ void MyScene15::updateUI()
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 
-    rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Colors::PapayaWhip, Colors::Yellow, 0.02f);
+    rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Colors::Black, Colors::White, 0.02f);
 
     textIncrease.draw("R : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::AliceBlue);
     textDecrease.draw("Shift + R : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::AliceBlue);

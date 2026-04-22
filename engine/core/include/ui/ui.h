@@ -13,9 +13,6 @@ namespace engine
     class UIBase : private NonCopyable
     {
     public:
-        //unsigned int width{};
-        //unsigned int height{};
-
         UIBase() = default;
         ~UIBase();
 
@@ -26,10 +23,6 @@ namespace engine
 
     protected:
         GLFWwindow* m_window{};
-        //unsigned int m_quadVAO{};
-
-        //static Shader m_uiShader; // Shared across all instances
-
-        //void initRenderData();
+        unsigned int m_VAO{}, m_VBO{};
     };
 }

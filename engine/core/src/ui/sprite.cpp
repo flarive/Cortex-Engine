@@ -8,7 +8,7 @@ engine::Shader engine::UISprite::m_spriteShader; // Define the static member
 
 engine::UISprite::~UISprite()
 {
-    glDeleteVertexArrays(1, &m_quadVAO);
+    glDeleteVertexArrays(1, &m_VAO);
 }
 
 void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
@@ -45,7 +45,7 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
     // prepare transformations
     m_spriteShader.use();
 
-    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f);
     m_spriteShader.setMat4("projection", projection2);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -66,7 +66,7 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
     // Send to GPU
-    glBindVertexArray(m_quadVAO);
+    glBindVertexArray(m_VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
@@ -82,7 +82,7 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
 void engine::UISprite::initRenderData()
 {
     // configure VAO/VBO
-    unsigned int VBO{};
+    //unsigned int VBO{};
     float vertices[] = {
         // pos      // tex
         0.0f, 1.0f, 0.0f, 1.0f,
@@ -94,14 +94,14 @@ void engine::UISprite::initRenderData()
         1.0f, 0.0f, 1.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &m_quadVAO);
-    glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Send to GPU
-    glBindVertexArray(m_quadVAO);
+    glBindVertexArray(m_VAO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -110,7 +110,6 @@ void engine::UISprite::initRenderData()
 
 void engine::UISprite::clean()
 {
-    glDeleteVertexArrays(1, &m_quadVAO);
     glDeleteTextures(1, &m_texture_id);
 
     m_spriteShader.clean();

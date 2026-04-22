@@ -26,7 +26,6 @@ namespace engine
         std::string m_filepath{};
         static Shader m_spriteShader; // Shared across all instances
         unsigned int m_texture_id{};
-        unsigned int m_quadVAO{};
         // Initializes and configures the quad's buffer and vertex attributes
         void initRenderData();
     };

@@ -174,6 +174,30 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+glm::vec2 engine::UIText::measure(const std::string& text, float scale) const
+{
+    float width = 0.0f;
+    float maxHeight = 0.0f;
+
+    for (char c : text)
+    {
+        auto it = m_characters.find(c);
+        if (it == m_characters.end())
+            continue;
+
+        const Character& ch = it->second;
+
+        // Advance cursor (same logic as draw)
+        width += (ch.Advance >> 6) * scale;
+
+        float height = ch.Size.y * scale;
+        if (height > maxHeight)
+            maxHeight = height;
+    }
+
+    return { width, maxHeight };
+}
+
 void engine::UIText::clean()
 {
     // Delete textures

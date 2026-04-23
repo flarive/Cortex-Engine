@@ -26,12 +26,14 @@ MyScene9::MyScene9(const string& _title, App* _app) : Scene(_title, _app, SceneS
 
 void MyScene9::init()
 {
+    // camera
     auto trsCamera1 = Transform{ { 0.0f, 5.0f, 3.0f } };
     auto camera1 = make_shared<OrbitCamera>();
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
+
 
     // lights
     auto trsLight1 = Transform{};
@@ -97,6 +99,25 @@ void MyScene9::init()
     ourText2.setup(app->window, FONT_PATH, 28);
     ourSprite.setup(app->window, "textures/awesomeface.png");
     textMeshCount.setup(app->window, FONT_PATH, 28);
+    rect.setup(app->window);
+
+    button.setup(app->window, FONT_PATH, 18);
+    button.setPosition({ 400, 300 });
+    button.setSize({ 100, 50 });
+    button.setText("GOOO");
+    button.setTextColor(Colors::Red);
+
+    button.setColors(
+        Color(0.2f, 0.2f, 0.2f, 0.9f),
+        Color(1.0f, 0.3f, 0.3f, 1.0f),
+        Color(0.1f, 0.1f, 1.0f, 1.0f),
+        Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+
+
+    button.onClick([this]{
+        std::cout << "Button clicked!\n";
+        });
 }
 
 
@@ -184,13 +205,26 @@ void MyScene9::framebuffer_size_callback(int newWidth, int newHeight)
 
 void MyScene9::update(Shader& shader)
 {
-    // draw scene and UI in framebuffer
-    drawScene(shader);
+    (void)shader;   //Do nothing
 }
 
 void MyScene9::updateUI()
 {
-    drawUI();
+    // render HUD / UI
+    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
+    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Color(0.0f, 0.0f, 0.0f, 0.5f), Colors::White, 0.02f);
+    ourSprite.draw(vec2(50, 50), vec2(50.0f), 0.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
+
+
+    double mouseX, mouseY;
+    glfwGetCursorPos(app->window, &mouseX, &mouseY);
+
+    bool mousePressed = glfwGetMouseButton(app->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+    button.update(mouseX, mouseY, mousePressed);
+    button.draw();
 }
 
 void MyScene9::clean()
@@ -200,18 +234,4 @@ void MyScene9::clean()
     ourText2.clean();
     ourSprite.clean();
     textMeshCount.clean();
-}
-
-void MyScene9::drawScene(Shader& shader)
-{
-    (void)shader;   //Do nothing
-}
-
-void MyScene9::drawUI()
-{
-    // render HUD / UI
-    ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
-    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
-    ourSprite.draw(vec2(50, 50), vec2(50.0f), 0.0f, Colors::White);
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
 }

@@ -26,7 +26,7 @@ void engine::UIRectangle::setup(GLFWwindow* window)
     initRenderData();
 }
 
-void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& fillColor, const Color& borderColor, float borderThickness)
+void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& fillColor, const Color& borderColor, float borderThickness, float borderRadius)
 {
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
@@ -50,7 +50,10 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
 
     m_rectShader.setVec4("fillColor", { fillColor.r, fillColor.g, fillColor.b, fillColor.a });
     m_rectShader.setVec4("borderColor", { borderColor.r, borderColor.g, borderColor.b, borderColor.a });
-    m_rectShader.setFloat("borderThickness", borderThickness);
+    m_rectShader.setVec2("rectSize", size); // rect size in pixels
+    m_rectShader.setFloat("radiusPx", borderRadius);    // corner radius in pixels
+    m_rectShader.setFloat("borderPx", borderThickness);    // border thickness in pixels
+
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

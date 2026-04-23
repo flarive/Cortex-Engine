@@ -1,9 +1,10 @@
 #include "../../include/ui/button.h"
 
-void engine::UIButton::setup(GLFWwindow* window)
+void engine::UIButton::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
 {
     m_window = window;
     m_rect.setup(window);
+    m_text.setup(window, fontPath, fontSize);
 }
 
 void engine::UIButton::setPosition(glm::vec2 pos)
@@ -28,7 +29,7 @@ void engine::UIButton::setColors(
     m_borderColor = border;
 }
 
-void engine::UIButton::setOnClick(ClickCallback callback)
+void engine::UIButton::onClick(ClickCallback callback)
 {
     m_onClick = callback;
 }
@@ -68,17 +69,29 @@ void engine::UIButton::draw()
         0.0f,
         *currentColor,
         m_borderColor,
-        m_borderThickness
+        m_borderThickness,
+        m_borderRadius
     );
+
+
+    // Text(centered)
+    glm::vec2 textPos = getCenteredTextPosition();
+    m_text.draw(m_label, textPos.x, textPos.y, 1.0f, m_textColor);
+
+}
+
+glm::vec2 engine::UIButton::getCenteredTextPosition() const
+{
+    glm::vec2 textSize = m_text.measure(m_label);
+
+    return {
+        m_position.x + (m_size.x - textSize.x) * 0.5f,
+        m_position.y + (m_size.y - textSize.y) * 0.5f
+    };
 }
 
 bool engine::UIButton::isMouseInside(double mouseX, double mouseY) const
 {
-    // GLFW mouse Y is from top → flip if your UI origin is bottom-left
-    int winW, winH;
-    glfwGetWindowSize(m_window, &winW, &winH);
-    mouseY = winH - mouseY;
-
     return mouseX >= m_position.x &&
         mouseX <= m_position.x + m_size.x &&
         mouseY >= m_position.y &&

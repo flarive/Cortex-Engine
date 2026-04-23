@@ -759,8 +759,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
         }
         break;
     case GLFW_KEY_SPACE:
-        if (action == GLFW_RELEASE)
-        {
+        if (action == GLFW_RELEASE) {
             show_demo_window = !show_demo_window;
         }
         break;

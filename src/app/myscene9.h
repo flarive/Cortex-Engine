@@ -23,8 +23,8 @@ private:
     UIText ourText2{};
     UISprite ourSprite{};
     UIText textMeshCount{};
-
-    
+    UIRectangle rect{};
+    UIButton button{};
 
     float rotation{};
 
@@ -51,10 +51,4 @@ public:
     void updateUI() override;
 
     void clean() override;
-
-
-private:
-    void drawScene(Shader& shader);
-
-    void drawUI();
 };

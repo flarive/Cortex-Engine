@@ -1,27 +1,3 @@
-//#version 330 core
-//
-//in vec2 uv;
-//out vec4 FragColor;
-//
-//uniform vec4 fillColor;
-//uniform vec4 borderColor;
-//uniform vec2 rectSize;   // rectangle size in pixels
-//uniform float borderPx;  // e.g. 1.0
-//
-//void main()
-//{
-//    // Convert pixel border thickness to UV space per axis
-//    float borderU = borderPx / rectSize.x;
-//    float borderV = borderPx / rectSize.y;
-//
-//    bool isBorder =
-//        uv.x < borderU || uv.x > 1.0 - borderU ||
-//        uv.y < borderV || uv.y > 1.0 - borderV;
-//
-//    FragColor = isBorder ? borderColor : fillColor;
-//}
-
-
 #version 330 core
 
 in vec2 uv;

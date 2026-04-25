@@ -125,8 +125,8 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     m_textShader.use();
 
     // update for fullscreen toggle
-    glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
-    m_textShader.setMat4("projection", projection2);
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
+    m_textShader.setMat4("projection", projection);
     m_textShader.setVec3("textColor", glm::vec3(color.r, color.g, color.b));
 
     glActiveTexture(GL_TEXTURE0);
@@ -174,10 +174,35 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glm::vec2 engine::UIText::measure(const std::string& text, float scale) const
+//glm::vec2 engine::UIText::measure(const std::string& text, float scale) const
+//{
+//    float width = 0.0f;
+//    float maxHeight = 0.0f;
+//
+//    for (char c : text)
+//    {
+//        auto it = m_characters.find(c);
+//        if (it == m_characters.end())
+//            continue;
+//
+//        const Character& ch = it->second;
+//
+//        // Advance cursor (same logic as draw)
+//        width += (ch.Advance >> 6) * scale;
+//
+//        float height = ch.Size.y * scale;
+//        if (height > maxHeight)
+//            maxHeight = height;
+//    }
+//
+//    return { width, maxHeight };
+//}
+
+glm::vec3 engine::UIText::measure(const std::string& text, float scale) const
 {
     float width = 0.0f;
     float maxHeight = 0.0f;
+    float maxBearingY = 0.0f; // Track the maximum bearing.y
 
     for (char c : text)
     {
@@ -193,9 +218,14 @@ glm::vec2 engine::UIText::measure(const std::string& text, float scale) const
         float height = ch.Size.y * scale;
         if (height > maxHeight)
             maxHeight = height;
+
+        // Track the maximum bearing.y
+        float bearingY = ch.Bearing.y * scale;
+        if (bearingY > maxBearingY)
+            maxBearingY = bearingY;
     }
 
-    return { width, maxHeight };
+    return { width, maxHeight, maxBearingY };
 }
 
 void engine::UIText::clean()

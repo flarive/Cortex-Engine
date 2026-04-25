@@ -33,7 +33,6 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
 
     m_rectShader.use();
 
-    //glm::mat4 projection = glm::ortho(0.0f, float(width), 0.0f, float(height));
     // This keeps winding CCW without changing OpenGL state
     glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
     m_rectShader.setMat4("projection", projection);
@@ -66,7 +65,7 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
 
 void engine::UIRectangle::initRenderData()
 {
-    unsigned int VBO{ 0 };
+    unsigned int VBO{};
 
     float vertices[] = {
         // pos

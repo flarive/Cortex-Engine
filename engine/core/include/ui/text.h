@@ -26,7 +26,7 @@ namespace engine
         // -------------------
         void draw(const std::string& text, float x, float y, float scale, const Color& color = Colors::White);
 
-        glm::vec2 measure(const std::string& text, float scale = 1.0f) const;
+        glm::vec3 measure(const std::string& text, float scale = 1.0f) const;
 
         void clean() override;
 

@@ -73,20 +73,27 @@ void engine::UIButton::draw()
         m_borderRadius
     );
 
+    int width, height;
+    glfwGetWindowSize(m_window, &width, &height);
 
     // Text(centered)
     glm::vec2 textPos = getCenteredTextPosition();
-    m_text.draw(m_label, textPos.x, textPos.y, 1.0f, m_textColor);
-
+    m_text.draw(m_label, textPos.x, height - textPos.y, 1.0f, m_textColor);
 }
 
 glm::vec2 engine::UIButton::getCenteredTextPosition() const
 {
-    glm::vec2 textSize = m_text.measure(m_label);
+    glm::vec3 textMetrics = m_text.measure(m_label);
+    float textWidth = textMetrics.x;
+    float textHeight = textMetrics.y;
+    float maxBearingY = textMetrics.z; // Maximum bearing.y
+
+    // Calculate the Y position to center the text visually
+    float yPos = m_position.y + (m_size.y / 2) + (textHeight / 2) + maxBearingY;
 
     return {
-        m_position.x + (m_size.x - textSize.x) * 0.5f,
-        m_position.y + (m_size.y - textSize.y) * 0.5f
+        m_position.x + (m_size.x - textWidth) * 0.5f,
+        m_position.y + (m_size.y + textHeight) * 0.5f // Adjust for baseline
     };
 }
 
@@ -100,5 +107,6 @@ bool engine::UIButton::isMouseInside(double mouseX, double mouseY) const
 
 void engine::UIButton::clean()
 {
-    
+    m_rect.clean();
+	m_text.clean();
 }

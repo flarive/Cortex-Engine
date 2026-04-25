@@ -101,14 +101,15 @@ void MyScene9::init()
     textMeshCount.setup(app->window, FONT_PATH, 28);
     rect.setup(app->window);
 
-    button.setup(app->window, FONT_PATH, 18);
-    button.setPosition({ 400, 300 });
+    button.setup(app->window, FONT_PATH, 16);
+    button.setPosition({ 400, 100 });
     button.setSize({ 100, 50 });
     button.setText("GOOO");
-    button.setTextColor(Colors::Red);
+    button.setTextColor(Colors::White);
+    button.setBorderThickness(1.0f);
 
     button.setColors(
-        Color(0.2f, 0.2f, 0.2f, 0.9f),
+        Color(0.0f, 0.0f, 0.0f, 0.9f),
         Color(1.0f, 0.3f, 0.3f, 1.0f),
         Color(0.1f, 0.1f, 1.0f, 1.0f),
         Color(1.0f, 1.0f, 1.0f, 1.0f)

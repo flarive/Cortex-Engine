@@ -12,7 +12,7 @@ namespace engine
     class Sphere final : public Primitive
     {
     public:
-        Sphere(const glm::vec3& _position = glm::vec3());
+        Sphere(bool _flipNormals = false, const glm::vec3& _position = glm::vec3());
         ~Sphere() = default;
 
 		void setup() override;
@@ -54,6 +54,7 @@ namespace engine
 
     private:
         float m_radius{ 1.0f };
+        bool m_flipNormals{ false };
         
         void geometrySetup();
 

@@ -4,7 +4,7 @@
 #include "../../include/tools/helpers.h"
 
 
-engine::Sphere::Sphere(const glm::vec3& _position) : Primitive(_position)
+engine::Sphere::Sphere(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
 }
 

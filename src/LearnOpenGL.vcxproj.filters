@@ -1032,6 +1032,44 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-albedo.png">
       <Filter>resources\textures\pbr\harshbricks</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-ao.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-height.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-metalness.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-normal.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-roughness.png" />
+    <CopyFileToFolders Include="..\resources\textures\no_ao.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\no_metalness.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\no_roughness.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rocks.jpg">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rocks_displace.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\rocks_normal.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\stones_normal.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\stones.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\stones_displace.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\saint_displace.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\saint_normal.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -1082,22 +1120,5 @@
     <ClInclude Include="app\myscene15.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-ao.png">
-      <Filter>resources\textures\pbr\harshbricks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-height.png">
-      <Filter>resources\textures\pbr\harshbricks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-metalness.png">
-      <Filter>resources\textures\pbr\harshbricks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-normal.png">
-      <Filter>resources\textures\pbr\harshbricks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\harshbricks\harshbricks-roughness.png">
-      <Filter>resources\textures\pbr\harshbricks</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -101,7 +101,7 @@ namespace engine
         static std::vector<Vertex> generateBillboardVertices(float uvScale = 1.0f);
         static std::vector<Vertex> generateCubeVertices(float uvScale = 1.0f);
         static std::vector<Vertex> generateCuboidVertices(float width = 1.0f, float height = 1.0f, float depth = 1.0f, float uvScale = 1.0f);
-        static std::vector<Vertex> generateSphereVertices(float radius = 1.0f, float uvScale = 1.0f);
+        static std::vector<Vertex> generateSphereVertices(float radius = 1.0f, float uvScale = 1.0f, bool flipNormal = false);
         static std::vector<Vertex> generateCylinderVertices(unsigned int sectorCount = 36, float height = 2.0f, float radius = 1.0f, float uvScale = 1.0f);
         static std::vector<Vertex> generateConeVertices(unsigned int sectorCount, float height, float radius, float uvScale);
 

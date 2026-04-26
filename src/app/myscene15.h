@@ -33,8 +33,9 @@ private:
 
     UIText textIncrease{};
     UIText textDecrease{};
+    UIText textParallaxIntensity{};
 
-    UIRectangle rect{};
+    
 
     float rotation{};
 
@@ -53,5 +54,8 @@ public:
     void framebuffer_size_callback(int newWidth, int newHeight);
 
 private:
+    float parallaxIntensity{ 0.0f };
     void incrementParallaxIntensity(float intensity);
+
+    
 };

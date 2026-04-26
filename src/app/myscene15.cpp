@@ -6,13 +6,14 @@ using namespace engine;
 
 MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::PBR,
+        .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048
+        .shadowMapsTextureSize = 2048,
+        .shadowMapsBiasFactor = 0.050f
     })
 {
     // my application specific state gets initialized here
@@ -33,31 +34,31 @@ void MyScene15::init()
     getEntityManager().addChild(entityCamera1);
 
     // light
-    auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
-    auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(2.0f);
-    light1->setCutoff(10.0f);
-    light1->setOuterCutoff(18.0f);
-    light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
-    light1->setAmbientColor(Color(1.0f));
-    light1->setDiffuseColor(Color(1.0f));
-    light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(true);
-    auto entityLight1 = make_shared<Entity>("Light1");
-    entityLight1->addComponent<TransformComponent>(trsLight1);
-    entityLight1->addComponent<LightComponent>(light1);
-    getEntityManager().addChild(entityLight1);
+    //auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
+    //auto light1 = make_shared<SpotLight>();
+    //light1->setIntensity(8.0f);
+    //light1->setCutoff(10.0f);
+    //light1->setOuterCutoff(18.0f);
+    //light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
+    //light1->setAmbientColor(Color(1.0f));
+    //light1->setDiffuseColor(Color(1.0f));
+    //light1->setSpecularColor(Color(1.0f));
+    //light1->setUseAttenuation(true);
+    //auto entityLight1 = make_shared<Entity>("Light1");
+    //entityLight1->addComponent<TransformComponent>(trsLight1);
+    //entityLight1->addComponent<LightComponent>(light1);
+    //getEntityManager().addChild(entityLight1);
 
-    //auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
-    //auto light2 = make_shared<PointLight>();
-    //light2->setIntensity(10.0f);
-    //light2->setAmbientColor(Color(1.0f));
-    //light2->setDiffuseColor(Color(1.0f));
-    //light2->setSpecularColor(Color(1.0f));
-    //auto entityLight2 = make_shared<Entity>("Light2");
-    //entityLight2->addComponent<TransformComponent>(trsLight2);
-    //entityLight2->addComponent<LightComponent>(light2);
-    //getEntityManager().addChild(entityLight2);
+    auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
+    auto light2 = make_shared<PointLight>();
+    light2->setIntensity(8.0f);
+    light2->setAmbientColor(Color(1.0f));
+    light2->setDiffuseColor(Color(1.0f));
+    light2->setSpecularColor(Color(1.0f));
+    auto entityLight2 = make_shared<Entity>("Light2");
+    entityLight2->addComponent<TransformComponent>(trsLight2);
+    entityLight2->addComponent<LightComponent>(light2);
+    getEntityManager().addChild(entityLight2);
 
     //auto trsLight1 = Transform{ {0.0f, 2.0f, 3.0f} };
     //auto light1 = make_shared<DirectionalLight>();
@@ -74,36 +75,70 @@ void MyScene15::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>(true);
-    //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/harshbricks/harshbricks-albedo.png",
-        "textures/pbr/harshbricks/harshbricks-normal.png",
-        "textures/pbr/harshbricks/harshbricks-metalness.png",
-        "textures/pbr/harshbricks/harshbricks-roughness.png",
-        "textures/pbr/harshbricks/harshbricks-ao.png",
-        "textures/pbr/harshbricks/harshbricks-height.png");
+    auto myPlane = make_shared<Plane>(false);
+    auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    //auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
+    //    "textures/pbr/harshbricks/harshbricks-albedo.png",
+    //    "textures/pbr/harshbricks/harshbricks-normal.png",
+    //    "textures/pbr/harshbricks/harshbricks-metalness.png",
+    //    "textures/pbr/harshbricks/harshbricks-roughness.png",
+    //    "textures/pbr/harshbricks/harshbricks-ao.png",
+    //    "textures/pbr/harshbricks/harshbricks-height.png");
+
+    //auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
+    //    "textures/bricks2.jpg",
+    //    "textures/bricks2_normal.jpg",
+    //    "textures/no_metalness.png",
+    //    "textures/no_roughness.png",
+    //    "textures/no_ao.png",
+    //    "textures/bricks2_disp.jpg");
+
 
 
     matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(1.0f));
-    auto trsPlane = Transform(vec3(1.5f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
+
+
+    auto myPlane2 = make_shared<Plane>(false);
+    auto matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
+    matPlane2->useParallaxMapping(true);
+    myPlane2->setup(matPlane2, UvMapping(1.0f));
+    auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(2.0f), vec3(-25.0f, 0.0, 180.0f));
+    auto entityPlane2 = make_shared<Entity>("MyPlane2");
+    entityPlane2->addComponent<TransformComponent>(trsPlane2);
+    entityPlane2->addComponent<PrimitiveComponent>(myPlane2);
+    getEntityManager().addChild(entityPlane2);
+
+
+
+
+
+
     // sphere
-    auto mySphere1 = make_shared<Sphere>();
-    //auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/planks/albedo.jpg",
-        "textures/pbr/planks/normal.jpg",
-        "textures/pbr/planks/metallic.jpg",
-        "textures/pbr/planks/roughness.jpg",
-        "textures/pbr/planks/ao.jpg",
-        "textures/pbr/planks/displace.jpg");
+    auto mySphere1 = make_shared<Sphere>(true);
+    auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    //    "textures/pbr/planks/albedo.jpg",
+    //    "textures/pbr/planks/normal.jpg",
+    //    "textures/pbr/planks/metallic.jpg",
+    //    "textures/pbr/planks/roughness.jpg",
+    //    "textures/pbr/planks/ao.jpg",
+    //    "textures/pbr/planks/displace.jpg");
+
+    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    //    "textures/bricks2.jpg",
+    //    "textures/bricks2_normal.jpg",
+    //    "textures/no_metalness.png",
+    //    "textures/no_roughness.png",
+    //    "textures/no_ao.png",
+    //    "textures/bricks2_disp.jpg");
 
 
     matSphere1->useParallaxMapping(true);
@@ -127,41 +162,7 @@ void MyScene15::init()
 
     textIncrease.setup(app->window, FONT_PATH, 18);
     textDecrease.setup(app->window, FONT_PATH, 18);
-
-    rect.setup(app->window);
-
-    // Setup
-
-    /*engine::UIButton button;
-
-    button.setup(window);
-    button.setPosition({ 100, 100 });
-    button.setSize({ 200, 50 });
-
-    button.setColors(
-        Color(0.2f, 0.2f, 0.2f, 0.9f),
-        Color(0.3f, 0.3f, 0.3f, 0.9f),
-        Color(0.1f, 0.1f, 0.1f, 0.9f),
-        Color(1.0f, 1.0f, 1.0f, 1.0f)
-    );
-
-    button.setOnClick({
-        std::cout << "Button clicked!\n";
-        });*/
-
-
-
-    // In main loop
-
-    //double mouseX, mouseY;
-    //glfwGetCursorPos(window, &mouseX, &mouseY);
-
-    //bool mousePressed =
-    //    glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-
-    //button.update(mouseX, mouseY, mousePressed);
-    //button.draw();
-
+    textParallaxIntensity.setup(app->window, FONT_PATH, 18);
 }
 
 
@@ -194,9 +195,9 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
         getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
     }
 
-    if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (key == GLFW_KEY_KP_SUBTRACT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         incrementParallaxIntensity(-0.01f);
-    else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    else if (key == GLFW_KEY_KP_ADD && (action == GLFW_REPEAT || action == GLFW_PRESS))
         incrementParallaxIntensity(0.01f);
 }
 
@@ -260,14 +261,17 @@ void MyScene15::updateUI()
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 
-    rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Colors::Black, Colors::White, 0.02f);
 
-    textIncrease.draw("R : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::AliceBlue);
-    textDecrease.draw("Shift + R : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::AliceBlue);
+
+    textIncrease.draw("NUMPAD + : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::White);
+    textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
+    textParallaxIntensity.draw(format("Parallax intensity : {}", 0), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
 {
+    parallaxIntensity = current + intensity;
+
     auto sphere = getEntityManager().findEntityByName("MySphere1");
     if (sphere)
     {
@@ -293,6 +297,19 @@ void MyScene15::incrementParallaxIntensity(float intensity)
             }
         }
     }
+
+    auto plane2 = getEntityManager().findEntityByName("MyPlane2");
+    if (plane2)
+    {
+        if (auto component = plane2->getComponent<PrimitiveComponent>())
+        {
+            if (auto material = component->getPrimitive()->getMaterial())
+            {
+                float current = material->getParallaxIntensity();
+                material->setParallaxIntensity(current + intensity);
+            }
+        }
+    }
 }
 
 void MyScene15::clean()
@@ -305,7 +322,7 @@ void MyScene15::clean()
     textDrawnCount.clean();
     textTotalCount.clean();
 
-    rect.clean();
     textIncrease.clean();
     textDecrease.clean();
+    textParallaxIntensity.clean();
 }

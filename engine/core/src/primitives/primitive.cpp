@@ -316,7 +316,42 @@ std::vector<engine::Vertex> engine::Primitive::generateCuboidVertices(float widt
     return vertices;
 }
 
-std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radius, float uvScale)
+//std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radius, float uvScale, bool flipNormal)
+//{
+//    std::vector<engine::Vertex> vertices;
+//
+//    constexpr unsigned int X_SEGMENTS = 64;
+//    constexpr unsigned int Y_SEGMENTS = 64;
+//    constexpr float PI = 3.14159265359f;
+//
+//    for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+//    {
+//        for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+//        {
+//            float xSegment = static_cast<float>(x) / static_cast<float>(X_SEGMENTS);
+//            float ySegment = static_cast<float>(y) / static_cast<float>(Y_SEGMENTS);
+//            float xPos = cos(xSegment * 2.0f * PI) * sin(ySegment * PI);
+//            float yPos = cos(ySegment * PI);
+//            float zPos = sin(xSegment * 2.0f * PI) * sin(ySegment * PI);
+//
+//            glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
+//            glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
+//            //glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
+//            glm::vec2 texCoord = { (1.0f - xSegment) * uvScale, (1.0f - ySegment) * uvScale };
+//
+//
+//            // Calculate tangent and bitangent
+//            glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));
+//            glm::vec3 bitangent = glm::normalize(glm::cross(normal, tangent));
+//
+//            vertices.emplace_back(position, normal, texCoord, tangent, bitangent);
+//        }
+//    }
+//
+//    return vertices;
+//}
+
+std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radius, float uvScale, bool flipNormal)
 {
     std::vector<engine::Vertex> vertices;
 
@@ -336,9 +371,14 @@ std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radi
 
             glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
             glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
-            //glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
-            glm::vec2 texCoord = { (1.0f - xSegment) * uvScale, (1.0f - ySegment) * uvScale };
 
+            // Flip the normal if required
+            if (flipNormal)
+            {
+                normal = -normal;
+            }
+
+            glm::vec2 texCoord = { (1.0f - xSegment) * uvScale, (1.0f - ySegment) * uvScale };
 
             // Calculate tangent and bitangent
             glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));

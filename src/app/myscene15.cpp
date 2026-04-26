@@ -110,7 +110,7 @@ void MyScene15::init()
     auto matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
     matPlane2->useParallaxMapping(true);
     myPlane2->setup(matPlane2, UvMapping(1.0f));
-    auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(2.0f), vec3(-25.0f, 0.0, 180.0f));
+    auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(2.0f), vec3(-15.0f, 0.0, 180.0f));
     auto entityPlane2 = make_shared<Entity>("MyPlane2");
     entityPlane2->addComponent<TransformComponent>(trsPlane2);
     entityPlane2->addComponent<PrimitiveComponent>(myPlane2);
@@ -171,7 +171,7 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
     Scene::key_callback(key, scancode, action, mods);
 
     // Detect Shift key state
-    bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
 
     if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
     {
@@ -265,51 +265,35 @@ void MyScene15::updateUI()
 
     textIncrease.draw("NUMPAD + : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::White);
     textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
-    textParallaxIntensity.draw(format("Parallax intensity : {}", 0), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
+    textParallaxIntensity.draw(format("Parallax intensity : {}", parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
 {
-    parallaxIntensity = current + intensity;
+    auto clampParallaxIntensity = [](float value) {
+        return std::clamp(value, 0.0f, 1.0f);
+        };
+
+    auto updateMaterial = [&](shared_ptr<Entity> entity) {  // Replace `Entity*` with your actual entity type
+        if (entity) {
+            if (auto component = entity->getComponent<PrimitiveComponent>()) {
+                if (auto material = component->getPrimitive()->getMaterial()) {
+                    float current = material->getParallaxIntensity();
+                    float newIntensity = clampParallaxIntensity(current + intensity);
+                    material->setParallaxIntensity(newIntensity);
+                }
+            }
+        }
+        };
 
     auto sphere = getEntityManager().findEntityByName("MySphere1");
-    if (sphere)
-    {
-        if (auto component = sphere->getComponent<PrimitiveComponent>())
-        {
-            if (auto material = component->getPrimitive()->getMaterial())
-            {
-                float current = material->getParallaxIntensity();
-                material->setParallaxIntensity(current + intensity);
-            }
-        }
-    }
+    updateMaterial(sphere);
 
     auto plane = getEntityManager().findEntityByName("MyPlane");
-    if (plane)
-    {
-        if (auto component = plane->getComponent<PrimitiveComponent>())
-        {
-            if (auto material = component->getPrimitive()->getMaterial())
-            {
-                float current = material->getParallaxIntensity();
-                material->setParallaxIntensity(current + intensity);
-            }
-        }
-    }
+    updateMaterial(plane);
 
     auto plane2 = getEntityManager().findEntityByName("MyPlane2");
-    if (plane2)
-    {
-        if (auto component = plane2->getComponent<PrimitiveComponent>())
-        {
-            if (auto material = component->getPrimitive()->getMaterial())
-            {
-                float current = material->getParallaxIntensity();
-                material->setParallaxIntensity(current + intensity);
-            }
-        }
-    }
+    updateMaterial(plane2);
 }
 
 void MyScene15::clean()

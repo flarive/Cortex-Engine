@@ -194,7 +194,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
             
             
             shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-            shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
+            shader.setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
             
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());

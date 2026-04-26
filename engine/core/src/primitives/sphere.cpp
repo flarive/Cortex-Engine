@@ -183,7 +183,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
             
             shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-            shader.setFloat("material.heightScale", m_material->getParallaxIntensity());
+            shader.setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
             
             
             

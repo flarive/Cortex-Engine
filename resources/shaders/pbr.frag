@@ -33,7 +33,7 @@ struct Material {
     float shadowMapsBlur;
     float normalMapIntensity;
     float emissiveIntensity;
-    float heightScale;
+    float parallaxMapIntensity;
 
     vec3 ambient_color;
 
@@ -678,7 +678,7 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
+    vec2 P = viewDir.xy / -viewDir.z * material.parallaxMapIntensity;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;

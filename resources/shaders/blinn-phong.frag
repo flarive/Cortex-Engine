@@ -23,7 +23,7 @@ struct Material {
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
     float normalMapIntensity;
-    float heightScale;
+    float parallaxMapIntensity;
 
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
@@ -445,7 +445,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
 
     // Bias computation (to avoid shadow acne)
     vec3 lightDir = normalize(lightPos - fragPos);
-    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.parallaxMapIntensity : 0.0);
 
     // Apply bias ONCE to receiver depth (PCF-correct)
     float currentDepth = projCoords.z;
@@ -489,7 +489,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
 
     // Bias computation (to avoid shadow acne)
     vec3 lightDir = normalize(lightPos - fragPos);
-    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.parallaxMapIntensity : 0.0);
 
     // Apply bias ONCE to receiver depth (PCF-correct)
     float currentDepth = projCoords.z;
@@ -577,7 +577,7 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
 
     // Bias computation (to avoid shadow acne)
     vec3 lightDir = normalize(lightPos - fragPos);
-    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.heightScale : 0.0);
+    float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.parallaxMapIntensity : 0.0);
 
     // Apply bias ONCE to receiver depth (PCF-correct)
     float currentDepth = projCoords.z;
@@ -817,7 +817,7 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / -viewDir.z * material.heightScale;
+    vec2 P = viewDir.xy / viewDir.z * material.parallaxMapIntensity;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;

@@ -307,10 +307,10 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 // Don't worry if you don't get what's going on; you generally want to do normal 
 // mapping the usual way for performance anyways; I do plan make a note of this 
 // technique somewhere later in the normal mapping tutorial.
-vec3 getNormalFromMap()
+vec3 getNormalFromMap(vec2 texCoords)
 {
     // Sample the normal map and convert the range from [0, 1] to [-1, 1]
-    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, fs_in.TexCoords).xyz * 2.0 - 1.0 : normalize(fs_in.Normal) * material.normalMapIntensity;; // caca
+    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0 : normalize(fs_in.Normal) * material.normalMapIntensity;; // caca
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
@@ -706,31 +706,31 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
 // ----------------------------------------------------------------------------
 void main()
 {		
+    // Use world-space viewDir for lighting and shadows
+    vec3 viewDirWS = normalize(viewPos - fs_in.FragPos);
+    // Use tangent-space viewDir only for parallax
+    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+
+    // Original texture coordinates
+    vec2 texCoords = fs_in.TexCoords;
+
+    // Offset texture coordinates with Parallax Mapping
+    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(texCoords, viewDirTS) : texCoords;
+
     // input lighting data
-    vec3 normal = getNormalFromMap();
+    vec3 normal = getNormalFromMap(ll_TexCoords);
     vec3 N = normalize(fs_in.Normal);
     vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
     vec3 R = reflect(-V, normal);
     vec3 P = fs_in.FragPos;
     float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
-    
-    vec2 texCoords = fs_in.TexCoords;
 
-    // Use world-space viewDir for lighting and shadows
-    vec3 viewDirWS = normalize(viewPos - fs_in.FragPos);
-    
-    // Use tangent-space viewDir only for parallax
-    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
 
-    // offset texture coordinates with Parallax Mapping
-    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(texCoords, viewDirTS) : texCoords;
-
-    // still usefull ??????????
-    vec3 mDiffuse = texture(material.texture_diffuse, ll_TexCoords).xyz;
-    vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0.5); // A neutral gray color
+    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0.5);
+    vec3 mDiffuse = texture(material.texture_diffuse, ll_TexCoords).xyz;
+    vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
     float metallic = 0;
     float roughness = 0;
@@ -738,20 +738,20 @@ void main()
     if (material.has_texture_metalness_from_combined_map)
     {
         // Sample the combined texture
-        vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
+        vec4 metalRoughness = texture(material.texture_metalness_from_combined, ll_TexCoords);
         metallic = metalRoughness.b; // Extract metallic from Blue channel
         roughness = metalRoughness.g; // Extract roughness from Green channel
     }
     else
     {
         // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, ll_TexCoords).r : 0.0; // Non-metallic;
-        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, ll_TexCoords).r : 0.5; // Moderate roughness
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, ll_TexCoords).r : 0.0;
+        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, ll_TexCoords).r : 0.5;
     }
 
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, ll_TexCoords).r : 0.0; // Full ambient occlusion
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, ll_TexCoords).r : 0.0;
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, ll_TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0.0); // waiting to be used
+    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -760,8 +760,6 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-
-
 
     // ambient lighting (we now use IBL as the ambient term)
     vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);

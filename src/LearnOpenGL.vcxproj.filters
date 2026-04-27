@@ -1032,11 +1032,6 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-albedo.png">
       <Filter>resources\textures\pbr\harshbricks</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-ao.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-height.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-metalness.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-normal.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-roughness.png" />
     <CopyFileToFolders Include="..\resources\textures\no_ao.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
@@ -1069,6 +1064,21 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\saint_normal.png">
       <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-ao.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-height.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-metalness.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-normal.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\harshbricks\harshbricks-roughness.png">
+      <Filter>resources\textures\pbr\harshbricks</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

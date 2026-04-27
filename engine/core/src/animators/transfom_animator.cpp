@@ -105,7 +105,8 @@ void engine::TransformAnimator::playAnimation(std::shared_ptr<Animation> pAnimat
 			m_initialTransform,
 			anim.from,
 			anim.to,
-			anim.mode
+			anim.mode,
+			anim.loop
 		);
 	}
 }

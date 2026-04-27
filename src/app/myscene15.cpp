@@ -96,7 +96,7 @@ void MyScene15::init()
 
 
     matPlane->useParallaxMapping(true);
-    myPlane->setup(matPlane, UvMapping(1.0f));
+    myPlane->setup(matPlane, UvMapping(2.0f));
     auto trsPlane = Transform(vec3(0.0f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
@@ -110,11 +110,35 @@ void MyScene15::init()
     auto matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
     matPlane2->useParallaxMapping(true);
     myPlane2->setup(matPlane2, UvMapping(1.0f));
-    auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(2.0f), vec3(-15.0f, 0.0, 180.0f));
+    auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(1.0f), vec3(-15.0f, 0.0, 180.0f));
     auto entityPlane2 = make_shared<Entity>("MyPlane2");
     entityPlane2->addComponent<TransformComponent>(trsPlane2);
     entityPlane2->addComponent<PrimitiveComponent>(myPlane2);
     getEntityManager().addChild(entityPlane2);
+
+
+
+    auto myPlane3 = make_shared<Plane>(false);
+    auto matPlane3 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/stones.png", "", "textures/stones_normal.png", "textures/stones_displace.png");
+    matPlane3->useParallaxMapping(true);
+    myPlane3->setup(matPlane3, UvMapping(1.0f));
+    auto trsPlane3 = Transform(vec3(-1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(90.0f, 45.0, 0.0f));
+    auto entityPlane3 = make_shared<Entity>("MyPlane3");
+    entityPlane3->addComponent<TransformComponent>(trsPlane3);
+    entityPlane3->addComponent<PrimitiveComponent>(myPlane3);
+    getEntityManager().addChild(entityPlane3);
+
+
+
+    auto myPlane4 = make_shared<Plane>(false);
+    auto matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png");
+    matPlane4->useParallaxMapping(true);
+    myPlane4->setup(matPlane4, UvMapping(1.0f));
+    auto trsPlane4 = Transform(vec3(1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(90.0f, -45.0, 0.0f));
+    auto entityPlane4 = make_shared<Entity>("MyPlane4");
+    entityPlane4->addComponent<TransformComponent>(trsPlane4);
+    entityPlane4->addComponent<PrimitiveComponent>(myPlane4);
+    getEntityManager().addChild(entityPlane4);
 
 
 
@@ -143,12 +167,29 @@ void MyScene15::init()
 
     matSphere1->useParallaxMapping(true);
     mySphere1->setup(matSphere1, UvMapping(1.0f));
-    auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 0.0f), vec3(0.4f));
+    auto trsSphere1 = Transform(vec3(0.0f, 0.36f, 0.0f), vec3(0.3f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
     getEntityManager().addChild(entitySphere1);
 
+
+
+
+    // cube
+    auto myCube = make_shared<Cube>(2.0f);
+    auto matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png");
+    matCube->useParallaxMapping(true);
+    myCube->setup(matCube, UvMapping(1.0f));
+    auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.4f));
+    auto entityCube = make_shared<Entity>("MyCube");
+    AnimTransform anim1{ trsCube, Transform(trsCube).addRotationX(90.0f), AnimMode::Absolute, 20.0f };
+    auto trsAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
+    auto trsAnimator = make_shared<TransformAnimator>(trsAnimation1);
+    entityCube->addComponent<TransformComponent>(trsCube);
+    entityCube->addComponent<PrimitiveComponent>(myCube);
+    entityCube->addComponent<AnimatorComponent>(trsAnimator);
+    getEntityManager().addChild(entityCube);
 
 
     textFPSCount.setup(app->window, FONT_PATH, 20);
@@ -265,7 +306,7 @@ void MyScene15::updateUI()
 
     textIncrease.draw("NUMPAD + : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::White);
     textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
-    textParallaxIntensity.draw(format("Parallax intensity : {}", parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
+    textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
@@ -274,26 +315,24 @@ void MyScene15::incrementParallaxIntensity(float intensity)
         return std::clamp(value, 0.0f, 1.0f);
         };
 
-    auto updateMaterial = [&](shared_ptr<Entity> entity) {  // Replace `Entity*` with your actual entity type
+    auto updateMaterial = [&](shared_ptr<Entity> entity) {
         if (entity) {
             if (auto component = entity->getComponent<PrimitiveComponent>()) {
                 if (auto material = component->getPrimitive()->getMaterial()) {
                     float current = material->getParallaxIntensity();
-                    float newIntensity = clampParallaxIntensity(current + intensity);
-                    material->setParallaxIntensity(newIntensity);
+                    m_parallaxIntensity = clampParallaxIntensity(current + intensity);
+                    material->setParallaxIntensity(m_parallaxIntensity);
                 }
             }
         }
         };
 
-    auto sphere = getEntityManager().findEntityByName("MySphere1");
-    updateMaterial(sphere);
-
-    auto plane = getEntityManager().findEntityByName("MyPlane");
-    updateMaterial(plane);
-
-    auto plane2 = getEntityManager().findEntityByName("MyPlane2");
-    updateMaterial(plane2);
+    updateMaterial(getEntityManager().findEntityByName("MySphere1"));
+    updateMaterial(getEntityManager().findEntityByName("MyPlane"));
+    updateMaterial(getEntityManager().findEntityByName("MyPlane2"));
+    updateMaterial(getEntityManager().findEntityByName("MyPlane3"));
+    updateMaterial(getEntityManager().findEntityByName("MyPlane4"));
+    updateMaterial(getEntityManager().findEntityByName("MyCube"));
 }
 
 void MyScene15::clean()

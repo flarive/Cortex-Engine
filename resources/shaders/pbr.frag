@@ -678,7 +678,7 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     float currentLayerDepth = 0.0;
 
     // Direction & per-layer texcoord shift
-    vec2 P = viewDir.xy / -viewDir.z * material.parallaxMapIntensity;
+    vec2 P = viewDir.xy / viewDir.z * material.parallaxMapIntensity;
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;

@@ -54,8 +54,6 @@ public:
     void framebuffer_size_callback(int newWidth, int newHeight);
 
 private:
-    float parallaxIntensity{ 0.0f };
+    float m_parallaxIntensity{ 0.0f };
     void incrementParallaxIntensity(float intensity);
-
-    
 };

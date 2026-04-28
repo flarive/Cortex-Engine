@@ -4,23 +4,34 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
+
 MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
-    {
-        .method = RenderMethod::PBR,
-        .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "",
-        .HDRSkyboxBlurStrength = 0.0f,
-        .enableShadows = true,
-        .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048,
-        .shadowMapsBiasFactor = 0.050f
-    })
+        {
+            .method = RenderMethod::PBR,
+            .HDRSkyboxHide = true,
+            .HDRSkyboxFilePath = "",
+            .HDRSkyboxBlurStrength = 0.0f,
+            .enableShadows = true,
+            .shadowIntensity = 3.0f,
+            .shadowMapsTextureSize = 2048,
+            .shadowMapsBiasFactor = 0.050f
+        })
 {
     // my application specific state gets initialized here
 
     lastX = app->width / 2.0f;
     lastY = app->height / 2.0f;
 }
+
+MyScene15::MyScene15(const string& _title, App* _app, const SceneSettings& _settings)
+    : Scene(_title, _app, _settings)
+{
+    // my application specific state gets initialized here
+
+    lastX = app->width / 2.0f;
+    lastY = app->height / 2.0f;
+}
+
 
 
 void MyScene15::init()
@@ -190,7 +201,7 @@ void MyScene15::init()
     mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.36f, 0.0f), vec3(0.3f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
-    AnimTransform animSphere1{ trsSphere1, Transform(trsSphere1).addRotationY(90.0f), AnimMode::Absolute, 5.0f, true };
+    AnimTransform animSphere1{ trsSphere1, Transform(trsSphere1).addRotationY(360.0f), AnimMode::Absolute, 5.0f, true };
     auto trsSphereAnimation1 = make_shared<TransformAnimation>("animSphere1", animSphere1);
     auto trsSphereAnimator = make_shared<TransformAnimator>(trsSphereAnimation1);
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
@@ -236,6 +247,8 @@ void MyScene15::init()
     textIncrease.setup(app->window, FONT_PATH, 18);
     textDecrease.setup(app->window, FONT_PATH, 18);
     textParallaxIntensity.setup(app->window, FONT_PATH, 18);
+
+    textCurrentRenderer.setup(app->window, FONT_PATH, 18);
 }
 
 
@@ -274,7 +287,10 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
         incrementParallaxIntensity(0.01f);
 
     if (key == GLFW_KEY_KP_ENTER && action == GLFW_PRESS)
-        switchRenderMode(RenderMethod::PBR);
+    {
+        auto newMethod = m_currentRendererMethod == RenderMethod::PBR ? RenderMethod::BlinnPhong : RenderMethod::PBR;
+        switchRenderMode(newMethod);
+    }
 }
 
 void MyScene15::mouse_callback(double xposIn, double yposIn)
@@ -342,6 +358,8 @@ void MyScene15::updateUI()
     textIncrease.draw("NUMPAD + : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::White);
     textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
     textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
+
+    textCurrentRenderer.draw(format("Renderer : {}", (m_currentRendererMethod == RenderMethod::PBR ? "PBR" : "BlinnPhong")), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Orange);
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
@@ -372,7 +390,8 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-
+    SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();
+    //getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15", app, settings));
 }
 
 void MyScene15::clean()
@@ -388,4 +407,6 @@ void MyScene15::clean()
     textIncrease.clean();
     textDecrease.clean();
     textParallaxIntensity.clean();
+
+    textCurrentRenderer.clean();
 }

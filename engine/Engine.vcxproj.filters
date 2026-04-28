@@ -486,6 +486,9 @@
     <ClCompile Include="core\src\ui\button.cpp">
       <Filter>Fichiers sources\core\ui</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\managers\scene_manager.cpp">
+      <Filter>Fichiers sources\core\managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -802,6 +805,9 @@
     </ClInclude>
     <ClInclude Include="core\include\ui\button.h">
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\managers\scene_manager.h">
+      <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

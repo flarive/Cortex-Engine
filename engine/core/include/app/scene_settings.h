@@ -13,8 +13,7 @@ namespace engine
     {
         Phong = 0,
         BlinnPhong = 1, // legacy
-        PBR = 2, // mainstream,
-        Parallax = 3 // temp test
+        PBR = 2, // mainstream (default)
     };
 
     struct GradientBackgroundSettings final
@@ -45,7 +44,7 @@ namespace engine
 
     struct SceneSettings final
     {
-        RenderMethod method{};
+        RenderMethod method{ RenderMethod ::PBR };
 
 		Color backgroundColor{ Colors::Black };
         GradientBackgroundSettings backgroundGradientColors { false, Colors::Black, Colors::Black, 0.0f};

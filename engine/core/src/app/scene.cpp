@@ -42,15 +42,15 @@ engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settin
     : title(_title), app(_app)
 {
     if (_settings.method == RenderMethod::PBR) {
+        // default renderer
         m_renderer = new PbrRenderer(app->window);
     }
     else if (_settings.method == RenderMethod::BlinnPhong) {
+        // legacy renderer
         m_renderer = new BlinnPhongRenderer(app->window);
     }
-    //else if (_settings.method == RenderMethod::Parallax) {
-    //    m_renderer = new ParallaxRenderer(app->window);
-    //}
     else {
+        // just for very simple tests
         m_renderer = new PhongRenderer(app->window);
     }
 
@@ -96,38 +96,20 @@ void engine::Scene::after_init_internal()
     // Always run this code
     initEntities();
     
-    // Counters
-    unsigned short spotLightCount = 0, dirLightCount = 0, pointLightCount = 0, areaLightCount = 0;
-
-    // Count each type using dynamic_pointer_cast
-    for (const auto& light : lights) {
-        if (std::dynamic_pointer_cast<SpotLight>(light)) {
-            ++spotLightCount;
-        }
-        else if (std::dynamic_pointer_cast<DirectionalLight>(light)) {
-            ++dirLightCount;
-        }
-        else if (std::dynamic_pointer_cast<PointLight>(light)) {
-            ++pointLightCount;
-        }
-        else if (std::dynamic_pointer_cast<AreaLight>(light)) {
-            ++areaLightCount;
-        }
-    }
-
-    m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount, areaLightCount);
+    // Count all lights in the scene
+    computeLightCount();
 
     // Fill imGui debug window with current scene hierarchy
     #if EDITOR_MODE
     m_editor.setScene(m_entityManager.getRootEntity());
     #endif
     
-    // count all items in the scene
+    // Count all items in the scene
     countItems(m_entityManager.getRootEntity());
 
     initQueries();
 
-    // avoid a big deltatime (nearly 3s) the first time
+    // Avoid a big deltatime (nearly 3s) the first time
     lastFrameTime = (float)glfwGetTime();
 }
 
@@ -921,6 +903,30 @@ void engine::Scene::countItems(std::shared_ptr<Entity>& entity)
             }
         }
     }
+}
+
+void engine::Scene::computeLightCount()
+{
+    // Counters
+    unsigned short spotLightCount = 0, dirLightCount = 0, pointLightCount = 0, areaLightCount = 0;
+
+    // Count each type using dynamic_pointer_cast
+    for (const auto& light : lights) {
+        if (std::dynamic_pointer_cast<SpotLight>(light)) {
+            ++spotLightCount;
+        }
+        else if (std::dynamic_pointer_cast<DirectionalLight>(light)) {
+            ++dirLightCount;
+        }
+        else if (std::dynamic_pointer_cast<PointLight>(light)) {
+            ++pointLightCount;
+        }
+        else if (std::dynamic_pointer_cast<AreaLight>(light)) {
+            ++areaLightCount;
+        }
+    }
+
+    m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount, areaLightCount);
 }
 
 //void engine::Scene::performRayCasting(double xpos, double ypos)

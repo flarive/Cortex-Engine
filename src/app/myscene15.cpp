@@ -272,6 +272,9 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
         incrementParallaxIntensity(-0.01f);
     else if (key == GLFW_KEY_KP_ADD && (action == GLFW_REPEAT || action == GLFW_PRESS))
         incrementParallaxIntensity(0.01f);
+
+    if (key == GLFW_KEY_KP_ENTER && action == GLFW_PRESS)
+        switchRenderMode(RenderMethod::PBR);
 }
 
 void MyScene15::mouse_callback(double xposIn, double yposIn)
@@ -365,6 +368,11 @@ void MyScene15::incrementParallaxIntensity(float intensity)
     updateMaterial(getEntityManager().findEntityByName("MyPlane3"));
     updateMaterial(getEntityManager().findEntityByName("MyPlane4"));
     updateMaterial(getEntityManager().findEntityByName("MyCube"));
+}
+
+void MyScene15::switchRenderMode(RenderMethod method)
+{
+
 }
 
 void MyScene15::clean()

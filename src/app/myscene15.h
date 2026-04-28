@@ -55,5 +55,7 @@ public:
 
 private:
     float m_parallaxIntensity{ 0.0f };
+    RenderMethod m_isPBR{ RenderMethod::BlinnPhong };
     void incrementParallaxIntensity(float intensity);
+    void switchRenderMode(RenderMethod method);
 };

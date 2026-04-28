@@ -25,8 +25,8 @@
 
 namespace engine
 {
-    class EntityManager;
-    class SceneManager;
+    //class EntityManager;
+    //class SceneManager;
 
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
@@ -89,7 +89,7 @@ namespace engine
         Renderer* m_renderer{};
         EntityManager m_entityManager{};
         AudioManager m_audioManager{};
-        //SceneManager m_sceneManager{};
+        SceneManager m_sceneManager{};
 
         unsigned short m_activeCameraIndex{};
 
@@ -138,10 +138,10 @@ namespace engine
         void exit();
 
         GLFWwindow* getWindow();
-        Renderer* getRenderer() { return m_renderer; };
-        EntityManager getEntityManager() { return m_entityManager; }; // call it entity root may be ?
-        AudioManager& getAudioManager() { return m_audioManager; };
-        //SceneManager getSceneManager() { return m_sceneManager; }
+        Renderer* getRenderer() { return m_renderer; }
+        EntityManager getEntityManager() { return m_entityManager; } // call it entity root may be ?
+        AudioManager& getAudioManager() { return m_audioManager; }
+        SceneManager getSceneManager() { return m_sceneManager; }
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {

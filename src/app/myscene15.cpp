@@ -114,7 +114,7 @@ void MyScene15::init()
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
-
+    
 
 
     auto myPlane2 = make_shared<Plane>(false);
@@ -206,7 +206,7 @@ void MyScene15::init()
     auto trsSphereAnimator = make_shared<TransformAnimator>(trsSphereAnimation1);
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
-    entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
+    //entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
     getEntityManager().addChild(entitySphere1);
 
 
@@ -359,7 +359,18 @@ void MyScene15::updateUI()
     textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
     textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
 
-    textCurrentRenderer.draw(format("Renderer : {}", (m_currentRendererMethod == RenderMethod::PBR ? "PBR" : "BlinnPhong")), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Orange);
+
+    auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
+    if (renderer)
+    {
+        textCurrentRenderer.draw(format("Renderer : {}", "BlinnPhong"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Orange);
+    }
+    else
+    {
+        textCurrentRenderer.draw(format("Renderer : {}", "PBR"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Green);
+    }
+
+    
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)
@@ -378,7 +389,7 @@ void MyScene15::incrementParallaxIntensity(float intensity)
                 }
             }
         }
-        };
+    };
 
     updateMaterial(getEntityManager().findEntityByName("MySphere1"));
     updateMaterial(getEntityManager().findEntityByName("MyPlane"));
@@ -391,7 +402,9 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 void MyScene15::switchRenderMode(RenderMethod method)
 {
     SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();
-    //getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15", app, settings));
+    getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15", app, settings));
+
+    m_currentRendererMethod = method;
 }
 
 void MyScene15::clean()

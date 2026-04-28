@@ -1,5 +1,7 @@
 #include "../../include/managers/scene_manager.h"
 
+#include "../../include/app/scene.h"
+
 void engine::SceneManager::loadScene(std::shared_ptr<engine::Scene> scene)
 {
 	if (m_currentScene) {

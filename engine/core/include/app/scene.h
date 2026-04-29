@@ -13,7 +13,6 @@
 #include "../editor/imgui_editor.h"
 #include "../debug/imgui_perf_overlay.h"
 
-#include "../managers/scene_manager.h"
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"
 
@@ -25,9 +24,6 @@
 
 namespace engine
 {
-    //class EntityManager;
-    //class SceneManager;
-
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
@@ -89,7 +85,6 @@ namespace engine
         Renderer* m_renderer{};
         EntityManager m_entityManager{};
         AudioManager m_audioManager{};
-        SceneManager m_sceneManager{};
 
         unsigned short m_activeCameraIndex{};
 
@@ -113,6 +108,7 @@ namespace engine
 
 
         Scene(const std::string& _title, App* _app, SceneSettings _settings);
+        virtual ~Scene();
 
         void initialize();
 
@@ -139,9 +135,8 @@ namespace engine
 
         GLFWwindow* getWindow();
         Renderer* getRenderer() { return m_renderer; }
-        EntityManager getEntityManager() { return m_entityManager; } // call it entity root may be ?
+        EntityManager& getEntityManager() { return m_entityManager; } // call it entity root may be ?
         AudioManager& getAudioManager() { return m_audioManager; }
-        SceneManager getSceneManager() { return m_sceneManager; }
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {

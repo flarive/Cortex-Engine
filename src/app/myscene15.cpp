@@ -23,6 +23,8 @@ MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, Scen
     lastY = app->height / 2.0f;
 }
 
+
+
 MyScene15::MyScene15(const string& _title, App* _app, const SceneSettings& _settings)
     : Scene(_title, _app, _settings)
 {
@@ -206,7 +208,7 @@ void MyScene15::init()
     auto trsSphereAnimator = make_shared<TransformAnimator>(trsSphereAnimation1);
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
-    //entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
+    entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
     getEntityManager().addChild(entitySphere1);
 
 
@@ -370,6 +372,7 @@ void MyScene15::updateUI()
         textCurrentRenderer.draw(format("Renderer : {}", "PBR"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Green);
     }
 
+    //app->
     
 }
 
@@ -401,10 +404,16 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-    SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();
-    getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15", app, settings));
+    app->getSceneManager().unloadCurrentScene();
 
-    m_currentRendererMethod = method;
+
+    //SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();
+    //app->getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15_NEW", app, settings));
+
+    //auto ppp = app->getSceneManager().getCurrentScene();
+    //ppp->initialize();
+
+    //m_currentRendererMethod = method;
 }
 
 void MyScene15::clean()

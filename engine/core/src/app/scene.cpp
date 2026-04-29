@@ -1142,3 +1142,12 @@ void engine::Scene::computeLightCount()
 //}
 
 //#endif
+
+
+engine::Scene::~Scene()
+{
+    //auto zzz = this->title;
+    
+    //if (currentInstance != nullptr)
+    //    delete(currentInstance);
+}

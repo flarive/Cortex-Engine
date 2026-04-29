@@ -2,11 +2,8 @@
 
 #include "../common_defines.h"
 
-//#include "../app/scene.h"
-
 namespace engine
 {
-	
 	class Scene;
 	
 	class SceneManager final
@@ -15,10 +12,11 @@ namespace engine
 		SceneManager() = default;
 		~SceneManager() = default;
 
-	void loadScene(std::shared_ptr<Scene> scene);
-	std::shared_ptr<Scene> getCurrentScene();
+	void loadScene(std::shared_ptr<engine::Scene> scene);
+	std::shared_ptr<engine::Scene> getCurrentScene();
+	bool unloadCurrentScene();
 
 	private:
-		std::shared_ptr<Scene> m_currentScene{};
+		std::shared_ptr<engine::Scene> m_currentScene{};
 	};
 }

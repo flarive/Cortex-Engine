@@ -24,10 +24,11 @@ using namespace engine;
 
 // make it easier to switch between scenes
 using MyApp = MyApp1;
-using MyScene = MyScene15;
+using MyScene = MyScene1;
 
 App* myApp{};
 Scene* myScene{};
+
 
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
@@ -55,7 +56,8 @@ int main(int, char**)
     if (myApp)
     {
         // Init a scene in the app
-        myScene = new MyScene("MyScene", myApp);
+        myApp->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", myApp));
+        myScene = myApp->getSceneManager().getCurrentScene().get(); // convert smart to raw pointer (temp !)
         if (myScene)
         {
             myScene->initialize();

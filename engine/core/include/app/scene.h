@@ -15,6 +15,7 @@
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"
+#include "../managers/log_manager.h"
 
 
 #include <iostream>
@@ -108,7 +109,7 @@ namespace engine
 
 
         Scene(const std::string& _title, App* _app, SceneSettings _settings);
-        virtual ~Scene();
+		virtual ~Scene() = default;
 
         void initialize();
 

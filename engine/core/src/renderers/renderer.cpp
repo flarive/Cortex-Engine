@@ -821,6 +821,8 @@ void engine::Renderer::renderSphere()
 
 void engine::Renderer::clean()
 {
+	logger.info("Cleaning up renderer base resources");
+    
     // delete shaders
     screenShader.clean();
 	directionalDepthMapShader.clean();

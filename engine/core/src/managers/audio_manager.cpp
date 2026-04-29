@@ -151,35 +151,6 @@ void engine::AudioManager::setInitCallback(InitCallback callback)
     m_initCallback = callback;
 }
 
-//void engine::AudioManager::clean()
-//{
-//    // Only clean up if the context is valid
-//    if (!m_context)
-//        return;
-//
-//    for (auto& [id, data] : m_audioMap) {
-//        ALint state;
-//        alGetSourcei(data.source, AL_SOURCE_STATE, &state);
-//        if (state == AL_PLAYING) {
-//            alSourceStop(data.source);
-//        }
-//        alSourcei(data.source, AL_BUFFER, 0);
-//        alDeleteSources(1, &data.source);
-//        alDeleteBuffers(1, &data.buffer);
-//    }
-//    m_audioMap.clear();
-//
-//    // Make context non-current
-//    alcMakeContextCurrent(nullptr);
-//    alcDestroyContext(m_context);
-//    m_context = nullptr;
-//
-//    if (m_device) {
-//        alcCloseDevice(m_device);
-//        m_device = nullptr;
-//    }
-//}
-
 void engine::AudioManager::clean()
 {
     // Signal the thread to exit early if it's still running

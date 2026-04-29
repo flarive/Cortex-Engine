@@ -11,6 +11,8 @@
 
 #include "../misc/ltc_matrix.h"
 
+#include "../managers/log_manager.h"
+
 
 namespace engine
 {

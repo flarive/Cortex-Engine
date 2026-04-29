@@ -105,6 +105,8 @@ engine::Shader& engine::PhongRenderer::getShader()
 void engine::PhongRenderer::clean()
 {
     Renderer::clean();
+
+    logger.info("Cleaning up Phong renderer resources");
     
     // delete shaders
     phongShader.clean();

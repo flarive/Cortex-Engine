@@ -24,3 +24,11 @@ bool engine::SceneManager::unloadCurrentScene()
 
 	return false;
 }
+
+void engine::SceneManager::clean()
+{
+	if (m_currentScene) {
+		//m_currentScene->clean();
+		//m_currentScene.reset();
+	}
+}

@@ -15,6 +15,7 @@ namespace engine
 	void loadScene(std::shared_ptr<engine::Scene> scene);
 	std::shared_ptr<engine::Scene> getCurrentScene();
 	bool unloadCurrentScene();
+	void clean();
 
 	private:
 		std::shared_ptr<engine::Scene> m_currentScene{};

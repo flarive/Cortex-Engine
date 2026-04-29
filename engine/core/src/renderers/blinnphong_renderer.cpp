@@ -301,6 +301,8 @@ engine::Shader& engine::BlinnPhongRenderer::getShader()
 void engine::BlinnPhongRenderer::clean()
 {
     Renderer::clean();
+
+    logger.info("Cleaning up BlinnPhong renderer resources");
     
     // delete shaders
     blinnPhongShader.clean();

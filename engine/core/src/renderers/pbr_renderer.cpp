@@ -515,6 +515,8 @@ engine::Shader& engine::PbrRenderer::getShader()
 void engine::PbrRenderer::clean()
 {
 	Renderer::clean();
+
+    logger.info("Cleaning up PBR renderer resources");
     
     // delete shaders
     pbrShader.clean();

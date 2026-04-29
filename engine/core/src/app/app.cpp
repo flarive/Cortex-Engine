@@ -254,7 +254,9 @@ void engine::App::resetWindowTitleSuffix()
 
 void engine::App::exit()
 {
-    logger.info("Engine exit");
+    logger.info("Exiting app {}", m_title);
+
+	m_sceneManager.clean();
 
     // imGui Cleanup
     ImGui_ImplOpenGL3_Shutdown();

@@ -685,6 +685,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
 void engine::Scene::exit()
 {
+    logger.info("Exiting scene {}", title);
+    
     glBindVertexArray(0);
 
     // optional: de-allocate all resources once they've outlived their purpose
@@ -702,6 +704,8 @@ void engine::Scene::exit()
     m_renderer->clean();
 	m_entityManager.clean();
     m_audioManager.clean();
+
+    logger.info("Cleaning up scene {}", title);
 
     // clean user stuffs
     clean();
@@ -1143,11 +1147,3 @@ void engine::Scene::computeLightCount()
 
 //#endif
 
-
-engine::Scene::~Scene()
-{
-    //auto zzz = this->title;
-    
-    //if (currentInstance != nullptr)
-    //    delete(currentInstance);
-}

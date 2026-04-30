@@ -51,11 +51,8 @@ namespace engine
 		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes
 
 		
-		
-
-		
 		Renderer(GLFWwindow* window);
-		virtual ~Renderer() = default;
+		virtual ~Renderer();
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
 		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) = 0;

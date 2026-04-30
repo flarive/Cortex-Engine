@@ -17,13 +17,13 @@ MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, Scen
             .shadowMapsBiasFactor = 0.050f
         })
 {
+    logger.trace("Scene {} constructor called", title);
+
     // my application specific state gets initialized here
 
     lastX = app->width / 2.0f;
     lastY = app->height / 2.0f;
 }
-
-
 
 MyScene15::MyScene15(const string& _title, App* _app, const SceneSettings& _settings)
     : Scene(_title, _app, _settings)
@@ -34,7 +34,10 @@ MyScene15::MyScene15(const string& _title, App* _app, const SceneSettings& _sett
     lastY = app->height / 2.0f;
 }
 
-
+MyScene15::~MyScene15()
+{
+    logger.trace("Scene {} destructor called", title);
+}
 
 void MyScene15::init()
 {

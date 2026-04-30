@@ -12,14 +12,16 @@
 
 #include "../../include/misc/colors.h"
 
-
-
-
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
     : Renderer(window)
 {
+    logger.trace("BlinnPhongRenderer constructor called");
 }
 
+engine::BlinnPhongRenderer::~BlinnPhongRenderer()
+{
+    logger.trace("BlinnPhongRenderer destructor called");
+}
 
 void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {

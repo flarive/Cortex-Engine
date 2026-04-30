@@ -33,7 +33,7 @@ namespace engine
     private:
         static Scene* currentInstance; // Static pointer to the current instance
         
-        bool key_F1_pressed{};
+        bool key_F1_pressed{ false };
 
         
 
@@ -109,7 +109,7 @@ namespace engine
 
 
         Scene(const std::string& _title, App* _app, SceneSettings _settings);
-		virtual ~Scene() = default;
+		virtual ~Scene();
 
         void initialize();
 

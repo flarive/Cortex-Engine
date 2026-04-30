@@ -9,6 +9,12 @@
 engine::Renderer::Renderer(GLFWwindow* window)
     : m_window(window)
 {
+    logger.trace("Renderer base constructor called");
+}
+
+engine::Renderer::~Renderer()
+{
+    logger.trace("Renderer base destructor called");
 }
 
 void engine::Renderer::loadShaders()

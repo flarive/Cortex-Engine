@@ -17,6 +17,7 @@ namespace engine
 		Shader backgroundShader{};
 
 		PbrRenderer(GLFWwindow* window);
+		~PbrRenderer() override;
 
 		void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<engine::Light>>& lights) override;
 		void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) override;

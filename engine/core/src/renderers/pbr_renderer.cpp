@@ -17,7 +17,14 @@
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
     : Renderer(window)
 {
+    logger.trace("PbrRenderer constructor called");
 }
+
+engine::PbrRenderer::~PbrRenderer()
+{
+    logger.trace("PbrRenderer destructor called");
+}
+
 
 /// <summary>
 /// Query once per program startup and cache these caps, not every bind.

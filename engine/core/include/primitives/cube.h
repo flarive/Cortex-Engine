@@ -12,7 +12,7 @@ namespace engine
         Cube(const glm::vec3& _position = glm::vec3());
         Cube(const float& _size, const glm::vec3& _position = glm::vec3());
         Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position = glm::vec3());
-        ~Cube() = default;
+        ~Cube() override;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;

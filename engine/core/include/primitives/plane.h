@@ -10,7 +10,7 @@ namespace engine
     {
     public:
         Plane(bool _flipNormals = true, const glm::vec3& _position = glm::vec3());
-        ~Plane() = default;
+        ~Plane() override;
 
         void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;

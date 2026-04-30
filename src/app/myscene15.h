@@ -44,6 +44,7 @@ private:
 public:
     MyScene15(const string& _title, App* _app);
     MyScene15(const string& _title, App* _app, const SceneSettings& settings);
+    ~MyScene15() override;
 
     void init() override;
     void update(Shader& shader) override;

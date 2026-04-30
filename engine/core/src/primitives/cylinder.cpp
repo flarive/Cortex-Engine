@@ -2,10 +2,18 @@
 
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
+#include "../../include/managers/log_manager.h"
 
 engine::Cylinder::Cylinder(float _radius, float _height, const glm::vec3& _position) : Primitive(_position), m_radius(_radius), m_height(_height)
 {
+    logger.trace("Cylinder constructor called");
 }
+
+engine::Cylinder::~Cylinder()
+{
+    logger.trace("Cylinder destructor called");
+}
+
 
 void engine::Cylinder::setup()
 {

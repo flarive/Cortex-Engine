@@ -13,11 +13,15 @@
 #include "../../include/misc/colors.h"
 
 
-
-
 engine::PhongRenderer::PhongRenderer(GLFWwindow* window)
     : Renderer(window)
 {
+    logger.trace("PhongRenderer constructor called");
+}
+
+engine::PhongRenderer::~PhongRenderer()
+{
+    logger.trace("PhongRenderer destructor called");
 }
 
 

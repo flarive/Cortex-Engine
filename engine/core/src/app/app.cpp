@@ -8,9 +8,16 @@
 engine::App::App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
     : m_title(_title), width(static_cast<float>(_width)), height(static_cast<float>(_height)), fullscreen(_fullscreen), settings(_settings)
 {
+    logger.trace("App {} constructor called", m_title);
+
     logger.info("Engine startup");
 
     setup();
+}
+
+engine::App::~App()
+{
+    logger.trace("App {} destructor called", m_title);
 }
 
 const int engine::App::getFrameDelay()

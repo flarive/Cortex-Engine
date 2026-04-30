@@ -15,8 +15,14 @@ public:
                  .targetFPS = 0
             })
     {
-        // my application specific state gets initialized here
+        logger.trace("MyApp1 constructor called");
 
+        // my application specific state gets initialized here
+    }
+
+    ~MyApp1() override
+    {
+        logger.trace("MyApp1 destructor called");
     }
 };
 

@@ -13,7 +13,7 @@ namespace engine
     {
     public:
         Sphere(bool _flipNormals = false, const glm::vec3& _position = glm::vec3());
-        ~Sphere() = default;
+        ~Sphere() override;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;

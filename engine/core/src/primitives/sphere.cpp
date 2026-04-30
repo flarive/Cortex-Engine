@@ -2,10 +2,16 @@
 
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
-
+#include "../../include/managers/log_manager.h"
 
 engine::Sphere::Sphere(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
+    logger.trace("Sphere constructor called");
+}
+
+engine::Sphere::~Sphere()
+{
+    logger.trace("Sphere destructor called");
 }
 
 void engine::Sphere::setup()

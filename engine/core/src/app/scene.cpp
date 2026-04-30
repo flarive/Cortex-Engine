@@ -41,6 +41,8 @@ using Clock = std::chrono::high_resolution_clock;
 engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settings)
     : title(_title), app(_app)
 {
+    logger.trace("Scene {} base constructor called", title);
+
     if (_settings.method == RenderMethod::PBR) {
         // default renderer
         m_renderer = new PbrRenderer(app->window);
@@ -62,6 +64,12 @@ engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settin
 
     currentInstance = this; // Set the current instance when constructing
 }
+
+engine::Scene::~Scene()
+{
+    logger.trace("Scene {} base destructor called", title);
+}
+
 
 void engine::Scene::before_init()
 {

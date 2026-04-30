@@ -12,7 +12,7 @@ namespace engine
     {
     public:
         Billboard(const glm::vec3& _position = glm::vec3());
-        ~Billboard() = default;
+        ~Billboard() override;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;

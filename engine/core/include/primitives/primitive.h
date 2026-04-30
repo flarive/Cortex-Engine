@@ -16,8 +16,10 @@
 
 #include "../transform.h"
 
-#include "../../include/debug/opengl_debug.h"
-#include "../../include/debug/debug_draw_line.h"
+#include "../debug/opengl_debug.h"
+#include "../debug/debug_draw_line.h"
+
+
 
 
 namespace engine
@@ -66,7 +68,7 @@ namespace engine
         bool highlight{};
         
         Primitive(const glm::vec3& _position = glm::vec3());
-        virtual ~Primitive() = default;
+        virtual ~Primitive();
 
         virtual void setup() = 0;
         virtual void setup(const std::shared_ptr<Material>& material) = 0;

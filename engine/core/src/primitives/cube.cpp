@@ -6,6 +6,7 @@
 #include "../../include/tools/helpers.h"
 
 #include "../../include/singleton.h"
+#include "../../include/managers/log_manager.h"
 
 #include <vector>
 #include <glm/glm.hpp>
@@ -13,16 +14,24 @@
 engine::Cube::Cube(const glm::vec3& _position)
     : Primitive(_position)
 {
+    logger.trace("Cube constructor called");
 }
 
 engine::Cube::Cube(const float& _size, const glm::vec3& _position)
     : Primitive(_position), m_width(_size), m_height(_size), m_depth(_size)
 {
+    logger.trace("Cube constructor called");
 }
 
 engine::Cube::Cube(const float& _width, const float& _height, const float& _depth, const glm::vec3& _position)
     : Primitive(_position), m_width(_width), m_height(_height), m_depth(_depth)
 {
+    logger.trace("Cube constructor called");
+}
+
+engine::Cube::~Cube()
+{
+    logger.trace("Cube destructor called");
 }
 
 void engine::Cube::setup()

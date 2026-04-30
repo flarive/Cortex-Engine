@@ -5,11 +5,19 @@
 #include "../../include/primitives/primitive.h"
 
 #include "../../include/singleton.h"
+#include "../../include/managers/log_manager.h"
 
 
 engine::Plane::Plane(bool _flipNormals, const glm::vec3& _position) : m_flipNormals(_flipNormals), Primitive(_position)
 {
+    logger.trace("Plane constructor called");
 }
+
+engine::Plane::~Plane()
+{
+    logger.trace("Plane destructor called");
+}
+
 
 void engine::Plane::setup()
 {

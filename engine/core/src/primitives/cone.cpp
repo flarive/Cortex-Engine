@@ -2,11 +2,18 @@
 
 #include "../../include/vertex.h"
 #include "../../include/tools/helpers.h"
-
+#include "../../include/managers/log_manager.h"
 
 engine::Cone::Cone(float _radius, float _height, const glm::vec3& _position) : Primitive(_position), m_radius(_radius), m_height(_height)
 {
+    logger.trace("Cone constructor called");
 }
+
+engine::Cone::~Cone()
+{
+    logger.trace("Cone destructor called");
+}
+
 
 void engine::Cone::setup()
 {

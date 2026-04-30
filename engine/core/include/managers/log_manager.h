@@ -9,7 +9,7 @@
 #include <memory>
 #include <source_location>
 
-#define DISABLE_LOGGING_FILE
+//#define DISABLE_LOGGING_FILE
 
 namespace engine
 {
@@ -18,20 +18,28 @@ namespace engine
     public:
         static LogManager& getInstance();
 
-        //void info(const std::string& msg);
-
         template<typename... Args>
         void info(fmt::format_string<Args...> fmt, Args&&... args)
         {
-            std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
-            logger->info(msg);
+            /*std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
+            logger->info(msg);*/
+            logger->info(fmt, std::forward<Args>(args)...);
+        }
+
+        template<typename... Args>
+        void trace(fmt::format_string<Args...> fmt, Args&&... args)
+        {
+            /*std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
+            logger->trace(msg);*/
+            logger->trace(fmt, std::forward<Args>(args)...);
         }
 
         template<typename... Args>
         void warn(fmt::format_string<Args...> fmt, Args&&... args)
         {
-            std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
-            logger->warn(msg);
+            /*std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
+            logger->warn(msg);*/
+            logger->warn(fmt, std::forward<Args>(args)...);
         }
 
         template<typename... Args>
@@ -41,14 +49,12 @@ namespace engine
             logger->warn(msg, loc);
         }
 
-        //void warn(const std::string& msg);
-        //void error(const std::string& msg);
-
         template<typename... Args>
         void error(fmt::format_string<Args...> fmt, Args&&... args)
         {
-            std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
-            logger->error(msg);
+            /*std::string msg = fmt::format(fmt, std::forward<Args>(args)...);
+            logger->error(msg);*/
+            logger->error(fmt, std::forward<Args>(args)...);
         }
 
         template<typename... Args>

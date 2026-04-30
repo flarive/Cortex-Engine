@@ -6,6 +6,7 @@
 #include "../debug/opengl_debug.h"
 
 #include "../managers/scene_manager.h"
+//#include "../managers/log_manager.h"
 
 #include <iostream>
 #include <functional>
@@ -34,6 +35,7 @@ namespace engine
 
        
         App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
+        virtual ~App();
            
 
         const int getFrameDelay();

@@ -13,7 +13,7 @@ namespace engine
     {
     public:
         Cone(float _radius = 1.0f, float _height = 3.0f, const glm::vec3& _position = glm::vec3());
-        ~Cone() = default;
+        ~Cone() override;
 
 		void setup() override;
         void setup(const std::shared_ptr<Material>& material) override;

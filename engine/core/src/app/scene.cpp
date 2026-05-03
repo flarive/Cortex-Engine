@@ -45,15 +45,15 @@ engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settin
 
     if (_settings.method == RenderMethod::PBR) {
         // default renderer
-        m_renderer = new PbrRenderer(app->window);
+        m_renderer = std::make_unique<PbrRenderer>(app->window);
     }
     else if (_settings.method == RenderMethod::BlinnPhong) {
         // legacy renderer
-        m_renderer = new BlinnPhongRenderer(app->window);
+        m_renderer = std::make_unique<BlinnPhongRenderer>(app->window);
     }
     else {
         // just for very simple tests
-        m_renderer = new PhongRenderer(app->window);
+        m_renderer = std::make_unique<PhongRenderer>(app->window);
     }
 
     // create scene entities hierarchy
@@ -68,6 +68,20 @@ engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settin
 engine::Scene::~Scene()
 {
     logger.trace("Scene {} base destructor called", title);
+
+    // OpenGL resources
+    cleanupQueries();
+
+    // Managed objects
+    if (m_renderer) {
+        m_renderer->clean();
+        // If m_renderer is a raw pointer, delete it here (or better, use smart pointers).
+    }
+    m_entityManager.clean();
+    m_audioManager.clean();
+
+    // Reset static state
+    currentInstance = nullptr;
 }
 
 
@@ -695,30 +709,14 @@ void engine::Scene::exit()
 {
     logger.info("Exiting scene {}", title);
     
+    // Optional: Unbind OpenGL state (if context is still active)
     glBindVertexArray(0);
 
-    // optional: de-allocate all resources once they've outlived their purpose
-    //glDeleteVertexArrays(1, &quadVAO);
-    ////glDeleteBuffers(1, &quadVBO);
-    //glDeleteRenderbuffers(1, &rbo);
-    //glDeleteFramebuffers(1, &colorFramebuffer);
-    //glDeleteFramebuffers(1, &depthMapFramebuffer);
-
-    //blinnPhongShader.clean();
-    //screenShader.clean();
-    //skyboxReflectShader.clean();
-
-    //TODO implement renderer clean & exit !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    m_renderer->clean();
-	m_entityManager.clean();
-    m_audioManager.clean();
-
-    logger.info("Cleaning up scene {}", title);
-
-    // clean user stuffs
+    // User-defined cleanup (e.g., saving scene state)
     clean();
 
-    cleanupQueries(); // called ? to test !!!!!
+    // Note: No need to call cleanupQueries() or m_renderer->clean() here
+    // if they are already in the destructor.
 }
 
 GLFWwindow* engine::Scene::getWindow()

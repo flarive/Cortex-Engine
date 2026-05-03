@@ -83,7 +83,8 @@ namespace engine
 
         App* app{};
 
-        Renderer* m_renderer{};
+        //Renderer* m_renderer{};
+        std::unique_ptr<Renderer> m_renderer{};
         EntityManager m_entityManager{};
         AudioManager m_audioManager{};
 

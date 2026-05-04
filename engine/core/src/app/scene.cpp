@@ -84,6 +84,12 @@ engine::Scene::~Scene()
     currentInstance = nullptr;
 }
 
+engine::Renderer* engine::Scene::getRenderer() const
+{
+    // no ownership transfer, read-only access
+    return m_renderer.get();
+}
+
 
 void engine::Scene::before_init()
 {

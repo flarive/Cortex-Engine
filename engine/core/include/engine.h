@@ -78,5 +78,6 @@
 
 #include "terrain/terrain.h"
 
+#include "managers/app_manager.h"
 #include "managers/log_manager.h"
 #include "managers/audio_manager.h"

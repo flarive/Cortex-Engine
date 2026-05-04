@@ -83,7 +83,6 @@ namespace engine
 
         App* app{};
 
-        //Renderer* m_renderer{};
         std::unique_ptr<Renderer> m_renderer{};
         EntityManager m_entityManager{};
         AudioManager m_audioManager{};
@@ -136,7 +135,7 @@ namespace engine
         void exit();
 
         GLFWwindow* getWindow();
-        Renderer* getRenderer() { return m_renderer; }
+        Renderer* getRenderer() const;
         EntityManager& getEntityManager() { return m_entityManager; } // call it entity root may be ?
         AudioManager& getAudioManager() { return m_audioManager; }
 

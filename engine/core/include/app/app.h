@@ -5,8 +5,8 @@
 
 #include "../debug/opengl_debug.h"
 
+//#include "../managers/app_manager.h"
 #include "../managers/scene_manager.h"
-//#include "../managers/log_manager.h"
 
 #include <iostream>
 #include <functional>
@@ -69,13 +69,16 @@ namespace engine
 		std::string& getTitle() { return m_title; }
 
         // returns a unique instance of managers per app (no copy !)
+        //AppManager& getAppManager() { return m_appManager; }
         SceneManager& getSceneManager() { return m_sceneManager; }
+        
 
     private:
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };
 
+        //AppManager m_appManager{};
         SceneManager m_sceneManager{};
 
         void setup();

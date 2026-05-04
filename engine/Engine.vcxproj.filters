@@ -489,6 +489,9 @@
     <ClCompile Include="core\src\managers\scene_manager.cpp">
       <Filter>Fichiers sources\core\managers</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\managers\app_manager.cpp">
+      <Filter>Fichiers sources\core\managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -807,6 +810,9 @@
       <Filter>Fichiers d%27en-tête\core\ui</Filter>
     </ClInclude>
     <ClInclude Include="core\include\managers\scene_manager.h">
+      <Filter>Fichiers d%27en-tête\core\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\managers\app_manager.h">
       <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
   </ItemGroup>

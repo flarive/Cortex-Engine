@@ -23,11 +23,11 @@
 using namespace engine;
 
 // make it easier to switch between scenes
-using MyApp = MyApp1;
+using MyApp = MyApp1; 
 using MyScene = MyScene15;
 
-App* myApp{};
-Scene* myScene{};
+//App* myApp{}; // non-owning observer
+Scene* myScene{}; // non-owning observer
 
 
 
@@ -50,52 +50,47 @@ static void gamepadUpdate();
 // Startup method
 int main(int, char**)
 {
+    engine::AppManager appManager;
+
     // Init the app
-    //myApp = new MyApp("MyApp", 1280, 720, false);
-    myApp = new MyApp("MyApp", 320, 240, false);
-    if (myApp)
+    MyApp& myApp = appManager.createApp<MyApp>("MyApp", 320, 240, false);
+    
+    // Init a scene in the app
+    myApp.getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", myApp));
+    myScene = myApp.getSceneManager().getCurrentScene().get(); // convert smart to raw pointer (temp !)
+    if (myScene)
     {
-        // Init a scene in the app
-        myApp->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", myApp));
-        myScene = myApp->getSceneManager().getCurrentScene().get(); // convert smart to raw pointer (temp !)
-        if (myScene)
+        myScene->initialize();
+
+        glfwSetFramebufferSizeCallback(myScene->getWindow(), framebufferSizeCallback);
+        glfwSetKeyCallback(myScene->getWindow(), keyCallback);
+        glfwSetCursorPosCallback(myScene->getWindow(), mouseCallback);
+        glfwSetScrollCallback(myScene->getWindow(), scrollCallback);
+        glfwSetWindowRefreshCallback(myScene->getWindow(), windowRefreshCallback);
+
+        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+        if (present > 0)
         {
-            myScene->initialize();
-
-            glfwSetFramebufferSizeCallback(myScene->getWindow(), framebufferSizeCallback);
-            glfwSetKeyCallback(myScene->getWindow(), keyCallback);
-            glfwSetCursorPosCallback(myScene->getWindow(), mouseCallback);
-            glfwSetScrollCallback(myScene->getWindow(), scrollCallback);
-            glfwSetWindowRefreshCallback(myScene->getWindow(), windowRefreshCallback);
-
-            int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-            if (present > 0)
-            {
-                const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-                logger.info("Joystick present {}", name);
-            }
-
-            // start game loop
-            while (myApp->isRunning())
-            {
-                gamepadUpdate(); // Update gamepad state
-                myScene->gameLoop();
-            }
-
-            myScene->exit();
-            myApp->exit();
+            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+            logger.info("Joystick present {}", name);
         }
-        else
+
+        // start game loop
+        while (myApp.isRunning())
         {
-            logger.error("Failed to create the scene");
-            return -1;
+            gamepadUpdate(); // Update gamepad state
+            myScene->gameLoop();
         }
+
+        myScene->exit();
+        myApp.exit();
     }
     else
     {
-        logger.error("Failed to create application");
+        logger.error("Failed to create the scene");
         return -1;
     }
+
 
     return 0;
 }

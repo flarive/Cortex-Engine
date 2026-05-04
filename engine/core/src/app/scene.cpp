@@ -324,6 +324,9 @@ void engine::Scene::listenForEditorChanges()
 
 void engine::Scene::gameLoop()
 {
+    //if (!this)
+    //    return;
+    
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
@@ -762,7 +765,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
         }
         break;
     }
-    
+
     // always pass input to ImGui *after*
     ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
 }

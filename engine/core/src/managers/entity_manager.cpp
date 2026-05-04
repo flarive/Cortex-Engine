@@ -160,5 +160,5 @@ void engine::EntityManager::updateSelfAndChild()
 
 void engine::EntityManager::clean()
 {
-    this->~EntityManager();
+
 }

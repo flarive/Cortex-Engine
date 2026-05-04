@@ -56,7 +56,7 @@ int main(int, char**)
     MyApp& myApp = appManager.createApp<MyApp>("MyApp", 320, 240, false);
     
     // Init a scene in the app
-    myApp.getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", myApp));
+    myApp.getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", &myApp));
     myScene = myApp.getSceneManager().getCurrentScene().get(); // convert smart to raw pointer (temp !)
     if (myScene)
     {
@@ -79,8 +79,16 @@ int main(int, char**)
         while (myApp.isRunning())
         {
             gamepadUpdate(); // Update gamepad state
-            myScene->gameLoop();
+            if (myScene)
+                myScene->gameLoop();
         }
+
+        // Unregister all callbacks
+        glfwSetFramebufferSizeCallback(myScene->getWindow(), nullptr);
+        glfwSetKeyCallback(myScene->getWindow(), nullptr);
+        glfwSetCursorPosCallback(myScene->getWindow(), nullptr);
+        glfwSetScrollCallback(myScene->getWindow(), nullptr);
+        glfwSetWindowRefreshCallback(myScene->getWindow(), nullptr);
 
         myScene->exit();
         myApp.exit();
@@ -91,7 +99,6 @@ int main(int, char**)
         return -1;
     }
 
-
     return 0;
 }
 
@@ -100,8 +107,8 @@ int main(int, char**)
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     (void)window;   //Do nothing
-
-    ((MyScene*)myScene)->key_callback(key, scancode, action, mods);
+    if (myScene)
+        ((MyScene*)myScene)->key_callback(key, scancode, action, mods);
 }
 
 // glfw: whenever the mouse moves, this callback is called

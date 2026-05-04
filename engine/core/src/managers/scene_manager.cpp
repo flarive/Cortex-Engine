@@ -20,6 +20,10 @@ bool engine::SceneManager::unloadCurrentScene()
 	if (m_currentScene)
 	{
 		m_currentScene->exit();
+		//m_currentScene.reset();
+		m_currentScene = nullptr; // Optional: Explicitly set to nullptr (not strictly needed)
+
+		return true;
 	}
 
 	return false;
@@ -27,8 +31,5 @@ bool engine::SceneManager::unloadCurrentScene()
 
 void engine::SceneManager::clean()
 {
-	if (m_currentScene) {
-		//m_currentScene->clean();
-		//m_currentScene.reset();
-	}
+
 }

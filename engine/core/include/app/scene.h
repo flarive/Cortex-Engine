@@ -134,6 +134,9 @@ namespace engine
 
         void exit();
 
+        //bool isValid() const { return this != nullptr; }
+        
+
         GLFWwindow* getWindow();
         Renderer* getRenderer() const;
         EntityManager& getEntityManager() { return m_entityManager; } // call it entity root may be ?

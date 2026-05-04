@@ -211,7 +211,7 @@ void MyScene15::init()
     auto trsSphereAnimator = make_shared<TransformAnimator>(trsSphereAnimation1);
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
-    entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
+    //entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
     getEntityManager().addChild(entitySphere1);
 
 
@@ -236,7 +236,7 @@ void MyScene15::init()
     auto trsAnimator = make_shared<TransformAnimator>(trsAnimation1);
     entityCube->addComponent<TransformComponent>(trsCube);
     entityCube->addComponent<PrimitiveComponent>(myCube);
-    entityCube->addComponent<AnimatorComponent>(trsAnimator);
+    //entityCube->addComponent<AnimatorComponent>(trsAnimator);
     getEntityManager().addChild(entityCube);
 
 
@@ -374,9 +374,6 @@ void MyScene15::updateUI()
     {
         textCurrentRenderer.draw(format("Renderer : {}", "PBR"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Green);
     }
-
-    //app->
-    
 }
 
 void MyScene15::incrementParallaxIntensity(float intensity)

@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene9::MyScene9(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene9::MyScene9(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -18,8 +18,10 @@ MyScene9::MyScene9(const string& _title, App* _app) : Scene(_title, _app, SceneS
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 
@@ -95,13 +97,13 @@ void MyScene9::init()
     }
 
 
-    ourText.setup(app->window, FONT_PATH, 28);
-    ourText2.setup(app->window, FONT_PATH, 28);
-    ourSprite.setup(app->window, "textures/awesomeface.png");
-    textMeshCount.setup(app->window, FONT_PATH, 28);
-    rect.setup(app->window);
+    ourText.setup(getApp()->window, FONT_PATH, 28);
+    ourText2.setup(getApp()->window, FONT_PATH, 28);
+    ourSprite.setup(getApp()->window, "textures/awesomeface.png");
+    textMeshCount.setup(getApp()->window, FONT_PATH, 28);
+    rect.setup(getApp()->window);
 
-    button.setup(app->window, FONT_PATH, 16);
+    button.setup(getApp()->window, FONT_PATH, 16);
     button.setPosition({ 400, 100 });
     button.setSize({ 100, 50 });
     button.setText("GOOO");
@@ -201,7 +203,7 @@ void MyScene9::framebuffer_size_callback(int newWidth, int newHeight)
 {
     Scene::framebuffer_size_callback(newWidth, newHeight);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
 void MyScene9::update(Shader& shader)
@@ -213,16 +215,16 @@ void MyScene9::updateUI()
 {
     // render HUD / UI
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
-    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    ourText2.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
     rect.draw(glm::vec2(50, 50), glm::vec2(300, 120), 0.0f, Color(0.0f, 0.0f, 0.0f, 0.5f), Colors::White, 0.02f);
     ourSprite.draw(vec2(50, 50), vec2(50.0f), 0.0f, Colors::White);
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), getApp()->width - 450.0f, 25.0f, 1.0f, Colors::White);
 
 
     double mouseX, mouseY;
-    glfwGetCursorPos(app->window, &mouseX, &mouseY);
+    glfwGetCursorPos(getApp()->window, &mouseX, &mouseY);
 
-    bool mousePressed = glfwGetMouseButton(app->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    bool mousePressed = glfwGetMouseButton(getApp()->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 
     button.update(mouseX, mouseY, mousePressed);
     button.draw();

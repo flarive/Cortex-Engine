@@ -35,7 +35,7 @@ private:
     float rotation{};
 
 public:
-    MyScene1(const string& _title, App* _app);
+    MyScene1(const string& _title, std::weak_ptr<App> _app);
 
     void init() override;
     void update(Shader& shader) override;

@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene4::MyScene4(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene4::MyScene4(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -18,8 +18,10 @@ MyScene4::MyScene4(const string& _title, App* _app) : Scene(_title, _app, SceneS
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 void MyScene4::init()
@@ -90,7 +92,7 @@ void MyScene4::init()
     entityCushion->addComponent<ModelComponent>(cushionModel);
     getEntityManager().addChild(entityCushion);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -168,7 +170,7 @@ void MyScene4::framebuffer_size_callback(int newWidth, int newHeight)
 {
     Scene::framebuffer_size_callback(newWidth, newHeight);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
 void MyScene4::update(Shader& shader)

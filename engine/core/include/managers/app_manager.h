@@ -10,12 +10,13 @@ namespace engine
     {
     public:
         template <typename T, typename... Args>
-        T& createApp(Args&&... args)
+        std::shared_ptr<T> createApp(Args&&... args)
         {
             static_assert(std::is_base_of_v<App, T>);
-            m_app = std::make_unique<T>(std::forward<Args>(args)...);
-            return static_cast<T&>(*m_app);
+            m_app = std::make_shared<T>(std::forward<Args>(args)...);
+            return std::static_pointer_cast<T>(m_app); // Explicitly cast to std::shared_ptr<T>
         }
+
 
         App& getApp()
         {
@@ -25,6 +26,11 @@ namespace engine
         const App& getApp() const
         {
             return *m_app;
+        }
+
+        const std::shared_ptr<App>& getAppPtr() const
+        {
+            return m_app;
         }
 
         bool hasApp() const
@@ -38,6 +44,6 @@ namespace engine
         }
 
     private:
-        std::unique_ptr<App> m_app{};
+        std::shared_ptr<App> m_app{};
     };
 }

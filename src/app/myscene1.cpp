@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene1::MyScene1(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene1::MyScene1(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
@@ -15,9 +15,10 @@ MyScene1::MyScene1(const string& _title, App* _app) : Scene(_title, _app, SceneS
     })
 {
     // my application specific state gets initialized here
-
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 
@@ -154,17 +155,17 @@ void MyScene1::init()
         renderer->setSkybox(faces);
     }
 
+    
 
+    textFPSCount.setup(getApp()->window, FONT_PATH, 20);
+    textElapsedFramesCount.setup(getApp()->window, FONT_PATH, 20);
 
-    textFPSCount.setup(app->window, FONT_PATH, 20);
-    textElapsedFramesCount.setup(app->window, FONT_PATH, 20);
+    textPolyCount.setup(getApp()->window, FONT_PATH, 20);
+    textMeshCount.setup(getApp()->window, FONT_PATH, 20);
+    textPrimitiveCount.setup(getApp()->window, FONT_PATH, 20);
 
-    textPolyCount.setup(app->window, FONT_PATH, 20);
-    textMeshCount.setup(app->window, FONT_PATH, 20);
-    textPrimitiveCount.setup(app->window, FONT_PATH, 20);
-
-    textDrawnCount.setup(app->window, FONT_PATH, 20);
-    textTotalCount.setup(app->window, FONT_PATH, 20);
+    textDrawnCount.setup(getApp()->window, FONT_PATH, 20);
+    textTotalCount.setup(getApp()->window, FONT_PATH, 20);
 }
 
 
@@ -285,9 +286,9 @@ void MyScene1::updateUI()
     textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
     textElapsedFramesCount.draw(format("{} frames", getTotalElapsedFrames()), 250.0f, 25.0f, 1.0f, Colors::White);
 
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, Colors::White);
+    textPolyCount.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), getApp()->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), getApp()->width - 650.0f, 25.0f, 1.0f, Colors::White);
 
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);

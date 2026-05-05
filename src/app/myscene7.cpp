@@ -5,7 +5,7 @@ using namespace glm;
 using namespace engine;
 
 
-MyScene7::MyScene7(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene7::MyScene7(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -19,8 +19,10 @@ MyScene7::MyScene7(const string& _title, App* _app) : Scene(_title, _app, SceneS
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 void MyScene7::before_init_hook()
@@ -194,11 +196,11 @@ void MyScene7::init()
 
 
 
-    textFPSCount.setup(app->window, FONT_PATH, 28);
-    textPolyCount.setup(app->window, FONT_PATH, 28);
-    textMeshCount.setup(app->window, FONT_PATH, 28);
-    textPrimitiveCount.setup(app->window, FONT_PATH, 28);
-    ourSprite.setup(app->window, "UI/cortex-logo.png");
+    textFPSCount.setup(getApp()->window, FONT_PATH, 28);
+    textPolyCount.setup(getApp()->window, FONT_PATH, 28);
+    textMeshCount.setup(getApp()->window, FONT_PATH, 28);
+    textPrimitiveCount.setup(getApp()->window, FONT_PATH, 28);
+    ourSprite.setup(getApp()->window, "UI/cortex-logo.png");
 }
 
 
@@ -358,9 +360,9 @@ void MyScene7::updateUI()
 {
     // render HUD / UI
     textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, Colors::White);
+    textPolyCount.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), getApp()->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), getApp()->width - 650.0f, 25.0f, 1.0f, Colors::White);
     ourSprite.draw(vec2(50, 50), vec2(50.0f), 0.0f, Colors::White);
 }
 

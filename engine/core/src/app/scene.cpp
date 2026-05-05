@@ -38,22 +38,28 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 
-engine::Scene::Scene(const std::string& _title, App* _app, SceneSettings _settings)
+engine::Scene::Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSettings _settings)
     : title(_title), app(_app)
 {
     logger.trace("Scene {} base constructor called", title);
 
+    // Convert weak_ptr to shared_ptr
+    auto appShared = app.lock();
+    if (!appShared) {
+        throw std::runtime_error("App no longer exists!");
+    }
+
     if (_settings.method == RenderMethod::PBR) {
         // default renderer
-        m_renderer = std::make_unique<PbrRenderer>(app->window);
+        m_renderer = std::make_unique<PbrRenderer>(appShared->window);
     }
     else if (_settings.method == RenderMethod::BlinnPhong) {
         // legacy renderer
-        m_renderer = std::make_unique<BlinnPhongRenderer>(app->window);
+        m_renderer = std::make_unique<BlinnPhongRenderer>(appShared->window);
     }
     else {
         // just for very simple tests
-        m_renderer = std::make_unique<PhongRenderer>(app->window);
+        m_renderer = std::make_unique<PhongRenderer>(appShared->window);
     }
 
     // create scene entities hierarchy
@@ -158,9 +164,16 @@ void engine::Scene::initialize()
 
     m_editor.initRenderGuizmo(getActiveCamera());
 
-
-    // renderer setup
-    m_renderer->setup(static_cast<int>(app->width), static_cast<int>(app->height), getActiveCamera(), lights);
+    if (auto appPtr = getApp()) {
+        // renderer setup
+        m_renderer->setup(static_cast<int>(appPtr->width), static_cast<int>(appPtr->height), getActiveCamera(), lights);
+    }
+    else {
+        // Handle the case where App no longer exists
+        throw std::runtime_error("App no longer exists!");
+        // Or log an error, or return early, depending on your needs
+    }
+    
 
     // listen for editor selected entity changed
     #if EDITOR_MODE
@@ -324,9 +337,6 @@ void engine::Scene::listenForEditorChanges()
 
 void engine::Scene::gameLoop()
 {
-    //if (!this)
-    //    return;
-    
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
@@ -335,7 +345,7 @@ void engine::Scene::gameLoop()
 
     ImGuiIO& io = ImGui::GetIO();
 
-    if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
+    if (auto appPtr = getApp(); appPtr && glfwGetWindowAttrib(appPtr->window, GLFW_ICONIFIED) != 0)
     {
         // Even if minimized, update ImGui deltaTime to avoid huge spikes
         float currentFrame = (float)glfwGetTime();
@@ -360,10 +370,22 @@ void engine::Scene::gameLoop()
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
-    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(app->width / app->height);
-    glm::mat4 view = getActiveCamera()->getViewMatrix();
+    float width = 0;
+    float height = 0;
+    bool capFramerate = false;
+	GLFWwindow* window = nullptr;
+    int frameDelay = 0;
 
-    
+    if (auto appPtr = getApp()) {
+		width = appPtr->width;
+		height = appPtr->height;
+		capFramerate = appPtr->capFramerate();
+        frameDelay = appPtr->getFrameDelay();
+		window = appPtr->window;
+    }
+
+    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(width / height);
+    glm::mat4 view = getActiveCamera()->getViewMatrix();
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -391,7 +413,7 @@ void engine::Scene::gameLoop()
 
     // fps capping (begin)
     std::chrono::steady_clock::time_point start_time{};
-    if (app->capFramerate()) {
+    if (capFramerate) {
         start_time = Clock::now();
     }
 
@@ -418,7 +440,7 @@ void engine::Scene::gameLoop()
         };
 
     // Call the renderer loop
-    m_renderer->loop(static_cast<int>(app->width), static_cast<int>(app->height), getActiveCamera(), updateLambda, updateUILambda);
+    m_renderer->loop(static_cast<int>(width), static_cast<int>(height), getActiveCamera(), updateLambda, updateUILambda);
 
     // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
@@ -431,9 +453,10 @@ void engine::Scene::gameLoop()
 
 
     int display_w, display_h;
-    glfwGetFramebufferSize(app->window, &display_w, &display_h);
+    glfwGetFramebufferSize(window, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
     
 
@@ -449,7 +472,9 @@ void engine::Scene::gameLoop()
         glfwMakeContextCurrent(backup_current_context);
     }
 
-    glfwSwapBuffers(app->window);
+
+    glfwSwapBuffers(window);
+    
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -461,10 +486,10 @@ void engine::Scene::gameLoop()
     uiTime += uiDuration2.count();
 
     // fps capping (end)
-    if (app->capFramerate())
+    if (capFramerate)
     {
         auto end_time = Clock::now();
-        auto zzz = std::chrono::milliseconds(app->getFrameDelay()) - (end_time - start_time);
+        auto zzz = std::chrono::milliseconds(frameDelay) - (end_time - start_time);
         std::this_thread::sleep_for(zzz);
     }
 
@@ -480,16 +505,20 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
     m_displayViewTransformGuizmo = !is_editor_mode;
 
     #if EDITOR_MODE
-    if (is_editor_mode) {
-        app->setWindowTitleSuffix("[EDITOR]");
-        m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
-    }
-    else
+    if (auto appPtr = getApp())
     {
-        app->resetWindowTitleSuffix();
-    }
+        if (is_editor_mode)
+        {
+            appPtr->setWindowTitleSuffix("[EDITOR]");
+            m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
+        }
+        else
+        {
+            appPtr->resetWindowTitleSuffix();
+        }
 
-    app->setWindowTitle();
+        appPtr->setWindowTitle();
+    }
     #endif
 
     // render camera view guizmo in the top right corner of the screen
@@ -531,11 +560,20 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     if (shader.name != "outline")
         m_entityManager.getRootEntity()->updateSelfAndChild();
 
+    float width = 0;
+    float height = 0;
+
+
+    if (auto appPtr = getApp()) {
+        width = appPtr->width;
+        height = appPtr->height;
+    }
 
     auto cam = getActiveCamera();
-    glm::mat4 projection = cam->getProjectionMatrix(app->width / app->height);
+    float ratio = width / height;
+    glm::mat4 projection = cam->getProjectionMatrix(ratio);
     glm::mat4 view = cam->getViewMatrix();
-    const Frustum camFrustum = cam->createFrustumFromCamera(app->width / app->height, glm::radians(cam->getZoom()), 0.1f, 100.0f);
+    const Frustum camFrustum = cam->createFrustumFromCamera(ratio, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
     
     // check the number of times entities are drawn per frame (should be called only once !)
@@ -721,6 +759,14 @@ void engine::Scene::exit()
     // Optional: Unbind OpenGL state (if context is still active)
     glBindVertexArray(0);
 
+    if (auto appPtr = getApp()) {
+        glfwSetFramebufferSizeCallback(appPtr->window, nullptr);
+        glfwSetKeyCallback(appPtr->window, nullptr);
+        glfwSetCursorPosCallback(appPtr->window, nullptr);
+        glfwSetScrollCallback(appPtr->window, nullptr);
+        glfwSetWindowRefreshCallback(appPtr->window, nullptr);
+    }
+
     // User-defined cleanup (e.g., saving scene state)
     clean();
 
@@ -730,7 +776,10 @@ void engine::Scene::exit()
 
 GLFWwindow* engine::Scene::getWindow()
 {
-    return app->window;
+    if (auto appPtr = getApp()) {
+        return appPtr->window;
+    }
+    return nullptr;
 }
 
 void engine::Scene::key_callback(int key, int scancode, int action, int mods)
@@ -739,43 +788,47 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     (void)mods;   //Do nothing
 
     // basic window handling
-    switch (key) {
-    case GLFW_KEY_ESCAPE:
-        glfwSetWindowShouldClose(app->window, GL_TRUE); break;
-    case GLFW_KEY_F:
-        if (action == GLFW_RELEASE)
+    if (auto appPtr = getApp())
+    {
+        switch (key)
         {
-            app->toggleFullscreen([this]() {
-                this->refreshFullscreen();
-                });
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(appPtr->window, GL_TRUE); break;
+        case GLFW_KEY_F:
+            if (action == GLFW_RELEASE)
+            {
+                appPtr->toggleFullscreen([this]() {
+                    this->refreshFullscreen();
+                    });
+            }
+            break;
+        case GLFW_KEY_F1:
+            if (action == GLFW_PRESS && !key_F1_pressed) {
+                is_editor_mode = !is_editor_mode;
+                key_F1_pressed = true;
+            }
+            else if (action == GLFW_RELEASE) {
+                key_F1_pressed = false;
+            }
+            break;
+        case GLFW_KEY_SPACE:
+            if (action == GLFW_RELEASE) {
+                show_demo_window = !show_demo_window;
+            }
+            break;
         }
-        break;
-    case GLFW_KEY_F1:
-        if (action == GLFW_PRESS && !key_F1_pressed) {
-            is_editor_mode = !is_editor_mode;
-            key_F1_pressed = true;
-        }
-        else if (action == GLFW_RELEASE) {
-            key_F1_pressed = false;
-        }
-        break;
-    case GLFW_KEY_SPACE:
-        if (action == GLFW_RELEASE) {
-            show_demo_window = !show_demo_window;
-        }
-        break;
-    }
 
-    // always pass input to ImGui *after*
-    ImGui_ImplGlfw_KeyCallback(app->window, key, scancode, action, mods);
+        // always pass input to ImGui *after*
+        ImGui_ImplGlfw_KeyCallback(appPtr->window, key, scancode, action, mods);
+    }
 }
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void engine::Scene::mouse_callback(double xposIn, double yposIn)
 {
-    if (is_editor_mode || show_demo_window)
-        ImGui_ImplGlfw_CursorPosCallback(app->window, xposIn, yposIn);
+    if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
+        ImGui_ImplGlfw_CursorPosCallback(appPtr->window, xposIn, yposIn);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -785,8 +838,8 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
     (void)xoffset;   //Do nothing
     (void)yoffset;   //Do nothing
 
-    if (is_editor_mode || show_demo_window)
-        ImGui_ImplGlfw_ScrollCallback(app->window, xoffset, yoffset); // ??????????
+    if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
+        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset); // ??????????
 }
 
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
@@ -832,7 +885,8 @@ void engine::Scene::framebuffer_size_callback(int newWidth, int newHeight)
 void engine::Scene::refreshFullscreen()
 {
     // reinit framebuffers because width and height changed
-    m_renderer->initColorFramebuffer(static_cast<int>(app->width), static_cast<int>(app->height)); // TODO use MSAA version instead !!!
+    if (auto appPtr = getApp())
+        m_renderer->initColorFramebuffer(static_cast<int>(appPtr->width), static_cast<int>(appPtr->height)); // TODO use MSAA version instead !!!
 }
 
 void engine::Scene::glfw_error_callback(int error, const char* description)

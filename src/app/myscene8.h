@@ -24,7 +24,7 @@ private:
     Skybox ourSkybox{};
 
 public:
-    MyScene8(const string& _title, App* _app);
+    MyScene8(const string& _title, std::weak_ptr<App> _app);
 
 
     void init() override;

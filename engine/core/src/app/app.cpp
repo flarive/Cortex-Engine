@@ -22,7 +22,7 @@ engine::App::~App()
 
 const int engine::App::getFrameDelay()
 {
-    return 1000 / settings.targetFPS; // in milliseconds
+    return settings.targetFPS > 0 ? (1000 / settings.targetFPS) : 0; // in milliseconds
 }
 
 const bool engine::App::capFramerate()

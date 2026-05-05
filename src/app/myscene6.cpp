@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene6::MyScene6(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene6::MyScene6(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = false,
@@ -18,8 +18,10 @@ MyScene6::MyScene6(const string& _title, App* _app) : Scene(_title, _app, SceneS
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 
@@ -99,9 +101,9 @@ void MyScene6::init()
     }
 
 
-    ourText.setup(app->window, FONT_PATH, 28);
-    ourText2.setup(app->window, FONT_PATH, 28);
-    ourSprite.setup(app->window, "UI/cortex-logo.png");
+    ourText.setup(getApp()->window, FONT_PATH, 28);
+    ourText2.setup(getApp()->window, FONT_PATH, 28);
+    ourSprite.setup(getApp()->window, "UI/cortex-logo.png");
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -195,7 +197,7 @@ void MyScene6::framebuffer_size_callback(int newWidth, int newHeight)
 {
     Scene::framebuffer_size_callback(newWidth, newHeight);
 
-    ourText.setup(app->window, FONT_PATH, 28);
+    ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
 void MyScene6::update(Shader& shader)
@@ -237,6 +239,6 @@ void MyScene6::drawUI()
 {
     // render HUD / UI
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
-    ourText2.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    ourText2.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
     ourSprite.draw(vec2(40, 40), vec2(128.0f), 0.0f, Colors::White);
 }

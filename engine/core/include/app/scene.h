@@ -81,7 +81,9 @@ namespace engine
         // settings
         std::string title{};
 
-        App* app{};
+        //App* app{};
+
+        std::weak_ptr<App> app{};
 
         std::unique_ptr<Renderer> m_renderer{};
         EntityManager m_entityManager{};
@@ -105,10 +107,12 @@ namespace engine
         std::vector<std::shared_ptr<engine::Camera>> cameras{};
 
 
+        std::shared_ptr<App> getApp() const {
+            return app.lock(); // Returns a shared_ptr if App exists, else nullptr
+        }
 
 
-
-        Scene(const std::string& _title, App* _app, SceneSettings _settings);
+        Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSettings _settings);
 		virtual ~Scene();
 
         void initialize();
@@ -134,8 +138,6 @@ namespace engine
 
         void exit();
 
-        //bool isValid() const { return this != nullptr; }
-        
 
         GLFWwindow* getWindow();
         Renderer* getRenderer() const;
@@ -205,7 +207,7 @@ namespace engine
 
 
 
-        
+
 
         
         static void glfw_error_callback(int error, const char* description);

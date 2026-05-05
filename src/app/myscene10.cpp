@@ -6,7 +6,7 @@ using namespace std;
 using namespace glm;
 using namespace engine;
 
-MyScene10::MyScene10(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene10::MyScene10(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
@@ -20,8 +20,10 @@ MyScene10::MyScene10(const string& _title, App* _app) : Scene(_title, _app, Scen
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 

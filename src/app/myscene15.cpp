@@ -5,7 +5,7 @@ using namespace glm;
 using namespace engine;
 
 
-MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, SceneSettings
+MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
         {
             .method = RenderMethod::PBR,
             .HDRSkyboxHide = true,
@@ -21,17 +21,21 @@ MyScene15::MyScene15(const string& _title, App* _app) : Scene(_title, _app, Scen
 
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
-MyScene15::MyScene15(const string& _title, App* _app, const SceneSettings& _settings)
+MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneSettings& _settings)
     : Scene(_title, _app, _settings)
 {
     // my application specific state gets initialized here
 
-    lastX = app->width / 2.0f;
-    lastY = app->height / 2.0f;
+    if (auto appPtr = app.lock()) {
+        lastX = appPtr->width / 2.0f;
+        lastY = appPtr->height / 2.0f;
+    }
 }
 
 MyScene15::~MyScene15()
@@ -240,20 +244,20 @@ void MyScene15::init()
     getEntityManager().addChild(entityCube);
 
 
-    textFPSCount.setup(app->window, FONT_PATH, 20);
+    textFPSCount.setup(getApp()->window, FONT_PATH, 20);
 
-    textPolyCount.setup(app->window, FONT_PATH, 20);
-    textMeshCount.setup(app->window, FONT_PATH, 20);
-    textPrimitiveCount.setup(app->window, FONT_PATH, 20);
+    textPolyCount.setup(getApp()->window, FONT_PATH, 20);
+    textMeshCount.setup(getApp()->window, FONT_PATH, 20);
+    textPrimitiveCount.setup(getApp()->window, FONT_PATH, 20);
 
-    textDrawnCount.setup(app->window, FONT_PATH, 20);
-    textTotalCount.setup(app->window, FONT_PATH, 20);
+    textDrawnCount.setup(getApp()->window, FONT_PATH, 20);
+    textTotalCount.setup(getApp()->window, FONT_PATH, 20);
 
-    textIncrease.setup(app->window, FONT_PATH, 18);
-    textDecrease.setup(app->window, FONT_PATH, 18);
-    textParallaxIntensity.setup(app->window, FONT_PATH, 18);
+    textIncrease.setup(getApp()->window, FONT_PATH, 18);
+    textDecrease.setup(getApp()->window, FONT_PATH, 18);
+    textParallaxIntensity.setup(getApp()->window, FONT_PATH, 18);
 
-    textCurrentRenderer.setup(app->window, FONT_PATH, 18);
+    textCurrentRenderer.setup(getApp()->window, FONT_PATH, 18);
 }
 
 
@@ -351,28 +355,28 @@ void MyScene15::updateUI()
     // render HUD / UI
     textFPSCount.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
 
-    textPolyCount.draw(format("{} polys", polycount), app->width - 250.0f, 25.0f, 1.0f, Colors::White);
-    textMeshCount.draw(format("{} meshes", meshcount), app->width - 450.0f, 25.0f, 1.0f, Colors::White);
-    textPrimitiveCount.draw(format("{} primitives", primitivecount), app->width - 650.0f, 25.0f, 1.0f, Colors::White);
+    textPolyCount.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
+    textMeshCount.draw(format("{} meshes", meshcount), getApp()->width - 450.0f, 25.0f, 1.0f, Colors::White);
+    textPrimitiveCount.draw(format("{} primitives", primitivecount), getApp()->width - 650.0f, 25.0f, 1.0f, Colors::White);
 
     textDrawnCount.draw(format("{} drawn", inFrustrumCount), 25.0f, 120.0f, 1.0f, Colors::White);
     textTotalCount.draw(format("{} total", totalFrustrumCount), 25.0f, 160.0f, 1.0f, Colors::White);
 
 
 
-    textIncrease.draw("NUMPAD + : increase parallax", app->width - 200.0f, app->height - 140.0f, 1.0f, Colors::White);
-    textDecrease.draw("NUMPAD - : decrease parallax", app->width - 200.0f, app->height - 160.0f, 1.0f, Colors::White);
-    textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), app->width - 200.0f, app->height - 180.0f, 1.0f, Colors::White);
+    textIncrease.draw("NUMPAD + : increase parallax", getApp()->width - 200.0f, getApp()->height - 140.0f, 1.0f, Colors::White);
+    textDecrease.draw("NUMPAD - : decrease parallax", getApp()->width - 200.0f, getApp()->height - 160.0f, 1.0f, Colors::White);
+    textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), getApp()->width - 200.0f, getApp()->height - 180.0f, 1.0f, Colors::White);
 
 
     auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
     if (renderer)
     {
-        textCurrentRenderer.draw(format("Renderer : {}", "BlinnPhong"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Orange);
+        textCurrentRenderer.draw(format("Renderer : {}", "BlinnPhong"), getApp()->width - 200.0f, getApp()->height - 220.0f, 1.0f, Colors::Orange);
     }
     else
     {
-        textCurrentRenderer.draw(format("Renderer : {}", "PBR"), app->width - 200.0f, app->height - 220.0f, 1.0f, Colors::Green);
+        textCurrentRenderer.draw(format("Renderer : {}", "PBR"), getApp()->width - 200.0f, getApp()->height - 220.0f, 1.0f, Colors::Green);
     }
 }
 
@@ -404,7 +408,7 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-    app->getSceneManager().unloadCurrentScene();
+    getApp()->getSceneManager().unloadCurrentScene();
 
 
     //SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();

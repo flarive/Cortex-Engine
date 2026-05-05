@@ -42,8 +42,8 @@ private:
     float rotation{};
 
 public:
-    MyScene15(const string& _title, App* _app);
-    MyScene15(const string& _title, App* _app, const SceneSettings& settings);
+    MyScene15(const string& _title, std::weak_ptr<App> _app);
+    MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneSettings& settings);
     ~MyScene15() override;
 
     void init() override;

@@ -21,7 +21,7 @@ MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
 
     // my application specific state gets initialized here
 
-    if (auto appPtr = app.lock()) {
+    if (auto appPtr = getApp()) {
         lastX = appPtr->width / 2.0f;
         lastY = appPtr->height / 2.0f;
     }
@@ -32,7 +32,7 @@ MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneS
 {
     // my application specific state gets initialized here
 
-    if (auto appPtr = app.lock()) {
+    if (auto appPtr = getApp()) {
         lastX = appPtr->width / 2.0f;
         lastY = appPtr->height / 2.0f;
     }
@@ -408,17 +408,7 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-    //getApp()->getSceneManager().unloadCurrentScene();
     getApp()->requestSceneUnload();
-
-
-    //SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();
-    //app->getSceneManager().loadScene(std::make_unique<MyScene15>("MyScene15_NEW", app, settings));
-
-    //auto ppp = app->getSceneManager().getCurrentScene();
-    //ppp->initialize();
-
-    //m_currentRendererMethod = method;
 }
 
 void MyScene15::clean()

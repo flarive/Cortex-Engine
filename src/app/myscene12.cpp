@@ -17,7 +17,7 @@ MyScene12::MyScene12(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
 {
     // my application specific state gets initialized here
 
-    if (auto appPtr = app.lock()) {
+    if (auto appPtr = getApp()) {
         lastX = appPtr->width / 2.0f;
         lastY = appPtr->height / 2.0f;
     }

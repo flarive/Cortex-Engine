@@ -39,12 +39,12 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 engine::Scene::Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSettings _settings)
-    : title(_title), app(_app)
+    : title(_title), m_app(_app)
 {
     logger.trace("Scene {} base constructor called", title);
 
     // Convert weak_ptr to shared_ptr
-    auto appShared = app.lock();
+    auto appShared = m_app.lock();
     if (!appShared) {
         throw std::runtime_error("App no longer exists!");
     }
@@ -81,7 +81,6 @@ engine::Scene::~Scene()
     // Managed objects
     if (m_renderer) {
         m_renderer->clean();
-        // If m_renderer is a raw pointer, delete it here (or better, use smart pointers).
     }
     m_entityManager.clean();
     m_audioManager.clean();

@@ -81,9 +81,6 @@ namespace engine
         // settings
         std::string title{};
 
-        //App* app{};
-
-        std::weak_ptr<App> app{};
 
         std::unique_ptr<Renderer> m_renderer{};
         EntityManager m_entityManager{};
@@ -108,7 +105,7 @@ namespace engine
 
 
         std::shared_ptr<App> getApp() const {
-            return app.lock(); // Returns a shared_ptr if App exists, else nullptr
+            return m_app.lock(); // Returns a shared_ptr if App exists, else nullptr
         }
 
 
@@ -198,6 +195,10 @@ namespace engine
 
 
     private:
+        
+
+        // weak_ptr to have App survive after scene destruction
+        std::weak_ptr<App> m_app{};
         
         int m_queryFrameIndex{ 0 }; // toggles between 0 and 1
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)

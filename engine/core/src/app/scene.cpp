@@ -341,7 +341,7 @@ void engine::Scene::gameLoop()
     auto cpuFrameStart = Clock::now();
 
     // Poll and handle events (inputs, window resize, etc.)
-    glfwPollEvents();
+    //glfwPollEvents();
 
     ImGuiIO& io = ImGui::GetIO();
 

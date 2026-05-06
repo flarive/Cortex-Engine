@@ -32,6 +32,9 @@ const bool engine::App::capFramerate()
 
 bool engine::App::isRunning()
 {
+    // Poll and handle events (inputs, window resize, etc.)
+    glfwPollEvents();
+
     return !glfwWindowShouldClose(window);
 }
 

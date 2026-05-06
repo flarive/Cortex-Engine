@@ -408,7 +408,8 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-    getApp()->getSceneManager().unloadCurrentScene();
+    //getApp()->getSceneManager().unloadCurrentScene();
+    getApp()->requestSceneUnload();
 
 
     //SceneSettings settings = (method == RenderMethod::PBR) ? DefaultPBRSettings() : DefaultBlinnPhongSettings();

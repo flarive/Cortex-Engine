@@ -20,8 +20,7 @@ bool engine::SceneManager::unloadCurrentScene()
 	if (m_currentScene)
 	{
 		m_currentScene->exit();
-		//m_currentScene.reset();
-		m_currentScene = nullptr; // Optional: Explicitly set to nullptr (not strictly needed)
+		m_currentScene.reset(); // force destroying the scene and calling destructor
 
 		return true;
 	}

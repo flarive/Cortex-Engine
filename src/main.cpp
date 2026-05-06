@@ -27,9 +27,9 @@ using MyApp = MyApp1;
 using MyScene = MyScene15;
 
 //App* myApp{}; // non-owning observer
-Scene* myScene{}; // non-owning observer
+//Scene* myScene{}; // non-owning observer
 
-
+static std::weak_ptr<Scene> gScene;
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
 extern "C" {
@@ -54,48 +54,56 @@ int main(int, char**)
 
     // Init the app
     std::weak_ptr<App> myApp = appManager.createApp<MyApp>("MyApp", 320, 240, false);
-    //std::shared_ptr<App> myApp = std::make_shared<MyApp>("MyApp", 320, 240, false);
     if (auto appShared = myApp.lock())
     {
         // Init a scene in the app
         appShared->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", appShared));
-        myScene = appShared->getSceneManager().getCurrentScene().get(); // convert smart to raw pointer (temp !)
-        if (myScene)
+
+        // Observe only
+        gScene = appShared->getSceneManager().getCurrentScene();
+        
+        if (auto scene = gScene.lock()) {
+            scene->initialize();
+
+            glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
+            glfwSetKeyCallback(scene->getWindow(), keyCallback);
+            glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);
+            glfwSetScrollCallback(scene->getWindow(), scrollCallback);
+            glfwSetWindowRefreshCallback(scene->getWindow(), windowRefreshCallback);
+        }
+
+            
+
+        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+        if (present > 0)
         {
-            myScene->initialize();
+            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+            logger.info("Joystick present {}", name);
+        }
 
-            glfwSetFramebufferSizeCallback(myScene->getWindow(), framebufferSizeCallback);
-            glfwSetKeyCallback(myScene->getWindow(), keyCallback);
-            glfwSetCursorPosCallback(myScene->getWindow(), mouseCallback);
-            glfwSetScrollCallback(myScene->getWindow(), scrollCallback);
-            glfwSetWindowRefreshCallback(myScene->getWindow(), windowRefreshCallback);
+        // start game loop
+        while (appShared->isRunning())
+        {
+            gamepadUpdate(); // Update gamepad state
 
-            int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-            if (present > 0)
-            {
-                const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-                logger.info("Joystick present {}", name);
+            if (auto scene = gScene.lock()) {
+                scene->gameLoop();
             }
 
-            // start game loop
-            while (appShared->isRunning())
-            {
-                gamepadUpdate(); // Update gamepad state
-                if (myScene)
-                    myScene->gameLoop();
-            }
 
-            myScene->exit();
-            appShared->exit();
+            if (appShared->shouldUnloadScene())
+            {
+                appShared->getSceneManager().unloadCurrentScene();
+                gScene.reset();
+                //break; // or switch scene
+            }
         }
-        else
-        {
-            logger.error("Failed to create the scene");
-            return -1;
+
+        if (auto scene = gScene.lock()) {
+            scene->exit();
         }
+        appShared->exit();
     }
-
-    
 
     return 0;
 }
@@ -105,8 +113,11 @@ int main(int, char**)
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     (void)window;   //Do nothing
-    if (myScene)
-        ((MyScene*)myScene)->key_callback(key, scancode, action, mods);
+
+    if (auto scene = gScene.lock())
+    {
+        (static_cast<MyScene*>(scene.get()))->key_callback(key, scancode, action, mods);
+    }
 }
 
 // glfw: whenever the mouse moves, this callback is called
@@ -115,7 +126,10 @@ static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
     (void)window;   //Do nothing
 
-    ((MyScene*)myScene)->mouse_callback(xposIn, yposIn);
+    if (auto scene = gScene.lock())
+    {
+        (static_cast<MyScene*>(scene.get()))->mouse_callback(xposIn, yposIn);
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -124,7 +138,10 @@ static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     (void)window;   //Do nothing
 
-    ((MyScene*)myScene)->scroll_callback(xoffset, yoffset);
+    if (auto scene = gScene.lock())
+    {
+        (static_cast<MyScene*>(scene.get()))->scroll_callback(xoffset, yoffset);
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -133,14 +150,20 @@ static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     (void)window;   //Do nothing
 
-    ((MyScene*)myScene)->framebuffer_size_callback(width, height);
+    if (auto scene = gScene.lock())
+    {
+        (static_cast<MyScene*>(scene.get()))->framebuffer_size_callback(width, height);
+    }
 }
 
 static void windowRefreshCallback(GLFWwindow* window)
 {
     (void)window;   //Do nothing
 
-    ((MyScene*)myScene)->window_refresh_callback();
+    if (auto scene = gScene.lock())
+    {
+        (static_cast<MyScene*>(scene.get()))->window_refresh_callback();
+    }
 }
 
 // Poll gamepad input and forward to MyApp
@@ -152,7 +175,10 @@ static void gamepadUpdate()
         GLFWgamepadstate state;
         if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
         {
-            ((MyScene*)myScene)->gamepad_callback(state);
+            if (auto scene = gScene.lock())
+            {
+                (static_cast<MyScene*>(scene.get()))->gamepad_callback(state);
+            }
         }
     }
 }

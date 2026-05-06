@@ -33,10 +33,10 @@ namespace engine
 
         AppSettings settings;
 
-       
+
         App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
         virtual ~App();
-           
+
 
         const int getFrameDelay();
         const bool capFramerate();
@@ -66,14 +66,21 @@ namespace engine
         void toggleFullscreen(std::function<void()> func);
 
 
-		std::string& getTitle() { return m_title; }
+        std::string& getTitle() { return m_title; }
 
         // returns a unique instance of managers per app (no copy !)
         //AppManager& getAppManager() { return m_appManager; }
         SceneManager& getSceneManager() { return m_sceneManager; }
+
+        bool shouldUnloadScene() const { return m_shouldUnloadScene; }
+        void requestSceneUnload() { m_shouldUnloadScene = true; }
+    
         
 
     private:
+        bool m_shouldUnloadScene{ false };
+        
+        
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };

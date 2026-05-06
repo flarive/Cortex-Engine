@@ -53,7 +53,7 @@ int main(int, char**)
     engine::AppManager appManager;
 
     // Init the app
-    std::weak_ptr<App> myApp = appManager.createApp<MyApp>("MyApp", 320, 240, false);
+    std::weak_ptr<App> myApp = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //320, 240
     if (auto appShared = myApp.lock())
     {
         // Init a scene in the app
@@ -95,7 +95,16 @@ int main(int, char**)
             {
                 appShared->getSceneManager().unloadCurrentScene();
                 gScene.reset();
-                //break; // or switch scene
+
+                // Clear the screen to black
+                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                // Swap buffers to ensure the clear is visible
+                if (auto app = myApp.lock())
+                {
+                    glfwSwapBuffers(app->window);
+                }
             }
         }
 

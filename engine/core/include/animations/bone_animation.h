@@ -29,7 +29,7 @@ namespace engine
 		BoneAnimation() = default;
 		BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor = 1.0f);
 
-		~BoneAnimation() = default;
+		~BoneAnimation() override;
 
 		AnimationType getTypeID() const override
 		{

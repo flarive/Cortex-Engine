@@ -9,11 +9,6 @@ engine::Sphere::Sphere(bool _flipNormals, const glm::vec3& _position) : m_flipNo
     logger.trace("Sphere constructor called");
 }
 
-engine::Sphere::~Sphere()
-{
-    logger.trace("Sphere destructor called");
-}
-
 void engine::Sphere::setup()
 {
     geometrySetup(); // Geometry setup
@@ -241,4 +236,9 @@ void engine::Sphere::clean()
     if(m_EBO) { glDeleteBuffers(1, &m_EBO); m_EBO = 0; }
     if (m_VBO) { glDeleteBuffers(1, &m_VBO); m_VBO = 0; }
     if (m_VAO) { glDeleteVertexArrays(1, &m_VAO); m_VAO = 0; }
+}
+
+engine::Sphere::~Sphere()
+{
+    logger.trace("Sphere destructor called");
 }

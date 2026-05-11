@@ -23,7 +23,7 @@ namespace engine
     {
     public:
         Model() = default;
-		~Model() = default;
+		~Model();
 
         // constructor, expects a filepath to a 3D model.
         Model(const std::string& _path, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());

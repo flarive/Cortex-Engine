@@ -6,16 +6,20 @@
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
 
 #include "../../include/transform.h"
+#include "../../include/managers/log_manager.h"
 
 #include <format>
 
 
 engine::PointLight::PointLight() : PointLight(glm::vec3())
 {
+    logger.trace("PointLight constructor called");
 }
 
 engine::PointLight::PointLight(glm::vec3 _position) : Light(_position)
 {
+    logger.trace("PointLight constructor called");
+
     setup();
 }
 
@@ -96,4 +100,9 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
 void engine::PointLight::clean()
 {
     m_debug_sphere.clean();
+}
+
+engine::PointLight::~PointLight()
+{
+    logger.trace("PointLight destructor called");
 }

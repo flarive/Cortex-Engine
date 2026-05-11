@@ -1,8 +1,12 @@
 #include "../../include/cameras/fps_camera.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::FpsCamera::FpsCamera(float _zoom, float _yaw, float _pitch, float _speed, float _sensitivity, glm::vec3 _position, glm::vec3 _up)
     : engine::Camera(_position, _up, _zoom, _yaw, _pitch, _speed, _sensitivity)
 {
+    logger.trace("FpsCamera constructor called");
+
     updateCameraVectors(); // needed if base Camera constructor is called
 }
 
@@ -145,4 +149,9 @@ void engine::FpsCamera::updateCameraVectors()
 void engine::FpsCamera::setup()
 {
     updateCameraVectors();
+}
+
+engine::FpsCamera::~FpsCamera()
+{
+    logger.trace("FpsCamera destructor called");
 }

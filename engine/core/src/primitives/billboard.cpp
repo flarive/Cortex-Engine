@@ -7,15 +7,10 @@
 
 engine::Billboard::Billboard(const glm::vec3& _position) : Primitive(_position)
 {
-    logger.trace("Cone constructor called");
+    logger.trace("Billboard constructor called");
 
     setCanCastShadows(false);
 	setCanReceiveShadows(false);
-}
-
-engine::Billboard::~Billboard()
-{
-    logger.trace("Billboard destructor called");
 }
 
 void engine::Billboard::setup()
@@ -195,4 +190,9 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
 void engine::Billboard::clean()
 {
 
+}
+
+engine::Billboard::~Billboard()
+{
+    logger.trace("Billboard destructor called");
 }

@@ -14,12 +14,14 @@
 engine::SharedModel::SharedModel(bool _gamma, bool _flipUV)
     : gammaCorrection(_gamma), flipUV(_flipUV)
 {
-
+    logger.trace("SharedModel constructor called");
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _flipUV)
     : gammaCorrection(_gamma), flipUV(_flipUV)
 {
+    logger.trace("SharedModel constructor called");
+    
     assert(!_path.empty() && "Model path is empty !");
 
     loadModel(_path, _flipUV);
@@ -28,6 +30,8 @@ engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _fl
 engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV)
     : gammaCorrection(_gamma), flipUV(_flipUV), m_customMaterial(_material)
 {
+    logger.trace("SharedModel constructor called");
+
     assert(!_path.empty() && "Model path is empty !");
 
     assert(_material && "Material is not defined !");
@@ -467,5 +471,10 @@ void engine::SharedModel::reSetup()
     std::string fullpath_str = fullpath.string();
 
     loadModel(fullpath_str, flipUV);
+}
+
+engine::SharedModel::~SharedModel()
+{
+    logger.trace("SharedModel destructor called");
 }
 

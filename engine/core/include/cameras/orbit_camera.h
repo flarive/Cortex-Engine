@@ -12,7 +12,7 @@ namespace engine
     public:
         // constructor
         OrbitCamera(glm::vec3 _target = glm::vec3(0.0f, 0.0f, 0.0f), float _radius = 10.0f, float _theta = 90.0f, float _phi = 0.0f, glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f));
-        ~OrbitCamera() = default;
+        ~OrbitCamera() override;
 
         CameraType getTypeID() const override
         {

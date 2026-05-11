@@ -10,7 +10,7 @@ namespace engine
 	public:
 		TransformAnimator(std::shared_ptr<TransformAnimation> animation);
 		TransformAnimator(const std::vector<std::shared_ptr<TransformAnimation>>& animations);
-		~TransformAnimator() = default;
+		~TransformAnimator() override;
 
 		virtual AnimatorType getTypeID() const
 		{

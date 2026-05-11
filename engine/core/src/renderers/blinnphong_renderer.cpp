@@ -18,11 +18,6 @@ engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
     logger.trace("BlinnPhongRenderer constructor called");
 }
 
-engine::BlinnPhongRenderer::~BlinnPhongRenderer()
-{
-    logger.trace("BlinnPhongRenderer destructor called");
-}
-
 void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights; // copy ?????????
@@ -313,4 +308,9 @@ void engine::BlinnPhongRenderer::clean()
     backgroundShader.clean();
 
 	m_skybox->clean();
+}
+
+engine::BlinnPhongRenderer::~BlinnPhongRenderer()
+{
+    logger.trace("BlinnPhongRenderer destructor called");
 }

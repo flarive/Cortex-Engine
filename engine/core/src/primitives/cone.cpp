@@ -9,12 +9,6 @@ engine::Cone::Cone(float _radius, float _height, const glm::vec3& _position) : P
     logger.trace("Cone constructor called");
 }
 
-engine::Cone::~Cone()
-{
-    logger.trace("Cone destructor called");
-}
-
-
 void engine::Cone::setup()
 {
     geometrySetup(); // Geometry setup
@@ -234,4 +228,9 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
 void engine::Cone::clean()
 {
 
+}
+
+engine::Cone::~Cone()
+{
+    logger.trace("Cone destructor called");
 }

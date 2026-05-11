@@ -1,9 +1,13 @@
 #include "../../include/cameras/fly_camera.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::FlyCamera::FlyCamera(float _zoom, float _yaw, float _pitch, float _speed, float _sensitivity, glm::vec3 _position, glm::vec3 _up)
 	: engine::Camera(_position, _up, _zoom, _yaw, _pitch, _speed, _sensitivity)
 {
-	updateCameraVectors(); // needed if base Camera constructor is called
+    logger.trace("FlyCamera constructor called");
+
+    updateCameraVectors(); // needed if base Camera constructor is called
 }
 
 // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -140,4 +144,9 @@ void engine::FlyCamera::updateCameraVectors()
 void engine::FlyCamera::setup()
 {
     updateCameraVectors();
+}
+
+engine::FlyCamera::~FlyCamera()
+{
+    logger.trace("FlyCamera destructor called");
 }

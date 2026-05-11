@@ -1,10 +1,13 @@
 #include "../../include/models/bone.h"
 
 #include "../../include/models/assimp_glm_helpers.h"
+#include "../../include/managers/log_manager.h"
 
 engine::Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	: m_name(name), m_ID(ID), m_localTransform(1.0f)
 {
+	logger.trace("Bone constructor called");
+
 	m_numPositions = channel->mNumPositionKeys;
 
 	for (int positionIndex = 0; positionIndex < m_numPositions; ++positionIndex)
@@ -137,4 +140,9 @@ glm::mat4 engine::Bone::interpolateScaling(float animationTime)
 	float scaleFactor = getScaleFactor(m_scales[p0Index].timeStamp, m_scales[p1Index].timeStamp, animationTime);
 	glm::vec3 finalScale = glm::mix(m_scales[p0Index].scale, m_scales[p1Index].scale, scaleFactor);
 	return glm::scale(glm::mat4(1.0f), finalScale);
+}
+
+engine::Bone::~Bone()
+{
+	logger.trace("Bone destructor called");
 }

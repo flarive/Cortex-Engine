@@ -89,7 +89,7 @@ namespace engine
 
         // constructor with vectors
         Camera(glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 _up = glm::vec3(0.0f, 1.0f, 0.0f), float _zoom = ZOOM, float _yaw = YAW, float _pitch = PITCH, float _speed = SPEED, float _sensitivity = SENSITIVITY);
-        ~Camera() = default;
+        virtual ~Camera();
 
 
         virtual CameraType getTypeID() const

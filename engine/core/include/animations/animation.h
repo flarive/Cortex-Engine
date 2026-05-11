@@ -25,7 +25,7 @@ namespace engine
 		Animation() = default;
 		Animation(const std::string& animationName, std::shared_ptr<Model> model, float speedFactor = 1.0f);
 
-		~Animation() = default;
+		virtual ~Animation();
 
 		virtual AnimationType getTypeID() const
 		{

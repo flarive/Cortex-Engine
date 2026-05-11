@@ -10,6 +10,7 @@ namespace engine
     public:
         SpotLight();
         SpotLight(glm::vec3 _position);
+        ~SpotLight() override;
 
         LightType getTypeID() const override
         {

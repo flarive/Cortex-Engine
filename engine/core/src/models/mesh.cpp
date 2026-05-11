@@ -2,11 +2,15 @@
 
 #include "../../include/debug/opengl_debug.h"
 
+#include "../../include/managers/log_manager.h"
+
 #include <memory>
 
 engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material)
     : vertices(std::move(_vertices)), indices(std::move(_indices)), m_material(std::move((_material)))
 {
+    logger.trace("Mesh constructor called");
+
     setupMesh();
 }
 
@@ -156,4 +160,9 @@ void engine::Mesh::clean()
     m_VAO = 0;
     m_VBO = 0;
     m_EBO = 0;
+}
+
+engine::Mesh::~Mesh()
+{
+    logger.trace("Mesh destructor called");
 }

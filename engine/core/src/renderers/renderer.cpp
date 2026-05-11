@@ -12,11 +12,6 @@ engine::Renderer::Renderer(GLFWwindow* window)
     logger.trace("Renderer base constructor called");
 }
 
-engine::Renderer::~Renderer()
-{
-    logger.trace("Renderer base destructor called");
-}
-
 void engine::Renderer::loadShaders()
 {
     // color framebuffer to screen shader
@@ -858,4 +853,9 @@ void engine::Renderer::clean()
 
     // delete sphere VAO/VBO/IBO
     glDeleteVertexArrays(1, &m_sphereVAO);
+}
+
+engine::Renderer::~Renderer()
+{
+    logger.trace("Renderer base destructor called");
 }

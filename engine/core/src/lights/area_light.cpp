@@ -1,5 +1,7 @@
 ﻿#include "../../include/lights/area_light.h"
 
+#include "../../include/managers/log_manager.h"
+
 #include "../../include/singleton.h"
 #include "../../include/misc/colors.h"
 
@@ -14,15 +16,20 @@
 
 engine::AreaLight::AreaLight() : AreaLight(glm::vec3())
 {
+    logger.trace("AreaLight constructor called");
 }
 
 engine::AreaLight::AreaLight(glm::vec3 _position) : Light(_position)
 {
+    logger.trace("AreaLight constructor called");
+
     setup();
 }
 
 engine::AreaLight::AreaLight(const std::shared_ptr<engine::Primitive>& primitive, glm::vec3 _position) : m_primitive(primitive), Light(_position)
 {
+    logger.trace("AreaLight constructor called");
+
     setup();
 }
 
@@ -144,4 +151,9 @@ void engine::AreaLight::clean()
 {
     if (m_debugDrawLine.isInitialized())
         m_debugDrawLine.clean();
+}
+
+engine::AreaLight::~AreaLight()
+{
+    logger.trace("AreaLight destructor called");
 }

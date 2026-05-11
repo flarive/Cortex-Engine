@@ -13,12 +13,6 @@ engine::Plane::Plane(bool _flipNormals, const glm::vec3& _position) : m_flipNorm
     logger.trace("Plane constructor called");
 }
 
-engine::Plane::~Plane()
-{
-    logger.trace("Plane destructor called");
-}
-
-
 void engine::Plane::setup()
 {
     geometrySetup(); // Geometry setup
@@ -217,4 +211,9 @@ void engine::Plane::clean()
 {
     if (m_debugDrawLine.isInitialized())
         m_debugDrawLine.clean();
+}
+
+engine::Plane::~Plane()
+{
+    logger.trace("Plane destructor called");
 }

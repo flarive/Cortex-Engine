@@ -10,6 +10,7 @@ namespace engine
     public:
         PointLight();
         PointLight(glm::vec3 _position);
+        ~PointLight() override;
 
         LightType getTypeID() const override
         {

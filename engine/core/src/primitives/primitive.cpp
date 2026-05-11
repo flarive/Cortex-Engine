@@ -8,11 +8,6 @@ engine::Primitive::Primitive(const glm::vec3& _position) : m_position(_position)
     logger.trace("Primitive base constructor called");
 }
 
-engine::Primitive::~Primitive()
-{
-    logger.trace("Primitive base destructor called");
-}
-
 void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
 {
     auto* singleton = engine::Singleton::getInstance();
@@ -511,4 +506,9 @@ std::vector<engine::Vertex> engine::Primitive::generateConeVertices(unsigned int
     }
 
     return vertices;
+}
+
+engine::Primitive::~Primitive()
+{
+    logger.trace("Primitive base destructor called");
 }

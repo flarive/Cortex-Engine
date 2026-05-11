@@ -46,6 +46,7 @@ namespace engine
 	{
 	public:
 		Bone(const std::string& name, int ID, const aiNodeAnim* channel);
+		~Bone();
 
 		void update(float animationTime);
 

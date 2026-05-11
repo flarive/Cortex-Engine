@@ -9,12 +9,6 @@ engine::Cylinder::Cylinder(float _radius, float _height, const glm::vec3& _posit
     logger.trace("Cylinder constructor called");
 }
 
-engine::Cylinder::~Cylinder()
-{
-    logger.trace("Cylinder destructor called");
-}
-
-
 void engine::Cylinder::setup()
 {
     geometrySetup(); // Geometry setup
@@ -251,4 +245,9 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
 void engine::Cylinder::clean()
 {
 
+}
+
+engine::Cylinder::~Cylinder()
+{
+    logger.trace("Cylinder destructor called");
 }

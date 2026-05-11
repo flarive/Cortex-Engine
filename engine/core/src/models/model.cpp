@@ -23,17 +23,20 @@
 engine::Model::Model(const std::string& _path, bool _gamma, bool _flipUVs, const glm::vec3& _position)
     : SharedModel(_path, _gamma, _flipUVs), m_position(_position)
 {
+    logger.trace("Model constructor called");
 }
 
 engine::Model::Model(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUVs, const glm::vec3& _position)
     : SharedModel(_path, _material, _gamma, _flipUVs), m_position(_position)
 {
+    logger.trace("Model constructor called");
 }
 
 // constructor, expects a model (for sharing)
 engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma, bool _flipUVs, const glm::vec3& _position)
     : SharedModel(_gamma, _flipUVs), m_shared_model(_shared_model), m_position(_position)
 {
+    logger.trace("Model constructor called");
 }
 
 // draws the model, and thus all its meshes
@@ -89,4 +92,9 @@ unsigned int engine::Model::getMeshCount() const
     {
         return m_shared_model->getMeshCount();
     }
+}
+
+engine::Model::~Model()
+{
+    logger.trace("Model destructor called");
 }

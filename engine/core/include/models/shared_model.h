@@ -63,16 +63,15 @@ namespace engine
         bool highlight{};
 
 
-
-        // at least one virtual method to make it base class
-        virtual ~SharedModel() = default;
-
         SharedModel(bool _gamma, bool _flipUV);
 
         // constructor, expects a filepath to a 3D model.
         SharedModel(const std::string& _path, bool _gamma = false, bool _flipUV = false);
 
         SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV);
+
+        // at least one virtual method to make it base class
+        virtual ~SharedModel();
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {

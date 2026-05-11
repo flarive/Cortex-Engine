@@ -1,8 +1,12 @@
 #include "../../include/animators/bone_animator.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 	: Animator(std::static_pointer_cast<Animation>(animation)), m_currentBoneAnimation(std::static_pointer_cast<BoneAnimation>(m_currentAnimation))
 {
+	logger.trace("BonesAnimator constructor called");
+	
 	m_boneCount = animation->getBoneCount();
 	if (m_boneCount > 0)
 	{
@@ -22,6 +26,8 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations)
 	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end())), m_currentBoneAnimation(std::static_pointer_cast<BoneAnimation>(m_currentAnimation))
 {
+	logger.trace("BonesAnimator constructor called");
+	
 	if (animations.size() > 0)
 	{
 		m_boneCount = animations[0]->getBoneCount();
@@ -180,4 +186,9 @@ void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, g
 			}
 		}
 	}
+}
+
+engine::BonesAnimator::~BonesAnimator()
+{
+	logger.trace("BonesAnimator destructor called");
 }

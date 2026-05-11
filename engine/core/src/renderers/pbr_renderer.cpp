@@ -20,12 +20,6 @@ engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
     logger.trace("PbrRenderer constructor called");
 }
 
-engine::PbrRenderer::~PbrRenderer()
-{
-    logger.trace("PbrRenderer destructor called");
-}
-
-
 /// <summary>
 /// Query once per program startup and cache these caps, not every bind.
 /// GLint maxFragUnits = 16;
@@ -535,4 +529,9 @@ void engine::PbrRenderer::clean()
     glDeleteTextures(1, &irradianceMap);
     glDeleteTextures(1, &prefilterMap);
     glDeleteTextures(1, &brdfLUTTexture);
+}
+
+engine::PbrRenderer::~PbrRenderer()
+{
+    logger.trace("PbrRenderer destructor called");
 }

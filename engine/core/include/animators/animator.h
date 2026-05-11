@@ -36,7 +36,7 @@ namespace engine
     public:
 		Animator(std::shared_ptr<Animation> animation);
 		Animator(const std::vector<std::shared_ptr<Animation>>& animations);
-		~Animator() = default;
+		virtual ~Animator();
 
 		virtual AnimatorType getTypeID() const
 		{

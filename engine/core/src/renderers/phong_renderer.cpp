@@ -19,12 +19,6 @@ engine::PhongRenderer::PhongRenderer(GLFWwindow* window)
     logger.trace("PhongRenderer constructor called");
 }
 
-engine::PhongRenderer::~PhongRenderer()
-{
-    logger.trace("PhongRenderer destructor called");
-}
-
-
 void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights; // copy ?????????
@@ -114,4 +108,9 @@ void engine::PhongRenderer::clean()
     
     // delete shaders
     phongShader.clean();
+}
+
+engine::PhongRenderer::~PhongRenderer()
+{
+    logger.trace("PhongRenderer destructor called");
 }

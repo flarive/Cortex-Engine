@@ -29,11 +29,6 @@ engine::Cube::Cube(const float& _width, const float& _height, const float& _dept
     logger.trace("Cube constructor called");
 }
 
-engine::Cube::~Cube()
-{
-    logger.trace("Cube destructor called");
-}
-
 void engine::Cube::setup()
 {
     geometrySetup(); // Geometry setup
@@ -237,9 +232,13 @@ void engine::Cube::drawDebugNormals(const glm::mat4& projection, const glm::mat4
     m_debugDrawLine.clear();
 }
 
-
 void engine::Cube::clean()
 {
     if (m_debugDrawLine.isInitialized())
         m_debugDrawLine.clean();
+}
+
+engine::Cube::~Cube()
+{
+    logger.trace("Cube destructor called");
 }

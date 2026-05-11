@@ -1,6 +1,7 @@
 #include "../../include/lights/directional_light.h"
 
 #include "../../include/singleton.h"
+#include "../../include/managers/log_manager.h"
 
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -11,10 +12,13 @@
 
 engine::DirectionalLight::DirectionalLight() : DirectionalLight(glm::vec3())
 {
+    logger.trace("DirectionalLight constructor called");
 }
 
 engine::DirectionalLight::DirectionalLight(glm::vec3 _position) : Light(_position)
 {
+    logger.trace("DirectionalLight constructor called");
+
     setup();
 }
 
@@ -83,4 +87,9 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
 void engine::DirectionalLight::clean()
 {
     m_debug_cylinder.clean();
+}
+
+engine::DirectionalLight::~DirectionalLight()
+{
+    logger.trace("DirectionalLight destructor called");
 }

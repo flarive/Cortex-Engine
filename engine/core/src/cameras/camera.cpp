@@ -1,5 +1,6 @@
 ﻿#include "../../include/cameras/camera.h"
 
+#include "../../include/managers/log_manager.h"
 
 #include <glm/glm.hpp> //glm::mat4
 #include <list> //std::list
@@ -9,6 +10,8 @@
 engine::Camera::Camera(glm::vec3 _position, glm::vec3 _up, float _zoom, float _yaw, float _pitch, float _speed, float _sensitivity)
 	: front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(_speed), mouseSensitivity(_sensitivity), m_zoom(_zoom), yaw(_yaw), pitch(_pitch)
 {
+    logger.trace("Camera base constructor called");
+
     position = _position;
     worldUp = _up;
     
@@ -150,3 +153,7 @@ engine::Bounds2D engine::Camera::getBounds(float aspect, float fovY, float zNear
     return bounds;
 }
 
+engine::Camera::~Camera()
+{
+    logger.trace("Camera base destructor called");
+}

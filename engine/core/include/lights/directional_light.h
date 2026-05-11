@@ -10,6 +10,7 @@ namespace engine
     public:
         DirectionalLight();
         DirectionalLight(glm::vec3 _position);
+        ~DirectionalLight() override;
 
 
         LightType getTypeID() const override

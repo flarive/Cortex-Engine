@@ -14,7 +14,7 @@ namespace engine
 	public:
 		TransformAnimation() = default;
 		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform);
-		~TransformAnimation() = default;
+		~TransformAnimation() override;
 
 		AnimationType getTypeID() const override
 		{

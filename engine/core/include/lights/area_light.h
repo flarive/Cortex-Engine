@@ -22,6 +22,7 @@ namespace engine
         AreaLight();
         AreaLight(glm::vec3 _position);
         AreaLight(const std::shared_ptr<engine::Primitive>& primitive, glm::vec3 _position = glm::vec3(0.0f));
+        ~AreaLight() override;
 
         LightType getTypeID() const override
         {

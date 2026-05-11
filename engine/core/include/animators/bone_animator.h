@@ -18,7 +18,7 @@ namespace engine
 	public:
 		BonesAnimator(std::shared_ptr<BoneAnimation> animation);
 		BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations);
-		~BonesAnimator() = default;
+		~BonesAnimator() override;
 
 		virtual AnimatorType getTypeID() const
 		{

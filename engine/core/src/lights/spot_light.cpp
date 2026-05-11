@@ -1,6 +1,7 @@
 #include "../../include/lights/spot_light.h"
 
 #include "../../include/singleton.h"
+#include "../../include/managers/log_manager.h"
 
 #include <format>
 
@@ -9,10 +10,13 @@
 
 engine::SpotLight::SpotLight() : SpotLight(glm::vec3())
 {
+    logger.trace("SpotLight constructor called");
 }
 
 engine::SpotLight::SpotLight(glm::vec3 _position) : Light(_position)
 {
+    logger.trace("SpotLight constructor called");
+
     setup();
 }
 
@@ -100,4 +104,9 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
 void engine::SpotLight::clean()
 {
     m_debug_cone.clean();
+}
+
+engine::SpotLight::~SpotLight()
+{
+    logger.trace("SpotLight destructor called");
 }

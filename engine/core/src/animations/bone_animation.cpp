@@ -1,9 +1,12 @@
 #include "../../include/animations/bone_animation.h"
 
+#include "../../include/managers/log_manager.h"
 
 engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
 	: Animation(animationName, model, speedFactor), m_filepath(animationPath)
 {
+	logger.trace("BoneAnimation constructor called");
+
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	assert(scene && scene->mRootNode);
@@ -104,4 +107,9 @@ unsigned int engine::BoneAnimation::computeFPS(const aiAnimation* anim)
 	//}
 
 	return static_cast<unsigned int>(std::round(1.0 / deltaSeconds));
+}
+
+engine::BoneAnimation::~BoneAnimation()
+{
+	logger.trace("BoneAnimation destructor called");
 }

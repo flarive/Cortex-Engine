@@ -47,7 +47,7 @@ namespace engine
     public:
         Light();
         Light(glm::vec3 _position);
-        virtual ~Light() = default;
+        virtual ~Light();
 
         virtual LightType getTypeID() const
         {

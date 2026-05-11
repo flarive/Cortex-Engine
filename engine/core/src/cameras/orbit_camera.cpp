@@ -1,8 +1,12 @@
 #include "../../include/cameras/orbit_camera.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::OrbitCamera::OrbitCamera(glm::vec3 _target, float _radius, float _theta, float _phi, glm::vec3 _up)
     : engine::Camera(glm::vec3(0.0, 0.0, 0.0), _up), m_target(_target), m_radius(_radius), m_theta(_theta), m_phi(_phi)
 {
+    logger.trace("OrbitCamera constructor called");
+
     updateCameraVectors(); // needed if base Camera constructor is called
 }
 
@@ -84,4 +88,9 @@ void engine::OrbitCamera::updateCameraVectors()
 void engine::OrbitCamera::setup()
 {
     updateCameraVectors();
+}
+
+engine::OrbitCamera::~OrbitCamera()
+{
+    logger.trace("OrbitCamera destructor called");
 }

@@ -1,14 +1,17 @@
 #include "../../include/animators/transform_animator.h"
 
+#include "../../include/managers/log_manager.h"
 
 engine::TransformAnimator::TransformAnimator(std::shared_ptr<TransformAnimation> animation)
 	: Animator(std::static_pointer_cast<Animation>(animation)), m_currentTransformAnimation(std::static_pointer_cast<TransformAnimation>(m_currentAnimation))
 {
+	logger.trace("TransformAnimator constructor called");
 }
 
 engine::TransformAnimator::TransformAnimator(const std::vector<std::shared_ptr<TransformAnimation>>& animations)
 	: Animator(std::vector<std::shared_ptr<Animation>>(animations.begin(), animations.end())), m_currentTransformAnimation(std::static_pointer_cast<TransformAnimation>(m_currentAnimation))
 {
+	logger.trace("TransformAnimator constructor called");
 }
 
 void engine::TransformAnimator::init(Transform& transform)
@@ -137,4 +140,9 @@ void engine::TransformAnimator::playAnimationAtIndex(unsigned short index)
 
 		loop++;
 	}
+}
+
+engine::TransformAnimator::~TransformAnimator()
+{
+	logger.trace("TransformAnimator destructor called");
 }

@@ -20,7 +20,7 @@ namespace engine
 
         // constructor
         Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material);
-		~Mesh() = default;
+		~Mesh();
 
         // override a little NonCopyableButMovable
         Mesh(Mesh&&) = default;

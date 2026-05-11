@@ -15,11 +15,6 @@ engine::App::App(const std::string& _title, unsigned int _width, unsigned int _h
     setup();
 }
 
-engine::App::~App()
-{
-    logger.trace("App {} destructor called", m_title);
-}
-
 const int engine::App::getFrameDelay()
 {
     return settings.targetFPS > 0 ? (1000 / settings.targetFPS) : 0; // in milliseconds
@@ -325,4 +320,9 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 
     isFullscreen = !isFullscreen;
 	fullscreen = isFullscreen;
+}
+
+engine::App::~App()
+{
+    logger.trace("App {} destructor called", m_title);
 }

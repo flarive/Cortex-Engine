@@ -4,6 +4,7 @@
 
 #include "app/myapp1.h"
 
+#include "app/myscene0.h" // scenes switcher
 #include "app/myscene1.h" // blinnphong with skybox
 #include "app/myscene2.h" // blinnphong cushion
 #include "app/myscene3.h" // PBR balls with HDR background
@@ -88,23 +89,6 @@ int main(int, char**)
 
             if (auto scene = gScene.lock()) {
                 scene->gameLoop();
-            }
-
-
-            if (appShared->shouldUnloadScene())
-            {
-                appShared->getSceneManager().unloadCurrentScene();
-                gScene.reset();
-
-                // Clear the screen to black
-                glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                // Swap buffers to ensure the clear is visible
-                if (auto app = myApp.lock())
-                {
-                    glfwSwapBuffers(app->window);
-                }
             }
         }
 

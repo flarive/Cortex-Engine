@@ -71,24 +71,6 @@ engine::Scene::Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSe
     currentInstance = this; // Set the current instance when constructing
 }
 
-engine::Scene::~Scene()
-{
-    logger.trace("Scene {} base destructor called", title);
-
-    // OpenGL resources
-    cleanupQueries();
-
-    // Managed objects
-    if (m_renderer) {
-        m_renderer->clean();
-    }
-    m_entityManager.clean();
-    m_audioManager.clean();
-
-    // Reset static state
-    currentInstance = nullptr;
-}
-
 engine::Renderer* engine::Scene::getRenderer() const
 {
     // no ownership transfer, read-only access
@@ -339,8 +321,13 @@ void engine::Scene::gameLoop()
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
-    // Poll and handle events (inputs, window resize, etc.)
-    //glfwPollEvents();
+    if (getApp()->shouldUnloadScene())
+    {
+        getApp()->getSceneManager().unloadCurrentScene();
+
+		auto currentScene = getApp()->getSceneManager().getCurrentScene();
+        currentScene.reset();
+    }
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -471,6 +458,12 @@ void engine::Scene::gameLoop()
         glfwMakeContextCurrent(backup_current_context);
     }
 
+    if (getApp()->shouldUnloadScene())
+    {
+        // Clear the screen to black
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     glfwSwapBuffers(window);
     
@@ -1214,4 +1207,24 @@ void engine::Scene::computeLightCount()
 //}
 
 //#endif
+
+
+engine::Scene::~Scene()
+{
+    logger.trace("Scene {} base destructor called", title);
+
+    // OpenGL resources
+    cleanupQueries();
+
+    // Managed objects
+    if (m_renderer) {
+        m_renderer->clean();
+    }
+    m_entityManager.clean();
+    m_audioManager.clean();
+
+    // Reset static state
+    currentInstance = nullptr;
+}
+
 

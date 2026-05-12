@@ -2,6 +2,7 @@
 #include "core/include/app/scene.h"
 #include "core/include/managers/log_manager.h"
 
+#include "app/myapp0.h" // app scenes switcher
 #include "app/myapp1.h"
 
 #include "app/myscene0.h" // scenes switcher
@@ -27,10 +28,9 @@ using namespace engine;
 using MyApp = MyApp1; 
 using MyScene = MyScene15;
 
-//App* myApp{}; // non-owning observer
-//Scene* myScene{}; // non-owning observer
+static std::weak_ptr<App> gApp; // non-owning observer
+static std::weak_ptr<Scene> gScene; // non-owning observer
 
-static std::weak_ptr<Scene> gScene;
 
 // Auto select Nvidia or AMD GPU instead of builtin intel GPU
 extern "C" {
@@ -54,15 +54,22 @@ int main(int, char**)
     engine::AppManager appManager;
 
     // Init the app
-    std::weak_ptr<App> myApp = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //320, 240
-    if (auto appShared = myApp.lock())
+    gApp = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    if (auto appShared = gApp.lock())
     {
-        // Init a scene in the app
+        // Load a scene in the app
         appShared->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", appShared));
+
+        // Load multiple scenes in the app
+        //vector<shared_ptr<Scene>> scenes{};
+        //scenes.emplace_back(std::make_shared<MyScene1>("Scene1", appShared));
+        //scenes.emplace_back(std::make_shared<MyScene2>("Scene2", appShared));
+        //scenes.emplace_back(std::make_shared<MyScene3>("Scene3", appShared));
+        //appShared->getSceneManager().loadScenes(scenes);
 
         // Observe only
         gScene = appShared->getSceneManager().getCurrentScene();
-        
+
         if (auto scene = gScene.lock()) {
             scene->initialize();
 
@@ -73,7 +80,7 @@ int main(int, char**)
             glfwSetWindowRefreshCallback(scene->getWindow(), windowRefreshCallback);
         }
 
-            
+
 
         int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
         if (present > 0)
@@ -97,6 +104,7 @@ int main(int, char**)
         }
         appShared->exit();
     }
+    
 
     return 0;
 }
@@ -106,6 +114,11 @@ int main(int, char**)
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     (void)window;   //Do nothing
+
+    if (auto app = gApp.lock())
+    {
+        (static_cast<MyApp*>(app.get()))->key_callback(key, scancode, action, mods);
+    }
 
     if (auto scene = gScene.lock())
     {

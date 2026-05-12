@@ -205,6 +205,7 @@
     <ClCompile Include="..\libs\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app\myapp0.h" />
     <ClInclude Include="app\myapp1.h" />
     <ClInclude Include="app\myscene0.h" />
     <ClInclude Include="app\myscene1.h" />

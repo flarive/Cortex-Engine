@@ -69,23 +69,23 @@ namespace engine
         std::string& getTitle() { return m_title; }
 
         // returns a unique instance of managers per app (no copy !)
-        //AppManager& getAppManager() { return m_appManager; }
         SceneManager& getSceneManager() { return m_sceneManager; }
 
-        bool shouldUnloadScene() const { return m_shouldUnloadScene; }
-        void requestSceneUnload() { m_shouldUnloadScene = true; }
+        //bool shouldUnloadScene() const { return m_shouldUnloadScene; }
+        //void requestSceneUnload() { m_shouldUnloadScene = true; }
     
-        
+        // glfw: whenever a key is pressed or released, this callback is called
+        // --------------------------------------------------------------------
+        void key_callback(int key, int scancode, int action, int mods);
 
     private:
-        bool m_shouldUnloadScene{ false };
+        //bool m_shouldUnloadScene{ false };
         
         
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };
 
-        //AppManager m_appManager{};
         SceneManager m_sceneManager{};
 
         void setup();

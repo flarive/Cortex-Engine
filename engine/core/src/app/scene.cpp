@@ -321,17 +321,23 @@ void engine::Scene::gameLoop()
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
-    if (getApp()->shouldUnloadScene())
-    {
-        getApp()->getSceneManager().unloadCurrentScene();
 
-		auto currentScene = getApp()->getSceneManager().getCurrentScene();
-        currentScene.reset();
+    auto app = getApp();
+    if (!app) return;
+
+    auto& sceneManager = app->getSceneManager();
+
+    if (sceneManager.shouldUnloadScene())
+    {
+        sceneManager.unloadCurrentScene();
+
+		/*auto currentScene = sceneManager.getCurrentScene();
+        currentScene.reset();*/
     }
 
     ImGuiIO& io = ImGui::GetIO();
 
-    if (auto appPtr = getApp(); appPtr && glfwGetWindowAttrib(appPtr->window, GLFW_ICONIFIED) != 0)
+    if (glfwGetWindowAttrib(app->window, GLFW_ICONIFIED) != 0)
     {
         // Even if minimized, update ImGui deltaTime to avoid huge spikes
         float currentFrame = (float)glfwGetTime();
@@ -356,22 +362,21 @@ void engine::Scene::gameLoop()
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
-    float width = 0;
-    float height = 0;
-    bool capFramerate = false;
-	GLFWwindow* window = nullptr;
-    int frameDelay = 0;
+    const float width = app->width;
+    const float height = app->height;
+	const bool capFramerate = app->capFramerate();
+    const int frameDelay = app->getFrameDelay();
+    GLFWwindow* window = app->window; // better as const ?
+    
 
-    if (auto appPtr = getApp()) {
-		width = appPtr->width;
-		height = appPtr->height;
-		capFramerate = appPtr->capFramerate();
-        frameDelay = appPtr->getFrameDelay();
-		window = appPtr->window;
-    }
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    glm::mat4 projection = getActiveCamera()->getProjectionMatrix(width / height);
-    glm::mat4 view = getActiveCamera()->getViewMatrix();
+
+    float aspect = (height > 0.0f) ? (width / height) : 1.0f;
+    glm::mat4 projection = camera->getProjectionMatrix(aspect);
+    glm::mat4 view = camera->getViewMatrix();
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -426,7 +431,7 @@ void engine::Scene::gameLoop()
         };
 
     // Call the renderer loop
-    m_renderer->loop(static_cast<int>(width), static_cast<int>(height), getActiveCamera(), updateLambda, updateUILambda);
+    m_renderer->loop(static_cast<int>(width), static_cast<int>(height), camera, updateLambda, updateUILambda);
 
     // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
@@ -457,8 +462,8 @@ void engine::Scene::gameLoop()
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup_current_context);
     }
-
-    if (getApp()->shouldUnloadScene())
+    
+    if (sceneManager.shouldUnloadScene())
     {
         // Clear the screen to black
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -481,8 +486,16 @@ void engine::Scene::gameLoop()
     if (capFramerate)
     {
         auto end_time = Clock::now();
-        auto zzz = std::chrono::milliseconds(frameDelay) - (end_time - start_time);
-        std::this_thread::sleep_for(zzz);
+        /*auto zzz = std::chrono::milliseconds(frameDelay) - (end_time - start_time);
+        std::this_thread::sleep_for(zzz);*/
+
+        auto frameTime = end_time - start_time;
+        auto target = std::chrono::milliseconds(frameDelay);
+
+        if (frameTime < target)
+        {
+            std::this_thread::sleep_for(target - frameTime);
+        }
     }
 
     // End CPU timer
@@ -784,8 +797,8 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     {
         switch (key)
         {
-        case GLFW_KEY_ESCAPE:
-            glfwSetWindowShouldClose(appPtr->window, GL_TRUE); break;
+        //case GLFW_KEY_ESCAPE:
+        //    glfwSetWindowShouldClose(appPtr->window, GL_TRUE); break;
         case GLFW_KEY_F:
             if (action == GLFW_RELEASE)
             {

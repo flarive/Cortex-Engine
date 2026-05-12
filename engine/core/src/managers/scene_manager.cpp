@@ -10,6 +10,14 @@ void engine::SceneManager::loadScene(std::shared_ptr<engine::Scene> scene)
 	m_currentScene = std::move(scene);
 }
 
+void engine::SceneManager::loadScenes(const std::vector<std::shared_ptr<engine::Scene>>& scenes)
+{
+	m_scenes = scenes;
+
+	if (!scenes.empty())
+		m_currentScene = std::move(m_scenes[0]);
+}
+
 std::shared_ptr<engine::Scene> engine::SceneManager::getCurrentScene()
 {
 	return m_currentScene;

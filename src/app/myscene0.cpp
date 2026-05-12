@@ -63,16 +63,6 @@ void MyScene0::key_callback(int key, int scancode, int action, int mods)
         getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
     else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
         getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-
-    if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
-    else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
-
-    if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
-    else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
 }
 
 void MyScene0::mouse_callback(double xposIn, double yposIn)

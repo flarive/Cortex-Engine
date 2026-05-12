@@ -322,6 +322,22 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 	fullscreen = isFullscreen;
 }
 
+void engine::App::key_callback(int key, int scancode, int action, int mods)
+{
+    (void)scancode;   //Do nothing
+    (void)mods;   //Do nothing
+
+    // basic window handling
+    switch (key)
+    {
+    case GLFW_KEY_ESCAPE:
+        glfwSetWindowShouldClose(window, GL_TRUE); break;
+    }
+
+    // always pass input to ImGui *after*
+    //ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+}
+
 engine::App::~App()
 {
     logger.trace("App {} destructor called", m_title);

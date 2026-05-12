@@ -408,7 +408,7 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
-    getApp()->requestSceneUnload();
+    getApp()->getSceneManager().requestSceneUnload();
 }
 
 void MyScene15::clean()

@@ -331,8 +331,8 @@ void engine::Scene::gameLoop()
     {
         sceneManager.unloadCurrentScene();
 
-		/*auto currentScene = sceneManager.getCurrentScene();
-        currentScene.reset();*/
+		//auto currentScene = sceneManager.getCurrentScene();
+  //      currentScene.reset();
     }
 
     ImGuiIO& io = ImGui::GetIO();

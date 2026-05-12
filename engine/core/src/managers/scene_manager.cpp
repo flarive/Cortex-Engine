@@ -10,12 +10,11 @@ void engine::SceneManager::loadScene(std::shared_ptr<engine::Scene> scene)
 	m_currentScene = std::move(scene);
 }
 
-void engine::SceneManager::loadScenes(const std::vector<std::shared_ptr<engine::Scene>>& scenes)
+void engine::SceneManager::addScene(std::shared_ptr<engine::Scene> scene)
 {
-	m_scenes = scenes;
+	m_scenes.emplace_back(std::move(scene));
 
-	if (!scenes.empty())
-		m_currentScene = std::move(m_scenes[0]);
+	m_currentScene = m_scenes[0];
 }
 
 std::shared_ptr<engine::Scene> engine::SceneManager::getCurrentScene()
@@ -23,10 +22,19 @@ std::shared_ptr<engine::Scene> engine::SceneManager::getCurrentScene()
 	return m_currentScene;
 }
 
+void engine::SceneManager::clearScenes()
+{
+	m_scenes.clear();
+}
+
 bool engine::SceneManager::unloadCurrentScene()
 {
 	if (m_currentScene)
 	{
+		// Remove the shared_ptr from the vector
+		m_scenes.erase(std::remove(m_scenes.begin(), m_scenes.end(), m_currentScene), m_scenes.end());
+
+		// Destroy scene and call destructor
 		m_currentScene->exit();
 		m_currentScene.reset(); // force destroying the scene and calling destructor
 

@@ -98,7 +98,7 @@ namespace engine
         bool show_demo_window{ false };
         bool show_perf_overlay{ true };
         
-
+		std::string getName() const { return title; }
         
         std::vector<std::shared_ptr<engine::Light>> lights{};
         std::vector<std::shared_ptr<engine::Camera>> cameras{};

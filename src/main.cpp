@@ -58,14 +58,10 @@ int main(int, char**)
     if (auto appShared = gApp.lock())
     {
         // Load a scene in the app
-        appShared->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", appShared));
+        //appShared->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", appShared));
 
         // Load multiple scenes in the app
-        //vector<shared_ptr<Scene>> scenes{};
-        //scenes.emplace_back(std::make_shared<MyScene1>("Scene1", appShared));
-        //scenes.emplace_back(std::make_shared<MyScene2>("Scene2", appShared));
-        //scenes.emplace_back(std::make_shared<MyScene3>("Scene3", appShared));
-        //appShared->getSceneManager().loadScenes(scenes);
+        appShared->getSceneManager().addScene(std::make_shared<MyScene>("Scene15", appShared));
 
         // Observe only
         gScene = appShared->getSceneManager().getCurrentScene();

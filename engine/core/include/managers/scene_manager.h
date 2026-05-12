@@ -13,12 +13,17 @@ namespace engine
 		~SceneManager() = default;
 
 	void loadScene(std::shared_ptr<engine::Scene> scene);
-	void loadScenes(const std::vector<std::shared_ptr<engine::Scene>>& scenes);
 
 	std::shared_ptr<engine::Scene> getCurrentScene();
 
+	std::vector<std::shared_ptr<engine::Scene>>& getScenes() { return m_scenes; }
+
 	bool shouldUnloadScene() const { return m_shouldUnloadScene; }
 	void requestSceneUnload() { m_shouldUnloadScene = true; }
+
+	void clearScenes();
+
+	void addScene(std::shared_ptr<engine::Scene> scene);
 
 	bool unloadCurrentScene(); // shouldn't be called directly, use requestSceneUnload instead
 	void clean();

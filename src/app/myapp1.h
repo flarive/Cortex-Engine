@@ -20,6 +20,16 @@ public:
         // my application specific state gets initialized here
     }
 
+    void init() override
+    {
+
+    }
+
+    void update() override
+    {
+
+    }
+
     ~MyApp1() override
     {
         logger.trace("MyApp1 destructor called");

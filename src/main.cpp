@@ -5,7 +5,6 @@
 #include "app/myapp0.h" // app scenes switcher
 #include "app/myapp1.h"
 
-#include "app/myscene0.h" // scenes switcher
 #include "app/myscene1.h" // blinnphong with skybox
 #include "app/myscene2.h" // blinnphong cushion
 #include "app/myscene3.h" // PBR balls with HDR background
@@ -25,8 +24,8 @@
 using namespace engine;
 
 // make it easier to switch between scenes
-using MyApp = MyApp1; 
-using MyScene = MyScene15;
+using MyApp = MyApp0; 
+using MyScene = MyScene1;
 
 static std::weak_ptr<App> gApp; // non-owning observer
 static std::weak_ptr<Scene> gScene; // non-owning observer
@@ -53,53 +52,58 @@ int main(int, char**)
 {
     engine::AppManager appManager;
 
+
     // Init the app
-    gApp = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
-    if (auto appShared = gApp.lock())
-    {
-        // Load a scene in the app
-        //appShared->getSceneManager().loadScene(std::make_shared<MyScene>("MyScene", appShared));
-
-        // Load multiple scenes in the app
-        appShared->getSceneManager().addScene(std::make_shared<MyScene>("Scene15", appShared));
-
-        // Observe only
-        gScene = appShared->getSceneManager().getCurrentScene();
-
-        if (auto scene = gScene.lock()) {
-            scene->initialize();
-
-            glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
-            glfwSetKeyCallback(scene->getWindow(), keyCallback);
-            glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);
-            glfwSetScrollCallback(scene->getWindow(), scrollCallback);
-            glfwSetWindowRefreshCallback(scene->getWindow(), windowRefreshCallback);
-        }
+    auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    app->init();
 
 
+    // Init the app
+    //gApp = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    //if (auto appShared = gApp.lock())
+    //{
+    //    // Load scenes in the app
+    //    appShared->getSceneManager().addScene(std::make_shared<MyScene1>("Scene1", appShared));
+    //    appShared->getSceneManager().addScene(std::make_shared<MyScene2>("Scene2", appShared));
+    //    appShared->getSceneManager().addScene(std::make_shared<MyScene3>("Scene3", appShared));
 
-        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-        if (present > 0)
-        {
-            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-            logger.info("Joystick present {}", name);
-        }
+    //    // Observe only
+    //    gScene = appShared->getSceneManager().getCurrentScene();
 
-        // start game loop
-        while (appShared->isRunning())
-        {
-            gamepadUpdate(); // Update gamepad state
+    //    if (auto scene = gScene.lock()) {
+    //        scene->initialize();
 
-            if (auto scene = gScene.lock()) {
-                scene->gameLoop();
-            }
-        }
+    //        glfwSetFramebufferSizeCallback(scene->getWindow(), framebufferSizeCallback);
+    //        glfwSetKeyCallback(scene->getWindow(), keyCallback);
+    //        glfwSetCursorPosCallback(scene->getWindow(), mouseCallback);
+    //        glfwSetScrollCallback(scene->getWindow(), scrollCallback);
+    //        glfwSetWindowRefreshCallback(scene->getWindow(), windowRefreshCallback);
+    //    }
 
-        if (auto scene = gScene.lock()) {
-            scene->exit();
-        }
-        appShared->exit();
-    }
+
+
+    //    int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+    //    if (present > 0)
+    //    {
+    //        const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+    //        logger.info("Joystick present {}", name);
+    //    }
+
+    //    // start game loop
+    //    while (appShared->isRunning())
+    //    {
+    //        gamepadUpdate(); // Update gamepad state
+
+    //        if (auto scene = gScene.lock()) {
+    //            scene->gameLoop();
+    //        }
+    //    }
+
+    //    if (auto scene = gScene.lock()) {
+    //        scene->exit();
+    //    }
+    //    appShared->exit();
+    //}
     
 
     return 0;

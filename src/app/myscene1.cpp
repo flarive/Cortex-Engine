@@ -21,7 +21,6 @@ MyScene1::MyScene1(const string& _title, std::weak_ptr<App> _app) : Scene(_title
     }
 }
 
-
 void MyScene1::init()
 {
     // camera
@@ -304,4 +303,9 @@ void MyScene1::clean()
     textPrimitiveCount.clean();
     textDrawnCount.clean();
     textTotalCount.clean();
+}
+
+MyScene1::~MyScene1()
+{
+    logger.trace("Scene {} destructor called", title);
 }

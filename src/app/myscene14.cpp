@@ -243,3 +243,8 @@ void MyScene14::clean()
     textDrawnCount.clean();
     textTotalCount.clean();
 }
+
+MyScene14::~MyScene14()
+{
+    logger.trace("Scene {} destructor called", title);
+}

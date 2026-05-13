@@ -34,6 +34,7 @@ private:
 
 public:
     MyScene7(const string& _title, std::weak_ptr<App> _app);
+    ~MyScene7() override;
 
     void before_init_hook() override;
     void init() override;

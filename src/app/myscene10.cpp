@@ -249,3 +249,8 @@ void MyScene10::drawUI()
 {
     // render HUD / UI
 }
+
+MyScene10::~MyScene10()
+{
+    logger.trace("Scene {} destructor called", title);
+}

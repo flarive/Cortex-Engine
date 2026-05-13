@@ -1,5 +1,12 @@
 #include "../../include/ui/button.h"
 
+#include "../../include/managers/log_manager.h"
+
+engine::UIButton::UIButton()
+{
+    logger.trace("UIButton constructor called");
+}
+
 void engine::UIButton::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
 {
     m_window = window;
@@ -56,6 +63,18 @@ void engine::UIButton::update(double mouseX, double mouseY, bool mousePressed)
 
 void engine::UIButton::draw()
 {
+    if (!m_isEnabled)
+        return;
+
+    if (!m_rect.getRectShader().isValid() || !m_text.getTextShader().isValid()) {
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        return;
+    }
+
+
     const Color* currentColor = &m_normalColor;
 
     if (m_pressed)
@@ -109,4 +128,9 @@ void engine::UIButton::clean()
 {
     m_rect.clean();
 	m_text.clean();
+}
+
+engine::UIButton::~UIButton()
+{
+    logger.trace("UIButton destructor called");
 }

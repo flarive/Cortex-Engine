@@ -16,8 +16,8 @@ namespace engine
     class UIText final : public UIBase
     {
     public:
-        UIText() = default;
-        ~UIText() = default;
+        UIText();
+        ~UIText() override;
 
         void setup(GLFWwindow* window, const std::string& fontPath, int fontSize);
 
@@ -27,6 +27,8 @@ namespace engine
         void draw(const std::string& text, float x, float y, float scale, const Color& color = Colors::White);
 
         glm::vec3 measure(const std::string& text, float scale = 1.0f) const;
+
+        const Shader& getTextShader() { return m_textShader; }
 
         void clean() override;
 

@@ -38,11 +38,6 @@ MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneS
     }
 }
 
-MyScene15::~MyScene15()
-{
-    logger.trace("Scene {} destructor called", title);
-}
-
 void MyScene15::init()
 {
     // camera
@@ -408,6 +403,8 @@ void MyScene15::incrementParallaxIntensity(float intensity)
 
 void MyScene15::switchRenderMode(RenderMethod method)
 {
+    (void)method;
+
     getApp()->getSceneManager().requestSceneUnload();
 }
 
@@ -426,4 +423,9 @@ void MyScene15::clean()
     textParallaxIntensity.clean();
 
     textCurrentRenderer.clean();
+}
+
+MyScene15::~MyScene15()
+{
+    logger.trace("Scene {} destructor called", title);
 }

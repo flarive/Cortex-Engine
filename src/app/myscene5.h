@@ -27,6 +27,7 @@ private:
 
 public:
     MyScene5(const string& _title, std::weak_ptr<App> _app);
+    ~MyScene5() override;
 
     void init() override;
  

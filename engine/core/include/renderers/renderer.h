@@ -11,6 +11,7 @@
 
 #include "../misc/ltc_matrix.h"
 
+#include "../misc/noncopyable.h"
 #include "../managers/log_manager.h"
 
 
@@ -32,7 +33,7 @@ namespace engine
 	// + Z : Out of the screen(toward the viewer)
 	// - Z : Into the screen(away from the viewer)
 	/// </summary>
-	class Renderer
+	class Renderer : private NonCopyable
 	{
 	public:
 		// shaders accessible publicly

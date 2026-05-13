@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <functional>
+#include <memory>
 
 namespace engine
 {
@@ -21,7 +22,7 @@ namespace engine
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
-    class App : private NonCopyable
+    class App : private NonCopyable, public std::enable_shared_from_this<App> // to be able to create a smart pointer from this
     {
     public:
         GLFWwindow* window{};
@@ -45,7 +46,8 @@ namespace engine
         bool isRunning();
 
 
-
+        virtual void init() = 0;
+        virtual void update() = 0;
         void exit();
 
 
@@ -75,12 +77,16 @@ namespace engine
         // --------------------------------------------------------------------
         void key_callback(int key, int scancode, int action, int mods);
 
+
+    protected:
+        SceneManager m_sceneManager{};
+
     private:
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };
 
-        SceneManager m_sceneManager{};
+        
 
         void setup();
 

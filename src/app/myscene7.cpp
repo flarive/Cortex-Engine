@@ -375,3 +375,8 @@ void MyScene7::clean()
     textPrimitiveCount.clean();
     ourSprite.clean();
 }
+
+MyScene7::~MyScene7()
+{
+    logger.trace("Scene {} destructor called", title);
+}

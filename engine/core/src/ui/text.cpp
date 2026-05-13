@@ -2,14 +2,21 @@
 
 #include "../../include/tools/file_system.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::Shader engine::UIText::m_textShader; // Define the static member
+
+
+engine::UIText::UIText()
+{
+    logger.trace("UIText constructor called");
+}
 
 void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int fontSize)
 {
     m_window = window;
 
-    int width{ 0 };
-    int height{ 0 };
+    int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
 
@@ -117,6 +124,17 @@ void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int 
 // -------------------
 void engine::UIText::draw(const std::string& text, float x, float y, float scale, const Color& color)
 {
+    if (!m_isEnabled)
+        return;
+
+    if (!m_textShader.isValid()) {
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        return;
+    }
+    
     int width{ 0 };
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
@@ -237,4 +255,9 @@ void engine::UIText::clean()
     m_characters.clear();
 
     m_textShader.clean();
+}
+
+engine::UIText::~UIText()
+{
+    logger.trace("UIText destructor called");
 }

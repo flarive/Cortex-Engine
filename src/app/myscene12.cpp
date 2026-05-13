@@ -266,3 +266,8 @@ void MyScene12::clean()
 {
     // clean up any resources
 }
+
+MyScene12::~MyScene12()
+{
+    logger.trace("Scene {} destructor called", title);
+}

@@ -211,3 +211,8 @@ void MyScene4::drawUI()
     // render HUD / UI
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
 }
+
+MyScene4::~MyScene4()
+{
+    logger.trace("Scene {} destructor called", title);
+}

@@ -359,3 +359,9 @@ void MyScene3::drawUI()
     ourText.draw(format("{:.0f} FPS", framerate), 25.0f, 25.0f, 1.0f, Colors::White);
     ourSprite.draw(vec2(40, 40), vec2(128.0f), 0.0f, Colors::White);
 }
+
+MyScene3::~MyScene3()
+{
+    logger.trace("Scene {} destructor called", title);
+}
+

@@ -242,3 +242,8 @@ void MyScene6::drawUI()
     ourText2.draw(format("{} polys", polycount), getApp()->width - 250.0f, 25.0f, 1.0f, Colors::White);
     ourSprite.draw(vec2(40, 40), vec2(128.0f), 0.0f, Colors::White);
 }
+
+MyScene6::~MyScene6()
+{
+    logger.trace("Scene {} destructor called", title);
+}

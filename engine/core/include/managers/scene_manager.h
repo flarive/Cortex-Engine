@@ -12,7 +12,8 @@ namespace engine
 		SceneManager() = default;
 		~SceneManager() = default;
 
-	void loadScene(std::shared_ptr<engine::Scene> scene);
+	std::shared_ptr<engine::Scene> setCurrentScene(unsigned int sceneIndex);
+	bool setCurrentScene(const std::string& sceneName);
 
 	std::shared_ptr<engine::Scene> getCurrentScene();
 

@@ -13,15 +13,16 @@ namespace engine
     class UIBase : private NonCopyable
     {
     public:
-        UIBase() = default;
-        ~UIBase();
+        UIBase();
+        virtual ~UIBase();
 
-        //void setup(GLFWwindow* window);
-        //void draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& fillColor, const Color& borderColor, float borderThickness = 0.02f);
+        bool isEnabled() const { return m_isEnabled; }
+        void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
         virtual void clean() = 0;
 
     protected:
+        bool m_isEnabled{ true };
         GLFWwindow* m_window{};
         unsigned int m_VAO{}, m_VBO{};
     };

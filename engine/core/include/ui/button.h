@@ -10,7 +10,12 @@ namespace engine
     class UIButton final : public UIBase
     {
     public:
+        
         using ClickCallback = std::function<void()>;
+
+        UIButton();
+        ~UIButton() override;
+
 
         void setup(GLFWwindow* window, const std::string& fontPath, int fontSize);
 

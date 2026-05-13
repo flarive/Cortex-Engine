@@ -238,3 +238,8 @@ void MyScene9::clean()
     ourSprite.clean();
     textMeshCount.clean();
 }
+
+MyScene9::~MyScene9()
+{
+    logger.trace("Scene {} destructor called", title);
+}

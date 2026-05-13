@@ -33,6 +33,7 @@ private:
 
 public:
     MyScene9(const string& _title, std::weak_ptr<App> _app);
+    ~MyScene9() override;
 
     void init() override;
     

@@ -2,21 +2,22 @@
 
 #include "../../include/texture.h"
 
+#include "../../include/managers/log_manager.h"
+
 #include <tuple>
 
 engine::Shader engine::UISprite::m_spriteShader; // Define the static member
 
-engine::UISprite::~UISprite()
+engine::UISprite::UISprite()
 {
-    glDeleteVertexArrays(1, &m_VAO);
+    logger.trace("UISprite constructor called");
 }
 
 void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
 {
     m_window = window;
 
-    int width{ 0 };
-    int height{ 0 };
+    int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
     
     if (!m_spriteShader.isInitialized()) {
@@ -38,6 +39,17 @@ void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
 
 void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& color)
 {
+    if (!m_isEnabled)
+        return;
+
+    if (!m_spriteShader.isValid()) {
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        return;
+    }
+
     int width{ 0 };
     int height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
@@ -113,4 +125,11 @@ void engine::UISprite::clean()
     glDeleteTextures(1, &m_texture_id);
 
     m_spriteShader.clean();
+}
+
+engine::UISprite::~UISprite()
+{
+    glDeleteVertexArrays(1, &m_VAO);
+
+    logger.trace("UISprite destructor called");
 }

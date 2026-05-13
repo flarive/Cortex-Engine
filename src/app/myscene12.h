@@ -20,6 +20,7 @@ private:
 
 public:
     MyScene12(const string& _title, std::weak_ptr<App> _app);
+    ~MyScene12() override;
 
     void init() override;
     void update(Shader& shader) override;

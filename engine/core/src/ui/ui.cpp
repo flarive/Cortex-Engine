@@ -1,10 +1,11 @@
 #include "../../include/ui/ui.h"
 
-engine::UIBase::~UIBase()
-{
-    
-}
+#include "../../include/managers/log_manager.h"
 
+engine::UIBase::UIBase()
+{
+    logger.trace("UI base constructor called");
+}
 
 void engine::UIBase::clean()
 {
@@ -17,5 +18,9 @@ void engine::UIBase::clean()
         glDeleteBuffers(1, &m_VBO);
         m_VBO = 0;
     }
+}
 
+engine::UIBase::~UIBase()
+{
+    logger.trace("UI base destructor called");
 }

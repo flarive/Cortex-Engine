@@ -11,14 +11,14 @@ namespace engine
         unsigned int width{};
         unsigned int height{};
         
-        // Constructor (inits shaders/shapes)
-        UISprite() = default;
-        // Destructor
-        ~UISprite();
+        UISprite();
+        ~UISprite() override;
+
         void setup(GLFWwindow* window, const std::string& filepath);
         // Renders a defined quad textured with given sprite
         void draw(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, const Color& color = Colors::White);
 
+        const Shader& getSpriteShader() { return m_spriteShader; }
 
         void clean() override;
 

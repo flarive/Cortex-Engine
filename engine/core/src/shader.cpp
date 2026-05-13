@@ -312,7 +312,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 bool engine::Shader::isValid() const
 {
     if (ID == 0) {
-		logger.error("Shader program ID is 0. Shader not created.");
+		//logger.error("Shader program ID is 0. Shader not created.");
         return false;
     }
 

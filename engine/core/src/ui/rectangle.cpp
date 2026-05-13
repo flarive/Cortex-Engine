@@ -1,10 +1,12 @@
 #include "../../include/ui/rectangle.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::Shader engine::UIRectangle::m_rectShader;
 
-engine::UIRectangle::~UIRectangle()
+engine::UIRectangle::UIRectangle()
 {
-    glDeleteVertexArrays(1, &m_VAO);
+    logger.trace("UIRectangle constructor called");
 }
 
 void engine::UIRectangle::setup(GLFWwindow* window)
@@ -28,6 +30,17 @@ void engine::UIRectangle::setup(GLFWwindow* window)
 
 void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate, const Color& fillColor, const Color& borderColor, float borderThickness, float borderRadius)
 {
+    if (!m_isEnabled)
+        return;
+
+    if (!m_rectShader.isValid()) {
+        return;
+    }
+
+    if (m_VAO == 0 || m_VBO == 0) {
+        return;
+    }
+
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
@@ -106,4 +119,11 @@ void engine::UIRectangle::initRenderData()
 void engine::UIRectangle::clean()
 {
     m_rectShader.clean();
+}
+
+engine::UIRectangle::~UIRectangle()
+{
+    logger.trace("UIRectangle destructor called");
+    
+    glDeleteVertexArrays(1, &m_VAO);
 }

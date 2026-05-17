@@ -16,6 +16,7 @@ namespace engine
     class LogManager final
     {
     public:
+    
         static LogManager& getInstance();
 
         template<typename... Args>
@@ -69,6 +70,7 @@ namespace engine
         LogManager();  // Constructor is private
         LogManager(const LogManager&) = delete;
         LogManager& operator=(const LogManager&) = delete;
+        ~LogManager();
 
         void init_sinks();
 

@@ -3,6 +3,8 @@
 
 #include "../../include/ecs/transform_component.h"
 
+#include "../../include/managers/log_manager.h"
+
 const std::string engine::EntityManager::ROOT_ENTITY_NAME = "Root"; // Definition
 
 
@@ -161,4 +163,9 @@ void engine::EntityManager::updateSelfAndChild()
 void engine::EntityManager::clean()
 {
 
+}
+
+engine::EntityManager::~EntityManager()
+{
+    logger.trace("EntityManager destructor called");
 }

@@ -39,8 +39,8 @@ public:
 
     // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
     // ---------------------------------------------------------------------------------------------------------
-    void key_callback(int key, int scancode, int action, int mods);
-    void mouse_callback(double xposIn, double yposIn);
+    void key_callback(int key, int scancode, int action, int mods) override;
+    void mouse_callback(double xposIn, double yposIn) override;
     void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
 

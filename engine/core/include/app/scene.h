@@ -32,10 +32,12 @@ namespace engine
     {
     private:
         static Scene* currentInstance; // Static pointer to the current instance
+
+        bool m_isInitialized{ false };
         
         bool key_F1_pressed{ false };
 
-        
+        SceneSettings m_sceneSettings{};
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
@@ -108,6 +110,8 @@ namespace engine
             return m_app.lock(); // Returns a shared_ptr if App exists, else nullptr
         }
 
+      
+
 
         Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSettings _settings);
 		virtual ~Scene();
@@ -120,6 +124,8 @@ namespace engine
 
         void before_init();
         void after_init();
+
+        SceneSettings getSceneSettings() const { return m_sceneSettings; }
 
         // must be overridden in derived class
         virtual void update(Shader& shader) = 0;
@@ -163,12 +169,12 @@ namespace engine
 
         // glfw: whenever a key is pressed or released, this callback is called
         // --------------------------------------------------------------------
-        void key_callback(int key, int scancode, int action, int mods);
+        virtual void key_callback(int key, int scancode, int action, int mods);
     
 
         // glfw: whenever the mouse moves, this callback is called
         // -------------------------------------------------------
-        void mouse_callback(double xposIn, double yposIn);
+        virtual void mouse_callback(double xposIn, double yposIn);
 
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called

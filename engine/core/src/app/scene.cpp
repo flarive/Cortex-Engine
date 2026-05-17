@@ -39,36 +39,9 @@ using Clock = std::chrono::high_resolution_clock;
 
 
 engine::Scene::Scene(const std::string& _title, std::weak_ptr<App> _app, SceneSettings _settings)
-    : title(_title), m_app(_app)
+    : title(_title), m_app(_app), m_sceneSettings(_settings)
 {
     logger.trace("Scene {} base constructor called", title);
-
-    // Convert weak_ptr to shared_ptr
-    auto appShared = m_app.lock();
-    if (!appShared) {
-        throw std::runtime_error("App no longer exists!");
-    }
-
-    if (_settings.method == RenderMethod::PBR) {
-        // default renderer
-        m_renderer = std::make_unique<PbrRenderer>(appShared->window);
-    }
-    else if (_settings.method == RenderMethod::BlinnPhong) {
-        // legacy renderer
-        m_renderer = std::make_unique<BlinnPhongRenderer>(appShared->window);
-    }
-    else {
-        // just for very simple tests
-        m_renderer = std::make_unique<PhongRenderer>(appShared->window);
-    }
-
-    // create scene entities hierarchy
-    m_entityManager.create();
-
-    // store SceneSettings in a singleton for easy access everywhere
-    engine::Singleton::initialize(_settings);
-
-    currentInstance = this; // Set the current instance when constructing
 }
 
 engine::Renderer* engine::Scene::getRenderer() const
@@ -130,6 +103,35 @@ void engine::Scene::after_init_internal()
 
 void engine::Scene::initialize()
 {
+    m_isInitialized = false;
+
+    // Convert weak_ptr to shared_ptr
+    auto appShared = m_app.lock();
+    if (!appShared) {
+        throw std::runtime_error("App no longer exists!");
+    }
+
+    if (m_sceneSettings.method == RenderMethod::PBR) {
+        // default renderer
+        m_renderer = std::make_unique<PbrRenderer>(appShared->window);
+    }
+    else if (m_sceneSettings.method == RenderMethod::BlinnPhong) {
+        // legacy renderer
+        m_renderer = std::make_unique<BlinnPhongRenderer>(appShared->window);
+    }
+    else {
+        // just for very simple tests
+        m_renderer = std::make_unique<PhongRenderer>(appShared->window);
+    }
+
+    // create scene entities hierarchy
+    m_entityManager.create();
+
+    // store SceneSettings in a singleton for easy access everywhere
+    engine::Singleton::initialize(m_sceneSettings);
+
+    currentInstance = this; // Set the current instance when constructing
+    
     before_init();
 
     init();
@@ -171,6 +173,8 @@ void engine::Scene::initialize()
 
 
     after_init();
+
+    m_isInitialized = true;
 }
 
 // Callback function
@@ -318,6 +322,9 @@ void engine::Scene::listenForEditorChanges()
 
 void engine::Scene::gameLoop()
 {
+    if (!m_isInitialized)
+        assert(m_isInitialized && "Scene not initialized");
+    
     // Start CPU timer
     auto cpuFrameStart = Clock::now();
 
@@ -330,9 +337,6 @@ void engine::Scene::gameLoop()
     if (sceneManager.shouldUnloadScene())
     {
         sceneManager.unloadCurrentScene();
-
-		//auto currentScene = sceneManager.getCurrentScene();
-  //      currentScene.reset();
     }
 
     ImGuiIO& io = ImGui::GetIO();
@@ -764,14 +768,6 @@ void engine::Scene::exit()
     // Optional: Unbind OpenGL state (if context is still active)
     glBindVertexArray(0);
 
-    if (auto appPtr = getApp()) {
-        glfwSetFramebufferSizeCallback(appPtr->window, nullptr);
-        glfwSetKeyCallback(appPtr->window, nullptr);
-        glfwSetCursorPosCallback(appPtr->window, nullptr);
-        glfwSetScrollCallback(appPtr->window, nullptr);
-        glfwSetWindowRefreshCallback(appPtr->window, nullptr);
-    }
-
     // User-defined cleanup (e.g., saving scene state)
     clean();
 
@@ -797,8 +793,6 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
     {
         switch (key)
         {
-        //case GLFW_KEY_ESCAPE:
-        //    glfwSetWindowShouldClose(appPtr->window, GL_TRUE); break;
         case GLFW_KEY_F:
             if (action == GLFW_RELEASE)
             {
@@ -844,7 +838,7 @@ void engine::Scene::scroll_callback(double xoffset, double yoffset)
     (void)yoffset;   //Do nothing
 
     if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
-        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset); // ??????????
+        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
 }
 
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp

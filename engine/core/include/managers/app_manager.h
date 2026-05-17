@@ -6,9 +6,14 @@ namespace engine
 {
     class App;
 
-    class AppManager
+    class AppManager final
     {
     public:
+
+        AppManager() = default;
+        ~AppManager();
+
+
         template <typename T, typename... Args>
         std::shared_ptr<T> createApp(Args&&... args)
         {

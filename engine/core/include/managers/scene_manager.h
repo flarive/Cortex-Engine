@@ -10,7 +10,7 @@ namespace engine
 	{
 	public:
 		SceneManager() = default;
-		~SceneManager() = default;
+		~SceneManager();
 
 	std::shared_ptr<engine::Scene> setCurrentScene(unsigned int sceneIndex);
 	bool setCurrentScene(const std::string& sceneName);
@@ -30,6 +30,9 @@ namespace engine
 	void clean();
 
 	private:
+	
+		// use weak_ptr instead to be able to delete pointers from m_scenes
+		// but keep a ref on deleted one to be able to recreate them when needed
 		std::vector<std::shared_ptr<engine::Scene>> m_scenes{};
 		std::shared_ptr<engine::Scene> m_currentScene{};
 

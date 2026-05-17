@@ -46,9 +46,8 @@ namespace engine
         bool isRunning();
 
 
-        virtual void init() = 0;
-        virtual void update() = 0;
-        void exit();
+        virtual void start() = 0;
+        virtual void exit(); // not mandatory in derived class
 
 
 
@@ -75,7 +74,7 @@ namespace engine
     
         // glfw: whenever a key is pressed or released, this callback is called
         // --------------------------------------------------------------------
-        void key_callback(int key, int scancode, int action, int mods);
+        virtual void key_callback(int key, int scancode, int action, int mods);
 
 
     protected:

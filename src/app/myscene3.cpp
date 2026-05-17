@@ -241,6 +241,8 @@ void MyScene3::init()
     //    bronzeMat->setAmbientIntensity(5.0f);
     //}
 
+    
+
 
     ourText.setup(getApp()->window, FONT_PATH, 28);
     ourSprite.setup(getApp()->window, "UI/cortex-logo.png");

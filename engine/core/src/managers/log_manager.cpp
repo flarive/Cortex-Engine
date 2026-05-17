@@ -56,3 +56,8 @@ void engine::LogManager::init_sinks()
 //{
 //    logger->error(msg);
 //}
+
+engine::LogManager::~LogManager()
+{
+
+}

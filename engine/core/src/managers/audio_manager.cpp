@@ -1,10 +1,9 @@
 #include "../../include/managers/audio_manager.h"
 
+#include "../../include/managers/log_manager.h"
+
 #define STB_VORBIS_HEADER_ONLY
 #include "stb_vorbis.c"
-
-
-#include "../../include/managers/log_manager.h"
 
 engine::AudioManager::AudioManager()
 {
@@ -12,16 +11,6 @@ engine::AudioManager::AudioManager()
     //m_initThread.detach(); // Detach so the thread runs independently
 }
 
-engine::AudioManager::~AudioManager()
-{
-    m_shouldExit = true; // Signal the thread to exit early
-    if (m_initThread.joinable()) {
-        m_initThread.join(); // Wait for thread to finish
-    }
-    clean();
-}
-
-// In AudioManager.cpp
 void engine::AudioManager::initOpenALInternal()
 {
     if (m_shouldExit)
@@ -184,4 +173,15 @@ void engine::AudioManager::clean()
         alcCloseDevice(m_device);
         m_device = nullptr;
     }
+}
+
+engine::AudioManager::~AudioManager()
+{
+    logger.trace("LoggerManager destructor called");
+    
+    m_shouldExit = true; // Signal the thread to exit early
+    if (m_initThread.joinable()) {
+        m_initThread.join(); // Wait for thread to finish
+    }
+    clean();
 }

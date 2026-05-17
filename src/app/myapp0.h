@@ -53,21 +53,21 @@ public:
         glfwSetWindowRefreshCallback(window, windowRefreshCallback);
 
         // Load scenes in the app
-        m_sceneManager.addScene(std::make_shared<MyScene1>("Scene1", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene2>("Scene2", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene3>("Scene3", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene4>("Scene4", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene5>("Scene5", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene6>("Scene6", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene7>("Scene7", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene8>("Scene8", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene9>("Scene9", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene10>("Scene10", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene11>("Scene11", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene12>("Scene12", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene13>("Scene13", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene14>("Scene14", shared_from_this()));
-        m_sceneManager.addScene(std::make_shared<MyScene15>("Scene15", shared_from_this()));
+        m_sceneManager.addScene<MyScene1>("Scene1", shared_from_this());
+        m_sceneManager.addScene<MyScene2>("Scene2", shared_from_this());
+        m_sceneManager.addScene<MyScene3>("Scene3", shared_from_this());
+        m_sceneManager.addScene<MyScene4>("Scene4", shared_from_this());
+        m_sceneManager.addScene<MyScene5>("Scene5", shared_from_this());
+        m_sceneManager.addScene<MyScene6>("Scene6", shared_from_this());
+        m_sceneManager.addScene<MyScene7>("Scene7", shared_from_this());
+        m_sceneManager.addScene<MyScene8>("Scene8", shared_from_this());
+        m_sceneManager.addScene<MyScene9>("Scene9", shared_from_this());
+        m_sceneManager.addScene<MyScene10>("Scene10", shared_from_this());
+        m_sceneManager.addScene<MyScene11>("Scene11", shared_from_this());
+        m_sceneManager.addScene<MyScene12>("Scene12", shared_from_this());
+        m_sceneManager.addScene<MyScene13>("Scene13", shared_from_this());
+        m_sceneManager.addScene<MyScene14>("Scene14", shared_from_this());
+        m_sceneManager.addScene<MyScene15>("Scene15", shared_from_this());
 
 
 
@@ -139,7 +139,7 @@ public:
 
         if (shiftPressed && key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
         {
-            if (m_currentSceneIndex < 3)
+            if (m_currentSceneIndex < this->getSceneManager().getSceneCount())
             {
                 m_currentSceneIndex++;
 
@@ -168,7 +168,7 @@ public:
             app->key_callback(key, scancode, action, mods);
 
             // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->m_sceneManager.getCurrentScene();
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
             if (auto scene = gScene.lock()) {
                 scene->key_callback(key, scancode, action, mods);
             }
@@ -183,7 +183,7 @@ public:
         MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
         if (app) {
             // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->m_sceneManager.getCurrentScene();
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
             if (auto scene = gScene.lock()) {
                 scene->mouse_callback(xposIn, yposIn);
             }
@@ -194,34 +194,43 @@ public:
     // ----------------------------------------------------------------------
     static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
-        (void)window;   //Do nothing
-
-        //if (auto scene = gScene.lock())
-        //{
-        //    (static_cast<MyScene*>(scene.get()))->scroll_callback(xoffset, yoffset);
-        //}
+        // Retrieve the MyApp0 instance from the window's user pointer
+        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->scroll_callback(xoffset, yoffset);
+            }
+        }
     }
 
     // glfw: whenever the window size changed (by OS or user resize) this callback function executes
     // ---------------------------------------------------------------------------------------------
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     {
-        (void)window;   //Do nothing
-
-        //if (auto scene = gScene.lock())
-        //{
-        //    (static_cast<MyScene*>(scene.get()))->framebuffer_size_callback(width, height);
-        //}
+        // Retrieve the MyApp0 instance from the window's user pointer
+        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->framebuffer_size_callback(width, height);
+            }
+        }
     }
 
     static void windowRefreshCallback(GLFWwindow* window)
     {
-        (void)window;   //Do nothing
-
-        //if (auto scene = gScene.lock())
-        //{
-        //    (static_cast<MyScene*>(scene.get()))->window_refresh_callback();
-        //}
+        // Retrieve the MyApp0 instance from the window's user pointer
+        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->window_refresh_callback();
+            }
+        }
     }
 
     ~MyApp0() override

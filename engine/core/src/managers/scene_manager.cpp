@@ -8,18 +8,6 @@
 
 #include <algorithm>
 
-void engine::SceneManager::addScene(std::shared_ptr<engine::Scene> scene)
-{
-	bool empty = m_scenes.empty();
-	
-	m_scenes.emplace_back(std::move(scene));
-
-	if (empty)
-	{
-		// auto select the first one as current scene
-		m_currentScene = m_scenes[0];
-	}
-}
 
 std::shared_ptr<engine::Scene> engine::SceneManager::getCurrentScene()
 {
@@ -32,17 +20,14 @@ std::shared_ptr<engine::Scene> engine::SceneManager::setCurrentScene(unsigned in
 	{
 		if (m_currentScene)
 		{
-			unloadCurrentScene();
+			unloadCurrentScene(); // Destroy the current scene
 		}
 
-		m_currentScene = m_scenes.at(sceneIndex);
-
-		// Reset the singleton with the new scene's settings
+		// Recreate the scene using the factory
+		m_currentScene = m_scenes.at(sceneIndex).factory();
 		engine::Singleton::reset(m_currentScene->getSceneSettings());
-
 		return m_currentScene;
 	}
-
 	return nullptr;
 }
 
@@ -51,23 +36,23 @@ bool engine::SceneManager::setCurrentScene(const std::string& sceneName)
 	if (m_scenes.empty())
 		return false;
 
+	// Unload and destroy the current scene
 	if (m_currentScene)
 	{
 		unloadCurrentScene();
 	}
 
+	// Find the scene in m_scenes
 	auto it = std::find_if(m_scenes.begin(), m_scenes.end(),
-		[&](const std::shared_ptr<Scene>& obj) {
-			return obj && obj->getName() == sceneName;
+		[&](const SceneInfo& info) {
+			return info.name == sceneName;
 		});
 
 	if (it != m_scenes.end())
 	{
-		m_currentScene = *it;
-
-		// Reset the singleton with the new scene's settings
+		// Recreate the scene using the factory
+		m_currentScene = it->factory();
 		engine::Singleton::reset(m_currentScene->getSceneSettings());
-
 		return true;
 	}
 
@@ -77,17 +62,13 @@ bool engine::SceneManager::setCurrentScene(const std::string& sceneName)
 void engine::SceneManager::clearScenes()
 {
 	m_scenes.clear();
+	m_currentScene.reset();
 }
 
 bool engine::SceneManager::unloadCurrentScene()
 {
 	if (m_currentScene)
 	{
-		// Remove the shared_ptr from the vector
-		//m_scenes.erase(std::remove(m_scenes.begin(), m_scenes.end(), m_currentScene), m_scenes.end());
-
-		//std::remove(m_scenes.begin(), m_scenes.end(), m_currentScene), m_scenes.end();
-
 		// Call exit() to clean up resources
 		m_currentScene->exit();
 

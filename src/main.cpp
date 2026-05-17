@@ -26,11 +26,9 @@ int main(int, char**)
 {
     engine::AppManager appManager;
 
-
     // Init the app
     auto app = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //320, 240 //1280, 720
     app->start();
-
 
     return 0;
 }

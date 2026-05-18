@@ -41,6 +41,8 @@ void engine::App::setup()
 
     initWindow();
 
+    setApp(window);
+
     // boilerplate stuff (ie. basic window setup, initialize OpenGL) occurs in abstract class
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
@@ -52,6 +54,7 @@ void engine::App::setup()
 
     initImGUI(glsl_version);
 
+#if DEBUG
     // check opengl context is valid
     int flags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
@@ -64,6 +67,13 @@ void engine::App::setup()
     else {
         logger.warn("OpenGL debug context not available.");
     }
+#endif
+}
+
+void engine::App::setApp(GLFWwindow* _window)
+{
+    // Store the 'this' pointer (App) in the window's user pointer
+    glfwSetWindowUserPointer(_window, this);
 }
 
 void engine::App::initGLFW()
@@ -77,7 +87,11 @@ void engine::App::initGLFW()
 
     glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
 
+#ifdef _DEBUG
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
+#else
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_FALSE);
+#endif
 }
 
 const char* engine::App::initOpenGL()
@@ -85,16 +99,12 @@ const char* engine::App::initOpenGL()
     // GL 3.3 + GLSL 130
     const char* glsl_version = "#version 130";
     
-    // opengl 3.3
-    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);*/
-
     // opengl 4.6
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // 3.0+ only and macOS
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // 3.0+ only and macOS
 
     return glsl_version;
 }
@@ -135,7 +145,6 @@ void engine::App::initWindow()
 void engine::App::initGLAD()
 {
     // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         logger.error("Failed to initialize GLAD");
@@ -170,12 +179,6 @@ void engine::App::initImGUI(const char* glsl_version)
         style.FramePadding.x = 8.0; // better widget horizontal padding
         style.FramePadding.y = 4.0; // better widget vertical padding
     }
-
-    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    //{
-    //    style.WindowRounding = 6.0f;
-    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    //}
 
     // Apply Adobe Spectrum theme
     //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum

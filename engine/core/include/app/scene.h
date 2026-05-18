@@ -179,11 +179,11 @@ namespace engine
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called
         // ----------------------------------------------------------------------
-        void scroll_callback(double xoffset, double yoffset);
+        virtual void scroll_callback(double xoffset, double yoffset);
 
 
         // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
-        void gamepad_callback(const GLFWgamepadstate& state);
+        virtual void gamepad_callback(const GLFWgamepadstate& state);
 
 
         // glfw: whenever the window size changed (by OS or user resize) this callback function executes

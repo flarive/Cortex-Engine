@@ -834,9 +834,6 @@ void engine::Scene::mouse_callback(double xposIn, double yposIn)
 // ----------------------------------------------------------------------
 void engine::Scene::scroll_callback(double xoffset, double yoffset)
 {
-    (void)xoffset;   //Do nothing
-    (void)yoffset;   //Do nothing
-
     if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
         ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
 }

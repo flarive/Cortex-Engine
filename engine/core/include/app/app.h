@@ -62,6 +62,14 @@ namespace engine
         void resetWindowTitleSuffix();
 
 
+        void setApp(GLFWwindow* _window);
+
+        // retreive the app from GLFW window custom params (needed mostly GLFW callbacks static calls because C-style function pointers)
+        template<typename T>
+        static T* getApp(GLFWwindow* _window)
+        {
+            return static_cast<T*>(glfwGetWindowUserPointer(_window));
+        }
 
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
@@ -94,6 +102,8 @@ namespace engine
         void initWindow();
         void initGLAD();
         void initImGUI(const char* glsl_version);
+
+
         
         static void GLAPIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 

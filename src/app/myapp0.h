@@ -42,15 +42,19 @@ public:
 
     void start() override
     {
-        // Store the 'this' pointer in the window's user pointer
-        glfwSetWindowUserPointer(window, this);
-
         // Set the callbacks
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwSetKeyCallback(window, keyCallback);
         glfwSetCursorPosCallback(window, mouseCallback);
         glfwSetScrollCallback(window, scrollCallback);
         glfwSetWindowRefreshCallback(window, windowRefreshCallback);
+
+        int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
+        if (present > 0)
+        {
+            const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
+            logger.info("Joystick present {}", name);
+        }
 
         // Load scenes in the app
         m_sceneManager.addScene<MyScene1>("Scene1", shared_from_this());
@@ -76,23 +80,13 @@ public:
 
         if (auto scene = m_scene.lock()) {
             scene->initialize();
-
-
         }
 
-
-
-        //int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-        //if (present > 0)
-        //{
-        //    const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-        //    logger.info("Joystick present {}", name);
-        //}
 
         // start game loop
         while (isRunning())
         {
-            //gamepadUpdate(); // Update gamepad state
+            gamepadCallback(window); // Update gamepad state
 
             if (auto scene = m_scene.lock()) {
                 scene->gameLoop();
@@ -109,6 +103,104 @@ public:
     void exit() override
     {
         App::exit();
+    }
+
+    // glfw: whenever a keyboard key is pressed, this callback is called
+    // -----------------------------------------------------------------
+    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        // Retrieve the MyApp0 instance from the window's user pointer
+        auto* app = getApp<MyApp0>(window);
+        if (app) {
+            // Call the non-static key_callback method
+            app->key_callback(key, scancode, action, mods);
+
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->key_callback(key, scancode, action, mods);
+            }
+        }
+    }
+
+    // glfw: whenever the mouse moves, this callback is called
+    // -------------------------------------------------------
+    static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
+    {
+        // Retrieve the MyApp0 instance from the window's user pointer
+        auto* app = getApp<MyApp0>(window);
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->mouse_callback(xposIn, yposIn);
+            }
+        }
+    }
+
+    // glfw: whenever the mouse scroll wheel scrolls, this callback is called
+    // ----------------------------------------------------------------------
+    static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        // Retrieve the MyApp0 instance from the window's user pointer
+        auto* app = getApp<MyApp0>(window);
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->scroll_callback(xoffset, yoffset);
+            }
+        }
+    }
+
+    // glfw: whenever the window size changed (by OS or user resize) this callback function executes
+    // ---------------------------------------------------------------------------------------------
+    static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+    {
+        // Retrieve the MyApp0 instance from the window's user pointer
+        auto* app = getApp<MyApp0>(window);
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->framebuffer_size_callback(width, height);
+            }
+        }
+    }
+
+    static void windowRefreshCallback(GLFWwindow* window)
+    {
+        // Retrieve the MyApp0 instance from the window's user pointer
+        auto* app = getApp<MyApp0>(window);
+        if (app) {
+            // Get the current scene and call its key_callback
+            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+            if (auto scene = gScene.lock()) {
+                scene->window_refresh_callback();
+            }
+        }
+    }
+
+    // Poll gamepad input and forward to MyApp
+    // ---------------------------------------
+    static void gamepadCallback(GLFWwindow* window)
+    {
+        if (glfwJoystickIsGamepad(GLFW_JOYSTICK_1))
+        {
+            GLFWgamepadstate state;
+            if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
+            {
+                // Retrieve the MyApp0 instance from the window's user pointer
+                auto* app = getApp<MyApp0>(window);
+                if (app) {
+                    // Get the current scene and call its key_callback
+                    std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
+                    if (auto scene = gScene.lock()) {
+                        scene->gamepad_callback(state);
+                    }
+                }
+            }
+        }
     }
 
     void key_callback(int key, int scancode, int action, int mods) override
@@ -157,94 +249,9 @@ public:
     }
 
 
-    // glfw: whenever a keyboard key is pressed, this callback is called
-    // -----------------------------------------------------------------
-    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-    {
-        // Retrieve the MyApp0 instance from the window's user pointer
-        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
-        if (app) {
-            // Call the non-static key_callback method
-            app->key_callback(key, scancode, action, mods);
-
-            // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
-            if (auto scene = gScene.lock()) {
-                scene->key_callback(key, scancode, action, mods);
-            }
-        }
-    }
-
-    // glfw: whenever the mouse moves, this callback is called
-    // -------------------------------------------------------
-    static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
-    {
-        // Retrieve the MyApp0 instance from the window's user pointer
-        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
-        if (app) {
-            // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
-            if (auto scene = gScene.lock()) {
-                scene->mouse_callback(xposIn, yposIn);
-            }
-        }
-    }
-
-    // glfw: whenever the mouse scroll wheel scrolls, this callback is called
-    // ----------------------------------------------------------------------
-    static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-    {
-        // Retrieve the MyApp0 instance from the window's user pointer
-        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
-        if (app) {
-            // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
-            if (auto scene = gScene.lock()) {
-                scene->scroll_callback(xoffset, yoffset);
-            }
-        }
-    }
-
-    // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-    // ---------------------------------------------------------------------------------------------
-    static void framebufferSizeCallback(GLFWwindow* window, int width, int height)
-    {
-        // Retrieve the MyApp0 instance from the window's user pointer
-        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
-        if (app) {
-            // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
-            if (auto scene = gScene.lock()) {
-                scene->framebuffer_size_callback(width, height);
-            }
-        }
-    }
-
-    static void windowRefreshCallback(GLFWwindow* window)
-    {
-        // Retrieve the MyApp0 instance from the window's user pointer
-        MyApp0* app = static_cast<MyApp0*>(glfwGetWindowUserPointer(window));
-        if (app) {
-            // Get the current scene and call its key_callback
-            std::weak_ptr<Scene> gScene = app->getSceneManager().getCurrentScene();
-            if (auto scene = gScene.lock()) {
-                scene->window_refresh_callback();
-            }
-        }
-    }
-
     ~MyApp0() override
     {
         logger.trace("MyApp0 destructor called");
-
-        // Iterate over all scenes and clear the window user pointer
-        /*for (shared_ptr<Scene> scene : m_sceneManager.getScenes()) {
-            if (scene && scene->getWindow()) {
-                glfwSetWindowUserPointer(scene->getWindow(), nullptr);
-            }
-        }*/
-
-        //glfwSetWindowUserPointer(window, this);
     }
 
     private:

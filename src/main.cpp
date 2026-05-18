@@ -20,15 +20,16 @@ extern "C" {
 }
 
 
-
 // Startup method
 int main(int, char**)
 {
-    engine::AppManager appManager;
-
     // Init the app
-    auto app = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //320, 240 //1280, 720
+    AppManager appManager;
+    auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    if (!app)
+        return EXIT_FAILURE;
+
     app->start();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

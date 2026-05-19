@@ -14,6 +14,9 @@ namespace engine
         ~AppManager();
 
 
+        /// <summary>
+        /// Create a new app
+        /// </summary>
         template <typename T, typename... Args>
         std::shared_ptr<T> createApp(Args&&... args)
         {

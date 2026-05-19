@@ -4,8 +4,6 @@
 #include "../tools/file_system.h"
 
 #include "../debug/opengl_debug.h"
-
-//#include "../managers/app_manager.h"
 #include "../managers/scene_manager.h"
 
 #include <iostream>
@@ -65,11 +63,11 @@ namespace engine
         void setApp(GLFWwindow* _window);
 
         // retreive the app from GLFW window custom params (needed mostly GLFW callbacks static calls because C-style function pointers)
-        template<typename T>
-        static T* getApp(GLFWwindow* _window)
-        {
-            return static_cast<T*>(glfwGetWindowUserPointer(_window));
-        }
+        //template<typename T>
+        //static T* getApp(GLFWwindow* _window)
+        //{
+        //    return static_cast<T*>(glfwGetWindowUserPointer(_window));
+        //}
 
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
@@ -80,9 +78,56 @@ namespace engine
         // returns a unique instance of managers per app (no copy !)
         SceneManager& getSceneManager() { return m_sceneManager; }
     
-        // glfw: whenever a key is pressed or released, this callback is called
-        // --------------------------------------------------------------------
-        virtual void key_callback(int key, int scancode, int action, int mods);
+
+        virtual void onKey(int key, int scancode, int action, int mods);
+        virtual void onMouseMove(double x, double y);
+        virtual void onScroll(double xoffset, double yoffset);
+        virtual void onResize(int width, int height);
+        virtual void onRefresh();
+
+
+        void registerCallbacks();
+
+
+        static App* getAppFromWindow(GLFWwindow* window)
+        {
+            return static_cast<App*>(glfwGetWindowUserPointer(window));
+        }
+
+        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+        {
+            if (auto* app = getAppFromWindow(window)) {
+                app->onKey(key, scancode, action, mods);
+            }
+        }
+
+        static void mouseCallback(GLFWwindow* window, double x, double y)
+        {
+            if (auto* app = getAppFromWindow(window)) {
+                app->onMouseMove(x, y);
+            }
+        }
+
+        static void scrollCallback(GLFWwindow* window, double x, double y)
+        {
+            if (auto* app = getAppFromWindow(window)) {
+                app->onScroll(x, y);
+            }
+        }
+
+        static void framebufferSizeCallback(GLFWwindow* window, int w, int h)
+        {
+            if (auto* app = getAppFromWindow(window)) {
+                app->onResize(w, h);
+            }
+        }
+
+        static void windowRefreshCallback(GLFWwindow* window)
+        {
+            if (auto* app = getAppFromWindow(window)) {
+                app->onRefresh();
+            }
+        }
 
 
     protected:

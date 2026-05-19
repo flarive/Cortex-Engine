@@ -325,20 +325,55 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 	fullscreen = isFullscreen;
 }
 
-void engine::App::key_callback(int key, int scancode, int action, int mods)
+void engine::App::registerCallbacks()
+{
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetScrollCallback(window, scrollCallback);
+    glfwSetWindowRefreshCallback(window, windowRefreshCallback);
+}
+
+
+void engine::App::onKey(int key, int scancode, int action, int mods)
 {
     (void)scancode;   //Do nothing
     (void)mods;   //Do nothing
+    (void)action;   //Do nothing
 
     // basic window handling
     switch (key)
     {
     case GLFW_KEY_ESCAPE:
-        glfwSetWindowShouldClose(window, GL_TRUE); break;
+        glfwSetWindowShouldClose(window, GL_TRUE);
+        break;
     }
 
     // always pass input to ImGui *after*
     //ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+}
+
+void engine::App::onMouseMove(double x, double y)
+{
+    (void)x;   //Do nothing
+    (void)y;   //Do nothing
+}
+
+void engine::App::onScroll(double xoffset, double yoffset)
+{
+    (void)xoffset;   //Do nothing
+    (void)yoffset;   //Do nothing
+}
+
+void engine::App::onResize(int width, int height)
+{
+    (void)width;   //Do nothing
+    (void)height;   //Do nothing
+}
+
+void engine::App::onRefresh()
+{
+
 }
 
 engine::App::~App()

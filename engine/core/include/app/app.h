@@ -62,13 +62,6 @@ namespace engine
 
         void setApp(GLFWwindow* _window);
 
-        // retreive the app from GLFW window custom params (needed mostly GLFW callbacks static calls because C-style function pointers)
-        //template<typename T>
-        //static T* getApp(GLFWwindow* _window)
-        //{
-        //    return static_cast<T*>(glfwGetWindowUserPointer(_window));
-        //}
-
         // Toggle Fullscreen
         void toggleFullscreen(std::function<void()> func);
 
@@ -84,9 +77,6 @@ namespace engine
         virtual void onScroll(double xoffset, double yoffset);
         virtual void onResize(int width, int height);
         virtual void onRefresh();
-
-
-        void registerCallbacks();
 
 
         static App* getAppFromWindow(GLFWwindow* window)
@@ -129,6 +119,7 @@ namespace engine
             }
         }
 
+        
 
     protected:
         SceneManager m_sceneManager{};
@@ -147,7 +138,7 @@ namespace engine
         void initWindow();
         void initGLAD();
         void initImGUI(const char* glsl_version);
-
+        void registerWindowInputCallbacks();
 
         
         static void GLAPIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);

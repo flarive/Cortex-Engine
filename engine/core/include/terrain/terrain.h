@@ -40,7 +40,7 @@ namespace engine
 	{
 	public:
 		Terrain(float heightFactor = 1.0f, unsigned int resolution = 20);
-		~Terrain() = default;
+		~Terrain();
 
         void setup();
         void setup(const std::shared_ptr<Material>& material);

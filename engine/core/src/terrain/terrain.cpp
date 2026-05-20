@@ -1,8 +1,11 @@
 #include "../../include/terrain/terrain.h"
 
+#include "../../include/managers/log_manager.h"
+
 engine::Terrain::Terrain(float heightFactor, unsigned int resolution)
 	: m_heightFactor(heightFactor), m_resolution(resolution)
 {
+    logger.trace("Terrain constructor called");
 }
 
 void engine::Terrain::setup()
@@ -234,4 +237,9 @@ void engine::Terrain::clean()
     }
 
 	//m_tessHeightMapShader.clean();
+}
+
+engine::Terrain::~Terrain()
+{
+    logger.trace("Terrain destructor called");
 }

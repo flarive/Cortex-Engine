@@ -40,11 +40,8 @@ public:
 
     void start() override
     {
-        // Set the callbacks
-        registerCallbacks();
-
         // Load scenes in the app
-        m_sceneManager.addScene<MyScene15>("Scene15", shared_from_this());
+        m_sceneManager.addScene<MyScene>("MyScene", shared_from_this());
 
 
 

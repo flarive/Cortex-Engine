@@ -54,6 +54,8 @@ void engine::App::setup()
 
     initImGUI(glsl_version);
 
+    registerWindowInputCallbacks();
+
 #if DEBUG
     // check opengl context is valid
     int flags;
@@ -325,7 +327,7 @@ void engine::App::toggleFullscreen(std::function<void()> func)
 	fullscreen = isFullscreen;
 }
 
-void engine::App::registerCallbacks()
+void engine::App::registerWindowInputCallbacks()
 {
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetKeyCallback(window, keyCallback);

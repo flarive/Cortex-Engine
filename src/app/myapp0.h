@@ -43,9 +43,6 @@ public:
     void start() override
     {
         // Set the callbacks
-        registerCallbacks();
-
-        // Set the callbacks
         /*glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwSetKeyCallback(window, keyCallback);
         glfwSetCursorPosCallback(window, mouseCallback);

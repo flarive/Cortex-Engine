@@ -273,6 +273,8 @@ void engine::App::exit()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    //unregisterWindowInputCallbacks();
+
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -336,6 +338,14 @@ void engine::App::registerWindowInputCallbacks()
     glfwSetWindowRefreshCallback(window, windowRefreshCallback);
 }
 
+void engine::App::unregisterWindowInputCallbacks()
+{
+    glfwSetFramebufferSizeCallback(window, nullptr);
+    glfwSetKeyCallback(window, nullptr);
+    glfwSetCursorPosCallback(window, nullptr);
+    glfwSetScrollCallback(window, nullptr);
+    glfwSetWindowRefreshCallback(window, nullptr);
+}
 
 void engine::App::onKey(int key, int scancode, int action, int mods)
 {

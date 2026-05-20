@@ -79,6 +79,7 @@ namespace engine
         virtual void onRefresh();
 
 
+		// store app instance into window user pointer to be able to call non-static member functions in static callbacks
         static App* getAppFromWindow(GLFWwindow* window)
         {
             return static_cast<App*>(glfwGetWindowUserPointer(window));
@@ -139,7 +140,7 @@ namespace engine
         void initGLAD();
         void initImGUI(const char* glsl_version);
         void registerWindowInputCallbacks();
-
+        void unregisterWindowInputCallbacks();
         
         static void GLAPIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 

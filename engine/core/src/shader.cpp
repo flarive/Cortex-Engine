@@ -326,7 +326,11 @@ bool engine::Shader::isValid() const
         std::vector<char> log(logLength);
         glGetProgramInfoLog(ID, logLength, nullptr, log.data());
 
-		logger.error("Shader program linking failed: {}", log.data());
+        if (!log.empty())
+        {
+            logger.error("Shader program linking failed: {}", log.data());
+        }
+		
         return false;
     }
 

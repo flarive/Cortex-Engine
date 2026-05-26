@@ -102,7 +102,7 @@ engine::TextureData engine::Texture::loadTextureExtended(const std::string& file
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -123,7 +123,7 @@ engine::TextureData engine::Texture::loadTextureExtended(const std::string& file
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool repeat, bool invertY, bool gammaCorrection)
 {
     if (filename.empty()) return 0;
 
@@ -138,21 +138,43 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = {
-        std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int> {
-            int width{}, height{}, nrComponents{};
-            unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-            if (!data) {
-                logger.error("Texture failed to load at path: {}", filename);
-                return { nullptr, 0, 0, 0 };
-            }
+    std::async(std::launch::async, [filename, invertY]() -> std::tuple<unsigned char*, int, int, int> {
+        int width{}, height{}, nrComponents{};
+        unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+        if (!data) {
+            logger.error("Texture failed to load at path: {}", filename);
+            return { nullptr, 0, 0, 0 };
+        }
 
-            return { data, width, height, nrComponents };
-        }),
-        false,
-        {}  // Result is empty initially
+        // Flip the image vertically
+        if (invertY)
+        {
+            unsigned char* flippedData = flipImageVertically(data, width, height, nrComponents);
+            return { flippedData, width, height, nrComponents };
+        }
+
+        return { data, width, height, nrComponents };
+    }),
+    false,
+    {} // Result is empty initially
     };
 
     return 0;  // Temporary ID, real ID is set later
+}
+
+unsigned char* engine::Texture::flipImageVertically(unsigned char* data, int width, int height, int nrComponents)
+{
+    unsigned char* flippedData = new unsigned char[width * height * nrComponents];
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            for (int c = 0; c < nrComponents; c++) {
+                flippedData[(height - 1 - y) * width * nrComponents + x * nrComponents + c] =
+                    data[y * width * nrComponents + x * nrComponents + c];
+            }
+        }
+    }
+    delete[] data;
+    return flippedData;
 }
 
 /// <summary>

@@ -87,8 +87,7 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
 
     const glm::vec3 normal(0.0f, 1.0f, 0.0f);
 
-
-	int width = static_cast<int>(m_textureWidth);
+    int width = static_cast<int>(m_textureWidth);
     int height = static_cast<int>(m_textureHeight);
 
     for (unsigned i = 0; i <= m_resolution - 1; i++)
@@ -100,11 +99,11 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
             float z0 = -height / 2.0f + height * j / float(m_resolution);
             float z1 = -height / 2.0f + height * (j + 1) / float(m_resolution);
 
+            // Flip the V coordinate to match OpenGL's bottom-left origin
             float u0 = (i / float(m_resolution)) * m_uvScale;
             float u1 = ((i + 1) / float(m_resolution)) * m_uvScale;
-            float v0 = (j / float(m_resolution)) * m_uvScale;
-            float v1 = ((j + 1) / float(m_resolution)) * m_uvScale;
-
+            float v0 = (1.0f - j / float(m_resolution)) * m_uvScale;  // Flipped V
+            float v1 = (1.0f - (j + 1) / float(m_resolution)) * m_uvScale;  // Flipped V
 
             // Vertex 1
             vertices.emplace_back(

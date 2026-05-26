@@ -49,7 +49,7 @@ namespace engine
 
         static TextureData loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
-        static unsigned int loadTextureAsync(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
+        static unsigned int loadTextureAsync(const std::string& filename, bool repeat = true, bool invertY = false, bool gammaCorrection = false);
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
         static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, bool repeat = true);
@@ -71,5 +71,9 @@ namespace engine
         static void checkTextureIsValid(unsigned int textureID);
 
         static engine::TextureData getTextureData(const std::string& texturePath);
+
+    private:
+
+        static unsigned char* flipImageVertically(unsigned char* data, int width, int height, int nrComponents);
     };
 }

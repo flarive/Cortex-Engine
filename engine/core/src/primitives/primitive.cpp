@@ -38,6 +38,61 @@ void engine::Primitive::clean()
     m_EBO = 0;
 }
 
+//std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvScale, bool flipNormal)
+//{
+//    std::vector<engine::Vertex> vertices;
+//
+//    // Define positions (XZ plane, facing +Y)
+//    glm::vec3 pos1(-1.0f, 0.0f, -1.0f); // Bottom-left
+//    glm::vec3 pos2(1.0f, 0.0f, -1.0f);  // Bottom-right
+//    glm::vec3 pos3(1.0f, 0.0f, 1.0f);   // Top-right
+//    glm::vec3 pos4(-1.0f, 0.0f, 1.0f);  // Top-left
+//
+//    // Texture coordinates (standard UV mapping)
+//    glm::vec2 uv1(0.0f, 0.0f);
+//    glm::vec2 uv2(uvScale, 0.0f);
+//    glm::vec2 uv3(uvScale, uvScale);
+//    glm::vec2 uv4(0.0f, uvScale);
+//
+//    // Normal vector (facing up)
+//    glm::vec3 normal = flipNormal ? glm::vec3(0.0f, -1.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
+//
+//    // --- Compute tangent and bitangent (once for the plane) ---
+//    glm::vec3 edge1 = pos2 - pos1;
+//    glm::vec3 edge2 = pos4 - pos1;
+//    glm::vec2 deltaUV1 = uv2 - uv1;
+//    glm::vec2 deltaUV2 = uv4 - uv1;
+//
+//    float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+//
+//    glm::vec3 tangent, bitangent;
+//    tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+//    tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+//    tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+//    tangent = glm::normalize(tangent);
+//
+//    bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+//    bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+//    bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+//    bitangent = glm::normalize(bitangent);
+//
+//    if (flipNormal) {
+//        tangent = -tangent;
+//        bitangent = -bitangent;
+//    }
+//
+//    // CCW winding for upward (+Y) facing plane
+//    vertices.emplace_back(pos1, normal, uv1, tangent, bitangent);
+//    vertices.emplace_back(pos4, normal, uv4, tangent, bitangent);
+//    vertices.emplace_back(pos2, normal, uv2, tangent, bitangent);
+//
+//    vertices.emplace_back(pos2, normal, uv2, tangent, bitangent);
+//    vertices.emplace_back(pos4, normal, uv4, tangent, bitangent);
+//    vertices.emplace_back(pos3, normal, uv3, tangent, bitangent);
+//
+//    return vertices;
+//}
+
 std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvScale, bool flipNormal)
 {
     std::vector<engine::Vertex> vertices;
@@ -48,11 +103,11 @@ std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvSca
     glm::vec3 pos3(1.0f, 0.0f, 1.0f);   // Top-right
     glm::vec3 pos4(-1.0f, 0.0f, 1.0f);  // Top-left
 
-    // Texture coordinates (standard UV mapping)
-    glm::vec2 uv1(0.0f, 0.0f);
-    glm::vec2 uv2(uvScale, 0.0f);
-    glm::vec2 uv3(uvScale, uvScale);
-    glm::vec2 uv4(0.0f, uvScale);
+    // Texture coordinates (flipped V to match OpenGL's bottom-left origin)
+    glm::vec2 uv1(0.0f, uvScale); // Bottom-left (V flipped)
+    glm::vec2 uv2(uvScale, uvScale); // Bottom-right (V flipped)
+    glm::vec2 uv3(uvScale, 0.0f); // Top-right (V flipped)
+    glm::vec2 uv4(0.0f, 0.0f); // Top-left (V flipped)
 
     // Normal vector (facing up)
     glm::vec3 normal = flipNormal ? glm::vec3(0.0f, -1.0f, 0.0f) : glm::vec3(0.0f, 1.0f, 0.0f);
@@ -408,8 +463,8 @@ std::vector<engine::Vertex> engine::Primitive::generateCylinderVertices(unsigned
         glm::vec3 normal(x, 0.0f, z);
 
         // FIX: Flip U coordinate to correct horizontal texture orientation
-        //float u = (1.0f - (float)i / sectorCount) * uvScale;
-        float u = ((float)i / sectorCount) * uvScale;
+        float u = (1.0f - (float)i / sectorCount) * uvScale;
+        //float u = ((float)i / sectorCount) * uvScale;
 
         // Bottom vertex
         glm::vec2 texCoord(u, 0.0f);

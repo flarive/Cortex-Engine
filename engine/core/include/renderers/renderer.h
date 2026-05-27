@@ -5,6 +5,8 @@
 #include "../shader.h"
 #include "../lights/light.h"
 #include "../lights/point_light.h"
+#include "../lights/spot_light.h"
+#include "../lights/directional_light.h"
 #include "../cameras/camera.h"
 
 #include "../debug/debug_plane_grid.h"

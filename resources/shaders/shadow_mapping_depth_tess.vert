@@ -18,5 +18,7 @@ void main()
     FragPos = aPos;
 
     //gl_Position = vec4(aPos, 1.0);  // Pass through for tessellation
+    
+    // For standard rendering, output clip space position
     gl_Position = lightSpaceMatrix * model * vec4(aPos, 1.0);
 }

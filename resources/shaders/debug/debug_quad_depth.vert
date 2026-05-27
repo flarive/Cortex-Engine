@@ -7,5 +7,7 @@ out vec2 TexCoords;
 void main()
 {
     TexCoords = aTexCoords;
+    
+    // Correct for full-screen quad rendering
     gl_Position = vec4(aPos, 1.0);
 }

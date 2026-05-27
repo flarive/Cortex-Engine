@@ -176,16 +176,29 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
+    
     float near_plane = 0.1f;  // Previously 1.0f
     float far_plane = 100.0f;  // Previously 7.5f
-    glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+    
 
-    // more accurate ???
-    //float cutOff = 38.0f;
-	//float outerCutOff = 90.0f;
-    //float spotlightCutoff = glm::cos(glm::radians(cutOff)); // Assuming `getCutOff()` returns the spotlight's cutoff angle
-    //glm::mat4 lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
+    glm::mat4 lightProjection{};
 
+
+    auto spot = std::dynamic_pointer_cast<engine::SpotLight>(light);
+    if (spot)
+    {
+        // spot light
+        /*float cutOff = spot->getCutoff();
+        lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);*/
+        
+        // don't understand why having better looking result with that ???
+        lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+    }
+    else
+    {
+        // directional light
+        lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+    }
 
     glm::mat4 lightView = glm::lookAt(light->getPosition(), light->getTarget(), glm::vec3(0.0, 1.0, 0.0));
     glm::mat4 lightSpaceMatrix = lightProjection * lightView;
@@ -205,6 +218,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 
     glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
     glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
+    //glPolygonOffset(1.1f, 4.0f);
     update(directionalDepthMapShader, directionalDepthMapTessellationShader);
     glDisable(GL_POLYGON_OFFSET_FILL);
 

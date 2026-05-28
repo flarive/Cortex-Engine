@@ -21,7 +21,6 @@ struct Material {
     sampler2D texture_metalness;
     sampler2D texture_roughness;
     sampler2D texture_ao;
-    sampler2D texture_height;
     sampler2D texture_emissive;
     
 
@@ -58,7 +57,6 @@ struct Material {
     bool has_texture_roughness_map;
     bool has_texture_metalness_from_combined_map;
     bool has_texture_ao_map;
-    bool has_texture_height_map;
     bool has_texture_emissive_map;
 
     bool canCastShadows;
@@ -66,6 +64,11 @@ struct Material {
 
     bool useParallaxMapping;
 };
+
+struct MaterialHeight {
+    sampler2D texture_height;
+    bool has_texture_height_map;
+}; 
 
 struct DirLight {
     bool use;
@@ -124,6 +127,7 @@ uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
+uniform MaterialHeight materialHeight;
 uniform mat4 lightSpaceMatrix;
 
 
@@ -682,8 +686,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;
-    float depthMapValue = material.has_texture_height_map
-        ? texture(material.texture_height, currentTexCoords).r
+    float depthMapValue = materialHeight.has_texture_height_map
+        ? texture(materialHeight.texture_height, currentTexCoords).r
         : 0.0;
 
     // --- Steep Parallax Loop ---
@@ -693,8 +697,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
             break;
 
         currentTexCoords -= deltaTexCoords;
-        depthMapValue = material.has_texture_height_map
-            ? texture(material.texture_height, currentTexCoords).r
+        depthMapValue = materialHeight.has_texture_height_map
+            ? texture(materialHeight.texture_height, currentTexCoords).r
             : 0.0;
 
         currentLayerDepth += layerDepth;
@@ -751,7 +755,7 @@ void main()
 
     float ao = material.has_texture_ao_map ? texture(material.texture_ao, ll_TexCoords).r : 0.0;
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, ll_TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    vec3 height = material.has_texture_height_map ? texture(material.texture_height, ll_TexCoords).rgb : vec3(0.0);
+    vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, ll_TexCoords).rgb : vec3(0.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

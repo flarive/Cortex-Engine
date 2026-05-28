@@ -945,16 +945,10 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\white-marble\white-marble_roughness.png">
       <Filter>resources\textures\pbr\white-marble</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\height.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\height.tcs">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\height.tes">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\height.vert">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\height\iceland_heightmap.png">

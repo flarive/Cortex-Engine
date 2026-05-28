@@ -1,10 +1,14 @@
 #version 440 core
 
+struct MaterialHeight {
+    sampler2D texture_height;
+    bool has_texture_height_map;
+}; 
+
 struct Material {
     sampler2D texture_diffuse;
     sampler2D texture_specular;
     sampler2D texture_normal;
-    sampler2D texture_height;
 
     vec3 diffuse_color;
     vec3 specular_color;
@@ -15,8 +19,6 @@ struct Material {
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
-    bool has_texture_height_map;
-
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -85,31 +87,17 @@ struct AreaLight
 	bool twoSided;
 };
 
-// coming from vertex shader
-in VS_OUT {
-    vec3 FragPos; // same as worldPosition
-    vec3 Normal; // same as worldNormal
-    vec2 TexCoords;
-    vec3 Tangent;
-    vec3 Bitangent;
-    vec4 FragPosLightSpace;
-    vec3 TangentLightPos;
-    vec3 TangentViewPos;
-    vec3 TangentFragPos;
-} fs_in;
-
-// coming from TES shader (tesselation)
+// coming from previous shader
 in vec3 FragPos;
 in vec2 TexCoords;
 in vec3 Normal;
-#ifdef IS_TESSELLATED
-in vec3 teTangent;  // Receive tangent from TES
-in vec3 teBitangent;  // Receive bitangent from TES
-in vec4 teFragPosLightSpace;
-in vec3 teTangentLightPos;
-in vec3 teTangentViewPos;
-in vec3 teTangentFragPos;
-#endif
+in vec3 Tangent;
+in vec3 Bitangent;
+in vec4 FragPosLightSpace;
+in vec3 TangentLightPos;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+
 
 in float Height;
 
@@ -119,7 +107,9 @@ uniform vec3 lightPos;
 uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
+
 uniform Material material;
+uniform MaterialHeight materialHeight;
 
 uniform bool isTessellated;
 
@@ -821,8 +811,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     vec2 deltaTexCoords = P / numLayers;
 
     vec2 currentTexCoords = texCoords;
-    float depthMapValue = material.has_texture_height_map
-        ? texture(material.texture_height, currentTexCoords).r
+    float depthMapValue = materialHeight.has_texture_height_map
+        ? texture(materialHeight.texture_height, currentTexCoords).r
         : 0.0;
 
     // --- Steep Parallax Loop ---
@@ -832,8 +822,8 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
             break;
 
         currentTexCoords -= deltaTexCoords;
-        depthMapValue = material.has_texture_height_map
-            ? texture(material.texture_height, currentTexCoords).r
+        depthMapValue = materialHeight.has_texture_height_map
+            ? texture(materialHeight.texture_height, currentTexCoords).r
             : 0.0;
 
         currentLayerDepth += layerDepth;
@@ -842,74 +832,53 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     return currentTexCoords;
 }
 
-
 void main()
 {
-    vec2 l_TexCoords;
-    vec3 l_FragPos;
-    vec3 l_Normal;
-    vec3 l_Tangent;
-    vec3 l_Bitangent;
-    vec4 l_FragPosLightSpace;
+    // --------------------------------------------------------
+    // 1. Base inputs
+    // --------------------------------------------------------
+    vec3 N = normalize(Normal);
+    vec3 T = normalize(Tangent);
+    vec3 B = normalize(Bitangent);
 
+    // --------------------------------------------------------
+    // 2. TBN construction (CORRECT, final stage)
+    // --------------------------------------------------------
+    mat3 TBN = mat3(T, B, N);
 
-if (isTessellated)
-{
-    l_TexCoords = TexCoords;
-    l_FragPos = FragPos;
-    l_Normal = Normal;
-}
-else
-{
-    l_TexCoords = fs_in.TexCoords;
-    l_FragPos = fs_in.FragPos;
-    l_Normal = fs_in.Normal;
-}
-    
-#ifdef IS_TESSELLATED
-    // coming from TES shader (tesselation)
-    l_Tangent = normalize(teTangent);
-    l_Bitangent = normalize(teBitangent);
-    l_FragPosLightSpace = teFragPosLightSpace;
-#else
-    // coming from vertex shader (no tess)
-    l_Tangent = fs_in.Tangent;
-    l_Bitangent = fs_in.Bitangent;
-    l_FragPosLightSpace = fs_in.FragPosLightSpace;
-#endif
-    
-    
-    // Transform normal from tangent space to world space
-    vec3 T = normalize(l_Tangent);
-    vec3 B = normalize(l_Bitangent);
-    vec3 N = normalize(l_Normal);
-    
+    // --------------------------------------------------------
+    // 3. World space directions
+    // --------------------------------------------------------
+    vec3 lightDirWS = normalize(lightPos - FragPos);
+    vec3 viewDirWS  = normalize(viewPos - FragPos);
 
+    // --------------------------------------------------------
+    // 4. Tangent space directions
+    // --------------------------------------------------------
+    vec3 lightDirTS = normalize(TBN * lightDirWS);
+    vec3 viewDirTS  = normalize(TBN * viewDirWS);
 
-    
-    vec3 norm;
+    // --------------------------------------------------------
+    // 5. Normal mapping
+    // --------------------------------------------------------
+    vec3 finalNormal;
+
     if (material.has_texture_normal_map && hasTangents)
     {
-        mat3 TBN = mat3(T, B, N);
+        vec3 normalSample = texture(material.texture_normal, TexCoords).rgb;
+        normalSample = normalize(normalSample * 2.0 - 1.0);
 
-        // Sample the normal map texture
-        norm = texture(material.texture_normal, l_TexCoords).rgb;
-        norm = normalize(norm * 2.0 - 1.0); // Transform from [0,1] to [-1,1]
-        norm = normalize(TBN * norm) * material.normalMapIntensity;
+        finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
     }
     else
     {
-        norm = normalize(l_Normal) * material.normalMapIntensity; // Use the geometry normal as a fallback
+        finalNormal = N;
     }
 
-    // Use world-space viewDir for lighting and shadows
-    vec3 viewDirWS = normalize(viewPos - l_FragPos);
-    
-    // Use tangent-space viewDir only for parallax
-    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-
-    // offset texture coordinates with Parallax Mapping
-    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(l_TexCoords, viewDirTS) : l_TexCoords;
+    // --------------------------------------------------------
+    // 6. Parallax mapping
+    // --------------------------------------------------------
+    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
 
 
 
@@ -930,32 +899,32 @@ else
     //vec3 mDiffuse = ToLinear(texture(material.texture_diffuse, fs_in.TexCoords).rgb); // gamma correction
     //vec3 mSpecular = ToLinear(vec3(0.23, 0.23, 0.23)); // gamma correction
     
-    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0);
+    vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
     // Lighting
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS);
+            result += CalcPointLight(pointLights[i], finalNormal, N, FragPos, texCoords, viewDirWS);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], norm, N, l_FragPos, ll_TexCoords, viewDirWS, l_FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
     }
 
     if (areaLightsCount > 0)
     {
-        vec3 V = normalize(viewPos - l_FragPos);
-	    vec3 P = l_FragPos;
+        vec3 V = normalize(viewPos - FragPos);
+	    vec3 P = FragPos;
         float dotNV = clamp(dot(N, V), 0.0, 1.0);
 
         // use roughness and sqrt(1-cos_theta) to sample M_texture
@@ -977,7 +946,7 @@ else
         for (int i = 0; i < areaLightsCount; i++)
         {
             if (areaLights[i].use)
-                result += CalcAreaLight(areaLights[i], norm, l_FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+                result += CalcAreaLight(areaLights[i], finalNormal, FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 
@@ -985,7 +954,7 @@ else
 
 
     // Sample the alpha value from the diffuse texture
-    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).a : 1.0;
+    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0;
 
     if (isTessellated)
     {
@@ -1004,9 +973,6 @@ else
     if (alpha < 0.1)
         discard;
 }
-
-
-
 
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace)
@@ -1042,9 +1008,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
         parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);
 
         // Tangent-space light direction
-        vec3 lightDirTS = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        vec3 lightDirTS = normalize(TangentLightPos - TangentFragPos);
         // Tangent-space view direction
-        vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+        vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
 
         // ambient
         ambient = light.ambient * color;
@@ -1114,9 +1080,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
         parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);
 
         // Tangent-space light direction
-        vec3 lightDirTS = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        vec3 lightDirTS = normalize(TangentLightPos - TangentFragPos);
         // Tangent-space view direction
-        vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+        vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
 
         // Ambient
         ambient = 0.1 * color;
@@ -1196,7 +1162,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
         // ambient
         ambient = 0.1 * color;
         // diffuse
-        vec3 lightDir2 = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+        vec3 lightDir2 = normalize(TangentLightPos - TangentFragPos);
         float diff2 = max(dot(lightDir2, parallaxNormal), 0.0);
         diffuse = diff2 * color;
         // specular    

@@ -49,21 +49,27 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_metalness_map", false);
         shader.setBool("material.has_texture_roughness_map", false);
         shader.setBool("material.has_texture_ao_map", false);
-        shader.setBool("material.has_texture_height_map", false);
+        shader.setBool("materialHeight.has_texture_height_map", false);
     }
     else
     {
         shader.setBool("material.has_texture_diffuse_map", false);
         shader.setBool("material.has_texture_specular_map", false);
         shader.setBool("material.has_texture_normal_map", false);
-        shader.setBool("material.has_texture_height_map", false);
+        shader.setBool("materialHeight.has_texture_height_map", false);
     }
 
     for (const auto& tex : textures)
     {
         // Example: tex.type could be "albedo", "normal", "metallic", ...
-        const std::string uniformName = std::format("material.{}", tex.type);
-        const std::string hasMapName = std::format("material.has_{}_map", tex.type);
+        std::string uniformName = std::format("material.{}", tex.type);
+        std::string hasMapName = std::format("material.has_{}_map", tex.type);
+
+        if (tex.type == "texture_height")
+        {
+            uniformName = std::format("materialHeight.{}", tex.type);
+            hasMapName = std::format("materialHeight.has_{}_map", tex.type);
+        }
 
         // If no texture, mark false and continue (don’t change unit).
         if (tex.id == 0)

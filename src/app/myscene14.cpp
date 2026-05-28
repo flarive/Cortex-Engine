@@ -39,13 +39,13 @@ void MyScene14::init()
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
     light1->setIntensity(1.0f);
-    light1->setCutoff(12.0f);
+    light1->setCutoff(32.0f);
     light1->setOuterCutoff(48.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(true);
+    light1->setUseAttenuation(false);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);

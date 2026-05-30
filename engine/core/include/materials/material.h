@@ -78,7 +78,7 @@ namespace engine
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
         const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
 
-
+        const int getTextureHeightUnit() const;
         
         
         float& getHeightIntensity() { return m_heightIntensity; }
@@ -142,5 +142,8 @@ namespace engine
 
         float m_shininess{};
         bool m_allTexturesLoaded{};
+
+    private:
+        unsigned int heightMapId{};
     };
 }

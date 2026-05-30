@@ -188,8 +188,8 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (spot)
     {
         // spot light
-        /*float cutOff = spot->getCutoff();
-        lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);*/
+        //float cutOff = spot->getCutoff();
+        //lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
         
         // don't understand why having better looking result with that ???
         lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);

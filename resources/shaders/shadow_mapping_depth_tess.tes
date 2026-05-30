@@ -1,24 +1,83 @@
 #version 440 core
+
 layout(quads, fractional_odd_spacing, cw) in;
 
 uniform mat4 model;
 uniform mat4 lightSpaceMatrix;
+
+uniform float heightFactor;
+uniform vec2 heightOffset;
+
+struct MaterialHeight
+{
+    sampler2D texture_height;
+    bool has_texture_height_map;
+};
+
+uniform MaterialHeight materialHeight;
+
+in vec2 tcTexCoords[];
 
 void main()
 {
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-    // Interpolate object-space positions for quads
-    vec4 p00 = gl_in[0].gl_Position;
-    vec4 p10 = gl_in[1].gl_Position;
-    vec4 p01 = gl_in[2].gl_Position;
-    vec4 p11 = gl_in[3].gl_Position;
+    //------------------------------------
+    // UV
+    //------------------------------------
 
-    vec4 p0 = (p10 - p00) * u + p00;
-    vec4 p1 = (p11 - p01) * u + p01;
-    vec4 p = (p1 - p0) * v + p0;
+    vec2 tc0 = mix(tcTexCoords[0], tcTexCoords[1], u);
+    vec2 tc1 = mix(tcTexCoords[2], tcTexCoords[3], u);
 
-    // Transform to light space for shadow mapping
-    gl_Position = lightSpaceMatrix * model * p;
+    vec2 texCoords = mix(tc0, tc1, v);
+
+    //------------------------------------
+    // Object-space position
+    //------------------------------------
+
+    vec4 p0 = mix(gl_in[0].gl_Position,
+                  gl_in[1].gl_Position,
+                  u);
+
+    vec4 p1 = mix(gl_in[2].gl_Position,
+                  gl_in[3].gl_Position,
+                  u);
+
+    vec4 p = mix(p0, p1, v);
+
+    //------------------------------------
+    // Height displacement
+    //------------------------------------
+
+    float rawHeight = 0.0;
+
+    if(materialHeight.has_texture_height_map)
+    {
+        rawHeight =
+            texture(
+                materialHeight.texture_height,
+                texCoords
+            ).r;
+    }
+
+    float height =
+        (rawHeight * 64.0 - 16.0)
+        * heightFactor;
+
+    p.y += height;
+
+    
+    p.x += heightOffset.x;
+    p.z += heightOffset.y;
+
+    //------------------------------------
+    // World -> Light Space
+    //------------------------------------
+
+    vec4 worldPos = model * p;
+
+    gl_Position =
+        lightSpaceMatrix *
+        worldPos;
 }

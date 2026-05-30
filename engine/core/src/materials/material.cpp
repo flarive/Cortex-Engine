@@ -232,7 +232,7 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     unsigned int metallicMapId{};
     unsigned int roughnessMapId{};
     unsigned int aoMapId{};
-    unsigned int heightMapId{};
+    //unsigned int heightMapId{};
     unsigned int emissiveMapId{};
 
     MaterialType type = getTypeID();
@@ -329,4 +329,11 @@ void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)
 {
     m_cubemapTextures = faces;
 }
+
+const int engine::Material::getTextureHeightUnit() const
+{
+    return heightMapId;
+}
+
+
 

@@ -218,6 +218,8 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
             return;
         }
 
+        
+
         if (type == ShaderType::BlinnPhongTessellation)
         {
             shader.setFloat("material.shininess", m_material->getShininessIntensity());
@@ -239,6 +241,11 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
             shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
         }
     }
+    else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)
+    {
+        shader.setInt("materialHeight.texture_height", m_material->getTextureHeightUnit());
+        shader.setBool("materialHeight.has_texture_height_map", true);
+    }
     
 
     shader.setMat4("model", transformMatrix);
@@ -248,14 +255,15 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         //shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
-
-        shader.setFloat("heightFactor", m_heightFactor);
-        shader.setVec2("heightOffset", m_heightOffset);
-
         shader.setBool("isTessellated", true);
     }
 
-    
+    if (type == ShaderType::BlinnPhongTessellation  || type == ShaderType::PBRTessellation || type == ShaderType::DepthBufferDirectionalLightsTessellation)
+    {
+        shader.setFloat("heightFactor", m_heightFactor);
+        shader.setVec2("heightOffset", m_heightOffset);
+    }
+   
 
     // render the terrain
     glBindVertexArray(m_terrainVAO);

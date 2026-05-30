@@ -420,7 +420,7 @@ float ShadowCalculationSimple(vec4 fragPosLightSpace)
 }
 
 // nice but possibly slow
-float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
+float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightDir)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
@@ -434,7 +434,7 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
     float shadow = 0.0;
 
     // Bias computation (to avoid shadow acne)
-    vec3 lightDir = normalize(lightPos - fragPos);
+    //vec3 lightDir = normalize(lightPos - fragPos);
     float bias = ComputeShadowBias(normalize(normal), lightDir, material.shadowMapsBias, material.useParallaxMapping ? material.parallaxMapIntensity : 0.0);
 
     // Apply bias ONCE to receiver depth (PCF-correct)

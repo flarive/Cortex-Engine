@@ -474,8 +474,7 @@ void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
     pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
-    //pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
-    pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/pbr.frag");
+    pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
 
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");

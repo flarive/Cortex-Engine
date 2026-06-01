@@ -1,18 +1,32 @@
 ﻿#version 330 core
 
 // coming from vertex shader
-in VS_OUT {
-    vec2 TexCoords;
-    vec3 FragPos;
-    vec3 Normal;
-    vec3 Tangent;
-    vec3 Bitangent;
-    vec4 FragPosLightSpace;
+//in VS_OUT {
+//    vec2 TexCoords;
+//    vec3 FragPos;
+//    vec3 Normal;
+//    vec3 Tangent;
+//    vec3 Bitangent;
+//    vec4 FragPosLightSpace;
+//
+//    vec3 TangentLightPos;
+//    vec3 TangentViewPos;
+//    vec3 TangentFragPos;
+//} fs_in;
 
-    vec3 TangentLightPos;
-    vec3 TangentViewPos;
-    vec3 TangentFragPos;
-} fs_in;
+// coming from previous shader
+in vec3 FragPos;
+in vec2 TexCoords;
+in vec3 Normal;
+in vec3 Tangent;
+in vec3 Bitangent;
+in vec4 FragPosLightSpace;
+in vec3 TangentLightPos;
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+
+
+in float Height;
 
 // material parameters
 struct Material {
@@ -122,7 +136,7 @@ struct AreaLight {
 
 // coming from code
 uniform vec3 viewPos;
-//uniform vec3 lightPos;
+uniform vec3 lightPos;
 uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
@@ -130,6 +144,7 @@ uniform Material material;
 uniform MaterialHeight materialHeight;
 uniform mat4 lightSpaceMatrix;
 
+uniform bool isTessellated;
 
 uniform sampler2D texture_shadowMap;
 uniform samplerCube texture_shadowMapCube;
@@ -314,24 +329,24 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 vec3 getNormalFromMap(vec2 texCoords)
 {
     // Sample the normal map and convert the range from [0, 1] to [-1, 1]
-    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0 : normalize(fs_in.Normal) * material.normalMapIntensity;; // caca
+    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0 : normalize(Normal) * material.normalMapIntensity;; // caca
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
     //tangentNormal.z = -tangentNormal.z;
 
     // Compute the TBN matrix using either precomputed tangents or derivatives
-    vec3 N = normalize(fs_in.Normal);
+    vec3 N = normalize(Normal);
     vec3 T, B;
 
     if (hasTangents) { // If tangents exist, use them
-        T = normalize(fs_in.Tangent);
-        B = normalize(fs_in.Bitangent);
+        T = normalize(Tangent);
+        B = normalize(Bitangent);
     } else { // Otherwise, compute them using screen-space derivatives
-        vec3 Q1  = dFdx(fs_in.FragPos);
-        vec3 Q2  = dFdy(fs_in.FragPos);
-        vec2 st1 = dFdx(fs_in.TexCoords);
-        vec2 st2 = dFdy(fs_in.TexCoords);
+        vec3 Q1  = dFdx(FragPos);
+        vec3 Q2  = dFdy(FragPos);
+        vec2 st1 = dFdx(TexCoords);
+        vec2 st2 = dFdy(TexCoords);
         T  = normalize(Q1*st2.t - Q2*st1.t);
         B  = -normalize(cross(N, T));
     }
@@ -453,8 +468,8 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 lightDir)
         return 0.0;
 
     // Normal-offset bias: move fragment slightly along normal in light space
-    vec3 normal = normalize(fs_in.Normal);
-    vec3 offsetPos = fs_in.FragPos + normal * 0.005; // tweak offset for acne reduction
+    vec3 normal = normalize(Normal);
+    vec3 offsetPos = FragPos + normal * 0.005; // tweak offset for acne reduction
     vec4 offsetLightSpace = lightSpaceMatrix * vec4(offsetPos, 1.0);
     vec3 offsetProjCoords = offsetLightSpace.xyz / offsetLightSpace.w;
     offsetProjCoords = offsetProjCoords * 0.5 + 0.5;
@@ -505,7 +520,7 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 lightPos)
     float currentDepth = projCoords.z;
 
     // Dynamic bias based on angle to light
-    float bias = max(0.0005 * (1.0 - dot(normalize(fs_in.Normal), normalize(lightPos - fs_in.FragPos))), 0.0001);
+    float bias = max(0.0005 * (1.0 - dot(normalize(Normal), normalize(lightPos - FragPos))), 0.0001);
 
     vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
 
@@ -711,29 +726,84 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
 void main()
 {		
     // Use world-space viewDir for lighting and shadows
-    vec3 viewDirWS = normalize(viewPos - fs_in.FragPos);
-    // Use tangent-space viewDir only for parallax
-    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-
-    // Original texture coordinates
-    vec2 texCoords = fs_in.TexCoords;
-
-    // Offset texture coordinates with Parallax Mapping
-    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(texCoords, viewDirTS) : texCoords;
+//    vec3 viewDirWS = normalize(viewPos - fs_in.FragPos);
+//    // Use tangent-space viewDir only for parallax
+//    vec3 viewDirTS = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+//
+//    // Original texture coordinates
+//    vec2 texCoords = fs_in.TexCoords;
+//
+//    // Offset texture coordinates with Parallax Mapping
+//    vec2 ll_TexCoords = material.useParallaxMapping ? SteepParallaxMapping(texCoords, viewDirTS) : texCoords;
 
     // input lighting data
-    vec3 normal = getNormalFromMap(ll_TexCoords);
-    vec3 N = normalize(fs_in.Normal);
-    vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
-    vec3 R = reflect(-V, normal);
-    vec3 P = fs_in.FragPos;
-    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+//    vec3 normal = getNormalFromMap(ll_TexCoords);
+//    vec3 N = normalize(fs_in.Normal);
+//    vec3 V = normalize(viewPos - fs_in.FragPos); // View direction
+//    vec3 R = reflect(-V, normal);
+//    vec3 P = fs_in.FragPos;
+//    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+
+
+// --------------------------------------------------------
+    // 1. Base inputs
+    // --------------------------------------------------------
+    vec3 N = normalize(Normal);
+    vec3 T = normalize(Tangent);
+    vec3 B = normalize(Bitangent);
+
+    
+
+    // --------------------------------------------------------
+    // 2. TBN construction (CORRECT, final stage)
+    // --------------------------------------------------------
+    mat3 TBN = mat3(T, B, N);
+
+    // --------------------------------------------------------
+    // 3. World space directions
+    // --------------------------------------------------------
+    vec3 lightDirWS = normalize(lightPos - FragPos);
+    vec3 viewDirWS  = normalize(viewPos - FragPos);
+
+    // --------------------------------------------------------
+    // 4. Tangent space directions
+    // --------------------------------------------------------
+    vec3 lightDirTS = normalize(TBN * lightDirWS);
+    vec3 viewDirTS  = normalize(TBN * viewDirWS);
+
+
+    float dotNV = clamp(dot(N, viewDirWS), 0.0f, 1.0f);
+
+
+    // --------------------------------------------------------
+    // 5. Normal mapping
+    // --------------------------------------------------------
+    vec3 finalNormal;
+
+    if (material.has_texture_normal_map && hasTangents)
+    {
+        vec3 normalSample = texture(material.texture_normal, TexCoords).rgb;
+        normalSample = normalize(normalSample * 2.0 - 1.0);
+
+        finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
+    }
+    else
+    {
+        finalNormal = N;
+    }
+
+    
+
+    // --------------------------------------------------------
+    // 6. Parallax mapping
+    // --------------------------------------------------------
+    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
 
 
 
     // material properties
-    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, ll_TexCoords).rgb : vec3(0.5);
-    vec3 mDiffuse = texture(material.texture_diffuse, ll_TexCoords).xyz;
+    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5);
+    vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
     float metallic = 0;
@@ -742,20 +812,20 @@ void main()
     if (material.has_texture_metalness_from_combined_map)
     {
         // Sample the combined texture
-        vec4 metalRoughness = texture(material.texture_metalness_from_combined, ll_TexCoords);
+        vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
         metallic = metalRoughness.b; // Extract metallic from Blue channel
         roughness = metalRoughness.g; // Extract roughness from Green channel
     }
     else
     {
         // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, ll_TexCoords).r : 0.0;
-        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, ll_TexCoords).r : 0.5;
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
+        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
     }
 
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, ll_TexCoords).r : 0.0;
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, ll_TexCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, ll_TexCoords).rgb : vec3(0.0);
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0;
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+    vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -766,7 +836,7 @@ void main()
     vec3 Lo = vec3(0.0);
 
     // ambient lighting (we now use IBL as the ambient term)
-    vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+    vec3 F = fresnelSchlickRoughness(max(dot(finalNormal, viewDirWS), 0.0), F0, roughness);
     
     // kS is equal to Fresnel
     vec3 kS = F;
@@ -779,12 +849,13 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;
 
-    vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
+    vec3 irradiance = texture(material.texture_irradiance, finalNormal).rgb;
     vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
 
     const float MAX_REFLECTION_LOD = 4.0;
+    vec3 R = reflect(-viewDirWS, finalNormal);
     vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
+    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(finalNormal, viewDirWS), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
     vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
 
@@ -793,19 +864,19 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], normal, N, fs_in.FragPos, ll_TexCoords, viewDirWS, albedo, metallic, roughness);
+            Lo += CalcPointLight(pointLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            Lo += CalcDirLight(dirLights[i], normal, N, fs_in.FragPos, ll_TexCoords, viewDirWS, vec3(1.0));
+            Lo += CalcDirLight(dirLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, vec3(1.0));
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            Lo += CalcSpotLight(spotLights[i], normal, N, fs_in.FragPos, ll_TexCoords, fs_in.FragPos, albedo, metallic, roughness);
+            Lo += CalcSpotLight(spotLights[i], finalNormal, N, FragPos, texCoords, FragPos, albedo, metallic, roughness);
     }
 
     if (areaLightsCount > 0)
@@ -827,8 +898,8 @@ void main()
 
         for (int i = 0; i < areaLightsCount; i++)
         {
-            if (areaLights[i].use)
-                Lo += CalcAreaLight(areaLights[i], normal, fs_in.FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+//            if (areaLights[i].use)
+//                Lo += CalcAreaLight(areaLights[i], finalNormal, FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 
@@ -853,7 +924,7 @@ void main()
     //color = vec3(ToSRGB(color)); // same as above
 
     // Sample the alpha value from the diffuse texture
-    float alpha = texture(material.texture_diffuse, fs_in.TexCoords).a;
+    float alpha = texture(material.texture_diffuse, texCoords).a;
 
     FragColor = vec4(color, alpha);
 
@@ -865,7 +936,7 @@ void main()
 // Calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
-    vec3 L = normalize(light.position - fs_in.FragPos);
+    vec3 L = normalize(light.position - FragPos);
     float theta = dot(L, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
 
@@ -879,18 +950,18 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
     
     // Compute ligh attenuation
-    float distance = length(light.position - fs_in.FragPos);
+    float distance = length(light.position - FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(FragPosLightSpace) : 0.0;
 
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow * material.shadowIntensity);  
@@ -951,11 +1022,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     // Shadow calculation
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fs_in.FragPosLightSpace, light.direction) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(FragPosLightSpace, light.direction) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fs_in.FragPosLightSpace) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(FragPosLightSpace) : 0.0;
 
 
     radiance *= (1.0 - shadow);  

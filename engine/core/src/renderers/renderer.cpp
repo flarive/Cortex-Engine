@@ -238,9 +238,8 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
-
-        if (type != ShaderType::PBR)
-            shader.setVec3("lightPos", light->getPosition());
+        
+        shader.setVec3("lightPos", light->getPosition());
 
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
@@ -350,11 +349,10 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
 
-        if (type != ShaderType::PBR)
-        {
-            shader.setVec3("lightPos", light->getPosition());
-            shader.setFloat("far_plane", far_plane);
-        }
+        
+        shader.setVec3("lightPos", light->getPosition());
+        shader.setFloat("far_plane", far_plane);
+        
 
         shader.setVec3("viewPos", m_camera->position);
         shader.setBool("enableShadows", enableShadows);

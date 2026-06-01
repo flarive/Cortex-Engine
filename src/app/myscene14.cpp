@@ -6,13 +6,22 @@ using namespace engine;
 
 MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
+        //.method = RenderMethod::BlinnPhong,
+        //.HDRSkyboxHide = true,
+        //.HDRSkyboxFilePath = "",
+        //.HDRSkyboxBlurStrength = 0.0f,
+        //.enableShadows = true,
+        //.shadowIntensity = 3.0f,
+        //.shadowMapsTextureSize = 2048
+
         .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "",
+        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
-        .enableShadows = true,
-        .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048
+        .shadowIntensity = 1.0f,
+        .iblDiffuseIntensity = 1.0f,
+        .iblSpecularIntensity = 1.0f,
+        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here
@@ -94,7 +103,7 @@ void MyScene14::init()
 
     // ground
     //auto myPlane = make_shared<Plane>();
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
     //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(28.0f));
     //auto entityPlane = make_shared<Entity>("MyPlane");
     //entityPlane->addComponent<TransformComponent>(trsPlane);
@@ -105,8 +114,14 @@ void MyScene14::init()
 
     // terrain
     auto myTerrain = make_shared<Terrain>(1.0f, 10);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
+    //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
+    myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/pbr/painted-wood/PaintedWood_Color.jpg",
+        "textures/pbr/painted-wood/PaintedWood_Normal.jpg",
+        "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
+        "pbr/painted-wood/PaintedWood_Roughness.jpg",
+        "pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
+        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
@@ -117,7 +132,8 @@ void MyScene14::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
-    mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    //mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    mySphere1->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 2.15f), vec3(0.4f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
@@ -125,7 +141,8 @@ void MyScene14::init()
     getEntityManager().addChild(entitySphere1);
 
     auto mySphere2 = make_shared<Sphere>();
-    mySphere2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    //mySphere2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    mySphere2->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
     auto trsSphere2 = Transform(vec3(2.0f, 1.8f, -10.0f), vec3(1.2f));
     auto entitySphere2 = make_shared<Entity>("MySphere2");
     entitySphere2->addComponent<TransformComponent>(trsSphere2);

@@ -233,19 +233,17 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
     ShaderType type = shader.getShaderType();
-    ShaderType typeTesselation = shaderTessellation.getShaderType();
+    ShaderType typeTessellation = shaderTessellation.getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
-        
         shader.setVec3("lightPos", light->getPosition());
-
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
     }
     
-    if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
+    if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setVec3("lightPos", light->getPosition());
@@ -341,7 +339,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
 
     ShaderType type = shader.getShaderType();
-    ShaderType typeTesselation = shaderTessellation.getShaderType();
+    ShaderType typeTessellation = shaderTessellation.getShaderType();
     
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
@@ -360,7 +358,7 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
 
     
-    if (typeTesselation == ShaderType::BlinnPhongTessellation || typeTesselation == ShaderType::PBRTessellation)
+    if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);

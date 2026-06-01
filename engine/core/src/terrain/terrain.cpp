@@ -88,64 +88,6 @@ void engine::Terrain::geometrySetup()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-//std::vector<engine::Vertex> engine::Terrain::generateVertices()
-//{
-//    std::vector<engine::Vertex> vertices;
-//    vertices.reserve(m_resolution * m_resolution * TERRAIN_TESSELLATION_PATCH_COUNT); // 4 vertices per quad
-//
-//    const glm::vec3 normal(0.0f, 1.0f, 0.0f);
-//
-//    int width = static_cast<int>(m_textureWidth);
-//    int height = static_cast<int>(m_textureHeight);
-//
-//    for (unsigned i = 0; i <= m_resolution - 1; i++)
-//    {
-//        for (unsigned j = 0; j <= m_resolution - 1; j++)
-//        {
-//            float x0 = -width / 2.0f + width * i / float(m_resolution);
-//            float x1 = -width / 2.0f + width * (i + 1) / float(m_resolution);
-//            float z0 = -height / 2.0f + height * j / float(m_resolution);
-//            float z1 = -height / 2.0f + height * (j + 1) / float(m_resolution);
-//
-//            // Flip the V coordinate to match OpenGL's bottom-left origin
-//            float u0 = (i / float(m_resolution)) * m_uvScale;
-//            float u1 = ((i + 1) / float(m_resolution)) * m_uvScale;
-//            float v0 = (1.0f - j / float(m_resolution)) * m_uvScale;  // Flipped V
-//            float v1 = (1.0f - (j + 1) / float(m_resolution)) * m_uvScale;  // Flipped V
-//
-//            // Vertex 1
-//            vertices.emplace_back(
-//                glm::vec3(x0, 0.0f, z0),
-//                normal,
-//                glm::vec2(u0, v0)
-//            );
-//
-//            // Vertex 2
-//            vertices.emplace_back(
-//                glm::vec3(x1, 0.0f, z0),
-//                normal,
-//                glm::vec2(u1, v0)
-//            );
-//
-//            // Vertex 3
-//            vertices.emplace_back(
-//                glm::vec3(x0, 0.0f, z1),
-//                normal,
-//                glm::vec2(u0, v1)
-//            );
-//
-//            // Vertex 4
-//            vertices.emplace_back(
-//                glm::vec3(x1, 0.0f, z1),
-//                normal,
-//                glm::vec2(u1, v1)
-//            );
-//        }
-//    }
-//
-//    return vertices;
-//}
-
 std::vector<engine::Vertex> engine::Terrain::generateVertices()
 {
     std::vector<engine::Vertex> vertices;
@@ -217,8 +159,6 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
             std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
             return;
         }
-
-        
 
         if (type == ShaderType::BlinnPhongTessellation)
         {

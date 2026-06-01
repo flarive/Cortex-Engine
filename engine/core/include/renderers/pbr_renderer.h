@@ -11,7 +11,7 @@ namespace engine
 	public:
 		// Main PBR shader
 		Shader pbrShader{};
-		Shader pbrShaderTesselation{};
+		Shader pbrShaderTessellation{};
 
 		// PBR environmentMap shader (for HDR skybox)
 		Shader backgroundShader{};

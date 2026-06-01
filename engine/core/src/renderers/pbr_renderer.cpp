@@ -415,7 +415,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // update user stuffs
-    update(pbrShader, pbrShaderTesselation);
+    update(pbrShader, pbrShaderTessellation);
     //update(outlineColorShader);
 
 
@@ -436,7 +436,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
 
     // compute light shadows using a depth map framebuffer
-    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, pbrShader, pbrShaderTesselation, update);
+    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, pbrShader, pbrShaderTessellation, update);
 
 
     
@@ -474,7 +474,7 @@ void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
     pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
-    pbrShaderTesselation.init("pbrTesselation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
+    pbrShaderTessellation.init("pbrTessellation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
 
     equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
     irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");
@@ -504,7 +504,7 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
         };
 
     setCounts(pbrShader);
-    setCounts(pbrShaderTesselation);
+    setCounts(pbrShaderTessellation);
 }
 
 engine::Shader& engine::PbrRenderer::getShader()

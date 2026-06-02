@@ -25,7 +25,7 @@ int main(int, char**)
 {
     // Init the app
     AppManager appManager;
-    auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    auto app = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //320, 240 //1280, 720
     if (!app)
         return EXIT_FAILURE;
 

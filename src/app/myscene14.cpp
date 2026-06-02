@@ -21,7 +21,6 @@ MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .shadowIntensity = 1.0f,
         .iblDiffuseIntensity = 1.0f,
         .iblSpecularIntensity = 1.0f,
-        .enableGammaCorrection = true
     })
 {
     // my application specific state gets initialized here
@@ -121,7 +120,7 @@ void MyScene14::init()
         "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
         "textures/pbr/painted-wood/PaintedWood_Roughness.jpg",
         "textures/pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
-        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
+        "textures/height/mountain_height.jpg"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);

@@ -8,6 +8,9 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform mat4 lightSpaceMatrix;
+uniform vec3 viewPos;
+uniform vec3 lightPos;
+
 
 uniform float heightFactor;
 uniform vec2 heightOffset;
@@ -24,6 +27,10 @@ in vec2 tcTextureCoord[];
 in vec3 tcTangent[];
 in vec3 tcBitangent[];
 in vec4 tcFragPosLightSpace[];
+in vec3 tcTangentLightPos[];
+in vec3 tcTangentViewPos[];
+in vec3 tcTangentFragPos[];
+
 
 // ===== OUTPUT =====
 out vec2 TexCoords;
@@ -32,6 +39,10 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 out vec4 FragPosLightSpace;
+out vec3 TangentLightPos;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
+
 
 out float Height;
 
@@ -142,6 +153,14 @@ void main()
     // 8. Light space position (better approach)
     // =========================================================
     FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
+
+    mat3 TBN = mat3(T, B, N);
+    mat3 invTBN = transpose(TBN);
+
+    TangentLightPos = invTBN * lightPos;
+    TangentViewPos  = invTBN * viewPos;
+    TangentFragPos  = invTBN * worldPos;
+
 
 
     // =========================================================

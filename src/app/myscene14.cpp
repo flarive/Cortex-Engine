@@ -119,8 +119,8 @@ void MyScene14::init()
     myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/pbr/painted-wood/PaintedWood_Color.jpg",
         "textures/pbr/painted-wood/PaintedWood_Normal.jpg",
         "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
-        "pbr/painted-wood/PaintedWood_Roughness.jpg",
-        "pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
+        "textures/pbr/painted-wood/PaintedWood_Roughness.jpg",
+        "textures/pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
         "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
@@ -132,17 +132,36 @@ void MyScene14::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
+
+    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
+        "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
+        "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
+        "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
+        "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
+        "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
+        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
+
     //mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    mySphere1->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 2.15f), vec3(0.4f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
     getEntityManager().addChild(entitySphere1);
 
+
+
     auto mySphere2 = make_shared<Sphere>();
     //mySphere2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-    mySphere2->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+
+    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/porcelain/Porcelain_Color.png",
+        "textures/pbr/porcelain/Porcelain_Normal.png",
+        "textures/pbr/porcelain/Porcelain_Metallic.png",
+        "textures/pbr/porcelain/Porcelain_Roughness.png",
+        "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
+        "textures/pbr/porcelain/Porcelain_Displace.png", 2.0f);
+    mySphere2->setup(matSphere2, UvMapping(1.0f));
     auto trsSphere2 = Transform(vec3(2.0f, 1.8f, -10.0f), vec3(1.2f));
     auto entitySphere2 = make_shared<Entity>("MySphere2");
     entitySphere2->addComponent<TransformComponent>(trsSphere2);

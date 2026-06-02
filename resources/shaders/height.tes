@@ -1,4 +1,4 @@
-#version 410 core
+#version 440 core
 
 // Tessellation Evaluation Shader for height mapping
 // https://wikis.khronos.org/opengl/Tessellation_Evaluation_Shader
@@ -133,7 +133,6 @@ void main()
 
     // orthogonalize
     T = normalize(T - dot(T, N) * N);
-
     vec3 B = normalize(cross(N, T));
 
     Tangent   = T;

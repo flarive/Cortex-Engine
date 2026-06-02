@@ -147,7 +147,7 @@ const float LUT_BIAS  = 0.5/LUT_SIZE;
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
-vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
 
 const int POISSON_SAMPLES = 4;
@@ -946,7 +946,7 @@ void main()
         for (int i = 0; i < areaLightsCount; i++)
         {
             if (areaLights[i].use)
-                result += CalcAreaLight(areaLights[i], finalNormal, FragPos, viewDirWS, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+                result += CalcAreaLight(areaLights[i], finalNormal, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 
@@ -1196,7 +1196,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
 }
 
 // Calculates the color when using an area light.
-vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular)
+vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular)
 {
     // Evaluate LTC shading
     vec3 diffuse = LTC_Evaluate(normal, V, P, mat3(1), light.points, light.twoSided, mDiffuse);

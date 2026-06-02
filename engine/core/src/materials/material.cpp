@@ -42,7 +42,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
     bool success = true;
 
 	// cleanup any previous bindings for this shader's material uniforms
-	if (shader.getShaderType() == ShaderType::PBR)
+	if (shader.getShaderType() == ShaderType::PBR || shader.getShaderType() == ShaderType::PBRTessellation)
     {
         shader.setBool("material.has_texture_diffuse_map", false);
         shader.setBool("material.has_texture_normal_map", false);

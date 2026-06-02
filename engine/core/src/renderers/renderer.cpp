@@ -238,7 +238,10 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
-        shader.setVec3("lightPos", light->getPosition());
+        
+        if (type != ShaderType::PBR)
+            shader.setVec3("lightPos", light->getPosition());
+        
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
     }
@@ -246,7 +249,10 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
-        shaderTessellation.setVec3("lightPos", light->getPosition());
+        
+        if (typeTessellation != ShaderType::PBRTessellation)
+            shaderTessellation.setVec3("lightPos", light->getPosition());
+
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
 
@@ -347,10 +353,10 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
 
-        
-        shader.setVec3("lightPos", light->getPosition());
+        if (type != ShaderType::PBR)
+            shader.setVec3("lightPos", light->getPosition());
+
         shader.setFloat("far_plane", far_plane);
-        
 
         shader.setVec3("viewPos", m_camera->position);
         shader.setBool("enableShadows", enableShadows);
@@ -363,7 +369,10 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);
         shaderTessellation.setMat4("view", view);
-        shaderTessellation.setVec3("lightPos", light->getPosition());
+        
+        if (typeTessellation != ShaderType::PBRTessellation)
+            shaderTessellation.setVec3("lightPos", light->getPosition());
+
         shaderTessellation.setVec3("viewPos", m_camera->position);
         shaderTessellation.setBool("enableShadows", enableShadows);
         shaderTessellation.setFloat("far_plane", far_plane);

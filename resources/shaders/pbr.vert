@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
 layout (location = 1) in vec3 aNormal; // the normal variable has attribute position 1
@@ -7,19 +7,6 @@ layout (location = 3) in vec3 aTangents; // the tangent variable has attribute p
 layout (location = 4) in vec3 aBitangents; // the bitangent variable has attribute position 4
 layout (location = 5) in ivec4 aBoneIds;  // Only used for animated models
 layout (location = 6) in vec4 aWeights;    // Only used for animated models
-
-//out VS_OUT {
-//    vec2 TexCoords;
-//    vec3 FragPos;
-//    vec3 Normal;
-//    vec3 Tangent;
-//    vec3 Bitangent;
-//    vec4 FragPosLightSpace;
-//
-//    vec3 TangentLightPos;
-//    vec3 TangentViewPos;
-//    vec3 TangentFragPos;
-//} vs2fs;
 
 out vec3 FragPos;
 out vec2 TexCoords;
@@ -85,26 +72,6 @@ void main()
     }
 
     // World space position
-//    vs2fs.FragPos = vec3(model * totalPosition);
-//   
-//    vs2fs.TexCoords = aTexCoords;
-//    vs2fs.Normal = normalMatrix * aNormal;
-//    vs2fs.Tangent = aTangents;
-//    vs2fs.Bitangent = aBitangents;
-//    vs2fs.FragPosLightSpace = lightSpaceMatrix * vec4(vs2fs.FragPos, 1.0);
-//
-//
-//    vec3 T = normalize(mat3(model) * aTangents);
-//    vec3 B = normalize(mat3(model) * aBitangents);
-//    vec3 N = normalize(mat3(model) * aNormal);
-//    mat3 TBN = transpose(mat3(T, B, N));
-//
-//    vs2fs.TangentLightPos = TBN * lightPos;
-//    vs2fs.TangentViewPos  = TBN * viewPos;
-//    vs2fs.TangentFragPos  = TBN * vs2fs.FragPos;
-
-
-    // World space position
     FragPos = vec3(model * totalPosition);
 
     // Normal handling
@@ -124,7 +91,7 @@ void main()
     Bitangent = aBitangents;
 
     // Light space position for shadow mapping
-    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0); // possible optim !
+    FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 
     // Handle gl_Position based on tessellation mode
     if (isTessellated)

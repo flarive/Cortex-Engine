@@ -22,21 +22,54 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material)
     setup(material, uv);
 }
 
+//void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
+//{
+//    m_material = material; // Store material reference
+//    m_uvScale = uv.getUvScale();
+//
+//    auto allTexturesLoaded = [this](bool) {
+//        TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
+//		m_textureWidth = std::get<2>(data);
+//        m_textureHeight = std::get<3>(data);
+//
+//        init();
+//    };
+//
+//    if (m_material && m_material->hasDiffuseMap())
+//        m_material->loadTexturesAsync(allTexturesLoaded);
+//}
+
 void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
-    m_material = material; // Store material reference
+    m_material = material;
     m_uvScale = uv.getUvScale();
 
     auto allTexturesLoaded = [this](bool) {
-        TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
-		m_textureWidth = std::get<2>(data);
-        m_textureHeight = std::get<3>(data);
+        if (this->m_material && this->m_material->hasHeightMap())
+        {
+            TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
+            m_textureWidth = std::get<2>(data);
+            m_textureHeight = std::get<3>(data);
+        }
+        else
+        {
+            m_textureWidth = 1024;
+            m_textureHeight = 1024;
+        }
 
         init();
-    };
+        };
 
-    if (m_material && m_material->hasDiffuseMap())
+    if (m_material)
+    {
         m_material->loadTexturesAsync(allTexturesLoaded);
+    }
+    else
+    {
+        m_textureWidth = 1024;
+        m_textureHeight = 1024;
+        init();
+    }
 }
 
 void engine::Terrain::init()
@@ -187,7 +220,6 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         shader.setBool("materialHeight.has_texture_height_map", true);
     }
     
-
     shader.setMat4("model", transformMatrix);
 
     if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)

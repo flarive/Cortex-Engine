@@ -83,6 +83,19 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
 
+    pbrShaderTessellation.use();
+    pbrShaderTessellation.setMat4("projection", projection);
+    pbrShaderTessellation.setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+    pbrShaderTessellation.setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+    pbrShaderTessellation.setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
+    pbrShaderTessellation.setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
+    pbrShaderTessellation.setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
+    pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShaderTessellation.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
@@ -398,6 +411,16 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
+
+    // PBR shader
+    pbrShaderTessellation.use();
+    pbrShaderTessellation.setMat4("projection", projection);
+    pbrShaderTessellation.setMat4("view", view);
+    pbrShaderTessellation.setVec3("viewPos", camera->position);
+    pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
     // bind pre-computed IBL data
     glActiveTexture(GL_TEXTURE0 + U_IRR);

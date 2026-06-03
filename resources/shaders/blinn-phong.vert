@@ -15,9 +15,9 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 out vec4 FragPosLightSpace;
-out vec3 TangentLightPos;
-out vec3 TangentViewPos;
-out vec3 TangentFragPos;
+out vec3 TangentLightPos; // ????
+out vec3 TangentViewPos; // ????
+out vec3 TangentFragPos; // ????
 
 
 uniform mat4 model;

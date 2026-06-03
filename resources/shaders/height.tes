@@ -1,7 +1,179 @@
-#version 440 core
+//#version 440 core
+//
+//// Tessellation Evaluation Shader for height mapping
+//// https://wikis.khronos.org/opengl/Tessellation_Evaluation_Shader
+////layout(quads, fractional_odd_spacing, cw) in;
+//layout(quads, fractional_odd_spacing, ccw) in;
+//
+//uniform mat4 model;
+//uniform mat4 view;
+//uniform mat4 projection;
+//uniform mat4 lightSpaceMatrix;
+//uniform vec3 viewPos;
+//uniform vec3 lightPos;
+//
+//
+//uniform float heightFactor;
+//uniform vec2 heightOffset;
+//
+//struct MaterialHeight {
+//    sampler2D texture_height;
+//    bool has_texture_height_map;
+//}; 
+//
+//uniform MaterialHeight materialHeight;
+//
+//// ===== INPUT =====
+//in vec2 tcTextureCoord[];
+//in vec3 tcTangent[];
+//in vec3 tcBitangent[];
+//in vec4 tcFragPosLightSpace[];
+//in vec3 tcTangentLightPos[];
+//in vec3 tcTangentViewPos[];
+//in vec3 tcTangentFragPos[];
+//
+//
+//// ===== OUTPUT =====
+//out vec2 TexCoords;
+//out vec3 FragPos;
+//out vec3 Normal;
+//out vec3 Tangent;
+//out vec3 Bitangent;
+//out vec4 FragPosLightSpace;
+//out vec3 TangentLightPos;
+//out vec3 TangentViewPos;
+//out vec3 TangentFragPos;
+//
+//
+//out float Height;
+//
+//void main()
+//{
+//    float u = gl_TessCoord.x;
+//    float v = gl_TessCoord.y;
+//
+//    // =========================================================
+//    // 1. UV interpolation (bilinear)
+//    // =========================================================
+//    vec2 tc0 = mix(tcTextureCoord[0], tcTextureCoord[1], u);
+//    vec2 tc1 = mix(tcTextureCoord[2], tcTextureCoord[3], u);
+//    vec2 texCoords = mix(tc0, tc1, v);
+//
+//    TexCoords = texCoords;
+//
+//    // =========================================================
+//    // 2. Position interpolation (object space)
+//    // =========================================================
+//    vec4 p0 = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, u);
+//    vec4 p1 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, u);
+//    vec4 p  = mix(p0, p1, v);
+//
+//    // =========================================================
+//    // 3. Height sampling
+//    // =========================================================
+//    float rawHeight = materialHeight.has_texture_height_map
+//        ? texture(materialHeight.texture_height, texCoords).r
+//        : 0.0;
+//
+//    Height = (rawHeight * 64.0 - 16.0) * heightFactor;
+//
+//    // =========================================================
+//    // 4. Compute displaced normal (CRITICAL)
+//    // =========================================================
+//    //float offset = 1.0 / 1024.0;
+//    //float hL = texture(materialHeight.texture_height, texCoords + vec2(-offset, 0)).r;
+//    //float hR = texture(materialHeight.texture_height, texCoords + vec2( offset, 0)).r;
+//    //float hD = texture(materialHeight.texture_height, texCoords + vec2(0, -offset)).r;
+//    //float hU = texture(materialHeight.texture_height, texCoords + vec2(0,  offset)).r;
+//
+//    //float scale = heightFactor * 64.0;
+//    
+//    //vec3 normal = normalize(cross(dz, dx));
+//
+//    // Secondary issue: your normal is in wrong space
+//    //vec3 dx = vec3(1.0, (hR - hL) * scale, 0.0);
+//    //vec3 dz = vec3(0.0, (hU - hD) * scale, 1.0);
+//
+//
+//    float texel = 1.0 / 1024.0;
+//
+//    float hL = texture(materialHeight.texture_height, texCoords + vec2(-texel, 0)).r;
+//    float hR = texture(materialHeight.texture_height, texCoords + vec2( texel, 0)).r;
+//    float hD = texture(materialHeight.texture_height, texCoords + vec2(0, -texel)).r;
+//    float hU = texture(materialHeight.texture_height, texCoords + vec2(0,  texel)).r;
+//
+//    float heightScale = heightFactor * 64.0;
+//
+//    
+//    float terrainScaleX = 512.0 / 1024.0; // = 0.5
+//    float terrainScaleZ = 512.0 / 1024.0; // = 0.5
+//
+//
+//    // Derivatives in *world space*
+//    vec3 dx = vec3(terrainScaleX, (hR - hL) * heightScale, 0.0);
+//    vec3 dz = vec3(0.0, (hU - hD) * heightScale, terrainScaleZ);
+//
+//
+//
+//    vec3 displacedNormal = normalize(cross(dz, dx));
+//
+//    // =========================================================
+//    // 5. Apply displacement
+//    // =========================================================
+//    //p.xyz += displacedNormal * Height;
+//    p.y += Height;
+//    
+//    p.x += heightOffset.x;
+//    p.z += heightOffset.y;
+//
+//    // =========================================================
+//    // 6. World space outputs
+//    // =========================================================
+//    vec3 worldPos = vec3(model * p);
+//
+//    FragPos = worldPos;
+//    Normal  = normalize(mat3(model) * displacedNormal);
+//
+//    // =========================================================
+//    // 7. TBN reconstruction (RIGHT PLACE)
+//    // =========================================================
+//    vec3 t0 = mix(tcTangent[0], tcTangent[1], u);
+//    vec3 t1 = mix(tcTangent[2], tcTangent[3], u);
+//    vec3 T  = normalize(mix(t0, t1, v));
+//
+//    vec3 N = displacedNormal;
+//
+//    // orthogonalize
+//    T = normalize(T - dot(T, N) * N);
+//    vec3 B = normalize(cross(N, T));
+//
+//    Tangent   = T;
+//    Bitangent = B;
+//
+//    // =========================================================
+//    // 8. Light space position (better approach)
+//    // =========================================================
+//    FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
+//
+//    mat3 TBN = mat3(T, B, N);
+//    mat3 invTBN = transpose(TBN);
+//
+//    TangentLightPos = invTBN * lightPos;
+//    TangentViewPos  = invTBN * viewPos;
+//    TangentFragPos  = invTBN * worldPos;
+//
+//
+//
+//    // =========================================================
+//    // 9. Final clip space position
+//    // =========================================================
+//    gl_Position = projection * view * vec4(worldPos, 1.0);
+//}
 
-// Tessellation Evaluation Shader for height mapping
-// https://wikis.khronos.org/opengl/Tessellation_Evaluation_Shader
+
+
+
+#version 440 core
 layout(quads, fractional_odd_spacing, cw) in;
 
 uniform mat4 model;
@@ -11,28 +183,20 @@ uniform mat4 lightSpaceMatrix;
 uniform vec3 viewPos;
 uniform vec3 lightPos;
 
-
 uniform float heightFactor;
 uniform vec2 heightOffset;
 
 struct MaterialHeight {
     sampler2D texture_height;
     bool has_texture_height_map;
-}; 
-
+};
 uniform MaterialHeight materialHeight;
 
-// ===== INPUT =====
 in vec2 tcTextureCoord[];
 in vec3 tcTangent[];
 in vec3 tcBitangent[];
 in vec4 tcFragPosLightSpace[];
-in vec3 tcTangentLightPos[];
-in vec3 tcTangentViewPos[];
-in vec3 tcTangentFragPos[];
 
-
-// ===== OUTPUT =====
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 Normal;
@@ -42,8 +206,6 @@ out vec4 FragPosLightSpace;
 out vec3 TangentLightPos;
 out vec3 TangentViewPos;
 out vec3 TangentFragPos;
-
-
 out float Height;
 
 void main()
@@ -51,120 +213,72 @@ void main()
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-    // =========================================================
-    // 1. UV interpolation (bilinear)
-    // =========================================================
+    // UV bilinear interpolation
     vec2 tc0 = mix(tcTextureCoord[0], tcTextureCoord[1], u);
     vec2 tc1 = mix(tcTextureCoord[2], tcTextureCoord[3], u);
     vec2 texCoords = mix(tc0, tc1, v);
-
     TexCoords = texCoords;
 
-    // =========================================================
-    // 2. Position interpolation (object space)
-    // =========================================================
+    // Object-space position bilinear interpolation
     vec4 p0 = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, u);
     vec4 p1 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, u);
     vec4 p  = mix(p0, p1, v);
 
-    // =========================================================
-    // 3. Height sampling
-    // =========================================================
-    float rawHeight = materialHeight.has_texture_height_map
-        ? texture(materialHeight.texture_height, texCoords).r
-        : 0.0;
+    float rawHeight = 0.0;
+    if (materialHeight.has_texture_height_map)
+        rawHeight = texture(materialHeight.texture_height, texCoords).r;
 
     Height = (rawHeight * 64.0 - 16.0) * heightFactor;
 
-    // =========================================================
-    // 4. Compute displaced normal (CRITICAL)
-    // =========================================================
-    //float offset = 1.0 / 1024.0;
-    //float hL = texture(materialHeight.texture_height, texCoords + vec2(-offset, 0)).r;
-    //float hR = texture(materialHeight.texture_height, texCoords + vec2( offset, 0)).r;
-    //float hD = texture(materialHeight.texture_height, texCoords + vec2(0, -offset)).r;
-    //float hU = texture(materialHeight.texture_height, texCoords + vec2(0,  offset)).r;
-
-    //float scale = heightFactor * 64.0;
-    
-    //vec3 normal = normalize(cross(dz, dx));
-
-    // Secondary issue: your normal is in wrong space
-    //vec3 dx = vec3(1.0, (hR - hL) * scale, 0.0);
-    //vec3 dz = vec3(0.0, (hU - hD) * scale, 1.0);
-
-
-    float texel = 1.0 / 1024.0;
-
-    float hL = texture(materialHeight.texture_height, texCoords + vec2(-texel, 0)).r;
-    float hR = texture(materialHeight.texture_height, texCoords + vec2( texel, 0)).r;
-    float hD = texture(materialHeight.texture_height, texCoords + vec2(0, -texel)).r;
-    float hU = texture(materialHeight.texture_height, texCoords + vec2(0,  texel)).r;
+    // Heightfield normal from neighboring samples
+    float texel = 1.0 / 1024.0; // better: pass real texture size as uniform
+    float hL = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(-texel, 0.0)).r : rawHeight;
+    float hR = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2( texel, 0.0)).r : rawHeight;
+    float hD = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(0.0, -texel)).r : rawHeight;
+    float hU = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(0.0,  texel)).r : rawHeight;
 
     float heightScale = heightFactor * 64.0;
 
-    
-    float terrainScaleX = 512.0 / 1024.0; // = 0.5
-    float terrainScaleZ = 512.0 / 1024.0; // = 0.5
+    // Local terrain spacing: tweak if needed / ideally provide via uniforms
+    float terrainScaleX = 1.0;
+    float terrainScaleZ = 1.0;
 
-
-    // Derivatives in *world space*
     vec3 dx = vec3(terrainScaleX, (hR - hL) * heightScale, 0.0);
     vec3 dz = vec3(0.0, (hU - hD) * heightScale, terrainScaleZ);
 
+    vec3 localNormal = normalize(cross(dz, dx));
 
-
-    vec3 displacedNormal = normalize(cross(dz, dx));
-
-    // =========================================================
-    // 5. Apply displacement
-    // =========================================================
-    //p.xyz += displacedNormal * Height;
+    // Apply vertical displacement in local/object space
     p.y += Height;
-    
     p.x += heightOffset.x;
     p.z += heightOffset.y;
 
-    // =========================================================
-    // 6. World space outputs
-    // =========================================================
     vec3 worldPos = vec3(model * p);
-
     FragPos = worldPos;
-    Normal  = normalize(mat3(model) * displacedNormal);
 
-    // =========================================================
-    // 7. TBN reconstruction (RIGHT PLACE)
-    // =========================================================
+    // Proper world normal
+    mat3 normalMat = transpose(inverse(mat3(model)));
+    vec3 worldNormal = normalize(normalMat * localNormal);
+    Normal = worldNormal;
+
+    // Interpolate tangent in local/object space, then transform to world
     vec3 t0 = mix(tcTangent[0], tcTangent[1], u);
     vec3 t1 = mix(tcTangent[2], tcTangent[3], u);
-    vec3 T  = normalize(mix(t0, t1, v));
+    vec3 localT = normalize(mix(t0, t1, v));
 
-    vec3 N = displacedNormal;
+    vec3 worldT = normalize(mat3(model) * localT);
+    worldT = normalize(worldT - dot(worldT, worldNormal) * worldNormal);
+    vec3 worldB = normalize(cross(worldNormal, worldT));
 
-    // orthogonalize
-    T = normalize(T - dot(T, N) * N);
-    vec3 B = normalize(cross(N, T));
+    Tangent = worldT;
+    Bitangent = worldB;
 
-    Tangent   = T;
-    Bitangent = B;
-
-    // =========================================================
-    // 8. Light space position (better approach)
-    // =========================================================
     FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
 
-    mat3 TBN = mat3(T, B, N);
-    mat3 invTBN = transpose(TBN);
+    mat3 TBN = transpose(mat3(worldT, worldB, worldNormal));
+    TangentLightPos = TBN * lightPos;
+    TangentViewPos  = TBN * viewPos;
+    TangentFragPos  = TBN * worldPos;
 
-    TangentLightPos = invTBN * lightPos;
-    TangentViewPos  = invTBN * viewPos;
-    TangentFragPos  = invTBN * worldPos;
-
-
-
-    // =========================================================
-    // 9. Final clip space position
-    // =========================================================
     gl_Position = projection * view * vec4(worldPos, 1.0);
 }

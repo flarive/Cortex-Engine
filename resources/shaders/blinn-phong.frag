@@ -88,6 +88,8 @@ struct AreaLight
 };
 
 // coming from previous shader
+// blinnphong.frag if no tessellation (VS => FS)
+// height.tes if tesselation (VS => TCS => TES => FS)
 in vec3 FragPos;
 in vec2 TexCoords;
 in vec3 Normal;
@@ -352,52 +354,19 @@ float ComputePointShadowBias(vec3 geomNormal, vec3 lightDir, float baseBias)
     return clamp(baseBias * (1.5 - ndotl), baseBias, baseBias * 6.0);
 }
 
-//float ShadowCalculationPCFOptimized(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, vec3 lightPos)
-//{
-//    // perform perspective divide
-//    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-//    // transform to [0,1] range
-//    projCoords = projCoords * 0.5 + 0.5;
-//    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-//    float closestDepth = texture(texture_shadowMap, projCoords.xy).r; 
-//    // get depth of current fragment from light's perspective
-//    float currentDepth = projCoords.z;
-//    // calculate bias (based on depth map resolution and slope)
-//    vec3 n_normal = normalize(normal);
-//    vec3 lightDir = normalize(lightPos - fragPos);
-//    //float bias = max(0.005 * (1.0 - dot(normal, lightDir)), 0.0005);
-//    float bias = clamp(0.0005 * tan(acos(dot(n_normal, lightDir))), 0.0001, 0.01);
-//    // check whether current frag pos is in shadow
-//    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-//    // PCF (shadow anti aliasing))
-//    float shadow = 0.0;
-//    vec2 texelSize = 1.0 / textureSize(texture_shadowMap, 0);
-//    for(int x = -1; x <= 1; ++x)
-//    {
-//        for(int y = -1; y <= 1; ++y)
-//        {
-//            float pcfDepth = texture(texture_shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-//            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-//        }    
-//    }
-//    shadow /= 9.0;
-//
-//    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-//    if(projCoords.z > 1.0)
-//        shadow = 0.0;
-//        
-//    return shadow;
-//}
-
-// hard edged shadow calculation
+// simple hard edged shadow calculation
 float ShadowCalculationSimple(vec4 fragPosLightSpace)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // early escape if outside light frustum
-    if (projCoords.z > 1.0)
+    // Reject fragments outside light frustum / shadow map
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0 ||
+        projCoords.z < 0.0 || projCoords.z > 1.0)
+    {
         return 0.0;
+    }
 
     float bias = 0.005;
     float shadow = 0.0;
@@ -425,11 +394,13 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, ve
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Outside light frustum -> no shadow
-    if (projCoords.z > 1.0 ||
-        projCoords.x < 0.0 || projCoords.x > 1.0 ||
-        projCoords.y < 0.0 || projCoords.y > 1.0)
+    // Reject fragments outside light frustum / shadow map
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0 ||
+        projCoords.z < 0.0 || projCoords.z > 1.0)
+    {
         return 0.0;
+    }
 
     float shadow = 0.0;
 
@@ -471,11 +442,13 @@ float ShadowCalculationSoft(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Outside light frustum -> no shadow
-    if (projCoords.z > 1.0 ||
-        projCoords.x < 0.0 || projCoords.x > 1.0 ||
-        projCoords.y < 0.0 || projCoords.y > 1.0)
+    // Reject fragments outside light frustum / shadow map
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0 ||
+        projCoords.z < 0.0 || projCoords.z > 1.0)
+    {
         return 0.0;
+    }
 
     // Bias computation (to avoid shadow acne)
     vec3 lightDir = normalize(lightPos - fragPos);
@@ -559,11 +532,13 @@ float ShadowCalculationPCSS(vec4 fragPosLightSpace, vec3 fragPos, vec3 normal, v
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 
-    // Outside light frustum -> no shadow
-    if (projCoords.z > 1.0 ||
-        projCoords.x < 0.0 || projCoords.x > 1.0 ||
-        projCoords.y < 0.0 || projCoords.y > 1.0)
+    // Reject fragments outside light frustum / shadow map
+    if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+        projCoords.y < 0.0 || projCoords.y > 1.0 ||
+        projCoords.z < 0.0 || projCoords.z > 1.0)
+    {
         return 0.0;
+    }
 
     // Bias computation (to avoid shadow acne)
     vec3 lightDir = normalize(lightPos - fragPos);

@@ -19,7 +19,8 @@ MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
         .shadowIntensity = 1.0f,
-        .iblDiffuseIntensity = 1.0f,
+        .shadowMapsTextureSize = 2048,
+        .iblDiffuseIntensity = 4.0f,
         .iblSpecularIntensity = 1.0f,
     })
 {
@@ -115,12 +116,12 @@ void MyScene14::init()
     auto myTerrain = make_shared<Terrain>(1.0f, 10);
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
-    myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/pbr/painted-wood/PaintedWood_Color.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Normal.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Roughness.jpg",
-        "textures/pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
-        "textures/height/mountain_height.jpg"), UvMapping(1.0f));
+    myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg",
+        "",
+        "",
+        "",
+        "",
+        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);

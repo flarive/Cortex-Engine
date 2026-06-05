@@ -3,8 +3,13 @@
 layout(quads, fractional_odd_spacing, cw) in;
 
 uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 uniform mat4 lightSpaceMatrix;
+uniform vec3 viewPos;
+uniform vec3 lightPos;
 
+uniform float heightTextureSize;
 uniform float heightFactor;
 uniform vec2 heightOffset;
 
@@ -16,68 +21,158 @@ struct MaterialHeight
 
 uniform MaterialHeight materialHeight;
 
-in vec2 tcTexCoords[];
+
+in vec2 tcTextureCoord[];
+in vec3 tcTangent[];
+in vec3 tcBitangent[];
+in vec4 tcFragPosLightSpace[];
+
+out vec2 TexCoords;
+out vec3 FragPos;
+out vec3 Normal;
+out vec3 Tangent;
+out vec3 Bitangent;
+out vec4 FragPosLightSpace;
+out vec3 TangentLightPos;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
+out float Height;
+
+
+
 
 void main()
 {
+//    float u = gl_TessCoord.x;
+//    float v = gl_TessCoord.y;
+//
+//    //------------------------------------
+//    // UV
+//    //------------------------------------
+//
+//    vec2 tc0 = mix(tcTextureCoord[0], tcTextureCoord[1], u);
+//    vec2 tc1 = mix(tcTextureCoord[2], tcTextureCoord[3], u);
+//
+//    vec2 texCoords = mix(tc0, tc1, v);
+//
+//    //------------------------------------
+//    // Object-space position
+//    //------------------------------------
+//
+//    vec4 p0 = mix(gl_in[0].gl_Position,
+//                  gl_in[1].gl_Position,
+//                  u);
+//
+//    vec4 p1 = mix(gl_in[2].gl_Position,
+//                  gl_in[3].gl_Position,
+//                  u);
+//
+//    vec4 p = mix(p0, p1, v);
+//
+//    //------------------------------------
+//    // Height displacement
+//    //------------------------------------
+//
+//    float rawHeight = 0.0;
+//
+//    if(materialHeight.has_texture_height_map)
+//    {
+//        rawHeight =
+//            texture(
+//                materialHeight.texture_height,
+//                texCoords
+//            ).r;
+//    }
+//
+//    float height =
+//        (rawHeight * 64.0 - 16.0)
+//        * heightFactor;
+//
+//    p.y += height;
+//
+//    
+//    p.x += heightOffset.x;
+//    p.z += heightOffset.y;
+//
+//    //------------------------------------
+//    // World -> Light Space
+//    //------------------------------------
+//
+//    vec4 worldPos = model * p;
+//
+//    gl_Position =
+//        lightSpaceMatrix *
+//        worldPos;
+
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 
-    //------------------------------------
-    // UV
-    //------------------------------------
-
-    vec2 tc0 = mix(tcTexCoords[0], tcTexCoords[1], u);
-    vec2 tc1 = mix(tcTexCoords[2], tcTexCoords[3], u);
-
+    // UV bilinear interpolation
+    vec2 tc0 = mix(tcTextureCoord[0], tcTextureCoord[1], u);
+    vec2 tc1 = mix(tcTextureCoord[2], tcTextureCoord[3], u);
     vec2 texCoords = mix(tc0, tc1, v);
+    TexCoords = texCoords;
 
-    //------------------------------------
-    // Object-space position
-    //------------------------------------
-
-    vec4 p0 = mix(gl_in[0].gl_Position,
-                  gl_in[1].gl_Position,
-                  u);
-
-    vec4 p1 = mix(gl_in[2].gl_Position,
-                  gl_in[3].gl_Position,
-                  u);
-
-    vec4 p = mix(p0, p1, v);
-
-    //------------------------------------
-    // Height displacement
-    //------------------------------------
+    // Object-space position bilinear interpolation
+    vec4 p0 = mix(gl_in[0].gl_Position, gl_in[1].gl_Position, u);
+    vec4 p1 = mix(gl_in[2].gl_Position, gl_in[3].gl_Position, u);
+    vec4 p  = mix(p0, p1, v);
 
     float rawHeight = 0.0;
+    if (materialHeight.has_texture_height_map)
+        rawHeight = texture(materialHeight.texture_height, texCoords).r;
 
-    if(materialHeight.has_texture_height_map)
-    {
-        rawHeight =
-            texture(
-                materialHeight.texture_height,
-                texCoords
-            ).r;
-    }
+    Height = (rawHeight * 64.0 - 16.0) * heightFactor;
 
-    float height =
-        (rawHeight * 64.0 - 16.0)
-        * heightFactor;
+    // Heightfield normal from neighboring samples
+    float texel = 1.0 / heightTextureSize;
+    float hL = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(-texel, 0.0)).r : rawHeight;
+    float hR = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2( texel, 0.0)).r : rawHeight;
+    float hD = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(0.0, -texel)).r : rawHeight;
+    float hU = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords + vec2(0.0,  texel)).r : rawHeight;
 
-    p.y += height;
+    float heightScale = heightFactor * 64.0;
 
-    
+    // Local terrain spacing: tweak if needed / ideally provide via uniforms
+    float terrainScaleX = 1.0;
+    float terrainScaleZ = 1.0;
+
+    vec3 dx = vec3(terrainScaleX, (hR - hL) * heightScale, 0.0);
+    vec3 dz = vec3(0.0, (hU - hD) * heightScale, terrainScaleZ);
+
+    vec3 localNormal = normalize(cross(dz, dx));
+
+    // Apply vertical displacement in local/object space
+    p.y += Height;
     p.x += heightOffset.x;
     p.z += heightOffset.y;
 
-    //------------------------------------
-    // World -> Light Space
-    //------------------------------------
+    vec3 worldPos = vec3(model * p);
+    FragPos = worldPos;
 
-    vec4 worldPos = model * p;
+    // Proper world normal
+    mat3 normalMat = transpose(inverse(mat3(model)));
+    vec3 worldNormal = normalize(normalMat * localNormal);
+    Normal = worldNormal;
 
-    gl_Position =
-        lightSpaceMatrix *
-        worldPos;
+    // Interpolate tangent in local/object space, then transform to world
+    vec3 t0 = mix(tcTangent[0], tcTangent[1], u);
+    vec3 t1 = mix(tcTangent[2], tcTangent[3], u);
+    vec3 localT = normalize(mix(t0, t1, v));
+
+    vec3 worldT = normalize(mat3(model) * localT);
+    worldT = normalize(worldT - dot(worldT, worldNormal) * worldNormal);
+    vec3 worldB = normalize(cross(worldNormal, worldT));
+
+    Tangent = worldT;
+    Bitangent = worldB;
+
+    FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
+
+    mat3 TBN = transpose(mat3(worldT, worldB, worldNormal));
+    TangentLightPos = TBN * lightPos;
+    TangentViewPos  = TBN * viewPos;
+    TangentFragPos  = TBN * worldPos;
+
+    gl_Position = projection * view * vec4(worldPos, 1.0);
 }

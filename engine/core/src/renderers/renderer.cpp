@@ -253,6 +253,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
         if (typeTessellation != ShaderType::PBRTessellation)
             shaderTessellation.setVec3("lightPos", light->getPosition());
 
+        shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
 

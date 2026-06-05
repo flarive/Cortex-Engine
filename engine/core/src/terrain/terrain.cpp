@@ -232,9 +232,13 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     if (type == ShaderType::BlinnPhongTessellation  || type == ShaderType::PBRTessellation || type == ShaderType::DepthBufferDirectionalLightsTessellation)
     {
-        shader.setFloat("heightTextureSize", m_textureWidth);
         shader.setFloat("heightFactor", m_heightFactor);
         shader.setVec2("heightOffset", m_heightOffset);
+
+        if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
+        {
+            shader.setFloat("heightTextureSize", m_textureWidth);
+        }
     }
    
 

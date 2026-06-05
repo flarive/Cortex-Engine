@@ -2,24 +2,73 @@
 
 layout(vertices = 4) out;
 
+uniform mat4 model;
+uniform mat4 view;
+
 in vec2 TexCoords[];
-out vec2 tcTexCoords[];
+in vec3 Tangent[];
+in vec3 Bitangent[];
+in vec4 FragPosLightSpace[];
+
+out vec2 tcTextureCoord[];
+out vec3 tcTangent[];
+out vec3 tcBitangent[];
+out vec4 tcFragPosLightSpace[];
 
 void main()
 {
-    tcTexCoords[gl_InvocationID] = TexCoords[gl_InvocationID];
+//    tcTexCoords[gl_InvocationID] = TexCoords[gl_InvocationID];
+//
+//    gl_out[gl_InvocationID].gl_Position =
+//        gl_in[gl_InvocationID].gl_Position;
+//
+//    if(gl_InvocationID == 0)
+//    {
+//        gl_TessLevelOuter[0] = 16.0;
+//        gl_TessLevelOuter[1] = 16.0;
+//        gl_TessLevelOuter[2] = 16.0;
+//        gl_TessLevelOuter[3] = 16.0;
+//
+//        gl_TessLevelInner[0] = 16.0;
+//        gl_TessLevelInner[1] = 16.0;
+//    }
 
-    gl_out[gl_InvocationID].gl_Position =
-        gl_in[gl_InvocationID].gl_Position;
 
-    if(gl_InvocationID == 0)
+    tcTextureCoord[gl_InvocationID]    = TexCoords[gl_InvocationID];
+    tcTangent[gl_InvocationID]         = Tangent[gl_InvocationID];
+    tcBitangent[gl_InvocationID]       = Bitangent[gl_InvocationID];
+    tcFragPosLightSpace[gl_InvocationID] = FragPosLightSpace[gl_InvocationID];
+
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+
+    if (gl_InvocationID == 0)
     {
-        gl_TessLevelOuter[0] = 16.0;
-        gl_TessLevelOuter[1] = 16.0;
-        gl_TessLevelOuter[2] = 16.0;
-        gl_TessLevelOuter[3] = 16.0;
+        const int   MIN_TESS_LEVEL = 4;
+        const int   MAX_TESS_LEVEL = 64;
+        const float MIN_DISTANCE   = 20.0;
+        const float MAX_DISTANCE   = 800.0;
 
-        gl_TessLevelInner[0] = 16.0;
-        gl_TessLevelInner[1] = 16.0;
+        vec4 eye0 = view * model * gl_in[0].gl_Position;
+        vec4 eye1 = view * model * gl_in[1].gl_Position;
+        vec4 eye2 = view * model * gl_in[2].gl_Position;
+        vec4 eye3 = view * model * gl_in[3].gl_Position;
+
+        float d0 = clamp((abs(eye0.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float d1 = clamp((abs(eye1.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float d2 = clamp((abs(eye2.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+        float d3 = clamp((abs(eye3.z) - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE), 0.0, 1.0);
+
+        float tess0 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(d0, d1));
+        float tess1 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(d1, d3));
+        float tess2 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(d2, d3));
+        float tess3 = mix(float(MAX_TESS_LEVEL), float(MIN_TESS_LEVEL), min(d0, d2));
+
+        gl_TessLevelOuter[0] = tess0;
+        gl_TessLevelOuter[1] = tess1;
+        gl_TessLevelOuter[2] = tess2;
+        gl_TessLevelOuter[3] = tess3;
+
+        gl_TessLevelInner[0] = max(tess1, tess3);
+        gl_TessLevelInner[1] = max(tess0, tess2);
     }
 }

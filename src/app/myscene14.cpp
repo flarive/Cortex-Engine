@@ -18,10 +18,10 @@ MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
-        .shadowIntensity = 1.0f,
+        .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
         .iblDiffuseIntensity = 4.0f,
-        .iblSpecularIntensity = 1.0f,
+        .iblSpecularIntensity = 1.0f
     })
 {
     // my application specific state gets initialized here
@@ -47,10 +47,10 @@ void MyScene14::init()
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(2.0f);
+    light1->setIntensity(3.0f);
     light1->setCutoff(32.0f);
     light1->setOuterCutoff(48.0f);
-    light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
+    light1->setTarget(vec3(-1.0f, -2.0f, 1.0f));
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
@@ -132,6 +132,7 @@ void MyScene14::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
+    //mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
 
     auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
         "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
@@ -140,10 +141,9 @@ void MyScene14::init()
         "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
-
-    //mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
     mySphere1->setup(matSphere1, UvMapping(1.0f));
-    auto trsSphere1 = Transform(vec3(0.0f, 0.16f, 2.15f), vec3(0.4f));
+    
+    auto trsSphere1 = Transform(vec3(0.0f, -4.0f, -3.0f), vec3(1.5f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(mySphere1);

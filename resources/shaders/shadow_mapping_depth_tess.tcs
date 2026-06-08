@@ -17,23 +17,6 @@ out vec4 tcFragPosLightSpace[];
 
 void main()
 {
-//    tcTexCoords[gl_InvocationID] = TexCoords[gl_InvocationID];
-//
-//    gl_out[gl_InvocationID].gl_Position =
-//        gl_in[gl_InvocationID].gl_Position;
-//
-//    if(gl_InvocationID == 0)
-//    {
-//        gl_TessLevelOuter[0] = 16.0;
-//        gl_TessLevelOuter[1] = 16.0;
-//        gl_TessLevelOuter[2] = 16.0;
-//        gl_TessLevelOuter[3] = 16.0;
-//
-//        gl_TessLevelInner[0] = 16.0;
-//        gl_TessLevelInner[1] = 16.0;
-//    }
-
-
     tcTextureCoord[gl_InvocationID]    = TexCoords[gl_InvocationID];
     tcTangent[gl_InvocationID]         = Tangent[gl_InvocationID];
     tcBitangent[gl_InvocationID]       = Bitangent[gl_InvocationID];

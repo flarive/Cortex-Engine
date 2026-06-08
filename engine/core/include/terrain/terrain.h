@@ -49,7 +49,7 @@ namespace engine
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
                 {"resolution", EditorProperty { "Resolution", getResolution(), editable, 1.0f, 25.0f, 1.0f, "%.0f" }},
-                {"heightfactor", EditorProperty { "Height", getHeightFactor(), editable, 0.1f, 100.0f, 0.1f, "%.1f" }},
+                {"heightfactor", EditorProperty { "Height", getHeightFactor(), editable, 0.0f, 100.0f, 0.1f, "%.1f" }},
                 {"offset", EditorProperty { "Offset", getHeightOffset(), editable, 0.0f, 100.0f, 1.0f, "%.0f" }},
                 {"uvscale", EditorProperty { "UV scale", getUvScale(), editable, 0.0f, 10.0f, 0.01f, "%.3f"}},
                 {"canCastShadows", EditorProperty { "Cast shadows", canCastShadows(), editable, 0.0f, 10.0f, 0.01f, "%.3f" }},

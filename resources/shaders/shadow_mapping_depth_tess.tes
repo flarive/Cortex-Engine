@@ -38,72 +38,8 @@ out vec3 TangentViewPos;
 out vec3 TangentFragPos;
 out float Height;
 
-
-
-
 void main()
 {
-//    float u = gl_TessCoord.x;
-//    float v = gl_TessCoord.y;
-//
-//    //------------------------------------
-//    // UV
-//    //------------------------------------
-//
-//    vec2 tc0 = mix(tcTextureCoord[0], tcTextureCoord[1], u);
-//    vec2 tc1 = mix(tcTextureCoord[2], tcTextureCoord[3], u);
-//
-//    vec2 texCoords = mix(tc0, tc1, v);
-//
-//    //------------------------------------
-//    // Object-space position
-//    //------------------------------------
-//
-//    vec4 p0 = mix(gl_in[0].gl_Position,
-//                  gl_in[1].gl_Position,
-//                  u);
-//
-//    vec4 p1 = mix(gl_in[2].gl_Position,
-//                  gl_in[3].gl_Position,
-//                  u);
-//
-//    vec4 p = mix(p0, p1, v);
-//
-//    //------------------------------------
-//    // Height displacement
-//    //------------------------------------
-//
-//    float rawHeight = 0.0;
-//
-//    if(materialHeight.has_texture_height_map)
-//    {
-//        rawHeight =
-//            texture(
-//                materialHeight.texture_height,
-//                texCoords
-//            ).r;
-//    }
-//
-//    float height =
-//        (rawHeight * 64.0 - 16.0)
-//        * heightFactor;
-//
-//    p.y += height;
-//
-//    
-//    p.x += heightOffset.x;
-//    p.z += heightOffset.y;
-//
-//    //------------------------------------
-//    // World -> Light Space
-//    //------------------------------------
-//
-//    vec4 worldPos = model * p;
-//
-//    gl_Position =
-//        lightSpaceMatrix *
-//        worldPos;
-
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
 

@@ -1096,7 +1096,11 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     vec3 lightDir = normalize(lightPos - fragPos);
 
     // Diffuse shading
-    float diff = max(dot(normal, light.direction), 0.0);
+    float diff = 0.0;
+    if (isTessellated)
+        diff = max(dot(normalize(normal), lightDir), 0.0);
+    else
+        diff = max(dot(normalize(normal), normalize(light.direction)), 0.0);
 
     // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
     vec3 halfwayDir = normalize(lightDir + viewDir);  
@@ -1105,7 +1109,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     // Attenuation based on distance
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    
     
     float theta = dot(lightDir, normalize(-light.direction));
 

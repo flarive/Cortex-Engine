@@ -103,7 +103,7 @@ void MyScene14::init()
 
     // ground
     //auto myPlane = make_shared<Plane>();
-    //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg"), UvMapping(1.0f));
     //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(28.0f));
     //auto entityPlane = make_shared<Entity>("MyPlane");
     //entityPlane->addComponent<TransformComponent>(trsPlane);

@@ -891,6 +891,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
         return vec3(0.0);
     
     vec3 H = normalize(viewDir + L);
+    //float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
 
     float NdotL = 0.0;
     if (isTessellated)

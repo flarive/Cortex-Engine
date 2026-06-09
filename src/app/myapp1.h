@@ -22,7 +22,7 @@
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene14;
+using MyScene = MyScene4;
 
 class MyApp1 final : public App
 {

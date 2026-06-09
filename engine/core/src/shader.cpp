@@ -7,6 +7,24 @@
 #include "../include/common_defines.h"
 #include "../include/managers/log_manager.h"
 
+
+// Auto select Nvidia or AMD GPU instead of builtin intel GPU
+#define FORCE_FASTEST_GPU
+
+// Auto select Nvidia or AMD GPU instead of builtin intel GPU
+#ifdef FORCE_FASTEST_GPU
+extern "C" {
+    __declspec(dllexport) uint32_t NvOptimusEnablement = 1;
+    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#else
+extern "C" {
+    __declspec(dllexport) uint32_t NvOptimusEnablement = 0;
+    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0;
+}
+#endif
+
+
 /// <summary>
 /// OpenGL simple pipeline
 /// VS => FS

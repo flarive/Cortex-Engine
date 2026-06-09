@@ -108,7 +108,9 @@ struct SpotLight {
   
     vec3 ambient;
     vec3 diffuse;
-    vec3 specular;       
+    vec3 specular;
+    
+    float intensity;
 };
 
 struct AreaLight {
@@ -738,6 +740,9 @@ void main()
         finalNormal = N;
     }
 
+
+
+
     //float dotNV = clamp(dot(N, viewDirWS), 0.0f, 1.0f);
     float dotNV = clamp(dot(finalNormal, viewDirWS), 0.0f, 1.0f);
 
@@ -880,28 +885,33 @@ void main()
 // Calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 albedo, float metallic, float roughness)
 {
-    vec3 L = normalize(light.position - FragPos);
+    vec3 L = normalize(light.position - fragPos);
     float theta = dot(L, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
 
     // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
     float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
+    //float intensity = light.intensity;
 
     if (theta < light.outerCutOff)
         return vec3(0.0);
     
     vec3 H = normalize(viewDir + L);
-    //float NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
 
     float NdotL = 0.0;
     if (isTessellated)
         NdotL = max(dot(normalize(normal), normalize(L)), 0.0);
     else
         NdotL = max(dot(normalize(normal), normalize(light.direction)), 0.0);
+
+    //float NdotL = max(dot(normalize(normal), normalize(L)), 0.0);
+
     
     // Compute ligh attenuation
-    float distance = length(light.position - FragPos);
+    float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    //float attenuation = 1.0 / (1.0 + 0.01 * distance + 0.0002 * distance * distance); // for large terrains
+
     vec3 radiance = light.diffuse * intensity * attenuation;
 
     // Compute shadow factor

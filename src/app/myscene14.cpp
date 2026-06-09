@@ -20,7 +20,7 @@ MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .HDRSkyboxBlurStrength = 0.0f,
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
-        .iblDiffuseIntensity = 4.0f,
+        .iblDiffuseIntensity = 1.0f,
         .iblSpecularIntensity = 1.0f
     })
 {

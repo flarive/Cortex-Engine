@@ -815,5 +815,8 @@
     <ClInclude Include="core\include\managers\app_manager.h">
       <Filter>Fichiers d%27en-tête\core\managers</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\app\gpu_selector.h">
+      <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

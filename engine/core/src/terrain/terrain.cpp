@@ -22,23 +22,6 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material)
     setup(material, uv);
 }
 
-//void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
-//{
-//    m_material = material; // Store material reference
-//    m_uvScale = uv.getUvScale();
-//
-//    auto allTexturesLoaded = [this](bool) {
-//        TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
-//		m_textureWidth = std::get<2>(data);
-//        m_textureHeight = std::get<3>(data);
-//
-//        init();
-//    };
-//
-//    if (m_material && m_material->hasDiffuseMap())
-//        m_material->loadTexturesAsync(allTexturesLoaded);
-//}
-
 void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
     m_material = material;

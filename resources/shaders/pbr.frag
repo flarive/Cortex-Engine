@@ -78,6 +78,8 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float intensity;
 };
 
 struct PointLight {
@@ -92,6 +94,8 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float intensity;
 };
 
 struct SpotLight {
@@ -890,8 +894,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     float epsilon = light.cutOff - light.outerCutOff;
 
     // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
-    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
-    //float intensity = light.intensity;
+    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0) * light.intensity;
 
     if (theta < light.outerCutOff)
         return vec3(0.0);
@@ -948,7 +951,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     vec3 L = normalize(light.position - fragPos);
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    vec3 radiance = light.diffuse * attenuation;
+    vec3 radiance = light.diffuse * light.intensity * attenuation;
 
     // Cook-Torrance BRDF
     vec3 H = normalize(viewDir + L);
@@ -977,7 +980,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     
     float NdotL = max(dot(normal, L), 0.0);
 
-    vec3 radiance = light.diffuse;
+    vec3 radiance = light.diffuse * light.intensity;
 
     // Shadow calculation
     float shadow = 0.0;

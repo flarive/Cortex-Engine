@@ -20,7 +20,7 @@ MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .HDRSkyboxBlurStrength = 0.0f,
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
-        .iblDiffuseIntensity = 1.0f,
+        .iblDiffuseIntensity = 2.0f,
         .iblSpecularIntensity = 1.0f
     })
 {
@@ -54,7 +54,7 @@ void MyScene14::init()
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
-    light1->setUseAttenuation(true);
+    light1->setUseAttenuation(false);
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
@@ -113,16 +113,23 @@ void MyScene14::init()
 
 
     // terrain
-    auto myTerrain = make_shared<Terrain>(1.0f, 10);
+    auto myTerrain = make_shared<Terrain>(3.2f, 10);
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
     //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
-    myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg",
+    /*myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg",
         "",
         "",
         "",
         "",
-        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
-    auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.1f));
+        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));*/
+    myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
+        "",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg"), UvMapping(1.0f));
+    auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.01f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
     entityTerrain->addComponent<TerrainComponent>(myTerrain);

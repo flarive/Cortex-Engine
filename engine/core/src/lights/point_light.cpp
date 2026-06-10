@@ -3,7 +3,7 @@
 #include "../../include/singleton.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
+#include <glm/gtx/quaternion.hpp>
 
 #include "../../include/transform.h"
 #include "../../include/managers/log_manager.h"
@@ -46,9 +46,9 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         shader.setVec3(std::format("{}.position", base), m_position);
 
         shader.setVec3(std::format("{}.ambient", base), ambient);
-        shader.setVec3(std::format("{}.diffuse", base), diffuse * intensity);
-        shader.setVec3(std::format("{}.specular", base), specular * intensity);
-
+        shader.setVec3(std::format("{}.diffuse", base), diffuse);
+        shader.setVec3(std::format("{}.specular", base), specular);
+        shader.setFloat(std::format("{}.intensity", base), intensity);
 
         if (m_useAttenuation)
         {

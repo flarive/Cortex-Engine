@@ -277,6 +277,7 @@
     <ClInclude Include="core\include\animators\transform_animator.h" />
     <ClInclude Include="core\include\anim_transform.h" />
     <ClInclude Include="core\include\app\app.h" />
+    <ClInclude Include="core\include\app\gpu_selector.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
     <ClInclude Include="core\include\bounding_volume.h" />

@@ -44,6 +44,8 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float intensity;
 };
 
 struct PointLight {
@@ -58,6 +60,8 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float intensity;
 };
 
 struct SpotLight {
@@ -74,7 +78,9 @@ struct SpotLight {
   
     vec3 ambient;
     vec3 diffuse;
-    vec3 specular;       
+    vec3 specular; 
+
+    float intensity;
 };
 
 struct AreaLight
@@ -958,7 +964,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     // Diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
 
-    // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
+    // Specular shading
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
@@ -998,6 +1004,10 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
         specular = light.specular * specTS;
     }
 
+    ambient  *= light.intensity;
+    diffuse  *= light.intensity;
+    specular *= light.intensity;
+
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
@@ -1011,9 +1021,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
     
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
-
-    return lighting;
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 // calculates the color when using a point light.
@@ -1071,11 +1079,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
         specular = vec3(0.2) * specTS;
     }
 
-    float intensity = 1.0;
     // apply attenuation
-    ambient *= attenuation * intensity;
-    diffuse *= attenuation * intensity;
-    specular *= attenuation * intensity;
+    ambient *= attenuation * light.intensity;
+    diffuse *= attenuation * light.intensity;
+    specular *= attenuation * light.intensity;
 
     // calculate shadow
     float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
@@ -1084,9 +1091,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
     
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
-
-    return lighting;
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 // Calculates the color when using a spot light.
@@ -1102,7 +1107,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     else
         diff = max(dot(normalize(normal), normalize(light.direction)), 0.0);
 
-    // Specular shading (Blinn-Phong or Phong based on 'blinn' flag)
+    // Specular shading
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
@@ -1117,7 +1122,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     //float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
     // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
-    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0);
+    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0) * light.intensity;
 
     vec3 ambient = vec3(0);
     vec3 diffuse = vec3(0); // (Lambert)
@@ -1168,9 +1173,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
 
     // Final lighting with shadow applied
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular));
-
-    return lighting;
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 // Calculates the color when using an area light.
@@ -1185,8 +1188,6 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 N, vec3 V, vec3 P, mat3 Mi
     // t2.y: Smith function for Geometric Attenuation Term, it is dot(V or L, H).
     specular *= mSpecular * t2.x + (1.0 - mSpecular) * t2.y;
 
-    // Add contribution
-    vec3 lighting = light.color * light.intensity * (specular + diffuse);
-
-    return lighting;
+    // Final lighting with shadow applied
+    return light.color * light.intensity * (specular + diffuse);
 }

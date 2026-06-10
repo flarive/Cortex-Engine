@@ -13,6 +13,9 @@ using namespace engine;
 using MyApp = MyApp1;
 
 
+//Previous HEAD position was 4ec76fa Terrain shadows should work soon -> OK
+//HEAD is now at 760fff8 Fix BlinnPhong terrain rendering -> KO
+
 // Startup method
 int main(int, char**)
 {

@@ -115,8 +115,8 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
     const glm::vec3 tangent(1.0f, 0.0f, 0.0f);
     const glm::vec3 bitangent(0.0f, 0.0f, -1.0f); // flipped V
 
-    int width = static_cast<int>(m_textureWidth);
-    int height = static_cast<int>(m_textureHeight);
+    int width = m_textureWidth;
+    int height = m_textureHeight;
 
     for (unsigned i = 0; i <= m_resolution - 1; i++)
     {

@@ -268,7 +268,10 @@ void engine::Scene::listenForEditorChanges()
                 logger.info("{} setting changed: {}", key, floatValue);
             }
 
-            if (key == "draw_wireframe") {
+            if (key == "render_method") {
+                sceneSettings.method = static_cast<RenderMethod>(intValue);
+            }
+            else if (key == "draw_wireframe") {
                 sceneSettings.drawAsWireframe = boolValue;
             }
             else if (key == "enable_gamma_correction") {
@@ -315,6 +318,12 @@ void engine::Scene::listenForEditorChanges()
             }
             else if (key == "shadow_maps_blur_factor") {
                 sceneSettings.shadowMapsBlur = floatValue;
+            }
+            else if (key == "pbr_ibl_diffuse_intensity") {
+                sceneSettings.iblDiffuseIntensity = floatValue;
+            }
+            else if (key == "pbr_ibl_specular_intensity") {
+                sceneSettings.iblSpecularIntensity = floatValue;
             }
         });
 }

@@ -813,57 +813,110 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     return currentTexCoords;
 }
 
+
+// ----------------------------------------------------------------------------
+// Easy trick to get tangent-normals to world-space to keep PBR code simplified.
+// Don't worry if you don't get what's going on; you generally want to do normal 
+// mapping the usual way for performance anyways; I do plan make a note of this 
+// technique somewhere later in the normal mapping tutorial.
+vec3 getNormalFromMap(vec2 texCoords)
+{
+    // Sample the normal map and convert the range from [0, 1] to [-1, 1]
+    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0 : normalize(Normal) * material.normalMapIntensity;; // caca
+
+    // Blend towards (0,0,1) instead of (0,0,0)
+    tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
+    //tangentNormal.z = -tangentNormal.z;
+
+    // Compute the TBN matrix using either precomputed tangents or derivatives
+    vec3 N = normalize(Normal);
+    vec3 T, B;
+
+    if (hasTangents) { // If tangents exist, use them
+        T = normalize(Tangent);
+        B = normalize(Bitangent);
+    } else { // Otherwise, compute them using screen-space derivatives
+        vec3 Q1  = dFdx(FragPos);
+        vec3 Q2  = dFdy(FragPos);
+        vec2 st1 = dFdx(TexCoords);
+        vec2 st2 = dFdy(TexCoords);
+        T  = normalize(Q1*st2.t - Q2*st1.t);
+        B  = -normalize(cross(N, T));
+    }
+
+    // Construct the TBN matrix
+    mat3 TBN = mat3(T, B, N);
+
+    // Transform the normal from tangent space to world space
+    return normalize(TBN * tangentNormal);
+}
+
 void main()
 {
     // --------------------------------------------------------
     // 1. Base inputs
     // --------------------------------------------------------
-    vec3 N = normalize(Normal);
-    vec3 T = normalize(Tangent);
-    vec3 B = normalize(Bitangent);
+//    vec3 N = normalize(Normal);
+//    vec3 T = normalize(Tangent);
+//    vec3 B = normalize(Bitangent);
+//
+//    // --------------------------------------------------------
+//    // 2. TBN construction (CORRECT, final stage)
+//    // --------------------------------------------------------
+//    mat3 TBN = mat3(T, B, N);
+//
+//    // --------------------------------------------------------
+//    // 3. World space directions
+//    // --------------------------------------------------------
+//    vec3 lightDirWS = normalize(lightPos - FragPos);
+//    vec3 viewDirWS  = normalize(viewPos - FragPos);
+//
+//    // --------------------------------------------------------
+//    // 4. Tangent space directions
+//    // --------------------------------------------------------
+//    vec3 lightDirTS = normalize(TBN * lightDirWS);
+//    vec3 viewDirTS  = normalize(TBN * viewDirWS);
+//
+//    // --------------------------------------------------------
+//    // 6. Parallax mapping
+//    // --------------------------------------------------------
+//    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
+//
+//
+//
+//    // --------------------------------------------------------
+//    // 5. Normal mapping
+//    // --------------------------------------------------------
+//    vec3 finalNormal;
+//
+//    if (material.has_texture_normal_map && hasTangents)
+//    {
+//        vec3 normalSample = texture(material.texture_normal, texCoords).rgb;
+//        normalSample = normalize(normalSample * 2.0 - 1.0);
+//
+//        finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
+//    }
+//    else
+//    {
+//        finalNormal = N;
+//    }
+//
+//
+        // Use world-space viewDir for lighting and shadows
+    vec3 viewDirWS = normalize(viewPos - FragPos);
+    // Use tangent-space viewDir only for parallax
+    vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
 
-    // --------------------------------------------------------
-    // 2. TBN construction (CORRECT, final stage)
-    // --------------------------------------------------------
-    mat3 TBN = mat3(T, B, N);
-
-    // --------------------------------------------------------
-    // 3. World space directions
-    // --------------------------------------------------------
-    vec3 lightDirWS = normalize(lightPos - FragPos);
-    vec3 viewDirWS  = normalize(viewPos - FragPos);
-
-    // --------------------------------------------------------
-    // 4. Tangent space directions
-    // --------------------------------------------------------
-    vec3 lightDirTS = normalize(TBN * lightDirWS);
-    vec3 viewDirTS  = normalize(TBN * viewDirWS);
-
-    // --------------------------------------------------------
-    // 6. Parallax mapping
-    // --------------------------------------------------------
+    // Offset texture coordinates with Parallax Mapping
     vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
 
-
-
-    // --------------------------------------------------------
-    // 5. Normal mapping
-    // --------------------------------------------------------
-    vec3 finalNormal;
-
-    if (material.has_texture_normal_map && hasTangents)
-    {
-        vec3 normalSample = texture(material.texture_normal, texCoords).rgb;
-        normalSample = normalize(normalSample * 2.0 - 1.0);
-
-        finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
-    }
-    else
-    {
-        finalNormal = N;
-    }
-
-
+    // input lighting data
+    vec3 normal = getNormalFromMap(texCoords);
+    vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - FragPos); // View direction
+    vec3 R = reflect(-V, normal);
+    vec3 P = FragPos;
+    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
 
 
     // == =====================================================
@@ -889,19 +942,19 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            result += CalcPointLight(pointLights[i], finalNormal, N, FragPos, texCoords, viewDirWS);
+            result += CalcPointLight(pointLights[i], normal, N, FragPos, texCoords, viewDirWS);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            result += CalcDirLight(dirLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
+            result += CalcDirLight(dirLights[i], normal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            result += CalcSpotLight(spotLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
+            result += CalcSpotLight(spotLights[i], normal, N, FragPos, texCoords, viewDirWS, FragPosLightSpace);
     }
 
     if (areaLightsCount > 0)
@@ -929,7 +982,7 @@ void main()
         for (int i = 0; i < areaLightsCount; i++)
         {
             if (areaLights[i].use)
-                result += CalcAreaLight(areaLights[i], finalNormal, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+                result += CalcAreaLight(areaLights[i], normal, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 

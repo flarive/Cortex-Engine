@@ -99,22 +99,27 @@ namespace engine
 		
 
 	protected:
+		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
 		bool sceneSetting_drawAsWireframe{ false };
-		float sceneSetting_exposure{ 1.0f };
-		bool sceneSetting_enableGammaCorrection{ false };
-		bool sceneSetting_enableToneMapping{ false };
-		int sceneSetting_applyPostProcessFx{ static_cast<int>(PostProcessingEffect::None) };
+		float sceneSetting_exposure{ DEFAULT_EXPOSURE };
+		bool sceneSetting_enableGammaCorrection{ DEFAULT_ENABLE_GAMMA_CORRECTION };
+		bool sceneSetting_enableToneMapping{ DEFAULT_ENABLE_TONE_MAPPING };
+		int sceneSetting_applyPostProcessFx{ static_cast<int>(DEFAULT_POST_PROCESSING_FX) };
 		bool sceneSetting_enableFaceCulling{ true };
 		bool sceneSetting_enableCameraFrustrumCulling{ true };
 		bool sceneSetting_drawLightsVisualHelpers{ false };
 		bool sceneSetting_drawBoundingBoxesVisualHelpers{ false };
 		bool sceneSetting_drawDebugNormalsVisualHelpers{ false };
-		bool sceneSetting_enableShadows{ true };
-		int sceneSetting_shadowCalculationMethod{ static_cast<int>(ShadowCalculationMethod::PCFSoft) };
-		float sceneSetting_shadowIntensity{ 1.5f };
-		int sceneSetting_shadowMapTextureSize{ 2048 };
+		bool sceneSetting_enableShadows{ DEFAULT_ENABLE_SHADOWS };
+		int sceneSetting_shadowCalculationMethod{ static_cast<int>(DEFAULT_SHADOWS_METHOD) };
+		float sceneSetting_shadowIntensity{ DEFAULT_SHADOWS_INTENSITY };
+		int sceneSetting_shadowMapTextureSize{ static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE) };
 		float sceneSetting_shadowMapBiasFactor{ DEFAULT_SHADOW_MAPS_BIAS };
-		float sceneSetting_shadowMapBlur{ 1.0f };
+		float sceneSetting_shadowMapBlur{ DEFAULT_SHADOWS_BLUR };
+
+		float sceneSetting_iblDiffuseIntensity{ DEFAULT_PBR_IBL_DIFFUSE_INTENSITY };
+		float sceneSetting_iblSpecularIntensity{ DEFAULT_PBR_IBL_SPECULAR_INTENSITY };
+
 
 		// guizmo
 		float viewWidth{ 10.0f }; // for orthographic

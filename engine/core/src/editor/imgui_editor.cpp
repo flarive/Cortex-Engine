@@ -195,6 +195,13 @@ void engine::ImGuiEditor::renderTabSettings()
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
 
+
+    static int lastRenderMethod = static_cast<int>(DEFAULT_RENDER_METHOD) };
+    EditorHelper::renderSliderIntWithLabel("Render method", "render_method", sceneSetting_renderMethod, lastRenderMethod, 1, 2, m_onSceneSettingChanged);
+
+
+
+
     static bool lastDrawWireframe = false;
     if (ImGui::Toggle("Wireframe", &sceneSetting_drawAsWireframe, toggle_config))
     {
@@ -205,7 +212,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastEnableGammaCorection = false;
+    static bool lastEnableGammaCorection = DEFAULT_ENABLE_GAMMA_CORRECTION;
     if (ImGui::Toggle("Gamma correction", &sceneSetting_enableGammaCorrection, toggle_config))
     {
         if (m_onSceneSettingChanged && lastEnableGammaCorection != sceneSetting_enableGammaCorrection)
@@ -215,7 +222,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastEnableToneMapping = false;
+    static bool lastEnableToneMapping = DEFAULT_ENABLE_TONE_MAPPING;
     if (ImGui::Toggle("Tone mapping", &sceneSetting_enableToneMapping, toggle_config))
     {
         if (m_onSceneSettingChanged && lastEnableToneMapping != sceneSetting_enableToneMapping)
@@ -225,7 +232,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static int lastApplyPostProcessFx = PostProcessingEffect::None;
+    static int lastApplyPostProcessFx = DEFAULT_POST_PROCESSING_FX;
     EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10, m_onSceneSettingChanged);
 
     static bool lastEnableFaceCulling = true;
@@ -238,7 +245,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static float lastExposure = 1.0f;
+    static float lastExposure = DEFAULT_EXPOSURE;
     EditorHelper::renderDragFloatWithLabel("Exposure", "exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
 
@@ -283,7 +290,7 @@ void engine::ImGuiEditor::renderTabSettings()
     }
 
 
-    static bool lastEnableShadows = true;
+    static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
     if (ImGui::Toggle("Enable shadows", &sceneSetting_enableShadows, toggle_config))
     {
         if (m_onSceneSettingChanged && lastEnableShadows != sceneSetting_enableShadows)
@@ -295,13 +302,13 @@ void engine::ImGuiEditor::renderTabSettings()
 
     
 
-    static int lastShadowCalculationMethod = ShadowCalculationMethod::PCFSoft;
+    static int lastShadowCalculationMethod = static_cast<int>(DEFAULT_SHADOWS_METHOD);
     EditorHelper::renderSliderIntWithLabel("Shadow maps method", "shadow_calculation_method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3, m_onSceneSettingChanged);
 
-    static int lastShadowMapTextureSize = 2048;
+    static int lastShadowMapTextureSize = static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE);
     EditorHelper::renderSliderIntWithLabel("Shadow maps texture size", "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096, m_onSceneSettingChanged);
 
-    static float lastShadowIntensity = 1.5f;
+    static float lastShadowIntensity = DEFAULT_SHADOWS_INTENSITY;
     EditorHelper::renderDragFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
     // Typical values(tune slightly per scene)
@@ -310,8 +317,19 @@ void engine::ImGuiEditor::renderTabSettings()
     static float lastShadowMapsBiasFactor = DEFAULT_SHADOW_MAPS_BIAS;
     EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f", m_onSceneSettingChanged);
 
-    static float lastShadowMapsBlur = 1.0f;
+    static float lastShadowMapsBlur = DEFAULT_SHADOWS_BLUR;
     EditorHelper::renderDragFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+
+    // PBR renderer only !!!!
+    if (sceneSetting_renderMethod == static_cast<int>(RenderMethod::PBR))
+    {
+        static float lastIblDiffuseIntensity = DEFAULT_PBR_IBL_DIFFUSE_INTENSITY;
+        EditorHelper::renderDragFloatWithLabel("IBL Diffuse Intensity", "pbr_ibl_diffuse_intensity", sceneSetting_iblDiffuseIntensity, lastIblDiffuseIntensity, 0.0f, 10.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+
+        static float lastIblSpecularIntensity = DEFAULT_PBR_IBL_SPECULAR_INTENSITY;
+        EditorHelper::renderDragFloatWithLabel("IBL Specular Intensity", "pbr_ibl_specular_intensity", sceneSetting_iblSpecularIntensity, lastIblSpecularIntensity, 0.0f, 10.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+    }
+
 
     ImGui::PopStyleVar();
 

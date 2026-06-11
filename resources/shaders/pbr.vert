@@ -14,7 +14,14 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 out vec4 FragPosLightSpace;
+out vec3 TangentLightPos;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
 
+
+// coming from code
+uniform vec3 viewPos;
+uniform vec3 lightPos;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
@@ -72,6 +79,22 @@ void main()
     Bitangent = normalize(mat3(model) * aBitangents);
 
     FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
+
+
+
+    vec3 N = normalize(Normal);
+    vec3 T = normalize(Tangent);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = normalize(cross(N, T));
+
+    // Columns = T, B, N  → transpose to go world → tangent
+    mat3 TBN = transpose(mat3(T, B, N));
+
+    TangentLightPos = TBN * lightPos;
+    TangentViewPos  = TBN * viewPos;
+    TangentFragPos  = TBN * worldPos;
+
+
 
     if (isTessellated)
     {

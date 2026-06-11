@@ -700,89 +700,240 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
 }
 
 // ----------------------------------------------------------------------------
+//void main()
+//{		
+//    // --------------------------------------------------------
+//    // 1. Base inputs
+//    // --------------------------------------------------------
+//    vec3 N = normalize(Normal);
+//    vec3 T = normalize(Tangent);
+//    T = normalize(T - dot(T, N) * N);
+//    vec3 B = normalize(cross(N, T));
+//
+//    // --------------------------------------------------------
+//    // 2. TBN construction (CORRECT, final stage)
+//    // --------------------------------------------------------
+//    mat3 TBN = mat3(T, B, N);
+//
+//    // --------------------------------------------------------
+//    // 3. World space directions
+//    // --------------------------------------------------------
+//    vec3 lightDirWS = normalize(lightPos - FragPos);
+//    vec3 viewDirWS  = normalize(viewPos - FragPos);
+//
+//    // --------------------------------------------------------
+//    // 4. Tangent space directions
+//    // --------------------------------------------------------
+//    // If you want tangent-space vectors, use transpose(TBN), not TBN
+////    vec3 lightDirTS = normalize(transpose(TBN) * lightDirWS);
+////    vec3 viewDirTS  = normalize(transpose(TBN) * viewDirWS);
+//    vec3 lightDirTS = normalize(TBN * lightDirWS);
+//    vec3 viewDirTS  = normalize(TBN * viewDirWS);
+//
+//    // --------------------------------------------------------
+//    // 6. Parallax mapping
+//    // --------------------------------------------------------
+//    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
+//
+//
+//
+//
+//    // --------------------------------------------------------
+//    // 5. Normal mapping
+//    // --------------------------------------------------------
+//    vec3 finalNormal;
+//
+//    if (material.has_texture_normal_map && hasTangents)
+//    {
+//        vec3 normalSample = texture(material.texture_normal, texCoords).rgb;
+//        normalSample = normalize(normalSample * 2.0 - 1.0);
+//        finalNormal = normalize(mix(N, normalize(TBN * normalSample), material.normalMapIntensity));
+//    }
+//    else
+//    {
+//        finalNormal = N;
+//    }
+//
+//
+//    float dotNV = clamp(dot(finalNormal, viewDirWS), 0.0f, 1.0f);
+//
+//
+//
+//    // material properties
+//    vec4 diffuseSample = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords) : vec4(0.5, 0.5, 0.5, 1.0);
+//
+//    vec3 albedo   = diffuseSample.rgb;
+//    vec3 mDiffuse = diffuseSample.rgb;
+//    vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
+//    float alpha   = diffuseSample.a;
+//    float metallic = 0;
+//    float roughness = 0;
+//
+//    if (material.has_texture_metalness_from_combined_map)
+//    {
+//        // 1 single combined texture for metalness and roughtness
+//        vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
+//        metallic = metalRoughness.b; // Extract metallic from Blue channel
+//        roughness = metalRoughness.g; // Extract roughness from Green channel
+//    }
+//    else
+//    {
+//        // 2 distinct textures for metalness and roughtness
+//        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
+//        roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
+//    }
+//
+//    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 1.0;
+//    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+//
+//    // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
+//    // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
+//    vec3 F0 = vec3(0.04); 
+//    F0 = mix(F0, albedo, metallic);
+//
+//    // reflectance equation
+//    vec3 Lo = vec3(0.0);
+//
+//    // ambient lighting (we now use IBL as the ambient term)
+//    vec3 F = fresnelSchlickRoughness(max(dot(finalNormal, viewDirWS), 0.0), F0, roughness);
+//    
+//    // kS is equal to Fresnel
+//    vec3 kS = F;
+//    // for energy conservation, the diffuse and specular light can't
+//    // be above 1.0 (unless the surface emits light); to preserve this
+//    // relationship the diffuse component (kD) should equal 1.0 - kS.
+//    vec3 kD = 1.0 - kS;
+//    // multiply kD by the inverse metalness such that only non-metals 
+//    // have diffuse lighting, or a linear blend if partly metal (pure metals
+//    // have no diffuse light).
+//    kD *= 1.0 - metallic;
+//
+//    vec3 irradiance = texture(material.texture_irradiance, finalNormal).rgb;
+//    vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
+//
+//    const float MAX_REFLECTION_LOD = 4.0;
+//    vec3 R = reflect(-viewDirWS, finalNormal);
+//    vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
+//    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(finalNormal, viewDirWS), 0.0), roughness)).rg;
+//    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
+//    vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
+//
+//
+//    // lights
+//    for (int i = 0; i < pointLightsCount; i++)
+//    {
+//        if (pointLights[i].use)
+//            Lo += CalcPointLight(pointLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
+//    }
+//
+//    for (int i = 0; i < dirLightsCount; i++)
+//    {
+//        if (dirLights[i].use)
+//            Lo += CalcDirLight(dirLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, vec3(1.0));
+//    }
+//
+//    for (int i = 0; i < spotLightsCount; i++)
+//    {
+//        if (spotLights[i].use)
+//            Lo += CalcSpotLight(spotLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
+//    }
+//
+//    if (areaLightsCount > 0)
+//    {
+//        vec2 uv = vec2(material.albedoRoughness.w, sqrt(1.0f - dotNV));
+//        uv = uv * LUT_SCALE + LUT_BIAS;
+//
+//        // get 4 parameters for inverse_M
+//        vec4 t1 = texture(LTC1, uv);
+//
+//        // Get 2 parameters for Fresnel calculation
+//        vec4 t2 = texture(LTC2, uv);
+//
+//        mat3 Minv = mat3(
+//            vec3(t1.x, 0, t1.y),
+//            vec3(   0, 1,    0),
+//            vec3(t1.z, 0, t1.w)
+//        );
+//
+//        vec3 N = normalize(Normal);
+//        vec3 V = normalize(viewPos - FragPos); // View direction
+//        vec3 P = FragPos; // to remove !
+//
+//        for (int i = 0; i < areaLightsCount; i++)
+//        {
+//            if (areaLights[i].use)
+//                Lo += CalcAreaLight(areaLights[i], finalNormal, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+//        }
+//    }
+//
+//    // add light and shadow contribution
+//    vec3 color = ambient + Lo;
+//
+//    // Add emissive contribution before gamma correction
+//    color += emissive;
+//
+//
+//    // HDR tonemapping
+//    //color = color / (color + vec3(1.0));
+//
+//    // gamma correction
+//    //color = pow(color, vec3(1.0/2.2));
+//    //color = vec3(ToSRGB(color)); // same as above
+//
+//
+//    FragColor = vec4(color, alpha);
+//
+//    // Discard transparent fragments (optional)
+//    if (alpha < 0.1)
+//        discard;
+//}
+
+// ----------------------------------------------------------------------------
 void main()
 {		
-    // --------------------------------------------------------
-    // 1. Base inputs
-    // --------------------------------------------------------
-    vec3 N = normalize(Normal);
-    vec3 T = normalize(Tangent);
-    T = normalize(T - dot(T, N) * N);
-    vec3 B = normalize(cross(N, T));
+    // Use world-space viewDir for lighting and shadows
+    vec3 viewDirWS = normalize(viewPos - FragPos);
+    // Use tangent-space viewDir only for parallax
+    vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
 
-    // --------------------------------------------------------
-    // 2. TBN construction (CORRECT, final stage)
-    // --------------------------------------------------------
-    mat3 TBN = mat3(T, B, N);
-
-    // --------------------------------------------------------
-    // 3. World space directions
-    // --------------------------------------------------------
-    vec3 lightDirWS = normalize(lightPos - FragPos);
-    vec3 viewDirWS  = normalize(viewPos - FragPos);
-
-    // --------------------------------------------------------
-    // 4. Tangent space directions
-    // --------------------------------------------------------
-    // If you want tangent-space vectors, use transpose(TBN), not TBN
-    vec3 lightDirTS = normalize(transpose(TBN) * lightDirWS);
-    vec3 viewDirTS  = normalize(transpose(TBN) * viewDirWS);
-
-    // --------------------------------------------------------
-    // 5. Normal mapping
-    // --------------------------------------------------------
-    vec3 finalNormal;
-
-    if (material.has_texture_normal_map && hasTangents)
-    {
-        vec3 normalSample = texture(material.texture_normal, TexCoords).rgb;
-        normalSample = normalize(normalSample * 2.0 - 1.0);
-        finalNormal = normalize(mix(N, normalize(TBN * normalSample), material.normalMapIntensity));
-    }
-    else
-    {
-        finalNormal = N;
-    }
-
-
-
-
-    //float dotNV = clamp(dot(N, viewDirWS), 0.0f, 1.0f);
-    float dotNV = clamp(dot(finalNormal, viewDirWS), 0.0f, 1.0f);
-
-    // --------------------------------------------------------
-    // 6. Parallax mapping
-    // --------------------------------------------------------
+    // Offset texture coordinates with Parallax Mapping
     vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
+
+    // input lighting data
+    vec3 normal = getNormalFromMap(texCoords);
+    vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - FragPos); // View direction
+    vec3 R = reflect(-V, normal);
+    vec3 P = FragPos;
+    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
 
 
 
     // material properties
-    vec4 diffuseSample = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords) : vec4(0.5, 0.5, 0.5, 1.0);
-
-    vec3 albedo   = diffuseSample.rgb;
-    vec3 mDiffuse = diffuseSample.rgb;
+    vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5);
+    vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
-    float alpha   = diffuseSample.a;
+
     float metallic = 0;
     float roughness = 0;
 
     if (material.has_texture_metalness_from_combined_map)
     {
-        // 1 single combined texture for metalness and roughtness
+        // Sample the combined texture
         vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
         metallic = metalRoughness.b; // Extract metallic from Blue channel
         roughness = metalRoughness.g; // Extract roughness from Green channel
     }
     else
     {
-        // 2 distinct textures for metalness and roughtness
+        // 2 distinct textures
         metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
     }
 
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 1.0;
+    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0;
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+    vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -793,7 +944,7 @@ void main()
     vec3 Lo = vec3(0.0);
 
     // ambient lighting (we now use IBL as the ambient term)
-    vec3 F = fresnelSchlickRoughness(max(dot(finalNormal, viewDirWS), 0.0), F0, roughness);
+    vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
     
     // kS is equal to Fresnel
     vec3 kS = F;
@@ -806,13 +957,12 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;
 
-    vec3 irradiance = texture(material.texture_irradiance, finalNormal).rgb;
+    vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
     vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
 
     const float MAX_REFLECTION_LOD = 4.0;
-    vec3 R = reflect(-viewDirWS, finalNormal);
     vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(finalNormal, viewDirWS), 0.0), roughness)).rg;
+    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
     vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
 
@@ -821,19 +971,19 @@ void main()
     for (int i = 0; i < pointLightsCount; i++)
     {
         if (pointLights[i].use)
-            Lo += CalcPointLight(pointLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
+            Lo += CalcPointLight(pointLights[i], normal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
     }
 
     for (int i = 0; i < dirLightsCount; i++)
     {
         if (dirLights[i].use)
-            Lo += CalcDirLight(dirLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, vec3(1.0));
+            Lo += CalcDirLight(dirLights[i], normal, N, FragPos, texCoords, viewDirWS, vec3(1.0));
     }
 
     for (int i = 0; i < spotLightsCount; i++)
     {
         if (spotLights[i].use)
-            Lo += CalcSpotLight(spotLights[i], finalNormal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
+            Lo += CalcSpotLight(spotLights[i], normal, N, FragPos, texCoords, viewDirWS, albedo, metallic, roughness);
     }
 
     if (areaLightsCount > 0)
@@ -855,12 +1005,11 @@ void main()
 
         vec3 N = normalize(Normal);
         vec3 V = normalize(viewPos - FragPos); // View direction
-        vec3 P = FragPos; // to remove !
 
         for (int i = 0; i < areaLightsCount; i++)
         {
             if (areaLights[i].use)
-                Lo += CalcAreaLight(areaLights[i], finalNormal, N, V, P, Minv, t1, t2, mDiffuse, mSpecular);
+                Lo += CalcAreaLight(areaLights[i], normal, N, V, FragPos, Minv, t1, t2, mDiffuse, mSpecular);
         }
     }
 
@@ -871,6 +1020,12 @@ void main()
     color += emissive;
 
 
+    // caca temp !!!!!!!!!!!!!!!!!!!!!
+    if (color.x == 0.00001)
+    {
+        color += height / 100;
+    }
+
     // HDR tonemapping
     //color = color / (color + vec3(1.0));
 
@@ -878,6 +1033,8 @@ void main()
     //color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
 
+    // Sample the alpha value from the diffuse texture
+    float alpha = texture(material.texture_diffuse, texCoords).a;
 
     FragColor = vec4(color, alpha);
 

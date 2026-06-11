@@ -840,13 +840,20 @@ void main()
     vec3 viewDirTS  = normalize(TBN * viewDirWS);
 
     // --------------------------------------------------------
+    // 6. Parallax mapping
+    // --------------------------------------------------------
+    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
+
+
+
+    // --------------------------------------------------------
     // 5. Normal mapping
     // --------------------------------------------------------
     vec3 finalNormal;
 
     if (material.has_texture_normal_map && hasTangents)
     {
-        vec3 normalSample = texture(material.texture_normal, TexCoords).rgb;
+        vec3 normalSample = texture(material.texture_normal, texCoords).rgb;
         normalSample = normalize(normalSample * 2.0 - 1.0);
 
         finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
@@ -855,11 +862,6 @@ void main()
     {
         finalNormal = N;
     }
-
-    // --------------------------------------------------------
-    // 6. Parallax mapping
-    // --------------------------------------------------------
-    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
 
 
 
@@ -1068,15 +1070,14 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
         vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
 
         // Ambient
-        ambient = 0.1 * color;
+        ambient = light.ambient * 0.1 * color;
         // Diffuse
         float diffTS = max(dot(parallaxNormal, lightDirTS), 0.0);
-        diffuse = diffTS * color;
+        diffuse = light.diffuse * diffTS * color;
         // Specular
         vec3 halfwayTS = normalize(lightDirTS + viewDirTS);
         float specTS = pow(max(dot(parallaxNormal, halfwayTS), 0.0), material.shininess);
-
-        specular = vec3(0.2) * specTS;
+        specular = light.specular * vec3(0.2) * specTS;
     }
 
     // apply attenuation
@@ -1143,16 +1144,16 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
         parallaxNormal = normalize(parallaxNormal * 2.0 - 1.0);  
 
         // ambient
-        ambient = 0.1 * color;
+        ambient = light.ambient * 0.1 * color;
         // diffuse
         vec3 lightDir2 = normalize(TangentLightPos - TangentFragPos);
         float diff2 = max(dot(lightDir2, parallaxNormal), 0.0);
-        diffuse = diff2 * color;
+        diffuse = light.diffuse * diff2 * color;
         // specular    
         vec3 reflectDir = reflect(-lightDir2, parallaxNormal);
         vec3 halfwayDir2 = normalize(lightDir2 + viewDir);  
         float spec2 = pow(max(dot(parallaxNormal, halfwayDir2), 0.0), 32.0);
-        specular = vec3(0.2) * spec2;
+        specular = light.specular * vec3(0.2) * spec2;
     }
 
     // Apply attenuation and spotlight intensity

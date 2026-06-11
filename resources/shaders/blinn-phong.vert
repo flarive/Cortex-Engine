@@ -15,10 +15,9 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 out vec4 FragPosLightSpace;
-out vec3 TangentLightPos; // ????
-out vec3 TangentViewPos; // ????
-out vec3 TangentFragPos; // ????
-
+out vec3 TangentLightPos;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -73,7 +72,8 @@ void main()
     }
 
     // World space position
-    FragPos = vec3(model * totalPosition);
+    vec3 worldPos = vec3(model * totalPosition);
+    FragPos = worldPos;
 
     // Normal handling
     vec3 worldNormal;
@@ -93,6 +93,19 @@ void main()
 
     // Light space position for shadow mapping
     FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0); // possible optim !
+
+    // Usefull for parallax mapping
+    vec3 N = normalize(Normal);
+    vec3 T = normalize(Tangent);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = normalize(cross(N, T));
+
+    // Columns = T, B, N  → transpose to go world → tangent
+    mat3 TBN = transpose(mat3(T, B, N));
+
+    TangentLightPos = TBN * lightPos;
+    TangentViewPos  = TBN * viewPos;
+    TangentFragPos  = TBN * worldPos;
 
     // Handle gl_Position based on tessellation mode
     if (isTessellated)

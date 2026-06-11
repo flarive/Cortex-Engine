@@ -81,7 +81,7 @@ void main()
     FragPosLightSpace = lightSpaceMatrix * vec4(worldPos, 1.0);
 
 
-
+    // Usefull for parallax mapping
     vec3 N = normalize(Normal);
     vec3 T = normalize(Tangent);
     T = normalize(T - dot(T, N) * N);

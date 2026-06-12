@@ -57,31 +57,8 @@ public:
     void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
 
-    static SceneSettings DefaultPBRSettings()
-    {
-        return SceneSettings{
-            .method = RenderMethod::PBR,
-            .HDRSkyboxHide = true,
-            .HDRSkyboxFilePath = "",
-            .HDRSkyboxBlurStrength = 0.0f,
-            .enableShadows = true,
-            .shadowIntensity = 3.0f,
-            .shadowMapsTextureSize = 2048,
-            .shadowMapsBiasFactor = 0.050f
-        };
-    }
-
-    static SceneSettings DefaultBlinnPhongSettings()
-    {
-        auto s = DefaultPBRSettings();
-        s.method = RenderMethod::BlinnPhong;
-        s.shadowIntensity = 1.5f;
-        return s;
-    }
-
 private:
     float m_parallaxIntensity{ 0.0f };
-    RenderMethod m_currentRendererMethod{ RenderMethod::PBR };
     void incrementParallaxIntensity(float intensity);
     void switchRenderMode(RenderMethod method);
 };

@@ -157,7 +157,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec4 fragPosLightSpace);
 vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 N, vec3 V, vec3 P, mat3 Minv, vec4 t1, vec4 t2, vec3 mDiffuse, vec3 mSpecular);
 
-
+// Blinn‑Phong artificially adds light, while PBR strictly conserves energy
+const float INTENSITY_REDUCER_FACTOR = 4.0f;
 const int POISSON_SAMPLES = 4;
 
 const vec2 poissonDisk4[4] = vec2[](
@@ -853,56 +854,7 @@ vec3 getNormalFromMap(vec2 texCoords)
 
 void main()
 {
-    // --------------------------------------------------------
-    // 1. Base inputs
-    // --------------------------------------------------------
-//    vec3 N = normalize(Normal);
-//    vec3 T = normalize(Tangent);
-//    vec3 B = normalize(Bitangent);
-//
-//    // --------------------------------------------------------
-//    // 2. TBN construction (CORRECT, final stage)
-//    // --------------------------------------------------------
-//    mat3 TBN = mat3(T, B, N);
-//
-//    // --------------------------------------------------------
-//    // 3. World space directions
-//    // --------------------------------------------------------
-//    vec3 lightDirWS = normalize(lightPos - FragPos);
-//    vec3 viewDirWS  = normalize(viewPos - FragPos);
-//
-//    // --------------------------------------------------------
-//    // 4. Tangent space directions
-//    // --------------------------------------------------------
-//    vec3 lightDirTS = normalize(TBN * lightDirWS);
-//    vec3 viewDirTS  = normalize(TBN * viewDirWS);
-//
-//    // --------------------------------------------------------
-//    // 6. Parallax mapping
-//    // --------------------------------------------------------
-//    vec2 texCoords = material.useParallaxMapping ? SteepParallaxMapping(TexCoords, viewDirTS) : TexCoords;
-//
-//
-//
-//    // --------------------------------------------------------
-//    // 5. Normal mapping
-//    // --------------------------------------------------------
-//    vec3 finalNormal;
-//
-//    if (material.has_texture_normal_map && hasTangents)
-//    {
-//        vec3 normalSample = texture(material.texture_normal, texCoords).rgb;
-//        normalSample = normalize(normalSample * 2.0 - 1.0);
-//
-//        finalNormal = normalize(TBN * normalSample) * material.normalMapIntensity;
-//    }
-//    else
-//    {
-//        finalNormal = N;
-//    }
-//
-//
-        // Use world-space viewDir for lighting and shadows
+    // Use world-space viewDir for lighting and shadows
     vec3 viewDirWS = normalize(viewPos - FragPos);
     // Use tangent-space viewDir only for parallax
     vec3 viewDirTS = normalize(TangentViewPos - TangentFragPos);
@@ -1059,9 +1011,12 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
         specular = light.specular * specTS;
     }
 
-    ambient  *= light.intensity;
-    diffuse  *= light.intensity;
-    specular *= light.intensity;
+    float intensity = light.intensity / INTENSITY_REDUCER_FACTOR;
+
+
+    ambient  *= intensity;
+    diffuse  *= intensity;
+    specular *= intensity;
 
     // Shadow Calculation (no light position needed)
     float shadow = 0.0;
@@ -1133,10 +1088,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
         specular = light.specular * vec3(0.2) * specTS;
     }
 
+    float intensity = light.intensity / INTENSITY_REDUCER_FACTOR;
+
     // apply attenuation
-    ambient *= attenuation * light.intensity;
-    diffuse *= attenuation * light.intensity;
-    specular *= attenuation * light.intensity;
+    ambient *= attenuation * intensity;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
 
     // calculate shadow
     float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
@@ -1155,11 +1112,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     vec3 lightDir = normalize(lightPos - fragPos);
 
     // Diffuse shading
-    float diff = 0.0;
-    if (isTessellated)
-        diff = max(dot(normalize(normal), lightDir), 0.0);
-    else
-        diff = max(dot(normalize(normal), normalize(light.direction)), 0.0);
+    float diff = max(dot(normalize(normal), normalize(light.direction)), 0.0);
 
     // Specular shading
     vec3 halfwayDir = normalize(lightDir + viewDir);  
@@ -1175,8 +1128,9 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     //float epsilon = light.cutOff - light.outerCutOff; // Smooth edge
     //float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
+
     // Spotlight intensity based on angle between light direction and fragment (smooth blurry cutoff)
-    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0) * light.intensity;
+    float intensity = pow(smoothstep(light.outerCutOff, light.cutOff, theta), 2.0) * (light.intensity / INTENSITY_REDUCER_FACTOR);
 
     vec3 ambient = vec3(0);
     vec3 diffuse = vec3(0); // (Lambert)
@@ -1214,14 +1168,17 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, v
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
 
+    vec3 L = normalize(light.position - fragPos); // for shading
+    vec3 shadowLightDir = normalize(-light.direction); // for shadow bias
+
     // Shadow calculation (using the light's position for shadow mapping)
     float shadow = 0.0;
     if (material.shadowCalculationMethod == 1)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCF(fragPosLightSpace, fragPos, geoNormal, shadowLightDir) : 0.0;
     else if (material.shadowCalculationMethod == 2)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationSoft(fragPosLightSpace, fragPos, geoNormal, shadowLightDir) : 0.0;
     else if (material.shadowCalculationMethod == 3)
-        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace, fragPos, geoNormal, lightDir) : 0.0;
+        shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationPCSS(fragPosLightSpace, fragPos, geoNormal, shadowLightDir) : 0.0;
 
     // Apply shadow intensity for darker/lighter shadows
     shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);

@@ -8,13 +8,19 @@ using namespace engine;
 MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
         {
             .method = RenderMethod::BlinnPhong,
-            .HDRSkyboxHide = true,
-            .HDRSkyboxFilePath = "",
-            .HDRSkyboxBlurStrength = 0.0f,
             .enableShadows = true,
             .shadowIntensity = 3.0f,
             .shadowMapsTextureSize = 2048,
             .shadowMapsBiasFactor = 0.050f
+
+            //.method = RenderMethod::PBR,
+            //.HDRSkyboxHide = true,
+            //.HDRSkyboxFilePath = "",
+            //.HDRSkyboxBlurStrength = 0.0f,
+            //.enableShadows = true,
+            //.shadowIntensity = 3.0f,
+            //.shadowMapsTextureSize = 2048,
+            //.shadowMapsBiasFactor = 0.050f
         })
 {
     logger.trace("Scene {} constructor called", title);
@@ -91,25 +97,20 @@ void MyScene15::init()
 
     // ground
     auto myPlane = make_shared<Plane>(false);
-    auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    //auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/pbr/harshbricks/harshbricks-albedo.png",
-    //    "textures/pbr/harshbricks/harshbricks-normal.png",
-    //    "textures/pbr/harshbricks/harshbricks-metalness.png",
-    //    "textures/pbr/harshbricks/harshbricks-roughness.png",
-    //    "textures/pbr/harshbricks/harshbricks-ao.png",
-    //    "textures/pbr/harshbricks/harshbricks-height.png");
-
-    //auto matPlane = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/bricks2.jpg",
-    //    "textures/bricks2_normal.jpg",
-    //    "textures/no_metalness.png",
-    //    "textures/no_roughness.png",
-    //    "textures/no_ao.png",
-    //    "textures/bricks2_disp.jpg");
-
-
-
+    shared_ptr<Material> matPlane{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matPlane = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/bricks2.jpg",
+            "textures/bricks2_normal.jpg",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/bricks2_disp.jpg");
+    }
+    else {
+        matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+        //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    }
     matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(2.0f));
     auto trsPlane = Transform(vec3(0.0f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
@@ -122,14 +123,19 @@ void MyScene15::init()
 
 
     auto myPlane2 = make_shared<Plane>(false);
-    auto matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
-    //auto matPlane2 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/wood_diffuse.png",
-    //    "textures/toy_box_normal.png",
-    //    "textures/no_metalness.png",
-    //    "textures/no_roughness.png",
-    //    "textures/no_ao.png",
-    //    "textures/toy_box_disp.png");
+    shared_ptr<Material> matPlane2{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matPlane2 = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/wood_diffuse.png",
+            "textures/toy_box_normal.png",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/toy_box_disp.png");
+    }
+    else {
+        matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
+    }
     matPlane2->useParallaxMapping(true);
     myPlane2->setup(matPlane2, UvMapping(1.0f));
     auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(1.0f), vec3(-15.0f, 0.0, 180.0f));
@@ -141,14 +147,19 @@ void MyScene15::init()
 
 
     auto myPlane3 = make_shared<Plane>(false);
-    auto matPlane3 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/stones.png", "", "textures/stones_normal.png", "textures/stones_displace.png");
-    /*auto matPlane3 = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/stones.png",
-        "textures/stones_normal.png",
-        "textures/no_metalness.png",
-        "textures/no_roughness.png",
-        "textures/no_ao.png",
-        "textures/stones_displace.png");*/
+    shared_ptr<Material> matPlane3{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matPlane3 = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/stones.png",
+            "textures/stones_normal.png",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/stones_displace.png");
+    }
+    else {
+        matPlane3 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/stones.png", "", "textures/stones_normal.png", "textures/stones_displace.png");
+    }
     matPlane3->useParallaxMapping(true);
     myPlane3->setup(matPlane3, UvMapping(1.0f));
     auto trsPlane3 = Transform(vec3(-1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(44.0f, 45.0, 0.0f));
@@ -160,14 +171,19 @@ void MyScene15::init()
 
 
     auto myPlane4 = make_shared<Plane>(false);
-    auto matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png");
-    //auto matPlane4 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/rocks.jpg",
-    //    "textures/rocks_normal.png",
-    //    "textures/no_metalness.png",
-    //    "textures/no_roughness.png",
-    //    "textures/no_ao.png",
-    //    "textures/rocks_displace.png");
+    shared_ptr<Material> matPlane4{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matPlane4 = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/rocks.jpg",
+            "textures/rocks_normal.png",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/rocks_displace.png");
+    }
+    else {
+        matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png");
+    }
     matPlane4->useParallaxMapping(true);
     myPlane4->setup(matPlane4, UvMapping(1.0f));
     auto trsPlane4 = Transform(vec3(1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(44.0f, -45.0, 0.0f));
@@ -183,8 +199,16 @@ void MyScene15::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>(false);
-    auto matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    shared_ptr<Material> matSphere1{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/bricks2.jpg",
+            "textures/bricks2_normal.jpg",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/bricks2_disp.jpg");
+        //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
     //    "textures/pbr/planks/albedo.jpg",
     //    "textures/pbr/planks/normal.jpg",
     //    "textures/pbr/planks/metallic.jpg",
@@ -192,15 +216,10 @@ void MyScene15::init()
     //    "textures/pbr/planks/ao.jpg",
     //    "textures/pbr/planks/displace.jpg");
 
-    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/bricks2.jpg",
-    //    "textures/bricks2_normal.jpg",
-    //    "textures/no_metalness.png",
-    //    "textures/no_roughness.png",
-    //    "textures/no_ao.png",
-    //    "textures/bricks2_disp.jpg");
-
-
+    }
+    else {
+        matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+    }
     matSphere1->useParallaxMapping(true);
     mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.36f, 0.0f), vec3(0.3f));
@@ -218,14 +237,19 @@ void MyScene15::init()
 
     // cube
     auto myCube = make_shared<Cube>(2.0f);
-    auto matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png");
-    //auto matCube = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/bricks2.jpg",
-    //    "textures/bricks2_normal.jpg",
-    //    "textures/no_metalness.png",
-    //    "textures/no_roughness.png",
-    //    "textures/no_ao.png",
-    //    "textures/bricks2_disp.jpg");
+    shared_ptr<Material> matCube{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matCube = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/bricks2.jpg",
+            "textures/bricks2_normal.jpg",
+            "textures/no_metalness.png",
+            "textures/no_roughness.png",
+            "textures/no_ao.png",
+            "textures/bricks2_disp.jpg");
+    }
+    else {
+        matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png");
+    }
     matCube->useParallaxMapping(true);
     myCube->setup(matCube, UvMapping(1.0f));
     auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.4f));
@@ -292,7 +316,7 @@ void MyScene15::key_callback(int key, int scancode, int action, int mods)
 
     if (key == GLFW_KEY_KP_ENTER && action == GLFW_PRESS)
     {
-        auto newMethod = m_currentRendererMethod == RenderMethod::PBR ? RenderMethod::BlinnPhong : RenderMethod::PBR;
+        auto newMethod = this->getSceneSettings().method == RenderMethod::PBR ? RenderMethod::BlinnPhong : RenderMethod::PBR;
         switchRenderMode(newMethod);
     }
 }

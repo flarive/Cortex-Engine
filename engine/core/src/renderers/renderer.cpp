@@ -355,9 +355,10 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.setMat4("view", view);
 
         if (type != ShaderType::PBR)
+        {
             shader.setVec3("lightPos", light->getPosition());
-
-        shader.setFloat("far_plane", far_plane);
+            shader.setFloat("far_plane", far_plane);
+        }
 
         shader.setVec3("viewPos", m_camera->position);
         shader.setBool("enableShadows", enableShadows);
@@ -372,11 +373,13 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shaderTessellation.setMat4("view", view);
         
         if (typeTessellation != ShaderType::PBRTessellation)
+        {
             shaderTessellation.setVec3("lightPos", light->getPosition());
+            shaderTessellation.setFloat("far_plane", far_plane);
+        }
 
         shaderTessellation.setVec3("viewPos", m_camera->position);
         shaderTessellation.setBool("enableShadows", enableShadows);
-        shaderTessellation.setFloat("far_plane", far_plane);
     }
     
     // update user stuffs

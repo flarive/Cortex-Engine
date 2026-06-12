@@ -196,7 +196,7 @@ void engine::ImGuiEditor::renderTabSettings()
 
 
 
-    static int lastRenderMethod = static_cast<int>(DEFAULT_RENDER_METHOD) };
+    static int lastRenderMethod = static_cast<int>(DEFAULT_RENDER_METHOD);
     EditorHelper::renderSliderIntWithLabel("Render method", "render_method", sceneSetting_renderMethod, lastRenderMethod, 1, 2, m_onSceneSettingChanged);
 
 

@@ -7,9 +7,6 @@ using namespace engine;
 MyScene14::MyScene14(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::BlinnPhong,
-        .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "",
-        .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048
@@ -114,21 +111,22 @@ void MyScene14::init()
 
     // terrain
     auto myTerrain = make_shared<Terrain>(3.2f, 10);
-    myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png"), UvMapping(1.0f));
-    //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
-    /*myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg",
-        "",
-        "",
-        "",
-        "",
-        "textures/height/iceland_heightmap.png"), UvMapping(1.0f));*/
-    //myTerrain->setup(make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
-    //    "",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg"), UvMapping(1.0f));
+    shared_ptr<Material> matTerrain{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matTerrain = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
+            "",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg");
+    }
+    else
+    {
+        matTerrain = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png");
+        //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
+    }
+    myTerrain->setup(matTerrain, UvMapping(1.0f));
     auto trsTerrain = Transform(vec3(0.0f, -5.0f, 0.0f), vec3(0.01f));
     auto entityTerrain = make_shared<Entity>("MyTerrain");
     entityTerrain->addComponent<TransformComponent>(trsTerrain);
@@ -139,17 +137,20 @@ void MyScene14::init()
 
     // sphere
     auto mySphere1 = make_shared<Sphere>();
-    mySphere1->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-
-    /*auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
-        "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
-    mySphere1->setup(matSphere1, UvMapping(1.0f));*/
-    
+    shared_ptr<Material> matSphere1{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
+            "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
+    }
+    else {
+        matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");
+    }
+    mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, -4.0f, -3.0f), vec3(1.5f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
@@ -159,16 +160,20 @@ void MyScene14::init()
 
 
     auto mySphere2 = make_shared<Sphere>();
-    mySphere2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
-
-    //auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/pbr/porcelain/Porcelain_Color.png",
-    //    "textures/pbr/porcelain/Porcelain_Normal.png",
-    //    "textures/pbr/porcelain/Porcelain_Metallic.png",
-    //    "textures/pbr/porcelain/Porcelain_Roughness.png",
-    //    "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
-    //    "textures/pbr/porcelain/Porcelain_Displace.png", 2.0f);
-    //mySphere2->setup(matSphere2, UvMapping(1.0f));
+    shared_ptr<Material> matSphere2{};
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+            "textures/pbr/porcelain/Porcelain_Color.png",
+            "textures/pbr/porcelain/Porcelain_Normal.png",
+            "textures/pbr/porcelain/Porcelain_Metallic.png",
+            "textures/pbr/porcelain/Porcelain_Roughness.png",
+            "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
+            "textures/pbr/porcelain/Porcelain_Displace.png", 2.0f);
+    }
+    else {
+        matSphere2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");
+    }
+    mySphere2->setup(matSphere2, UvMapping(1.0f));
     auto trsSphere2 = Transform(vec3(2.0f, 1.8f, -10.0f), vec3(1.2f));
     auto entitySphere2 = make_shared<Entity>("MySphere2");
     entitySphere2->addComponent<TransformComponent>(trsSphere2);

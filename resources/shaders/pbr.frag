@@ -129,7 +129,6 @@ struct AreaLight {
 // coming from code
 uniform vec3 viewPos;
 uniform vec3 lightPos;
-uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;

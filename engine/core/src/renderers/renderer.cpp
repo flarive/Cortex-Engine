@@ -353,15 +353,16 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
         shader.use();
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
+        
 
         if (type != ShaderType::PBR)
         {
             shader.setVec3("lightPos", light->getPosition());
-            shader.setFloat("far_plane", far_plane);
         }
 
         shader.setVec3("viewPos", m_camera->position);
         shader.setBool("enableShadows", enableShadows);
+        shader.setFloat("far_plane", far_plane);
     }
 
 

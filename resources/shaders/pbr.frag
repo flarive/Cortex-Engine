@@ -129,6 +129,7 @@ struct AreaLight {
 // coming from code
 uniform vec3 viewPos;
 uniform vec3 lightPos;
+uniform float far_plane;
 uniform bool enableShadows;
 uniform bool hasTangents; // does the primitive to render has tangents and bitangents ?
 uniform Material material;
@@ -525,6 +526,20 @@ float ShadowCalculationPCF(vec4 fragPosLightSpace, vec3 geoNormal, vec3 lightDir
 
     return shadow;
 }
+
+float ShadowCalculationCubeMap(vec3 fragPos, vec3 lightPos)
+{
+    vec3 fragToLight = fragPos - lightPos;
+    float currentDepth = length(fragToLight);
+
+    vec3 dir = normalize(fragToLight);
+    float closestDepth = texture(texture_shadowMapCube, dir).r * far_plane;
+
+    float bias = max(material.shadowMapsBias * (1.0 - dot(normalize(fragToLight), normalize(dir))), 0.0005);
+
+    return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+}
+
 
 float rand2(vec2 co)
 {
@@ -1020,10 +1035,10 @@ void main()
 
 
     // caca temp !!!!!!!!!!!!!!!!!!!!!
-    if (color.x == 0.00001)
-    {
-        color += height / 100;
-    }
+//    if (color.x == 0.00001)
+//    {
+//        color += height / 100;
+//    }
 
     // HDR tonemapping
     //color = color / (color + vec3(1.0));
@@ -1107,7 +1122,17 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     vec3 L = normalize(light.position - fragPos);
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    
+    // calculate shadow
+    float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+
+    // Apply shadow intensity for darker/lighter shadows
+    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+
+   
     vec3 radiance = light.diffuse * light.intensity * attenuation;
+    radiance *= (1.0 - shadow);
+    
 
     // Cook-Torrance BRDF
     vec3 H = normalize(viewDir + L);
@@ -1128,6 +1153,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     float NdotL = max(dot(normal, L), 0.0);
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
+
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 color)
 {

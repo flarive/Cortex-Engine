@@ -9,6 +9,15 @@ MyScene8::MyScene8(const string& _title, std::weak_ptr<App> _app) : Scene(_title
     {
         .method = RenderMethod::BlinnPhong,
         .shadowIntensity = 5.0f
+
+        //.method = RenderMethod::PBR,
+        //.HDRSkyboxHide = true,
+        //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        //.HDRSkyboxBlurStrength = 0.0f,
+        //.enableShadows = true,
+        //.shadowIntensity = 3.0f,
+        //.shadowMapsTextureSize = 2048,
+        //.shadowMapsBiasFactor = 0.050f
     })
 {
     // my application specific state gets initialized here
@@ -37,7 +46,7 @@ void MyScene8::init()
     // light
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
-    light1->setIntensity(1.0f);
+    light1->setIntensity(3.0f);
     light1->setAmbientColor(Color(1.0f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));

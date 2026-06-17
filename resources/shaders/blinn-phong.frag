@@ -852,6 +852,7 @@ vec3 getNormalFromMap(vec2 texCoords)
     return normalize(TBN * tangentNormal);
 }
 
+// ----------------------------------------------------------------------------
 void main()
 {
     // Use world-space viewDir for lighting and shadows

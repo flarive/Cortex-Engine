@@ -111,7 +111,7 @@ void MyScene15::init()
         matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
         //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
     }
-    //matPlane->useParallaxMapping(true);
+    matPlane->useParallaxMapping(true);
     myPlane->setup(matPlane, UvMapping(2.0f));
     auto trsPlane = Transform(vec3(0.0f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
@@ -136,7 +136,7 @@ void MyScene15::init()
     else {
         matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
     }
-    //matPlane2->useParallaxMapping(true);
+    matPlane2->useParallaxMapping(true);
     myPlane2->setup(matPlane2, UvMapping(1.0f));
     auto trsPlane2 = Transform(vec3(0.0f, 2.0f, -1.5f), vec3(1.0f), vec3(-15.0f, 0.0, 180.0f));
     auto entityPlane2 = make_shared<Entity>("MyPlane2");
@@ -160,7 +160,7 @@ void MyScene15::init()
     else {
         matPlane3 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/stones.png", "", "textures/stones_normal.png", "textures/stones_displace.png");
     }
-    //matPlane3->useParallaxMapping(true);
+    matPlane3->useParallaxMapping(true);
     myPlane3->setup(matPlane3, UvMapping(1.0f));
     auto trsPlane3 = Transform(vec3(-1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(44.0f, 45.0, 0.0f));
     auto entityPlane3 = make_shared<Entity>("MyPlane3");
@@ -184,7 +184,7 @@ void MyScene15::init()
     else {
         matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png");
     }
-    //matPlane4->useParallaxMapping(true);
+    matPlane4->useParallaxMapping(true);
     myPlane4->setup(matPlane4, UvMapping(1.0f));
     auto trsPlane4 = Transform(vec3(1.0f, 0.5f, -5.0f), vec3(1.0f), vec3(44.0f, -45.0, 0.0f));
     auto entityPlane4 = make_shared<Entity>("MyPlane4");
@@ -220,7 +220,7 @@ void MyScene15::init()
     else {
         matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
     }
-    //matSphere1->useParallaxMapping(true);
+    matSphere1->useParallaxMapping(true);
     mySphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, 0.36f, 0.0f), vec3(0.3f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
@@ -250,7 +250,7 @@ void MyScene15::init()
     else {
         matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png");
     }
-    //matCube->useParallaxMapping(true);
+    matCube->useParallaxMapping(true);
     myCube->setup(matCube, UvMapping(1.0f));
     auto trsCube = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.4f));
     auto entityCube = make_shared<Entity>("MyCube");

@@ -176,10 +176,10 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
-    
+
     float near_plane = 0.1f;  // Previously 1.0f
     float far_plane = 100.0f;  // Previously 7.5f
-    
+
 
     glm::mat4 lightProjection{};
 
@@ -190,7 +190,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
         // spot light
         //float cutOff = spot->getCutoff();
         //lightProjection = glm::perspective(glm::radians(2.0f * cutOff), 1.0f, near_plane, far_plane);
-        
+
         // don't understand why having better looking result with that ???
         lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
     }
@@ -209,8 +209,8 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 
     directionalDepthMapTessellationShader.use();
     directionalDepthMapTessellationShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-    
-    
+
+
     glViewport(0, 0, (GLsizei)shadowSize, (GLsizei)shadowSize);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -228,7 +228,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
+
 
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
@@ -238,18 +238,18 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
-        
+
         if (type != ShaderType::PBR)
             shader.setVec3("lightPos", light->getPosition());
-        
+
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
     }
-    
+
     if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
-        
+
         if (typeTessellation != ShaderType::PBRTessellation)
             shaderTessellation.setVec3("lightPos", light->getPosition());
 
@@ -347,51 +347,42 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(Shader& shader, Shad
 
     ShaderType type = shader.getShaderType();
     ShaderType typeTessellation = shaderTessellation.getShaderType();
-    
+
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
-        
-
-        if (type != ShaderType::PBR)
-        {
-            shader.setVec3("lightPos", light->getPosition());
-        }
 
         shader.setVec3("viewPos", m_camera->position);
+        shader.setVec3("lightPos", light->getPosition());
         shader.setBool("enableShadows", enableShadows);
         shader.setFloat("far_plane", far_plane);
     }
 
 
-    
+
     if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
     {
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);
         shaderTessellation.setMat4("view", view);
-        
-        if (typeTessellation != ShaderType::PBRTessellation)
-        {
-            shaderTessellation.setVec3("lightPos", light->getPosition());
-            shaderTessellation.setFloat("far_plane", far_plane);
-        }
 
         shaderTessellation.setVec3("viewPos", m_camera->position);
+        shaderTessellation.setVec3("lightPos", light->getPosition());
         shaderTessellation.setBool("enableShadows", enableShadows);
+        shaderTessellation.setFloat("far_plane", far_plane);
     }
-    
+
     // update user stuffs
     update(shader, shaderTessellation);
 
 
-   
+
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureDepthMapBuffer);
 
-    if (shader.getShaderType() == ShaderType::BlinnPhong)
+    if (shader.getShaderType() == ShaderType::BlinnPhong || shader.getShaderType() == ShaderType::PBR)
     {
         shader.use();
         shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
@@ -534,10 +525,10 @@ void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
 void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 {
     //draw color framebuffer to screen
-    
+
     // IMPORTANT: restore to fill before drawing the screen quad
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
+
     //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
@@ -551,7 +542,7 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     screenShader.setBool("useGamma", settings.enableGammaCorrection);
     screenShader.setBool("useToneMapping", settings.enableToneMapping);
     screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
-    
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
 
@@ -563,7 +554,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
 {
     // IMPORTANT: restore to fill before drawing the screen quad
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
+
     // Bind default framebuffer (usually SDR)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
@@ -584,7 +575,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
 
     // test that HDR is working
     //testHDR(width, height);
-    
+
     // render HDR framebuffer to screen as a big fullscreen quad
     renderQuad();
 }
@@ -612,8 +603,8 @@ void engine::Renderer::updateEditorPropertySettings()
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
-    
-    
+
+
     // solid/wireframe polygons
     static bool lastRenderModeWireframe = settings.drawAsWireframe;
     if (lastRenderModeWireframe != settings.drawAsWireframe)
@@ -735,10 +726,10 @@ void engine::Renderer::renderQuad()
         glBindVertexArray(m_quadVAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        
+
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-        
+
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
     }
@@ -846,11 +837,11 @@ void engine::Renderer::renderSphere()
 
 void engine::Renderer::clean()
 {
-	logger.info("Cleaning up renderer base resources");
-    
+    logger.info("Cleaning up renderer base resources");
+
     // delete shaders
     screenShader.clean();
-	directionalDepthMapShader.clean();
+    directionalDepthMapShader.clean();
     pointDepthMapShader.clean();
     depthMapToQuadShader.clean();
     cubeFaceDebugShader.clean();

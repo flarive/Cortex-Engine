@@ -1033,13 +1033,6 @@ void main()
     // Add emissive contribution before gamma correction
     color += emissive;
 
-
-    // caca temp !!!!!!!!!!!!!!!!!!!!!
-//    if (color.x == 0.00001)
-//    {
-//        color += height / 100;
-//    }
-
     // HDR tonemapping
     //color = color / (color + vec3(1.0));
 
@@ -1131,7 +1124,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
 
    
     vec3 radiance = light.diffuse * light.intensity * attenuation;
-    radiance *= (1.0 - shadow);
+    //radiance *= (1.0 - shadow); // arggggggggggggggggggggggggggggggg !!!!
     
 
     // Cook-Torrance BRDF
@@ -1153,7 +1146,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     float NdotL = max(dot(normal, L), 0.0);
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }
-
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec2 texCoords, vec3 viewDir, vec3 color)
 {

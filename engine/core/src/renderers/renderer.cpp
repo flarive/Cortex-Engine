@@ -98,6 +98,8 @@ void engine::Renderer::computeDepthMapFramebuffer(GLsizei width, GLsizei height,
     if (m_lights.size() > 0)
     {
         std::shared_ptr<Light> firstLight = m_lights[0];
+        firstLight->setIsShadowCaster(true);
+        
         if (firstLight->getTypeID() == LightType::point)
             computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
         else

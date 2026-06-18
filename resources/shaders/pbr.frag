@@ -80,6 +80,7 @@ struct DirLight {
     vec3 specular;
 
     float intensity;
+    bool isShadowCaster;
 };
 
 struct PointLight {
@@ -96,6 +97,7 @@ struct PointLight {
     vec3 specular;
 
     float intensity;
+    bool isShadowCaster;
 };
 
 struct SpotLight {
@@ -115,6 +117,7 @@ struct SpotLight {
     vec3 specular;
     
     float intensity;
+    bool isShadowCaster;
 };
 
 struct AreaLight {
@@ -1115,16 +1118,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     vec3 L = normalize(light.position - fragPos);
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    
-    // calculate shadow
-    float shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
-
-    // Apply shadow intensity for darker/lighter shadows
-    shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
-
-   
     vec3 radiance = light.diffuse * light.intensity * attenuation;
-    //radiance *= (1.0 - shadow); // arggggggggggggggggggggggggggggggg !!!!
+
+    
+    float shadow = 0.0;
+    if (light.isShadowCaster)
+    {
+        // calculate shadow
+        //shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
+        // Apply shadow intensity for darker/lighter shadows
+        //shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
+    }
+    
+    radiance *= (1.0 - shadow);
     
 
     // Cook-Torrance BRDF

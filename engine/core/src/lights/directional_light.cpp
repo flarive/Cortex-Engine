@@ -32,7 +32,7 @@ void engine::DirectionalLight::setup()
     m_debug_cylinder.setup(matDebugLight);
 }
 
-void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     ShaderType type = shader.getShaderType();
 
@@ -49,6 +49,7 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         shader.setVec3(std::format("{}.diffuse", base), diffuse);
         shader.setVec3(std::format("{}.specular", base), specular);
         shader.setFloat(std::format("{}.intensity", base), intensity);
+        shader.setBool(std::format("{}.isShadowCaster", base), castShadow);
 
         shader.setVec3(std::format("{}.direction", base), calculateLightDirection(m_position, target));
     }

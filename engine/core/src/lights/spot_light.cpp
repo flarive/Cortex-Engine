@@ -29,7 +29,7 @@ void engine::SpotLight::setup()
     m_debug_cone.setup(matDebugLight);
 }
 
-void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     ShaderType type = shader.getShaderType();
 
@@ -47,6 +47,7 @@ void engine::SpotLight::draw(Shader& shader, const glm::mat4& projection, const 
         shader.setVec3(std::format("{}.diffuse", base), diffuse);
         shader.setVec3(std::format("{}.specular", base), specular);
         shader.setFloat(std::format("{}.intensity", base), intensity);
+        shader.setBool(std::format("{}.isShadowCaster", base), castShadow);
 
         if (m_useAttenuation)
         {

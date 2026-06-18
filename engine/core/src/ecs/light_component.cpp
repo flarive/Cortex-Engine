@@ -30,6 +30,7 @@ void engine::LightComponent::draw(const glm::mat4& projection, const glm::mat4& 
         m_light->getDiffuseColor(),
         m_light->getSpecularColor(),
         m_light->getIntensity(),
+        m_light->isShadowCaster(),
         m_light->getTarget(),
         worldTransformMatrix,
         localTransform);

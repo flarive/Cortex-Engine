@@ -86,7 +86,7 @@ namespace engine
 
         virtual void setIndex(unsigned int index) { m_index = index; }
 
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
+        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
 
         virtual void clean() = 0;
 
@@ -96,7 +96,8 @@ namespace engine
 		bool getEnabled() const { return m_enabled; }
         void setEnabled(bool enabled) { m_enabled = enabled; }
 
-        
+        void setIsShadowCaster(bool isShadowCaster) { m_isShadowCaster = isShadowCaster; }
+        bool isShadowCaster() { return m_isShadowCaster; }
 
     private:
         virtual void setup() = 0;
@@ -105,6 +106,8 @@ namespace engine
         unsigned int m_index{};
 
         bool m_enabled{ true };
+
+        bool m_isShadowCaster{ false };
 
         glm::vec3 m_position{};
         glm::vec3 m_scale{};

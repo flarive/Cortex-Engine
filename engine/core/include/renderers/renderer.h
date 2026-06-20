@@ -121,7 +121,7 @@ namespace engine
 		unsigned int LTC1Map{};
 		unsigned int LTC2Map{};
 
-
+		GLuint m_dummyCubeMapTexture = 0;
 
 		unsigned short m_spotLightCount{};
 		unsigned short m_dirLightCount{};
@@ -177,7 +177,7 @@ namespace engine
 
 		// base
 		unsigned int U_BG_ENV = 5;
-		unsigned int U_SHADOW_MAP = 1; // pspot lights & dir lights
+		unsigned int U_SHADOW_MAP = 1; // spot lights & dir lights
 		unsigned int U_SHADOW_MAP_CUBE = 2; // point lights
 		unsigned int U_LTC1 = 3; // area lights
 		unsigned int U_LTC2 = 4; // area lights
@@ -200,7 +200,7 @@ namespace engine
 	private:
 		void testHDR(int width, int height);
 
-		
+		void initDummyCubeMap();
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light
 		void initPointLightDepthMapFramebuffer(GLsizei shadowSize); // for omni light

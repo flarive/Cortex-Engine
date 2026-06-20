@@ -1,5 +1,7 @@
 #include "../../include/debug/opengl_debug.h"
 
+//#define DEBUG
+
 #ifdef DEBUG
 #define CHECK_GL_ERROR(label) OpenGLDebug::checkGLError(label)
 #else
@@ -14,7 +16,7 @@ void engine::OpenGLDebug::checkGLError(const char* label)
 {
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        std::cerr << "OpenGL error at " << label << ": " << std::hex << err << std::endl;
+        std::cerr << "OpenGL error at " << label << ": code " << err << std::endl;
     }
 }
 

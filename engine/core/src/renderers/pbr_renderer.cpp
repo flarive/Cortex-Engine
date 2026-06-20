@@ -83,6 +83,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
 
 
+
+
     pbrShaderTessellation.use();
     pbrShaderTessellation.setMat4("projection", projection);
     pbrShaderTessellation.setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
@@ -96,6 +98,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+
+
 
     screenShader.use();
     screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID

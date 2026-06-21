@@ -83,7 +83,7 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
-    // Always initialize a dummy cube map
+    // Always initialize the dummy cube map (only once)
     initDummyCubeMap();
 
     // If there are no lights, use the dummy cube map

@@ -78,19 +78,21 @@ namespace engine
 		std::vector<std::shared_ptr<Light>> m_lights{};
 
 		// renderbuffer object to render the main framebuffer
-		unsigned int rbo{};
+		GLuint rbo{};
 
 		// main framebuffer
-		unsigned int colorFramebuffer{};
+		GLuint colorFramebuffer{};
 
 		// depth map framebuffer for shadow maps
-		unsigned int depthMapFramebuffer{};
+		GLuint depthMapFramebuffer{};
 
 		// texture ID that holds main framebuffer rendering
-		unsigned int textureColorBuffer{};
+		GLuint textureColorBuffer{};
 
 		// texture ID that holds depth map framebuffer
-		unsigned int textureDepthMapBuffer{};
+		GLuint textureDepthMapBuffer{};
+
+		GLuint m_dummyCubeMapTexture = 0;
 
 		
 		GLint m_prevPolyModes[2]{};
@@ -121,7 +123,7 @@ namespace engine
 		unsigned int LTC1Map{};
 		unsigned int LTC2Map{};
 
-		GLuint m_dummyCubeMapTexture = 0;
+		
 
 		unsigned short m_spotLightCount{};
 		unsigned short m_dirLightCount{};

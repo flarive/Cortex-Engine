@@ -81,9 +81,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
-
-
-
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    pbrShader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    pbrShader.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
 
     pbrShaderTessellation.use();
     pbrShaderTessellation.setMat4("projection", projection);
@@ -98,7 +98,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
     pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
-
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    pbrShaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    pbrShaderTessellation.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
 
 
     screenShader.use();
@@ -361,7 +363,6 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     backgroundShader.setInt("environmentMap", U_BG_ENV); // Should be texture unit, not texture ID
     backgroundShader.setMat4("projection", projection);
 
-
     // then before rendering, configure the viewport to the original framebuffer's screen dimensions
     int scrWidth{}, scrHeight{};
     glfwGetFramebufferSize(m_window, &scrWidth, &scrHeight);
@@ -440,7 +441,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glActiveTexture(GL_TEXTURE0 + U_LTC2);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
-
+    
     // update user stuffs
     update(pbrShader, pbrShaderTessellation);
     //update(outlineColorShader);

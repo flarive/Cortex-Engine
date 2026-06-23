@@ -132,8 +132,8 @@ void engine::Renderer::computeDepthMapFramebuffer(
         return;
     }
 
-    std::shared_ptr<Light> firstLight = m_lights[0];
-    firstLight->setIsShadowCaster(true);
+  std::shared_ptr<Light> firstLight = m_lights[0];
+  firstLight->setIsShadowCaster(true);
 
     if (firstLight->getTypeID() == LightType::point)
         computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
@@ -167,7 +167,8 @@ void engine::Renderer::initSpotLightDepthMapFramebuffer(GLsizei shadowSize)
     // create depth texture
     glGenTextures(1, &textureDepthMapBuffer);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowSize, shadowSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowSize, shadowSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, shadowSize, shadowSize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -206,6 +207,9 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // REQUIRED for samplerCube ????????????????
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
     // attach depth texture as FBO's depth buffer
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
@@ -459,6 +463,9 @@ void engine::Renderer::initDummyCubeMap()
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // REQUIRED for samplerCube ????????????????
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }

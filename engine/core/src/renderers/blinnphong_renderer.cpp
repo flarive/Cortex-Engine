@@ -59,7 +59,9 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     blinnPhongShader.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
     blinnPhongShader.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
-
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    blinnPhongShader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    blinnPhongShader.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
 
     blinnPhongShaderTessellation.use();
     blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
@@ -68,7 +70,10 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
     blinnPhongShaderTessellation.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
     blinnPhongShaderTessellation.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
-
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    blinnPhongShaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    blinnPhongShaderTessellation.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    
 
     // shader configuration
     // --------------------

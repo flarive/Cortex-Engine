@@ -1,6 +1,6 @@
 #include "../../include/debug/opengl_debug.h"
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define CHECK_GL_ERROR(label) OpenGLDebug::checkGLError(label)

@@ -2,8 +2,8 @@
 
 #include "../../include/managers/log_manager.h"
 
-engine::Terrain::Terrain(float heightFactor, unsigned int resolution)
-	: m_heightFactor(heightFactor), m_resolution(resolution)
+engine::Terrain::Terrain(float heightFactor, unsigned int resolution, const glm::vec3& _position)
+	: Primitive(_position), m_heightFactor(heightFactor), m_resolution(resolution)
 {
     logger.trace("Terrain constructor called");
 }
@@ -65,11 +65,11 @@ void engine::Terrain::geometrySetup()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     m_vertices = generateVertices();
 
-    glGenVertexArrays(1, &m_terrainVAO);
-    glBindVertexArray(m_terrainVAO);
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
 
-    glGenBuffers(1, &m_terrainVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_terrainVBO);
+    glGenBuffers(1, &m_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
     // Upload full Vertex structs
     glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(engine::Vertex), m_vertices.data(), GL_STATIC_DRAW);
@@ -159,7 +159,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         return;
     }
 
-    if (m_terrainVAO == 0 || m_terrainVBO == 0) {
+    if (m_VAO == 0 || m_VBO == 0) {
         std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
         return;
     }
@@ -207,7 +207,6 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
     if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
-        //shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
         shader.setBool("isTessellated", true);
@@ -220,13 +219,13 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
         if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
         {
-            shader.setFloat("heightTextureSize", m_textureWidth);
+            shader.setFloat("heightTextureSize", static_cast<float>(m_textureWidth));
         }
     }
    
 
     // render the terrain
-    glBindVertexArray(m_terrainVAO);
+    glBindVertexArray(m_VAO);
     glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
     glBindVertexArray(0);
 
@@ -239,13 +238,13 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
 void engine::Terrain::clean()
 {
-    if (m_terrainVAO != 0) {
-        glDeleteVertexArrays(1, &m_terrainVAO);
-        m_terrainVAO = 0;
+    if (m_VAO != 0) {
+        glDeleteVertexArrays(1, &m_VAO);
+        m_VAO = 0;
     }
-    if (m_terrainVBO != 0) {
-        glDeleteBuffers(1, &m_terrainVBO);
-        m_terrainVBO = 0;
+    if (m_VBO != 0) {
+        glDeleteBuffers(1, &m_VBO);
+        m_VBO = 0;
     }
 
 	//m_tessHeightMapShader.clean();

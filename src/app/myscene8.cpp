@@ -7,17 +7,17 @@ using namespace engine;
 
 MyScene8::MyScene8(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::BlinnPhong,
-        .shadowIntensity = 5.0f
+        //.method = RenderMethod::BlinnPhong,
+        //.shadowIntensity = 5.0f
 
-        //.method = RenderMethod::PBR,
-        //.HDRSkyboxHide = true,
-        //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-        //.HDRSkyboxBlurStrength = 0.0f,
-        //.enableShadows = true,
-        //.shadowIntensity = 3.0f,
-        //.shadowMapsTextureSize = 2048,
-        //.shadowMapsBiasFactor = 0.050f
+        .method = RenderMethod::PBR,
+        .HDRSkyboxHide = true,
+        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        .HDRSkyboxBlurStrength = 0.0f,
+        .enableShadows = true,
+        .shadowIntensity = 3.0f,
+        .shadowMapsTextureSize = 2048,
+        .shadowMapsBiasFactor = 0.050f
     })
 {
     // my application specific state gets initialized here
@@ -37,10 +37,6 @@ void MyScene8::init()
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
-
-
-
-
 
 
     // light
@@ -67,7 +63,12 @@ void MyScene8::init()
 
     // ground
     auto myPlane = make_shared<Plane>();
-    myPlane->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myPlane->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
+    }
+    else {
+        myPlane->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
+    }
     auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
@@ -78,7 +79,12 @@ void MyScene8::init()
 
     // cube 1
     auto myCube1 = make_shared<Cube>();
-    myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myCube1->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
+    else {
+        myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
     auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
 
     AnimTransform anim1{ trsCube1, Transform(trsCube1).addRotationX(90.0f).addRotationY(90.0f), AnimMode::Absolute, 10.0f };
@@ -103,7 +109,12 @@ void MyScene8::init()
 
     // cube 2
     auto myCube2 = make_shared<Cube>();
-    myCube2->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myCube2->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
+    else {
+        myCube2->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
     auto trsCube2 = Transform(vec3(1.0f, -0.35f, 1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
     auto entityCube2 = make_shared<Entity>("MyCube2");
     entityCube2->addComponent<TransformComponent>(trsCube2);
@@ -113,7 +124,12 @@ void MyScene8::init()
 
     // cube 3
     auto myCube3 = make_shared<Cube>();
-    myCube3->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myCube3->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
+    else {
+        myCube3->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
     auto trsCube3 = Transform(vec3(1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
     auto entityCube3 = make_shared<Entity>("MyCube3");
     entityCube3->addComponent<TransformComponent>(trsCube3);
@@ -123,7 +139,12 @@ void MyScene8::init()
 
     // cube 4
     auto myCube4 = make_shared<Cube>();
-    myCube4->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myCube4->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
+    else {
+        myCube4->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
     auto trsCube4 = Transform(vec3(-1.0f, -0.35f, 1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
     auto entityCube4 = make_shared<Entity>("MyCube4");
     entityCube4->addComponent<TransformComponent>(trsCube4);
@@ -133,7 +154,13 @@ void MyScene8::init()
 
     // sphere
     auto mySphere = make_shared<Sphere>();
-    mySphere->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        mySphere->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
+    else {
+        mySphere->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
+    }
 
     auto trsSphere = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
     auto entitySphere = make_shared<Entity>("MySphere");

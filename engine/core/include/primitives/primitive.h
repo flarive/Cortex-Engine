@@ -19,12 +19,9 @@
 #include "../debug/opengl_debug.h"
 #include "../debug/debug_draw_line.h"
 
-
-
-
 namespace engine
 {
-    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6 };
+    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6, terrain = 7 };
 
 
     const std::unordered_map<PrimitiveType, std::string> PrimitiveTypeNames = {
@@ -34,7 +31,8 @@ namespace engine
         {PrimitiveType::plane, "plane"},
         {PrimitiveType::cylinder, "cylinder"},
         {PrimitiveType::cone, "cone"},
-        {PrimitiveType::billboard, "billboard"}
+        {PrimitiveType::billboard, "billboard"},
+        {PrimitiveType::terrain, "terrain"}
     };
 
     inline std::string to_string(PrimitiveType type) {
@@ -98,6 +96,9 @@ namespace engine
         void setCanCastShadows(bool canCast) { m_canCastShadows = canCast; }
         void setCanReceiveShadows(bool canReceive) { m_canReceiveShadows = canReceive; }
 
+		bool& isTesselated() { return m_isTesselated; }
+		void setIsTesselated(bool tesselated) { m_isTesselated = tesselated; }
+
 
         static std::vector<Vertex> generatePlaneVertices(float uvScale = 1.0f, bool flipNormal = false);
         static std::vector<Vertex> generateBillboardVertices(float uvScale = 1.0f);
@@ -142,6 +143,8 @@ namespace engine
         glm::vec3 m_position{};
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
+
+		bool m_isTesselated{ false };
 
         
         

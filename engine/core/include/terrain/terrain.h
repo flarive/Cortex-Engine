@@ -24,19 +24,6 @@ namespace engine
 {
     const int TERRAIN_TESSELLATION_PATCH_COUNT = 4;
     
-    //enum class TerrainType { undefined = 0, terrain = 1 };
-
-
-    //const std::unordered_map<TerrainType, std::string> terrainTypeNames = {
-    //    {TerrainType::undefined, "undefined"},
-    //    {TerrainType::terrain, "Terrain"}
-    //};
-
-    //inline std::string to_string(TerrainType type) {
-    //    auto it = terrainTypeNames.find(type);
-    //    return it != terrainTypeNames.end() ? it->second : "unknown";
-    //}
-    
     class Terrain final : public Primitive
 	{
 	public:

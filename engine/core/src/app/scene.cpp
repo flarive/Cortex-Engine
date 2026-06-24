@@ -83,7 +83,7 @@ void engine::Scene::after_init_internal()
 {
     // Always run this code
     initEntities();
-    
+
     // Count all lights in the scene
     computeLightCount();
 
@@ -111,16 +111,17 @@ void engine::Scene::initialize()
         throw std::runtime_error("App no longer exists!");
     }
 
+    // Create renderer
     if (m_sceneSettings.method == RenderMethod::PBR) {
-        // default renderer
+        // PBR is default renderer (mainstream)
         m_renderer = std::make_unique<PbrRenderer>(appShared->window);
     }
     else if (m_sceneSettings.method == RenderMethod::BlinnPhong) {
-        // legacy renderer
+        // BlinnPhong is a legacy renderer (deprecated)
         m_renderer = std::make_unique<BlinnPhongRenderer>(appShared->window);
     }
     else {
-        // just for very simple tests
+        // Blinn is just for very simple tests
         m_renderer = std::make_unique<PhongRenderer>(appShared->window);
     }
 
@@ -146,6 +147,10 @@ void engine::Scene::initialize()
     if (cameras.size() == 0) logger.warn("Scene has no camera !");
 
     m_editor.initRenderGuizmo(getActiveCamera());
+
+    // renderer should use tessellation shaders ?
+    computeSupportTessellation(m_entityManager.getRootEntity());
+    m_renderer->setShouldSupportTessellation(m_supportTessellation);
 
     if (auto appPtr = getApp()) {
         // renderer setup
@@ -1005,6 +1010,28 @@ void engine::Scene::computeLightCount()
     }
 
     m_renderer->setLightsCount(pointLightCount, dirLightCount, spotLightCount, areaLightCount);
+}
+
+void engine::Scene::computeSupportTessellation(std::shared_ptr<Entity>& entity)
+{
+    if (entity)
+    {
+        for (auto& child : entity->children)
+        {
+            if (child)
+            {
+                // should use primitive isTessellated instead
+                if (child->getComponent<TerrainComponent>())
+                {
+                    m_supportTessellation = true;
+                    break;
+                }
+
+                if (!child->children.empty())
+                    computeSupportTessellation(child);
+            }
+        }
+    }
 }
 
 //void engine::Scene::performRayCasting(double xpos, double ypos)

@@ -75,6 +75,9 @@ std::string engine::Entity::getTypeNameEx()
 			else if (primitive->getTypeID() == PrimitiveType::billboard) {
 				return "Billboard primitive";
 			}
+			else if (primitive->getTypeID() == PrimitiveType::terrain) {
+				return "Terrain primitive";
+			}
 		}
 
 		return "Primitive";

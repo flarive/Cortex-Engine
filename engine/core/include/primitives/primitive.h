@@ -96,8 +96,8 @@ namespace engine
         void setCanCastShadows(bool canCast) { m_canCastShadows = canCast; }
         void setCanReceiveShadows(bool canReceive) { m_canReceiveShadows = canReceive; }
 
-		bool& isTesselated() { return m_isTesselated; }
-		void setIsTesselated(bool tesselated) { m_isTesselated = tesselated; }
+		bool& isTessellated() { return m_isTessellated; }
+		void setIsTessellated(bool tessellated) { m_isTessellated = tessellated; }
 
 
         static std::vector<Vertex> generatePlaneVertices(float uvScale = 1.0f, bool flipNormal = false);
@@ -135,6 +135,7 @@ namespace engine
 
     protected:
         bool m_isEnabled{ true };
+        
 
         void setMaterial(const std::shared_ptr<Material>& material);
 
@@ -144,7 +145,7 @@ namespace engine
         glm::vec3 m_rotation{};
         glm::vec3 m_scale{};
 
-		bool m_isTesselated{ false };
+        bool m_isTessellated{ false };
 
         
         

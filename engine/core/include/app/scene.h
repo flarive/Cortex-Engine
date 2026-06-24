@@ -74,6 +74,8 @@ namespace engine
         GLint meshcount{};
         GLint primitivecount{};
 
+        bool m_supportTessellation{ false };
+
         GLint64 totalElapsedFrames{};
 
         // camera frustrum culling
@@ -213,7 +215,7 @@ namespace engine
         void computeLightsIndexes();
 
 
-
+        void computeSupportTessellation(std::shared_ptr<Entity>& entity);
 
 
         

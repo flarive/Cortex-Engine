@@ -63,16 +63,19 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     blinnPhongShader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
     blinnPhongShader.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
 
-    blinnPhongShaderTessellation.use();
-    blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-    blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    blinnPhongShaderTessellation.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
-    blinnPhongShaderTessellation.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
-    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-    blinnPhongShaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-    blinnPhongShaderTessellation.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    if (supportTessellation())
+    {
+        blinnPhongShaderTessellation.use();
+        blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+        blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+        blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        blinnPhongShaderTessellation.setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+        blinnPhongShaderTessellation.setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+        // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+        blinnPhongShaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+        blinnPhongShaderTessellation.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    }
     
 
     // shader configuration
@@ -162,15 +165,17 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     blinnPhongShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     blinnPhongShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
 
-
-    blinnPhongShaderTessellation.use();
-    blinnPhongShaderTessellation.setMat4("projection", projection);
-    blinnPhongShaderTessellation.setMat4("view", view);
-    blinnPhongShaderTessellation.setVec3("viewPos", camera->position);
-    blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
-    blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    if (supportTessellation())
+    {
+        blinnPhongShaderTessellation.use();
+        blinnPhongShaderTessellation.setMat4("projection", projection);
+        blinnPhongShaderTessellation.setMat4("view", view);
+        blinnPhongShaderTessellation.setVec3("viewPos", camera->position);
+        blinnPhongShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+        blinnPhongShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+        blinnPhongShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        blinnPhongShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    }
 
 
     

@@ -66,6 +66,8 @@ namespace engine
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
 
+		void setShouldSupportTessellation(bool supportTessellation);
+
 		virtual Shader& getShader() = 0;
 
 		virtual void clean() = 0;
@@ -93,7 +95,6 @@ namespace engine
 		GLuint textureDepthMapBuffer{};
 
 		GLuint m_dummyCubeMapTexture = 0;
-
 		
 		GLint m_prevPolyModes[2]{};
 
@@ -156,6 +157,8 @@ namespace engine
 
 		void updateEditorPropertySettings();
 
+		bool supportTessellation() const { return m_supportTessellation; }
+
 
 		// renderCube() renders a 1x1 3D cube in NDC.
 		// -------------------------------------------------
@@ -200,6 +203,8 @@ namespace engine
 
 
 	private:
+		bool m_supportTessellation{ false };
+		
 		void testHDR(int width, int height);
 
 		void initDummyCubeMap();

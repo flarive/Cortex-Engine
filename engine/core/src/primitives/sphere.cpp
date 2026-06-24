@@ -211,7 +211,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", false);
+        shader.setBool("isTessellated", isTessellated());
     }
 
     // Send to GPU

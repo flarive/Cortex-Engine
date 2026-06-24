@@ -5,6 +5,8 @@
 engine::Terrain::Terrain(float heightFactor, unsigned int resolution, const glm::vec3& _position)
 	: Primitive(_position), m_heightFactor(heightFactor), m_resolution(resolution)
 {
+    setIsTessellated(true);
+
     logger.trace("Terrain constructor called");
 }
 
@@ -209,7 +211,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     {
         shader.setBool("hasTangents", true);
         shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", true);
+        shader.setBool("isTessellated", isTessellated());
     }
 
     if (type == ShaderType::BlinnPhongTessellation  || type == ShaderType::PBRTessellation || type == ShaderType::DepthBufferDirectionalLightsTessellation)

@@ -111,7 +111,7 @@ void engine::Renderer::computeDepthMapFramebuffer(
 {
     if (m_lights.empty())
     {
-        // No lights: bind the dummy cube map and skip shadow computation
+        // No lights: bind the dummy cube map and skip shadow computation (not tested yet)
         glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_dummyCubeMapTexture);
 
@@ -122,7 +122,8 @@ void engine::Renderer::computeDepthMapFramebuffer(
             shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
             shader.setBool("enableShadows", false);
         }
-        if (shaderTessellation.getShaderType() == ShaderType::BlinnPhongTessellation || shaderTessellation.getShaderType() == ShaderType::PBRTessellation)
+
+        if (m_supportTessellation && (shaderTessellation.getShaderType() == ShaderType::BlinnPhongTessellation || shaderTessellation.getShaderType() == ShaderType::PBRTessellation))
         {
             shaderTessellation.use();
             shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
@@ -141,19 +142,19 @@ void engine::Renderer::computeDepthMapFramebuffer(
     {
         computeSpotLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
 
-		bool done = false;
-        for (const auto& light : m_lights)
-        {
-			// optimization: only compute depth map for the first light of each type ????
-            if (light->getTypeID() == LightType::point)
-            {
-                if (!done)
-                {
-                    computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, light);
-                    done = true;
-                }
-            }
-        }
+		//bool done = false;
+  //      for (const auto& light : m_lights)
+  //      {
+		//	// optimization: only compute depth map for the first light of each type ????
+  //          if (light->getTypeID() == LightType::point)
+  //          {
+  //              if (!done)
+  //              {
+  //                  computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, light);
+  //                  done = true;
+  //              }
+  //          }
+  //      }
     }
 }
 
@@ -264,8 +265,11 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     directionalDepthMapShader.use();
     directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-    directionalDepthMapTessellationShader.use();
-    directionalDepthMapTessellationShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    if (m_supportTessellation)
+    {
+        directionalDepthMapTessellationShader.use();
+        directionalDepthMapTessellationShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    }
 
 
     glViewport(0, 0, (GLsizei)shadowSize, (GLsizei)shadowSize);
@@ -295,21 +299,13 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.use();
-
-        //if (type != ShaderType::PBR)
-        //    shader.setVec3("lightPos", light->getPosition());
-
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("enableShadows", enableShadows);
     }
 
-    if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
+    if (m_supportTessellation && (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation))
     {
         shaderTessellation.use();
-
-        //if (typeTessellation != ShaderType::PBRTessellation)
-        //    shaderTessellation.setVec3("lightPos", light->getPosition());
-
         shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shaderTessellation.setBool("enableShadows", enableShadows);
     }
@@ -324,8 +320,11 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     shader.use();
     shader.setInt("texture_shadowMap", U_SHADOW_MAP);
 
-    shaderTessellation.use();
-    shaderTessellation.setInt("texture_shadowMap", U_SHADOW_MAP);
+    if (m_supportTessellation)
+    {
+        shaderTessellation.use();
+        shaderTessellation.setInt("texture_shadowMap", U_SHADOW_MAP);
+    }
 
     // render Depth map to quad for visual debugging
     // ---------------------------------------------
@@ -373,11 +372,14 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
         pointDepthMapShader.setFloat("far_plane", far_plane);
         pointDepthMapShader.setVec3("lightPos", light->getPosition());
 
-        pointDepthMapTessellationShader.use();
-        for (unsigned int i = 0; i < 6; ++i)
-            pointDepthMapTessellationShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
-        pointDepthMapTessellationShader.setFloat("far_plane", far_plane);
-        pointDepthMapTessellationShader.setVec3("lightPos", light->getPosition());
+        if (m_supportTessellation)
+        {
+            pointDepthMapTessellationShader.use();
+            for (unsigned int i = 0; i < 6; ++i)
+                pointDepthMapTessellationShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+            pointDepthMapTessellationShader.setFloat("far_plane", far_plane);
+            pointDepthMapTessellationShader.setVec3("lightPos", light->getPosition());
+        }
 
         update(pointDepthMapShader, pointDepthMapTessellationShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -399,25 +401,16 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         shader.setVec3("viewPos", m_camera->position);
-
-        //if (type != ShaderType::PBR)
-        //    shader.setVec3("lightPos", light->getPosition());
-
-
         shader.setBool("enableShadows", enableShadows);
         shader.setFloat("far_plane", far_plane);
     }
 
-    if (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation)
+    if (m_supportTessellation && (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation))
     {
         shaderTessellation.use();
         shaderTessellation.setMat4("projection", projection);
         shaderTessellation.setMat4("view", view);
         shaderTessellation.setVec3("viewPos", m_camera->position);
-
-        //if (type != ShaderType::PBR)
-        //    shaderTessellation.setVec3("lightPos", light->getPosition());
-
         shaderTessellation.setBool("enableShadows", enableShadows);
         shaderTessellation.setFloat("far_plane", far_plane);
     }
@@ -434,9 +427,12 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
         shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
         shader.setBool("hasShadowMapCube", light->isShadowCaster());
 
-        shaderTessellation.use();
-        shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-        shaderTessellation.setBool("hasShadowMapCube", light->isShadowCaster());
+        if (m_supportTessellation)
+        {
+            shaderTessellation.use();
+            shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+            shaderTessellation.setBool("hasShadowMapCube", light->isShadowCaster());
+        }
     }
 }
 
@@ -935,6 +931,11 @@ void engine::Renderer::clean()
 
     // delete sphere VAO/VBO/IBO
     glDeleteVertexArrays(1, &m_sphereVAO);
+}
+
+void engine::Renderer::setShouldSupportTessellation(bool supportTessellation)
+{
+    m_supportTessellation = supportTessellation;
 }
 
 engine::Renderer::~Renderer()

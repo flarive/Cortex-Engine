@@ -6,13 +6,22 @@ using namespace engine;
 
 MyScene13::MyScene13(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
-        .method = RenderMethod::BlinnPhong,
+        //.method = RenderMethod::BlinnPhong,
+        //.HDRSkyboxHide = true,
+        //.HDRSkyboxFilePath = "",
+        //.HDRSkyboxBlurStrength = 0.0f,
+        //.enableShadows = true,
+        //.shadowIntensity = 3.0f,
+        //.shadowMapsTextureSize = 2048
+
+        .method = RenderMethod::PBR,
         .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "",
+        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
-        .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048
+        .shadowMapsTextureSize = 2048,
+        .iblDiffuseIntensity = 2.0f,
+        .iblSpecularIntensity = 1.0f
     })
 {
     // my application specific state gets initialized here
@@ -82,7 +91,12 @@ void MyScene13::init()
 
     // ground
     auto myPlane = make_shared<Plane>();
-    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myPlane->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    }
+    else {
+        myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
+    }
     auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
@@ -94,7 +108,12 @@ void MyScene13::init()
 
     // particle systems
     auto myParticleSystem = make_shared<ParticleSystem>(500, 100, 0.15f, 2.0f, -0.25f);
-    myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myParticleSystem->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
+    }
+    else {
+        myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
+    }
     auto trsParticleSystem = Transform(vec3(-1.5f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
     auto entityParticleSystem = make_shared<Entity>("MyParticleSystem1");
     entityParticleSystem->addComponent<TransformComponent>(trsParticleSystem);
@@ -102,7 +121,12 @@ void MyScene13::init()
     getEntityManager().addChild(entityParticleSystem);
 
     auto myParticleSystem2 = make_shared<ParticleSystem>(500, 100, 0.65f, 2.0f, -0.25f);
-    myParticleSystem2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/fire.png"), UvMapping(1.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myParticleSystem2->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/particles/fire.png"), UvMapping(1.0f));
+    }
+    else {
+        myParticleSystem2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/fire.png"), UvMapping(1.0f));
+    }
     auto trsParticleSystem2 = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
     auto entityParticleSystem2 = make_shared<Entity>("MyParticleSystem2");
     entityParticleSystem2->addComponent<TransformComponent>(trsParticleSystem2);
@@ -110,7 +134,12 @@ void MyScene13::init()
     getEntityManager().addChild(entityParticleSystem2);
 
     auto myParticleSystem3 = make_shared<ParticleSystem>(500, 25, 0.20f, 2.0f, -0.25f);
-    myParticleSystem3->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/purple.png"), UvMapping(1.0f));
+    if (this->getSceneSettings().method == RenderMethod::PBR) {
+        myParticleSystem3->setup(make_shared<PBRMaterial>(Color(0.1f), "textures/particles/purple.png"), UvMapping(1.0f));
+    }
+    else {
+        myParticleSystem3->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/purple.png"), UvMapping(1.0f));
+    }
     auto trsParticleSystem3 = Transform(vec3(1.5f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
     auto entityParticleSystem3 = make_shared<Entity>("MyParticleSystem3");
     entityParticleSystem3->addComponent<TransformComponent>(trsParticleSystem3);

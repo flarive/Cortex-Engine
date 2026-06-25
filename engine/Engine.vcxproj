@@ -224,7 +224,7 @@
     <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
     <ClCompile Include="core\src\renderers\renderer.cpp" />
     <ClCompile Include="core\src\singleton.cpp" />
-    <ClCompile Include="core\src\terrain\terrain.cpp" />
+    <ClCompile Include="core\src\primitives\terrain.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
@@ -288,6 +288,7 @@
     <ClInclude Include="core\include\cameras\orbit_camera.h" />
     <ClInclude Include="core\include\character.h" />
     <ClInclude Include="core\include\common_defines.h" />
+    <ClInclude Include="core\include\constants.h" />
     <ClInclude Include="core\include\debug\debug_cube.h" />
     <ClInclude Include="core\include\debug\debug_draw_line.h" />
     <ClInclude Include="core\include\debug\debug_frame.h" />
@@ -331,7 +332,7 @@
     <ClInclude Include="core\include\renderers\pbr_renderer.h" />
     <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\singleton.h" />
-    <ClInclude Include="core\include\terrain\terrain.h" />
+    <ClInclude Include="core\include\primitives\terrain.h" />
     <ClInclude Include="core\include\tools\file_system.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />

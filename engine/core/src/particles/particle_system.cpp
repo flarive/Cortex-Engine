@@ -1,7 +1,9 @@
 #include "../../include/particles/particle_system.h"
 
 #include "../../include/texture.h"
+#include "../../include/vertex.h"
 
+#include "../../include/managers/log_manager.h"
 #include "../../include/debug/opengl_debug.h"
 
 const float M_PI_F = 3.1415927f;
@@ -12,24 +14,33 @@ using namespace std;
 engine::ParticleSystem::ParticleSystem()
 	: m_maxParticles(100), m_numOfParticlesPerSecond(10), m_squareSize(0.25f), m_emitterRadius(1.0f), m_lifeSpan(0.25f), m_infiniteEmission(true), m_drawCallCount(0)
 {
+	logger.trace("ParticleSystem constructor called");
+
 	init();
 }
 
 engine::ParticleSystem::ParticleSystem(unsigned int _maxParticles, unsigned int _numOfParticlesPerSecond, float _particleSize, float _emitterRadius, float _lifeSpan, bool _infiniteEmission)
 	: m_maxParticles(_maxParticles), m_numOfParticlesPerSecond(_numOfParticlesPerSecond), m_squareSize(_particleSize), m_emitterRadius(_emitterRadius), m_lifeSpan(_lifeSpan), m_infiniteEmission(_infiniteEmission), m_drawCallCount(0)
 {
+	logger.trace("ParticleSystem constructor called");
+
 	init();
 }
 
-engine::ParticleSystem::~ParticleSystem()
+void engine::ParticleSystem::setup()
 {
-	delete(m_particlesArray);
-	delete(m_flags);
+	
+}
+
+void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material)
+{
+	const UvMapping uv{};
+	setup(material, uv);
 }
 
 void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, const UvMapping& uv)
 {
-	m_material = material;
+	Primitive::setMaterial(material);
 	m_uvScale = uv.getUvScale();
 
 	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
@@ -476,6 +487,12 @@ std::vector<std::string> engine::ParticleSystem::getModesList()
 	return names;
 }
 
+std::vector<engine::Vertex> engine::ParticleSystem::generateVertices()
+{
+	// not implemented
+	return std::vector<engine::Vertex>();
+}
+
 void engine::ParticleSystem::setModeAtIndex(unsigned short index)
 {
 	if (index == 1)
@@ -486,4 +503,17 @@ void engine::ParticleSystem::setModeAtIndex(unsigned short index)
 	m_type = ParticleSystemType::basic;
 
 	reSetup();
+}
+
+void engine::ParticleSystem::clean()
+{
+
+}
+
+engine::ParticleSystem::~ParticleSystem()
+{
+	logger.trace("ParticleSystem destructor called");
+
+	delete(m_particlesArray);
+	delete(m_flags);
 }

@@ -453,9 +453,6 @@
     <ClCompile Include="..\libs\stb\stb_vorbis.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\terrain\terrain.cpp">
-      <Filter>Fichiers sources\core\terrain</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\ecs\terrain_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
@@ -491,6 +488,9 @@
     </ClCompile>
     <ClCompile Include="core\src\managers\app_manager.cpp">
       <Filter>Fichiers sources\core\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\primitives\terrain.cpp">
+      <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -776,9 +776,6 @@
     <ClInclude Include="core\include\ecs\particlesystem_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\terrain\terrain.h">
-      <Filter>Fichiers d%27en-tête\core\terrain</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\ecs\terrain_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
     </ClInclude>
@@ -817,6 +814,12 @@
     </ClInclude>
     <ClInclude Include="core\include\app\gpu_selector.h">
       <Filter>Fichiers d%27en-tête\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\terrain.h">
+      <Filter>Fichiers d%27en-tête\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\constants.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

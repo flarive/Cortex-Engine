@@ -372,48 +372,12 @@ std::vector<engine::Vertex> engine::Primitive::generateCuboidVertices(float widt
     return vertices;
 }
 
-//std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radius, float uvScale, bool flipNormal)
-//{
-//    std::vector<engine::Vertex> vertices;
-//
-//    constexpr unsigned int X_SEGMENTS = 64;
-//    constexpr unsigned int Y_SEGMENTS = 64;
-//    constexpr float PI = 3.14159265359f;
-//
-//    for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-//    {
-//        for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-//        {
-//            float xSegment = static_cast<float>(x) / static_cast<float>(X_SEGMENTS);
-//            float ySegment = static_cast<float>(y) / static_cast<float>(Y_SEGMENTS);
-//            float xPos = cos(xSegment * 2.0f * PI) * sin(ySegment * PI);
-//            float yPos = cos(ySegment * PI);
-//            float zPos = sin(xSegment * 2.0f * PI) * sin(ySegment * PI);
-//
-//            glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
-//            glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
-//            //glm::vec2 texCoord = { xSegment * uvScale, ySegment * uvScale };
-//            glm::vec2 texCoord = { (1.0f - xSegment) * uvScale, (1.0f - ySegment) * uvScale };
-//
-//
-//            // Calculate tangent and bitangent
-//            glm::vec3 tangent = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), normal));
-//            glm::vec3 bitangent = glm::normalize(glm::cross(normal, tangent));
-//
-//            vertices.emplace_back(position, normal, texCoord, tangent, bitangent);
-//        }
-//    }
-//
-//    return vertices;
-//}
-
 std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radius, float uvScale, bool flipNormal)
 {
     std::vector<engine::Vertex> vertices;
 
     constexpr unsigned int X_SEGMENTS = 64;
     constexpr unsigned int Y_SEGMENTS = 64;
-    constexpr float PI = 3.14159265359f;
 
     for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
     {
@@ -421,9 +385,9 @@ std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radi
         {
             float xSegment = static_cast<float>(x) / static_cast<float>(X_SEGMENTS);
             float ySegment = static_cast<float>(y) / static_cast<float>(Y_SEGMENTS);
-            float xPos = cos(xSegment * 2.0f * PI) * sin(ySegment * PI);
-            float yPos = cos(ySegment * PI);
-            float zPos = sin(xSegment * 2.0f * PI) * sin(ySegment * PI);
+            float xPos = cos(xSegment * 2.0f * constants::PI) * sin(ySegment * constants::PI);
+            float yPos = cos(ySegment * constants::PI);
+            float zPos = sin(xSegment * 2.0f * constants::PI) * sin(ySegment * constants::PI);
 
             glm::vec3 position = radius * glm::vec3(xPos, yPos, zPos);
             glm::vec3 normal = glm::normalize(glm::vec3(xPos, yPos, zPos));
@@ -450,13 +414,12 @@ std::vector<engine::Vertex> engine::Primitive::generateSphereVertices(float radi
 std::vector<engine::Vertex> engine::Primitive::generateCylinderVertices(unsigned int sectorCount, float height, float radius, float uvScale)
 {
     std::vector<engine::Vertex> vertices;
-    const float PI = 3.14159265359f;
     float halfHeight = height / 2.0f;
 
     // === Side Surface Vertices ===
     for (unsigned int i = 0; i <= sectorCount; ++i)
     {
-        float sectorAngle = 2 * PI * i / sectorCount;
+        float sectorAngle = 2 * constants::PI * i / sectorCount;
         float x = cosf(sectorAngle);
         float z = sinf(sectorAngle);
 
@@ -486,7 +449,7 @@ std::vector<engine::Vertex> engine::Primitive::generateCylinderVertices(unsigned
     // === Top Cap Ring Vertices ===
     for (unsigned int i = 0; i <= sectorCount; ++i)
     {
-        float angle = 2 * PI * i / sectorCount;
+        float angle = 2 * constants::PI * i / sectorCount;
         float x = cosf(angle);
         float z = sinf(angle);
         glm::vec3 pos(radius * x, halfHeight, radius * z);
@@ -504,7 +467,7 @@ std::vector<engine::Vertex> engine::Primitive::generateCylinderVertices(unsigned
     // === Bottom Cap Ring Vertices ===
     for (unsigned int i = 0; i <= sectorCount; ++i)
     {
-        float angle = 2 * PI * i / sectorCount;
+        float angle = 2 * constants::PI * i / sectorCount;
         float x = cosf(angle);
         float z = sinf(angle);
         glm::vec3 pos(radius * x, -halfHeight, radius * z);
@@ -519,7 +482,6 @@ std::vector<engine::Vertex> engine::Primitive::generateCylinderVertices(unsigned
 std::vector<engine::Vertex> engine::Primitive::generateConeVertices(unsigned int sectorCount, float height, float radius, float uvScale)
 {
     std::vector<engine::Vertex> vertices;
-    const float PI = 3.14159265359f;
     float halfHeight = height / 2.0f;
     glm::vec3 tip(0.0f, halfHeight, 0.0f);
 
@@ -531,7 +493,7 @@ std::vector<engine::Vertex> engine::Primitive::generateConeVertices(unsigned int
 
     for (unsigned int i = 0; i <= sectorCount; ++i)
     {
-        float angle = 2 * PI * i / sectorCount;
+        float angle = 2 * constants::PI * i / sectorCount;
         float x = cosf(angle);
         float z = sinf(angle);
 
@@ -551,7 +513,7 @@ std::vector<engine::Vertex> engine::Primitive::generateConeVertices(unsigned int
     // === Base ring vertices ===
     for (unsigned int i = 0; i <= sectorCount; ++i)
     {
-        float angle = 2 * PI * i / sectorCount;
+        float angle = 2 * constants::PI * i / sectorCount;
         float x = cosf(angle);
         float z = sinf(angle);
 

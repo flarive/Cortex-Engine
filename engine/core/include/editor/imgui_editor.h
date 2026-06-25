@@ -95,21 +95,18 @@ namespace engine
 
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
-
-		
-
 	protected:
 		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
-		bool sceneSetting_drawAsWireframe{ false };
+		bool sceneSetting_drawAsWireframe{ DEFAULT_ENABLE_WIREFRAME_MODE };
 		float sceneSetting_exposure{ DEFAULT_EXPOSURE };
 		bool sceneSetting_enableGammaCorrection{ DEFAULT_ENABLE_GAMMA_CORRECTION };
 		bool sceneSetting_enableToneMapping{ DEFAULT_ENABLE_TONE_MAPPING };
 		int sceneSetting_applyPostProcessFx{ static_cast<int>(DEFAULT_POST_PROCESSING_FX) };
-		bool sceneSetting_enableFaceCulling{ true };
-		bool sceneSetting_enableCameraFrustrumCulling{ true };
-		bool sceneSetting_drawLightsVisualHelpers{ false };
-		bool sceneSetting_drawBoundingBoxesVisualHelpers{ false };
-		bool sceneSetting_drawDebugNormalsVisualHelpers{ false };
+		bool sceneSetting_enableFaceCulling{ DEFAULT_ENABLE_FACE_CULLING };
+		bool sceneSetting_enableCameraFrustrumCulling{ DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING };
+		bool sceneSetting_drawLightsVisualHelpers{ DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS };
+		bool sceneSetting_drawBoundingBoxesVisualHelpers{ DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS };
+		bool sceneSetting_drawDebugNormalsVisualHelpers{ DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS };
 		bool sceneSetting_enableShadows{ DEFAULT_ENABLE_SHADOWS };
 		int sceneSetting_shadowCalculationMethod{ static_cast<int>(DEFAULT_SHADOWS_METHOD) };
 		float sceneSetting_shadowIntensity{ DEFAULT_SHADOWS_INTENSITY };

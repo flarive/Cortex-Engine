@@ -2,7 +2,7 @@
 
 #include "../../include/singleton.h"
 
-#include "../../include/terrain/terrain.h"
+#include "../../include/primitives/terrain.h"
 
 
 engine::TerrainComponent::TerrainComponent(std::shared_ptr<Terrain> terrain) : m_terrain(terrain)

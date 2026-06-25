@@ -202,7 +202,7 @@ void engine::ImGuiEditor::renderTabSettings()
 
 
 
-    static bool lastDrawWireframe = false;
+    static bool lastDrawWireframe = DEFAULT_ENABLE_WIREFRAME_MODE;
     if (ImGui::Toggle("Wireframe", &sceneSetting_drawAsWireframe, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawWireframe != sceneSetting_drawAsWireframe)
@@ -235,7 +235,7 @@ void engine::ImGuiEditor::renderTabSettings()
     static int lastApplyPostProcessFx = DEFAULT_POST_PROCESSING_FX;
     EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10, m_onSceneSettingChanged);
 
-    static bool lastEnableFaceCulling = true;
+    static bool lastEnableFaceCulling = DEFAULT_ENABLE_FACE_CULLING;
     if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))
     {
         if (m_onSceneSettingChanged && lastEnableFaceCulling != sceneSetting_enableFaceCulling)
@@ -249,7 +249,7 @@ void engine::ImGuiEditor::renderTabSettings()
     EditorHelper::renderDragFloatWithLabel("Exposure", "exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
 
 
-    static bool lastEnableCameraFrustrumCulling = true;
+    static bool lastEnableCameraFrustrumCulling = DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING;
     if (ImGui::Toggle("Camera frustrum culling", &sceneSetting_enableCameraFrustrumCulling, toggle_config))
     {
         if (m_onSceneSettingChanged && lastEnableCameraFrustrumCulling != sceneSetting_enableCameraFrustrumCulling)
@@ -259,7 +259,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastDrawLightsVisualHelpers = false;
+    static bool lastDrawLightsVisualHelpers = DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS;
     if (ImGui::Toggle("Lights visual helpers", &sceneSetting_drawLightsVisualHelpers, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawLightsVisualHelpers != sceneSetting_drawLightsVisualHelpers)
@@ -269,7 +269,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastDrawBoundingBoxesVisualHelpers = false;
+    static bool lastDrawBoundingBoxesVisualHelpers = DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS;
     if (ImGui::Toggle("Bounding boxes visual helpers", &sceneSetting_drawBoundingBoxesVisualHelpers, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawBoundingBoxesVisualHelpers != sceneSetting_drawBoundingBoxesVisualHelpers)
@@ -279,7 +279,7 @@ void engine::ImGuiEditor::renderTabSettings()
         }
     }
 
-    static bool lastDrawDebugNormalsVisualHelpers = false;
+    static bool lastDrawDebugNormalsVisualHelpers = DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS;
     if (ImGui::Toggle("Normals visual helpers", &sceneSetting_drawDebugNormalsVisualHelpers, toggle_config))
     {
         if (m_onSceneSettingChanged && lastDrawDebugNormalsVisualHelpers != sceneSetting_drawDebugNormalsVisualHelpers)

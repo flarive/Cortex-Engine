@@ -70,6 +70,13 @@ namespace engine
     const bool DEFAULT_ENABLE_TONE_MAPPING{ false };
     const PostProcessingEffect DEFAULT_POST_PROCESSING_FX{ PostProcessingEffect::None };
 
+    const bool DEFAULT_ENABLE_FACE_CULLING{ true };
+    const bool DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING{ true };
+    const bool DEFAULT_ENABLE_WIREFRAME_MODE{ false };
+    const bool DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS { false };
+    const bool DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS{ false };
+    const bool DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS{ false };
+
     struct SceneSettings final
     {
         RenderMethod method{ DEFAULT_RENDER_METHOD };
@@ -98,13 +105,12 @@ namespace engine
         bool enableToneMapping{ DEFAULT_ENABLE_TONE_MAPPING };
         PostProcessingEffect applyPostProcessFx{ DEFAULT_POST_PROCESSING_FX };
         
-        // to finish
-        bool enableFaceCulling{ true };
-        bool enableCameraFrustrumCulling{ true };
-        bool drawAsWireframe{ false };
+        bool enableFaceCulling{ DEFAULT_ENABLE_FACE_CULLING };
+        bool enableCameraFrustrumCulling{ DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING };
+        bool drawAsWireframe{ DEFAULT_ENABLE_WIREFRAME_MODE };
 
-        bool drawLightsVisualHelpers{ false };
-        bool drawBoundingBoxesVisualHelpers{ false };
-        bool drawNormalsVisualHelpers{ false };
+        bool drawLightsVisualHelpers{ DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS };
+        bool drawBoundingBoxesVisualHelpers{ DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS };
+        bool drawNormalsVisualHelpers{ DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS };
     };
 }

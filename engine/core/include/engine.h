@@ -72,11 +72,12 @@
 #include "primitives/cone.h"
 #include "primitives/plane.h"
 #include "primitives/billboard.h"
+#include "primitives/terrain.h"
 
 #include "particles/particle.h"
 #include "particles/particle_system.h"
 
-#include "terrain/terrain.h"
+
 
 #include "managers/app_manager.h"
 #include "managers/log_manager.h"

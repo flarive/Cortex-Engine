@@ -6,6 +6,7 @@
 #include <variant>
 
 #include "../common_defines.h"
+#include "../constants.h"
 #include "../vertex.h"
 #include "../shader.h"
 #include "../uvmapping.h"
@@ -21,7 +22,7 @@
 
 namespace engine
 {
-    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6, terrain = 7 };
+    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6, terrain = 7, particle = 8 };
 
 
     const std::unordered_map<PrimitiveType, std::string> PrimitiveTypeNames = {
@@ -32,7 +33,8 @@ namespace engine
         {PrimitiveType::cylinder, "cylinder"},
         {PrimitiveType::cone, "cone"},
         {PrimitiveType::billboard, "billboard"},
-        {PrimitiveType::terrain, "terrain"}
+        {PrimitiveType::terrain, "terrain"},
+        {PrimitiveType::particle, "particle"}
     };
 
     inline std::string to_string(PrimitiveType type) {

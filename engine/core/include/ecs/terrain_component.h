@@ -4,7 +4,7 @@
 #include "component.h"
 
 #include "../primitives/primitive.h"
-#include "../terrain/terrain.h"
+#include "../primitives/terrain.h"
 #include "../frustrum.h"
 #include "../bounding_volume.h"
 #include "../aabb.h"

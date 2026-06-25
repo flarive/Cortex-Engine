@@ -1,4 +1,4 @@
-#include "../../include/terrain/terrain.h"
+#include "../../include/primitives/terrain.h"
 
 #include "../../include/managers/log_manager.h"
 

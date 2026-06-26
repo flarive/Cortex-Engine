@@ -28,6 +28,8 @@
 
 
 
+
+
 #include "../../include/managers/entity_manager.h"
 
 // https://github.com/TheCherno/ImGuizmo
@@ -131,9 +133,6 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
 
     renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 }
-
-
-
 
 void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
 {
@@ -430,10 +429,13 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
     if (entity)
     {
         auto entityType = entity->getType();
-        GLuint iconTexture = EditorHelper::getEntityTypeMediumIcon(entityType);
+        auto uv = EditorHelper::getEntityTypeMediumIcon(entityType);
+        GLuint tex = EditorHelper::getIconAtlasTexture();
+
+        IM_ASSERT(tex != 0);
 
         // Draw the icon
-        ImGui::Image(iconTexture, ImVec2(48, 48));
+        ImGui::Image((ImTextureID)(intptr_t)tex, ImVec2(48, 48), uv.uv0, uv.uv1);
 
         // Place next content on the same line as the image
         ImGui::SameLine();

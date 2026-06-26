@@ -1080,6 +1080,27 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_ao_2k.jpg">
       <Filter>resources\textures\pbr\aerial-rocks</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\icons\editor_atlas_48x48.png">
+      <Filter>resources\icons</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_arm_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_diff_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_disp_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_nor_gl_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_rough_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_rough_ao_2k.jpg">
+      <Filter>resources\textures\pbr\aerial-rocks</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -1133,25 +1154,5 @@
     <ClInclude Include="app\myapp0.h">
       <Filter>app</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_arm_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_diff_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_disp_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_nor_gl_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_rough_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
-    <Image Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_rough_ao_2k.jpg">
-      <Filter>resources\textures\pbr\aerial-rocks</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -68,6 +68,8 @@ namespace engine
 
 		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
 
+		IconAtlas m_iconAtlas;
+
 		void renderTabSettings();
 		void renderTabAbout();
 		void renderHierarchyWidget();

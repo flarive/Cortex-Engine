@@ -4,8 +4,7 @@
 #include "../ecs/entity.h"
 #include "../ecs/component.h"
 #include "../cameras/camera.h"
-
-#include "../ecs/entity.h"
+#include "../editor/icon_atlas.h"
 
 #include <imgui.h>
 
@@ -18,6 +17,13 @@
 namespace engine
 {
 	using SceneSetting = std::variant<bool, int, unsigned int, float>;
+
+	//struct IconUV {
+	//	ImVec2 uv0;
+	//	ImVec2 uv1;
+	//};
+
+	//
 
 	class EditorHelper final
 	{
@@ -51,7 +57,10 @@ namespace engine
 
 		static GLuint getIcon(const std::string& key);
 		static GLuint getEntityTypeSmallIcon(const EntityType entityType);
-		static GLuint getEntityTypeMediumIcon(const EntityType entityType);
+
+		static GLuint getIconAtlasTexture();
+		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EntityType type);
+		
 
 		static void addToolbarIconButton(const std::string& icon, std::function<void()> onClick);
 		static void addDiscreetIconButton(bool& state, const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick);
@@ -84,8 +93,13 @@ namespace engine
 		static std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
 		static std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
-		static std::unordered_map<EntityType, GLuint> m_iconMediumTextureCache;
 
-		
+		//static GLuint m_iconAtlas48x48Texture;
+		//static std::unordered_map<EntityType, IconUV> m_iconUVs;
+
+		/*static void loadIconAtlas();
+		static void generateIconUVs();*/
+
+		static engine::IconAtlas m_iconAtlas;
 	};
 }

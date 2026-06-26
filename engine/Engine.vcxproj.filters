@@ -492,6 +492,9 @@
     <ClCompile Include="core\src\primitives\terrain.cpp">
       <Filter>Fichiers sources\core\primitives</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\editor\icon_atlas.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -820,6 +823,9 @@
     </ClInclude>
     <ClInclude Include="core\include\constants.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\icon_atlas.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

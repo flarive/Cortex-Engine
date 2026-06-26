@@ -23,7 +23,7 @@ std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconActionTextureCache; // Define the static member
 std::unordered_map<engine::EntityType, GLuint> engine::EditorHelper::m_iconSmallTextureCache; // Define the static member
-std::unordered_map<engine::EntityType, GLuint> engine::EditorHelper::m_iconMediumTextureCache; // Define the static member
+engine::IconAtlas engine::EditorHelper::m_iconAtlas; // Define the static member
 
 
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
@@ -682,21 +682,24 @@ GLuint engine::EditorHelper::getEntityTypeSmallIcon(const engine::EntityType ent
     }
 }
 
-GLuint engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType entityType)
+const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType type)
 {
-    auto it = m_iconMediumTextureCache.find(entityType);
-    if (it != m_iconMediumTextureCache.end())
+    if (!m_iconAtlas.isAtlasLoaded())
     {
-        return it->second;
+        m_iconAtlas.load(
+            "editor_atlas_48x48.png",
+            48,     // icon size
+            480,    // atlas width
+            480     // atlas height
+        );
     }
-    else {
-        auto iconName = std::format("icon_{}_48x48.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false);
 
-        m_iconMediumTextureCache.insert(std::make_pair(entityType, iconTexture));
+    return m_iconAtlas.getUV(type);
+}
 
-        return iconTexture;
-    }
+GLuint engine::EditorHelper::getIconAtlasTexture()
+{
+    return m_iconAtlas.getTextureID();
 }
 
 /// <summary>

@@ -19,17 +19,17 @@ bool engine::IconAtlas::load(const std::string& filePath,
     if (m_textureID == 0)
         return false;
 
-    generateUVs();
+    //generateUVs();
     return true;
 }
 
-void engine::IconAtlas::generateUVs()
+void engine::IconAtlas::generateUVs(std::vector<unsigned int> iconsEnum)
 {
     const int iconsPerRow = m_atlasWidth / m_iconSize;
 
-    for (int i = 0; i < (int)EntityType::COUNT; i++)
+    for (int i = 0; i < iconsEnum.size(); i++)
     {
-        EntityType type = (EntityType)i;
+        unsigned int icon = iconsEnum[i];
 
         int x = (i % iconsPerRow) * m_iconSize;
         int y = (i / iconsPerRow) * m_iconSize;
@@ -44,11 +44,11 @@ void engine::IconAtlas::generateUVs()
             float(y + m_iconSize) / m_atlasHeight
         );
 
-        m_uvs[type] = uv;
+        m_uvs[icon] = uv;
     }
 }
 
-const engine::IconUV& engine::IconAtlas::getUV(EntityType type) const
+const engine::IconUV& engine::IconAtlas::getUV(unsigned int icon) const
 {
-    return m_uvs.at(type);
+    return m_uvs.at(icon);
 }

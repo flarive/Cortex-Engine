@@ -424,12 +424,33 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     ImGui::PopID();
 }
 
+engine::EditorIcon engine::ImGuiEditor::convert(const engine::EntityType type) const
+{
+    switch (type)
+    {
+    case EntityType::model:
+        return EditorIcon::entity_model;
+    case EntityType::primitive:
+        return EditorIcon::entity_primitive;
+    case EntityType::light:
+        return EditorIcon::entity_light;
+    case EntityType::camera:
+        return EditorIcon::entity_camera;
+    case EntityType::particleSystem:
+        return EditorIcon::entity_particleSystem;
+    case EntityType::terrain:
+        return EditorIcon::entity_terrain;
+    default:
+        return EditorIcon::undefined;
+    }
+}
+
 void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& entity)
 {
     if (entity)
     {
         auto entityType = entity->getType();
-        auto uv = EditorHelper::getEntityTypeMediumIcon(entityType);
+        auto uv = EditorHelper::getEntityTypeMediumIcon(convert(entityType));
         GLuint tex = EditorHelper::getIconAtlasTexture();
 
         IM_ASSERT(tex != 0);

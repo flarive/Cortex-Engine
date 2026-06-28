@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imgui.h"
-#include "../ecs/entity.h"
 
 #include <unordered_map>
 #include <string>
@@ -26,20 +25,19 @@ namespace engine
 
         bool isAtlasLoaded() { return m_textureID > 0; }
 
-        GLuint getTextureID() const { return m_textureID; }
+        void generateUVs(std::vector<unsigned int> icons);
 
-        const IconUV& getUV(EntityType type) const;
+        unsigned int getTextureID() const { return m_textureID; }
+
+        const IconUV& getUV(unsigned int icon) const;
 
     private:
-        void generateUVs();
-
-    private:
-        GLuint m_textureID{};
+        unsigned int m_textureID{};
 
         int m_iconSize{};
         int m_atlasWidth{};
         int m_atlasHeight{};
 
-        std::unordered_map<EntityType, IconUV> m_uvs;
+        std::unordered_map<unsigned int, IconUV> m_uvs;
     };
 }

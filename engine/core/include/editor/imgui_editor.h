@@ -17,6 +17,7 @@
 #include "../lights/light.h"
 
 #include "editor_helper.h"
+#include "icon_atlas.h"
 
 #include <variant>
 
@@ -96,6 +97,8 @@ namespace engine
 		void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
 
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
+
+		EditorIcon convert(const engine::EntityType type) const;
 
 	protected:
 		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };

@@ -25,6 +25,9 @@ namespace engine
 
 	//
 
+	enum class EditorIcon { undefined = 0, entity_model = 1, entity_primitive = 2, entity_light = 3, entity_camera = 4, entity_particleSystem = 5, entity_terrain = 6, COUNT };
+	
+
 	class EditorHelper final
 	{
 	public:
@@ -59,7 +62,7 @@ namespace engine
 		static GLuint getEntityTypeSmallIcon(const EntityType entityType);
 
 		static GLuint getIconAtlasTexture();
-		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EntityType type);
+		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EditorIcon icon);
 		
 
 		static void addToolbarIconButton(const std::string& icon, std::function<void()> onClick);
@@ -93,12 +96,6 @@ namespace engine
 		static std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
 		static std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
-
-		//static GLuint m_iconAtlas48x48Texture;
-		//static std::unordered_map<EntityType, IconUV> m_iconUVs;
-
-		/*static void loadIconAtlas();
-		static void generateIconUVs();*/
 
 		static engine::IconAtlas m_iconAtlas;
 	};

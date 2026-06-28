@@ -682,7 +682,7 @@ GLuint engine::EditorHelper::getEntityTypeSmallIcon(const engine::EntityType ent
     }
 }
 
-const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine::EntityType type)
+const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine::EditorIcon icon)
 {
     if (!m_iconAtlas.isAtlasLoaded())
     {
@@ -692,9 +692,21 @@ const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine
             480,    // atlas width
             480     // atlas height
         );
+
+		std::vector<unsigned int> icons = {
+            static_cast<unsigned int>(EditorIcon::undefined),
+            static_cast<unsigned int>(EditorIcon::entity_model),
+			static_cast<unsigned int>(EditorIcon::entity_primitive),
+			static_cast<unsigned int>(EditorIcon::entity_light),
+			static_cast<unsigned int>(EditorIcon::entity_camera),
+			static_cast<unsigned int>(EditorIcon::entity_particleSystem),
+			static_cast<unsigned int>(EditorIcon::entity_terrain)
+		};
+
+        m_iconAtlas.generateUVs(icons);
     }
 
-    return m_iconAtlas.getUV(type);
+    return m_iconAtlas.getUV(static_cast<unsigned int>(icon));
 }
 
 GLuint engine::EditorHelper::getIconAtlasTexture()

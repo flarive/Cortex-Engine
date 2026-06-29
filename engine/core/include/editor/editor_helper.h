@@ -92,8 +92,6 @@ namespace engine
 
 		static std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
-		static std::unordered_map<EntityType, GLuint> m_iconSmallTextureCache;
-
 		static engine::IconAtlas m_iconAtlas;
 	};
 }

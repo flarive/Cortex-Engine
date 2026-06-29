@@ -22,7 +22,6 @@
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache; // Define the static member
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
 std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconActionTextureCache; // Define the static member
-std::unordered_map<engine::EntityType, GLuint> engine::EditorHelper::m_iconSmallTextureCache; // Define the static member
 engine::IconAtlas engine::EditorHelper::m_iconAtlas; // Define the static member
 
 

@@ -1,54 +1,55 @@
 #include "../../include/editor/icon_atlas.h"
 #include "../../include/texture.h"
 
-bool engine::IconAtlas::load(const std::string& filePath,
-    int iconSize,
-    int atlasWidth,
-    int atlasHeight)
+bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int atlasHeight)
 {
-    m_iconSize = iconSize;
     m_atlasWidth = atlasWidth;
     m_atlasHeight = atlasHeight;
 
     m_textureID = Texture::loadGLTextureFromFile(
         filePath.c_str(),
         "icons",
-        true, true, false
+        false, true, false
     );
 
-    if (m_textureID == 0)
-        return false;
-
-    //generateUVs();
-    return true;
+    return (m_textureID != 0);
 }
 
-void engine::IconAtlas::generateUVs(std::vector<unsigned int> iconsEnum)
+void engine::IconAtlas::registerIcon(unsigned int iconEnum, int x, int y, int w, int h)
 {
-    const int iconsPerRow = m_atlasWidth / m_iconSize;
+    IconInfo info;
+    info.x = x;
+    info.y = y;
+    info.w = w;
+    info.h = h;
 
-    for (int i = 0; i < iconsEnum.size(); i++)
+    m_iconInfos[iconEnum] = info;
+}
+
+void engine::IconAtlas::generateUVs()
+{
+    m_uvs.clear();
+
+    for (auto& kv : m_iconInfos)
     {
-        unsigned int icon = iconsEnum[i];
-
-        int x = (i % iconsPerRow) * m_iconSize;
-        int y = (i / iconsPerRow) * m_iconSize;
+        unsigned int icon = kv.first;
+        const IconInfo& info = kv.second;
 
         IconUV uv;
         uv.uv0 = ImVec2(
-            float(x) / m_atlasWidth,
-            float(y) / m_atlasHeight
+            float(info.x) / m_atlasWidth,
+            float(info.y) / m_atlasHeight
         );
         uv.uv1 = ImVec2(
-            float(x + m_iconSize) / m_atlasWidth,
-            float(y + m_iconSize) / m_atlasHeight
+            float(info.x + info.w) / m_atlasWidth,
+            float(info.y + info.h) / m_atlasHeight
         );
 
         m_uvs[icon] = uv;
     }
 }
 
-const engine::IconUV& engine::IconAtlas::getUV(unsigned int icon) const
+const engine::IconUV& engine::IconAtlas::getUV(unsigned int iconEnum) const
 {
-    return m_uvs.at(icon);
+    return m_uvs.at(iconEnum);
 }

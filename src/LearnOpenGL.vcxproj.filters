@@ -1080,7 +1080,7 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_ao_2k.jpg">
       <Filter>resources\textures\pbr\aerial-rocks</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\editor_atlas_48x48.png">
+    <CopyFileToFolders Include="..\resources\icons\editor_icons_atlas.png">
       <Filter>resources\icons</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\aerial_rocks_04_arm_2k.jpg">

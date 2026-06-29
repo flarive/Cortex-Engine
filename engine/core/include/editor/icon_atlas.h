@@ -1,43 +1,53 @@
 #pragma once
 
-#include "imgui.h"
-
 #include <unordered_map>
+#include <vector>
 #include <string>
+#include <stdexcept>
 
-namespace engine
-{
-    struct IconUV
-    {
-        ImVec2 uv0;
-        ImVec2 uv1;
+#include <glad/glad.h>
+#include <imgui.h>
+
+namespace engine {
+
+    struct IconUV {
+        ImVec2 uv0; // 0.0 - 0.1
+        ImVec2 uv1; // 0.0 - 0.1
+    };
+
+    struct IconInfo {
+        int x;      // pixel position in atlas
+        int y;
+        int w;      // icon width
+        int h;      // icon height
     };
 
     class IconAtlas
     {
     public:
-        IconAtlas() = default;
-
         bool load(const std::string& filePath,
-            int iconSize,
             int atlasWidth,
             int atlasHeight);
 
-        bool isAtlasLoaded() { return m_textureID > 0; }
+        void registerIcon(unsigned int iconEnum,
+            int x, int y,
+            int w, int h);
 
-        void generateUVs(std::vector<unsigned int> icons);
+        void generateUVs();
 
-        unsigned int getTextureID() const { return m_textureID; }
+        const IconUV& getUV(unsigned int iconEnum) const;
 
-        const IconUV& getUV(unsigned int icon) const;
+        GLuint getTextureID() const { return m_textureID; }
+        bool isAtlasLoaded() const { return m_textureID != 0; }
 
     private:
-        unsigned int m_textureID{};
+        GLuint m_textureID = 0;
 
-        int m_iconSize{};
-        int m_atlasWidth{};
-        int m_atlasHeight{};
+        int m_atlasWidth = 0;
+        int m_atlasHeight = 0;
 
+        std::unordered_map<unsigned int, IconInfo> m_iconInfos;
         std::unordered_map<unsigned int, IconUV> m_uvs;
     };
-}
+
+} // namespace engine

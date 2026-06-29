@@ -664,46 +664,57 @@ GLuint engine::EditorHelper::getIcon(const std::string& key)
         return iconTexture;
     }
 }
-GLuint engine::EditorHelper::getEntityTypeSmallIcon(const engine::EntityType entityType)
+
+void engine::EditorHelper::registerIconAtlas()
 {
-    auto it = m_iconSmallTextureCache.find(entityType);
-    if (it != m_iconSmallTextureCache.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        auto iconName = std::format("icon_{}_16x16.png", static_cast<int>(entityType));
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false);
+    m_iconAtlas.load(
+        "editor_icons_atlas.png",
+        480,    // atlas width
+        480     // atlas height
+    );
 
-        m_iconSmallTextureCache.insert(std::make_pair(entityType, iconTexture));
+    // 16x16 icons are on row 0
+    const int row1Y16 = 0;
+    const int icon16 = 16;
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::undefined, 0 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_model_16x16, 1 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_primitive_16x16, 2 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_light_16x16, 3 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_camera_16x16, 4 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_particleSystem_16x16, 5 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_terrain_16x16, 6 * icon16, row1Y16, icon16, icon16);
 
-        return iconTexture;
+
+    // 48x48 icons are on row 1
+    const int row1Y48 = 16;
+    const int icon48 = 48;
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::undefined, 0 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_model_48x48, 1 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_primitive_48x48, 2 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_light_48x48, 3 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_camera_48x48, 4 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_particleSystem_48x48, 5 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_terrain_48x48, 6 * icon48, row1Y48, icon48, icon48);
+
+    m_iconAtlas.generateUVs();
+}
+
+
+const engine::IconUV& engine::EditorHelper::getEntityTypeSmallIcon(const engine::EditorIcon icon)
+{
+    if (!m_iconAtlas.isAtlasLoaded())
+    {
+        registerIconAtlas();
     }
+
+    return m_iconAtlas.getUV(static_cast<unsigned int>(icon));
 }
 
 const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine::EditorIcon icon)
 {
     if (!m_iconAtlas.isAtlasLoaded())
     {
-        m_iconAtlas.load(
-            "editor_atlas_48x48.png",
-            48,     // icon size
-            480,    // atlas width
-            480     // atlas height
-        );
-
-		std::vector<unsigned int> icons = {
-            static_cast<unsigned int>(EditorIcon::undefined),
-            static_cast<unsigned int>(EditorIcon::entity_model),
-			static_cast<unsigned int>(EditorIcon::entity_primitive),
-			static_cast<unsigned int>(EditorIcon::entity_light),
-			static_cast<unsigned int>(EditorIcon::entity_camera),
-			static_cast<unsigned int>(EditorIcon::entity_particleSystem),
-			static_cast<unsigned int>(EditorIcon::entity_terrain)
-		};
-
-        m_iconAtlas.generateUVs(icons);
+        registerIconAtlas();
     }
 
     return m_iconAtlas.getUV(static_cast<unsigned int>(icon));

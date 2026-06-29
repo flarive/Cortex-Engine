@@ -6,22 +6,22 @@ using namespace engine;
 
 MyScene13::MyScene13(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
-        //.method = RenderMethod::BlinnPhong,
-        //.HDRSkyboxHide = true,
-        //.HDRSkyboxFilePath = "",
-        //.HDRSkyboxBlurStrength = 0.0f,
-        //.enableShadows = true,
-        //.shadowIntensity = 3.0f,
-        //.shadowMapsTextureSize = 2048
-
-        .method = RenderMethod::PBR,
+        .method = RenderMethod::BlinnPhong,
         .HDRSkyboxHide = true,
-        .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        .HDRSkyboxFilePath = "",
         .HDRSkyboxBlurStrength = 0.0f,
+        .enableShadows = true,
         .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048,
-        .iblDiffuseIntensity = 2.0f,
-        .iblSpecularIntensity = 1.0f
+        .shadowMapsTextureSize = 2048
+
+        //.method = RenderMethod::PBR,
+        //.HDRSkyboxHide = true,
+        //.HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
+        //.HDRSkyboxBlurStrength = 0.0f,
+        //.shadowIntensity = 3.0f,
+        //.shadowMapsTextureSize = 2048,
+        //.iblDiffuseIntensity = 2.0f,
+        //.iblSpecularIntensity = 1.0f
     })
 {
     // my application specific state gets initialized here

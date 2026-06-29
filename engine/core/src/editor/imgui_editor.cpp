@@ -366,10 +366,14 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     ImGui::PushID(entity.get()); // unique ID per entity
 
-    GLuint iconTexture = EditorHelper::getEntityTypeSmallIcon(entityType);
+    auto uv = EditorHelper::getEntityTypeSmallIcon(convertEntityTypeToAtlasIcon(entityType, 16));
+    GLuint tex = EditorHelper::getIconAtlasTexture();
 
-    // Row start: small icon
-    ImGui::Image((ImTextureID)(intptr_t)iconTexture, ImVec2(16, 16));
+    IM_ASSERT(tex != 0);
+
+    // Draw the icon
+    ImGui::Image((ImTextureID)(intptr_t)tex, ImVec2(16, 16), uv.uv0, uv.uv1);
+
     ImGui::SameLine();
 
     // Tree node
@@ -424,24 +428,47 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     ImGui::PopID();
 }
 
-engine::EditorIcon engine::ImGuiEditor::convert(const engine::EntityType type) const
+engine::EditorIcon engine::ImGuiEditor::convertEntityTypeToAtlasIcon(const engine::EntityType type, unsigned int Iconsize) const
 {
-    switch (type)
+    if (Iconsize == 16)
     {
-    case EntityType::model:
-        return EditorIcon::entity_model;
-    case EntityType::primitive:
-        return EditorIcon::entity_primitive;
-    case EntityType::light:
-        return EditorIcon::entity_light;
-    case EntityType::camera:
-        return EditorIcon::entity_camera;
-    case EntityType::particleSystem:
-        return EditorIcon::entity_particleSystem;
-    case EntityType::terrain:
-        return EditorIcon::entity_terrain;
-    default:
-        return EditorIcon::undefined;
+        switch (type)
+        {
+        case EntityType::model:
+            return EditorIcon::entity_model_16x16;
+        case EntityType::primitive:
+            return EditorIcon::entity_primitive_16x16;
+        case EntityType::light:
+            return EditorIcon::entity_light_16x16;
+        case EntityType::camera:
+            return EditorIcon::entity_camera_16x16;
+        case EntityType::particleSystem:
+            return EditorIcon::entity_particleSystem_16x16;
+        case EntityType::terrain:
+            return EditorIcon::entity_terrain_16x16;
+        default:
+            return EditorIcon::undefined;
+        }
+    }
+    else if (Iconsize == 48)
+    {
+        switch (type)
+        {
+        case EntityType::model:
+            return EditorIcon::entity_model_48x48;
+        case EntityType::primitive:
+            return EditorIcon::entity_primitive_48x48;
+        case EntityType::light:
+            return EditorIcon::entity_light_48x48;
+        case EntityType::camera:
+            return EditorIcon::entity_camera_48x48;
+        case EntityType::particleSystem:
+            return EditorIcon::entity_particleSystem_48x48;
+        case EntityType::terrain:
+            return EditorIcon::entity_terrain_48x48;
+        default:
+            return EditorIcon::undefined;
+        }
     }
 }
 
@@ -450,7 +477,7 @@ void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& en
     if (entity)
     {
         auto entityType = entity->getType();
-        auto uv = EditorHelper::getEntityTypeMediumIcon(convert(entityType));
+        auto uv = EditorHelper::getEntityTypeMediumIcon(convertEntityTypeToAtlasIcon(entityType, 48));
         GLuint tex = EditorHelper::getIconAtlasTexture();
 
         IM_ASSERT(tex != 0);

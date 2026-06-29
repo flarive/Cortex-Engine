@@ -18,14 +18,10 @@ namespace engine
 {
 	using SceneSetting = std::variant<bool, int, unsigned int, float>;
 
-	//struct IconUV {
-	//	ImVec2 uv0;
-	//	ImVec2 uv1;
-	//};
-
-	//
-
-	enum class EditorIcon { undefined = 0, entity_model = 1, entity_primitive = 2, entity_light = 3, entity_camera = 4, entity_particleSystem = 5, entity_terrain = 6, COUNT };
+	enum class EditorIcon { undefined = 0, 
+		entity_model_16x16 = 1, entity_primitive_16x16 = 2, entity_light_16x16 = 3, entity_camera_16x16 = 4, entity_particleSystem_16x16 = 5, entity_terrain_16x16 = 6,
+		entity_model_48x48 = 7, entity_primitive_48x48 = 8, entity_light_48x48 = 9, entity_camera_48x48 = 10, entity_particleSystem_48x48 = 11, entity_terrain_48x48 = 12,
+		COUNT };
 	
 
 	class EditorHelper final
@@ -59,9 +55,10 @@ namespace engine
 		inline static const float FIELD_WIDTH = 120.0f;
 
 		static GLuint getIcon(const std::string& key);
-		static GLuint getEntityTypeSmallIcon(const EntityType entityType);
-
+		
+		static void registerIconAtlas();
 		static GLuint getIconAtlasTexture();
+		static const engine::IconUV& getEntityTypeSmallIcon(const engine::EditorIcon icon);
 		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EditorIcon icon);
 		
 

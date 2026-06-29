@@ -98,7 +98,7 @@ namespace engine
 
 		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
-		EditorIcon convert(const engine::EntityType type) const;
+		EditorIcon convertEntityTypeToAtlasIcon(const EntityType type, unsigned int Iconsize) const;
 
 	protected:
 		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };

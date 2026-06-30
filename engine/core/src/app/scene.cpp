@@ -89,6 +89,7 @@ void engine::Scene::after_init_internal()
 
     // Fill imGui debug window with current scene hierarchy
     #if EDITOR_MODE
+    m_editor.init();
     m_editor.setScene(m_entityManager.getRootEntity());
     #endif
     

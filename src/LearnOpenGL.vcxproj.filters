@@ -681,24 +681,6 @@
     <CopyFileToFolders Include="..\resources\models\cushion\cushion.glb">
       <Filter>resources\models\cushion</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_0_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_4_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_3_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_2_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_1_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_0_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\fonts\Raleway-Medium.ttf">
       <Filter>resources\fonts</Filter>
     </CopyFileToFolders>
@@ -707,24 +689,6 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\debug\stencil_testing.vert">
       <Filter>resources\shaders\debug</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_1_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_2_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_3_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_4_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_hide_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_show_16x16.png">
-      <Filter>resources\icons</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\test\light_plane.frag">
       <Filter>resources\shaders\test</Filter>
@@ -813,21 +777,6 @@
     <CopyFileToFolders Include="..\resources\UI\cortex-logo.png">
       <Filter>resources\UI</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\editor_rotate.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_link_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_linked_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\editor_scale.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\editor_translate.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Color.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
     </CopyFileToFolders>
@@ -915,12 +864,6 @@
     <CopyFileToFolders Include="..\resources\textures\particles\rect.jpg">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_5_48x48.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_5_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\particles\explode.png">
       <Filter>resources\textures\particles</Filter>
     </CopyFileToFolders>
@@ -980,12 +923,6 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\height\mountain_specular.jpg">
       <Filter>resources\textures\height</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_6_16x16.png">
-      <Filter>resources\icons</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\icons\icon_6_48x48.png">
-      <Filter>resources\icons</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\shadow_mapping_depth_tess.tcs">
       <Filter>resources\shaders</Filter>

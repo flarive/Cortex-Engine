@@ -48,6 +48,12 @@
 
 #if EDITOR_MODE
 
+
+void engine::ImGuiEditor::init()
+{
+    EditorHelper::registerIconAtlas();
+}
+
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
 {
     m_rootEntity = rootEntity;
@@ -366,13 +372,12 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     ImGui::PushID(entity.get()); // unique ID per entity
 
-    auto uv = EditorHelper::getEntityTypeSmallIcon(convertEntityTypeToAtlasIcon(entityType, 16));
     GLuint tex = EditorHelper::getIconAtlasTexture();
-
     IM_ASSERT(tex != 0);
 
     // Draw the icon
-    ImGui::Image((ImTextureID)(intptr_t)tex, ImVec2(16, 16), uv.uv0, uv.uv1);
+    auto uvEntityType = EditorHelper::getEntityTypeSmallIcon(convertEntityTypeToAtlasIcon(entityType, 16));
+    ImGui::Image((ImTextureID)(intptr_t)tex, ImVec2(16, 16), uvEntityType.uv0, uvEntityType.uv1);
 
     ImGui::SameLine();
 
@@ -392,10 +397,6 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
 
     // Image button at the end of the line
     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 28.0f); // align to right side
-    GLuint buttonIcon = entity->enabled ? EditorHelper::getIcon("hide") : EditorHelper::getIcon("show");
-
-    
-
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
@@ -404,7 +405,9 @@ void engine::ImGuiEditor::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(-2.f, 0.f));
 
-    if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
+    // Draw the show/hide entity button
+    auto uvShowHide = EditorHelper::getIcon(entity->enabled ? EditorIcon::show : EditorIcon::hide);
+    if (ImGui::ImageButton("##visible", (ImTextureID)(intptr_t)tex, ImVec2(16, 16), uvShowHide.uv0, uvShowHide.uv1))
     {
         entity->setEnabled(!entity->enabled);
     }
@@ -446,8 +449,6 @@ engine::EditorIcon engine::ImGuiEditor::convertEntityTypeToAtlasIcon(const engin
             return EditorIcon::entity_particleSystem_16x16;
         case EntityType::terrain:
             return EditorIcon::entity_terrain_16x16;
-        default:
-            return EditorIcon::undefined;
         }
     }
     else if (Iconsize == 48)
@@ -466,10 +467,10 @@ engine::EditorIcon engine::ImGuiEditor::convertEntityTypeToAtlasIcon(const engin
             return EditorIcon::entity_particleSystem_48x48;
         case EntityType::terrain:
             return EditorIcon::entity_terrain_48x48;
-        default:
-            return EditorIcon::undefined;
         }
     }
+
+    return EditorIcon::undefined;
 }
 
 void engine::ImGuiEditor::displayEntityDetails(const std::shared_ptr<Entity>& entity)
@@ -714,7 +715,7 @@ void engine::ImGuiEditor::renderTransformComponent(const std::shared_ptr<Entity>
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("Scale");
                 ImGui::SameLine(98.0f); // align to right side
-                EditorHelper::addDiscreetIconButton(scaleLinked, "link", "linked", []() {});
+                EditorHelper::addDiscreetIconButton(scaleLinked, "LockUnlock", EditorIcon::unlocked, EditorIcon::locked, []() {});
 
                 ImGui::TableSetColumnIndex(1);
                 if (EditorHelper::drawCustomDragFloat("X", "##scaX", ImGui::GetCursorScreenPos(), EditorHelper::SIZE, EditorHelper::ROUNDING, 50.0f, EditorHelper::green, EditorHelper::white, &scaX, 0.01f)) {
@@ -1074,11 +1075,11 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
     if (editTransformDecomposition)
     {
         EditorHelper::BeginCenteredToolbar(3, 32);
-        EditorHelper::addToolbarIconButton("translate", []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
+        EditorHelper::addToolbarIconButton("translate", EditorIcon::editor_translate, []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
-        EditorHelper::addToolbarIconButton("rotate", []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
+        EditorHelper::addToolbarIconButton("rotate", EditorIcon::editor_rotate, []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
-        EditorHelper::addToolbarIconButton("scale", []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
+        EditorHelper::addToolbarIconButton("scale", EditorIcon::editor_scale, []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
         EditorHelper::EndCenteredToolbar();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))

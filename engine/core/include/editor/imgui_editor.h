@@ -32,6 +32,8 @@ namespace engine
 		ImGuiEditor() = default;
 		~ImGuiEditor() = default;
 
+		void init();
+
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
 		void renderUIWindow(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);

@@ -19,9 +19,7 @@
 #include <format>
 
 
-std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconTextureCache; // Define the static member
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
-std::unordered_map<std::string, GLuint> engine::EditorHelper::m_iconActionTextureCache; // Define the static member
 engine::IconAtlas engine::EditorHelper::m_iconAtlas; // Define the static member
 
 
@@ -489,14 +487,14 @@ void engine::EditorHelper::renderStringVectorComboboxTable(
     ImGui::PopStyleVar();
 }
 
-void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::function<void()> onClick)
+void engine::EditorHelper::addToolbarIconButton(const std::string& iconName, const EditorIcon& icon, std::function<void()> onClick)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6, 6));
 
     // Set default or toggled colors BEFORE rendering the button
-    if (m_iconToggleStates[icon]) {
+    if (m_iconToggleStates[iconName]) {
         // Toggled ON colors
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE700));
@@ -509,11 +507,15 @@ void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::fu
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.3f, 1.0f));
     }
 
-    GLuint my_texture_id = getIconTexture(icon, "editor", "icons");
-    if (ImGui::ImageButton(std::format("##{}", icon).c_str(), (ImTextureID)(intptr_t)my_texture_id, ImVec2(18, 18)))
+
+    GLuint tex = EditorHelper::getIconAtlasTexture();
+    IM_ASSERT(tex != 0);
+
+    auto uv = EditorHelper::getIcon(icon);
+    if (ImGui::ImageButton(std::format("##{}", iconName).c_str(), (ImTextureID)(intptr_t)tex, ImVec2(18, 18), uv.uv0, uv.uv1))
     {
         resetIconToggleStates(); // Turn all off
-        setIconToggleState(icon, true); // Turn only this one on
+        setIconToggleState(iconName, true); // Turn only this one on
         if (onClick) onClick(); // Call the provided function
     }
 
@@ -525,10 +527,8 @@ void engine::EditorHelper::addToolbarIconButton(const std::string& icon, std::fu
     ImGui::PopStyleColor(3); // Pop colors
 }
 
-void engine::EditorHelper::addDiscreetIconButton(bool& state, const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick)
+void engine::EditorHelper::addDiscreetIconButton(bool& state, const std::string& icon_name, const EditorIcon& icon_off, const EditorIcon& icon_on, std::function<void()> onClick)
 {
-    GLuint buttonIcon = state ? getIcon(icon_on) : getIcon(icon_off);
-
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
@@ -536,7 +536,13 @@ void engine::EditorHelper::addDiscreetIconButton(bool& state, const std::string&
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 2.f));
 
-    if (ImGui::ImageButton(std::format("##{}", icon_off).c_str(), (ImTextureID)(intptr_t)buttonIcon, ImVec2(16, 16)))
+
+    auto uv = EditorHelper::getIcon(state ? icon_on : icon_off);
+    GLuint tex = EditorHelper::getIconAtlasTexture();
+
+    IM_ASSERT(tex != 0);
+
+    if (ImGui::ImageButton(std::format("##{}", icon_name).c_str(), (ImTextureID)(intptr_t)tex, ImVec2(16, 16), uv.uv0, uv.uv1))
     {
         if (onClick)
             onClick();
@@ -546,24 +552,6 @@ void engine::EditorHelper::addDiscreetIconButton(bool& state, const std::string&
 
     ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(4);
-}
-
-GLuint engine::EditorHelper::getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder)
-{
-    auto it = m_iconTextureCache.find(key);
-    if (it != m_iconTextureCache.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        auto iconName = std::format("{}_{}.png", prefix, key);
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), folder);
-
-        m_iconTextureCache.insert(std::make_pair(key, iconTexture));
-
-        return iconTexture;
-    }
 }
 
 void engine::EditorHelper::resetIconToggleStates()
@@ -647,21 +635,11 @@ void engine::EditorHelper::EndCenteredToolbar()
     // ImGui::Dummy(ImVec2(0.0f, 0.0f)); // not strictly necessary
 }
 
-GLuint engine::EditorHelper::getIcon(const std::string& key)
+const engine::IconUV& engine::EditorHelper::getIcon(const EditorIcon& icon)
 {
-    auto it = m_iconActionTextureCache.find(key);
-    if (it != m_iconActionTextureCache.end())
-    {
-        return it->second;
-    }
-    else {
-        auto iconName = std::format("icon_{}_16x16.png", key);
-        GLuint iconTexture = Texture::loadGLTextureFromFile(iconName.c_str(), "icons", false, true, false);
-
-        m_iconActionTextureCache.insert(std::make_pair(key, iconTexture));
-
-        return iconTexture;
-    }
+    assert(m_iconAtlas.isAtlasLoaded() && "Editor icon atlas not loaded");
+    
+    return m_iconAtlas.getUV(static_cast<unsigned int>(icon));
 }
 
 void engine::EditorHelper::registerIconAtlas()
@@ -684,6 +662,13 @@ void engine::EditorHelper::registerIconAtlas()
     m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_terrain_16x16, 6 * icon16, row1Y16, icon16, icon16);
 
 
+    // end of 16x16 row 0
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::locked, 26 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::unlocked, 27 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::show, 28 * icon16, row1Y16, icon16, icon16);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::hide, 29 * icon16, row1Y16, icon16, icon16);
+
+
     // 48x48 icons are on row 1
     const int row1Y48 = 16;
     const int icon48 = 48;
@@ -695,26 +680,25 @@ void engine::EditorHelper::registerIconAtlas()
     m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_particleSystem_48x48, 5 * icon48, row1Y48, icon48, icon48);
     m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_terrain_48x48, 6 * icon48, row1Y48, icon48, icon48);
 
+    // end of 48x48 row 1
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_translate, 37 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_scale, 38 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_rotate, 39 * icon48, row1Y48, icon48, icon48);
+    
     m_iconAtlas.generateUVs();
 }
 
 
 const engine::IconUV& engine::EditorHelper::getEntityTypeSmallIcon(const engine::EditorIcon icon)
 {
-    if (!m_iconAtlas.isAtlasLoaded())
-    {
-        registerIconAtlas();
-    }
+    assert(m_iconAtlas.isAtlasLoaded() && "Editor icon atlas not loaded");
 
     return m_iconAtlas.getUV(static_cast<unsigned int>(icon));
 }
 
 const engine::IconUV& engine::EditorHelper::getEntityTypeMediumIcon(const engine::EditorIcon icon)
 {
-    if (!m_iconAtlas.isAtlasLoaded())
-    {
-        registerIconAtlas();
-    }
+    assert(m_iconAtlas.isAtlasLoaded() && "Editor icon atlas not loaded");
 
     return m_iconAtlas.getUV(static_cast<unsigned int>(icon));
 }

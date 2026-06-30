@@ -19,8 +19,15 @@ namespace engine
 	using SceneSetting = std::variant<bool, int, unsigned int, float>;
 
 	enum class EditorIcon { undefined = 0, 
+		// row 0 (16x16)
 		entity_model_16x16 = 1, entity_primitive_16x16 = 2, entity_light_16x16 = 3, entity_camera_16x16 = 4, entity_particleSystem_16x16 = 5, entity_terrain_16x16 = 6,
-		entity_model_48x48 = 7, entity_primitive_48x48 = 8, entity_light_48x48 = 9, entity_camera_48x48 = 10, entity_particleSystem_48x48 = 11, entity_terrain_48x48 = 12,
+		locked = 26, unlocked = 27, show = 28, hide = 29,
+		
+		// row 1 (48x48)
+		entity_model_48x48 = 30, entity_primitive_48x48 = 31, entity_light_48x48 = 32, entity_camera_48x48 = 33, entity_particleSystem_48x48 = 34, entity_terrain_48x48 = 35,
+		editor_translate = 37, editor_scale = 38, editor_rotate = 39,
+		
+		// dynamic counter
 		COUNT };
 	
 
@@ -54,7 +61,7 @@ namespace engine
 		inline static const float ITEM_LABEL_WIDTH{ 100.0f }; // pixels
 		inline static const float FIELD_WIDTH = 120.0f;
 
-		static GLuint getIcon(const std::string& key);
+		static const engine::IconUV& getIcon(const EditorIcon& icon);
 		
 		static void registerIconAtlas();
 		static GLuint getIconAtlasTexture();
@@ -62,10 +69,9 @@ namespace engine
 		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EditorIcon icon);
 		
 
-		static void addToolbarIconButton(const std::string& icon, std::function<void()> onClick);
-		static void addDiscreetIconButton(bool& state, const std::string& icon_off, const std::string& icon_on, std::function<void()> onClick);
+		static void addToolbarIconButton(const std::string& iconName, const EditorIcon& icon, std::function<void()> onClick);
+		static void addDiscreetIconButton(bool& state, const std::string& icon_name, const EditorIcon& icon_off, const EditorIcon& icon_on, std::function<void()> onClick);
 
-		static GLuint getIconTexture(const std::string& key, const std::string& prefix, const std::string& folder);
 		static void setIconToggleState(const std::string& key, bool state);
 
 		static void resetIconToggleStates();
@@ -87,10 +93,7 @@ namespace engine
 		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck);
 
 	private:
-		static std::unordered_map<std::string, GLuint> m_iconTextureCache;
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
-
-		static std::unordered_map<std::string, GLuint> m_iconActionTextureCache;
 
 		static engine::IconAtlas m_iconAtlas;
 	};

@@ -54,15 +54,17 @@ namespace engine
 		Shader cubeFaceDebugShader{}; // for depth map cube map textures debugging purposes
 
 		
-		Renderer(GLFWwindow* window);
+		Renderer(GLFWwindow* window, RenderMethod method);
 		virtual ~Renderer();
 
 		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
 		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI) = 0;
 
+		void initFramebuffer(RenderMethod method, int width, int height, ubyte msaaSamples);
+
 		void initColorFramebuffer(int width, int height);
-		void initColorFramebufferMSAA(int width, int height);
-		void initHDRColorFramebufferMSAA(int width, int height);
+		void initColorFramebufferMSAA(int width, int height, const ubyte samples = 4);
+		void initHDRColorFramebufferMSAA(int width, int height, const ubyte samples = 4);
 
 		virtual void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) = 0;
 
@@ -74,6 +76,8 @@ namespace engine
 
 	protected:
 		GLFWwindow* m_window{};
+
+		RenderMethod m_renderMethod{ RenderMethod::PBR };
 
 		std::shared_ptr<Camera> m_camera{};
 
@@ -110,9 +114,7 @@ namespace engine
 		
 
 		// HDR
-		//unsigned int resolvedHDRTex{};
 		unsigned int resolveFBO{};
-		//unsigned int resolveFBOTexture{};
 
 
 		unsigned int irradianceMap{};
@@ -155,7 +157,7 @@ namespace engine
 		void computeColorFramebuffer(const SceneSettings& settings);
 		void computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings);
 
-		void updateEditorPropertySettings();
+		void updateEditorPropertySettings(int width, int height);
 
 		bool supportTessellation() const { return m_supportTessellation; }
 

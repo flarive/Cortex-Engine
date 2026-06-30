@@ -315,6 +315,30 @@ void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const cha
     }
 }
 
+void engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+{
+    ImGui::SetNextItemWidth(FIELD_WIDTH);
+
+    ImGui::SliderScalar(
+        label,
+        ImGuiDataType_U8,
+        &value,
+        &min,
+        &max,
+        "%d"
+    );
+
+    // Apply changes only when released
+    if (ImGui::IsItemDeactivatedAfterEdit() && lastValue != value)
+    {
+        if (sceneSettingChanged)
+        {
+            sceneSettingChanged(key, value);
+            lastValue = value;
+        }
+    }
+}
+
 void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
 {
     static bool isDraggingSlider = false;
@@ -363,6 +387,28 @@ void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const cha
     if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
     {
         if (sceneSettingChanged && lastValue != value)
+        {
+            sceneSettingChanged(key, value);
+            lastValue = value;
+        }
+    }
+}
+
+void engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+{
+    ImGui::SetNextItemWidth(FIELD_WIDTH);
+
+    ImGui::DragScalar(label,
+        ImGuiDataType_U8,
+        &value,
+        step,
+        &min,
+        &max,
+        "%d");
+
+    if (ImGui::IsItemDeactivatedAfterEdit() && lastValue != value)
+    {
+        if (sceneSettingChanged)
         {
             sceneSettingChanged(key, value);
             lastValue = value;

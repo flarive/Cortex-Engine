@@ -14,7 +14,7 @@
 
 
 engine::PhongRenderer::PhongRenderer(GLFWwindow* window)
-    : Renderer(window)
+    : Renderer(window, RenderMethod::Phong)
 {
     logger.trace("PhongRenderer constructor called");
 }
@@ -52,7 +52,7 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
     glClear(GL_COLOR_BUFFER_BIT);
 
-    updateEditorPropertySettings();
+    updateEditorPropertySettings(width, height);
 
     phongShader.use();
     phongShader.setMat4("projection", projection);

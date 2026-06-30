@@ -16,7 +16,7 @@
 
 namespace engine
 {
-	using SceneSetting = std::variant<bool, int, unsigned int, float>;
+	using SceneSetting = std::variant<bool, int, uint, ubyte, float>;
 
 	enum class EditorIcon { undefined = 0, 
 		// row 0 (16x16)
@@ -43,8 +43,11 @@ namespace engine
 		static void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
 		static void renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+		static void renderSliderUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
 		static void renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+		
 		static void renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
+		static void renderDragUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step, std::function<void(std::string, SceneSetting)> sceneSettingChanged);
 
 		inline static const ImVec4 im_white{ 0.882f, 0.882f, 0.882f, 1.0f };
 		inline static const ImVec4 im_gray{ 0.502f, 0.502f, 0.502f, 1.0f };
@@ -65,8 +68,8 @@ namespace engine
 		
 		static void registerIconAtlas();
 		static GLuint getIconAtlasTexture();
-		static const engine::IconUV& getEntityTypeSmallIcon(const engine::EditorIcon icon);
-		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EditorIcon icon);
+		static const engine::IconUV& getEntityTypeSmallIcon(const engine::EditorIcon icon); // 16x16 icons
+		static const engine::IconUV& getEntityTypeMediumIcon(const engine::EditorIcon icon); // 48x48 icons
 		
 
 		static void addToolbarIconButton(const std::string& iconName, const EditorIcon& icon, std::function<void()> onClick);

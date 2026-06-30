@@ -13,7 +13,7 @@
 #include "../../include/misc/colors.h"
 
 engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
-    : Renderer(window)
+    : Renderer(window, RenderMethod::BlinnPhong)
 {
     logger.trace("BlinnPhongRenderer constructor called");
 }
@@ -94,11 +94,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
 
     // color framebuffer configuration
     // -------------------------
-    initColorFramebufferMSAA(width, height); // SDR and AA
-    //initColorFramebuffer(width, height); // SDR
-
-    // solid/wireframe polygons
-    //glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+    initFramebuffer(RenderMethod::BlinnPhong, width, height, settings.frameBufferAntiAliasingSamplesQuality);
+    //initColorFramebufferMSAA(width, height, settings.frameBufferAntiAliasingSamplesQuality); // SDR and AA
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -142,7 +139,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     
     
 
-    updateEditorPropertySettings();
+    updateEditorPropertySettings(width, height);
 
 
 

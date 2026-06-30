@@ -15,7 +15,7 @@
 
 
 engine::PbrRenderer::PbrRenderer(GLFWwindow* window)
-    : Renderer(window)
+    : Renderer(window, RenderMethod::PBR)
 {
     logger.trace("PbrRenderer constructor called");
 }
@@ -113,14 +113,10 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // -----------------------------------
     initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
 
+
     // color framebuffer configuration
     // -------------------------
-    initHDRColorFramebufferMSAA(width, height); // HDR and AA
-    //initColorFramebufferMSAA(width, height); // no HDR
-    //initColorFramebuffer(width, height); // no AA
-
-    // solid/wireframe polygons
-    //glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+    initFramebuffer(RenderMethod::PBR, width, height, settings.frameBufferAntiAliasingSamplesQuality); // HDR and AA
 
 
     int vsize{ 512 };
@@ -389,7 +385,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
 
-    updateEditorPropertySettings();
+    updateEditorPropertySettings(width, height);
 
     glm::mat4 projection = camera->getProjectionMatrix(width* 1.0f / height * 1.0f);
     glm::mat4 view = camera->getViewMatrix();

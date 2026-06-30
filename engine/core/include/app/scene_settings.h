@@ -77,6 +77,8 @@ namespace engine
     const bool DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS{ false };
     const bool DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS{ false };
 
+    const ubyte DEFAULT_FRAMEBUFFER_MSAA_SAMPLES{ 4 };
+
     struct SceneSettings final
     {
         RenderMethod method{ DEFAULT_RENDER_METHOD };
@@ -112,5 +114,7 @@ namespace engine
         bool drawLightsVisualHelpers{ DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS };
         bool drawBoundingBoxesVisualHelpers{ DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS };
         bool drawNormalsVisualHelpers{ DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS };
+
+        ubyte frameBufferAntiAliasingSamplesQuality{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
     };
 }

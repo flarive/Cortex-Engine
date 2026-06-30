@@ -247,7 +247,7 @@ void engine::Scene::listenForEditorChanges()
             }
         });
 
-    m_editor.setOnSceneSettingChanged([this](const std::string& key, std::variant<bool, int, unsigned int, float> value)
+    m_editor.setOnSceneSettingChanged([this](const std::string& key, SceneSetting value)
         {
             auto* singleton = engine::Singleton::getInstance();
             assert(singleton != nullptr && "Singleton not initialized !");
@@ -255,7 +255,8 @@ void engine::Scene::listenForEditorChanges()
 
 			bool boolValue = false;
 			int intValue = 0;
-            unsigned int unsignedIntValue = 0;
+            uint unsignedIntValue = 0;
+            ubyte unsignedByteValue = 0;
 			float floatValue = 0.0f;
 
             if (std::holds_alternative<bool>(value))
@@ -272,6 +273,16 @@ void engine::Scene::listenForEditorChanges()
             {
                 floatValue = std::get<float>(value);
                 logger.info("{} setting changed: {}", key, floatValue);
+            }
+            else if (std::holds_alternative<uint>(value))
+            {
+                unsignedIntValue = std::get<uint>(value);
+                logger.info("{} setting changed: {}", key, unsignedIntValue);
+            }
+            else if (std::holds_alternative<ubyte>(value))
+            {
+                unsignedByteValue = std::get<ubyte>(value);
+                logger.info("{} setting changed: {}", key, unsignedByteValue);
             }
 
             if (key == "render_method") {
@@ -330,6 +341,9 @@ void engine::Scene::listenForEditorChanges()
             }
             else if (key == "pbr_ibl_specular_intensity") {
                 sceneSettings.iblSpecularIntensity = floatValue;
+            }
+            else if (key == "framebuffer_msaa_samples") {
+                sceneSettings.frameBufferAntiAliasingSamplesQuality = unsignedByteValue;
             }
         });
 }

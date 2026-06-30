@@ -6,8 +6,8 @@
 #include <memory>
 
 
-engine::Renderer::Renderer(GLFWwindow* window)
-    : m_window(window)
+engine::Renderer::Renderer(GLFWwindow* window, RenderMethod method)
+    : m_window(window), m_renderMethod(method)
 {
     logger.trace("Renderer base constructor called");
 }
@@ -139,23 +139,7 @@ void engine::Renderer::computeDepthMapFramebuffer(
     if (firstLight->getTypeID() == LightType::point)
         computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
     else
-    {
         computeSpotLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, firstLight);
-
-		//bool done = false;
-  //      for (const auto& light : m_lights)
-  //      {
-		//	// optimization: only compute depth map for the first light of each type ????
-  //          if (light->getTypeID() == LightType::point)
-  //          {
-  //              if (!done)
-  //              {
-  //                  computePointLightDepthMapFramebuffer(shader, shaderTessellation, width, height, enableShadows, shadowMapsTextureSize, update, light);
-  //                  done = true;
-  //              }
-  //          }
-  //      }
-    }
 }
 
 /// <summary>
@@ -238,9 +222,7 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     float near_plane = 0.1f;  // Previously 1.0f
     float far_plane = 100.0f;  // Previously 7.5f
 
-
     glm::mat4 lightProjection{};
-
 
     auto spot = std::dynamic_pointer_cast<engine::SpotLight>(light);
     if (spot)
@@ -459,13 +441,16 @@ void engine::Renderer::initDummyCubeMap()
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    // REQUIRED for samplerCube ????????????????
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
+/// <summary>
+/// Init a very basic frame buffer (SDR, no anti aliasing)
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
 void engine::Renderer::initColorFramebuffer(int width, int height)
 {
     // create framebuffer
@@ -491,10 +476,13 @@ void engine::Renderer::initColorFramebuffer(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void engine::Renderer::initColorFramebufferMSAA(int width, int height)
+/// <summary>
+/// Init a frame buffer that will support anti aliasing
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+void engine::Renderer::initColorFramebufferMSAA(int width, int height, const ubyte samples)
 {
-    const int samples = 4; // Change this to your desired MSAA level
-
     // 1. Create multisampled framebuffer
     glGenFramebuffers(1, &colorFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
@@ -540,10 +528,13 @@ void engine::Renderer::initColorFramebufferMSAA(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
+/// <summary>
+/// Init a frame buffer that will support HDR and anti aliasing
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height, const ubyte samples)
 {
-    const int samples = 4;
-
     glGenFramebuffers(1, &colorFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
 
@@ -585,6 +576,12 @@ void engine::Renderer::initHDRColorFramebufferMSAA(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+
+
+/// <summary>
+/// Compute a very basic frame buffer (SDR)
+/// </summary>
+/// <param name="settings"></param>
 void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 {
     //draw color framebuffer to screen
@@ -613,6 +610,12 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     renderQuad();
 }
 
+/// <summary>
+/// Compute a frame buffer that will support HDR
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="settings"></param>
 void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings)
 {
     // IMPORTANT: restore to fill before drawing the screen quad
@@ -661,7 +664,7 @@ void engine::Renderer::testHDR(int width, int height)
         std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
 }
 
-void engine::Renderer::updateEditorPropertySettings()
+void engine::Renderer::updateEditorPropertySettings(int width, int height)
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -690,6 +693,30 @@ void engine::Renderer::updateEditorPropertySettings()
     {
         initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
         lastShadowMapsTexturesize = settings.shadowMapsTextureSize;
+    }
+
+    // framebuffer antialiasing quality
+    static ubyte lastFramebufferMsaaSamples = settings.frameBufferAntiAliasingSamplesQuality;
+    if (lastFramebufferMsaaSamples != settings.frameBufferAntiAliasingSamplesQuality)
+    {
+        initFramebuffer(m_renderMethod, width, height, settings.frameBufferAntiAliasingSamplesQuality);
+        lastFramebufferMsaaSamples = settings.frameBufferAntiAliasingSamplesQuality;
+    }
+}
+
+void engine::Renderer::initFramebuffer(RenderMethod method, int width, int height, ubyte msaaSamples)
+{
+    if (method == RenderMethod::PBR)
+    {
+        initHDRColorFramebufferMSAA(width, height, msaaSamples); // HDR and AA
+    }
+    else if (method == RenderMethod::BlinnPhong)
+    {
+        initColorFramebufferMSAA(width, height, msaaSamples); // SDR and AA
+    }
+    else
+    {
+        initColorFramebuffer(width, height);
     }
 }
 

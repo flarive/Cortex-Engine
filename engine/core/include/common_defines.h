@@ -22,6 +22,16 @@ namespace engine
 {
 	using Color = glm::vec4;
 
+	using ulong = uint64_t;
+	using uint = uint32_t;
+	using ushort = uint16_t;
+	using ubyte = uint8_t;
+
+	//using long = int64_t;
+	//using int = int32_t;
+	//using short = int16_t;
+	using byte = int8_t;
+
 	using EditorPropertyValue = std::variant<int, unsigned int, std::string, float, bool, glm::vec2, glm::vec3, glm::vec4, std::vector<std::string>>;
 
 	enum EditorPropertyType {

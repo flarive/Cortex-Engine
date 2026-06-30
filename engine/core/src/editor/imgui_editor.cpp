@@ -1092,13 +1092,13 @@ void engine::ImGuiEditor::editTransform(const float* cameraView, float* cameraPr
 
     if (editTransformDecomposition)
     {
-        EditorHelper::BeginCenteredToolbar(3, 32);
+        EditorHelper::beginCenteredToolbar(3, 32);
         EditorHelper::addToolbarIconButton("translate", EditorIcon::editor_translate, []() { mCurrentGizmoOperation = ImGuizmo::TRANSLATE; });
         ImGui::SameLine();
         EditorHelper::addToolbarIconButton("rotate", EditorIcon::editor_rotate, []() { mCurrentGizmoOperation = ImGuizmo::ROTATE; });
         ImGui::SameLine();
         EditorHelper::addToolbarIconButton("scale", EditorIcon::editor_scale, []() { mCurrentGizmoOperation = ImGuizmo::SCALE; });
-        EditorHelper::EndCenteredToolbar();
+        EditorHelper::endCenteredToolbar();
 
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
         {

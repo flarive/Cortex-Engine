@@ -613,7 +613,7 @@ void engine::EditorHelper::setIconToggleState(const std::string& key, bool state
 // Returns true if the toolbar was started successfully.
 // Outputs the background rect in screen space if outBgMin/outBgMax are provided.
 // `outStartCursorLocal` is where your first item will be placed (window-local).
-bool engine::EditorHelper::BeginCenteredToolbar(
+bool engine::EditorHelper::beginCenteredToolbar(
     int   iconCount,
     float iconSize,
     float iconSpacing,              // <0 => use style.ItemSpacing.x
@@ -674,7 +674,7 @@ bool engine::EditorHelper::BeginCenteredToolbar(
     return true;
 }
 
-void engine::EditorHelper::EndCenteredToolbar()
+void engine::EditorHelper::endCenteredToolbar()
 {
     ImGui::EndGroup();
     // If you want to ensure layout continues on a new line below the background, you could add:

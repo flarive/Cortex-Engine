@@ -79,7 +79,7 @@ namespace engine
 
 		static void resetIconToggleStates();
 
-		static bool BeginCenteredToolbar(
+		static bool beginCenteredToolbar(
 			int   iconCount,
 			float iconSize,
 			float iconSpacing = -1.0f,              // <0 => use style.ItemSpacing.x
@@ -91,7 +91,7 @@ namespace engine
 			ImVec2* outBgMax = nullptr,
 			ImVec2* outStartCursorLocal = nullptr);
 
-		static void EndCenteredToolbar();
+		static void endCenteredToolbar();
 
 		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck);
 

@@ -244,6 +244,7 @@
     <ClCompile Include="core\src\tools\helpers.cpp" />
     <ClCompile Include="core\src\tools\random.cpp" />
     <ClCompile Include="core\src\tools\system_monitor.cpp" />
+    <ClCompile Include="core\src\tools\vram_manager.cpp" />
     <ClCompile Include="core\src\transform.cpp" />
     <ClCompile Include="core\src\ui\button.cpp" />
     <ClCompile Include="core\src\ui\rectangle.cpp" />
@@ -355,6 +356,7 @@
     <ClInclude Include="core\include\tools\helpers.h" />
     <ClInclude Include="core\include\tools\random.h" />
     <ClInclude Include="core\include\tools\system_monitor.h" />
+    <ClInclude Include="core\include\tools\vram_manager.h" />
     <ClInclude Include="core\include\transform.h" />
     <ClInclude Include="core\include\ui\button.h" />
     <ClInclude Include="core\include\ui\rectangle.h" />

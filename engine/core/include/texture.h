@@ -47,8 +47,8 @@ namespace engine
 
         void bind() const;
 
-        static TextureData loadTextureExtended(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
-        static unsigned int loadTexture(const std::string& filename, bool repeat = true, bool gammaCorrection = false);
+        static TextureData loadTextureExtended(const std::string& filename, bool mipmaps = true, bool repeat = true, bool gammaCorrection = false);
+        static unsigned int loadTexture(const std::string& filename, bool mipmaps = true, bool repeat = true, bool gammaCorrection = false);
         static unsigned int loadTextureAsync(const std::string& filename, bool repeat = true, bool invertY = false, bool gammaCorrection = false);
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
@@ -56,14 +56,14 @@ namespace engine
 
 
         static void processLoadedTextures();
-        static unsigned int enqueueTextureCreation(const std::string& filename, bool generateMipmaps = true, bool repeat = false, bool gammaCorrection = false);
+        static unsigned int enqueueTextureCreation(const std::string& filename, bool mipmaps = true, bool repeat = true, bool gammaCorrection = false);
 
-        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool generateMipmaps, bool repeat, bool gammaCorrection);
+        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool mipmaps, bool repeat, bool gammaCorrection);
 
-        static unsigned int loadTextureFromFile(const char* path, const std::string& directory);
-        static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory, bool invertY = true, bool mipmaps = true, bool compress = true);
-        static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename);
-        static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height);
+        static unsigned int loadTextureFromFile(const char* path, const std::string& directory, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
+        static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
+        static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
+        static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
 
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();

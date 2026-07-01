@@ -495,6 +495,9 @@
     <ClCompile Include="core\src\editor\icon_atlas.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\tools\vram_manager.cpp">
+      <Filter>Fichiers sources\core\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -826,6 +829,9 @@
     </ClInclude>
     <ClInclude Include="core\include\editor\icon_atlas.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\tools\vram_manager.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

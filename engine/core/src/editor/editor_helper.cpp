@@ -691,7 +691,7 @@ const engine::IconUV& engine::EditorHelper::getIcon(const EditorIcon& icon)
 void engine::EditorHelper::registerIconAtlas()
 {
     m_iconAtlas.load(
-        "editor_icons_atlas.png",
+        "icons/editor_icons_atlas.png",
         480,    // atlas width
         480     // atlas height
     );
@@ -727,9 +727,9 @@ void engine::EditorHelper::registerIconAtlas()
     m_iconAtlas.registerIcon((unsigned)EditorIcon::entity_terrain_48x48, 6 * icon48, row1Y48, icon48, icon48);
 
     // end of 48x48 row 1
-    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_translate, 37 * icon48, row1Y48, icon48, icon48);
-    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_scale, 38 * icon48, row1Y48, icon48, icon48);
-    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_rotate, 39 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_translate, 7 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_scale, 8 * icon48, row1Y48, icon48, icon48);
+    m_iconAtlas.registerIcon((unsigned)EditorIcon::editor_rotate, 9 * icon48, row1Y48, icon48, icon48);
     
     m_iconAtlas.generateUVs();
 }

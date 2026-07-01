@@ -52,6 +52,8 @@
 void engine::ImGuiEditor::init()
 {
     EditorHelper::registerIconAtlas();
+
+    m_vramManager.init();
 }
 
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
@@ -363,11 +365,27 @@ void engine::ImGuiEditor::renderTabSettings()
 
 void engine::ImGuiEditor::renderTabAbout()
 {
+    auto vramInfo = m_vramManager.query();
+    
     ImGui::BeginChild("AboutRegion", ImVec2(0, 0), true);
     ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
+    
+    double total = vramInfo.totalBytes / (1024.0 * 1024.0);
+    ImGui::Text("GPU VRAM Total: %.2f MB", total);
+
+    double used = vramInfo.usedBytes / (1024.0 * 1024.0);
+    double free = vramInfo.freeBytes / (1024.0 * 1024.0);
+    ImGui::Text("GPU VRAM Used: %.2f MB / Free: %.2f MB", used, free);
+    
     ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
     ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());
     ImGui::Text(" ");
+
+    
+
+    
+
+
     ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::EndChild();
 }

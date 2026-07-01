@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../tools/system_monitor.h"
+#include "../tools/vram_manager.h"
 
 #include "../ecs/entity.h"
 #include "../ecs/transform_component.h"
@@ -62,6 +63,7 @@ namespace engine
 
 	private:
 		SystemMonitor m_sysMonitor{};
+		VramManager m_vramManager{};
 
 		std::shared_ptr<Entity> m_rootEntity{};
 

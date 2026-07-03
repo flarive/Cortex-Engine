@@ -498,6 +498,9 @@
     <ClCompile Include="core\src\tools\vram_manager.cpp">
       <Filter>Fichiers sources\core\tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\glad\src\glad.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">

@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libs\glad\src\glad.c" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp" />

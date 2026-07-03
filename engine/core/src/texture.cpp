@@ -24,9 +24,15 @@ namespace engine {
     }
 }
 
+engine::Texture::Texture()
+{
+    logger.trace("Texture constructor called");
+}
+
 engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
     : id(id), type(type), path(path)
 {
+    logger.trace("Texture constructor called");
 }
 
 void engine::Texture::bind() const
@@ -64,12 +70,9 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool mipm
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 
-        if (mipmaps)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        else
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+        // filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
         SOIL_free_image_data(data);
     }
@@ -84,7 +87,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, bool mipm
 }
 
 /// <summary>
-/// Synchronous texture loading
+/// Synchronous texture loading with extended result
 /// </summary>
 engine::TextureData engine::Texture::loadTextureExtended(const std::string& filename, bool mipmaps, bool repeat, bool gammaCorrection)
 {
@@ -110,16 +113,12 @@ engine::TextureData engine::Texture::loadTextureExtended(const std::string& file
         if (mipmaps)
             glGenerateMipmap(GL_TEXTURE_2D);
 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-
-        if (mipmaps)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        else
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+        // filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
         SOIL_free_image_data(data);
     }
@@ -136,7 +135,7 @@ engine::TextureData engine::Texture::loadTextureExtended(const std::string& file
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool repeat, bool invertY, bool gammaCorrection)
+unsigned int engine::Texture::requestLoadTextureAsync(const std::string& filename, bool repeat, bool invertY, bool gammaCorrection)
 {
     if (filename.empty()) return 0;
 
@@ -151,7 +150,8 @@ unsigned int engine::Texture::loadTextureAsync(const std::string& filename, bool
 
     // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] = {
-    std::async(std::launch::async, [filename, invertY]() -> std::tuple<unsigned char*, int, int, int> {
+    std::async(std::launch::async, [filename, invertY]() -> std::tuple<unsigned char*, int, int, int>
+    {
         int width{}, height{}, nrComponents{};
         unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
         if (!data) {
@@ -207,11 +207,23 @@ void engine::Texture::processLoadedTextures()
 /// <summary>
 /// Enqueue Texture Creation to Run on Main Thread
 /// </summary>
-unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool mipmaps, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename, bool invertY, bool mipmaps, bool repeat, bool gammaCorrection, bool compress)
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
     //std::cerr << "EnqueueTextureCreation " << filename << std::endl;
+
+
+    // Detect normal maps by filename
+    bool isNormalMap =
+        filename.find("normal") != std::string::npos ||
+        filename.find("_n") != std::string::npos ||
+        filename.find("_norm") != std::string::npos;
+
+    // Detect heightmaps
+    bool isHeightMap =
+        filename.find("height") != std::string::npos ||
+        filename.find("_h") != std::string::npos;
 
     // 1️. Check if the texture was loaded asynchronously
     auto it = engine::TextureManager::textureCache.find(filename);
@@ -251,10 +263,10 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
     {
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
 
-        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, mipmaps, repeat, gammaCorrection]()
+        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, isNormalMap, isHeightMap, invertY, mipmaps, repeat, gammaCorrection, compress]()
         {
             //  OpenGL upload texture
-            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, mipmaps, repeat, gammaCorrection);
+            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isNormalMap, isHeightMap, invertY, mipmaps, repeat, gammaCorrection, compress);
 
             engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
             engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
@@ -271,49 +283,82 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
 /// <summary>
 /// Creates OpenGL Texture (Always Called on Main Thread)
 /// </summary>
-unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool mipmaps, bool repeat, bool gammaCorrection)
+unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isNormalMap, bool isHeightMap, bool invertY, bool mipmaps, bool repeat, bool gammaCorrection, bool compress)
 {
     if (!data) return 0;
 
-    GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
+    //GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 
     // Flip image vertically
-    int rowSize = width * nrComponents;  // Number of bytes per row
-    unsigned char* rowBuffer = new unsigned char[rowSize];
+    //int rowSize = width * nrComponents;  // Number of bytes per row
+    //unsigned char* rowBuffer = new unsigned char[rowSize];
 
-    for (int y = 0; y < height / 2; ++y) {
-        unsigned char* rowTop = data + y * rowSize;
-        unsigned char* rowBottom = data + (height - y - 1) * rowSize;
+    //for (int y = 0; y < height / 2; ++y) {
+    //    unsigned char* rowTop = data + y * rowSize;
+    //    unsigned char* rowBottom = data + (height - y - 1) * rowSize;
 
-        std::memcpy(rowBuffer, rowTop, rowSize);
-        std::memcpy(rowTop, rowBottom, rowSize);
-        std::memcpy(rowBottom, rowBuffer, rowSize);
-    }
+    //    std::memcpy(rowBuffer, rowTop, rowSize);
+    //    std::memcpy(rowTop, rowBottom, rowSize);
+    //    std::memcpy(rowBottom, rowBuffer, rowSize);
+    //}
 
-    delete[] rowBuffer;
+    //delete[] rowBuffer;
+
+    // Flip image vertically (always ??????)
+    if (invertY)
+        data = flipImageVertically(data, width, height, nrComponents);
 
     // Create and bind OpenGL texture
     unsigned int textureID{};
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+
+    GLenum externalFormat{};
+    if (nrComponents == 1) externalFormat = GL_RED;
+    else if (nrComponents == 3) externalFormat = GL_RGB;
+    else if (nrComponents == 4) externalFormat = GL_RGBA;
+
+    // Choose compressed internal format
+    GLenum internalFormat{};
+
+    if (compress)
+    {
+        // use GPU texture compression in VRAM
+        if (isNormalMap)
+        {
+            // BC5 (RGTC2)
+            internalFormat = GL_COMPRESSED_RG_RGTC2;
+        }
+        else if (isHeightMap)
+        {
+            // BC4 (RGTC1)
+            internalFormat = GL_COMPRESSED_RED_RGTC1;
+        }
+        else
+        {
+            // Color textures → BC7
+            internalFormat = gammaCorrection ?
+                GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM :
+                GL_COMPRESSED_RGBA_BPTC_UNORM;
+        }
+    }
+
+    // Upload texture to GPU with or without compression
+    glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
 
     if (mipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
-    if (mipmaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
 }
-
 
 unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
@@ -438,12 +483,9 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         
         
-        if (mipmaps)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        else
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+        // filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
         SOIL_free_image_data(data);
     }
@@ -534,12 +576,9 @@ unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, s
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     
-    if (mipmaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     SOIL_free_image_data(image);
 
@@ -570,12 +609,9 @@ unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     
-    if (mipmaps)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
 }
@@ -633,5 +669,15 @@ engine::TextureData engine::Texture::getTextureData(const std::string& texturePa
     }
 
 	return {}; // Return default if not found
+}
+
+
+engine::Texture::~Texture()
+{
+    logger.trace("Texture destructor called");
+
+    engine::TextureManager::textureIDCache.clear();
+    engine::TextureManager::textureDataCache.clear();
+    engine::TextureManager::textureCache.clear();
 }
 

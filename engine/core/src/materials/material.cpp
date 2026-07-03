@@ -242,13 +242,14 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     {
         textures.reserve(7);
         
-        engine::Texture::loadTextureAsync(getDiffuseTexPath());
-        engine::Texture::loadTextureAsync(getNormalTexPath());
-        engine::Texture::loadTextureAsync(getMetallicTexPath());
-        engine::Texture::loadTextureAsync(getRoughnessTexPath());
-        engine::Texture::loadTextureAsync(getAoTexPath());
-        engine::Texture::loadTextureAsync(getHeightTexPath());
-        engine::Texture::loadTextureAsync(getEmissiveTexPath());
+        // request load textures async on another thread
+        engine::Texture::requestLoadTextureAsync(getDiffuseTexPath());
+        engine::Texture::requestLoadTextureAsync(getNormalTexPath());
+        engine::Texture::requestLoadTextureAsync(getMetallicTexPath());
+        engine::Texture::requestLoadTextureAsync(getRoughnessTexPath());
+        engine::Texture::requestLoadTextureAsync(getAoTexPath());
+        engine::Texture::requestLoadTextureAsync(getHeightTexPath());
+        engine::Texture::requestLoadTextureAsync(getEmissiveTexPath());
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
@@ -263,10 +264,10 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     {
         textures.reserve(4);
         
-        engine::Texture::loadTextureAsync(getDiffuseTexPath());
-        engine::Texture::loadTextureAsync(getSpecularTexPath());
-        engine::Texture::loadTextureAsync(getNormalTexPath());
-        engine::Texture::loadTextureAsync(getHeightTexPath());
+        engine::Texture::requestLoadTextureAsync(getDiffuseTexPath());
+        engine::Texture::requestLoadTextureAsync(getSpecularTexPath());
+        engine::Texture::requestLoadTextureAsync(getNormalTexPath());
+        engine::Texture::requestLoadTextureAsync(getHeightTexPath());
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;

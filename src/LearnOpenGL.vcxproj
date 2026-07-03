@@ -200,7 +200,6 @@
     <ClCompile Include="app\myscene8.cpp" />
     <ClCompile Include="app\myscene9.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="..\libs\glad\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp0.h" />

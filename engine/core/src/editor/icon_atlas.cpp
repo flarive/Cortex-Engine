@@ -6,13 +6,7 @@ bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int at
     m_atlasWidth = atlasWidth;
     m_atlasHeight = atlasHeight;
 
-    //m_textureID = Texture::loadGLTextureFromFile(
-    //    filePath.c_str(),
-    //    "icons",
-    //    false, true, false
-    //);
-
-    m_textureID = Texture::loadTexture(filePath.c_str(), false, false, false);
+    m_textureID = Texture::loadTexture(filePath.c_str(), TextureFlag_CompressTexture);
 
     return (m_textureID != 0);
 }

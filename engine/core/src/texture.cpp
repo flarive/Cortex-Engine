@@ -24,15 +24,15 @@ namespace engine {
     }
 }
 
-engine::Texture::Texture()
-{
-    logger.trace("Texture constructor called");
-}
+//engine::Texture::Texture()
+//{
+//    //logger.trace("Texture constructor called");
+//}
 
 engine::Texture::Texture(unsigned int id, const std::string& type, const std::string& path)
     : id(id), type(type), path(path)
 {
-    logger.trace("Texture constructor called");
+    //logger.trace("Texture constructor called");
 }
 
 void engine::Texture::bind() const
@@ -43,36 +43,137 @@ void engine::Texture::bind() const
 /// <summary>
 /// Synchronous texture loading
 /// </summary>
-unsigned int engine::Texture::loadTexture(const std::string& filename, bool mipmaps, bool repeat, bool gammaCorrection)
+//unsigned int engine::Texture::loadTexture(const std::string& filename, bool mipmaps, bool repeat, bool gammaCorrection, bool compress)
+//{
+//    unsigned int textureID{};
+//    glGenTextures(1, &textureID);
+//
+//    // Detect normal maps by filename
+//    bool isNormalMap =
+//        filename.find("normal") != std::string::npos ||
+//        filename.find("_n") != std::string::npos ||
+//        filename.find("_norm") != std::string::npos;
+//
+//    // Detect heightmaps
+//    bool isHeightMap =
+//        filename.find("height") != std::string::npos ||
+//        filename.find("_h") != std::string::npos;
+//
+//
+//    int width{}, height{}, nrComponents{};
+//    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+//
+//    if (data)
+//    {
+//        GLenum externalFormat{};
+//        if (nrComponents == 1) externalFormat = GL_RED;
+//        else if (nrComponents == 3) externalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+//        else if (nrComponents == 4) externalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+//
+//        // Choose compressed internal format
+//        GLenum internalFormat{};
+//
+//        if (compress)
+//        {
+//            // use GPU texture compression in VRAM
+//            if (isNormalMap)
+//                internalFormat = GL_COMPRESSED_RG_RGTC2; // normal maps use BC5 (RGTC2)
+//            else if (isHeightMap)
+//                internalFormat = GL_COMPRESSED_RED_RGTC1; // height map use BC4 (RGTC1)
+//            else
+//                internalFormat = gammaCorrection ? GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM : GL_COMPRESSED_RGBA_BPTC_UNORM; // Color textures use BC7
+//        }
+//
+//        // Upload texture to GPU with or without compression
+//        glBindTexture(GL_TEXTURE_2D, textureID);
+//        glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
+//        // glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//
+//        // mipmaps
+//        if (mipmaps)
+//            glGenerateMipmap(GL_TEXTURE_2D);
+//
+//        // wrapping
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+//
+//        // filtering
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+//
+//        SOIL_free_image_data(data);
+//    }
+//    else
+//    {
+//        logger.error("Texture failed to load at path: {}", filename);
+//        SOIL_free_image_data(data);
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    return textureID;
+//}
+
+
+/// <summary>
+/// Synchronous texture loading
+/// </summary>
+unsigned int engine::Texture::loadTexture(const std::string& filename, TextureFlags flags)
 {
     unsigned int textureID{};
     glGenTextures(1, &textureID);
+
+    // Detect normal maps by filename
+    bool isNormalMap =
+        filename.find("normal") != std::string::npos ||
+        filename.find("_n") != std::string::npos ||
+        filename.find("_norm") != std::string::npos;
+
+    // Detect heightmaps
+    bool isHeightMap =
+        filename.find("height") != std::string::npos ||
+        filename.find("_h") != std::string::npos;
+
 
     int width{}, height{}, nrComponents{};
     unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
     if (data)
     {
-        GLenum format{};
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
+        GLenum externalFormat{};
+        if (nrComponents == 1) externalFormat = GL_RED;
+        else if (nrComponents == 3) externalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB : GL_RGB;
+        else if (nrComponents == 4) externalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB_ALPHA : GL_RGBA;
 
+        // Choose compressed internal format
+        GLenum internalFormat{};
+
+        if (hasFlag(flags, TextureFlag_CompressTexture))
+        {
+            // use GPU texture compression in VRAM
+            if (isNormalMap)
+                internalFormat = GL_COMPRESSED_RG_RGTC2; // normal maps use BC5 (RGTC2)
+            else if (isHeightMap)
+                internalFormat = GL_COMPRESSED_RED_RGTC1; // height map use BC4 (RGTC1)
+            else
+                internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM : GL_COMPRESSED_RGBA_BPTC_UNORM; // Color textures use BC7
+        }
+
+        // Upload texture to GPU with or without compression
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        
-        if (mipmaps)
+        glTexImage2D(GL_TEXTURE_2D, 0, hasFlag(flags, TextureFlag_CompressTexture) ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
+        // glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+        // mipmaps
+        if (hasFlag(flags, TextureFlag_GenerateMipmaps))
             glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+        // wrapping
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 
         // filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
         SOIL_free_image_data(data);
     }
@@ -109,7 +210,7 @@ engine::TextureData engine::Texture::loadTextureExtended(const std::string& file
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        
+
         if (mipmaps)
             glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -190,6 +291,25 @@ unsigned char* engine::Texture::flipImageVertically(unsigned char* data, int wid
     return flippedData;
 }
 
+void engine::Texture::flipImageVertically2(unsigned char* data, int width, int height, int nrComponents)
+{
+    if (!data) return;
+
+    const int rowSize = width * nrComponents;
+    std::vector<unsigned char> rowBuffer(rowSize);
+
+    for (int y = 0; y < height / 2; ++y)
+    {
+        unsigned char* rowTop = data + y * rowSize;
+        unsigned char* rowBottom = data + (height - 1 - y) * rowSize;
+
+        std::memcpy(rowBuffer.data(), rowTop, rowSize);
+        std::memcpy(rowTop, rowBottom, rowSize);
+        std::memcpy(rowBottom, rowBuffer.data(), rowSize);
+    }
+}
+
+
 /// <summary>
 /// Process Texture Creation on Main Thread
 /// </summary>
@@ -264,17 +384,17 @@ unsigned int engine::Texture::enqueueTextureCreation(const std::string& filename
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
 
         engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, isNormalMap, isHeightMap, invertY, mipmaps, repeat, gammaCorrection, compress]()
-        {
-            //  OpenGL upload texture
-            unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isNormalMap, isHeightMap, invertY, mipmaps, repeat, gammaCorrection, compress);
+            {
+                //  OpenGL upload texture
+                unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isNormalMap, isHeightMap, invertY, mipmaps, repeat, gammaCorrection, compress);
 
-            engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
-            engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
+                engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
+                engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
 
-            SOIL_free_image_data(data);  // Free after OpenGL upload
+                SOIL_free_image_data(data);  // Free after OpenGL upload
 
-            return textureID;
-        });
+                return textureID;
+            });
     }
 
     return 0;
@@ -287,26 +407,9 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 {
     if (!data) return 0;
 
-    GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
-
-    // Flip image vertically
-    int rowSize = width * nrComponents;  // Number of bytes per row
-    unsigned char* rowBuffer = new unsigned char[rowSize];
-
-    for (int y = 0; y < height / 2; ++y) {
-        unsigned char* rowTop = data + y * rowSize;
-        unsigned char* rowBottom = data + (height - y - 1) * rowSize;
-
-        std::memcpy(rowBuffer, rowTop, rowSize);
-        std::memcpy(rowTop, rowBottom, rowSize);
-        std::memcpy(rowBottom, rowBuffer, rowSize);
-    }
-
-    delete[] rowBuffer;
-
-    // Flip image vertically (always ??????)
-    //if (invertY)
-    //    data = flipImageVertically(data, width, height, nrComponents);
+    // Flip vertically if requested
+    if (invertY)
+        flipImageVertically2(data, width, height, nrComponents);
 
     // Create and bind OpenGL texture
     unsigned int textureID{};
@@ -316,8 +419,8 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     GLenum externalFormat{};
     if (nrComponents == 1) externalFormat = GL_RED;
-    else if (nrComponents == 3) externalFormat = GL_RGB;
-    else if (nrComponents == 4) externalFormat = GL_RGBA;
+    else if (nrComponents == 3) externalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+    else if (nrComponents == 4) externalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
 
     // Choose compressed internal format
     GLenum internalFormat{};
@@ -326,33 +429,21 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
     {
         // use GPU texture compression in VRAM
         if (isNormalMap)
-        {
-            // BC5 (RGTC2)
-            internalFormat = GL_COMPRESSED_RG_RGTC2;
-        }
+            internalFormat = GL_COMPRESSED_RG_RGTC2; // normal maps use BC5 (RGTC2)
         else if (isHeightMap)
-        {
-            // BC4 (RGTC1)
-            internalFormat = GL_COMPRESSED_RED_RGTC1;
-        }
+            internalFormat = GL_COMPRESSED_RED_RGTC1; // height map use BC4 (RGTC1)
         else
-        {
-            // Color textures → BC7
-            internalFormat = gammaCorrection ?
-                GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM :
-                GL_COMPRESSED_RGBA_BPTC_UNORM;
-        }
+            internalFormat = gammaCorrection ? GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM : GL_COMPRESSED_RGBA_BPTC_UNORM; // Color textures use BC7
     }
 
     // Upload texture to GPU with or without compression
-    //glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-
-
+    // mipmaps
     if (mipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
 
+    // wrapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
@@ -484,8 +575,8 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-        
-        
+
+
         // filtering
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
@@ -516,7 +607,7 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
     unsigned int flags = 0;
 
     if (invertY)
-		flags |= SOIL_FLAG_INVERT_Y;
+        flags |= SOIL_FLAG_INVERT_Y;
 
     if (mipmaps)
         flags |= SOIL_FLAG_MIPMAPS;
@@ -537,8 +628,10 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
 }
@@ -578,7 +671,7 @@ unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, s
     // Texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    
+
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
@@ -611,7 +704,7 @@ unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data,
     // Texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    
+
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
@@ -671,16 +764,17 @@ engine::TextureData engine::Texture::getTextureData(const std::string& texturePa
         return engine::TextureManager::textureDataCache[texturePath];
     }
 
-	return {}; // Return default if not found
+    return {}; // Return default if not found
 }
 
-
-engine::Texture::~Texture()
-{
-    logger.trace("Texture destructor called");
-
-    engine::TextureManager::textureIDCache.clear();
-    engine::TextureManager::textureDataCache.clear();
-    engine::TextureManager::textureCache.clear();
-}
+//engine::Texture::~Texture()
+//{
+//    // destructor called many many times, don't know why
+//    //logger.trace("Texture destructor called");
+//
+//    // static methods so shouldn't clean anything here
+//    //engine::TextureManager::textureIDCache.clear();
+//    //engine::TextureManager::textureDataCache.clear();
+//    //engine::TextureManager::textureCache.clear();
+//}
 

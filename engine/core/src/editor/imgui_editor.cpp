@@ -371,11 +371,11 @@ void engine::ImGuiEditor::renderTabAbout()
     ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
     
     double total = vramInfo.totalBytes / (1024.0 * 1024.0);
-    ImGui::Text("GPU VRAM Total: %.2f MB", total);
+    ImGui::Text("GPU VRAM Total: %.0f MB", total);
 
     double used = vramInfo.usedBytes / (1024.0 * 1024.0);
     double free = vramInfo.freeBytes / (1024.0 * 1024.0);
-    ImGui::Text("GPU VRAM Used: %.2f MB / Free: %.2f MB", used, free);
+    ImGui::Text("GPU VRAM Used: %.0f MB / Free: %.0f MB", used, free);
     
     ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
     ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());

@@ -287,26 +287,26 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 {
     if (!data) return 0;
 
-    //GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
+    GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
 
     // Flip image vertically
-    //int rowSize = width * nrComponents;  // Number of bytes per row
-    //unsigned char* rowBuffer = new unsigned char[rowSize];
+    int rowSize = width * nrComponents;  // Number of bytes per row
+    unsigned char* rowBuffer = new unsigned char[rowSize];
 
-    //for (int y = 0; y < height / 2; ++y) {
-    //    unsigned char* rowTop = data + y * rowSize;
-    //    unsigned char* rowBottom = data + (height - y - 1) * rowSize;
+    for (int y = 0; y < height / 2; ++y) {
+        unsigned char* rowTop = data + y * rowSize;
+        unsigned char* rowBottom = data + (height - y - 1) * rowSize;
 
-    //    std::memcpy(rowBuffer, rowTop, rowSize);
-    //    std::memcpy(rowTop, rowBottom, rowSize);
-    //    std::memcpy(rowBottom, rowBuffer, rowSize);
-    //}
+        std::memcpy(rowBuffer, rowTop, rowSize);
+        std::memcpy(rowTop, rowBottom, rowSize);
+        std::memcpy(rowBottom, rowBuffer, rowSize);
+    }
 
-    //delete[] rowBuffer;
+    delete[] rowBuffer;
 
     // Flip image vertically (always ??????)
-    if (invertY)
-        data = flipImageVertically(data, width, height, nrComponents);
+    //if (invertY)
+    //    data = flipImageVertically(data, width, height, nrComponents);
 
     // Create and bind OpenGL texture
     unsigned int textureID{};
@@ -345,7 +345,10 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
     }
 
     // Upload texture to GPU with or without compression
-    glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+    //glTexImage2D(GL_TEXTURE_2D, 0, compress ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
 
     if (mipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);

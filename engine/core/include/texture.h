@@ -9,6 +9,20 @@
 #include <mutex>
 #include <queue>
 
+// not added by GLAD ext GL_EXT_texture_compression_s3tc so we define them here to avoid compilation errors
+#ifndef GL_COMPRESSED_SRGB_S3TC_DXT1_EXT
+#define GL_COMPRESSED_SRGB_S3TC_DXT1_EXT        0x8C4C
+#endif
+
+#ifndef GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT  0x8C4E
+#endif
+
+#ifndef GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT  0x8C4F
+#endif
+
+
 namespace engine
 {
     using TextureData = std::tuple<unsigned int, unsigned char*, int, int, int>;
@@ -54,6 +68,7 @@ namespace engine
         return (flags & flag) != 0;
     }
 
+
     
     class Texture final : private NonCopyableButMovable
     {
@@ -72,22 +87,21 @@ namespace engine
 
         void bind() const;
 
-        //static unsigned int loadTexture(const std::string& filename, bool mipmaps = false, bool repeat = false, bool gammaCorrection = false, bool compress = false);
-        static unsigned int loadTexture(const std::string& filename, TextureFlags flags);
+        static unsigned int loadTexture(const std::string& filename, TextureFlags flags = TextureFlag_None);
         
-        static TextureData loadTextureExtended(const std::string& filename, bool mipmaps = true, bool repeat = true, bool gammaCorrection = false);
+        static TextureData loadTextureExtended(const std::string& filename, TextureFlags flags = TextureFlag_None);
         
         
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
-        static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, bool repeat = true);
+        static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, TextureFlags flags = TextureFlag_RepeatTexture);
 
-        static unsigned int requestLoadTextureAsync(const std::string& filename, bool repeat = true, bool invertY = false, bool gammaCorrection = false);
-        static unsigned int enqueueTextureCreation(const std::string& filename, bool invertY = true, bool mipmaps = true, bool repeat = true, bool gammaCorrection = false, bool compress = true);
+        static unsigned int requestLoadTextureAsync(const std::string& filename);
+        static unsigned int enqueueAsyncTextureCreation(const std::string& filename, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture | TextureFlag_CompressTexture);
         static void processLoadedTextures();
-        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isNormalMap, bool isHeightMap, bool invertY, bool mipmaps, bool repeat, bool gammaCorrection, bool compress);
+        static unsigned int createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isNormalMap, bool isHeightMap, TextureFlags flags);
 
-        static unsigned int loadTextureFromFile(const char* path, const std::string& directory, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
+        static unsigned int loadTextureFromFile(const char* path, const std::string& directory, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps | TextureFlag_CompressTexture);// bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
         static unsigned int loadGLTextureFromFile(const char* path, const std::string& directory, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
         static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
         static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, bool repeat = true, bool invertY = false, bool mipmaps = true, bool compress = false);
@@ -103,5 +117,10 @@ namespace engine
 
         static unsigned char* flipImageVertically(unsigned char* data, int width, int height, int nrComponents);
         static void flipImageVertically2(unsigned char* data, int width, int height, int nrComponents);
+
+        static bool isNormalMap(const std::string& filename);
+        static bool isHeightMap(const std::string& filename);
+
+        static bool gpuSupportsBC7();
     };
 }

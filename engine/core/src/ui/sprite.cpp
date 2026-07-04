@@ -28,7 +28,7 @@ void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
     m_spriteShader.use();
     m_spriteShader.setMat4("projection", projection2);
 
-    auto textureTuple = Texture::loadTextureExtended(filepath, false, false);
+    auto textureTuple = Texture::loadTextureExtended(filepath, TextureFlag_None);
     
     m_texture_id = std::get<0>(textureTuple);
     width = std::get<2>(textureTuple);

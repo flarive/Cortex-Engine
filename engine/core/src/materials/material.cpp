@@ -252,13 +252,13 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
         engine::Texture::requestLoadTextureAsync(getEmissiveTexPath());
 
         // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
-        normalMapId = hasNormalMap() ? engine::Texture::enqueueTextureCreation(getNormalTexPath(), true) : 0;
-        metallicMapId = hasMetallicMap() ? engine::Texture::enqueueTextureCreation(getMetallicTexPath(), true) : 0;
-        roughnessMapId = hasRoughnessMap() ? engine::Texture::enqueueTextureCreation(getRoughnessTexPath(), true) : 0;
-        aoMapId = hasAoMap() ? engine::Texture::enqueueTextureCreation(getAoTexPath(), true) : 0;
-        heightMapId = hasHeightMap() ? engine::Texture::enqueueTextureCreation(getHeightTexPath(), true) : 0;
-        emissiveMapId = hasEmissiveMap() ? engine::Texture::enqueueTextureCreation(getEmissiveTexPath(), true) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(getDiffuseTexPath()) : 0;
+        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(getNormalTexPath()) : 0;
+        metallicMapId = hasMetallicMap() ? engine::Texture::enqueueAsyncTextureCreation(getMetallicTexPath()) : 0;
+        roughnessMapId = hasRoughnessMap() ? engine::Texture::enqueueAsyncTextureCreation(getRoughnessTexPath()) : 0;
+        aoMapId = hasAoMap() ? engine::Texture::enqueueAsyncTextureCreation(getAoTexPath()) : 0;
+        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(getHeightTexPath()) : 0;
+        emissiveMapId = hasEmissiveMap() ? engine::Texture::enqueueAsyncTextureCreation(getEmissiveTexPath()) : 0;
     }
     else
     {
@@ -270,10 +270,10 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
         engine::Texture::requestLoadTextureAsync(getHeightTexPath());
 
         // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueTextureCreation(getDiffuseTexPath(), true) : 0;
-        specularMapId = hasSpecularMap() ? engine::Texture::enqueueTextureCreation(getSpecularTexPath(), true) : 0;
-        normalMapId = hasNormalMap() ? engine::Texture::enqueueTextureCreation(getNormalTexPath(), true) : 0;
-        heightMapId = hasHeightMap() ? engine::Texture::enqueueTextureCreation(getHeightTexPath(), true) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(getDiffuseTexPath()) : 0;
+        specularMapId = hasSpecularMap() ? engine::Texture::enqueueAsyncTextureCreation(getSpecularTexPath()) : 0;
+        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(getNormalTexPath()) : 0;
+        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(getHeightTexPath()) : 0;
     }
 
 

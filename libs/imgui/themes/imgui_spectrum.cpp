@@ -7,11 +7,48 @@ namespace ImGui {
         extern const unsigned int SourceSansProRegular_compressed_size = 149392;
         extern const unsigned int SourceSansProRegular_compressed_data[]; // defined later in the file
 
+        ImFont* fontSmall = nullptr;
+        ImFont* fontMedium = nullptr;
+        ImFont* fontLarge = nullptr;
+
+
         void LoadFont(float size) {
             ImGuiIO& io = ImGui::GetIO();
             ImFont* font = io.Fonts->AddFontFromMemoryCompressedTTF(SourceSansProRegular_compressed_data, SourceSansProRegular_compressed_size, size);
             IM_ASSERT(font != nullptr);
             io.FontDefault = font;
+        }
+
+        void LoadFonts() {
+            ImGuiIO& io = ImGui::GetIO();
+
+            fontSmall = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                17.0f
+            );
+
+            fontMedium = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                18.0f
+            );
+
+            fontLarge = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                28.0f
+            );
+
+
+            IM_ASSERT(fontSmall != nullptr);
+            IM_ASSERT(fontMedium != nullptr);
+            IM_ASSERT(fontLarge != nullptr);
+
+            io.FontDefault = fontSmall;
+
+            io.Fonts->Build();
+            //ImGui_ImplOpenGL3_CreateFontsTexture();
         }
 
         void StyleColorsSpectrum() {

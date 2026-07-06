@@ -169,6 +169,12 @@ void engine::App::initImGUI(const char* glsl_version)
     //ImFont* defaultFont = io.Fonts->AddFontDefault(); // Default
     //ImFont* largeFont = io.Fonts->AddFontFromFileTTF("fonts/Raleway-Medium.ttf", 20.0f); // Larger font
 
+    //ImGuiIO& io = ImGui::GetIO();
+
+    //ImFont* fontSmall = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 14.0f);
+    //ImFont* fontMedium = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 20.0f);
+    //ImFont* fontLarge = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Bold.ttf", 32.0f);
+
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags)
@@ -185,7 +191,8 @@ void engine::App::initImGUI(const char* glsl_version)
     // Apply Adobe Spectrum theme
     //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
     ImGui::Spectrum::StyleColorsSpectrum();
-    ImGui::Spectrum::LoadFont(17.0f);
+    //ImGui::Spectrum::LoadFont(17.0f);
+    ImGui::Spectrum::LoadFonts();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);

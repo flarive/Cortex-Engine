@@ -104,6 +104,9 @@ namespace engine
 
 		EditorIcon convertEntityTypeToAtlasIcon(const EntityType type, unsigned int Iconsize) const;
 
+
+		void TestOverlay();
+
 	protected:
 		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
 		bool sceneSetting_drawAsWireframe{ DEFAULT_ENABLE_WIREFRAME_MODE };

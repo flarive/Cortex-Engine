@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../imgui.h"
+
 /*
 Color definitions in ImGui are a good starting point, 
 but do not cover all the intricacies of Spectrum's possible colors
@@ -28,9 +30,18 @@ namespace ImGui {
         const float CHECKBOX_BORDER_SIZE = 2.0f;
         const float CHECKBOX_ROUNDING = 2.0f;
 
+
+        extern ImFont* fontSmall;
+        extern ImFont* fontMedium;
+        extern ImFont* fontLarge;
+
+
         // Load SourceSansProRegular and sets it as a default font.
         // You may want to call ImGui::GetIO().Fonts->Clear() before this
         void LoadFont(float size = 16.0f);
+
+        /// Load multiple size of SourceSansProRegular and sets it as a default font.
+        void LoadFonts();
 
         // Sets the ImGui style to Spectrum
         void StyleColorsSpectrum();

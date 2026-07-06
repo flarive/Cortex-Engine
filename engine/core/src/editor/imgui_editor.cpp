@@ -140,6 +140,9 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
     ImGui::PopStyleVar();
 
     renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
+
+
+    TestOverlay();
 }
 
 void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
@@ -1260,5 +1263,32 @@ void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& vie
             m_guizmoCamera->setFromViewMatrix(newViewMatrix);
         }
     }
+}
+
+void engine::ImGuiEditor::TestOverlay()
+{
+    ImGui::Begin("Overlay", nullptr,
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoNav);
+
+    ImGui::PushFont(ImGui::Spectrum::fontLarge);
+    ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "LARGE RED TITLE");
+    ImGui::PopFont();
+
+    ImGui::PushFont(ImGui::Spectrum::fontMedium);
+    ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "Medium cyan text");
+    ImGui::PopFont();
+
+    ImGui::PushFont(ImGui::Spectrum::fontSmall);
+    ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Small yellow text");
+    ImGui::PopFont();
+
+    ImGui::End();
+
+    
+
 }
 

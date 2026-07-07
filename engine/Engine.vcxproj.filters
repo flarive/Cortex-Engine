@@ -208,6 +208,9 @@
     <Filter Include="Fichiers sources\core\ui\base">
       <UniqueIdentifier>{1d332bc9-267a-444b-a9de-ec9e86cad6cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor\base">
+      <UniqueIdentifier>{6250a1f9-54a2-4689-8b34-75cc58ab7bb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -500,6 +503,18 @@
     </ClCompile>
     <ClCompile Include="..\libs\glad\src\glad.c">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\dialog_box.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\custom_widget.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\imgui_ui_manager.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\overlay.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -835,6 +850,21 @@
     </ClInclude>
     <ClInclude Include="core\include\tools\vram_manager.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\imgui_element.h">
+      <Filter>Fichiers d%27en-tête\core\editor\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\dialog_box.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\overlay.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\custom_widget.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\imgui_ui_manager.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

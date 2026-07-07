@@ -27,7 +27,9 @@
 #include "../../include/primitives/cone.h"
 
 
-
+#include "../../include/editor/dialog_box.h"
+#include "../../include/editor/overlay.h"
+#include "../../include/editor/custom_widget.h"
 
 
 #include "../../include/managers/entity_manager.h"
@@ -54,6 +56,11 @@ void engine::ImGuiEditor::init()
     EditorHelper::registerIconAtlas();
 
     m_vramManager.init();
+
+
+    auto* dialog = m_ui.create<DialogBox>("Settings");
+    auto* overlay = m_ui.create<DebugOverlay>();
+    auto* widget = m_ui.create<CustomWidget>();
 }
 
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
@@ -142,7 +149,11 @@ void engine::ImGuiEditor::renderUIWindow(bool show, glm::mat4& projection, glm::
     renderGuizmo(dockspace_id, projection, view, displayObjectTransformGuizmo);
 
 
+    // ????????????????
     TestOverlay();
+
+    // ????????????????
+    m_ui.render();
 }
 
 void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)

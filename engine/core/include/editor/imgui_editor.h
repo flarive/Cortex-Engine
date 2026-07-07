@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui_ui_manager.h"
+
 #include "../tools/system_monitor.h"
 #include "../tools/vram_manager.h"
 
@@ -142,6 +144,8 @@ namespace engine
 		bool firstFrame{ true };
 		int lastUsing{};
 
+
+		ImGuiUIManager m_ui;
 
 		std::shared_ptr<Camera> m_guizmoCamera{};
 	};

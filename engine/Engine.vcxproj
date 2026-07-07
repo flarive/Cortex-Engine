@@ -196,6 +196,8 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
+    <ClCompile Include="core\src\editor\custom_widget.cpp" />
+    <ClCompile Include="core\src\editor\dialog_box.cpp" />
     <ClCompile Include="core\src\editor\editor_helper.cpp" />
     <ClCompile Include="core\src\editor\icon_atlas.cpp" />
     <ClCompile Include="core\src\editor\imgui_editor.cpp" />
@@ -205,6 +207,7 @@
     <ClCompile Include="core\src\ecs\light_component.cpp" />
     <ClCompile Include="core\src\ecs\model_component.cpp" />
     <ClCompile Include="core\src\ecs\primitive_component.cpp" />
+    <ClCompile Include="core\src\editor\imgui_ui_manager.cpp" />
     <ClCompile Include="core\src\lights\area_light.cpp" />
     <ClCompile Include="core\src\managers\app_manager.cpp" />
     <ClCompile Include="core\src\managers\audio_manager.cpp" />
@@ -254,6 +257,7 @@
     <ClCompile Include="core\src\ui\ui.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
     <ClCompile Include="core\src\ecs\transform_component.cpp" />
+    <ClCompile Include="core\src\editor\overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
@@ -301,6 +305,7 @@
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
+    <ClInclude Include="core\include\editor\dialog_box.h" />
     <ClInclude Include="core\include\editor\editor_helper.h" />
     <ClInclude Include="core\include\editor\icon_atlas.h" />
     <ClInclude Include="core\include\editor\imgui_editor.h" />
@@ -310,6 +315,9 @@
     <ClInclude Include="core\include\ecs\model_component.h" />
     <ClInclude Include="core\include\ecs\primitive_component.h" />
     <ClInclude Include="core\include\ecs\transform_component.h" />
+    <ClInclude Include="core\include\editor\imgui_element.h" />
+    <ClInclude Include="core\include\editor\imgui_ui_manager.h" />
+    <ClInclude Include="core\include\editor\overlay.h" />
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\ecs\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
@@ -367,6 +375,7 @@
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />
     <ClInclude Include="core\include\managers\entity_manager.h" />
+    <ClInclude Include="core\include\editor\custom_widget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

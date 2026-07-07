@@ -10,19 +10,19 @@
 
 namespace engine {
 
-    struct IconUV {
+    struct IconUV final {
         ImVec2 uv0; // 0.0 - 0.1
         ImVec2 uv1; // 0.0 - 0.1
     };
 
-    struct IconInfo {
+    struct IconInfo final {
         int x;      // pixel position in atlas
         int y;
         int w;      // icon width
         int h;      // icon height
     };
 
-    class IconAtlas
+    class IconAtlas final
     {
     public:
         bool load(const std::string& filePath,

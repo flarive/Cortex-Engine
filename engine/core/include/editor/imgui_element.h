@@ -4,20 +4,29 @@
 #include <string>
 #include <vector>
 
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "themes/imgui_spectrum.h"
+
+#include "extensions/toggle/imgui_toggle.h"
+#include "extensions/toggle/imgui_toggle_palette.h"
+
 namespace engine
 {
+    enum class Category
+    {
+        DockSpace = 0,
+        Window = 1,
+        Widget = 2,
+        Overlay = 3
+    };
+
     class ImGuiElement
     {
     public:
-        enum class Type
-        {
-            Window,
-            Overlay,
-            Widget
-        };
-
-        ImGuiElement(Type type, const std::string& name)
-            : m_type(type), m_name(name), m_visible(true)
+        
+        ImGuiElement(Category category, const std::string& name)
+            : m_category(category), m_name(name), m_visible(true)
         {}
 
         virtual ~ImGuiElement() = default;
@@ -37,7 +46,7 @@ namespace engine
         void show(bool v = true) { m_visible = v; }
 
 
-        Type getType() const { return m_type; }
+        Category getCategory() const { return m_category; }
         std::string getName() const { return m_name; }
         bool isVisible() const { return m_visible; }
 
@@ -80,13 +89,13 @@ namespace engine
         // Derived classes override these
         virtual void begin()
         {
-            switch (m_type)
+            switch (m_category)
             {
-            case Type::Window:
+            case Category::Window:
                 ImGui::Begin(m_name.c_str());
                 break;
 
-            case Type::Overlay:
+            case Category::Overlay:
                 ImGui::SetNextWindowBgAlpha(0.0f);
                 ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
                 ImGui::Begin(m_name.c_str(),
@@ -98,7 +107,7 @@ namespace engine
                     ImGuiWindowFlags_NoNav);
                 break;
 
-            case Type::Widget:
+            case Category::Widget:
                 // Widgets do not create windows
                 break;
             }
@@ -108,13 +117,13 @@ namespace engine
 
         virtual void end()
         {
-            if (m_type == Type::Window || m_type == Type::Overlay)
+            if (m_category == Category::Window || m_category == Category::Overlay)
                 ImGui::End();
         }
 
 
     protected:
-        Type m_type;
+        Category m_category;
         std::string m_name;
         bool m_visible;
 

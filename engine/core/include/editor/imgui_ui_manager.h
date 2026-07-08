@@ -38,10 +38,10 @@ namespace engine
         // Render all elements
         void render()
         {
-            // Sort by type: windows first, overlays last
             std::sort(m_elements.begin(), m_elements.end(),
-                [](const auto& a, const auto& b) {
-                    return static_cast<int>(a->getType()) < static_cast<int>(b->getType());
+                [](const auto& a, const auto& b)
+                {
+                    return static_cast<int>(a->getCategory()) < static_cast<int>(b->getCategory());
                 });
 
             for (auto& e : m_elements)
@@ -51,14 +51,8 @@ namespace engine
         // Toggle visibility by name
         void toggle(const std::string& name)
         {
-            for (auto& e : m_elements)
-            {
-                if (e->getName() == name)
-                {
-                    e->show(!e->isVisible());
-                    return;
-                }
-            }
+            if (auto* e = find(name))
+                e->show(!e->isVisible());
         }
 
         // Find element by name

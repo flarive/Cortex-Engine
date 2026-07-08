@@ -6,6 +6,8 @@
 #include "../cameras/camera.h"
 #include "../editor/icon_atlas.h"
 
+
+
 #include <imgui.h>
 
 #include <string>
@@ -94,6 +96,10 @@ namespace engine
 		static void endCenteredToolbar();
 
 		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck);
+
+		static ImVec4 getEntityColor(const engine::EntityType entityType);
+
+		static engine::EditorIcon convertEntityTypeToAtlasIcon(const engine::EntityType type, unsigned int Iconsize);
 
 	private:
 		static std::unordered_map<std::string, bool> m_iconToggleStates;

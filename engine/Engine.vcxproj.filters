@@ -516,6 +516,24 @@
     <ClCompile Include="core\src\editor\overlay.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\editor\dockspace.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\scene_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\settings_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\about_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\properties_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\floating_toolbar_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -860,11 +878,29 @@
     <ClInclude Include="core\include\editor\overlay.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\editor\custom_widget.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\editor\imgui_ui_manager.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\dockspace.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\scene_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\settings_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\custom_widget.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\about_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\properties_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\floating_toolbar_window.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

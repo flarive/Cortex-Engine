@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 #include "imgui_element.h"
 
 namespace engine
@@ -10,7 +8,7 @@ namespace engine
     {
     public:
         DialogBox(const std::string& title)
-            : ImGuiElement(Type::Window, title)
+            : ImGuiElement(Category::Window, title)
         {}
 
     protected:

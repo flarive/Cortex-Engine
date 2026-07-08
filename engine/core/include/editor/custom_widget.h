@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 #include "imgui_element.h"
 
 namespace engine
@@ -9,7 +7,7 @@ namespace engine
     class CustomWidget final : public ImGuiElement
     {
     public:
-        CustomWidget() : ImGuiElement(Type::Widget, "ColorWidget") {}
+        CustomWidget() : ImGuiElement(Category::Widget, "ColorWidget") {}
 
     protected:
         void draw() override

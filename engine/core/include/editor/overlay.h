@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 #include "imgui_element.h"
 
 namespace engine
@@ -9,7 +7,7 @@ namespace engine
     class DebugOverlay final : public ImGuiElement
     {
     public:
-        DebugOverlay() : ImGuiElement(Type::Overlay, "DebugOverlay") {}
+        DebugOverlay() : ImGuiElement(Category::Overlay, "DebugOverlay") {}
 
     protected:
         void draw() override

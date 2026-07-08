@@ -9,6 +9,8 @@
 
 #include "../../include/managers/entity_manager.h"
 
+#include "../../include/misc/colors.h"
+
 #include <imgui_internal.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -804,3 +806,70 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     return is_open;
 }
 
+ImVec4 engine::EditorHelper::getEntityColor(const engine::EntityType entityType)
+{
+    auto color = engine::Colors::hexToNormalizedRGB("#969696");
+
+    if (entityType == engine::EntityType::model) {
+        color = engine::Colors::hexToNormalizedRGB("#d478ff");
+    }
+    else if (entityType == engine::EntityType::primitive) {
+        color = engine::Colors::hexToNormalizedRGB("#abff78");
+    }
+    else if (entityType == engine::EntityType::light) {
+        color = engine::Colors::hexToNormalizedRGB("#ffd83b");
+    }
+    else if (entityType == engine::EntityType::camera) {
+        color = engine::Colors::hexToNormalizedRGB("#0f9cff");
+    }
+    else if (entityType == engine::EntityType::particleSystem) {
+        color = engine::Colors::hexToNormalizedRGB("#ff9228");
+    }
+    else if (entityType == engine::EntityType::terrain) {
+        color = engine::Colors::hexToNormalizedRGB("#ff28a7");
+    }
+
+    return ImVec4(color.r, color.g, color.b, color.a);
+}
+
+engine::EditorIcon engine::EditorHelper::convertEntityTypeToAtlasIcon(const engine::EntityType type, unsigned int Iconsize)
+{
+    if (Iconsize == 16)
+    {
+        switch (type)
+        {
+        case EntityType::model:
+            return EditorIcon::entity_model_16x16;
+        case EntityType::primitive:
+            return EditorIcon::entity_primitive_16x16;
+        case EntityType::light:
+            return EditorIcon::entity_light_16x16;
+        case EntityType::camera:
+            return EditorIcon::entity_camera_16x16;
+        case EntityType::particleSystem:
+            return EditorIcon::entity_particleSystem_16x16;
+        case EntityType::terrain:
+            return EditorIcon::entity_terrain_16x16;
+        }
+    }
+    else if (Iconsize == 48)
+    {
+        switch (type)
+        {
+        case EntityType::model:
+            return EditorIcon::entity_model_48x48;
+        case EntityType::primitive:
+            return EditorIcon::entity_primitive_48x48;
+        case EntityType::light:
+            return EditorIcon::entity_light_48x48;
+        case EntityType::camera:
+            return EditorIcon::entity_camera_48x48;
+        case EntityType::particleSystem:
+            return EditorIcon::entity_particleSystem_48x48;
+        case EntityType::terrain:
+            return EditorIcon::entity_terrain_48x48;
+        }
+    }
+
+    return EditorIcon::undefined;
+}

@@ -2,8 +2,8 @@
 
 #include "imgui_ui_manager.h"
 
-#include "../tools/system_monitor.h"
-#include "../tools/vram_manager.h"
+//#include "../tools/system_monitor.h"
+//#include "../tools/vram_manager.h"
 
 #include "../ecs/entity.h"
 #include "../ecs/transform_component.h"
@@ -64,8 +64,8 @@ namespace engine
 
 
 	private:
-		SystemMonitor m_sysMonitor{};
-		VramManager m_vramManager{};
+		//SystemMonitor m_sysMonitor{};
+		//VramManager m_vramManager{};
 
 		std::shared_ptr<Entity> m_rootEntity{};
 
@@ -75,42 +75,42 @@ namespace engine
 
 		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
 
-		IconAtlas m_iconAtlas;
+		//IconAtlas m_iconAtlas;
 
-		void renderTabSettings();
-		void renderTabAbout();
-		void renderHierarchyWidget();
-		void renderPropertiesWidget();
+		//void renderTabSettings();
+		//void renderTabAbout();
+		//void renderHierarchyWidget();
+		//void renderPropertiesWidget();
 
-		void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
-		void displayEntityDetails(const std::shared_ptr<Entity>& entity);
-
-
-		ImVec4 getEntityColor(const engine::EntityType entityType);
+		//void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
+		//void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
 
+		//ImVec4 getEntityColor(const engine::EntityType entityType);
 
-		void renderComponents(const std::shared_ptr<Entity>& entity);
 
 
-		void renderTransformComponent(const std::shared_ptr<Entity>& entity);
-		void renderLightComponent(std::shared_ptr<LightComponent>& component);
-		void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
-		void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
-		void renderModelComponent(std::shared_ptr<ModelComponent>& component);
-		void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
-		void renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component);
-		void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
+		//void renderComponents(const std::shared_ptr<Entity>& entity);
 
-		void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
-		EditorIcon convertEntityTypeToAtlasIcon(const EntityType type, unsigned int Iconsize) const;
+		//void renderTransformComponent(const std::shared_ptr<Entity>& entity);
+		//void renderLightComponent(std::shared_ptr<LightComponent>& component);
+		//void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
+		//void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
+		//void renderModelComponent(std::shared_ptr<ModelComponent>& component);
+		//void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
+		//void renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component);
+		//void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
+
+		//void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
+
+		//EditorIcon convertEntityTypeToAtlasIcon(const EntityType type, unsigned int Iconsize) const;
 
 
 		void TestOverlay();
 
 	protected:
-		int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
+		/*int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
 		bool sceneSetting_drawAsWireframe{ DEFAULT_ENABLE_WIREFRAME_MODE };
 		float sceneSetting_exposure{ DEFAULT_EXPOSURE };
 		bool sceneSetting_enableGammaCorrection{ DEFAULT_ENABLE_GAMMA_CORRECTION };
@@ -131,7 +131,7 @@ namespace engine
 		float sceneSetting_iblDiffuseIntensity{ DEFAULT_PBR_IBL_DIFFUSE_INTENSITY };
 		float sceneSetting_iblSpecularIntensity{ DEFAULT_PBR_IBL_SPECULAR_INTENSITY };
 
-		ubyte sceneSetting_framebufferMsaaSamples{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
+		ubyte sceneSetting_framebufferMsaaSamples{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };*/
 
 
 		// guizmo

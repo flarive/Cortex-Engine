@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class SettingsWindow : public ImGuiElement
+    class SettingsWindow final : public ImGuiElement
     {
     public:
         SettingsWindow() : ImGuiElement(Category::Window, "Settings") {}

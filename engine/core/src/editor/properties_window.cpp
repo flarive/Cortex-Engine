@@ -2,9 +2,21 @@
 
 #include "../../include/editor/editor_helper.h"
 
+void engine::PropertiesWindow::onInit()
+{
+    // listen for events from scene hierarchy window
+    listen([this](const UIEvent& evt)
+    {
+        if (evt.sender == "Scene" &&evt.type == UIEventType::EntitySelectionChanged)
+        {
+            m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.payload);
+        }
+    });
+}
+
 void engine::PropertiesWindow::renderPropertiesWidget()
 {
-    if (m_rootEntity)
+    if (m_selectedEntity)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f); // Set rounding to 5 pixels
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f)); // 10 pixels padding on x and y
@@ -106,7 +118,6 @@ void engine::PropertiesWindow::renderComponents(const std::shared_ptr<Entity>& e
         }
     }
 }
-
 
 void engine::PropertiesWindow::renderTransformComponent(const std::shared_ptr<Entity>& entity)
 {

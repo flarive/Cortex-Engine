@@ -3,7 +3,11 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <functional>
+
 #include "imgui_element.h"
+
+#include "../misc/event.h"
 
 namespace engine
 {
@@ -13,12 +17,27 @@ namespace engine
         ImGuiUIManager() = default;
         ~ImGuiUIManager() = default;
 
+        void addListener(EventCallback cb)
+        {
+            m_listeners.push_back(cb);
+        }
+
+        void emitEvent(const UIEvent& evt)
+        {
+            for (auto& cb : m_listeners)
+                cb(evt);
+        }
+
+
+
         // Register a new UI element
         template<typename T, typename... Args>
         T* create(Args&&... args)
         {
             auto ptr = std::make_unique<T>(std::forward<Args>(args)...);
             T* raw = ptr.get();
+            raw->setManager(this);
+            raw->onInit();
             m_elements.push_back(std::move(ptr));
             return raw;
         }
@@ -66,5 +85,8 @@ namespace engine
 
     private:
         std::vector<std::unique_ptr<ImGuiElement>> m_elements;
+
+        // event bus
+        std::vector<EventCallback> m_listeners;
     };
 }

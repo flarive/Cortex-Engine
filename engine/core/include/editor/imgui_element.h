@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <string>
 #include <vector>
+#include <any>
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -11,8 +12,12 @@
 #include "extensions/toggle/imgui_toggle.h"
 #include "extensions/toggle/imgui_toggle_palette.h"
 
+#include "../misc/event.h"
+
 namespace engine
 {
+    class ImGuiUIManager;
+    
     enum class Category
     {
         DockSpace = 0,
@@ -25,11 +30,14 @@ namespace engine
     {
     public:
         
-        ImGuiElement(Category category, const std::string& name)
-            : m_category(category), m_name(name), m_visible(true)
-        {}
-
+        ImGuiElement(Category category, const std::string& name);
         virtual ~ImGuiElement() = default;
+
+        void setManager(ImGuiUIManager* mgr);
+
+
+        virtual void onInit() {}
+
 
         // Main entry point called by your UI manager
         void render()
@@ -85,41 +93,7 @@ namespace engine
             }
         }
 
-    protected:
-        // Derived classes override these
-        virtual void begin()
-        {
-            switch (m_category)
-            {
-            case Category::Window:
-                ImGui::Begin(m_name.c_str());
-                break;
-
-            case Category::Overlay:
-                ImGui::SetNextWindowBgAlpha(0.0f);
-                ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
-                ImGui::Begin(m_name.c_str(),
-                    nullptr,
-                    ImGuiWindowFlags_NoDecoration |
-                    ImGuiWindowFlags_AlwaysAutoResize |
-                    ImGuiWindowFlags_NoSavedSettings |
-                    ImGuiWindowFlags_NoFocusOnAppearing |
-                    ImGuiWindowFlags_NoNav);
-                break;
-
-            case Category::Widget:
-                // Widgets do not create windows
-                break;
-            }
-        }
-
-        virtual void draw() = 0;
-
-        virtual void end()
-        {
-            if (m_category == Category::Window || m_category == Category::Overlay)
-                ImGui::End();
-        }
+        void listen(EventCallback cb);
 
 
     protected:
@@ -129,5 +103,14 @@ namespace engine
 
         std::vector<ImFont*> m_fontStack;
         std::vector<ImGuiCol> m_colorStack;
+
+        ImGuiUIManager* m_manager;
+
+        void emit(UIEventType type, std::any payload);
+
+        // Derived classes override these
+        virtual void begin();
+        virtual void draw() = 0;
+        virtual void end();
     };
 }

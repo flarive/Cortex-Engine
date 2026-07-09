@@ -6,7 +6,7 @@
 
 namespace engine
 {
-    class SceneWindow : public ImGuiElement
+    class SceneWindow final : public ImGuiElement
     {
     public:
         SceneWindow() : ImGuiElement(Category::Window, "Scene") {}

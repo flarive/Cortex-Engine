@@ -62,9 +62,10 @@ void engine::ImGuiEditor::init()
 {
     EditorHelper::registerIconAtlas();
 
-    //m_vramManager.init();
-
-    
+    m_ui.addListener([this](const UIEvent& evt)
+    {
+        onUIEvent(evt);
+    });
 }
 
 void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
@@ -84,7 +85,7 @@ void engine::ImGuiEditor::setScene(std::shared_ptr<Entity> rootEntity)
     aboutWindow->init();
 
     auto* propertiesWindow = m_ui.create<PropertiesWindow>();
-    propertiesWindow->setRootEntity(m_rootEntity);
+    //propertiesWindow->setRootEntity(m_rootEntity);
 
 
     //m_ui.create<FloatingToolbarWindow>();
@@ -1322,4 +1323,23 @@ void engine::ImGuiEditor::TestOverlay()
 
     ImGui::End();
 }
+
+void engine::ImGuiEditor::onUIEvent(const UIEvent& evt)
+{
+    if (evt.type == UIEventType::ButtonClicked)
+    {
+        int i = 0;
+    }
+    else if (evt.type == UIEventType::EntitySelectionChanged)
+    {
+        m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.payload);
+
+        if (m_onSelectionChanged)
+            m_onSelectionChanged(m_selectedEntity);
+
+    }
+
+    // You can handle more event types here
+}
+
 

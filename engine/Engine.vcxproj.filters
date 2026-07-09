@@ -211,6 +211,9 @@
     <Filter Include="Fichiers d%27en-tête\core\editor\base">
       <UniqueIdentifier>{6250a1f9-54a2-4689-8b34-75cc58ab7bb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core\editor\base">
+      <UniqueIdentifier>{7d94375a-e90c-41de-9a82-cca007a31fc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -522,9 +525,6 @@
     <ClCompile Include="core\src\editor\scene_window.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\settings_window.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\editor\about_window.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
@@ -533,6 +533,12 @@
     </ClCompile>
     <ClCompile Include="core\src\editor\floating_toolbar_window.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\settings_window.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\imgui_element.cpp">
+      <Filter>Fichiers sources\core\editor\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -901,6 +907,9 @@
     </ClInclude>
     <ClInclude Include="core\include\editor\floating_toolbar_window.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\misc\event.h">
+      <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

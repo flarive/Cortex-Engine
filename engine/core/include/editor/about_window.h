@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class AboutWindow : public ImGuiElement
+    class AboutWindow final : public ImGuiElement
     {
     public:
         AboutWindow() : ImGuiElement(Category::Window, "About") {}

@@ -14,23 +14,21 @@
 
 namespace engine
 {
-    class PropertiesWindow : public ImGuiElement
+    class PropertiesWindow final : public ImGuiElement
     {
     public:
         PropertiesWindow() : ImGuiElement(Category::Window, "Properties") {}
 
-        void setRootEntity(const std::shared_ptr<Entity>& entity) { m_rootEntity = entity; }
+        void onInit() override;
+
 
     private:
-        std::shared_ptr<Entity> m_rootEntity{};
         std::shared_ptr<Entity> m_selectedEntity{};
 
         void renderPropertiesWidget();
         void displayEntityDetails(const std::shared_ptr<Entity>& entity);
 
-
         void renderComponents(const std::shared_ptr<Entity>& entity);
-
 
         void renderTransformComponent(const std::shared_ptr<Entity>& entity);
         void renderLightComponent(std::shared_ptr<LightComponent>& component);

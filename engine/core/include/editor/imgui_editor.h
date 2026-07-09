@@ -19,6 +19,8 @@
 
 #include "../lights/light.h"
 
+#include "../misc/event.h"
+
 #include "editor_helper.h"
 #include "icon_atlas.h"
 
@@ -88,6 +90,7 @@ namespace engine
 
 		//ImVec4 getEntityColor(const engine::EntityType entityType);
 
+		void onUIEvent(const UIEvent& evt);
 
 
 		//void renderComponents(const std::shared_ptr<Entity>& entity);

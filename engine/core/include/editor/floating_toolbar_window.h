@@ -6,7 +6,7 @@
 
 namespace engine
 {
-    class FloatingToolbarWindow : public ImGuiElement
+    class FloatingToolbarWindow final : public ImGuiElement
     {
     public:
         FloatingToolbarWindow() : ImGuiElement(Category::Window, "FloatingToolbar") {}

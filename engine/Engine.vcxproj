@@ -210,6 +210,7 @@
     <ClCompile Include="core\src\ecs\light_component.cpp" />
     <ClCompile Include="core\src\ecs\model_component.cpp" />
     <ClCompile Include="core\src\ecs\primitive_component.cpp" />
+    <ClCompile Include="core\src\editor\imgui_element.cpp" />
     <ClCompile Include="core\src\editor\imgui_ui_manager.cpp" />
     <ClCompile Include="core\src\editor\properties_window.cpp" />
     <ClCompile Include="core\src\editor\scene_window.cpp" />
@@ -342,6 +343,7 @@
     <ClInclude Include="core\include\materials\pbr_material.h" />
     <ClInclude Include="core\include\misc\colors.h" />
     <ClInclude Include="core\include\managers\log_manager.h" />
+    <ClInclude Include="core\include\misc\event.h" />
     <ClInclude Include="core\include\misc\ltc_matrix.h" />
     <ClInclude Include="core\include\misc\ordered_map.h" />
     <ClInclude Include="core\include\animators\bone_animator.h" />

@@ -4,9 +4,6 @@
 
 void engine::SceneWindow::renderHierarchyWidget()
 {
-    if (ImGui::Button("Add Entity"))
-        emit(UIEventType::ButtonClicked, "AddEntity");
-    
     if (m_rootEntity)
     {
         ImGui::BeginChild("EntityTreeRegion", ImVec2(0, 0), true);
@@ -51,11 +48,7 @@ void engine::SceneWindow::displayEntityHierarchy(const std::shared_ptr<Entity>& 
     if (ImGui::IsItemClicked())
     {
         m_selectedEntity = entity;
-
-        emit(UIEventType::EntitySelectionChanged, entity);
-
-        //if (m_onSelectionChanged)
-        //    m_onSelectionChanged(m_selectedEntity);
+        emit(UIEventType::EntitySelectionChanged, "entity", entity);
     }
 
     // Image button at the end of the line

@@ -534,11 +534,11 @@
     <ClCompile Include="core\src\editor\floating_toolbar_window.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\editor\settings_window.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\editor\imgui_element.cpp">
       <Filter>Fichiers sources\core\editor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\settings_window.cpp">
+      <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

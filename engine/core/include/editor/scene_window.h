@@ -17,7 +17,7 @@ namespace engine
     private:
         std::shared_ptr<Entity> m_rootEntity{};
         std::shared_ptr<Entity> m_selectedEntity{};
-        std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
+        //std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
         
 

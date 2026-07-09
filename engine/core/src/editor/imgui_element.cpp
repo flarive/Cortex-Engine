@@ -12,10 +12,10 @@ void engine::ImGuiElement::setManager(ImGuiUIManager* mgr)
     m_manager = mgr;
 }
 
-void engine::ImGuiElement::emit(UIEventType type, std::any payload)
+void engine::ImGuiElement::emit(UIEventType type, const std::string& param, std::any payload)
 {
     if (m_manager)
-        m_manager->emitEvent({ type, m_name, payload });
+        m_manager->emitEvent({ type, m_name, param, payload });
 }
 
 void engine::ImGuiElement::listen(EventCallback cb)

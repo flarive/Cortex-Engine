@@ -45,7 +45,8 @@ void engine::SettingsWindow::renderTabSettings()
     {
         if (m_onSceneSettingChanged && lastDrawWireframe != sceneSetting_drawAsWireframe)
         {
-            m_onSceneSettingChanged("draw_wireframe", sceneSetting_drawAsWireframe);
+            emit(UIEventType::SceneSettingChanged, "draw_wireframe", sceneSetting_drawAsWireframe);
+            //m_onSceneSettingChanged("draw_wireframe", sceneSetting_drawAsWireframe);
             lastDrawWireframe = sceneSetting_drawAsWireframe;
         }
     }

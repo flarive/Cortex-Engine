@@ -19,7 +19,8 @@ namespace engine
     {
         UIEventType type;
         std::string sender;     // window/widget name
-        std::any payload;    // button name, value, etc.
+		std::string key;      // additional info, e.g., setting name
+        std::any value;    // button name, value, etc.
     };
 
     // event bus

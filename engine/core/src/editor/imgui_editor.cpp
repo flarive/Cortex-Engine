@@ -1326,16 +1326,19 @@ void engine::ImGuiEditor::TestOverlay()
 
 void engine::ImGuiEditor::onUIEvent(const UIEvent& evt)
 {
-    if (evt.type == UIEventType::ButtonClicked)
+    if (evt.type == UIEventType::EntitySelectionChanged)
     {
-        int i = 0;
-    }
-    else if (evt.type == UIEventType::EntitySelectionChanged)
-    {
-        m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.payload);
+        m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.value);
 
         if (m_onSelectionChanged)
             m_onSelectionChanged(m_selectedEntity);
+    }
+    else if (evt.type == UIEventType::SceneSettingChanged)
+    {
+        bool aaa = std::any_cast<bool>(evt.value);
+
+        if (m_onSceneSettingChanged)
+            m_onSceneSettingChanged(evt.key, aaa);
 
     }
 

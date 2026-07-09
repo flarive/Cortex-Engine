@@ -106,7 +106,7 @@ namespace engine
 
         ImGuiUIManager* m_manager;
 
-        void emit(UIEventType type, std::any payload);
+        void emit(UIEventType type, const std::string& param, std::any payload);
 
         // Derived classes override these
         virtual void begin();

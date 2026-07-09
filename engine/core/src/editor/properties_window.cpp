@@ -9,7 +9,7 @@ void engine::PropertiesWindow::onInit()
     {
         if (evt.sender == "Scene" &&evt.type == UIEventType::EntitySelectionChanged)
         {
-            m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.payload);
+            m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.value);
         }
     });
 }

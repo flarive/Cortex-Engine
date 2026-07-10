@@ -48,8 +48,8 @@ namespace engine
         bool m_displayObjectTransformGuizmo{ false };
 
 
-        ImGuiPerfOverlay m_perfOverlay{};
-
+        //ImGuiPerfOverlay m_perfOverlay{};
+        PerformanceOverlay m_perfOverlay{};
         
 
         void before_init_internal();

@@ -38,28 +38,33 @@ void engine::SettingsWindow::renderTabSettings()
     // ------------------------------------------------------------------------
 
     static int lastRenderMethod = static_cast<int>(DEFAULT_RENDER_METHOD);
-    EditorHelper::renderSliderIntWithLabel("Render method", "render_method", sceneSetting_renderMethod, lastRenderMethod, 1, 2, m_onSceneSettingChanged);
+    if (EditorHelper::renderSliderIntWithLabel("Render method", sceneSetting_renderMethod, lastRenderMethod, 1, 2))
+    {
+        emit(UIEventType::SceneSettingChanged, "render_method", sceneSetting_renderMethod);
+    }
 
     static bool lastDrawWireframe = DEFAULT_ENABLE_WIREFRAME_MODE;
     if (ImGui::Toggle("Wireframe", &sceneSetting_drawAsWireframe, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastDrawWireframe != sceneSetting_drawAsWireframe)
+        if (lastDrawWireframe != sceneSetting_drawAsWireframe)
         {
             emit(UIEventType::SceneSettingChanged, "draw_wireframe", sceneSetting_drawAsWireframe);
-            //m_onSceneSettingChanged("draw_wireframe", sceneSetting_drawAsWireframe);
             lastDrawWireframe = sceneSetting_drawAsWireframe;
         }
     }
 
     static ubyte lastFrameBufferMsaaSamples = DEFAULT_FRAMEBUFFER_MSAA_SAMPLES;
-    EditorHelper::renderSliderUnsignedByteWithLabel("Framebuffer antialiasing samples", "framebuffer_msaa_samples", sceneSetting_framebufferMsaaSamples, lastFrameBufferMsaaSamples, 0, 16, m_onSceneSettingChanged);
+    if (EditorHelper::renderSliderUnsignedByteWithLabel("Framebuffer antialiasing samples", sceneSetting_framebufferMsaaSamples, lastFrameBufferMsaaSamples, 0, 16))
+    {
+        emit(UIEventType::SceneSettingChanged, "framebuffer_msaa_samples", sceneSetting_framebufferMsaaSamples);
+    }
 
     static bool lastEnableGammaCorection = DEFAULT_ENABLE_GAMMA_CORRECTION;
     if (ImGui::Toggle("Gamma correction", &sceneSetting_enableGammaCorrection, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableGammaCorection != sceneSetting_enableGammaCorrection)
+        if (lastEnableGammaCorection != sceneSetting_enableGammaCorrection)
         {
-            m_onSceneSettingChanged("enable_gamma_correction", sceneSetting_enableGammaCorrection);
+            emit(UIEventType::SceneSettingChanged, "enable_gamma_correction", sceneSetting_enableGammaCorrection);
             lastEnableGammaCorection = sceneSetting_enableGammaCorrection;
         }
     }
@@ -67,19 +72,25 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastEnableToneMapping = DEFAULT_ENABLE_TONE_MAPPING;
     if (ImGui::Toggle("Tone mapping", &sceneSetting_enableToneMapping, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableToneMapping != sceneSetting_enableToneMapping)
+        if (lastEnableToneMapping != sceneSetting_enableToneMapping)
         {
-            m_onSceneSettingChanged("enable_tone_mapping", sceneSetting_enableToneMapping);
+            emit(UIEventType::SceneSettingChanged, "enable_tone_mapping", sceneSetting_enableToneMapping);
             lastEnableToneMapping = sceneSetting_enableToneMapping;
         }
     }
 
     static float lastExposure = DEFAULT_EXPOSURE;
-    EditorHelper::renderDragFloatWithLabel("Exposure", "exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+    if (EditorHelper::renderDragFloatWithLabel("Exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "exposure", sceneSetting_exposure);
+    }
 
 
     static int lastApplyPostProcessFx = DEFAULT_POST_PROCESSING_FX;
-    EditorHelper::renderSliderIntWithLabel("Post process", "post_process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10, m_onSceneSettingChanged);
+    if (EditorHelper::renderSliderIntWithLabel("Post process", sceneSetting_applyPostProcessFx, lastApplyPostProcessFx, 0, 10))
+    {
+        emit(UIEventType::SceneSettingChanged, "post_process", sceneSetting_applyPostProcessFx);
+    }
 
     // ------------------------------------------------------------------------
     // optims
@@ -88,9 +99,9 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastEnableFaceCulling = DEFAULT_ENABLE_FACE_CULLING;
     if (ImGui::Toggle("Face culling", &sceneSetting_enableFaceCulling, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableFaceCulling != sceneSetting_enableFaceCulling)
+        if (lastEnableFaceCulling != sceneSetting_enableFaceCulling)
         {
-            m_onSceneSettingChanged("enable_face_culling", sceneSetting_enableFaceCulling);
+            emit(UIEventType::SceneSettingChanged, "enable_face_culling", sceneSetting_enableFaceCulling);
             lastEnableFaceCulling = sceneSetting_enableFaceCulling;
         }
     }
@@ -98,9 +109,9 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastEnableCameraFrustrumCulling = DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING;
     if (ImGui::Toggle("Camera frustrum culling", &sceneSetting_enableCameraFrustrumCulling, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableCameraFrustrumCulling != sceneSetting_enableCameraFrustrumCulling)
+        if (lastEnableCameraFrustrumCulling != sceneSetting_enableCameraFrustrumCulling)
         {
-            m_onSceneSettingChanged("enable_camera_frustrum_culling", sceneSetting_enableCameraFrustrumCulling);
+            emit(UIEventType::SceneSettingChanged, "enable_camera_frustrum_culling", sceneSetting_enableCameraFrustrumCulling);
             lastEnableCameraFrustrumCulling = sceneSetting_enableCameraFrustrumCulling;
         }
     }
@@ -112,9 +123,9 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastDrawLightsVisualHelpers = DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS;
     if (ImGui::Toggle("Lights visual helpers", &sceneSetting_drawLightsVisualHelpers, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastDrawLightsVisualHelpers != sceneSetting_drawLightsVisualHelpers)
+        if (lastDrawLightsVisualHelpers != sceneSetting_drawLightsVisualHelpers)
         {
-            m_onSceneSettingChanged("draw_lights_visual_helpers", sceneSetting_drawLightsVisualHelpers);
+            emit(UIEventType::SceneSettingChanged, "draw_lights_visual_helpers", sceneSetting_drawLightsVisualHelpers);
             lastDrawLightsVisualHelpers = sceneSetting_drawLightsVisualHelpers;
         }
     }
@@ -122,9 +133,9 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastDrawBoundingBoxesVisualHelpers = DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS;
     if (ImGui::Toggle("Bounding boxes visual helpers", &sceneSetting_drawBoundingBoxesVisualHelpers, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastDrawBoundingBoxesVisualHelpers != sceneSetting_drawBoundingBoxesVisualHelpers)
+        if (lastDrawBoundingBoxesVisualHelpers != sceneSetting_drawBoundingBoxesVisualHelpers)
         {
-            m_onSceneSettingChanged("draw_bounding_boxes_visual_helpers", sceneSetting_drawBoundingBoxesVisualHelpers);
+            emit(UIEventType::SceneSettingChanged, "draw_bounding_boxes_visual_helpers", sceneSetting_drawBoundingBoxesVisualHelpers);
             lastDrawBoundingBoxesVisualHelpers = sceneSetting_drawBoundingBoxesVisualHelpers;
         }
     }
@@ -132,9 +143,9 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastDrawDebugNormalsVisualHelpers = DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS;
     if (ImGui::Toggle("Normals visual helpers", &sceneSetting_drawDebugNormalsVisualHelpers, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastDrawDebugNormalsVisualHelpers != sceneSetting_drawDebugNormalsVisualHelpers)
+        if (lastDrawDebugNormalsVisualHelpers != sceneSetting_drawDebugNormalsVisualHelpers)
         {
-            m_onSceneSettingChanged("draw_debug_normals_visual_helpers", sceneSetting_drawDebugNormalsVisualHelpers);
+            emit(UIEventType::SceneSettingChanged, "draw_debug_normals_visual_helpers", sceneSetting_drawDebugNormalsVisualHelpers);
             lastDrawDebugNormalsVisualHelpers = sceneSetting_drawDebugNormalsVisualHelpers;
         }
     }
@@ -146,30 +157,45 @@ void engine::SettingsWindow::renderTabSettings()
     static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
     if (ImGui::Toggle("Enable shadows", &sceneSetting_enableShadows, toggle_config))
     {
-        if (m_onSceneSettingChanged && lastEnableShadows != sceneSetting_enableShadows)
+        if (lastEnableShadows != sceneSetting_enableShadows)
         {
-            m_onSceneSettingChanged("enable_shadows", sceneSetting_enableShadows);
+            emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
             lastEnableShadows = sceneSetting_enableShadows;
         }
     }
 
     static int lastShadowCalculationMethod = static_cast<int>(DEFAULT_SHADOWS_METHOD);
-    EditorHelper::renderSliderIntWithLabel("Shadow maps method", "shadow_calculation_method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3, m_onSceneSettingChanged);
+    if (EditorHelper::renderSliderIntWithLabel("Shadow maps method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3))
+    {
+        emit(UIEventType::SceneSettingChanged, "shadow_calculation_method", sceneSetting_shadowCalculationMethod);
+    }
 
     static int lastShadowMapTextureSize = static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE);
-    EditorHelper::renderSliderIntWithLabel("Shadow maps texture size", "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096, m_onSceneSettingChanged);
+    if (EditorHelper::renderSliderIntWithLabel("Shadow maps texture size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096))
+    {
+        emit(UIEventType::SceneSettingChanged, "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize);
+    }
 
     static float lastShadowIntensity = DEFAULT_SHADOWS_INTENSITY;
-    EditorHelper::renderDragFloatWithLabel("Shadow maps intensity", "shadow_intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+    if (EditorHelper::renderDragFloatWithLabel("Shadow maps intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "shadow_intensity", sceneSetting_shadowIntensity);
+    }
 
     // Typical values(tune slightly per scene)
     // material.shadowMapsBias = 0.02;   // indoor
     // material.shadowMapsBias = 0.05;   // outdoor / large scenes
     static float lastShadowMapsBiasFactor = DEFAULT_SHADOW_MAPS_BIAS;
-    EditorHelper::renderDragFloatWithLabel("Shadow maps bias", "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f", m_onSceneSettingChanged);
+    if (EditorHelper::renderDragFloatWithLabel("Shadow maps bias", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
+    }
 
     static float lastShadowMapsBlur = DEFAULT_SHADOWS_BLUR;
-    EditorHelper::renderDragFloatWithLabel("Shadow maps blur", "shadow_maps_blur_factor", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+    if (EditorHelper::renderDragFloatWithLabel("Shadow maps blur", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "shadow_maps_blur_factor", sceneSetting_shadowMapBlur);
+    }
 
 
     // ------------------------------------------------------------------------
@@ -179,14 +205,17 @@ void engine::SettingsWindow::renderTabSettings()
     if (sceneSetting_renderMethod == static_cast<int>(RenderMethod::PBR))
     {
         static float lastIblDiffuseIntensity = DEFAULT_PBR_IBL_DIFFUSE_INTENSITY;
-        EditorHelper::renderDragFloatWithLabel("IBL Diffuse Intensity", "pbr_ibl_diffuse_intensity", sceneSetting_iblDiffuseIntensity, lastIblDiffuseIntensity, 0.0f, 10.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+        if (EditorHelper::renderDragFloatWithLabel("IBL Diffuse Intensity", sceneSetting_iblDiffuseIntensity, lastIblDiffuseIntensity, 0.0f, 10.0f, 0.1f, "%.1f"))
+        {
+            emit(UIEventType::SceneSettingChanged, "pbr_ibl_diffuse_intensity", sceneSetting_iblDiffuseIntensity);
+        }
 
         static float lastIblSpecularIntensity = DEFAULT_PBR_IBL_SPECULAR_INTENSITY;
-        EditorHelper::renderDragFloatWithLabel("IBL Specular Intensity", "pbr_ibl_specular_intensity", sceneSetting_iblSpecularIntensity, lastIblSpecularIntensity, 0.0f, 10.0f, 0.1f, "%.1f", m_onSceneSettingChanged);
+        if (EditorHelper::renderDragFloatWithLabel("IBL Specular Intensity", sceneSetting_iblSpecularIntensity, lastIblSpecularIntensity, 0.0f, 10.0f, 0.1f, "%.1f"))
+        {
+            emit(UIEventType::SceneSettingChanged, "pbr_ibl_specular_intensity", sceneSetting_iblSpecularIntensity);
+        }
     }
-
-
-
 
     ImGui::PopStyleVar();
 

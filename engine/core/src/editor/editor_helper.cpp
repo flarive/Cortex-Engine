@@ -291,7 +291,7 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
     return res;
 }
 
-void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const char* key, int& value, int& lastValue, int min, int max, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max)
 {
     static bool isDraggingSlider = false;
 
@@ -309,15 +309,16 @@ void engine::EditorHelper::renderSliderIntWithLabel(const char* label, const cha
     // Apply changes only on release
     if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
     {
-        if (sceneSettingChanged && lastValue != value)
-        {
-            sceneSettingChanged(key, value);
+        if (lastValue != value)
             lastValue = value;
-        }
+
+        return true;
     }
+
+    return false;
 }
 
-void engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max)
 {
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
@@ -331,17 +332,18 @@ void engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, 
     );
 
     // Apply changes only when released
-    if (ImGui::IsItemDeactivatedAfterEdit() && lastValue != value)
+    if (ImGui::IsItemDeactivatedAfterEdit())
     {
-        if (sceneSettingChanged)
-        {
-            sceneSettingChanged(key, value);
+        if (lastValue != value)
             lastValue = value;
-        }
+
+        return true;
     }
+
+    return false;
 }
 
-void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, const char* format)
 {
     static bool isDraggingSlider = false;
 
@@ -360,15 +362,16 @@ void engine::EditorHelper::renderSliderFloatWithLabel(const char* label, const c
     // Apply changes only on release
     if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
     {
-        if (sceneSettingChanged && lastValue != value)
-        {
-            sceneSettingChanged(key, value);
+        if (lastValue != value)
             lastValue = value;
-        }
+
+        return true;
     }
+
+    return false;
 }
 
-void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const char* key, float& value, float& lastValue, float min, float max, float step, const char* format, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format)
 {
     static bool isDraggingSlider = false;
 
@@ -388,15 +391,16 @@ void engine::EditorHelper::renderDragFloatWithLabel(const char* label, const cha
     // Apply changes only on release
     if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
     {
-        if (sceneSettingChanged && lastValue != value)
-        {
-            sceneSettingChanged(key, value);
+        if (lastValue != value)
             lastValue = value;
-        }
+
+        return true;
     }
+
+    return false;
 }
 
-void engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, const char* key, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step, std::function<void(std::string, SceneSetting)> sceneSettingChanged)
+bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step)
 {
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
@@ -408,14 +412,15 @@ void engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, co
         &max,
         "%d");
 
-    if (ImGui::IsItemDeactivatedAfterEdit() && lastValue != value)
+    if (ImGui::IsItemDeactivatedAfterEdit())
     {
-        if (sceneSettingChanged)
-        {
-            sceneSettingChanged(key, value);
+        if (lastValue != value)
             lastValue = value;
-        }
+
+        return true;
     }
+
+    return false;
 }
 
 void engine::EditorHelper::renderStringVectorButtonListTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property)

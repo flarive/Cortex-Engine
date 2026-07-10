@@ -2,19 +2,7 @@
 
 #include "imgui_ui_manager.h"
 
-//#include "../tools/system_monitor.h"
-//#include "../tools/vram_manager.h"
-
 #include "../ecs/entity.h"
-#include "../ecs/transform_component.h"
-#include "../ecs/light_component.h"
-#include "../ecs/camera_component.h"
-#include "../ecs/model_component.h"
-#include "../ecs/primitive_component.h"
-#include "../ecs/animator_component.h"
-#include "../ecs/particlesystem_component.h"
-#include "../ecs/terrain_component.h"
-
 #include "../app/scene_settings.h"
 
 #include "../lights/light.h"
@@ -27,6 +15,9 @@
 #include <variant>
 
 #include <imgui.h>
+
+
+#include "../../include/editor/performance_overlay.h"
 
 #if EDITOR_MODE
 namespace engine
@@ -41,7 +32,9 @@ namespace engine
 
 		void setScene(std::shared_ptr<Entity> rootEntity);
 
-		void renderUIWindow(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
+		void initEditor();
+
+		void renderEditor(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
 
 		// Let parent register a callback
 		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
@@ -56,6 +49,7 @@ namespace engine
 
 		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
+		//void updatePerformanceCounters(const PerformanceCounters& counters);
 		
 
 		void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
@@ -65,10 +59,10 @@ namespace engine
 		void renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo);
 
 
-	private:
-		//SystemMonitor m_sysMonitor{};
-		//VramManager m_vramManager{};
+		//bool hasPerformanceOverlay() const { return m_performanceOverlay != nullptr; }
 
+
+	private:
 		std::shared_ptr<Entity> m_rootEntity{};
 
 		std::shared_ptr<Entity> m_selectedEntity{};
@@ -77,66 +71,24 @@ namespace engine
 
 		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
 
-		//IconAtlas m_iconAtlas;
-
-		//void renderTabSettings();
-		//void renderTabAbout();
-		//void renderHierarchyWidget();
-		//void renderPropertiesWidget();
-
-		//void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
-		//void displayEntityDetails(const std::shared_ptr<Entity>& entity);
+		//PerformanceOverlay* m_performanceOverlay{};
 
 
-		//ImVec4 getEntityColor(const engine::EntityType entityType);
-
-		void onUIEvent(const UIEvent& evt);
 
 
-		//void renderComponents(const std::shared_ptr<Entity>& entity);
+		template<typename T>
+		bool any_is(const std::any& a)
+		{
+			return a.type() == typeid(T);
+		}
+	
+		
 
+		void onEditorUIEvent(const UIEvent& evt);
 
-		//void renderTransformComponent(const std::shared_ptr<Entity>& entity);
-		//void renderLightComponent(std::shared_ptr<LightComponent>& component);
-		//void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
-		//void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
-		//void renderModelComponent(std::shared_ptr<ModelComponent>& component);
-		//void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
-		//void renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component);
-		//void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
-
-		//void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
-
-		//EditorIcon convertEntityTypeToAtlasIcon(const EntityType type, unsigned int Iconsize) const;
-
-
-		void TestOverlay();
+		
 
 	protected:
-		/*int sceneSetting_renderMethod{ static_cast<int>(DEFAULT_RENDER_METHOD) };
-		bool sceneSetting_drawAsWireframe{ DEFAULT_ENABLE_WIREFRAME_MODE };
-		float sceneSetting_exposure{ DEFAULT_EXPOSURE };
-		bool sceneSetting_enableGammaCorrection{ DEFAULT_ENABLE_GAMMA_CORRECTION };
-		bool sceneSetting_enableToneMapping{ DEFAULT_ENABLE_TONE_MAPPING };
-		int sceneSetting_applyPostProcessFx{ static_cast<int>(DEFAULT_POST_PROCESSING_FX) };
-		bool sceneSetting_enableFaceCulling{ DEFAULT_ENABLE_FACE_CULLING };
-		bool sceneSetting_enableCameraFrustrumCulling{ DEFAULT_ENABLE_CAMERA_FRUSTRUM_CULLING };
-		bool sceneSetting_drawLightsVisualHelpers{ DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS };
-		bool sceneSetting_drawBoundingBoxesVisualHelpers{ DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS };
-		bool sceneSetting_drawDebugNormalsVisualHelpers{ DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS };
-		bool sceneSetting_enableShadows{ DEFAULT_ENABLE_SHADOWS };
-		int sceneSetting_shadowCalculationMethod{ static_cast<int>(DEFAULT_SHADOWS_METHOD) };
-		float sceneSetting_shadowIntensity{ DEFAULT_SHADOWS_INTENSITY };
-		int sceneSetting_shadowMapTextureSize{ static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE) };
-		float sceneSetting_shadowMapBiasFactor{ DEFAULT_SHADOW_MAPS_BIAS };
-		float sceneSetting_shadowMapBlur{ DEFAULT_SHADOWS_BLUR };
-
-		float sceneSetting_iblDiffuseIntensity{ DEFAULT_PBR_IBL_DIFFUSE_INTENSITY };
-		float sceneSetting_iblSpecularIntensity{ DEFAULT_PBR_IBL_SPECULAR_INTENSITY };
-
-		ubyte sceneSetting_framebufferMsaaSamples{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };*/
-
-
 		// guizmo
 		float viewWidth{ 10.0f }; // for orthographic
 		const float camYAngle{ 165.f / 180.f * 3.14159f };

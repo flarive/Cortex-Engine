@@ -516,7 +516,7 @@
     <ClCompile Include="core\src\editor\imgui_ui_manager.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\editor\overlay.cpp">
+    <ClCompile Include="core\src\editor\performance_overlay.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
     <ClCompile Include="core\src\editor\dockspace.cpp">
@@ -881,7 +881,7 @@
     <ClInclude Include="core\include\editor\dialog_box.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\editor\overlay.h">
+    <ClInclude Include="core\include\editor\performance_overlay.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
     </ClInclude>
     <ClInclude Include="core\include\editor\imgui_ui_manager.h">

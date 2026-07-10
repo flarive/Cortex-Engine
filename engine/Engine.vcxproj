@@ -264,7 +264,7 @@
     <ClCompile Include="core\src\ui\ui.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
     <ClCompile Include="core\src\ecs\transform_component.cpp" />
-    <ClCompile Include="core\src\editor\overlay.cpp" />
+    <ClCompile Include="core\src\editor\performance_overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
@@ -327,7 +327,7 @@
     <ClInclude Include="core\include\ecs\transform_component.h" />
     <ClInclude Include="core\include\editor\imgui_element.h" />
     <ClInclude Include="core\include\editor\imgui_ui_manager.h" />
-    <ClInclude Include="core\include\editor\overlay.h" />
+    <ClInclude Include="core\include\editor\performance_overlay.h" />
     <ClInclude Include="core\include\editor\properties_window.h" />
     <ClInclude Include="core\include\editor\scene_window.h" />
     <ClInclude Include="core\include\editor\settings_window.h" />

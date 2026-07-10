@@ -54,4 +54,13 @@ namespace engine
 		std::string suffix{};
 		std::function<void(unsigned short)> function{};
 	};
+
+	struct PerformanceCounters
+	{
+		float fps;
+		float deltaTime;
+		double cpuTime;
+		double gpuTime;
+		double uiTime;
+	};
 }

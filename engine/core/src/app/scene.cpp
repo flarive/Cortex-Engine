@@ -91,6 +91,7 @@ void engine::Scene::after_init_internal()
     #if EDITOR_MODE
     m_editor.init();
     m_editor.setScene(m_entityManager.getRootEntity());
+    m_editor.initEditor();
     #endif
     
     // Count all items in the scene
@@ -433,7 +434,10 @@ void engine::Scene::gameLoop()
 
 
     if (show_perf_overlay && !is_editor_mode)
-        m_perfOverlay.renderPerfOverlay(&show_perf_overlay, framerate, deltaTime, cpuTime, gpuTime, uiTime);
+    {
+        m_perfOverlay.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });
+        m_perfOverlay.render();
+    }
 
     // fps capping (begin)
     std::chrono::steady_clock::time_point start_time{};
@@ -548,11 +552,14 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
         if (is_editor_mode)
         {
             appPtr->setWindowTitleSuffix("[EDITOR]");
-            m_editor.renderUIWindow(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
+            m_editor.renderEditor(is_editor_mode, projection, view, m_displayObjectTransformGuizmo);
         }
         else
         {
             appPtr->resetWindowTitleSuffix();
+
+            /*if (m_editor.hasPerformanceOverlay() && show_perf_overlay)
+                m_editor.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });*/
         }
 
         appPtr->setWindowTitle();

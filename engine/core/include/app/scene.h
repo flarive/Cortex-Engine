@@ -11,7 +11,6 @@
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../editor/imgui_editor.h"
-#include "../debug/imgui_perf_overlay.h"
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"

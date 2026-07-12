@@ -390,9 +390,6 @@
     <ClCompile Include="core\src\ecs\transform_component.cpp">
       <Filter>Fichiers sources\core\ecs\component</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp">
-      <Filter>Fichiers sources\core\debug</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\lights\area_light.cpp">
       <Filter>Fichiers sources\core\lights</Filter>
     </ClCompile>
@@ -745,9 +742,6 @@
     </ClInclude>
     <ClInclude Include="core\include\ecs\transform_component.h">
       <Filter>Fichiers d%27en-tête\core\ecs\component</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\debug\imgui_perf_overlay.h">
-      <Filter>Fichiers d%27en-tête\core\debug</Filter>
     </ClInclude>
     <ClInclude Include="core\include\lights\area_light.h">
       <Filter>Fichiers d%27en-tête\core\lights</Filter>

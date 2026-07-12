@@ -82,17 +82,17 @@ void engine::PerformanceOverlay::draw()
         }
     }
 
-    ImGui::PushFont(ImGui::Spectrum::fontLarge);
-    ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "LARGE RED TITLE");
-    ImGui::PopFont();
-        
-    ImGui::PushFont(ImGui::Spectrum::fontMedium);
-    ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "Medium cyan text");
-    ImGui::PopFont();
-        
-    ImGui::PushFont(ImGui::Spectrum::fontSmall);
-    ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Small yellow text");
-    ImGui::PopFont();
+    //ImGui::PushFont(ImGui::Spectrum::fontLarge);
+    //ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "LARGE RED TITLE");
+    //ImGui::PopFont();
+    //    
+    //ImGui::PushFont(ImGui::Spectrum::fontMedium);
+    //ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "Medium cyan text");
+    //ImGui::PopFont();
+    //    
+    //ImGui::PushFont(ImGui::Spectrum::fontSmall);
+    //ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Small yellow text");
+    //ImGui::PopFont();
 
     ImGui::End();
 }

@@ -191,7 +191,6 @@
     <ClCompile Include="core\src\debug\debug_draw_line.cpp" />
     <ClCompile Include="core\src\debug\debug_frame.cpp" />
     <ClCompile Include="core\src\debug\debug_plane_grid.cpp" />
-    <ClCompile Include="core\src\debug\imgui_perf_overlay.cpp" />
     <ClCompile Include="core\src\debug\opengl_debug.cpp" />
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
@@ -307,7 +306,6 @@
     <ClInclude Include="core\include\debug\debug_draw_line.h" />
     <ClInclude Include="core\include\debug\debug_frame.h" />
     <ClInclude Include="core\include\debug\debug_plane_grid.h" />
-    <ClInclude Include="core\include\debug\imgui_perf_overlay.h" />
     <ClInclude Include="core\include\debug\opengl_debug.h" />
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />

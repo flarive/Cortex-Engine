@@ -557,9 +557,6 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
         else
         {
             appPtr->resetWindowTitleSuffix();
-
-            /*if (m_editor.hasPerformanceOverlay() && show_perf_overlay)
-                m_editor.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });*/
         }
 
         appPtr->setWindowTitle();

@@ -16,8 +16,6 @@
 
 namespace engine
 {
-    
-    
     class PDHCounters final
     {
 	public:
@@ -120,7 +118,7 @@ namespace engine
         }
 
     protected:
-        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de performances du processeur";
+        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\% temps utilisateur";
 
 
     private:

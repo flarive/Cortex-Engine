@@ -105,12 +105,12 @@ double engine::SystemMonitor::getCPUTotalUsed()
 
 double engine::SystemMonitor::getCPUTotalUsedPDH()
 {
-    if (m_cpuPDHCounterExists)
-    {
+    /*if (m_cpuPDHCounterExists)
+    {*/
         return m_PDHCounters.getCPUTotalUsedPDH();
-    }
-    
-    return 0.0;
+    //}
+    //
+    //return 0.0;
 }
 
 

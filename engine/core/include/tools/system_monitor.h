@@ -75,9 +75,9 @@ namespace engine
         
         PDHCounters m_PDHCounters{};
 
-        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de performances du processeur";
+        //const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de performances du processeur";
 
-        bool m_cpuPDHCounterExists{ false };
+        //bool m_cpuPDHCounterExists{ false };
         
         double cpuTotalUsedPercent = 0.0;
         double cpuTotalUsedPDHPercent = 0.0;
@@ -119,7 +119,7 @@ namespace engine
             }
 
 
-            m_cpuPDHCounterExists = m_PDHCounters.TestPDHCounter(COUNTER_PATH);
+            //m_cpuPDHCounterExists = m_PDHCounters.TestPDHCounter(COUNTER_PATH);
         }
 
         void updateWindows()

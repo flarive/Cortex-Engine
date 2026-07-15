@@ -30,12 +30,34 @@ void engine::AboutWindow::renderTabAbout()
     
 
     // --- SAMPLE EVERY 100 ms ---
-    static double lastSample = 0.0;
-    double now = glfwGetTime();
+    //static double lastSample = 0.0;
+    //double now = glfwGetTime();
 
-    if (now - lastSample >= 0.1)   // 100 ms
+    //if (now - lastSample >= 0.1)   // 100 ms
+    //{
+    //    m_sysMonitor.update();     // updates internal PDH + RAM
+
+    //    cachedCPU = m_sysMonitor.getCPUPDH();
+    //    cachedCPUProcess = m_sysMonitor.getCPUProcess();
+    //    cachedRAMUsed = m_sysMonitor.getRAMUsed();
+    //    cachedRAMTotal = m_sysMonitor.getRAMTotal();
+    //    cachedProcessRAM = m_sysMonitor.getProcessRAM();
+
+    //    lastSample = now;
+    //}
+
+    static double accumulator = 0.0;
+    static double lastTime = glfwGetTime();
+
+    double now = glfwGetTime();
+    double delta = now - lastTime;
+    lastTime = now;
+
+    accumulator += delta;
+
+    if (accumulator >= 1.0)   // sample every 1 second
     {
-        m_sysMonitor.update();     // updates internal PDH + RAM
+        m_sysMonitor.update();
 
         cachedCPU = m_sysMonitor.getCPUPDH();
         cachedCPUProcess = m_sysMonitor.getCPUProcess();
@@ -43,8 +65,9 @@ void engine::AboutWindow::renderTabAbout()
         cachedRAMTotal = m_sysMonitor.getRAMTotal();
         cachedProcessRAM = m_sysMonitor.getProcessRAM();
 
-        lastSample = now;
+        accumulator = 0.0;
     }
+
 
 
 

@@ -3,7 +3,7 @@
 #include "imgui_element.h"
 
 #include "../tools/system_monitor.h"
-//#include "../tools/cpu_usage.h"
+#include "../tools/pdh_counters.h"
 #include "../tools/vram_manager.h"
 
 
@@ -20,7 +20,16 @@ namespace engine
         SystemMonitor m_sysMonitor{};
         VramManager m_vramManager{};
 
-        //Test m_test{};
+        PDHCounters m_pdhCounters{};
+
+
+
+        double cachedCPU = 0.0;
+        double cachedCPUProcess = 0.0;
+        uint64_t cachedRAMUsed = 0;
+        uint64_t cachedRAMTotal = 0;
+        uint64_t cachedProcessRAM = 0;
+
         
         void renderTabAbout();
 

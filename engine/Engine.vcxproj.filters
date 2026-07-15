@@ -905,7 +905,7 @@
     <ClInclude Include="core\include\misc\event.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\tools\cpu_usage.h">
+    <ClInclude Include="core\include\tools\pdh_counters.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
   </ItemGroup>

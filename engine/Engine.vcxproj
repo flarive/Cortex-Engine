@@ -357,7 +357,7 @@
     <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\singleton.h" />
     <ClInclude Include="core\include\primitives\terrain.h" />
-    <ClInclude Include="core\include\tools\cpu_usage.h" />
+    <ClInclude Include="core\include\tools\pdh_counters.h" />
     <ClInclude Include="core\include\tools\file_system.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />

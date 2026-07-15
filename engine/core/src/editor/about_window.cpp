@@ -5,7 +5,10 @@ void engine::AboutWindow::init()
 {
     m_vramManager.init();
 
-    //m_test.run();
+    // test PDH counters
+    /*m_pdhCounters.listAll();
+    m_pdhCounters.test();*/
+
 }
 
 void engine::AboutWindow::renderTabAbout()
@@ -24,7 +27,24 @@ void engine::AboutWindow::renderTabAbout()
 
 
 
-    m_sysMonitor.update();   // updates CPU + RAM
+    
+
+    // --- SAMPLE EVERY 100 ms ---
+    static double lastSample = 0.0;
+    double now = glfwGetTime();
+
+    if (now - lastSample >= 0.1)   // 100 ms
+    {
+        m_sysMonitor.update();     // updates internal PDH + RAM
+
+        cachedCPU = m_sysMonitor.getCPUPDH();
+        cachedCPUProcess = m_sysMonitor.getCPUProcess();
+        cachedRAMUsed = m_sysMonitor.getRAMUsed();
+        cachedRAMTotal = m_sysMonitor.getRAMTotal();
+        cachedProcessRAM = m_sysMonitor.getProcessRAM();
+
+        lastSample = now;
+    }
 
 
 
@@ -34,32 +54,22 @@ void engine::AboutWindow::renderTabAbout()
 
     ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-    
 
-
-    double cpu = m_sysMonitor.getCPU();
-    double cpuProcess = m_sysMonitor.getCPUProcess();
-
-
-    uint64_t ramUsed = m_sysMonitor.getRAMUsed();
-    uint64_t ramTotal = m_sysMonitor.getRAMTotal();
-    uint64_t processRamUsed = m_sysMonitor.getProcessRAM();
 
     // ImGui overlay
-    ImGui::Text("CPU: %.1f %%", cpu);
+    ImGui::Text("CPU: %.0f %%", cachedCPU);
     ImGui::Text("RAM: %.2f / %.2f GB",
-        ramUsed / (1024.0 * 1024 * 1024),
-        ramTotal / (1024.0 * 1024 * 1024));
+        cachedRAMUsed / (1024.0 * 1024 * 1024),
+        cachedRAMTotal / (1024.0 * 1024 * 1024));
 
 
-    ImGui::Text("App RAM: %.2f MB", processRamUsed / (1024.0 * 1024.0));
+    ImGui::Text("App RAM: %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
 
 
-    ImGui::Text("App CPU: %.1f %%", cpuProcess);
+    ImGui::Text("App CPU: %.1f %%", cachedCPUProcess);
 
 
 
 
     ImGui::EndChild();
 }
-

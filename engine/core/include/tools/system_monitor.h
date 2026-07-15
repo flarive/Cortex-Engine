@@ -20,8 +20,14 @@
 #include <unistd.h>
 #endif
 
+
+#include "../../include/tools/pdh_counters.h" // WINDOWS ONLY !!!
+
 namespace engine
 {
+    
+    
+    
     class SystemMonitor final
     {
     public:
@@ -49,6 +55,7 @@ namespace engine
         }
 
         double getCPU() const { return cpuTotalUsedPercent; }
+        double getCPUPDH() const { return cpuTotalUsedPDHPercent; }
         double getCPUProcess() const { return cpuProcessPercent; }
 
 
@@ -65,13 +72,24 @@ namespace engine
 
 
     private:
+        
+        PDHCounters m_PDHCounters{};
+
+        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de performances du processeur";
+
+        bool m_cpuPDHCounterExists{ false };
+        
         double cpuTotalUsedPercent = 0.0;
+        double cpuTotalUsedPDHPercent = 0.0;
         double cpuProcessPercent = 0.0;
         uint64_t ramUsedBytes = 0;
         uint64_t ramTotalBytes = 0;
 
 
+
+
         double getCPUTotalUsed();
+        double getCPUTotalUsedPDH();
         double getProcessCPU();
 
 
@@ -99,11 +117,15 @@ namespace engine
                 prevIdle = idle;
                 prevTotal = idle + kernel + user;
             }
+
+
+            m_cpuPDHCounterExists = m_PDHCounters.TestPDHCounter(COUNTER_PATH);
         }
 
         void updateWindows()
         {
             cpuTotalUsedPercent = getCPUTotalUsed();
+            cpuTotalUsedPDHPercent = getCPUTotalUsedPDH();
             cpuProcessPercent = getProcessCPU();
 
             // RAM

@@ -1,4 +1,8 @@
 #include "../../include/tools/system_monitor.h"
+
+
+
+
 #include <iostream>
 #include <cstring>
 
@@ -25,46 +29,90 @@ uint64_t engine::SystemMonitor::getProcessRAM()
     return 0;
 }
 
-
 double engine::SystemMonitor::getCPUTotalUsed()
 {
-    double cpu = 0.0;
-    
+    static uint64_t prevIdle = 0;
+    static uint64_t prevTotal = 0;
+
     FILETIME idleTime, kernelTime, userTime;
-    if (GetSystemTimes(&idleTime, &kernelTime, &userTime))
-    {
-        uint64_t idle = fileTimeToUint64(idleTime);
-        uint64_t kernel = fileTimeToUint64(kernelTime);
-        uint64_t user = fileTimeToUint64(userTime);
+    if (!GetSystemTimes(&idleTime, &kernelTime, &userTime))
+        return 0.0;
 
-        uint64_t total = idle + kernel + user;
+    uint64_t idle = fileTimeToUint64(idleTime);
+    uint64_t kernel = fileTimeToUint64(kernelTime);
+    uint64_t user = fileTimeToUint64(userTime);
 
-        uint64_t idleDelta = idle - prevIdle;
-        uint64_t totalDelta = total - prevTotal;
+    uint64_t total = idle + kernel + user;
 
-        prevIdle = idle;
-        prevTotal = total;
+    uint64_t idleDelta = idle - prevIdle;
+    uint64_t totalDelta = total - prevTotal;
 
-        if (totalDelta > 0)
-        {
-            double idleFrac = static_cast<double>(idleDelta) / static_cast<double>(totalDelta);
+    prevIdle = idle;
+    prevTotal = total;
 
-            // Raw total CPU load across all cores
-            // same as "\Processor(_Total)\% Processor Time"
-            cpu = (1.0 - idleFrac) * 100.0;
+    if (totalDelta == 0)
+        return 0.0;
 
-            // Normalize to match Task Manager
-            SYSTEM_INFO sysInfo;
-            GetSystemInfo(&sysInfo);
-            cpu /= (sysInfo.dwNumberOfProcessors);
+    double cpu = (1.0 - double(idleDelta) / double(totalDelta)) * 100.0;
 
-            if (cpu < 0.0) cpu = 0.0;
-            if (cpu > 100.0) cpu = 100.0;
-        }
-    }
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
+    cpu /= info.dwNumberOfProcessors;   // REQUIRED
 
     return cpu;
 }
+
+
+//double engine::SystemMonitor::getCPUTotalUsed()
+//{
+//    double cpu = 0.0;
+//    
+//    FILETIME idleTime, kernelTime, userTime;
+//    if (GetSystemTimes(&idleTime, &kernelTime, &userTime))
+//    {
+//        uint64_t idle = fileTimeToUint64(idleTime);
+//        uint64_t kernel = fileTimeToUint64(kernelTime);
+//        uint64_t user = fileTimeToUint64(userTime);
+//
+//        uint64_t total = idle + kernel + user;
+//
+//        uint64_t idleDelta = idle - prevIdle;
+//        uint64_t totalDelta = total - prevTotal;
+//
+//        prevIdle = idle;
+//        prevTotal = total;
+//
+//        if (totalDelta > 0)
+//        {
+//            double idleFrac = static_cast<double>(idleDelta) / static_cast<double>(totalDelta);
+//
+//            // Raw total CPU load across all cores
+//            // same as "\Processor(_Total)\% Processor Time"
+//            cpu = (1.0 - idleFrac) * 100.0;
+//
+//            // Normalize to match Task Manager
+//            SYSTEM_INFO sysInfo;
+//            GetSystemInfo(&sysInfo);
+//            cpu /= (sysInfo.dwNumberOfProcessors);
+//
+//            if (cpu < 0.0) cpu = 0.0;
+//            if (cpu > 100.0) cpu = 100.0;
+//        }
+//    }
+//
+//    return cpu;
+//}
+
+double engine::SystemMonitor::getCPUTotalUsedPDH()
+{
+    if (m_cpuPDHCounterExists)
+    {
+        return m_PDHCounters.getCPUTotalUsedPDH();
+    }
+    
+    return 0.0;
+}
+
 
 double engine::SystemMonitor::getProcessCPU()
 {

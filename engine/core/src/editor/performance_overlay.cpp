@@ -60,11 +60,39 @@ void engine::PerformanceOverlay::draw()
     bool open = true; // ImGuiElement manages visibility itself
     if (ImGui::Begin("PerfDebugOverlay", &open, window_flags))
     {
-        ImGui::Text("FPS: %.2f", fps);
-        ImGui::Text("CPU time: %.2f ms", cpuTime);
-        ImGui::Text("GPU time: %.2f ms", gpuTime);
-        ImGui::Text("UI time: %.2f ms", uiTime);
-        ImGui::Text("Delta time: %.2f ms", deltaTime);
+
+        char buf[64];
+        snprintf(buf, sizeof(buf), "FPS: %.0f", fps);
+
+
+        ImGui::PushFont(ImGui::Spectrum::fontLarge);
+
+        ImVec2 size = ImGui::CalcTextSize(buf);
+        float center = (ImGui::GetWindowWidth() - size.x) * 0.5f;
+
+        ImGui::SetCursorPosX(center);
+        ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", buf);
+
+        ImGui::PopFont();
+
+
+
+        ImGui::PushFont(ImGui::Spectrum::fontSmall);
+        ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Frame duration: %.2f ms", deltaTime * 1000.0f);
+        ImGui::PopFont();
+
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "CPU time per frame: %.2f ms", cpuTime);
+        ImGui::PopFont();
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "GPU time per frame: %.2f ms", gpuTime);
+        ImGui::PopFont();
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "UI time per frame: %.2f ms", uiTime);
+        ImGui::PopFont();
 
         if (ImGui::BeginPopupContextWindow())
         {
@@ -82,17 +110,11 @@ void engine::PerformanceOverlay::draw()
         }
     }
 
-    //ImGui::PushFont(ImGui::Spectrum::fontLarge);
-    //ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "LARGE RED TITLE");
-    //ImGui::PopFont();
-    //    
-    //ImGui::PushFont(ImGui::Spectrum::fontMedium);
-    //ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "Medium cyan text");
-    //ImGui::PopFont();
-    //    
-    //ImGui::PushFont(ImGui::Spectrum::fontSmall);
-    //ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Small yellow text");
-    //ImGui::PopFont();
+    
+        
+    
+        
+    
 
     ImGui::End();
 }

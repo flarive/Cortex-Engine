@@ -1,62 +1,87 @@
 #pragma once
 
 #include <windows.h>
-#include <chrono>
+#include <pdh.h>
+#include <iostream>
+#include <tchar.h>
+
+#pragma comment(lib, "pdh.lib")
 
 namespace engine
 {
-    class CpuUsage
+    class Test
     {
-    public:
-        CpuUsage()
-        {
-            SYSTEM_INFO si;
-            GetSystemInfo(&si);
-            m_numProcessors = si.dwNumberOfProcessors;
+	public:
+		Test() = default;
+		~Test() = default;
 
-            m_lastWallTime = std::chrono::steady_clock::now();
-            m_lastCpuTime = GetProcessCpuTime();
-        }
-
-        double GetUsagePercent()
-        {
-            auto nowWall = std::chrono::steady_clock::now();
-            uint64_t nowCpu = GetProcessCpuTime();
-
-            double elapsedWall =
-                std::chrono::duration<double>(nowWall - m_lastWallTime).count();
-
-            double elapsedCpu =
-                double(nowCpu - m_lastCpuTime) / 10000000.0; // FILETIME -> seconds
-
-            m_lastWallTime = nowWall;
-            m_lastCpuTime = nowCpu;
-
-            return (elapsedCpu / elapsedWall) * 100.0 / m_numProcessors;
-        }
+		void run() {
+			std::wstring counterPath = L"\\Processor Information(_Total)\\% Processor Utility";
+			if (TestPDHCounter(counterPath)) {
+				std::wcout << L"Counter is available: " << counterPath << std::endl;
+			}
+			else {
+				std::wcout << L"Counter is NOT available: " << counterPath << std::endl;
+			}
+		}
 
     private:
-        uint64_t GetProcessCpuTime()
-        {
-            FILETIME create, exit, kernel, user;
-            GetProcessTimes(
-                GetCurrentProcess(),
-                &create, &exit,
-                &kernel, &user);
 
-            ULARGE_INTEGER k, u;
-            k.LowPart = kernel.dwLowDateTime;
-            k.HighPart = kernel.dwHighDateTime;
+        void HandlePDHError(PDH_STATUS status, const std::wstring& context) {
+            if (status == ERROR_SUCCESS) return;
 
-            u.LowPart = user.dwLowDateTime;
-            u.HighPart = user.dwHighDateTime;
+            LPWSTR errorMsg = nullptr;
+            FormatMessage(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_HMODULE,
+                GetModuleHandle(L"pdh.dll"),
+                status,
+                0,
+                (LPWSTR)&errorMsg,
+                0,
+                NULL
+            );
 
-            return k.QuadPart + u.QuadPart;
+            std::wcerr << L"PDH Error in " << context << L": " << status << L" (" << errorMsg << L")" << std::endl;
+            LocalFree(errorMsg);
         }
 
-        uint32_t m_numProcessors;
-        uint64_t m_lastCpuTime;
-        std::chrono::steady_clock::time_point m_lastWallTime;
+        bool TestPDHCounter(const std::wstring& counterPath) {
+            PDH_HQUERY query;
+            PDH_HCOUNTER counter;
+            PDH_STATUS status;
+
+            status = PdhOpenQuery(NULL, 0, &query);
+            if (status != ERROR_SUCCESS) {
+                HandlePDHError(status, L"PdhOpenQuery");
+                return false;
+            }
+
+            status = PdhAddCounter(query, counterPath.c_str(), 0, &counter);
+            if (status != ERROR_SUCCESS) {
+                HandlePDHError(status, L"PdhAddCounter");
+                PdhCloseQuery(query);
+                return false;
+            }
+
+            PdhRemoveCounter(counter);
+            PdhCloseQuery(query);
+            return true;
+        }
+
     };
+
+    
+
+    //int main() {
+    //    std::wstring counterPath = L"\\Processor(_Total)\\% Processor Time";
+    //    if (TestPDHCounter(counterPath)) {
+    //        std::wcout << L"Counter is available: " << counterPath << std::endl;
+    //    }
+    //    else {
+    //        std::wcout << L"Counter is NOT available: " << counterPath << std::endl;
+    //    }
+
+    //    return 0;
+    //}
 }
 

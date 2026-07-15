@@ -4,6 +4,8 @@
 void engine::AboutWindow::init()
 {
     m_vramManager.init();
+
+    //m_test.run();
 }
 
 void engine::AboutWindow::renderTabAbout()
@@ -35,16 +37,6 @@ void engine::AboutWindow::renderTabAbout()
     
 
 
-    //static double last = 0;
-    //double now = glfwGetTime();
-
-    //if (now - last > 0.2) {   // sample every 200ms
-    //    m_sysMonitor.update();
-    //    last = now;
-    //}
-
-    
-
     double cpu = m_sysMonitor.getCPU();
     double cpuProcess = m_sysMonitor.getCPUProcess();
 
@@ -64,11 +56,6 @@ void engine::AboutWindow::renderTabAbout()
 
 
     ImGui::Text("App CPU: %.1f %%", cpuProcess);
-
-
-    // every second or so
-    double percent = m_cpuUsage.GetUsagePercent();
-    ImGui::Text("CPU GetUsagePercent: %.1f%%", percent);
 
 
 

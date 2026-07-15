@@ -31,7 +31,7 @@ namespace ImGui {
             fontMedium = io.Fonts->AddFontFromMemoryCompressedTTF(
                 SourceSansProRegular_compressed_data,
                 SourceSansProRegular_compressed_size,
-                18.0f
+                22.0f
             );
 
             fontLarge = io.Fonts->AddFontFromMemoryCompressedTTF(

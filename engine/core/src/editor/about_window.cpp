@@ -1,14 +1,8 @@
 #include "../../include/editor/about_window.h"
 
-
 void engine::AboutWindow::init()
 {
     m_vramManager.init();
-
-    // test PDH counters
-    /*m_pdhCounters.listAll();
-    m_pdhCounters.test();*/
-
 }
 
 void engine::AboutWindow::renderTabAbout()
@@ -29,23 +23,7 @@ void engine::AboutWindow::renderTabAbout()
 
     
 
-    // --- SAMPLE EVERY 100 ms ---
-    //static double lastSample = 0.0;
-    //double now = glfwGetTime();
-
-    //if (now - lastSample >= 0.1)   // 100 ms
-    //{
-    //    m_sysMonitor.update();     // updates internal PDH + RAM
-
-    //    cachedCPU = m_sysMonitor.getCPUPDH();
-    //    cachedCPUProcess = m_sysMonitor.getCPUProcess();
-    //    cachedRAMUsed = m_sysMonitor.getRAMUsed();
-    //    cachedRAMTotal = m_sysMonitor.getRAMTotal();
-    //    cachedProcessRAM = m_sysMonitor.getProcessRAM();
-
-    //    lastSample = now;
-    //}
-
+    // --- SAMPLE EVERY 1 s ---
     static double accumulator = 0.0;
     static double lastTime = glfwGetTime();
 
@@ -59,7 +37,8 @@ void engine::AboutWindow::renderTabAbout()
     {
         m_sysMonitor.update();
 
-        cachedCPU = m_sysMonitor.getCPUPDH();
+        cachedCPU = m_sysMonitor.getCPU();
+
         cachedCPUProcess = m_sysMonitor.getCPUProcess();
         cachedRAMUsed = m_sysMonitor.getRAMUsed();
         cachedRAMTotal = m_sysMonitor.getRAMTotal();
@@ -79,20 +58,13 @@ void engine::AboutWindow::renderTabAbout()
 
 
 
-    // ImGui overlay
-    ImGui::Text("CPU: %.0f %%", cachedCPU);
-    ImGui::Text("RAM: %.2f / %.2f GB",
-        cachedRAMUsed / (1024.0 * 1024 * 1024),
-        cachedRAMTotal / (1024.0 * 1024 * 1024));
+
+    ImGui::Text("CPU total : %.0f %%", cachedCPU);
+    ImGui::Text("CPU app : %.0f %%", cachedCPUProcess);
 
 
-    ImGui::Text("App RAM: %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
-
-
-    ImGui::Text("App CPU: %.1f %%", cachedCPUProcess);
-
-
-
+    ImGui::Text("RAM total : %.2f / %.2f GB", cachedRAMUsed / (1024.0 * 1024 * 1024), cachedRAMTotal / (1024.0 * 1024 * 1024));
+    ImGui::Text("RAM app : %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
 
     ImGui::EndChild();
 }

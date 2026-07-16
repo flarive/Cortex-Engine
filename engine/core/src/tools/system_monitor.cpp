@@ -62,56 +62,31 @@ double engine::SystemMonitor::getCPUTotalUsed()
     return cpu;
 }
 
-
-//double engine::SystemMonitor::getCPUTotalUsed()
-//{
-//    double cpu = 0.0;
-//    
-//    FILETIME idleTime, kernelTime, userTime;
-//    if (GetSystemTimes(&idleTime, &kernelTime, &userTime))
-//    {
-//        uint64_t idle = fileTimeToUint64(idleTime);
-//        uint64_t kernel = fileTimeToUint64(kernelTime);
-//        uint64_t user = fileTimeToUint64(userTime);
-//
-//        uint64_t total = idle + kernel + user;
-//
-//        uint64_t idleDelta = idle - prevIdle;
-//        uint64_t totalDelta = total - prevTotal;
-//
-//        prevIdle = idle;
-//        prevTotal = total;
-//
-//        if (totalDelta > 0)
-//        {
-//            double idleFrac = static_cast<double>(idleDelta) / static_cast<double>(totalDelta);
-//
-//            // Raw total CPU load across all cores
-//            // same as "\Processor(_Total)\% Processor Time"
-//            cpu = (1.0 - idleFrac) * 100.0;
-//
-//            // Normalize to match Task Manager
-//            SYSTEM_INFO sysInfo;
-//            GetSystemInfo(&sysInfo);
-//            cpu /= (sysInfo.dwNumberOfProcessors);
-//
-//            if (cpu < 0.0) cpu = 0.0;
-//            if (cpu > 100.0) cpu = 100.0;
-//        }
-//    }
-//
-//    return cpu;
-//}
-
+#if defined(_WIN32)
 double engine::SystemMonitor::getCPUTotalUsedPDH()
 {
-    /*if (m_cpuPDHCounterExists)
-    {*/
-        return m_PDHCounters.getCPUTotalUsedPDH();
-    //}
-    //
-    //return 0.0;
+    static uint64_t prevProc = 0;
+    static uint64_t prevSys = 0;
+    static uint64_t prevTime = GetTickCount64();
+    static double   lastCPU = 0.0;
+
+    uint64_t now = GetTickCount64();
+    uint64_t elapsed = now - prevTime;
+
+    // Only compute every 100 ms (Task Manager interval)
+    if (elapsed < 100)
+        return lastCPU;
+
+    double cpu = m_PDHCounters.getCPUQueryValue();
+
+    if (cpu < 0.0) cpu = 0.0;
+    if (cpu > 100.0) cpu = 100.0;
+
+    lastCPU = cpu;
+
+    return cpu;
 }
+#endif
 
 
 double engine::SystemMonitor::getProcessCPU()
@@ -125,7 +100,7 @@ double engine::SystemMonitor::getProcessCPU()
     uint64_t elapsed = now - prevTime;
 
     // Only compute every 1000 ms (Task Manager interval)
-    if (elapsed < 1000)
+    if (elapsed < 100)
         return lastCPU;
 
     FILETIME ftSysIdle, ftSysKernel, ftSysUser;

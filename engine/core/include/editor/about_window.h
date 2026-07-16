@@ -6,7 +6,6 @@
 #include "../tools/pdh_counters.h"
 #include "../tools/vram_manager.h"
 
-
 namespace engine
 {
     class AboutWindow final : public ImGuiElement
@@ -20,20 +19,15 @@ namespace engine
         SystemMonitor m_sysMonitor{};
         VramManager m_vramManager{};
 
-        PDHCounters m_pdhCounters{};
-
-
 
         double cachedCPU = 0.0;
         double cachedCPUProcess = 0.0;
+
         uint64_t cachedRAMUsed = 0;
         uint64_t cachedRAMTotal = 0;
         uint64_t cachedProcessRAM = 0;
 
-        
         void renderTabAbout();
-
-        
 
     protected:
         void draw() override

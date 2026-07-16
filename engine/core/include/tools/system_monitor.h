@@ -14,7 +14,6 @@
 #include <windows.h>
 #include <pdh.h>
 #include <psapi.h>
-#pragma comment(lib, "pdh.lib")
 #else
 #include <cstdio>
 #include <unistd.h>
@@ -25,9 +24,6 @@
 
 namespace engine
 {
-    
-    
-    
     class SystemMonitor final
     {
     public:
@@ -55,7 +51,6 @@ namespace engine
         }
 
         double getCPU() const { return cpuTotalUsedPercent; }
-        double getCPUPDH() const { return cpuTotalUsedPDHPercent; }
         double getCPUProcess() const { return cpuProcessPercent; }
 
 
@@ -73,14 +68,12 @@ namespace engine
 
     private:
         
+        #if defined(_WIN32)
         PDHCounters m_PDHCounters{};
+        #endif
 
-        //const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de performances du processeur";
-
-        //bool m_cpuPDHCounterExists{ false };
         
         double cpuTotalUsedPercent = 0.0;
-        double cpuTotalUsedPDHPercent = 0.0;
         double cpuProcessPercent = 0.0;
         uint64_t ramUsedBytes = 0;
         uint64_t ramTotalBytes = 0;
@@ -117,15 +110,16 @@ namespace engine
                 prevIdle = idle;
                 prevTotal = idle + kernel + user;
             }
-
-
-            //m_cpuPDHCounterExists = m_PDHCounters.TestPDHCounter(COUNTER_PATH);
         }
 
         void updateWindows()
         {
+            #if defined(_WIN32)
+            cpuTotalUsedPercent = getCPUTotalUsedPDH(); // using Windows PDH (closest to Task manager value)
+            #else
             cpuTotalUsedPercent = getCPUTotalUsed();
-            cpuTotalUsedPDHPercent = getCPUTotalUsedPDH();
+            #endif
+
             cpuProcessPercent = getProcessCPU();
 
             // RAM

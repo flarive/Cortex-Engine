@@ -1,18 +1,18 @@
 #pragma once
 
+#if defined(_WIN32)
+
 #include <windows.h>
 #include <pdh.h>
 #include <iostream>
 #include <tchar.h>
-
-
-
 #include <pdhmsg.h>
 #include <vector>
 #include <string>
 
-
 #pragma comment(lib, "pdh.lib")
+
+#endif
 
 namespace engine
 {
@@ -21,6 +21,8 @@ namespace engine
 	public:
         PDHCounters() = default;
 		~PDHCounters() = default;
+
+        #if defined(_WIN32)
 
         bool TestPDHCounter(const std::wstring& counterPath) {
             PDH_HQUERY query;
@@ -84,51 +86,61 @@ namespace engine
 
 
 
-        void initPDHCPU()
+        void initCPUQuery()
         {
-            if (cpuInitialized)
+            if (m_cpuInitialized)
                 return;
 
-            if (PdhOpenQuery(NULL, 0, &cpuQuery) != ERROR_SUCCESS)
+            if (PdhOpenQuery(NULL, 0, &m_cpuQuery) != ERROR_SUCCESS)
                 return;
 
-            if (PdhAddCounterW(cpuQuery, COUNTER_PATH.c_str(), 0, &cpuCounter) != ERROR_SUCCESS)
+            if (PdhAddCounterW(m_cpuQuery, COUNTER_PATH.c_str(), 0, &m_cpuCounter) != ERROR_SUCCESS)
                 return;
 
             // Required double sample
-            PdhCollectQueryData(cpuQuery);
+            PdhCollectQueryData(m_cpuQuery);
             Sleep(100);
-            PdhCollectQueryData(cpuQuery);
+            PdhCollectQueryData(m_cpuQuery);
 
-            cpuInitialized = true;
+            m_cpuInitialized = true;
         }
 
-        double getCPUTotalUsedPDH()
+        double getCPUQueryValue()
         {
-            if (!cpuInitialized)
-                initPDHCPU();
+            double cpu = 0.0;
+            
+            if (!m_cpuInitialized)
+                initCPUQuery();
 
-            PdhCollectQueryData(cpuQuery);
+            PdhCollectQueryData(m_cpuQuery);
 
             PDH_FMT_COUNTERVALUE value{};
-            if (PdhGetFormattedCounterValue(cpuCounter, PDH_FMT_DOUBLE, NULL, &value) == ERROR_SUCCESS)
-                return value.doubleValue;
+            if (PdhGetFormattedCounterValue(m_cpuCounter, PDH_FMT_DOUBLE, NULL, &value) == ERROR_SUCCESS)
+            {
+                cpu = value.doubleValue;
 
-            return 0.0;
+                SYSTEM_INFO info;
+                GetSystemInfo(&info);
+
+                // Task Manager clamps
+                if (cpu < 0.0) cpu = 0.0;
+                if (cpu > 100.0) cpu = 100.0;
+            }
+
+            return cpu;
         }
-
-    protected:
-        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\% temps utilisateur";
+    #endif
 
 
     private:
+    #if defined(_WIN32)
 
-        PDH_HQUERY cpuQuery = nullptr;
-        PDH_HCOUNTER cpuCounter = nullptr;
-        bool cpuInitialized = false;
+        PDH_HQUERY m_cpuQuery = nullptr;
+        PDH_HCOUNTER m_cpuCounter = nullptr;
+        bool m_cpuInitialized = false;
 
+        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
         
-        //L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur",
 
         void HandlePDHError(PDH_STATUS status, const std::wstring& context) {
             if (status == ERROR_SUCCESS) return;
@@ -197,35 +209,6 @@ namespace engine
             for (wchar_t* i = instanceList.data(); *i; i += wcslen(i) + 1)
                 std::wcout << L"  " << i << std::endl;
         }
-
-
-        
+    #endif
     };
-
-
-
-
-    
-
-    //int main()
-    //{
-    //    listProcessorCounters(L"Processor");
-    //    listProcessorCounters(L"Processor Information");
-    //    return 0;
-    //}
-
-    
-
-    //int main() {
-    //    std::wstring counterPath = L"\\Processor(_Total)\\% Processor Time";
-    //    if (TestPDHCounter(counterPath)) {
-    //        std::wcout << L"Counter is available: " << counterPath << std::endl;
-    //    }
-    //    else {
-    //        std::wcout << L"Counter is NOT available: " << counterPath << std::endl;
-    //    }
-
-    //    return 0;
-    //}
 }
-

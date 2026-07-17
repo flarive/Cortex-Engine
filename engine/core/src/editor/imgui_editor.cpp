@@ -62,9 +62,6 @@ void engine::ImGuiEditor::initEditor()
     m_ui.create<SettingsWindow>();
     m_ui.create<AboutWindow>()->init();
     m_ui.create<PropertiesWindow>();
-
-    // create overlays
-    //m_performanceOverlay = m_ui.create<PerformanceOverlay>();
 }
 
 /// <summary>
@@ -87,12 +84,6 @@ void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
 }
 
 #endif
-
-//void engine::ImGuiEditor::updatePerformanceCounters(const PerformanceCounters& counters)
-//{
-//    if (m_performanceOverlay)
-//        m_performanceOverlay->updatePerformanceCounters(counters);
-//}
 
 void engine::ImGuiEditor::renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo)
 {

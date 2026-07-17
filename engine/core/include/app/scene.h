@@ -11,6 +11,7 @@
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../editor/imgui_editor.h"
+#include "../editor/performance_overlay.h"
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"
@@ -47,7 +48,7 @@ namespace engine
         bool m_displayObjectTransformGuizmo{ false };
 
 
-        //ImGuiPerfOverlay m_perfOverlay{};
+        
         PerformanceOverlay m_perfOverlay{};
         
 

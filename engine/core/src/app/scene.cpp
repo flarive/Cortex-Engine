@@ -435,6 +435,7 @@ void engine::Scene::gameLoop()
 
     if (show_perf_overlay && !is_editor_mode)
     {
+        m_perfOverlay.init();
         m_perfOverlay.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });
         m_perfOverlay.render();
     }

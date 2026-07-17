@@ -1,18 +1,11 @@
 #pragma once
 
 #include "../common_defines.h"
-#include <string>
-#include <deque>
-
-
-#pragma once
 #include <cstdint>
 #include <chrono>
 
 #if defined(_WIN32)
-#define NOMINMAX
 #include <windows.h>
-#include <pdh.h>
 #include <psapi.h>
 #else
 #include <cstdio>
@@ -20,10 +13,14 @@
 #endif
 
 
-#include "../../include/tools/pdh_counters.h" // WINDOWS ONLY !!!
+
 
 namespace engine
 {
+    #if defined(_WIN32)
+    class PDHCounters;
+    #endif
+    
     class SystemMonitor final
     {
     public:
@@ -38,6 +35,7 @@ namespace engine
         }
 
         ~SystemMonitor() = default;
+        
         
 
         // Call every ~200ms
@@ -69,7 +67,7 @@ namespace engine
     private:
         
         #if defined(_WIN32)
-        PDHCounters m_PDHCounters{};
+        PDHCounters* m_PDHCounters{};
         #endif
 
         

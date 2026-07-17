@@ -1,10 +1,13 @@
 #include "../../include/tools/system_monitor.h"
 
-
-
+#if defined(_WIN32)
+#include "../../include/tools/pdh_counters.h" // WINDOWS ONLY !!!
+#endif
 
 #include <iostream>
 #include <cstring>
+
+
 
 std::string engine::SystemMonitor::GetGPUVendor() {
     return reinterpret_cast<const char*>(glGetString(GL_VENDOR));
@@ -77,7 +80,10 @@ double engine::SystemMonitor::getCPUTotalUsedPDH()
     if (elapsed < 100)
         return lastCPU;
 
-    double cpu = m_PDHCounters.getCPUQueryValue();
+    if (m_PDHCounters == nullptr)
+        m_PDHCounters = new PDHCounters();
+
+    double cpu = m_PDHCounters->getCPUQueryValue();
 
     if (cpu < 0.0) cpu = 0.0;
     if (cpu > 100.0) cpu = 100.0;

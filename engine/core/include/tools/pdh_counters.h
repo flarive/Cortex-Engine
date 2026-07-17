@@ -2,13 +2,21 @@
 
 #if defined(_WIN32)
 
-#include <windows.h>
+//#include <windows.h>
 #include <pdh.h>
-#include <iostream>
+//#include <iostream>
 #include <tchar.h>
 #include <pdhmsg.h>
-#include <vector>
-#include <string>
+//#include <vector>
+//#include <string>
+
+
+
+//#include <windows.h>
+//#include <pdh.h>
+//#include <psapi.h>
+
+
 
 #pragma comment(lib, "pdh.lib")
 

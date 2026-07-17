@@ -17,7 +17,7 @@
 #include <imgui.h>
 
 
-#include "../../include/editor/performance_overlay.h"
+//#include "../../include/editor/performance_overlay.h"
 
 #if EDITOR_MODE
 namespace engine
@@ -49,7 +49,7 @@ namespace engine
 
 		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
-		//void updatePerformanceCounters(const PerformanceCounters& counters);
+		
 		
 
 		void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
@@ -59,7 +59,7 @@ namespace engine
 		void renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo);
 
 
-		//bool hasPerformanceOverlay() const { return m_performanceOverlay != nullptr; }
+		
 
 
 	private:
@@ -71,7 +71,7 @@ namespace engine
 
 		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
 
-		//PerformanceOverlay* m_performanceOverlay{};
+		
 
 
 

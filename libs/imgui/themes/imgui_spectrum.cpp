@@ -7,9 +7,12 @@ namespace ImGui {
         extern const unsigned int SourceSansProRegular_compressed_size = 149392;
         extern const unsigned int SourceSansProRegular_compressed_data[]; // defined later in the file
 
-        ImFont* fontSmall = nullptr;
-        ImFont* fontMedium = nullptr;
-        ImFont* fontLarge = nullptr;
+        ImFont* fontSmall1 = nullptr;
+        ImFont* fontSmall2 = nullptr;
+        ImFont* fontMedium1 = nullptr;
+        ImFont* fontMedium2 = nullptr;
+        ImFont* fontLarge1 = nullptr;
+        ImFont* fontLarge2 = nullptr;
 
 
         void LoadFont(float size) {
@@ -22,30 +25,51 @@ namespace ImGui {
         void LoadFonts() {
             ImGuiIO& io = ImGui::GetIO();
 
-            fontSmall = io.Fonts->AddFontFromMemoryCompressedTTF(
+            fontSmall1 = io.Fonts->AddFontFromMemoryCompressedTTF(
                 SourceSansProRegular_compressed_data,
                 SourceSansProRegular_compressed_size,
                 17.0f
             );
 
-            fontMedium = io.Fonts->AddFontFromMemoryCompressedTTF(
+            fontSmall2 = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                15.0f
+            );
+
+            fontMedium1 = io.Fonts->AddFontFromMemoryCompressedTTF(
                 SourceSansProRegular_compressed_data,
                 SourceSansProRegular_compressed_size,
                 22.0f
             );
 
-            fontLarge = io.Fonts->AddFontFromMemoryCompressedTTF(
+            fontMedium2 = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                24.0f
+            );
+
+            fontLarge1 = io.Fonts->AddFontFromMemoryCompressedTTF(
                 SourceSansProRegular_compressed_data,
                 SourceSansProRegular_compressed_size,
                 28.0f
             );
 
+            fontLarge2 = io.Fonts->AddFontFromMemoryCompressedTTF(
+                SourceSansProRegular_compressed_data,
+                SourceSansProRegular_compressed_size,
+                32.0f
+            );
 
-            IM_ASSERT(fontSmall != nullptr);
-            IM_ASSERT(fontMedium != nullptr);
-            IM_ASSERT(fontLarge != nullptr);
 
-            io.FontDefault = fontSmall;
+            IM_ASSERT(fontSmall1 != nullptr);
+            IM_ASSERT(fontSmall2 != nullptr);
+            IM_ASSERT(fontMedium1 != nullptr);
+            IM_ASSERT(fontMedium2 != nullptr);
+            IM_ASSERT(fontLarge1 != nullptr);
+            IM_ASSERT(fontLarge2 != nullptr);
+
+            io.FontDefault = fontSmall1;
 
             io.Fonts->Build();
             //ImGui_ImplOpenGL3_CreateFontsTexture();

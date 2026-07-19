@@ -31,10 +31,12 @@ namespace ImGui {
         const float CHECKBOX_ROUNDING = 2.0f;
 
 
-        extern ImFont* fontSmall;
-        extern ImFont* fontMedium;
-        extern ImFont* fontLarge;
-
+        extern ImFont* fontSmall1;
+        extern ImFont* fontSmall2;
+        extern ImFont* fontMedium1;
+        extern ImFont* fontMedium2;
+        extern ImFont* fontLarge1;
+        extern ImFont* fontLarge2;
 
         // Load SourceSansProRegular and sets it as a default font.
         // You may want to call ImGui::GetIO().Fonts->Clear() before this

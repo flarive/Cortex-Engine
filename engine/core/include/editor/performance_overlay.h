@@ -6,6 +6,8 @@
 #include "../tools/system_monitor.h"
 #include "../tools/vram_manager.h"
 
+#include <optional>
+
 namespace engine
 {
     class PerformanceOverlay final : public ImGuiElement
@@ -32,7 +34,10 @@ namespace engine
         uint64_t cachedRAMTotal = 0;
         uint64_t cachedProcessRAM = 0;
 
-        void centerTextInBox(const std::string& header, float value, float boxWidth, ImFont* font);
+        double cachedRamPercent = 0;
+        double cachedRamProcessPercent = 0;
+
+        void centerTextInBox(const std::string& header, std::optional<double> value, bool offsetX, float boxWidth, float yOffset, ImFont* font = ImGui::Spectrum::fontSmall1, const ImVec4& color = ImVec4(1, 1, 1, 1));
 
     protected:
         void draw() override;

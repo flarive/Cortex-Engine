@@ -1,5 +1,7 @@
 #include "../../include/editor/performance_overlay.h"
 
+
+
 void engine::PerformanceOverlay::init()
 {
     if (!m_initDone)
@@ -27,13 +29,7 @@ void engine::PerformanceOverlay::draw()
     static int location = -2;
     ImGuiIO& io = ImGui::GetIO();
 
-    static ImGuiWindowFlags window_flags =
-        ImGuiWindowFlags_NoDecoration |
-        ImGuiWindowFlags_NoDocking |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoFocusOnAppearing |
-        ImGuiWindowFlags_NoNav |
-        ImGuiWindowFlags_NoBringToFrontOnFocus;
+    static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     // Handle overlay positioning
     if (location >= 0)
@@ -63,56 +59,14 @@ void engine::PerformanceOverlay::draw()
         window_flags |= ImGuiWindowFlags_NoMove;
     }
 
-    ImGui::SetNextWindowSize(ImVec2(300.0f, 0.0f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
     ImGui::SetNextWindowBgAlpha(0.85f);
 
     bool open = true; // ImGuiElement manages visibility itself
     if (ImGui::Begin("PerfDebugOverlay", &open, window_flags))
     {
-        char buf[64];
-        snprintf(buf, sizeof(buf), "FPS: %.0f", fps);
-
-
-        ImGui::PushFont(ImGui::Spectrum::fontLarge);
-
-        ImVec2 size = ImGui::CalcTextSize(buf);
-        float center = (ImGui::GetWindowWidth() - size.x) * 0.5f;
-
-        ImGui::SetCursorPosX(center);
-        ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", buf);
-
-        ImGui::PopFont();
-
-
-
-        ImGui::PushFont(ImGui::Spectrum::fontSmall);
-        ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Frame duration: %.2f ms", deltaTime * 1000.0f);
-        ImGui::PopFont();
-
-
-        ImGui::PushFont(ImGui::Spectrum::fontMedium);
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "CPU time per frame: %.2f ms", cpuTime);
-        ImGui::PopFont();
-
-        ImGui::PushFont(ImGui::Spectrum::fontMedium);
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "GPU time per frame: %.2f ms", gpuTime);
-        ImGui::PopFont();
-
-        ImGui::PushFont(ImGui::Spectrum::fontMedium);
-        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "UI time per frame: %.2f ms", uiTime);
-        ImGui::PopFont();
-
-
+        static ImVec4 GREY = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
         
-
-        
-        
-
-
-
-
-
-        // --- SAMPLE EVERY 1 s ---
         static double accumulator = 0.0;
         static double lastTime = glfwGetTime();
 
@@ -129,41 +83,168 @@ void engine::PerformanceOverlay::draw()
             cachedCPU = m_sysMonitor.getCPU();
 
             cachedCPUProcess = m_sysMonitor.getCPUProcess();
-            cachedRAMUsed = m_sysMonitor.getRAMUsed();
-            cachedRAMTotal = m_sysMonitor.getRAMTotal();
-            cachedProcessRAM = m_sysMonitor.getProcessRAM();
+            cachedRAMUsed = m_sysMonitor.getRAMUsed() / (1024.0 * 1024 * 1024);
+            cachedRAMTotal = m_sysMonitor.getRAMTotal() / (1024.0 * 1024 * 1024);
+            cachedProcessRAM = m_sysMonitor.getProcessRAM() / (1024.0 * 1024.0);
+            
+            cachedRamPercent = (cachedRAMUsed / cachedRAMTotal) * 100.0;
+            cachedRamProcessPercent = (cachedProcessRAM / cachedRAMTotal) * 100.0;
 
             accumulator = 0.0;
         }
 
 
+        
 
-        ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
-        ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
-        ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());
-        ImGui::Text(" ");
+        // FPS
+        //ImGui::BeginChild("LeftBox", ImVec2(150.0f, 40.0f), ImGuiChildFlags_None);
+        //{
+        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+        //    centerTextInBox("FPS: %.0f", fps, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge);
+        //}
+        //ImGui::EndChild();
 
-        ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //ImGui::SameLine();
 
-
-        auto vramInfo = m_vramManager.query();
-
-        double total = vramInfo.totalBytes / (1024.0 * 1024.0);
-        ImGui::Text("GPU VRAM Total: %.0f MB", total);
-
-        double used = vramInfo.usedBytes / (1024.0 * 1024.0);
-        double free = vramInfo.freeBytes / (1024.0 * 1024.0);
-        ImGui::Text("GPU VRAM Used: %.0f MB / Free: %.0f MB", used, free);
-
-
-
-
-        ImGui::Text("CPU total : %.0f %%", cachedCPU);
-        ImGui::Text("CPU app : %.0f %%", cachedCPUProcess);
+        //// Hardware
+        //ImGui::BeginChild("RightBox", ImVec2(150.0f, 40.0f), ImGuiChildFlags_None);
+        //{
+        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+        //    centerTextInBox("FPS: %.0f", fps, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall);
+        //}
+        //ImGui::EndChild();
 
 
-        ImGui::Text("RAM total : %.2f / %.2f GB", cachedRAMUsed / (1024.0 * 1024 * 1024), cachedRAMTotal / (1024.0 * 1024 * 1024));
-        ImGui::Text("RAM app : %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
+        // CPU
+        ImGui::BeginChild("CPU", ImVec2(100.0f, 90.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("CPU", std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+
+            ImGui::BeginChild("CPU1", ImVec2(40.0f, 0.0f), ImGuiChildFlags_None);
+            {
+                float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+                centerTextInBox("%.0f%%", cachedCPU, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, true, boxWidth, 25.0f, ImGui::Spectrum::fontSmall1, GREY);
+            }
+            ImGui::EndChild();
+
+            ImGui::SameLine();
+
+            ImGui::BeginChild("CPU2", ImVec2(40.0f, 0.0f), ImGuiChildFlags_None);
+            {
+                float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+                centerTextInBox("%.0f%%", cachedCPUProcess, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("APP", std::nullopt, true, boxWidth, 25.0f, ImGui::Spectrum::fontSmall1, GREY);
+            }
+            ImGui::EndChild();
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        // RAM
+        ImGui::BeginChild("RAM", ImVec2(100.0f, 40.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("RAM", std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+
+            ImGui::BeginChild("RAM1", ImVec2(40.0f, 0.0f), ImGuiChildFlags_None);
+            {
+                float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+                centerTextInBox("%.0f%%", cachedRamPercent, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, true, boxWidth, 25.0f, ImGui::Spectrum::fontSmall1, GREY);
+            }
+            ImGui::EndChild();
+
+            ImGui::SameLine();
+
+            ImGui::BeginChild("RAM2", ImVec2(40.0f, 0.0f), ImGuiChildFlags_None);
+            {
+                float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+                centerTextInBox("%.0f%%", cachedRamProcessPercent, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("APP", std::nullopt, true, boxWidth, 25.0f, ImGui::Spectrum::fontSmall1, GREY);
+            }
+            ImGui::EndChild();
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        // GPU
+        ImGui::BeginChild("GPU", ImVec2(100.0f, 40.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("GPU", std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        // VRAM
+        ImGui::BeginChild("VRAM", ImVec2(100.0f, 40.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("VRAM", std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+        }
+        ImGui::EndChild();
+
+
+        /*ImGui::PushFont(ImGui::Spectrum::fontSmall);
+        ImGui::TextColored(ImVec4(1, 1, 0.2f, 1), "Frame duration: %.2f ms", deltaTime * 1000.0f);
+        ImGui::PopFont();
+
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "CPU time per frame: %.2f ms", cpuTime);
+        ImGui::PopFont();
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "GPU time per frame: %.2f ms", gpuTime);
+        ImGui::PopFont();
+
+        ImGui::PushFont(ImGui::Spectrum::fontMedium);
+        ImGui::TextColored(ImVec4(0.2f, 0.8f, 1, 1), "UI time per frame: %.2f ms", uiTime);
+        ImGui::PopFont();*/
+
+
+        
+
+        
+        
+
+
+
+
+
+
+
+        //ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
+        //ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
+        //ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());
+        //ImGui::Text(" ");
+
+        //ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+
+        //auto vramInfo = m_vramManager.query();
+
+        //double total = vramInfo.totalBytes / (1024.0 * 1024.0);
+        //ImGui::Text("GPU VRAM Total: %.0f MB", total);
+
+        //double used = vramInfo.usedBytes / (1024.0 * 1024.0);
+        //double free = vramInfo.freeBytes / (1024.0 * 1024.0);
+        //ImGui::Text("GPU VRAM Used: %.0f MB / Free: %.0f MB", used, free);
+
+
+
+
+        //ImGui::Text("CPU total : %.0f %%", cachedCPU);
+        //ImGui::Text("CPU app : %.0f %%", cachedCPUProcess);
+
+
+        //ImGui::Text("RAM total : %.2f / %.2f GB", cachedRAMUsed / (1024.0 * 1024 * 1024), cachedRAMTotal / (1024.0 * 1024 * 1024));
+        //ImGui::Text("RAM app : %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
 
 
 
@@ -186,33 +267,35 @@ void engine::PerformanceOverlay::draw()
     ImGui::End();
 }
 
-void engine::PerformanceOverlay::centerTextInBox(const std::string& header, float value, float boxWidth, ImFont* font)
+void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std::optional<double> value, bool offsetX, float boxWidth, float yOffset, ImFont* font, const ImVec4& color)
 {
     char buf[64];
-    snprintf(buf, sizeof(buf), "FPS %.0f", value);
+
+    if (value.has_value())
+    {
+        if (header.find('%') != std::string::npos)
+            snprintf(buf, sizeof(buf), header.c_str(), *value);
+        else
+            snprintf(buf, sizeof(buf), "%s %.0f", header.c_str(), *value);
+    }
+    else
+    {
+        // No value just print the header
+        snprintf(buf, sizeof(buf), "%s", header.c_str());
+    }
+
 
     ImGui::PushFont(font);
 
     ImVec2 size = ImGui::CalcTextSize(buf);
     float center = (boxWidth - size.x) * 0.5f;
 
-    ImGui::SetCursorPosX(center);
-    ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", buf);
+	if (offsetX)
+		ImGui::SetCursorPosX(center);
+
+    ImGui::SetCursorPosY(yOffset);
+
+    ImGui::TextColored(color, "%s", buf);
 
     ImGui::PopFont();
-
-
-    //char buf[64];
-    //snprintf(buf, sizeof(buf), "FPS: %.0f", value);
-
-
-    //ImGui::PushFont(ImGui::Spectrum::fontLarge);
-
-    //ImVec2 size = ImGui::CalcTextSize(buf);
-    //float center = (ImGui::GetWindowWidth() - size.x) * 0.5f;
-
-    //ImGui::SetCursorPosX(center);
-    //ImGui::TextColored(ImVec4(1, 1, 1, 1), "%s", buf);
-
-    //ImGui::PopFont();
 }

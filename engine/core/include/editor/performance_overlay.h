@@ -33,11 +33,18 @@ namespace engine
         uint64_t cachedRAMUsed = 0;
         uint64_t cachedRAMTotal = 0;
         uint64_t cachedProcessRAM = 0;
-
         double cachedRamPercent = 0;
         double cachedRamProcessPercent = 0;
 
-        void centerTextInBox(const std::string& header, std::optional<double> value, bool offsetX, float boxWidth, float yOffset, ImFont* font = ImGui::Spectrum::fontSmall1, const ImVec4& color = ImVec4(1, 1, 1, 1));
+
+        double cachedVramTotal = 0;
+        double cachedVramUsed = 0;
+        double cachedVramFree = 0;
+        double cachedVramPercent = 0;
+
+
+
+        void centerTextInBox(const std::string& header, std::optional<double> value1, std::optional<double> value2, bool offsetX, float boxWidth, float yOffset, ImFont* font = ImGui::Spectrum::fontSmall1, const ImVec4& color = ImVec4(1, 1, 1, 1));
 
     protected:
         void draw() override;

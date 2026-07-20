@@ -908,5 +908,8 @@
     <ClInclude Include="core\include\tools\pdh_counters.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\tools\nvidia_monitor.h">
+      <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

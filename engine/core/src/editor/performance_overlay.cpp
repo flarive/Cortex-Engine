@@ -86,9 +86,9 @@ void engine::PerformanceOverlay::draw()
             cachedCPU = m_sysMonitor.getCPU();
             cachedCPUProcess = m_sysMonitor.getCPUProcess();
 
-            cachedRAMUsed = m_sysMonitor.getRAMUsed() / (1024 * 1024 * 1024); // GiB
-            cachedRAMTotal = m_sysMonitor.getRAMTotal() / (1024 * 1024 * 1024); // GiB
-            cachedProcessRAM = m_sysMonitor.getProcessRAM() / (1024 * 1024 * 1024); // GiB
+            cachedRAMUsed = m_sysMonitor.getRAMUsed() / (1024.0 * 1024.0 * 1024.0); // GiB
+            cachedRAMTotal = m_sysMonitor.getRAMTotal() / (1024.0 * 1024.0 * 1024.0); // GiB
+            cachedProcessRAM = m_sysMonitor.getProcessRAM() / (1024.0 * 1024.0 * 1024.0); // GiB
             
             cachedRamPercent = (cachedRAMUsed / cachedRAMTotal) * 100.0;
             cachedRamProcessPercent = (cachedProcessRAM / cachedRAMTotal) * 100.0;
@@ -97,6 +97,11 @@ void engine::PerformanceOverlay::draw()
             cachedVramUsed = vramInfo.usedBytes / (1024.0 * 1024.0); // MiB
             cachedVramFree = vramInfo.freeBytes / (1024.0 * 1024.0); // MiB
             cachedVramPercent = (cachedVramUsed / cachedVramTotal) * 100.0;
+
+            cachedVendorGPUUsage = m_sysMonitor.getVendorGPUUsage();
+            cachedVendorGPUUsagePercent = m_sysMonitor.getVendorGPUUsagePercent();
+            cachedVendorTemperature = m_sysMonitor.getVendorTemperature();
+            cachedVendorPowerUsageWatts = m_sysMonitor.getVendorPowerUsageWatts();
 
 
             accumulator = 0.0;
@@ -194,7 +199,7 @@ void engine::PerformanceOverlay::draw()
             ImGui::BeginChild("GPU1", ImVec2(40.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", 0.0f, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("%.0f%%", cachedVendorGPUUsagePercent, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
                 centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 25.0f, ImGui::Spectrum::fontSmall1, GREY);
             }
             ImGui::EndChild();
@@ -335,7 +340,7 @@ void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std:
     if (value1.has_value() && value2.has_value())
     {
         if (header.find('%') != std::string::npos)
-            snprintf(buf, sizeof(buf), header.c_str(), *value1);
+            snprintf(buf, sizeof(buf), header.c_str(), *value1, *value2);
         else
             snprintf(buf, sizeof(buf), "%s %.0f %.0f", header.c_str(), *value1, *value2);
     }

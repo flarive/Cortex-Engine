@@ -151,3 +151,13 @@ double engine::SystemMonitor::getProcessCPU()
     return cpu;
 }
 
+void engine::SystemMonitor::getNvidiaGPUInfo()
+{
+	if (m_nvidiaMonitor.isAvailable())
+	{
+        m_vendorGPUUsage = m_nvidiaMonitor.getGpuUsage();
+        m_vendorGPUUsagePercent = m_nvidiaMonitor.getMemoryUsagePercent();
+        m_vendorTemperature = m_nvidiaMonitor.getTemperatureC();
+        m_vendorPowerUsageWatts = m_nvidiaMonitor.getPowerUsageWatts();
+	}
+}

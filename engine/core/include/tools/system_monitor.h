@@ -12,7 +12,7 @@
 #include <unistd.h>
 #endif
 
-
+#include "nvidia_monitor.h"
 
 
 namespace engine
@@ -46,16 +46,31 @@ namespace engine
 #else
             updateLinux();
 #endif
+
+            updateVendor();
         }
 
-        double getCPU() const { return cpuTotalUsedPercent; }
-        double getCPUProcess() const { return cpuProcessPercent; }
+
+        void updateVendor()
+        {
+            getNvidiaGPUInfo();
+        }
 
 
-        uint64_t getRAMUsed() const { return ramUsedBytes; }
-        uint64_t getRAMTotal() const { return ramTotalBytes; }
+        double getCPU() const { return m_cpuTotalUsedPercent; }
+        double getCPUProcess() const { return m_cpuProcessPercent; }
+
+
+        uint64_t getRAMUsed() const { return m_ramUsedBytes; }
+        uint64_t getRAMTotal() const { return m_ramTotalBytes; }
         uint64_t getProcessRAM();
         
+
+		int getVendorGPUUsage() const { return m_vendorGPUUsage; }
+		double getVendorGPUUsagePercent() const { return m_vendorGPUUsagePercent; }
+		int getVendorTemperature() const { return m_vendorTemperature; }
+		double getVendorPowerUsageWatts() const { return m_vendorPowerUsageWatts; }
+
 
         std::string GetGPUVendor();
         std::string GetGPURenderer();
@@ -70,18 +85,30 @@ namespace engine
         PDHCounters* m_PDHCounters{};
         #endif
 
+        NvidiaGpuMonitor m_nvidiaMonitor{};
+
         
-        double cpuTotalUsedPercent = 0.0;
-        double cpuProcessPercent = 0.0;
-        uint64_t ramUsedBytes = 0;
-        uint64_t ramTotalBytes = 0;
+        double m_cpuTotalUsedPercent = 0.0;
+        double m_cpuProcessPercent = 0.0;
+        uint64_t m_ramUsedBytes = 0;
+        uint64_t m_ramTotalBytes = 0;
 
 
+        int m_vendorGPUUsage = 0;
+		double m_vendorGPUUsagePercent = 0.0;
+		int m_vendorTemperature = 0;
+		double m_vendorPowerUsageWatts = 0.0;
 
 
         double getCPUTotalUsed();
         double getCPUTotalUsedPDH();
         double getProcessCPU();
+
+
+
+        
+
+		void getNvidiaGPUInfo();
 
 
 #if defined(_WIN32)
@@ -113,20 +140,20 @@ namespace engine
         void updateWindows()
         {
             #if defined(_WIN32)
-            cpuTotalUsedPercent = getCPUTotalUsedPDH(); // using Windows PDH (closest to Task manager value)
+            m_cpuTotalUsedPercent = getCPUTotalUsedPDH(); // using Windows PDH (closest to Task manager value)
             #else
-            cpuTotalUsedPercent = getCPUTotalUsed();
+            m_cpuTotalUsedPercent = getCPUTotalUsed();
             #endif
 
-            cpuProcessPercent = getProcessCPU();
+            m_cpuProcessPercent = getProcessCPU();
 
             // RAM
             MEMORYSTATUSEX mem{};
             mem.dwLength = sizeof(mem);
             GlobalMemoryStatusEx(&mem);
 
-            ramTotalBytes = mem.ullTotalPhys;
-            ramUsedBytes = mem.ullTotalPhys - mem.ullAvailPhys;
+            m_ramTotalBytes = mem.ullTotalPhys;
+            m_ramUsedBytes = mem.ullTotalPhys - mem.ullAvailPhys;
         }
 #else
         uint64_t prevIdle = 0, prevTotal = 0;

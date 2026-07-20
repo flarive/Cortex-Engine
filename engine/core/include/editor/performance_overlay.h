@@ -30,9 +30,9 @@ namespace engine
         double cachedCPU = 0.0;
         double cachedCPUProcess = 0.0;
 
-        uint64_t cachedRAMUsed = 0;
-        uint64_t cachedRAMTotal = 0;
-        uint64_t cachedProcessRAM = 0;
+        double cachedRAMUsed = 0;
+        double cachedRAMTotal = 0;
+        double cachedProcessRAM = 0;
         double cachedRamPercent = 0;
         double cachedRamProcessPercent = 0;
 
@@ -41,6 +41,12 @@ namespace engine
         double cachedVramUsed = 0;
         double cachedVramFree = 0;
         double cachedVramPercent = 0;
+
+
+		int cachedVendorGPUUsage = 0;
+		double cachedVendorGPUUsagePercent = 0.0;
+		int cachedVendorTemperature = 0;
+		double cachedVendorPowerUsageWatts = 0.0;
 
 
 

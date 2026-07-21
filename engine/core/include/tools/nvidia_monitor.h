@@ -33,22 +33,11 @@ namespace engine
 
     typedef nvmlReturn_t(*nvmlInit_t)();
     typedef nvmlReturn_t(*nvmlShutdown_t)();
-
-    typedef nvmlReturn_t(*nvmlDeviceGetHandleByIndex_t)(unsigned int index,
-        nvmlDevice_t* device);
-
-    typedef nvmlReturn_t(*nvmlDeviceGetUtilizationRates_t)(nvmlDevice_t device,
-        nvmlUtilization_t* utilization);
-
-    typedef nvmlReturn_t(*nvmlDeviceGetMemoryInfo_t)(nvmlDevice_t device,
-        nvmlMemory_t* memory);
-
-    typedef nvmlReturn_t(*nvmlDeviceGetTemperature_t)(nvmlDevice_t device,
-        int sensorType,
-        unsigned int* temp);
-
-    typedef nvmlReturn_t(*nvmlDeviceGetPowerUsage_t)(nvmlDevice_t device,
-        unsigned int* power);
+    typedef nvmlReturn_t(*nvmlDeviceGetHandleByIndex_t)(unsigned int index, nvmlDevice_t* device);
+    typedef nvmlReturn_t(*nvmlDeviceGetUtilizationRates_t)(nvmlDevice_t device, nvmlUtilization_t* utilization);
+    typedef nvmlReturn_t(*nvmlDeviceGetMemoryInfo_t)(nvmlDevice_t device, nvmlMemory_t* memory);
+    typedef nvmlReturn_t(*nvmlDeviceGetTemperature_t)(nvmlDevice_t device, int sensorType, unsigned int* temp);
+    typedef nvmlReturn_t(*nvmlDeviceGetPowerUsage_t)(nvmlDevice_t device, unsigned int* power);
 
     // Header-only dynamic NVML loader + monitor
 

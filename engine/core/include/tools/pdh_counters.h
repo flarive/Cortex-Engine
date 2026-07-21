@@ -94,36 +94,80 @@ namespace engine
 
 
 
-        void initCPUQuery()
+        void initTotalUsedCPUQuery()
         {
-            if (m_cpuInitialized)
+            if (m_totalCpuUsedInitialized)
                 return;
 
-            if (PdhOpenQuery(NULL, 0, &m_cpuQuery) != ERROR_SUCCESS)
+            if (PdhOpenQuery(NULL, 0, &m_totalCpuUsedQuery) != ERROR_SUCCESS)
                 return;
 
-            if (PdhAddCounterW(m_cpuQuery, COUNTER_PATH.c_str(), 0, &m_cpuCounter) != ERROR_SUCCESS)
+            if (PdhAddCounterW(m_totalCpuUsedQuery, TOTAL_CPU_USED_COUNTER_PATH.c_str(), 0, &m_totalCpuUsedCounter) != ERROR_SUCCESS)
                 return;
 
             // Required double sample
-            PdhCollectQueryData(m_cpuQuery);
+            PdhCollectQueryData(m_totalCpuUsedQuery);
             Sleep(100);
-            PdhCollectQueryData(m_cpuQuery);
+            PdhCollectQueryData(m_totalCpuUsedQuery);
 
-            m_cpuInitialized = true;
+            m_totalCpuUsedInitialized = true;
         }
 
-        double getCPUQueryValue()
+        double getTotalUsedCPUQueryValue()
         {
             double cpu = 0.0;
             
-            if (!m_cpuInitialized)
-                initCPUQuery();
+            if (!m_totalCpuUsedInitialized)
+                initTotalUsedCPUQuery();
 
-            PdhCollectQueryData(m_cpuQuery);
+            PdhCollectQueryData(m_totalCpuUsedQuery);
 
             PDH_FMT_COUNTERVALUE value{};
-            if (PdhGetFormattedCounterValue(m_cpuCounter, PDH_FMT_DOUBLE, NULL, &value) == ERROR_SUCCESS)
+            if (PdhGetFormattedCounterValue(m_totalCpuUsedCounter, PDH_FMT_DOUBLE, NULL, &value) == ERROR_SUCCESS)
+            {
+                cpu = value.doubleValue;
+
+                SYSTEM_INFO info;
+                GetSystemInfo(&info);
+
+                // Task Manager clamps
+                if (cpu < 0.0) cpu = 0.0;
+                if (cpu > 100.0) cpu = 100.0;
+            }
+
+            return cpu;
+        }
+
+        void initProcessUsedCPUQuery()
+        {
+            if (m_processCpuUsedInitialized)
+                return;
+
+            if (PdhOpenQuery(NULL, 0, &m_processCpuUsedQuery) != ERROR_SUCCESS)
+                return;
+
+            if (PdhAddCounterW(m_processCpuUsedQuery, PROCESS_CPU_USED_COUNTER_PATH.c_str(), 0, &m_processCpuUsedCounter) != ERROR_SUCCESS)
+                return;
+
+            // Required double sample
+            PdhCollectQueryData(m_processCpuUsedQuery);
+            Sleep(100);
+            PdhCollectQueryData(m_processCpuUsedQuery);
+
+            m_processCpuUsedInitialized = true;
+        }
+
+        double getProcessUsedCPUQueryValue()
+        {
+            double cpu = 0.0;
+
+            if (!m_processCpuUsedInitialized)
+                initProcessUsedCPUQuery();
+
+            PdhCollectQueryData(m_processCpuUsedQuery);
+
+            PDH_FMT_COUNTERVALUE value{};
+            if (PdhGetFormattedCounterValue(m_processCpuUsedCounter, PDH_FMT_DOUBLE, NULL, &value) == ERROR_SUCCESS)
             {
                 cpu = value.doubleValue;
 
@@ -143,11 +187,17 @@ namespace engine
     private:
     #if defined(_WIN32)
 
-        PDH_HQUERY m_cpuQuery = nullptr;
-        PDH_HCOUNTER m_cpuCounter = nullptr;
-        bool m_cpuInitialized = false;
+        PDH_HQUERY m_totalCpuUsedQuery = nullptr;
+        PDH_HCOUNTER m_totalCpuUsedCounter = nullptr;
+        bool m_totalCpuUsedInitialized = false;
 
-        const std::wstring COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
+
+        PDH_HQUERY m_processCpuUsedQuery = nullptr;
+        PDH_HCOUNTER m_processCpuUsedCounter = nullptr;
+        bool m_processCpuUsedInitialized = false;
+
+        const std::wstring TOTAL_CPU_USED_COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
+        const std::wstring PROCESS_CPU_USED_COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
         
 
         void HandlePDHError(PDH_STATUS status, const std::wstring& context) {
@@ -164,7 +214,7 @@ namespace engine
                 NULL
             );
 
-            //L’objet spécifié n’a pas été trouvé sur l’ordinateur.
+            // Specified object not found on this computer
             std::wcerr << L"PDH Error in " << context << L": " << status << L" (" << errorMsg << L")" << std::endl;
             LocalFree(errorMsg);
         }

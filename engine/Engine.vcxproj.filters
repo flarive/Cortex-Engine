@@ -214,6 +214,9 @@
     <Filter Include="Fichiers sources\core\editor\base">
       <UniqueIdentifier>{7d94375a-e90c-41de-9a82-cca007a31fc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\helpers">
+      <UniqueIdentifier>{08194286-4625-47c5-bb3e-4652de436e80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -910,6 +913,9 @@
     </ClInclude>
     <ClInclude Include="core\include\tools\nvidia_monitor.h">
       <Filter>Fichiers d%27en-tête\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\helpers\string_helper.h">
+      <Filter>Fichiers d%27en-tête\core\helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

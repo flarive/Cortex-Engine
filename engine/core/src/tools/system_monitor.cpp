@@ -1,8 +1,10 @@
 #include "../../include/tools/system_monitor.h"
 
 #if defined(_WIN32)
-#include "../../include/tools/pdh_counters.h" // WINDOWS ONLY !!!
+#include "../../include/tools/pdh_counters.h"
 #endif
+
+#include "../../include/helpers/string_helper.h"
 
 #include <iostream>
 #include <cstring>
@@ -22,6 +24,11 @@ std::string engine::SystemMonitor::GetGPUVersion() {
 }
 
 
+void engine::SystemMonitor::initVendor()
+{
+    m_isNvidia = containsInsensitive(GetGPUVendor(), "nvidia");
+}
+
 uint64_t engine::SystemMonitor::getProcessRAM()
 {
     PROCESS_MEMORY_COUNTERS_EX pmc;
@@ -32,6 +39,10 @@ uint64_t engine::SystemMonitor::getProcessRAM()
     return 0;
 }
 
+/// <summary>
+/// Simplest version, not very accurate but cen be used as a fallback if PDH counter not found
+/// </summary>
+/// <returns></returns>
 double engine::SystemMonitor::getCPUTotalUsed()
 {
     static uint64_t prevIdle = 0;
@@ -60,12 +71,16 @@ double engine::SystemMonitor::getCPUTotalUsed()
 
     SYSTEM_INFO info;
     GetSystemInfo(&info);
-    cpu /= info.dwNumberOfProcessors;   // REQUIRED
+    cpu /= info.dwNumberOfProcessors;
 
     return cpu;
 }
 
 #if defined(_WIN32)
+/// <summary>
+/// More accurate because using Windows PDH counters (same value as Task Manager)
+/// </summary>
+/// <returns></returns>
 double engine::SystemMonitor::getCPUTotalUsedPDH()
 {
     static uint64_t prevProc = 0;
@@ -83,7 +98,38 @@ double engine::SystemMonitor::getCPUTotalUsedPDH()
     if (m_PDHCounters == nullptr)
         m_PDHCounters = new PDHCounters();
 
-    double cpu = m_PDHCounters->getCPUQueryValue();
+    double cpu = m_PDHCounters->getTotalUsedCPUQueryValue();
+
+    if (cpu < 0.0) cpu = 0.0;
+    if (cpu > 100.0) cpu = 100.0;
+
+    lastCPU = cpu;
+
+    return cpu;
+}
+
+/// <summary>
+/// More accurate because using Windows PDH counters (same value as Task Manager)
+/// </summary>
+/// <returns></returns>
+double engine::SystemMonitor::getCPUProcessUsedPDH()
+{
+    static uint64_t prevProc = 0;
+    static uint64_t prevSys = 0;
+    static uint64_t prevTime = GetTickCount64();
+    static double   lastCPU = 0.0;
+
+    uint64_t now = GetTickCount64();
+    uint64_t elapsed = now - prevTime;
+
+    // Only compute every 100 ms (Task Manager interval)
+    if (elapsed < 100)
+        return lastCPU;
+
+    if (m_PDHCounters == nullptr)
+        m_PDHCounters = new PDHCounters();
+
+    double cpu = m_PDHCounters->getProcessUsedCPUQueryValue();
 
     if (cpu < 0.0) cpu = 0.0;
     if (cpu > 100.0) cpu = 100.0;
@@ -94,7 +140,10 @@ double engine::SystemMonitor::getCPUTotalUsedPDH()
 }
 #endif
 
-
+/// <summary>
+/// CPU taken by this app (currently executed .exe)
+/// </summary>
+/// <returns></returns>
 double engine::SystemMonitor::getProcessCPU()
 {
     static uint64_t prevProc = 0;
@@ -113,15 +162,12 @@ double engine::SystemMonitor::getProcessCPU()
     FILETIME ftProcCreation, ftProcExit, ftProcKernel, ftProcUser;
 
     GetSystemTimes(&ftSysIdle, &ftSysKernel, &ftSysUser);
-    GetProcessTimes(GetCurrentProcess(),
-        &ftProcCreation, &ftProcExit,
-        &ftProcKernel, &ftProcUser);
+    GetProcessTimes(GetCurrentProcess(), &ftProcCreation, &ftProcExit, &ftProcKernel, &ftProcUser);
 
     auto to64 = [](const FILETIME& ft)
-        {
-            return (uint64_t(ft.dwHighDateTime) << 32) |
-                uint64_t(ft.dwLowDateTime);
-        };
+    {
+        return (uint64_t(ft.dwHighDateTime) << 32) | uint64_t(ft.dwLowDateTime);
+    };
 
     uint64_t sysTotal = to64(ftSysKernel) + to64(ftSysUser);
     uint64_t procTotal = to64(ftProcKernel) + to64(ftProcUser);
@@ -153,11 +199,8 @@ double engine::SystemMonitor::getProcessCPU()
 
 void engine::SystemMonitor::getNvidiaGPUInfo()
 {
-	if (m_nvidiaMonitor.isAvailable())
-	{
-        m_vendorGPUUsage = m_nvidiaMonitor.getGpuUsage();
-        m_vendorGPUUsagePercent = m_nvidiaMonitor.getMemoryUsagePercent();
-        m_vendorTemperature = m_nvidiaMonitor.getTemperatureC();
-        m_vendorPowerUsageWatts = m_nvidiaMonitor.getPowerUsageWatts();
-	}
+    m_vendorGPUUsage = m_nvidiaMonitor.getGpuUsage();
+    m_vendorGPUUsagePercent = m_nvidiaMonitor.getMemoryUsagePercent();
+    m_vendorTemperature = m_nvidiaMonitor.getTemperatureC();
+    m_vendorPowerUsageWatts = m_nvidiaMonitor.getPowerUsageWatts();
 }

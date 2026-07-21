@@ -332,6 +332,7 @@
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\ecs\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
+    <ClInclude Include="core\include\helpers\string_helper.h" />
     <ClInclude Include="core\include\lights\area_light.h" />
     <ClInclude Include="core\include\managers\app_manager.h" />
     <ClInclude Include="core\include\managers\audio_manager.h" />

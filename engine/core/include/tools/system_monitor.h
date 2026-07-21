@@ -3,6 +3,9 @@
 #include "../common_defines.h"
 #include <cstdint>
 #include <chrono>
+#include <algorithm>
+#include <string>
+
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -13,6 +16,7 @@
 #endif
 
 #include "nvidia_monitor.h"
+
 
 
 namespace engine
@@ -27,15 +31,19 @@ namespace engine
         SystemMonitor()
         {
 #if defined(_WIN32)
-            // CPU query
+            initVendor();
             initWindowsCPU();
 #else
+            // Linux
             readProcStat(prevIdle, prevTotal);
 #endif
         }
 
         ~SystemMonitor() = default;
         
+#if defined(_WIN32)
+        void initVendor();
+#endif
         
 
         // Call every ~200ms
@@ -46,14 +54,15 @@ namespace engine
 #else
             updateLinux();
 #endif
-
-            updateVendor();
         }
 
 
         void updateVendor()
         {
-            getNvidiaGPUInfo();
+            if (m_isNvidia)
+            {
+                getNvidiaGPUInfo();
+            }
         }
 
 
@@ -83,6 +92,10 @@ namespace engine
         
         #if defined(_WIN32)
         PDHCounters* m_PDHCounters{};
+
+        bool m_isNvidia = false;
+        bool m_isAmd = false;
+        bool m_isIntel = false;
         #endif
 
         NvidiaGpuMonitor m_nvidiaMonitor{};
@@ -94,6 +107,9 @@ namespace engine
         uint64_t m_ramTotalBytes = 0;
 
 
+        
+
+
         int m_vendorGPUUsage = 0;
 		double m_vendorGPUUsagePercent = 0.0;
 		int m_vendorTemperature = 0;
@@ -102,6 +118,7 @@ namespace engine
 
         double getCPUTotalUsed();
         double getCPUTotalUsedPDH();
+        double getCPUProcessUsedPDH();
         double getProcessCPU();
 
 
@@ -109,6 +126,7 @@ namespace engine
         
 
 		void getNvidiaGPUInfo();
+
 
 
 #if defined(_WIN32)
@@ -139,13 +157,12 @@ namespace engine
 
         void updateWindows()
         {
-            #if defined(_WIN32)
-            m_cpuTotalUsedPercent = getCPUTotalUsedPDH(); // using Windows PDH (closest to Task manager value)
-            #else
-            m_cpuTotalUsedPercent = getCPUTotalUsed();
-            #endif
+            updateVendor();
 
-            m_cpuProcessPercent = getProcessCPU();
+            // using Windows PDH (closest to Task manager value)
+            m_cpuTotalUsedPercent = getCPUTotalUsedPDH();
+            m_cpuProcessPercent = getCPUProcessUsedPDH();
+            
 
             // RAM
             MEMORYSTATUSEX mem{};

@@ -55,7 +55,7 @@ void engine::PerformanceOverlay::draw()
     {
         // Center window
         ImVec2 pos = ImGui::GetMainViewport()->GetCenter();
-        pos.y -= ImGui::GetMainViewport()->Size.y / 2.5f;
+        pos.y -= ImGui::GetMainViewport()->Size.y / 3.0f;
         ImGui::SetNextWindowPos(pos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         window_flags |= ImGuiWindowFlags_NoMove;
     }
@@ -66,7 +66,8 @@ void engine::PerformanceOverlay::draw()
     bool open = true; // ImGuiElement manages visibility itself
     if (ImGui::Begin("PerfDebugOverlay", &open, window_flags))
     {
-        static ImVec4 GREY = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+        static ImVec4 GREY_DARK = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+        static ImVec4 GREY_LIGHT = ImVec4(0.7f, 0.7f, 0.7f, 1.0f);
         
         static double accumulator = 0.0;
         static double lastTime = glfwGetTime();
@@ -93,9 +94,9 @@ void engine::PerformanceOverlay::draw()
             cachedRamPercent = (cachedRAMUsed / cachedRAMTotal) * 100.0;
             cachedRamProcessPercent = (cachedProcessRAM / cachedRAMTotal) * 100.0;
 
-            cachedVramTotal = vramInfo.totalBytes / (1024.0 * 1024.0); // MiB
-            cachedVramUsed = vramInfo.usedBytes / (1024.0 * 1024.0); // MiB
-            cachedVramFree = vramInfo.freeBytes / (1024.0 * 1024.0); // MiB
+            cachedVramTotal = vramInfo.totalBytes / (1024.0 * 1024.0 * 1024.0); // GiB
+            cachedVramUsed = vramInfo.usedBytes / (1024.0 * 1024.0 * 1024.0); // GiB
+            cachedVramFree = vramInfo.freeBytes / (1024.0 * 1024.0 * 1024.0); // GiB
             cachedVramPercent = (cachedVramUsed / cachedVramTotal) * 100.0;
 
             cachedVendorGPUUsage = m_sysMonitor.getVendorGPUUsage();
@@ -120,26 +121,23 @@ void engine::PerformanceOverlay::draw()
         // ROW 1
         // -----------------------
         
-
         // FPS
-        //ImGui::BeginChild("FPS", ImVec2(150.0f, 40.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox("%.0f", fps, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1);
-        //    centerTextInBox("FPS", std::nullopt, std::nullopt, true, boxWidth, 20.0f, ImGui::Spectrum::fontSmall1);
-        //}
-        //ImGui::EndChild();
+        ImGui::BeginChild("FPS", ImVec2(160.0f, 38.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("%.0f FPS", fps, std::nullopt, true, boxWidth, -4.0f, ImGui::Spectrum::fontLarge2);
+        }
+        ImGui::EndChild();
 
-        //ImGui::SameLine();
+        ImGui::SameLine();
 
-        //// Hardware
-        //ImGui::BeginChild("HARDWARE", ImVec2(250.0f, 40.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox(m_sysMonitor.GetGPURenderer(), std::nullopt, std::nullopt, false, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1);
-        //    centerTextInBox(m_sysMonitor.GetGPUVersion(), std::nullopt, std::nullopt, false, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
-        //}
-        //ImGui::EndChild();
+        // Hardware
+        ImGui::BeginChild("HARDWARE", ImVec2(240.0f, 38.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox(m_sysMonitor.GetGPURenderer(), std::nullopt, std::nullopt, false, boxWidth, 8.0f, ImGui::Spectrum::fontSmall1);
+        }
+        ImGui::EndChild();
 
         // ------------------------
         // ROW 2
@@ -149,13 +147,13 @@ void engine::PerformanceOverlay::draw()
         ImGui::BeginChild("CPU_2", ImVec2(100.0f, 70.0f), ImGuiChildFlags_None);
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-            centerTextInBox("CPU", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+            centerTextInBox("CPU", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2, GREY_DARK);
 
             ImGui::BeginChild("CPU1", ImVec2(50.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedCPU, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", std::floor(cachedCPU), std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
 
@@ -164,8 +162,8 @@ void engine::PerformanceOverlay::draw()
             ImGui::BeginChild("CPU2", ImVec2(50.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedCPUProcess, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("APP", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", std::floor(cachedCPUProcess), std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("APP", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
         }
@@ -177,13 +175,13 @@ void engine::PerformanceOverlay::draw()
         ImGui::BeginChild("RAM_2", ImVec2(100.0f, 70.0f), ImGuiChildFlags_None);
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-            centerTextInBox("RAM", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+            centerTextInBox("RAM", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2, GREY_DARK);
 
             ImGui::BeginChild("RAM1", ImVec2(50.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedRamPercent, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", cachedRamPercent, std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
 
@@ -192,8 +190,8 @@ void engine::PerformanceOverlay::draw()
             ImGui::BeginChild("RAM2", ImVec2(50.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedRamProcessPercent, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("APP", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", cachedRamProcessPercent, std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("APP", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
         }
@@ -205,13 +203,13 @@ void engine::PerformanceOverlay::draw()
         ImGui::BeginChild("GPU_2", ImVec2(100.0f, 70.0f), ImGuiChildFlags_None);
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-            centerTextInBox("GPU", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+            centerTextInBox("GPU", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2, GREY_DARK);
 
             ImGui::BeginChild("GPU1", ImVec2(100.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedVendorGPUUsagePercent, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", cachedVendorGPUUsagePercent, std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
         }
@@ -223,74 +221,74 @@ void engine::PerformanceOverlay::draw()
         ImGui::BeginChild("VRAM_2", ImVec2(100.0f, 70.0f), ImGuiChildFlags_None);
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-            centerTextInBox("VRAM", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontLarge1, GREY);
+            centerTextInBox("VRAM", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2, GREY_DARK);
 
             ImGui::BeginChild("VRAM1", ImVec2(100.0f, 0.0f), ImGuiChildFlags_None);
             {
                 float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-                centerTextInBox("%.0f%%", cachedVramPercent, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontMedium2);
-                centerTextInBox("TOTAL2", std::nullopt, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1, GREY);
+                centerTextInBox("%.0f%%", cachedVramPercent, std::nullopt, true, boxWidth, -6.0f, ImGui::Spectrum::fontMedium2);
+                centerTextInBox("TOTAL", std::nullopt, std::nullopt, true, boxWidth, 12.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
             }
             ImGui::EndChild();
         }
         ImGui::EndChild();
 
 
-
-        ImGui::PopStyleVar(4);
-
         // ------------------------
         // ROW 3
         // -----------------------
 
         // CPU
-        //ImGui::BeginChild("CPU_3", ImVec2(100.0f, 50.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox("TIME PER FRAME", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY);
-        //    centerTextInBox("%.0f ms", cpuTime, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1);
-        //}
-        //ImGui::EndChild();
+        ImGui::BeginChild("CPU_3", ImVec2(100.0f, 35.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("TIME / FRAME", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
+            centerTextInBox("%.0f ms", cpuTime, std::nullopt, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+        }
+        ImGui::EndChild();
 
-        //ImGui::SameLine();
+        ImGui::SameLine();
 
-        //// RAM
-        //ImGui::BeginChild("RAM_3", ImVec2(100.0f, 50.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY);
-        //    centerTextInBox("%.0f Gb / %.0f Gb", cachedRAMUsed, cachedRAMTotal, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1);
-        //    
-        //}
-        //ImGui::EndChild();
+        // RAM
+        ImGui::BeginChild("RAM_3", ImVec2(100.0f, 35.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
+            centerTextInBox("%.1f / %.1f Gb", cachedRAMUsed, cachedRAMTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+            
+        }
+        ImGui::EndChild();
 
-        //ImGui::SameLine();
+        ImGui::SameLine();
 
-        //// GPU
-        //ImGui::BeginChild("GPU_3", ImVec2(100.0f, 50.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox("TIME PER FRAME", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY);
-        //    centerTextInBox("%.0f ms", gpuTime, std::nullopt, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1);
-        //}
-        //ImGui::EndChild();
+        // GPU
+        ImGui::BeginChild("GPU_3", ImVec2(100.0f, 35.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("TIME / FRAME", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
+            centerTextInBox("%.0f ms", gpuTime, std::nullopt, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+        }
+        ImGui::EndChild();
 
-        //ImGui::SameLine();
+        ImGui::SameLine();
 
-        //// VRAM
-        //ImGui::BeginChild("VRAM_3", ImVec2(100.0f, 50.0f), ImGuiChildFlags_None);
-        //{
-        //    float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-        //    centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY);
-        //    centerTextInBox("%.0f Mb / %.0f Mb", cachedVramUsed, cachedVramTotal, true, boxWidth, 18.0f, ImGui::Spectrum::fontSmall1);
-        //}
-        //ImGui::EndChild();
+        // VRAM
+        ImGui::BeginChild("VRAM_3", ImVec2(100.0f, 35.0f), ImGuiChildFlags_None);
+        {
+            float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
+            centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
+            centerTextInBox("%.1f / %.1f Gb", cachedVramUsed, cachedVramTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+        }
+        ImGui::EndChild();
 
+
+        
 
         
 
-        
-        
+
+        ImGui::PopStyleVar(4);
+
 
 
 

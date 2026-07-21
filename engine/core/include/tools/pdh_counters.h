@@ -80,7 +80,7 @@ namespace engine
             if (status == ERROR_SUCCESS)
             {
                 PdhCollectQueryData(query);
-                Sleep(100);
+                Sleep(SLEEP_DURATION_MS);
                 PdhCollectQueryData(query);
 
                 PDH_FMT_COUNTERVALUE value{};
@@ -130,6 +130,9 @@ namespace engine
                 SYSTEM_INFO info;
                 GetSystemInfo(&info);
 
+                // Normalize by the number of logical cores
+                //cpu /= info.dwNumberOfProcessors;
+
                 // Task Manager clamps
                 if (cpu < 0.0) cpu = 0.0;
                 if (cpu > 100.0) cpu = 100.0;
@@ -151,7 +154,7 @@ namespace engine
 
             // Required double sample
             PdhCollectQueryData(m_processCpuUsedQuery);
-            Sleep(100);
+            Sleep(SLEEP_DURATION_MS);
             PdhCollectQueryData(m_processCpuUsedQuery);
 
             m_processCpuUsedInitialized = true;
@@ -173,6 +176,9 @@ namespace engine
 
                 SYSTEM_INFO info;
                 GetSystemInfo(&info);
+
+                // Normalize by the number of logical cores
+                cpu /= info.dwNumberOfProcessors;
 
                 // Task Manager clamps
                 if (cpu < 0.0) cpu = 0.0;
@@ -196,8 +202,11 @@ namespace engine
         PDH_HCOUNTER m_processCpuUsedCounter = nullptr;
         bool m_processCpuUsedInitialized = false;
 
-        const std::wstring TOTAL_CPU_USED_COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
-        const std::wstring PROCESS_CPU_USED_COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
+        //const std::wstring TOTAL_CPU_USED_COUNTER_PATH = L"\\Informations sur le processeur(_Total)\\Pourcentage de rendement du processeur";
+        const std::wstring TOTAL_CPU_USED_COUNTER_PATH = L"\\Processeur(_Total)\\% temps processeur";
+        const std::wstring PROCESS_CPU_USED_COUNTER_PATH = L"\\Processus(App)\\% temps processeur";
+
+		const unsigned int SLEEP_DURATION_MS = 100; // 100 milliseconds
         
 
         void HandlePDHError(PDH_STATUS status, const std::wstring& context) {

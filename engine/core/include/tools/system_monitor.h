@@ -63,6 +63,14 @@ namespace engine
             {
                 getNvidiaGPUInfo();
             }
+			else if (m_isAmd)
+			{
+				// Implement AMD GPU monitoring here
+			}
+			else if (m_isIntel)
+			{
+				// Implement Intel GPU monitoring here
+			}
         }
 
 

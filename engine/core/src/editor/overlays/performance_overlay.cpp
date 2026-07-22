@@ -1,4 +1,4 @@
-#include "../../include/editor/performance_overlay.h"
+#include "../../../include/editor/overlays/performance_overlay.h"
 
 #include <algorithm>
 
@@ -125,7 +125,7 @@ void engine::PerformanceOverlay::draw()
         ImGui::BeginChild("FPS", ImVec2(160.0f, 38.0f), ImGuiChildFlags_None);
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
-            centerTextInBox("%.0f FPS", fps, std::nullopt, true, boxWidth, -4.0f, ImGui::Spectrum::fontLarge2);
+            centerTextInBox("%.0f FPS", fps, std::nullopt, true, boxWidth, -4.0f, ImGui::Spectrum::fontLarge2, getFPSColor(fps));
         }
         ImGui::EndChild();
 
@@ -282,47 +282,7 @@ void engine::PerformanceOverlay::draw()
         ImGui::EndChild();
 
 
-        
-
-        
-
-
         ImGui::PopStyleVar(4);
-
-
-
-
-
-
-
-
-        //ImGui::Text("GPU Vendor:\n%s", m_sysMonitor.GetGPUVendor().c_str());
-        //ImGui::Text("GPU Renderer:\n%s", m_sysMonitor.GetGPURenderer().c_str());
-        //ImGui::Text("OpenGL Version:\n%s", m_sysMonitor.GetGPUVersion().c_str());
-        //ImGui::Text(" ");
-
-        //ImGui::Text("Application average %.3f ms\nFrame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-
-        //auto vramInfo = m_vramManager.query();
-
-        //double total = vramInfo.totalBytes / (1024.0 * 1024.0);
-        //ImGui::Text("GPU VRAM Total: %.0f MB", total);
-
-        //double used = vramInfo.usedBytes / (1024.0 * 1024.0);
-        //double free = vramInfo.freeBytes / (1024.0 * 1024.0);
-        //ImGui::Text("GPU VRAM Used: %.0f MB / Free: %.0f MB", used, free);
-
-
-
-
-        //ImGui::Text("CPU total : %.0f %%", cachedCPU);
-        //ImGui::Text("CPU app : %.0f %%", cachedCPUProcess);
-
-
-        //ImGui::Text("RAM total : %.2f / %.2f GB", cachedRAMUsed / (1024.0 * 1024 * 1024), cachedRAMTotal / (1024.0 * 1024 * 1024));
-        //ImGui::Text("RAM app : %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
-
 
 
         if (ImGui::BeginPopupContextWindow())
@@ -344,7 +304,7 @@ void engine::PerformanceOverlay::draw()
     ImGui::End();
 }
 
-void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std::optional<double> value1, std::optional<double> value2, bool offsetX, float boxWidth, float yOffset, ImFont* font, const ImVec4& color)
+void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std::optional<double> value1, std::optional<double> value2, bool offsetX, float boxWidth, float offsetY, ImFont* font, const ImVec4& color)
 {
     char buf[64];
 
@@ -368,7 +328,6 @@ void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std:
         snprintf(buf, sizeof(buf), "%s", header.c_str());
     }
 
-
     ImGui::PushFont(font);
 
     ImVec2 size = ImGui::CalcTextSize(buf);
@@ -377,9 +336,68 @@ void engine::PerformanceOverlay::centerTextInBox(const std::string& header, std:
 	if (offsetX)
 		ImGui::SetCursorPosX(center);
 
-    ImGui::SetCursorPosY(yOffset);
+    ImGui::SetCursorPosY(offsetY);
 
     ImGui::TextColored(color, "%s", buf);
 
     ImGui::PopFont();
 }
+
+ImVec4 engine::PerformanceOverlay::getFPSColor(float fps)
+{
+    const ImVec4 red = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);
+    const ImVec4 orange = ImVec4(1.0f, 0.5f, 0.1f, 1.0f);
+    const ImVec4 green = ImVec4(0.2f, 1.0f, 0.2f, 1.0f);
+
+    if (fps < 30.0f)
+        return red;
+
+    if (fps < 45.0f)
+    {
+        float t = (fps - 30.0f) / (45.0f - 30.0f);   // 0 => 1
+        return lerpColor(red, orange, t);
+    }
+
+    if (fps < 60.0f)
+    {
+        float t = (fps - 45.0f) / (60.0f - 45.0f);   // 0 => 1
+        return lerpColor(orange, green, t);
+    }
+
+    return green;
+}
+
+ImVec4 engine::PerformanceOverlay::getPercentColor(float percent)
+{
+    const ImVec4 red = ImVec4(1.0f, 0.1f, 0.1f, 1.0f);
+    const ImVec4 orange = ImVec4(1.0f, 0.5f, 0.1f, 1.0f);
+    const ImVec4 green = ImVec4(0.2f, 1.0f, 0.2f, 1.0f);
+
+    //if (fps < 30.0f)
+    //    return red;
+
+    //if (fps < 45.0f)
+    //{
+    //    float t = (fps - 30.0f) / (45.0f - 30.0f);   // 0 => 1
+    //    return lerpColor(red, orange, t);
+    //}
+
+    //if (fps < 60.0f)
+    //{
+    //    float t = (fps - 45.0f) / (60.0f - 45.0f);   // 0 => 1
+    //    return lerpColor(orange, green, t);
+    //}
+
+    return green;
+}
+
+ImVec4 engine::PerformanceOverlay::lerpColor(const ImVec4& a, const ImVec4& b, float t)
+{
+    return ImVec4(
+        a.x + (b.x - a.x) * t,
+        a.y + (b.y - a.y) * t,
+        a.z + (b.z - a.z) * t,
+        a.w + (b.w - a.w) * t
+    );
+}
+

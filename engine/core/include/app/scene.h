@@ -11,7 +11,7 @@
 #include "../misc/noncopyable.h"
 #include "../tools/file_system.h"
 #include "../editor/imgui_editor.h"
-#include "../editor/performance_overlay.h"
+#include "../editor/overlays/performance_overlay.h"
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"

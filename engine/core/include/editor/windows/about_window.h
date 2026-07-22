@@ -1,9 +1,9 @@
 #pragma once
 
-#include "imgui_element.h"
+#include "../imgui_element.h"
 
-#include "../tools/system_monitor.h"
-#include "../tools/vram_manager.h"
+#include "../../tools/system_monitor.h"
+#include "../../tools/vram_manager.h"
 
 namespace engine
 {

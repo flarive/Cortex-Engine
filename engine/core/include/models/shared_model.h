@@ -130,7 +130,7 @@ namespace engine
 
         virtual Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
-        bool checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat);
+        bool checkMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
         
 

@@ -1,7 +1,4 @@
-#include "../../include/editor/settings_window.h"
-
-
-
+#include "../../../include/editor/windows/settings_window.h"
 
 void engine::SettingsWindow::renderTabSettings()
 {

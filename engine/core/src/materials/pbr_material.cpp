@@ -17,3 +17,11 @@ engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const std::string& d
 	: Material(ambientColor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath)
 {
 }
+
+/// <summary>
+/// PBR material with MR, ARM combined textures
+/// </summary>
+engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, float shininess)
+	: Material(combinedTextureType, ambientColor, diffuseTexPath, "", normalTexPath, rmOrArmTexPath, heightTexPath)
+{
+}

@@ -195,12 +195,12 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
-    <ClCompile Include="core\src\editor\about_window.cpp" />
-    <ClCompile Include="core\src\editor\custom_widget.cpp" />
-    <ClCompile Include="core\src\editor\dialog_box.cpp" />
-    <ClCompile Include="core\src\editor\dockspace.cpp" />
+    <ClCompile Include="core\src\editor\windows\about_window.cpp" />
+    <ClCompile Include="core\src\editor\widgets\custom_widget.cpp" />
+    <ClCompile Include="core\src\editor\windows\dialog_box.cpp" />
+    <ClCompile Include="core\src\editor\dockspaces\dockspace.cpp" />
     <ClCompile Include="core\src\editor\editor_helper.cpp" />
-    <ClCompile Include="core\src\editor\floating_toolbar_window.cpp" />
+    <ClCompile Include="core\src\editor\windows\floating_toolbar_window.cpp" />
     <ClCompile Include="core\src\editor\icon_atlas.cpp" />
     <ClCompile Include="core\src\editor\imgui_editor.cpp" />
     <ClCompile Include="core\src\ecs\camera_component.cpp" />
@@ -211,8 +211,8 @@
     <ClCompile Include="core\src\ecs\primitive_component.cpp" />
     <ClCompile Include="core\src\editor\imgui_element.cpp" />
     <ClCompile Include="core\src\editor\imgui_ui_manager.cpp" />
-    <ClCompile Include="core\src\editor\properties_window.cpp" />
-    <ClCompile Include="core\src\editor\scene_window.cpp" />
+    <ClCompile Include="core\src\editor\windows\properties_window.cpp" />
+    <ClCompile Include="core\src\editor\windows\scene_window.cpp" />
     <ClCompile Include="core\src\lights\area_light.cpp" />
     <ClCompile Include="core\src\managers\app_manager.cpp" />
     <ClCompile Include="core\src\managers\audio_manager.cpp" />
@@ -233,7 +233,7 @@
     <ClCompile Include="core\src\renderers\phong_renderer.cpp" />
     <ClCompile Include="core\src\renderers\pbr_renderer.cpp" />
     <ClCompile Include="core\src\renderers\renderer.cpp" />
-    <ClCompile Include="core\src\editor\settings_window.cpp" />
+    <ClCompile Include="core\src\editor\windows\settings_window.cpp" />
     <ClCompile Include="core\src\singleton.cpp" />
     <ClCompile Include="core\src\primitives\terrain.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
@@ -263,7 +263,7 @@
     <ClCompile Include="core\src\ui\ui.cpp" />
     <ClCompile Include="core\src\uvmapping.cpp" />
     <ClCompile Include="core\src\ecs\transform_component.cpp" />
-    <ClCompile Include="core\src\editor\performance_overlay.cpp" />
+    <ClCompile Include="core\src\editor\overlays\performance_overlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
@@ -310,11 +310,11 @@
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
-    <ClInclude Include="core\include\editor\about_window.h" />
-    <ClInclude Include="core\include\editor\dialog_box.h" />
-    <ClInclude Include="core\include\editor\dockspace.h" />
+    <ClInclude Include="core\include\editor\windows\about_window.h" />
+    <ClInclude Include="core\include\editor\windows\dialog_box.h" />
+    <ClInclude Include="core\include\editor\dockspaces\dockspace.h" />
     <ClInclude Include="core\include\editor\editor_helper.h" />
-    <ClInclude Include="core\include\editor\floating_toolbar_window.h" />
+    <ClInclude Include="core\include\editor\windows\floating_toolbar_window.h" />
     <ClInclude Include="core\include\editor\icon_atlas.h" />
     <ClInclude Include="core\include\editor\imgui_editor.h" />
     <ClInclude Include="core\include\ecs\camera_component.h" />
@@ -325,10 +325,10 @@
     <ClInclude Include="core\include\ecs\transform_component.h" />
     <ClInclude Include="core\include\editor\imgui_element.h" />
     <ClInclude Include="core\include\editor\imgui_ui_manager.h" />
-    <ClInclude Include="core\include\editor\performance_overlay.h" />
-    <ClInclude Include="core\include\editor\properties_window.h" />
-    <ClInclude Include="core\include\editor\scene_window.h" />
-    <ClInclude Include="core\include\editor\settings_window.h" />
+    <ClInclude Include="core\include\editor\overlays\performance_overlay.h" />
+    <ClInclude Include="core\include\editor\windows\properties_window.h" />
+    <ClInclude Include="core\include\editor\windows\scene_window.h" />
+    <ClInclude Include="core\include\editor\windows\settings_window.h" />
     <ClInclude Include="core\include\engine.h" />
     <ClInclude Include="core\include\ecs\entity.h" />
     <ClInclude Include="core\include\frustrum.h" />
@@ -390,7 +390,7 @@
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />
     <ClInclude Include="core\include\managers\entity_manager.h" />
-    <ClInclude Include="core\include\editor\custom_widget.h" />
+    <ClInclude Include="core\include\editor\widgets\custom_widget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

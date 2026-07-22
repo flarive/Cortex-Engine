@@ -1,16 +1,16 @@
 #pragma once
 
-#include "imgui_element.h"
+#include "../imgui_element.h"
 
-#include "../ecs/entity.h"
-#include "../ecs/transform_component.h"
-#include "../ecs/light_component.h"
-#include "../ecs/camera_component.h"
-#include "../ecs/model_component.h"
-#include "../ecs/primitive_component.h"
-#include "../ecs/animator_component.h"
-#include "../ecs/particlesystem_component.h"
-#include "../ecs/terrain_component.h"
+#include "../../ecs/entity.h"
+#include "../../ecs/transform_component.h"
+#include "../../ecs/light_component.h"
+#include "../../ecs/camera_component.h"
+#include "../../ecs/model_component.h"
+#include "../../ecs/primitive_component.h"
+#include "../../ecs/animator_component.h"
+#include "../../ecs/particlesystem_component.h"
+#include "../../ecs/terrain_component.h"
 
 namespace engine
 {

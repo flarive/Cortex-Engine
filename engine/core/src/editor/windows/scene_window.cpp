@@ -1,6 +1,6 @@
-#include "../../include/editor/scene_window.h"
+#include "../../../include/editor/windows/scene_window.h"
 
-#include "../../include/editor/editor_helper.h"
+#include "../../../include/editor/editor_helper.h"
 
 void engine::SceneWindow::renderHierarchyWidget()
 {

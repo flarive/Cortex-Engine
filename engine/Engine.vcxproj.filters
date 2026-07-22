@@ -217,6 +217,30 @@
     <Filter Include="Fichiers d%27en-tête\core\helpers">
       <UniqueIdentifier>{08194286-4625-47c5-bb3e-4652de436e80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\core\editor\overlays">
+      <UniqueIdentifier>{fab293e2-c709-460e-bad1-4c4453f18079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor\overlays">
+      <UniqueIdentifier>{0f8e0f7c-9326-40a0-8eca-a0a34cb3b40c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor\windows">
+      <UniqueIdentifier>{33cd611b-e674-42b3-a41f-1612865c862e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\editor\windows">
+      <UniqueIdentifier>{dcab9522-29c1-4f0b-988d-794a0d625b80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor\dockspaces">
+      <UniqueIdentifier>{e47c7818-a36e-4cf5-b4f4-2247800ca526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\editor\dockspaces">
+      <UniqueIdentifier>{c2b57f9f-1347-4a57-a2e5-bba5284148e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\editor\widgets">
+      <UniqueIdentifier>{2e4545fe-804f-4bf4-8ad4-9d9dd6dd7185}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\editor\widgets">
+      <UniqueIdentifier>{821f8139-aee1-47f0-a298-5f84e8859831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -507,38 +531,38 @@
     <ClCompile Include="..\libs\glad\src\glad.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\editor\dialog_box.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\custom_widget.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\editor\imgui_ui_manager.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\performance_overlay.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\dockspace.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\scene_window.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\about_window.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\properties_window.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\editor\floating_toolbar_window.cpp">
       <Filter>Fichiers sources\core\editor</Filter>
     </ClCompile>
     <ClCompile Include="core\src\editor\imgui_element.cpp">
       <Filter>Fichiers sources\core\editor\base</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\editor\settings_window.cpp">
-      <Filter>Fichiers sources\core\editor</Filter>
+    <ClCompile Include="core\src\editor\overlays\performance_overlay.cpp">
+      <Filter>Fichiers sources\core\editor\overlays</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\about_window.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\floating_toolbar_window.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\properties_window.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\scene_window.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\settings_window.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\dockspaces\dockspace.cpp">
+      <Filter>Fichiers sources\core\editor\dockspaces</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\widgets\custom_widget.cpp">
+      <Filter>Fichiers sources\core\editor\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\editor\windows\dialog_box.cpp">
+      <Filter>Fichiers sources\core\editor\windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -875,35 +899,8 @@
     <ClInclude Include="core\include\editor\imgui_element.h">
       <Filter>Fichiers d%27en-tête\core\editor\base</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\editor\dialog_box.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\performance_overlay.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\editor\imgui_ui_manager.h">
       <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\dockspace.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\scene_window.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\settings_window.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\custom_widget.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\about_window.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\properties_window.h">
-      <Filter>Fichiers d%27en-tête\core\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\editor\floating_toolbar_window.h">
-      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="core\include\misc\event.h">
       <Filter>Fichiers d%27en-tête\core\misc</Filter>
@@ -916,6 +913,33 @@
     </ClInclude>
     <ClInclude Include="core\include\helpers\string_helper.h">
       <Filter>Fichiers d%27en-tête\core\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\overlays\performance_overlay.h">
+      <Filter>Fichiers d%27en-tête\core\editor\overlays</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\settings_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\scene_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\floating_toolbar_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\about_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\properties_window.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\dockspaces\dockspace.h">
+      <Filter>Fichiers d%27en-tête\core\editor\dockspaces</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\widgets\custom_widget.h">
+      <Filter>Fichiers d%27en-tête\core\editor\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\windows\dialog_box.h">
+      <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

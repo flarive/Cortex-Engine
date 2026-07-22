@@ -1,10 +1,10 @@
 #pragma once
 
-#include "imgui_element.h"
+#include "../imgui_element.h"
 
-#include "../common_defines.h"
-#include "../tools/system_monitor.h"
-#include "../tools/vram_manager.h"
+#include "../../common_defines.h"
+#include "../../tools/system_monitor.h"
+#include "../../tools/vram_manager.h"
 
 #include <optional>
 
@@ -50,7 +50,11 @@ namespace engine
 
 
 
-        void centerTextInBox(const std::string& header, std::optional<double> value1, std::optional<double> value2, bool offsetX, float boxWidth, float yOffset, ImFont* font = ImGui::Spectrum::fontSmall1, const ImVec4& color = ImVec4(1, 1, 1, 1));
+        void centerTextInBox(const std::string& header, std::optional<double> value1, std::optional<double> value2, bool offsetX, float boxWidth, float offsetY, ImFont* font = ImGui::Spectrum::fontSmall1, const ImVec4& color = ImVec4(1, 1, 1, 1));
+
+        ImVec4 getFPSColor(float fps);
+        ImVec4 getPercentColor(float percent);
+        static ImVec4 lerpColor(const ImVec4& a, const ImVec4& b, float t);
 
     protected:
         void draw() override;

@@ -1,4 +1,4 @@
-#include "../../include/editor/about_window.h"
+#include "../../../include/editor/windows/about_window.h"
 
 void engine::AboutWindow::init()
 {

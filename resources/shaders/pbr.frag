@@ -753,7 +753,7 @@ void main()
 
     if (material.has_texture_metalness_from_combined_map)
     {
-        // Sample the combined texture
+        // Sample the MR combined texture
         vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
         metallic = metalRoughness.b; // Extract metallic from Blue channel
         roughness = metalRoughness.g; // Extract roughness from Green channel

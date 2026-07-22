@@ -11,6 +11,8 @@
 namespace engine
 {
     enum class MaterialType { undefined = 0, blinnphong = 1, PBR = 2 };
+
+    enum class CombinedTexture { NoCombination = 0, MR = 1, ARM = 2 };
     
     /// <summary>
     /// Abstract class for materials
@@ -27,7 +29,9 @@ namespace engine
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
         Material(const Color& ambientColor);
         Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
-        Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = "", const std::string& heightTexPath = "", float shininess = 1.0f);
+        Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess = 1.0f);
+        
+        Material(CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath);
 
         virtual ~Material() = default;
 
@@ -123,9 +127,14 @@ namespace engine
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};
         std::string m_normalTexPath{};
-        std::string m_metallicTexPath{};
-        std::string m_roughnessTexPath{};
+        
         std::string m_aoTexPath{};
+        std::string m_roughnessTexPath{};
+        std::string m_metallicTexPath{};
+
+        std::string m_rmTexPath{}; // roughness and metallic textures combined
+        std::string m_armTexPath{}; // ambient occlusion, roughness and metallic textures combined
+        
         std::string m_heightTexPath{};
         std::string m_emissiveTexPath{};
 

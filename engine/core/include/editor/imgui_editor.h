@@ -16,9 +16,6 @@
 
 #include <imgui.h>
 
-
-//#include "../../include/editor/performance_overlay.h"
-
 #if EDITOR_MODE
 namespace engine
 {

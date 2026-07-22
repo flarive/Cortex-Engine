@@ -292,7 +292,13 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
 }
 
-bool engine::SharedModel::checkMetalnessRoughnessSingleTexture(const aiScene* scene, aiMaterial* mat)
+/// <summary>
+/// MR combined textures (metalness + roughness)
+/// </summary>
+/// <param name="scene"></param>
+/// <param name="mat"></param>
+/// <returns></returns>
+bool engine::SharedModel::checkMRSingleTexture(const aiScene* scene, aiMaterial* mat)
 {
     aiString str1{};
     aiString str2{};
@@ -324,12 +330,12 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
         {
             if (std::strcmp(loaded.path.c_str(), str.C_Str()) == 0)
             {
-                // If this is a metallic/roughness texture, mark it as such
+                // If this is a metallic/roughness MR texture, mark it as such
                 if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
                 {
                     engine::Texture texture{ loaded.id, typeName, str.C_Str() };
 
-                    bool singleTexture = checkMetalnessRoughnessSingleTexture(scene, mat);
+                    bool singleTexture = checkMRSingleTexture(scene, mat);
                     if (singleTexture)
                     {
                         // Tag the texture as metallic or roughness
@@ -378,7 +384,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
 
             if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
             {
-                bool singleTexture = checkMetalnessRoughnessSingleTexture(scene, mat);
+                bool singleTexture = checkMRSingleTexture(scene, mat);
                 if (singleTexture)
                 {
                     // Tag the texture if it's metallic or roughness

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "imgui_element.h"
+#include "../imgui_element.h"
 
-#include "../app/scene_settings.h"
+#include "../../app/scene_settings.h"
 
-#include "../../include/editor/editor_helper.h"
+#include "../../../include/editor/editor_helper.h"
 
 namespace engine
 {

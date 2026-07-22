@@ -1,4 +1,4 @@
-#include "../../include/editor/dockspace.h"
+#include "../../../include/editor/dockspaces/dockspace.h"
 
 void engine::DockSpaceElement::begin()
 {

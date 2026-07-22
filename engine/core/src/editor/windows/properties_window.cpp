@@ -1,6 +1,6 @@
-#include "../../include/editor/properties_window.h"
+#include "../../../include/editor/windows/properties_window.h"
 
-#include "../../include/editor/editor_helper.h"
+#include "../../../include/editor/editor_helper.h"
 
 void engine::PropertiesWindow::onInit()
 {

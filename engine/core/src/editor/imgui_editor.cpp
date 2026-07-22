@@ -1,19 +1,18 @@
 ﻿#include "../../include/editor/imgui_editor.h"
 
-//#include "../../include/misc/colors.h"
-
 #include <string>
 #include <format>
 
-#include "../../include/editor/dialog_box.h"
-#include "../../include/editor/custom_widget.h"
+// test
+#include "../../include/editor/windows/dialog_box.h"
+#include "../../include/editor/widgets/custom_widget.h"
 
-#include "../../include/editor/dockspace.h"
-#include "../../include/editor/about_window.h"
-#include "../../include/editor/scene_window.h"
-#include "../../include/editor/settings_window.h"
-#include "../../include/editor/properties_window.h"
-#include "../../include/editor/floating_toolbar_window.h"
+#include "../../include/editor/dockspaces/dockspace.h"
+#include "../../include/editor/windows/about_window.h"
+#include "../../include/editor/windows/scene_window.h"
+#include "../../include/editor/windows/settings_window.h"
+#include "../../include/editor/windows/properties_window.h"
+#include "../../include/editor/windows/floating_toolbar_window.h"
 
 
 #include "../../include/managers/entity_manager.h"

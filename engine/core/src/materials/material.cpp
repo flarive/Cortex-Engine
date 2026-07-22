@@ -23,6 +23,19 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 {
 }
 
+engine::Material::Material(CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_heightTexPath(heightTexPath), m_shininess(0.0f)
+{
+    if (mode == CombinedTexture::MR)
+    {
+        m_rmTexPath = rmOrArmTexPath;
+    }
+    else if (mode == CombinedTexture::ARM)
+    {
+        m_armTexPath = rmOrArmTexPath;
+    }
+}
+
 bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
 {
     static int m_maxFragUnits{};

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "imgui_element.h"
+#include "../imgui_element.h"
 
-#include "../ecs/entity.h"
+#include "../../ecs/entity.h"
 
 namespace engine
 {

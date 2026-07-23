@@ -113,12 +113,10 @@ void MyScene14::init()
     auto myTerrain = make_shared<Terrain>(3.2f, 10);
     shared_ptr<Material> matTerrain{};
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        matTerrain = make_shared<PBRMaterial>(Color(0.1f),
+        matTerrain = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f),
             "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
-            "",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_arm_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg");
     }
     else
@@ -146,6 +144,12 @@ void MyScene14::init()
             "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
+
+        //matSphere1 = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f, 0.7f, 0.3f, 1.0f),
+        //    "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
+        //    "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
+        //    "textures/pbr/ceramic/ClayCeramicGlossy_ARM.jpg",
+        //    "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
     }
     else {
         matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");

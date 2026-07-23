@@ -26,12 +26,14 @@ engine::Material::Material(const Color& ambientColor, const std::string& diffuse
 engine::Material::Material(CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath)
     : m_ambientColor(ambientColor), m_diffuseTexPath(diffuseTexPath), m_specularTexPath(specularTexPath), m_normalTexPath(normalTexPath), m_heightTexPath(heightTexPath), m_shininess(0.0f)
 {
-    if (mode == CombinedTexture::MR)
+    if (mode == CombinedTexture::RM)
     {
+        // packed Roughness/Metallic
         m_rmTexPath = rmOrArmTexPath;
     }
     else if (mode == CombinedTexture::ARM)
     {
+        // packed AO/Roughness/Metallic
         m_armTexPath = rmOrArmTexPath;
     }
 }
@@ -197,45 +199,50 @@ void engine::Material::loadTextures()
     // Load textures asynchronously
     if (type == MaterialType::PBR)
     {
-        unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(getDiffuseTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
+        unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
 
-        unsigned int normalMapId = hasNormalMap() ? engine::Texture::loadTexture(getNormalTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+        unsigned int normalMapId = hasNormalMap() ? engine::Texture::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
 
-        unsigned int metallicMapId = hasMetallicMap() ? engine::Texture::loadTexture(getMetallicTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
+        unsigned int metallicMapId = hasMetallicMap() ? engine::Texture::loadTexture(m_metallicTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", m_metallicTexPath }));
 
-        unsigned int roughnessMapId = hasRoughnessMap() ? engine::Texture::loadTexture(getRoughnessTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
+        unsigned int roughnessMapId = hasRoughnessMap() ? engine::Texture::loadTexture(m_roughnessTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", m_roughnessTexPath }));
 
-        unsigned int aoMapId = hasAoMap() ? engine::Texture::loadTexture(getAoTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
+        unsigned int aoMapId = hasAoMap() ? engine::Texture::loadTexture(m_aoTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
 
-        unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(getHeightTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+        unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
 
-        unsigned int emissiveMapId = hasEmissiveMap() ? engine::Texture::loadTexture(getEmissiveTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+        unsigned int emissiveMapId = hasEmissiveMap() ? engine::Texture::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
+
+        if (!m_armTexPath.empty())
+        {
+            int i = 0;
+        }
     }
     else
     {
         // BlinnPhong, Phong...
-        unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(getDiffuseTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
+        unsigned int diffuseMapId = hasDiffuseMap() ? engine::Texture::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
 
-        unsigned int specularMapId = hasSpecularMap() ? engine::Texture::loadTexture(getSpecularTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
+        unsigned int specularMapId = hasSpecularMap() ? engine::Texture::loadTexture(m_specularTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", m_specularTexPath }));
 
-        unsigned int normalMapId = hasNormalMap() ? engine::Texture::loadTexture(getNormalTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+        unsigned int normalMapId = hasNormalMap() ? engine::Texture::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
 
-        unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(getHeightTexPath(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
+        unsigned int heightMapId = hasHeightMap() ? engine::Texture::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
     }
 }
 
-void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoaded)
+void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoadedCallback)
 {
     textures.clear();
     
@@ -248,77 +255,133 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     //unsigned int heightMapId{};
     unsigned int emissiveMapId{};
 
+
+    unsigned int armMapId{}; // packed AO/Roughness/Metallic
+    unsigned int rmMapId{}; // packed Roughness/Metallic
+
+
     MaterialType type = getTypeID();
 
     // Load textures asynchronously
     if (type == MaterialType::PBR)
     {
+        // PBR
         textures.reserve(7);
         
         // request load textures async on another thread
-        engine::Texture::requestLoadTextureAsync(getDiffuseTexPath());
-        engine::Texture::requestLoadTextureAsync(getNormalTexPath());
-        engine::Texture::requestLoadTextureAsync(getMetallicTexPath());
-        engine::Texture::requestLoadTextureAsync(getRoughnessTexPath());
-        engine::Texture::requestLoadTextureAsync(getAoTexPath());
-        engine::Texture::requestLoadTextureAsync(getHeightTexPath());
-        engine::Texture::requestLoadTextureAsync(getEmissiveTexPath());
+        engine::Texture::requestLoadTextureAsync(m_diffuseTexPath);
+        engine::Texture::requestLoadTextureAsync(m_normalTexPath);
+        
+        if (hasArmMap())
+        {
+            engine::Texture::requestLoadTextureAsync(m_armTexPath);
+        }
+        else if (hasRmMap())
+        {
+            engine::Texture::requestLoadTextureAsync(m_rmTexPath);
+        }
+        else
+        {
+            engine::Texture::requestLoadTextureAsync(m_metallicTexPath);
+            engine::Texture::requestLoadTextureAsync(m_roughnessTexPath);
+            engine::Texture::requestLoadTextureAsync(m_aoTexPath);
+        }
+        
+        engine::Texture::requestLoadTextureAsync(m_heightTexPath);
+        engine::Texture::requestLoadTextureAsync(m_emissiveTexPath);
 
         // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(getDiffuseTexPath()) : 0;
-        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(getNormalTexPath()) : 0;
-        metallicMapId = hasMetallicMap() ? engine::Texture::enqueueAsyncTextureCreation(getMetallicTexPath()) : 0;
-        roughnessMapId = hasRoughnessMap() ? engine::Texture::enqueueAsyncTextureCreation(getRoughnessTexPath()) : 0;
-        aoMapId = hasAoMap() ? engine::Texture::enqueueAsyncTextureCreation(getAoTexPath()) : 0;
-        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(getHeightTexPath()) : 0;
-        emissiveMapId = hasEmissiveMap() ? engine::Texture::enqueueAsyncTextureCreation(getEmissiveTexPath()) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
+        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
+
+        if (hasArmMap())
+        {
+            // ARM combined texture(ambient occlusion, roughness and metalness)
+            armMapId = engine::Texture::enqueueAsyncTextureCreation(m_armTexPath);
+
+            aoMapId = 0;
+            roughnessMapId = 0;
+            metallicMapId = 0;
+        }
+        else if (hasRmMap())
+        {
+            // RM combined texture(roughness and metalness)
+            rmMapId = engine::Texture::enqueueAsyncTextureCreation(m_rmTexPath);
+
+            roughnessMapId = 0;
+            metallicMapId = 0;
+        }
+        else
+        {
+            metallicMapId = hasMetallicMap() ? engine::Texture::enqueueAsyncTextureCreation(m_metallicTexPath) : 0;
+            roughnessMapId = hasRoughnessMap() ? engine::Texture::enqueueAsyncTextureCreation(m_roughnessTexPath) : 0;
+            aoMapId = hasAoMap() ? engine::Texture::enqueueAsyncTextureCreation(m_aoTexPath) : 0;
+        }
+        
+        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
+        emissiveMapId = hasEmissiveMap() ? engine::Texture::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
     }
     else
     {
+        // BlinnPhong, Blinn...
         textures.reserve(4);
         
-        engine::Texture::requestLoadTextureAsync(getDiffuseTexPath());
-        engine::Texture::requestLoadTextureAsync(getSpecularTexPath());
-        engine::Texture::requestLoadTextureAsync(getNormalTexPath());
-        engine::Texture::requestLoadTextureAsync(getHeightTexPath());
+        engine::Texture::requestLoadTextureAsync(m_diffuseTexPath);
+        engine::Texture::requestLoadTextureAsync(m_specularTexPath);
+        engine::Texture::requestLoadTextureAsync(m_normalTexPath);
+        engine::Texture::requestLoadTextureAsync(m_heightTexPath);
 
         // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(getDiffuseTexPath()) : 0;
-        specularMapId = hasSpecularMap() ? engine::Texture::enqueueAsyncTextureCreation(getSpecularTexPath()) : 0;
-        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(getNormalTexPath()) : 0;
-        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(getHeightTexPath()) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::Texture::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
+        specularMapId = hasSpecularMap() ? engine::Texture::enqueueAsyncTextureCreation(m_specularTexPath) : 0;
+        normalMapId = hasNormalMap() ? engine::Texture::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
+        heightMapId = hasHeightMap() ? engine::Texture::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
     }
 
 
     // process queue
     engine::Texture::processLoadedTextures();
 
-    // get TextureID from queue
-
-    diffuseMapId = engine::TextureManager::textureIDCache[getDiffuseTexPath()];
+    
+    // get loaded TextureID from queue
+    diffuseMapId = engine::TextureManager::textureIDCache[m_diffuseTexPath];
     if (diffuseMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", getDiffuseTexPath() }));
+        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
 
-    specularMapId = engine::TextureManager::textureIDCache[getSpecularTexPath()];
+    specularMapId = engine::TextureManager::textureIDCache[m_specularTexPath];
 	if (specularMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", getSpecularTexPath() }));
+        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", m_specularTexPath }));
 
-    // should always be added even if id = 0 (to set has_normal_map = false in shader)
-    normalMapId = engine::TextureManager::textureIDCache[getNormalTexPath()];
+    normalMapId = engine::TextureManager::textureIDCache[m_normalTexPath];
     if (normalMapId > 0)
-	    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", getNormalTexPath() }));
+	    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
 
-    metallicMapId = engine::TextureManager::textureIDCache[getMetallicTexPath()];
-    if (metallicMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", getMetallicTexPath() }));
+    if (hasArmMap())
+    {
+        armMapId = engine::TextureManager::textureIDCache[m_armTexPath];
+        if (armMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ armMapId, "texture_arm", m_armTexPath }));
+    }
+    else if (hasRmMap())
+    {
+        rmMapId = engine::TextureManager::textureIDCache[m_rmTexPath];
+        if (rmMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ rmMapId, "texture_rm", m_rmTexPath }));
+    }
+    else
+    {
+        aoMapId = engine::TextureManager::textureIDCache[m_aoTexPath];
+        if (aoMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
 
-    roughnessMapId = engine::TextureManager::textureIDCache[getRoughnessTexPath()];
-    if (roughnessMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", getRoughnessTexPath() }));
+        roughnessMapId = engine::TextureManager::textureIDCache[m_roughnessTexPath];
+        if (roughnessMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", m_roughnessTexPath }));
 
-    aoMapId = engine::TextureManager::textureIDCache[getAoTexPath()];
-    if (aoMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", getAoTexPath() }));
+        metallicMapId = engine::TextureManager::textureIDCache[m_metallicTexPath];
+        if (metallicMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", m_metallicTexPath }));
+    }
 
     heightMapId = engine::TextureManager::textureIDCache[getHeightTexPath()];
     if (heightMapId > 0)
@@ -331,12 +394,12 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
 
     if (diffuseMapId > 0) // BOFFFFF !!!!
     {
-        //std::cout << "All textures loaded !!!!!" << std::endl;
+        // use textures.size() instead
         m_allTexturesLoaded = true;
     }
 
-    if (texturesLoaded)
-        texturesLoaded(m_allTexturesLoaded);
+    if (texturesLoadedCallback)
+        texturesLoadedCallback(m_allTexturesLoaded);
 }
 
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)

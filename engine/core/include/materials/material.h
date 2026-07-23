@@ -12,7 +12,7 @@ namespace engine
 {
     enum class MaterialType { undefined = 0, blinnphong = 1, PBR = 2 };
 
-    enum class CombinedTexture { NoCombination = 0, MR = 1, ARM = 2 };
+    enum class CombinedTexture { NoCombination = 0, RM = 1, ARM = 2 };
     
     /// <summary>
     /// Abstract class for materials
@@ -41,7 +41,7 @@ namespace engine
         }
 
         void loadTextures();
-        void loadTexturesAsync(std::function<void(bool)> texturesLoaded = nullptr);
+        void loadTexturesAsync(std::function<void(bool)> texturesLoadedCallback = nullptr);
 
         bool bind(Shader& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
         bool bind2(engine::Shader& shader) const;
@@ -57,6 +57,9 @@ namespace engine
         bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
         bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
 
+        bool hasArmMap() const { return !std::empty(m_armTexPath); }
+        bool hasRmMap() const { return !std::empty(m_rmTexPath); }
+        
         bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
         bool areAllTexturesLoaded() const { return !hasTextures() || (hasTextures() && m_allTexturesLoaded); }

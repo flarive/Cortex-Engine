@@ -18,7 +18,7 @@ namespace engine
 		PBRMaterial(CombinedTexture combinedTextureType, const Color& ambientColor,
 			const std::string& diffuseTexPath,
 			const std::string& normalTexPath,
-			const std::string& armOrRmTexPath,     // <-- packed AO/Roughness/Metallic or packed /Roughness/Metallic
+			const std::string& armOrRmTexPath,     // <-- packed AO/Roughness/Metallic or packed Roughness/Metallic
 			const std::string& heightTexPath,
 			float shininess = 0.0f);
 

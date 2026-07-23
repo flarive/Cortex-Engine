@@ -24,8 +24,10 @@ struct Material {
     sampler2D texture_roughness;
     sampler2D texture_ao;
     sampler2D texture_emissive;
-    
 
+    // combined textures
+    sampler2D texture_arm;
+    sampler2D texture_rm;
     sampler2D texture_metalness_from_combined;
 
     int shadowCalculationMethod;
@@ -55,7 +57,11 @@ struct Material {
     bool has_texture_normal_map;
     bool has_texture_metalness_map;
     bool has_texture_roughness_map;
+    
+    bool has_texture_arm_map;
+    bool has_texture_rm_map;
     bool has_texture_metalness_from_combined_map;
+
     bool has_texture_ao_map;
     bool has_texture_emissive_map;
 
@@ -748,24 +754,43 @@ void main()
     vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
-    float metallic = 0;
-    float roughness = 0;
+    float metallic = 0.0;
+    float roughness = 0.0;
+    float ao = 1.0;
 
-    if (material.has_texture_metalness_from_combined_map)
+    if (material.has_texture_arm_map)
     {
+        // Sample the ARM combined texture
+        vec4 aoRoughnessMetalness = texture(material.texture_arm, texCoords);
+        ao = aoRoughnessMetalness.r; // Extract ambient occlusion from Red channel
+        roughness = aoRoughnessMetalness.g; // Extract roughness from Green channel
+        metallic = aoRoughnessMetalness.b; // Extract metallic from Blue channel
+    }
+    else if (material.has_texture_rm_map)
+    {
+        // Sample the RM combined texture
+        vec4 roughnessMetalness = texture(material.texture_rm, texCoords);
+        metallic = roughnessMetalness.b; // Extract metallic from Blue channel
+        roughness = roughnessMetalness.g; // Extract roughness from Green channel
+        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 1.0; // Ambient occlusion defaults to white (1.0) 
+    }
+    else if (material.has_texture_metalness_from_combined_map)
+    {
+        // to remove !!!!!!!!!!!!! (merge with just above)
         // Sample the MR combined texture
         vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
         metallic = metalRoughness.b; // Extract metallic from Blue channel
         roughness = metalRoughness.g; // Extract roughness from Green channel
+        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Ambient occlusion defaults to white (1.0) 
     }
     else
     {
-        // 2 distinct textures
-        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
+        // 3 distinct textures
+        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Ambient occlusion defaults to white (1.0) 
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
+        metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
     }
 
-    float ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0;
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
 

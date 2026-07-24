@@ -6,7 +6,7 @@ bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int at
     m_atlasWidth = atlasWidth;
     m_atlasHeight = atlasHeight;
 
-    m_textureID = Texture::loadTexture(filePath.c_str(), TextureFlag_CompressTexture); // TextureFlag_InvertY
+    m_textureID = Texture::loadTexture(filePath.c_str()); // TextureFlag_InvertY
 
     return (m_textureID != 0);
 }

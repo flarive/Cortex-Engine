@@ -137,19 +137,11 @@ void MyScene14::init()
     auto mySphere1 = make_shared<Sphere>();
     shared_ptr<Material> matSphere1{};
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
+        matSphere1 = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f, 0.7f, 0.3f, 1.0f),
             "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
-            "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
-            "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
-            "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
+            "textures/pbr/ceramic/ClayCeramicGlossy_ARM.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
-
-        //matSphere1 = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f, 0.7f, 0.3f, 1.0f),
-        //    "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
-        //    "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
-        //    "textures/pbr/ceramic/ClayCeramicGlossy_ARM.jpg",
-        //    "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
     }
     else {
         matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");
@@ -166,12 +158,10 @@ void MyScene14::init()
     auto mySphere2 = make_shared<Sphere>();
     shared_ptr<Material> matSphere2{};
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+        matSphere2 = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f),
             "textures/pbr/porcelain/Porcelain_Color.png",
             "textures/pbr/porcelain/Porcelain_Normal.png",
-            "textures/pbr/porcelain/Porcelain_Metallic.png",
-            "textures/pbr/porcelain/Porcelain_Roughness.png",
-            "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
+            "textures/pbr/porcelain/Porcelain_Arm.png",
             "textures/pbr/porcelain/Porcelain_Displace.png", 2.0f);
     }
     else {

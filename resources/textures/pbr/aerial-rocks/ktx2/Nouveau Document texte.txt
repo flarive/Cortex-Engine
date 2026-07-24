@@ -1,0 +1,3 @@
+toktx --bcmp output2.ktx2 aerial_rocks_04_diff_2k.jpg
+
+

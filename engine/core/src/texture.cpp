@@ -7,6 +7,8 @@
 
 #include "SOIL2.h"
 
+#include "texture.h"
+
 #include <iostream>
 #include <functional>
 
@@ -71,7 +73,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, TextureFl
         // Choose compressed internal format
         GLenum internalFormat{};
 
-        if (hasFlag(flags, TextureFlag_CompressTexture))
+        if (isCompressedFile(filename))
         {
             // use GPU texture compression in VRAM
             if (isNormalMap)
@@ -84,7 +86,7 @@ unsigned int engine::Texture::loadTexture(const std::string& filename, TextureFl
 
         // Upload texture to GPU with or without compression
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, hasFlag(flags, TextureFlag_CompressTexture) ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, isCompressedFile(filename) ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
         // glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         // mipmaps
@@ -248,7 +250,7 @@ void engine::Texture::processLoadedTextures()
 /// <summary>
 /// Enqueue Texture Creation to Run on Main Thread
 /// </summary>
-unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& filename, TextureFlags flags)// bool invertY, bool mipmaps, bool repeat, bool gammaCorrection, bool compress)
+unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& filename, TextureFlags flags)
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
@@ -259,6 +261,9 @@ unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& fil
 
     // Detect heightmaps
     bool isHeightMap = Texture::isHeightMap(filename);
+
+    // Texture can be compressed in VRAM ?
+    bool isCompressed = isCompressedFile(filename);
 
     // 1️. Check if the texture was loaded asynchronously
     auto it = engine::TextureManager::textureCache.find(filename);
@@ -298,10 +303,10 @@ unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& fil
     {
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
 
-        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, isNormalMap, isHeightMap, flags]()
+        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, isCompressed, isNormalMap, isHeightMap, flags]()
             {
                 //  OpenGL upload texture
-                unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isNormalMap, isHeightMap, flags);
+                unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isCompressed, isNormalMap, isHeightMap, flags);
 
                 engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
                 engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
@@ -316,9 +321,9 @@ unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& fil
 }
 
 /// <summary>
-/// Creates OpenGL Texture (Always Called on Main Thread)
+/// Creates OpenGL Texture and upload it on the GPU (Always Called on Main Thread)
 /// </summary>
-unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isNormalMap, bool isHeightMap, TextureFlags flags)
+unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isCompressed, bool isNormalMap, bool isHeightMap, TextureFlags flags)
 {
     if (!data) return 0;
 
@@ -332,6 +337,9 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
     glBindTexture(GL_TEXTURE_2D, textureID);
 
 
+
+    std::string filename = ""; // ????????????????????????
+
     GLenum externalFormat{};
     if (nrComponents == 1) externalFormat = GL_RED;
     else if (nrComponents == 3) externalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB : GL_RGB;
@@ -339,37 +347,22 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     // Choose compressed internal format
     GLenum internalFormat{};
+    if (isCompressedFile(filename))
+        internalFormat = chooseCompressedFormat(isNormalMap, isHeightMap, hasFlag(flags, TextureFlag_GammaCorrect), gpuSupportsBC7());
 
-    if (hasFlag(flags, TextureFlag_CompressTexture))
-    {
-        // use GPU texture compression in VRAM
-        if (gpuSupportsBC7())
-        {
-            // Modern GPUs
-            if (isNormalMap)
-            {
-                internalFormat = GL_COMPRESSED_RG_RGTC2;   // BC5
-            }
-            else if (isHeightMap)
-            {
-                internalFormat = GL_COMPRESSED_RED_RGTC1;  // BC4
-            }
-            else
-            {
-                // Color textures → BC7 or fallback
-                internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ?
-                    GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM :
-                    GL_COMPRESSED_RGBA_BPTC_UNORM;
-            }
-        }
-        else
-        {
-            internalFormat = GL_COMPRESSED_RGBA_BPTC_UNORM;
-        }
-    }
+
 
     // Upload texture to GPU with or without compression
-    glTexImage2D(GL_TEXTURE_2D, 0, hasFlag(flags, TextureFlag_CompressTexture) ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, isCompressedFile(filename) ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+
+    
+    // ensure texture was compressed
+    GLint compressed;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &compressed);
+    if (!compressed) {
+        logger.warn("Driver did not compress texture, falling back to uncompressed.");
+    }
+
 
     // mipmaps
     if (hasFlag(flags, TextureFlag_GenerateMipmaps))
@@ -384,6 +377,30 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
+}
+
+/// <summary>
+/// Uncompressed texture (PNG/JPG/TGA/HDR)
+/// Small texture size on disk but using more VRAM on GPU
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+unsigned int engine::Texture::createUncompressedTexture(const std::string& filename, TextureFlags flags)
+{
+    return 0;
+}
+
+/// <summary>
+/// Compressed texture (DDS/KTX2 (BC7 / BC5 / BC4))
+/// Bigger size on disk but using less VRAM on GPU
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+unsigned int engine::Texture::createCompressedTexture(const std::string& filename, TextureFlags flags)
+{
+    return 0;
 }
 
 unsigned int engine::Texture::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -526,7 +543,7 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
     return textureID;
 }
 
-unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory, bool repeat, bool invertY, bool mipmaps, bool compress)
+unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std::string& directory, TextureFlags flags)
 {
     std::string filename{};
 
@@ -537,18 +554,18 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
 
     logger.info("Loading openGL texture {}", filename);
 
-    unsigned int flags = 0;
+    unsigned int soilFlags = 0;
 
-    if (invertY)
-        flags |= SOIL_FLAG_INVERT_Y;
+    if (hasFlag(flags, TextureFlag_InvertY))
+        soilFlags |= SOIL_FLAG_INVERT_Y;
 
-    if (mipmaps)
-        flags |= SOIL_FLAG_MIPMAPS;
+    if (hasFlag(flags, TextureFlag_GenerateMipmaps))
+        soilFlags |= SOIL_FLAG_MIPMAPS;
 
-    if (compress)
-        flags |= SOIL_FLAG_COMPRESS_TO_DXT;
+    /*if (hasFlag(flags, TextureFlag_CompressTexture))
+        soilFlags |= SOIL_FLAG_COMPRESS_TO_DXT;*/
 
-    unsigned int textureID = SOIL_load_OGL_texture(filename.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, flags);
+    unsigned int textureID = SOIL_load_OGL_texture(filename.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, soilFlags);
 
     if (textureID == 0)
     {
@@ -559,17 +576,17 @@ unsigned int engine::Texture::loadGLTextureFromFile(const char* path, const std:
 
     // Set texture parameters manually, since SOIL does not handle all of them
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
 }
 
-unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, bool repeat, bool invertY, bool mipmaps, bool compress)
+unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags)
 {
     int width = 0, height = 0, channels = 0;
 
@@ -598,23 +615,23 @@ unsigned int engine::Texture::loadTextureFromMemory(const unsigned char* data, s
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
 
-    if (mipmaps)
+    if (hasFlag(flags, TextureFlag_GenerateMipmaps))
         glGenerateMipmap(GL_TEXTURE_2D);
 
     // Texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     SOIL_free_image_data(image);
 
     return textureID;
 }
 
-unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, bool repeat, bool invertY, bool mipmaps, bool compress)
+unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags)
 {
     if (!data || height == 0 || width == 0)
     {
@@ -631,16 +648,16 @@ unsigned int engine::Texture::loadUncompressedTexture(const unsigned char* data,
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-    if (mipmaps)
+    if (hasFlag(flags, TextureFlag_GenerateMipmaps))
         glGenerateMipmap(GL_TEXTURE_2D);
 
     // Texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     return textureID;
 }
@@ -700,7 +717,6 @@ engine::TextureData engine::Texture::getTextureData(const std::string& texturePa
     return {}; // Return default if not found
 }
 
-
 bool engine::Texture::isNormalMap(const std::string& filename)
 {
     return filename.find("normal") != std::string::npos || filename.find("_n") != std::string::npos || filename.find("_norm") != std::string::npos;
@@ -709,6 +725,11 @@ bool engine::Texture::isNormalMap(const std::string& filename)
 bool engine::Texture::isHeightMap(const std::string& filename)
 {
     return filename.find("height") != std::string::npos || filename.find("_h") != std::string::npos;
+}
+
+bool engine::Texture::isCompressedFile(const std::string& filename)
+{
+    return filename.ends_with(".dds") || filename.ends_with(".ktx") || filename.ends_with(".ktx2");
 }
 
 bool engine::Texture::gpuSupportsBC7()
@@ -720,7 +741,51 @@ bool engine::Texture::gpuSupportsBC7()
     return strstr(extensions, "GL_ARB_texture_compression_bptc") != nullptr;
 }
 
+GLenum engine::Texture::chooseCompressedFormat(bool isNormal, bool isHeight, bool gamma, bool gpuBC7)
+{
+    if (isNormal) return GL_COMPRESSED_RG_RGTC2;   // BC5
+    if (isHeight) return GL_COMPRESSED_RED_RGTC1;  // BC4
 
+    if (gpuBC7)
+        return gamma ? GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM
+        : GL_COMPRESSED_RGBA_BPTC_UNORM;
+
+    // Fallback to BC3 (DXT5)
+    // BC3 is universally supported on all NVIDIA GPUs since 2004
+    return gamma ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+}
+
+
+GLuint engine::Texture::loadKTX2(const std::string& filename, bool isNormalMap, bool isHeightMap)
+{
+    ktxTexture2* kTexture;
+    if (ktxTexture2_CreateFromNamedFile(filename.c_str(),
+        KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &kTexture) != KTX_SUCCESS)
+        return 0;
+
+    ktx_transcode_fmt_e fmt = KTX_TTF_BC7_RGBA;
+    if (isNormalMap) fmt = KTX_TTF_BC5_RG;
+    if (isHeightMap) fmt = KTX_TTF_BC4_R;
+
+    if (ktxTexture2_TranscodeBasis(kTexture, fmt, 0) != KTX_SUCCESS) {
+        ktxTexture_Destroy(kTexture);
+        return 0;
+    }
+
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    ktxTexture_GLUpload(kTexture, &tex, nullptr);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    ktxTexture_Destroy(kTexture);
+    return tex;
+}
 
 
 //engine::Texture::~Texture()

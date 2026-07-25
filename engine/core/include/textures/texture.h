@@ -1,16 +1,12 @@
 #pragma once
 
-#include "misc/noncopyable.h"
-#include "common_defines.h"
+#include "../misc/noncopyable.h"
+#include "../common_defines.h"
 
-#include <vector>
 #include <future>
 #include <unordered_map>
 #include <mutex>
 #include <queue>
-
-#define KTX_STATIC
-#include "ktx.h"
 
 
 
@@ -113,8 +109,6 @@ namespace engine
         static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
         static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
 
-        static GLuint loadKTX2(const std::string& filename, bool isNormalMap, bool isHeightMap);
-
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();
 
@@ -134,6 +128,7 @@ namespace engine
         static unsigned int createCompressedTexture(const std::string& filename, TextureFlags flags);
 
         static bool isCompressedFile(const std::string& filename);
+        static bool isKTX2File(const std::string& filename);
         static bool gpuSupportsBC7();
         static GLenum chooseCompressedFormat(bool isNormal, bool isHeight, bool gamma, bool gpuBC7);
 

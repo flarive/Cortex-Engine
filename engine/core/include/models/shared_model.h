@@ -4,7 +4,7 @@
 #include "../materials/material.h"
 #include "../materials/blinnphong_material.h"
 #include "../materials/pbr_material.h"
-#include "../texture.h"
+#include "../textures/texture.h"
 #include "mesh.h"
 #include "../shader.h"
 #include "../transform.h"

@@ -134,6 +134,9 @@
     <Filter Include="resources\textures\pbr\aerial-rocks">
       <UniqueIdentifier>{501fb67b-7ad7-4c40-b2c4-0427f3fd1cb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\aerial-rocks\ktx2">
+      <UniqueIdentifier>{68aea3f4-d475-44be-a96a-fde848243d5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -1041,6 +1044,10 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\porcelain\Porcelain_Arm.png">
       <Filter>resources\textures\pbr\porcelain</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\libs\ktx\debug\ktx.dll" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_arm_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myscene1.h">
@@ -1094,5 +1101,16 @@
     <ClInclude Include="app\myapp0.h">
       <Filter>app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_diff_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </None>
+    <None Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_disp_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </None>
+    <None Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_nor_gl_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </None>
   </ItemGroup>
 </Project>

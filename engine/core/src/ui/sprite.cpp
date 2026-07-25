@@ -1,6 +1,6 @@
 #include "../../include/ui/sprite.h"
 
-#include "../../include/texture.h"
+#include "../../include/textures/texture.h"
 
 #include "../../include/managers/log_manager.h"
 

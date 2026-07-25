@@ -1,6 +1,6 @@
 #include "../../include/misc/skybox.h"
 
-#include "../../include/texture.h"
+#include "../../include/textures/texture.h"
 #include "../../include/primitives/primitive.h"
 
 #include "../../include/debug/opengl_debug.h"

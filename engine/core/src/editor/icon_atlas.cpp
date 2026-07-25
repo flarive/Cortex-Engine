@@ -1,5 +1,5 @@
 #include "../../include/editor/icon_atlas.h"
-#include "../../include/texture.h"
+#include "../../include/textures/texture.h"
 
 bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int atlasHeight)
 {

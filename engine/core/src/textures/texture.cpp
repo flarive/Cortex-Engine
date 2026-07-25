@@ -1,18 +1,17 @@
-﻿#include "../include/texture.h"
+﻿#include "../../include/textures/texture.h"
 
-#include "../include/managers/log_manager.h"
-#include "../include/common_defines.h"
+#include "../../include/managers/log_manager.h"
+#include "../../include/common_defines.h"
 
-#include "../include/misc/ltc_matrix.h"
+#include "../../include/misc/ltc_matrix.h"
+
+#include "../../include/textures/ktx_loader.h"
+
 
 #include "SOIL2.h"
 
-#include "texture.h"
-
 #include <iostream>
 #include <functional>
-
-
 
 
 namespace engine {
@@ -184,7 +183,26 @@ unsigned int engine::Texture::requestLoadTextureAsync(const std::string& filenam
         std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int>
         {
             int width{}, height{}, nrComponents{};
-            unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
+            unsigned char* data;
+
+			if (isKTX2File(filename))
+            {
+                // Detect normal maps by filename
+                bool isNormalMap = Texture::isNormalMap(filename);
+
+                // Detect heightmaps
+                bool isHeightMap = Texture::isHeightMap(filename);
+
+                // ktx lib can load ktx and ktx2
+                auto llll = ktxLoader::loadKTX(filename, isNormalMap, isHeightMap);
+			}
+            /*else
+            {*/
+                // soil can load jpg, png, dds...
+                data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+            //}
+
             if (!data) {
                 logger.error("Texture failed to load at path: {}", filename);
                 return { nullptr, 0, 0, 0 };
@@ -337,9 +355,6 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
     glBindTexture(GL_TEXTURE_2D, textureID);
 
 
-
-    std::string filename = ""; // ????????????????????????
-
     GLenum externalFormat{};
     if (nrComponents == 1) externalFormat = GL_RED;
     else if (nrComponents == 3) externalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB : GL_RGB;
@@ -347,13 +362,13 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     // Choose compressed internal format
     GLenum internalFormat{};
-    if (isCompressedFile(filename))
+    if (isCompressed)
         internalFormat = chooseCompressedFormat(isNormalMap, isHeightMap, hasFlag(flags, TextureFlag_GammaCorrect), gpuSupportsBC7());
 
 
 
     // Upload texture to GPU with or without compression
-    glTexImage2D(GL_TEXTURE_2D, 0, isCompressedFile(filename) ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, isCompressed ? internalFormat : externalFormat, width, height, 0,  externalFormat, GL_UNSIGNED_BYTE, data);
 
     
     // ensure texture was compressed
@@ -732,6 +747,11 @@ bool engine::Texture::isCompressedFile(const std::string& filename)
     return filename.ends_with(".dds") || filename.ends_with(".ktx") || filename.ends_with(".ktx2");
 }
 
+bool engine::Texture::isKTX2File(const std::string& filename)
+{
+	return filename.ends_with(".ktx2");
+}
+
 bool engine::Texture::gpuSupportsBC7()
 {
     const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
@@ -753,38 +773,6 @@ GLenum engine::Texture::chooseCompressedFormat(bool isNormal, bool isHeight, boo
     // Fallback to BC3 (DXT5)
     // BC3 is universally supported on all NVIDIA GPUs since 2004
     return gamma ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-}
-
-
-GLuint engine::Texture::loadKTX2(const std::string& filename, bool isNormalMap, bool isHeightMap)
-{
-    ktxTexture2* kTexture;
-    if (ktxTexture2_CreateFromNamedFile(filename.c_str(),
-        KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &kTexture) != KTX_SUCCESS)
-        return 0;
-
-    ktx_transcode_fmt_e fmt = KTX_TTF_BC7_RGBA;
-    if (isNormalMap) fmt = KTX_TTF_BC5_RG;
-    if (isHeightMap) fmt = KTX_TTF_BC4_R;
-
-    if (ktxTexture2_TranscodeBasis(kTexture, fmt, 0) != KTX_SUCCESS) {
-        ktxTexture_Destroy(kTexture);
-        return 0;
-    }
-
-    GLuint tex;
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-
-    ktxTexture_GLUpload(kTexture, &tex, nullptr);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    ktxTexture_Destroy(kTexture);
-    return tex;
 }
 
 

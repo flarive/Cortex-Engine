@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <string>
-#include "../texture.h"
+#include "../textures/texture.h"
 #include "../shader.h"
 
 namespace engine

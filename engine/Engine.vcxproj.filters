@@ -241,6 +241,12 @@
     <Filter Include="Fichiers d%27en-tête\core\editor\widgets">
       <UniqueIdentifier>{821f8139-aee1-47f0-a298-5f84e8859831}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\core\textures">
+      <UniqueIdentifier>{ea0a1ef3-794b-4c3c-aa40-33531389fc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\core\textures">
+      <UniqueIdentifier>{80c77795-05b6-4e8e-af76-11fc337b531b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -289,9 +295,6 @@
       <Filter>Fichiers sources\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="core\src\shader.cpp">
-      <Filter>Fichiers sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\texture.cpp">
       <Filter>Fichiers sources\core</Filter>
     </ClCompile>
     <ClCompile Include="core\src\primitives\primitive.cpp">
@@ -564,6 +567,12 @@
     <ClCompile Include="core\src\editor\windows\dialog_box.cpp">
       <Filter>Fichiers sources\core\editor\windows</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\textures\ktx_loader.cpp">
+      <Filter>Fichiers sources\core\textures</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\textures\texture.cpp">
+      <Filter>Fichiers sources\core\textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -621,9 +630,6 @@
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\shader.h">
-      <Filter>Fichiers d%27en-tête\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\texture.h">
       <Filter>Fichiers d%27en-tête\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\vertex.h">
@@ -940,6 +946,12 @@
     </ClInclude>
     <ClInclude Include="core\include\editor\windows\dialog_box.h">
       <Filter>Fichiers d%27en-tête\core\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\textures\ktx_loader.h">
+      <Filter>Fichiers d%27en-tête\core\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\textures\texture.h">
+      <Filter>Fichiers d%27en-tête\core\textures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

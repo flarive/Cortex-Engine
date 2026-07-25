@@ -1,6 +1,6 @@
 #include "../../include/particles/particle_system.h"
 
-#include "../../include/texture.h"
+#include "../../include/textures/texture.h"
 #include "../../include/vertex.h"
 
 #include "../../include/managers/log_manager.h"

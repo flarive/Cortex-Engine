@@ -236,6 +236,7 @@
     <ClCompile Include="core\src\editor\windows\settings_window.cpp" />
     <ClCompile Include="core\src\singleton.cpp" />
     <ClCompile Include="core\src\primitives\terrain.cpp" />
+    <ClCompile Include="core\src\textures\ktx_loader.cpp" />
     <ClCompile Include="core\src\tools\file_system.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
@@ -250,7 +251,7 @@
     <ClCompile Include="core\src\misc\skybox.cpp" />
     <ClCompile Include="core\src\primitives\sphere.cpp" />
     <ClCompile Include="core\src\shader.cpp" />
-    <ClCompile Include="core\src\texture.cpp" />
+    <ClCompile Include="core\src\textures\texture.cpp" />
     <ClCompile Include="core\src\tools\helpers.cpp" />
     <ClCompile Include="core\src\tools\random.cpp" />
     <ClCompile Include="core\src\tools\system_monitor.cpp" />
@@ -358,6 +359,7 @@
     <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\singleton.h" />
     <ClInclude Include="core\include\primitives\terrain.h" />
+    <ClInclude Include="core\include\textures\ktx_loader.h" />
     <ClInclude Include="core\include\tools\nvidia_monitor.h" />
     <ClInclude Include="core\include\tools\pdh_counters.h" />
     <ClInclude Include="core\include\tools\file_system.h" />
@@ -376,7 +378,7 @@
     <ClInclude Include="core\include\primitives\sphere.h" />
     <ClInclude Include="core\include\primitives\cone.h" />
     <ClInclude Include="core\include\shader.h" />
-    <ClInclude Include="core\include\texture.h" />
+    <ClInclude Include="core\include\textures\texture.h" />
     <ClInclude Include="core\include\tools\helpers.h" />
     <ClInclude Include="core\include\tools\random.h" />
     <ClInclude Include="core\include\tools\system_monitor.h" />

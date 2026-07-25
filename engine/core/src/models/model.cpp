@@ -1,7 +1,7 @@
 ﻿#include "../../include/models/model.h"
 #include "../../include/models/shared_model.h"
 
-#include "../../include/texture.h"
+#include "../../include/textures/texture.h"
 
 #include "../../include/managers/log_manager.h"
 #include "../../include/tools/file_system.h"

@@ -114,10 +114,10 @@ void MyScene14::init()
     shared_ptr<Material> matTerrain{};
     if (this->getSceneSettings().method == RenderMethod::PBR) {
         matTerrain = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f),
-            "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_arm_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg");
+            "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.ktx2",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.ktx2",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_arm_2k.ktx2",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.ktx2");
     }
     else
     {

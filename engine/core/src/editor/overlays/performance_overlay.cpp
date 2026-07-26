@@ -254,7 +254,7 @@ void engine::PerformanceOverlay::draw()
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
             centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
-            centerTextInBox("%.1f / %.1f Gb", cachedRAMUsed, cachedRAMTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+            centerTextInBox("%.2f / %.1f Gb", cachedRAMUsed, cachedRAMTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
             
         }
         ImGui::EndChild();
@@ -277,7 +277,7 @@ void engine::PerformanceOverlay::draw()
         {
             float boxWidth = ImGui::GetContentRegionAvail().x + ImGui::GetStyle().ItemSpacing.x;
             centerTextInBox("USED", std::nullopt, std::nullopt, true, boxWidth, 0.0f, ImGui::Spectrum::fontSmall1, GREY_DARK);
-            centerTextInBox("%.1f / %.1f Gb", cachedVramUsed, cachedVramTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
+            centerTextInBox("%.2f / %.1f Gb", cachedVramUsed, cachedVramTotal, true, boxWidth, 15.0f, ImGui::Spectrum::fontSmall1);
         }
         ImGui::EndChild();
 

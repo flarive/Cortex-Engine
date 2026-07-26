@@ -177,41 +177,52 @@ unsigned int engine::Texture::requestLoadTextureAsync(const std::string& filenam
 
     logger.info("Loading async texture {}", filename);
 
-    // Ensure the future is correctly assigned
     engine::TextureManager::textureCache[filename] =
     {
-        std::async(std::launch::async, [filename]() -> std::tuple<unsigned char*, int, int, int>
+        std::async(std::launch::async, [filename]() -> TexturePayload
         {
-            int width{}, height{}, nrComponents{};
+            TexturePayload payload;
 
-            unsigned char* data;
-
-			if (isKTX2File(filename))
+            if (isKTX2File(filename))
             {
-                // Detect normal maps by filename
-                bool isNormalMap = Texture::isNormalMap(filename);
-
-                // Detect heightmaps
-                bool isHeightMap = Texture::isHeightMap(filename);
-
+				// compressed texture, use ktx loader
                 // ktx lib can load ktx and ktx2
-                auto llll = ktxLoader::loadKTX(filename, isNormalMap, isHeightMap);
-			}
-            /*else
-            {*/
-                // soil can load jpg, png, dds...
-                data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-            //}
+                payload.type = TextureSourceType::KTXTexture;
 
-            if (!data) {
-                logger.error("Texture failed to load at path: {}", filename);
-                return { nullptr, 0, 0, 0 };
+                payload.ktxData = ktxLoader::loadKTX(
+                    filename,
+                    isNormalMap(filename),
+                    isHeightMap(filename)
+                );
+
+                if (!payload.ktxData)
+                    return payload;
+
+                payload.width = payload.ktxData->baseWidth;
+                payload.height = payload.ktxData->baseHeight;
+                payload.components = ktxLoader::getKTXComponents(payload.ktxData, isNormalMap(filename), isHeightMap(filename));
+
+                return payload;
             }
+            else
+            {
+				// uncompressed texture, use SOIL loader
+                // SOIL can load jpg, png, dds...
+                payload.type = TextureSourceType::RawPixels;
 
-            return { data, width, height, nrComponents };
+                payload.rawData = SOIL_load_image(
+                    filename.c_str(),
+                    &payload.width,
+                    &payload.height,
+                    &payload.components,
+                    SOIL_LOAD_AUTO
+                );
+
+                return payload;
+            }
         }),
         false,
-        {} // Result is empty initially
+        {}
     };
 
     return 0;  // Temporary ID, real ID is set later
@@ -250,7 +261,6 @@ void engine::Texture::flipImageVertically2(unsigned char* data, int width, int h
     }
 }
 
-
 /// <summary>
 /// Process Texture Creation on Main Thread
 /// </summary>
@@ -272,67 +282,95 @@ unsigned int engine::Texture::enqueueAsyncTextureCreation(const std::string& fil
 {
     std::lock_guard<std::mutex> lock(engine::TextureManager::textureCacheMutex);
 
-    //std::cerr << "EnqueueTextureCreation " << filename << std::endl;
-
-    // Detect normal maps by filename
     bool isNormalMap = Texture::isNormalMap(filename);
-
-    // Detect heightmaps
     bool isHeightMap = Texture::isHeightMap(filename);
-
-    // Texture can be compressed in VRAM ?
     bool isCompressed = isCompressedFile(filename);
 
-    // 1️. Check if the texture was loaded asynchronously
+    // 1. Check async load result exists
     auto it = engine::TextureManager::textureCache.find(filename);
     if (it == engine::TextureManager::textureCache.end())
     {
         logger.warn("Texture future for {} not found !", filename);
-        return 0;  // Exit if the texture is not found in cache
+        return 0;
     }
 
-    // 2️. Ensure the future is valid before calling `.get()`
-    auto& entry = engine::TextureManager::textureCache[filename];
-    if (!entry.ready) {
-        if (!entry.future.valid()) {
+    auto& entry = it->second;
+
+    // 2. Retrieve future result once
+    if (!entry.ready)
+    {
+        if (!entry.future.valid())
+        {
             logger.warn("Texture future for {} is invalid !", filename);
             return 0;
         }
 
-        entry.result = entry.future.get();  // Retrieve once
-        entry.ready = true;  // Mark it as ready
+        entry.result = entry.future.get();
+        entry.ready = true;
     }
 
-    // 3️. Retrieve texture data (blocking call)
-    //auto [data, width, height, nrComponents] = it->second.get();
-    auto [data, width, height, nrComponents] = entry.result;
-    if (!data || width == 0 || height == 0 || nrComponents == 0) {
-        logger.error("Texture {} failed to load or is empty !", filename);
-        return 0;  // Prevent further processing
-    }
+    const TexturePayload& payload = entry.result;
 
-    // Avoid duplicate OpenGL uploads
-    if (engine::TextureManager::textureIDCache.find(filename) != engine::TextureManager::textureIDCache.end())
+    // 3. Validate payload
+    if (payload.type == TextureSourceType::RawPixels)
     {
-        return engine::TextureManager::textureIDCache[filename];  // Already created
+        if (!payload.rawData || payload.width == 0 || payload.height == 0)
+        {
+            logger.error("Raw texture {} failed to load !", filename);
+            return 0;
+        }
+    }
+    else if (payload.type == TextureSourceType::KTXTexture)
+    {
+        if (!payload.ktxData)
+        {
+            logger.error("KTX texture {} failed to load !", filename);
+            return 0;
+        }
     }
 
-    // Queue OpenGL Calls for Execution in `processLoadedTextures()`
+    // 4. Avoid duplicate uploads
+    if (engine::TextureManager::textureIDCache.contains(filename))
+        return engine::TextureManager::textureIDCache[filename];
+
+    // 5. Enqueue OpenGL upload on main thread
     {
         std::lock_guard<std::mutex> lock(engine::TextureManager::textureQueueMutex);
 
-        engine::TextureManager::textureUploadQueue.push([filename, data, width, height, nrComponents, isCompressed, isNormalMap, isHeightMap, flags]()
+        engine::TextureManager::textureUploadQueue.push(
+            [filename, payload, isCompressed, isNormalMap, isHeightMap, flags]()
             {
-                //  OpenGL upload texture
-                unsigned int textureID = createOpenGLTexture(data, width, height, nrComponents, isCompressed, isNormalMap, isHeightMap, flags);
+                GLuint textureID = 0;
 
-                engine::TextureManager::textureIDCache[filename] = textureID; // Store in cache
-                engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, width, height, nrComponents }; // Cache for later use
+                if (payload.type == TextureSourceType::RawPixels)
+                {
+                    textureID = createOpenGLTexture(
+                        payload.rawData,
+                        payload.width,
+                        payload.height,
+                        payload.components,
+                        isCompressed,
+                        isNormalMap,
+                        isHeightMap,
+                        flags
+                    );
 
-                SOIL_free_image_data(data);  // Free after OpenGL upload
+                    SOIL_free_image_data(payload.rawData);
+                }
+                else if (payload.type == TextureSourceType::KTXTexture)
+                {
+                    textureID = ktxLoader::uploadKTX_OpenGL(payload.ktxData);
+
+                    ktxTexture_Destroy(payload.ktxData);
+                }
+
+                // Cache result
+                engine::TextureManager::textureIDCache[filename] = textureID;
+                engine::TextureManager::textureDataCache[filename] = TextureData{ textureID, nullptr, payload.width, payload.height, payload.components };
 
                 return textureID;
-            });
+            }
+        );
     }
 
     return 0;
@@ -372,10 +410,13 @@ unsigned int engine::Texture::createOpenGLTexture(unsigned char* data, int width
 
     
     // ensure texture was compressed
-    GLint compressed;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &compressed);
-    if (!compressed) {
-        logger.warn("Driver did not compress texture, falling back to uncompressed.");
+    if (isCompressed)
+    {
+        GLint compressed;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &compressed);
+        if (!compressed) {
+            logger.warn("Driver did not compress texture, falling back to uncompressed.");
+        }
     }
 
 

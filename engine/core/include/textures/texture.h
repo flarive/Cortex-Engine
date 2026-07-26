@@ -3,6 +3,8 @@
 #include "../misc/noncopyable.h"
 #include "../common_defines.h"
 
+#include "ktx.h"
+
 #include <future>
 #include <unordered_map>
 #include <mutex>
@@ -26,13 +28,37 @@
 
 namespace engine
 {
+    enum class TextureSourceType {
+        RawPixels,   // SOIL, PNG, JPG, DDS
+        KTXTexture   // KTX1 / KTX2
+    };
+
+    struct TexturePayload {
+        TextureSourceType type;
+
+        // Raw pixels (SOIL)
+        unsigned char* rawData = nullptr;
+
+        // KTX texture object
+        ktxTexture* ktxData = nullptr;
+
+        int width = 0;
+        int height = 0;
+        int components = 0;
+    };
+
+
+
+
+    
     using TextureData = std::tuple<unsigned int, unsigned char*, int, int, int>;
 
     struct TextureLoadResult final {
-        std::future<std::tuple<unsigned char*, int, int, int>> future;
+        std::future<TexturePayload> future;
         bool ready = false;
-        std::tuple<unsigned char*, int, int, int> result;
+        TexturePayload result;   // <-- FIXED
     };
+
     
     namespace TextureManager {
         extern std::unordered_map<std::string, TextureLoadResult> textureCache;

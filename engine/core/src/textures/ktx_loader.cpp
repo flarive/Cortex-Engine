@@ -77,3 +77,12 @@ ktx_transcode_fmt_e engine::ktxLoader::chooseTranscodeFormat(bool isNormalMap, b
     if (isHeightMap) return KTX_TTF_BC4_R;
     return KTX_TTF_BC7_RGBA;
 }
+
+
+int engine::ktxLoader::getKTXComponents(ktxTexture* tex, bool isNormalMap, bool isHeightMap)
+{
+    if (isNormalMap) return 2;   // BC5_RG
+    if (isHeightMap) return 1;   // BC4_R
+    return 4;                    // BC7_RGBA
+}
+

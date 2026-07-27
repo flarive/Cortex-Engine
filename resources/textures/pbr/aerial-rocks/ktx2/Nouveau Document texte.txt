@@ -1,3 +1,53 @@
-toktx --bcmp output2.ktx2 aerial_rocks_04_diff_2k.jpg
+
+toktx --bcmp --assign_oetf sRGB aerial_rocks_04_diff_2k.ktx2 aerial_rocks_04_diff_2k.jpg
+toktx --bcmp --assign_oetf linear aerial_rocks_04_nor_gl_2k.ktx2 aerial_rocks_04_nor_gl_2k.jpg
+toktx --bcmp --assign_oetf linear aerial_rocks_04_ao_2ko.ktx2 aerial_rocks_04_ao_2k.jpg
+toktx --bcmp --assign_oetf linear aerial_rocks_04_rough_2k.ktx2 aerial_rocks_04_rough_2k.jpg
+toktx --bcmp --assign_oetf linear aerial_rocks_04_disp_2k.ktx2 aerial_rocks_04_disp_2k.jpg
+toktx --bcmp --assign_oetf linear aerial_rocks_04_arm_2k.ktx2 aerial_rocks_04_arm_2k.jpg
+
+
+
+
+
+
+
+
+
+gltf-transform
+
+
+
+3/4 mo files on disk :
+
+
+diffuse :
+toktx --uastc --zcmp 18 --assign_oetf sRGB diffuse.ktx2 aerial_rocks_04_diff_2k.jpg
+
+normal :
+toktx --uastc --zcmp 18 --assign_oetf linear normal.ktx2 aerial_rocks_04_nor_gl_2k.jpg
+
+ao :
+toktx --uastc --zcmp 18 --assign_oetf linear ao.ktx2 aerial_rocks_04_ao_2k.jpg
+
+rouhness :
+toktx --uastc --zcmp 18 --assign_oetf linear roughness.ktx2 aerial_rocks_04_rough_2k.jpg
+
+height :
+toktx --uastc --zcmp 18 --assign_oetf linear height.ktx2 aerial_rocks_04_disp_2k.jpg
+
+arm :
+toktx --uastc --zcmp 18 --assign_oetf linear arm.ktx2 aerial_rocks_04_arm_2k.jpg
+
+
+
+-- better disk compression :
+toktx --etc1s --clevel 5 --qlevel 128 --assign_oetf sRGB diffuse.ktx2 aerial_rocks_04_diff_2k.jpg
+
+
+
+
+
+
 
 

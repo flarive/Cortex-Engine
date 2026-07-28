@@ -18,11 +18,12 @@
 #include "app/myscene13.h" // blinnphong particles
 #include "app/myscene14.h" // blinnphong terrain
 #include "app/myscene15.h" // parallax mapping
+#include "app/myscene16.h" // ktx compressed textures
 
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene15;
+using MyScene = MyScene16;
 
 class MyApp1 final : public App
 {

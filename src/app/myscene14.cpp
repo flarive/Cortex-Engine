@@ -119,11 +119,19 @@ void MyScene14::init()
         //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_arm_2k.ktx2",
         //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_disp_2k.ktx2");
 
-        matTerrain = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f),
+        //matTerrain = make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f),
+        //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
+        //    "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
+        //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_arm_2k.ktx2",
+        //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_disp_2k.ktx2");
+
+        matTerrain = make_shared<PBRMaterial>(Color(0.1f),
             "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
-            "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_arm_2k.ktx2",
-            "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_disp_2k.ktx2");
+            "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
+            "textures/pbr/porcelain/Porcelain_Metallic.png",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg");
     }
     else
     {

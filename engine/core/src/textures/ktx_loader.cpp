@@ -75,6 +75,8 @@ ktx_transcode_fmt_e engine::ktxLoader::chooseTranscodeFormat(bool isNormalMap, b
 {
     if (isNormalMap) return KTX_TTF_BC5_RG;
     if (isHeightMap) return KTX_TTF_BC4_R;
+
+    // Albedo/baseColor (sRGB or linear)
     return KTX_TTF_BC7_RGBA;
 }
 

@@ -1,5 +1,35 @@
 #include "../../../include/editor/windows/settings_window.h"
 
+#include "../../../include/singleton.h"
+
+void engine::SettingsWindow::onInit()
+{
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    const SceneSettings& settings = singleton->sceneSettings();
+
+    sceneSetting_renderMethod = static_cast<int>(settings.method);
+    sceneSetting_drawAsWireframe = settings.drawAsWireframe;
+    sceneSetting_exposure = settings.exposure;
+    sceneSetting_enableGammaCorrection = settings.enableGammaCorrection;
+    sceneSetting_enableToneMapping = settings.enableToneMapping;
+    sceneSetting_applyPostProcessFx = static_cast<int>(settings.applyPostProcessFx);
+	sceneSetting_enableFaceCulling = settings.enableFaceCulling;
+	sceneSetting_enableCameraFrustrumCulling = settings.enableCameraFrustrumCulling;
+	sceneSetting_drawLightsVisualHelpers = settings.drawLightsVisualHelpers;
+	sceneSetting_drawBoundingBoxesVisualHelpers = settings.drawBoundingBoxesVisualHelpers;
+	sceneSetting_drawDebugNormalsVisualHelpers = settings.drawNormalsVisualHelpers;
+	sceneSetting_enableShadows = settings.enableShadows;
+    sceneSetting_shadowCalculationMethod = static_cast<int>(settings.shadowCalculationMethod);
+	sceneSetting_shadowIntensity = settings.shadowIntensity;
+    sceneSetting_shadowMapTextureSize = static_cast<int>(settings.shadowMapsTextureSize);
+	sceneSetting_shadowMapBiasFactor = settings.shadowMapsBiasFactor;
+	sceneSetting_shadowMapBlur = settings.shadowMapsBlur;
+    sceneSetting_iblDiffuseIntensity = settings.iblDiffuseIntensity;
+    sceneSetting_iblSpecularIntensity = settings.iblSpecularIntensity;
+	sceneSetting_framebufferMsaaSamples = settings.frameBufferAntiAliasingSamplesQuality;
+}
+
 void engine::SettingsWindow::renderTabSettings()
 {
     ImGui::BeginChild("SettingsRegion", ImVec2(0, 0), true);
@@ -28,6 +58,7 @@ void engine::SettingsWindow::renderTabSettings()
 
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
 
 
     // ------------------------------------------------------------------------

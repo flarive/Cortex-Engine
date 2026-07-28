@@ -341,13 +341,11 @@ vec3 getNormalFromMap(vec2 texCoords)
 
     
     // Fix DX-space normal maps (KTX2)
-    //tangentNormal.y = -tangentNormal.y;
+    //tangentNormal.z = -tangentNormal.z;
 
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
-    //tangentNormal.z = -tangentNormal.z;
-
 
 
 

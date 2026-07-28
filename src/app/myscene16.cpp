@@ -20,7 +20,10 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .enableShadows = true,
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
-        .shadowMapsBiasFactor = 0.050f
+        .shadowMapsBiasFactor = 0.050f,
+        .iblDiffuseIntensity = 2.0f,
+        .iblSpecularIntensity = 1.0f,
+        .enableGammaCorrection = true, 
     })
 {
     logger.trace("Scene {} constructor called", title);
@@ -46,21 +49,42 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app, const SceneS
 
 void MyScene16::init()
 {
-    // camera
-    auto trsCamera1 = Transform{ {0.0f, 1.0f, 5.0f} };
-    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
+    // cameras
+    auto trsCamera1 = Transform{ {0.0f, -8.0f, 2.0f } };
+    auto camera1 = make_shared<FlyCamera>(45.0f, -90.0f, 0.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
     getEntityManager().addChild(entityCamera1);
 
-    // light
-    auto trsLight2 = Transform{ {0.0f, 2.0f, 3.0f} };
+    auto trsCamera2 = Transform{ { 0.0f, -9.0f, 2.0f } };
+    auto camera2 = make_shared<FlyCamera>(20.0f, -90.0f, 0.0f, 10.0f);
+    auto entityCamera2 = make_shared<Entity>("Camera2");
+    entityCamera2->addComponent<TransformComponent>(trsCamera2);
+    entityCamera2->addComponent<CameraComponent>(camera2);
+    getEntityManager().addChild(entityCamera2);
+
+
+    this->setActiveCamera(1);
+
+
+    // lights
+    auto trsLight1 = Transform{ { 0.0f, 8.0f, 0.0f } };
+    auto light1 = make_shared<SpotLight>();
+    light1->setIntensity(20.0f);
+    light1->setCutoff(12.5f);
+    light1->setOuterCutoff(15.0f);
+    light1->setTarget(vec3(0.0f, 0.0f, -5.0f));
+    light1->setAmbientColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
+    auto entityLight1 = make_shared<Entity>("Light1");
+    entityLight1->addComponent<TransformComponent>(trsLight1);
+    entityLight1->addComponent<LightComponent>(light1);
+    getEntityManager().addChild(entityLight1);
+
+
+    auto trsLight2 = Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
-    light2->setIntensity(8.0f);
-    light2->setAmbientColor(Color(1.0f));
-    light2->setDiffuseColor(Color(1.0f));
-    light2->setSpecularColor(Color(1.0f));
+    light2->setIntensity(18.0f);
     auto entityLight2 = make_shared<Entity>("Light2");
     entityLight2->addComponent<TransformComponent>(trsLight2);
     entityLight2->addComponent<LightComponent>(light2);
@@ -68,59 +92,74 @@ void MyScene16::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>(false);
-    shared_ptr<Material> matPlane{};
-    if (this->getSceneSettings().method == RenderMethod::PBR) {
-        matPlane = make_shared<PBRMaterial>(Color(0.1f),
-            "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_metal_2k.png",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg");
-    }
-    else {
-        matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    }
-    matPlane->useParallaxMapping(true);
-    myPlane->setup(matPlane, UvMapping(2.0f));
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, -1.5f), vec3(3.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto myPlane = make_shared<Plane>();
+    /*myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
+        "textures/pbr/planks/albedo.jpg",
+        "textures/pbr/planks/normal.jpg",
+        "textures/pbr/planks/metallic.jpg",
+        "textures/pbr/planks/roughness.jpg",
+        "textures/pbr/planks/ao.jpg",
+        ""), UvMapping(1.0f));*/
+
+    myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
+        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
+        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_metal_2k.png",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
+        "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+        ""), UvMapping(3.0f));
+
+
+    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
 
 
+    // sphere models
+    auto sphere1 = make_shared<Sphere>();
 
 
+    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+        "models/sphere/rounded-metal-cubes/albedo.dds",
+        "models/sphere/rounded-metal-cubes/normal.png",
+        "models/sphere/rounded-metal-cubes/metallic.png",
+        "models/sphere/rounded-metal-cubes/roughness.png",
+        "models/sphere/rounded-metal-cubes/ao.png",
+        "models/sphere/rounded-metal-cubes/height.png");
+    matSphere1->setNormalIntensity(5.0f);
 
-    // sphere
-    auto mySphere1 = make_shared<Sphere>(false);
-    shared_ptr<Material> matSphere1{};
-    if (this->getSceneSettings().method == RenderMethod::PBR) {
-        matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
-            "textures/pbr/red-scifi-metal/albedo.png",
-            "textures/pbr/red-scifi-metal/normal.png",
-            "textures/pbr/red-scifi-metal/metallic.png",
-            "textures/pbr/red-scifi-metal/roughness.png",
-            "textures/pbr/red-scifi-metal/ao.png",
-            "textures/pbr/red-scifi-metal/height.png");
-    }
-    else {
-        matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
-    }
-    matSphere1->useParallaxMapping(true);
-    mySphere1->setup(matSphere1, UvMapping(1.0f));
-    auto trsSphere1 = Transform(vec3(0.0f, 0.36f, 0.0f), vec3(0.3f));
+    sphere1->setup(matSphere1, UvMapping(2.0f));
+
+    auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
-    AnimTransform animSphere1{ trsSphere1, Transform(trsSphere1).addRotationY(360.0f), AnimMode::Absolute, 5.0f, true };
-    auto trsSphereAnimation1 = make_shared<TransformAnimation>("animSphere1", animSphere1);
-    auto trsSphereAnimator = make_shared<TransformAnimator>(trsSphereAnimation1);
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
-    entitySphere1->addComponent<PrimitiveComponent>(mySphere1);
-    //entitySphere1->addComponent<AnimatorComponent>(trsSphereAnimator);
+    entitySphere1->addComponent<PrimitiveComponent>(sphere1);
     getEntityManager().addChild(entitySphere1);
 
+
+    // sphere models
+    auto sphere2 = make_shared<Sphere>();
+
+    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/rusted_iron/albedo.png",
+        "textures/pbr/rusted_iron/normal.png",
+        "textures/pbr/rusted_iron/metallic.png",
+        "textures/pbr/rusted_iron/roughness.png",
+        "textures/pbr/rusted_iron/ao.png",
+        "textures/pbr/rusted_iron/height.png");
+
+
+    matSphere2->setNormalIntensity(2.0f);
+
+    sphere2->setup(matSphere2, UvMapping(2.0f));
+
+    auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto entitySphere2 = make_shared<Entity>("MySphere2");
+    entitySphere2->addComponent<TransformComponent>(trsSphere2);
+    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
+    getEntityManager().addChild(entitySphere2);
 
 
 

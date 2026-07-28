@@ -414,6 +414,11 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     pbrShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+
+
+
 
     if (supportTessellation())
     {
@@ -425,6 +430,8 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
         pbrShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
         pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
         pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
     }
 
     // bind pre-computed IBL data

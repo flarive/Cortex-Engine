@@ -332,12 +332,24 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 // technique somewhere later in the normal mapping tutorial.
 vec3 getNormalFromMap(vec2 texCoords)
 {
-    // Sample the normal map and convert the range from [0, 1] to [-1, 1]
-    vec3 tangentNormal = material.has_texture_normal_map ? texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0 : normalize(Normal) * material.normalMapIntensity;; // caca
+    if (!material.has_texture_normal_map)
+        return normalize(Normal);
+
+    
+    // Sample the normal map and convert the range from [0, 1] to [-1, 1] (assumes OpenGL normal map convention (Y+))
+    vec3 tangentNormal = texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0;
+
+    
+    // Fix DX-space normal maps (KTX2)
+    //tangentNormal.y = -tangentNormal.y;
+
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
     //tangentNormal.z = -tangentNormal.z;
+
+
+
 
     // Compute the TBN matrix using either precomputed tangents or derivatives
     vec3 N = normalize(Normal);
@@ -354,6 +366,13 @@ vec3 getNormalFromMap(vec2 texCoords)
         T  = normalize(Q1*st2.t - Q2*st1.t);
         B  = -normalize(cross(N, T));
     }
+
+
+    
+    // Re-orthonormalize TBN (critical!)
+//    T = normalize(T - N * dot(N, T));
+//    B = normalize(cross(N, T));
+
 
     // Construct the TBN matrix
     mat3 TBN = mat3(T, B, N);

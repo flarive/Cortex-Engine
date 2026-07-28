@@ -793,7 +793,7 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
 
     float checkbox_width = ImGui::GetFrameHeight();
     //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
-    ImVec2 checkbox_pos(32, pos.y - 72);
+    ImVec2 checkbox_pos(32, pos.y - 67);
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size

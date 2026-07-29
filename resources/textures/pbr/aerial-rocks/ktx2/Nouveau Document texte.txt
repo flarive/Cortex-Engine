@@ -8,14 +8,12 @@ toktx --bcmp --assign_oetf linear aerial_rocks_04_arm_2k.ktx2 aerial_rocks_04_ar
 
 
 
-toktx --encode etc1s --assign_oetf linear --qlevel 255 aerial_rocks_04_nor_gl_2k.ktx2 aerial_rocks_04_nor_gl_2k.jpg
 
 
 
 
 
 
-gltf-transform
 
 
 

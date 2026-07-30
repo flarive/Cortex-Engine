@@ -16,8 +16,9 @@
 #include "scene/myscene11.h" // blinnphong animated character
 #include "scene/myscene12.h" // PBR wood plane with misc materials
 #include "scene/myscene13.h" // blinnphong particles
-#include "scene/myscene14.h" // blinnphong terrain
-#include "scene/myscene15.h" // parallax mapping
+#include "scene/myscene14.h" // blinnphong/pbr terrain
+#include "scene/myscene15.h" // blinnphong/pbr parallax mapping
+#include "scene/myscene16.h" // ktx compressed textures
 
 #include <memory>
 
@@ -72,7 +73,7 @@ public:
         m_sceneManager.addScene<MyScene13>("Scene13", shared_from_this());
         m_sceneManager.addScene<MyScene14>("Scene14", shared_from_this());
         m_sceneManager.addScene<MyScene15>("Scene15", shared_from_this());
-
+        m_sceneManager.addScene<MyScene16>("Scene16", shared_from_this());
 
 
         // Observe only

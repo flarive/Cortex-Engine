@@ -132,9 +132,19 @@ std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvSca
     bitangent = glm::normalize(bitangent);
 
     if (flipNormal) {
-        tangent = -tangent;
         bitangent = -bitangent;
+        tangent = -tangent;
     }
+    
+    //if (flipNormal) {
+    //    normal = -normal;
+    //    tangent = -tangent;
+    //    bitangent = -bitangent;
+    //}
+
+
+    //bitangent = -bitangent;
+    
 
     // CCW winding for upward (+Y) facing plane
     vertices.emplace_back(pos1, normal, uv1, tangent, bitangent);

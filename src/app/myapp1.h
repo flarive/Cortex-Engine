@@ -3,22 +3,23 @@
 #include "core/include/app/app.h"
 #include "core/include/engine.h"
 
-#include "app/myscene1.h" // blinnphong with skybox
-#include "app/myscene2.h" // blinnphong cushion
-#include "app/myscene3.h" // PBR balls with HDR background
-#include "app/myscene4.h" // PBR cushion
-#include "app/myscene5.h" // PBR buddha
-#include "app/myscene6.h" // PBR rotating helmet
-#include "app/myscene7.h" // PBR multiple helmets
-#include "app/myscene8.h" // blinnphong monochromatic point shadow
-#include "app/myscene9.h" // PBR orbit camera
-#include "app/myscene10.h" // PBR area lights demo
-#include "app/myscene11.h" // blinnphong animated character
-#include "app/myscene12.h" // PBR wood plane with misc materials
-#include "app/myscene13.h" // blinnphong particles
-#include "app/myscene14.h" // blinnphong terrain
-#include "app/myscene15.h" // parallax mapping
-#include "app/myscene16.h" // ktx compressed textures
+#include "scene/myscene0.h" // blinnphong empty scene
+#include "scene/myscene1.h" // blinnphong with skybox
+#include "scene/myscene2.h" // blinnphong cushion
+#include "scene/myscene3.h" // PBR balls with HDR background
+#include "scene/myscene4.h" // PBR cushion
+#include "scene/myscene5.h" // PBR buddha
+#include "scene/myscene6.h" // PBR rotating helmet
+#include "scene/myscene7.h" // PBR multiple helmets
+#include "scene/myscene8.h" // blinnphong monochromatic point shadow
+#include "scene/myscene9.h" // PBR orbit camera
+#include "scene/myscene10.h" // PBR area lights demo
+#include "scene/myscene11.h" // blinnphong animated character
+#include "scene/myscene12.h" // PBR wood plane with misc materials
+#include "scene/myscene13.h" // blinnphong particles
+#include "scene/myscene14.h" // blinnphong/pbr terrain
+#include "scene/myscene15.h" // blinnphong/pbr parallax mapping
+#include "scene/myscene16.h" // ktx compressed textures
 
 using namespace std;
 using namespace engine;

@@ -330,52 +330,90 @@ vec3 ToSRGB(vec3 v)   { return PowVec3(v, 1.0/gamma); }
 // Don't worry if you don't get what's going on; you generally want to do normal 
 // mapping the usual way for performance anyways; I do plan make a note of this 
 // technique somewhere later in the normal mapping tutorial.
+//vec3 getNormalFromMap(vec2 texCoords)
+//{
+//    if (!material.has_texture_normal_map)
+//        return normalize(Normal);
+//
+//    
+//    // Sample the normal map and convert the range from [0, 1] to [-1, 1] (assumes OpenGL normal map convention (Y+))
+//    vec3 tangentNormal = texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0;
+//
+//    
+//    // Fix DX-space normal maps (KTX2)
+//    //tangentNormal.z = -tangentNormal.z;
+//    //tangentNormal.y = -tangentNormal.y;
+//
+//
+//    // Blend towards (0,0,1) instead of (0,0,0)
+//    tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
+//
+//
+//
+//    // Compute the TBN matrix using either precomputed tangents or derivatives
+//    vec3 N = normalize(Normal);
+//    vec3 T, B;
+//
+//    if (hasTangents) { // If tangents exist, use them
+//        T = normalize(Tangent);
+//        B = normalize(Bitangent);
+//    } else { // Otherwise, compute them using screen-space derivatives
+//        vec3 Q1  = dFdx(FragPos);
+//        vec3 Q2  = dFdy(FragPos);
+//        vec2 st1 = dFdx(TexCoords);
+//        vec2 st2 = dFdy(TexCoords);
+//        T  = normalize(Q1*st2.t - Q2*st1.t);
+//        B  = normalize(cross(N, T)); // Right‑handed TBN
+//    }
+//
+//
+//    
+//    // Re-orthonormalize TBN (critical!)
+//    T = normalize(T - N * dot(N, T));
+//    B = normalize(cross(N, T)); // Right‑handed TBN
+//
+//
+//    // Construct the TBN matrix
+//    mat3 TBN = mat3(T, B, N);
+//
+//    // Transform the normal from tangent space to world space
+//    return normalize(TBN * tangentNormal);
+//}
+
 vec3 getNormalFromMap(vec2 texCoords)
 {
     if (!material.has_texture_normal_map)
         return normalize(Normal);
 
-    
-    // Sample the normal map and convert the range from [0, 1] to [-1, 1] (assumes OpenGL normal map convention (Y+))
+    // Sample normal map
     vec3 tangentNormal = texture(material.texture_normal, texCoords).xyz * 2.0 - 1.0;
-
-    
-    // Fix DX-space normal maps (KTX2)
-    //tangentNormal.z = -tangentNormal.z;
-
 
     // Blend towards (0,0,1) instead of (0,0,0)
     tangentNormal = mix(vec3(0.0, 0.0, 1.0), tangentNormal, material.normalMapIntensity);
-
-
 
     // Compute the TBN matrix using either precomputed tangents or derivatives
     vec3 N = normalize(Normal);
     vec3 T, B;
 
-    if (hasTangents) { // If tangents exist, use them
+    if (hasTangents) {
+        // If tangents exist, use them
         T = normalize(Tangent);
         B = normalize(Bitangent);
-    } else { // Otherwise, compute them using screen-space derivatives
+    } else {
+        // Otherwise, compute them using screen-space derivatives
         vec3 Q1  = dFdx(FragPos);
         vec3 Q2  = dFdy(FragPos);
         vec2 st1 = dFdx(TexCoords);
         vec2 st2 = dFdy(TexCoords);
         T  = normalize(Q1*st2.t - Q2*st1.t);
-        B  = -normalize(cross(N, T));
+        B  = normalize(cross(N, T));
     }
 
+    // Orthonormalize WITHOUT destroying handedness
+    T = normalize(T - N * dot(N, T));
+    B = normalize(B - N * dot(N, B));
 
-    
-    // Re-orthonormalize TBN (critical!)
-//    T = normalize(T - N * dot(N, T));
-//    B = normalize(cross(N, T));
-
-
-    // Construct the TBN matrix
     mat3 TBN = mat3(T, B, N);
-
-    // Transform the normal from tangent space to world space
     return normalize(TBN * tangentNormal);
 }
 

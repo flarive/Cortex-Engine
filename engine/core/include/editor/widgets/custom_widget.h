@@ -9,6 +9,8 @@ namespace engine
     public:
         CustomWidget() : ImGuiElement(Category::Widget, "ColorWidget") {}
 
+        void init();
+
     protected:
         void draw() override
         {

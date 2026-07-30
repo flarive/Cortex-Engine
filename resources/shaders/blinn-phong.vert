@@ -95,10 +95,19 @@ void main()
     FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0); // possible optim !
 
     // Usefull for parallax mapping
+//    vec3 N = normalize(Normal);
+//    vec3 T = normalize(Tangent);
+//    T = normalize(T - dot(T, N) * N);
+//    vec3 B = normalize(cross(N, T));
+
+    // Usefull for parallax mapping
     vec3 N = normalize(Normal);
     vec3 T = normalize(Tangent);
-    T = normalize(T - dot(T, N) * N);
-    vec3 B = normalize(cross(N, T));
+    vec3 B = normalize(Bitangent);
+
+    // Orthonormalize without destroying handedness
+    T = normalize(T - N * dot(N, T));
+    B = normalize(B - N * dot(N, B));
 
     // Columns = T, B, N  → transpose to go world → tangent
     mat3 TBN = transpose(mat3(T, B, N));

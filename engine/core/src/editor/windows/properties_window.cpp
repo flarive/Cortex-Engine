@@ -2,6 +2,8 @@
 
 #include "../../../include/editor/editor_helper.h"
 
+
+
 void engine::PropertiesWindow::onInit()
 {
     // listen for events from scene hierarchy window
@@ -12,6 +14,9 @@ void engine::PropertiesWindow::onInit()
             m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.value);
         }
     });
+
+
+    m_customWidget.init();
 }
 
 void engine::PropertiesWindow::renderPropertiesWidget()
@@ -424,6 +429,10 @@ void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<Primitiv
     {
         EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
     }
+
+
+    // material
+    m_customWidget.render();
 }
 
 void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelComponent>& component)

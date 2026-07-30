@@ -137,58 +137,70 @@
     <Filter Include="resources\textures\pbr\aerial-rocks\ktx2">
       <UniqueIdentifier>{68aea3f4-d475-44be-a96a-fde848243d5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\models\sphere\rounded-metal-cubes\ktx2">
+      <UniqueIdentifier>{2bc2167c-5b5d-4ca8-aca6-585256670d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\rusted_iron\ktx2">
+      <UniqueIdentifier>{2b8641de-33a4-41d9-8e8c-074794800295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{6968f246-3d2b-45c0-bb97-73c2d8e94709}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene1.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene0.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene2.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene1.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene3.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene2.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene4.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene3.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene5.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene4.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene6.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene5.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene7.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene6.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene8.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene7.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene9.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene8.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene10.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene9.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene11.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene10.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene12.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene11.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene13.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene12.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene14.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene13.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene15.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene14.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
-    <ClCompile Include="app\myscene16.cpp">
-      <Filter>sources\app</Filter>
+    <ClCompile Include="scene\myscene15.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\myscene16.cpp">
+      <Filter>scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1059,9 +1071,6 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_arm_2k.ktx2">
       <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_ao_2ko.ktx2">
-      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_rough_2k.ktx2">
       <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
     </CopyFileToFolders>
@@ -1077,61 +1086,106 @@
     <CopyFileToFolders Include="..\resources\textures\no_roughness_2048.png">
       <Filter>resources\textures</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\roughness.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\albedo.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\ao.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\height.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\metallic.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\normal.ktx2">
+      <Filter>resources\models\sphere\rounded-metal-cubes\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\albedo.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\ao.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\height.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\metallic.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\normal.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\roughness.ktx2">
+      <Filter>resources\textures\pbr\rusted_iron\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_metal_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_ao_2k.ktx2">
+      <Filter>resources\textures\pbr\aerial-rocks\ktx2</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="app\myscene1.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene2.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene3.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene4.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene5.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene6.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="app\myapp1.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene7.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene8.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene9.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene10.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene11.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene12.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene13.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene14.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="app\myscene15.h">
       <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="app\myapp0.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="app\myscene16.h">
-      <Filter>app</Filter>
+    <ClInclude Include="scene\myscene0.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene1.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene2.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene3.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene4.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene5.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene6.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene7.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene8.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene9.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene10.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene11.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene12.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene13.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene14.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene15.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\myscene16.h">
+      <Filter>scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -84,10 +84,14 @@ void main()
     // Usefull for parallax mapping
     vec3 N = normalize(Normal);
     vec3 T = normalize(Tangent);
-    T = normalize(T - dot(T, N) * N);
-    vec3 B = normalize(cross(N, T));
+    vec3 B = normalize(Bitangent);
 
-    // Columns = T, B, N  → transpose to go world → tangent
+    // Orthonormalize without destroying handedness
+    T = normalize(T - N * dot(N, T));
+    B = normalize(B - N * dot(N, B));
+
+
+    // Columns = T, B, N => transpose to go world => tangent
     mat3 TBN = transpose(mat3(T, B, N));
 
     TangentLightPos = TBN * lightPos;

@@ -200,43 +200,45 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="app\myscene1.cpp" />
-    <ClCompile Include="app\myscene10.cpp" />
-    <ClCompile Include="app\myscene11.cpp" />
-    <ClCompile Include="app\myscene12.cpp" />
-    <ClCompile Include="app\myscene13.cpp" />
-    <ClCompile Include="app\myscene14.cpp" />
-    <ClCompile Include="app\myscene15.cpp" />
-    <ClCompile Include="app\myscene16.cpp" />
-    <ClCompile Include="app\myscene2.cpp" />
-    <ClCompile Include="app\myscene3.cpp" />
-    <ClCompile Include="app\myscene4.cpp" />
-    <ClCompile Include="app\myscene5.cpp" />
-    <ClCompile Include="app\myscene6.cpp" />
-    <ClCompile Include="app\myscene7.cpp" />
-    <ClCompile Include="app\myscene8.cpp" />
-    <ClCompile Include="app\myscene9.cpp" />
+    <ClCompile Include="scene\myscene0.cpp" />
+    <ClCompile Include="scene\myscene1.cpp" />
+    <ClCompile Include="scene\myscene10.cpp" />
+    <ClCompile Include="scene\myscene11.cpp" />
+    <ClCompile Include="scene\myscene12.cpp" />
+    <ClCompile Include="scene\myscene13.cpp" />
+    <ClCompile Include="scene\myscene14.cpp" />
+    <ClCompile Include="scene\myscene15.cpp" />
+    <ClCompile Include="scene\myscene16.cpp" />
+    <ClCompile Include="scene\myscene2.cpp" />
+    <ClCompile Include="scene\myscene3.cpp" />
+    <ClCompile Include="scene\myscene4.cpp" />
+    <ClCompile Include="scene\myscene5.cpp" />
+    <ClCompile Include="scene\myscene6.cpp" />
+    <ClCompile Include="scene\myscene7.cpp" />
+    <ClCompile Include="scene\myscene8.cpp" />
+    <ClCompile Include="scene\myscene9.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\myapp0.h" />
     <ClInclude Include="app\myapp1.h" />
-    <ClInclude Include="app\myscene1.h" />
-    <ClInclude Include="app\myscene10.h" />
-    <ClInclude Include="app\myscene11.h" />
-    <ClInclude Include="app\myscene12.h" />
-    <ClInclude Include="app\myscene13.h" />
-    <ClInclude Include="app\myscene14.h" />
-    <ClInclude Include="app\myscene15.h" />
-    <ClInclude Include="app\myscene16.h" />
-    <ClInclude Include="app\myscene2.h" />
-    <ClInclude Include="app\myscene3.h" />
-    <ClInclude Include="app\myscene4.h" />
-    <ClInclude Include="app\myscene5.h" />
-    <ClInclude Include="app\myscene6.h" />
-    <ClInclude Include="app\myscene7.h" />
-    <ClInclude Include="app\myscene8.h" />
-    <ClInclude Include="app\myscene9.h" />
+    <ClInclude Include="scene\myscene0.h" />
+    <ClInclude Include="scene\myscene1.h" />
+    <ClInclude Include="scene\myscene10.h" />
+    <ClInclude Include="scene\myscene11.h" />
+    <ClInclude Include="scene\myscene12.h" />
+    <ClInclude Include="scene\myscene13.h" />
+    <ClInclude Include="scene\myscene14.h" />
+    <ClInclude Include="scene\myscene15.h" />
+    <ClInclude Include="scene\myscene16.h" />
+    <ClInclude Include="scene\myscene2.h" />
+    <ClInclude Include="scene\myscene3.h" />
+    <ClInclude Include="scene\myscene4.h" />
+    <ClInclude Include="scene\myscene5.h" />
+    <ClInclude Include="scene\myscene6.h" />
+    <ClInclude Include="scene\myscene7.h" />
+    <ClInclude Include="scene\myscene8.h" />
+    <ClInclude Include="scene\myscene9.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\models\backpack\backpack.mtl">
@@ -2245,7 +2247,7 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_ao_2ko.ktx2">
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_ao_2k.ktx2">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -2286,6 +2288,103 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\albedo.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\ao.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\height.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\metallic.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\normal.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\sphere\rounded-metal-cubes\ktx2\roughness.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)models/sphere/rounded-metal-cubes/ktx2</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\albedo.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\ao.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\height.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\metallic.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\normal.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\rusted_iron\ktx2\roughness.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\rusted_iron\ktx2</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\resources\textures\pbr\aerial-rocks\ktx2\aerial_rocks_04_metal_2k.ktx2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)textures\pbr\aerial-rocks\ktx2</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)textures\pbr\aerial-rocks\ktx2</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

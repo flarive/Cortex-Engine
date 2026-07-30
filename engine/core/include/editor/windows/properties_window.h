@@ -2,6 +2,8 @@
 
 #include "../imgui_element.h"
 
+#include "../widgets/custom_widget.h"
+
 #include "../../ecs/entity.h"
 #include "../../ecs/transform_component.h"
 #include "../../ecs/light_component.h"
@@ -24,6 +26,8 @@ namespace engine
 
     private:
         std::shared_ptr<Entity> m_selectedEntity{};
+
+        CustomWidget m_customWidget{};
 
         void renderPropertiesWidget();
         void displayEntityDetails(const std::shared_ptr<Entity>& entity);

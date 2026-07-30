@@ -36,7 +36,7 @@ namespace engine
         void setManager(ImGuiUIManager* mgr);
 
 
-        virtual void onInit() {}
+        virtual void init() {}
 
 
         // Main entry point called by your UI manager

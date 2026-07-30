@@ -196,7 +196,7 @@
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
     <ClCompile Include="core\src\editor\windows\about_window.cpp" />
-    <ClCompile Include="core\src\editor\widgets\custom_widget.cpp" />
+    <ClCompile Include="core\src\editor\widgets\material_widget.cpp" />
     <ClCompile Include="core\src\editor\windows\dialog_box.cpp" />
     <ClCompile Include="core\src\editor\dockspaces\dockspace.cpp" />
     <ClCompile Include="core\src\editor\editor_helper.cpp" />
@@ -392,7 +392,7 @@
     <ClInclude Include="core\include\uvmapping.h" />
     <ClInclude Include="core\include\vertex.h" />
     <ClInclude Include="core\include\managers\entity_manager.h" />
-    <ClInclude Include="core\include\editor\widgets\custom_widget.h" />
+    <ClInclude Include="core\include\editor\widgets\material_widget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

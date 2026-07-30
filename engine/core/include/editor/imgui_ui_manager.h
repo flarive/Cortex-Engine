@@ -37,7 +37,7 @@ namespace engine
             auto ptr = std::make_unique<T>(std::forward<Args>(args)...);
             T* raw = ptr.get();
             raw->setManager(this);
-            raw->onInit();
+            raw->init();
             m_elements.push_back(std::move(ptr));
             return raw;
         }

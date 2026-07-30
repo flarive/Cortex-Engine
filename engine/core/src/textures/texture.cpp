@@ -1,6 +1,7 @@
 ﻿#include "../../include/textures/texture.h"
 
 #include "../../include/managers/log_manager.h"
+#include "../../include/tools/file_system.h"
 #include "../../include/common_defines.h"
 
 #include "../../include/misc/ltc_matrix.h"
@@ -555,7 +556,9 @@ unsigned int engine::Texture::loadTextureFromFile(const char* path, const std::s
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
-    logger.info("Loading texture {}", filename);
+    
+
+    logger.info("Loading texture {}", FileSystem::getShortenedPath(filename));
 
     unsigned int textureID;
     glGenTextures(1, &textureID);

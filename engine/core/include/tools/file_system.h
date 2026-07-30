@@ -15,11 +15,15 @@ namespace engine
 
     public:
         static std::string getPath(const std::string& path);
+        static std::string getDirectoryPath(const std::string& path);
+        static std::string getFilename(const std::string& path);
+        static std::string getShortenedPath(const std::string& path);
 
     private:
         static const std::string& getRoot();
         static Builder getPathBuilder();
         static std::string getPathRelativeRoot(const std::string& path);
         static std::string getPathRelativeBinary(const std::string& path);
+
     };
 }

@@ -15,7 +15,7 @@ namespace engine
     public:
         PerformanceOverlay() : ImGuiElement(Category::Overlay, "PerformanceOverlay") {}
 
-        void init();
+        void init() override;
         void updatePerformanceCounters(const PerformanceCounters& counters);
 
     private:

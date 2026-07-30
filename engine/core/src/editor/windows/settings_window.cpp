@@ -2,7 +2,7 @@
 
 #include "../../../include/singleton.h"
 
-void engine::SettingsWindow::onInit()
+void engine::SettingsWindow::init()
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");

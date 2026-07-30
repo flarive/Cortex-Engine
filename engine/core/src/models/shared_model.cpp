@@ -54,6 +54,17 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
         flags |= aiProcess_FlipUVs;
 
 
+
+
+    // retrieve the directory path of the filepath
+    m_directory = FileSystem::getDirectoryPath(path);
+
+    // retrieve the filename of the filepath
+    m_filename = FileSystem::getFilename(path);
+
+    
+
+
     const aiScene* scene = importer.ReadFile(path, flags);
 
     // check for errors
@@ -64,12 +75,7 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     }
 
 
-    // retrieve the directory path of the filepath
-    m_directory = path.substr(0, path.find_last_of('/'));
 
-    // retrieve the filename of the filepath
-    size_t last_slash = path.find_last_of("/\\"); // Works for both '/' and '\'
-    m_filename = path.substr(last_slash + 1);
 
 
     // check for bones or not
@@ -94,7 +100,7 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     // Print the time taken
-    logger.info("Loading model {} : {} milliseconds", path, duration.count());
+    logger.info("Loading model {} : {} milliseconds", FileSystem::getShortenedPath(path), duration.count());
 }
 
 

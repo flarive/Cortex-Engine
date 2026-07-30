@@ -778,20 +778,18 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     snprintf(result, sizeof(result), "%s%s", "##collapsingHeaderCheckbox", label);
 
     ImGuiID id = window->GetID(result);
-    flags |= ImGuiTreeNodeFlags_CollapsingHeader;
-    //if (p_visible)
-    flags |= ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
 
     bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
 
-    ImGuiContext& g = *GImGui;
-    const ImGuiStyle& style = g.Style;
+    //ImGuiContext& g = *GImGui;
+    //const ImGuiStyle& style = g.Style;
 
     ImVec2 pos = window->DC.CursorPos;
-    ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
-    ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+    //ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
+    //ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
 
-    float checkbox_width = ImGui::GetFrameHeight();
+    //float checkbox_width = ImGui::GetFrameHeight();
     //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
     ImVec2 checkbox_pos(32, pos.y - 67);
 
@@ -805,6 +803,43 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     {
         onCheck(*p_checked);
     }
+
+    ImGui::PopStyleVar(3); // Restore the previous style
+
+    return is_open;
+}
+
+bool engine::EditorHelper::collapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    char result[100];
+    snprintf(result, sizeof(result), "%s%s", "##collapsingHeader", label);
+
+    ImGuiID id = window->GetID(result);
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+
+    bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+
+    /*ImGuiContext& g = *GImGui;
+    const ImGuiStyle& style = g.Style;*/
+
+    ImVec2 pos = window->DC.CursorPos;
+    //ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
+    //ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+
+    //float checkbox_width = ImGui::GetFrameHeight();
+    ImVec2 label_pos(32, pos.y - 67);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.0f);       // Reduce corner rounding
+
+    ImGui::SetCursorPos(label_pos);
+
+    ImGui::Text(label);
 
     ImGui::PopStyleVar(3); // Restore the previous style
 

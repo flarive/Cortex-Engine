@@ -12,7 +12,7 @@ namespace engine
     public:
         AboutWindow() : ImGuiElement(Category::Window, "About") {}
 
-        void init();
+        void init() override;
 
     private:
         SystemMonitor m_sysMonitor{};

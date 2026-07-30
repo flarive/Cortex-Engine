@@ -2,7 +2,7 @@
 
 #include "../imgui_element.h"
 
-#include "../widgets/custom_widget.h"
+#include "../widgets/material_widget.h"
 
 #include "../../ecs/entity.h"
 #include "../../ecs/transform_component.h"
@@ -21,13 +21,13 @@ namespace engine
     public:
         PropertiesWindow() : ImGuiElement(Category::Window, "Properties") {}
 
-        void onInit() override;
+        void init() override;
 
 
     private:
         std::shared_ptr<Entity> m_selectedEntity{};
 
-        CustomWidget m_customWidget{};
+        MaterialWidget m_materialWidget{};
 
         void renderPropertiesWidget();
         void displayEntityDetails(const std::shared_ptr<Entity>& entity);

@@ -4,7 +4,7 @@
 
 
 
-void engine::PropertiesWindow::onInit()
+void engine::PropertiesWindow::init()
 {
     // listen for events from scene hierarchy window
     listen([this](const UIEvent& evt)
@@ -16,7 +16,7 @@ void engine::PropertiesWindow::onInit()
     });
 
 
-    m_customWidget.init();
+    m_materialWidget.init();
 }
 
 void engine::PropertiesWindow::renderPropertiesWidget()
@@ -402,8 +402,7 @@ void engine::PropertiesWindow::renderCameraComponent(std::shared_ptr<CameraCompo
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::
-        collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
     }
@@ -431,8 +430,8 @@ void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<Primitiv
     }
 
 
-    // material
-    m_customWidget.render();
+    // material section
+    m_materialWidget.render();
 }
 
 void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelComponent>& component)

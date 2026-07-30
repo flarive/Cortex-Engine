@@ -215,15 +215,15 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    blinnPhongShader.init("blinnphong", "shaders/blinn-phong.vert", "shaders/blinn-phong.frag");
-    blinnPhongShaderTessellation.init("blinnphongTessellation", "shaders/blinn-phong.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/blinn-phong.frag");
+    blinnPhongShader.init("blinnphong", "shaders/renderer/blinnphong/blinn-phong.vert", "shaders/renderer/blinnphong/blinn-phong.frag");
+    blinnPhongShaderTessellation.init("blinnphongTessellation", "shaders/renderer/blinnphong/blinn-phong.vert", "shaders/renderer/shared/height.tcs", "shaders/renderer/shared/height.tes", nullptr, "shaders/renderer/blinnphong/blinn-phong.frag");
     
 
     // skybox reflection shader
-    skyboxReflectionShader.init("cubemap", "shaders/cubemap.vert", "shaders/cubemap.frag");
+    skyboxReflectionShader.init("cubemap", "shaders/renderer/blinnphong/cubemap.vert", "shaders/renderer/blinnphong/cubemap.frag");
 
 	// gradient background shader
-    backgroundShader.init("background", "shaders/blinnphong_background.vert", "shaders/blinnphong_background.frag");
+    backgroundShader.init("background", "shaders/renderer/blinnphong/blinnphong_background.vert", "shaders/renderer/blinnphong/blinnphong_background.frag");
 
     // shared shaders
     Renderer::loadShaders();

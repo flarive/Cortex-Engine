@@ -13,7 +13,7 @@ namespace engine
     public:
         SettingsWindow() : ImGuiElement(Category::Window, "Settings") {}
 
-		void onInit() override;
+		void init() override;
 
     private:
 		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback

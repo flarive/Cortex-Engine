@@ -79,7 +79,7 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
 void engine::PhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    phongShader.init("blinnphong", "shaders/phong.vert", "shaders/phong.frag");
+    phongShader.init("blinnphong", "shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
 
     // shared shaders
     Renderer::loadShaders();

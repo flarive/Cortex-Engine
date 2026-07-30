@@ -72,9 +72,9 @@ void MyScene16::init()
     auto trsLight1 = Transform{ { 0.0f, 8.0f, 0.0f } };
     auto light1 = make_shared<SpotLight>();
     light1->setIntensity(20.0f);
-    light1->setCutoff(12.5f);
+    light1->setCutoff(10.0f);
     light1->setOuterCutoff(15.0f);
-    light1->setTarget(vec3(0.0f, 0.0f, -5.0f));
+    light1->setTarget(vec3(0.0f, -11.0f, -10.0f));
     light1->setAmbientColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
     auto entityLight1 = make_shared<Entity>("Light1");
     entityLight1->addComponent<TransformComponent>(trsLight1);
@@ -84,7 +84,7 @@ void MyScene16::init()
 
     auto trsLight2 = Transform{ { -10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
-    light2->setIntensity(18.0f);
+    light2->setIntensity(10.0f);
     auto entityLight2 = make_shared<Entity>("Light2");
     entityLight2->addComponent<TransformComponent>(trsLight2);
     entityLight2->addComponent<LightComponent>(light2);
@@ -119,67 +119,85 @@ void MyScene16::init()
 
 
     // sphere models
-    auto sphere1 = make_shared<Sphere>();
+    //auto sphere1 = make_shared<Sphere>();
 
 
-    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
-        "models/sphere/rounded-metal-cubes/albedo.png",
-        "models/sphere/rounded-metal-cubes/normal.png",
-        "models/sphere/rounded-metal-cubes/metallic.png",
-        "models/sphere/rounded-metal-cubes/roughness.png",
-        "models/sphere/rounded-metal-cubes/ao.png",
-        "models/sphere/rounded-metal-cubes/height.png");
+    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    //    "models/sphere/rounded-metal-cubes/albedo.png",
+    //    "models/sphere/rounded-metal-cubes/normal.png",
+    //    "models/sphere/rounded-metal-cubes/metallic.png",
+    //    "models/sphere/rounded-metal-cubes/roughness.png",
+    //    "models/sphere/rounded-metal-cubes/ao.png",
+    //    "models/sphere/rounded-metal-cubes/height.png");
 
 
 
-    matSphere1->setNormalIntensity(5.0f);
+    //matSphere1->setNormalIntensity(5.0f);
 
-    sphere1->setup(matSphere1, UvMapping(2.0f));
+    //sphere1->setup(matSphere1, UvMapping(2.0f));
 
-    auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere1 = make_shared<Entity>("MySphere1");
-    entitySphere1->addComponent<TransformComponent>(trsSphere1);
-    entitySphere1->addComponent<PrimitiveComponent>(sphere1);
-    getEntityManager().addChild(entitySphere1);
+    //auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto entitySphere1 = make_shared<Entity>("MySphere1");
+    //entitySphere1->addComponent<TransformComponent>(trsSphere1);
+    //entitySphere1->addComponent<PrimitiveComponent>(sphere1);
+    //getEntityManager().addChild(entitySphere1);
 
 
-    // sphere models
-    auto sphere2 = make_shared<Sphere>();
+    //// sphere models
+    //auto sphere2 = make_shared<Sphere>();
+
+    ////auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+    ////    "textures/pbr/rusted_iron/albedo.png",
+    ////    "textures/pbr/rusted_iron/normal.png",
+    ////    "textures/pbr/rusted_iron/metallic.png",
+    ////    "textures/pbr/rusted_iron/roughness.png",
+    ////    "textures/pbr/rusted_iron/ao.png",
+    ////    "textures/pbr/rusted_iron/height.png");
+
+    ////auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+    ////  "textures/pbr/rusted_iron/ktx2/albedo.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/normal.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/metallic.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/roughness.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/ao.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/height.ktx2");
 
     //auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/pbr/rusted_iron/albedo.png",
-    //    "textures/pbr/rusted_iron/normal.png",
-    //    "textures/pbr/rusted_iron/metallic.png",
-    //    "textures/pbr/rusted_iron/roughness.png",
-    //    "textures/pbr/rusted_iron/ao.png",
-    //    "textures/pbr/rusted_iron/height.png");
-
-    //auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-    //  "textures/pbr/rusted_iron/ktx2/albedo.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/normal.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/metallic.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/roughness.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/ao.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/height.ktx2");
-
-    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-        "models/sphere/rounded-metal-cubes/ktx2/albedo.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/normal.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/metallic.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/roughness.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/ao.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/height.ktx2");
+    //    "models/sphere/rounded-metal-cubes/ktx2/albedo.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/normal.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/metallic.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/roughness.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/ao.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/height.ktx2");
 
 
-    matSphere2->setNormalIntensity(5.0f);
+    //matSphere2->setNormalIntensity(5.0f);
 
-    sphere2->setup(matSphere2, UvMapping(2.0f));
+    //sphere2->setup(matSphere2, UvMapping(2.0f));
 
-    auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere2 = make_shared<Entity>("MySphere2");
-    entitySphere2->addComponent<TransformComponent>(trsSphere2);
-    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
-    getEntityManager().addChild(entitySphere2);
+    //auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto entitySphere2 = make_shared<Entity>("MySphere2");
+    //entitySphere2->addComponent<TransformComponent>(trsSphere2);
+    //entitySphere2->addComponent<PrimitiveComponent>(sphere2);
+    //getEntityManager().addChild(entitySphere2);
+
+
+    
+
+    // Stained glass lamp model
+    const string stainedGlassLampPath = FileSystem::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
+    shared_ptr<Model> cushionModel = make_shared<Model>(stainedGlassLampPath);
+    auto trsCushion = Transform(vec3(0.0f, -11.0f, -10.0f), vec3(6.0f));
+
+    AnimTransform animLampRotate{ trsCushion, Transform(trsCushion).addRotationY(360.0f), AnimMode::Absolute, 30.0f, true };
+    auto trsLampAnimation = make_shared<TransformAnimation>("animLampRotate", animLampRotate);
+    auto trsLampAnimator = make_shared<TransformAnimator>(trsLampAnimation);
+
+    auto entityLamp = make_shared<Entity>("StainedGlassLamp");
+    entityLamp->addComponent<TransformComponent>(trsCushion);
+    entityLamp->addComponent<ModelComponent>(cushionModel);
+    entityLamp->addComponent<AnimatorComponent>(trsLampAnimator);
+    getEntityManager().addChild(entityLamp);
 
 
 

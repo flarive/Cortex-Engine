@@ -508,16 +508,16 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
-    pbrShader.init("pbr", "shaders/pbr.vert", "shaders/pbr.frag");
-    pbrShaderTessellation.init("pbrTessellation", "shaders/pbr.vert", "shaders/height.tcs", "shaders/height.tes", nullptr, "shaders/pbr.frag");
+    pbrShader.init("pbr", "shaders/renderer/pbr/pbr.vert", "shaders/renderer/pbr/pbr.frag");
+    pbrShaderTessellation.init("pbrTessellation", "shaders/renderer/pbr/pbr.vert", "shaders/renderer/shared/height.tcs", "shaders/renderer/shared/height.tes", nullptr, "shaders/renderer/pbr/pbr.frag");
 
-    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/cubemap2.vert", "shaders/equirectangular_to_cubemap.frag");
-    irradianceShader.init("irradianceShader", "shaders/cubemap2.vert", "shaders/irradiance_convolution.frag");
-    prefilterShader.init("prefilterShader", "shaders/cubemap2.vert", "shaders/prefilter.frag");
-    brdfShader.init("brdfShader", "shaders/brdf.vert", "shaders/brdf.frag");
+    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/equirectangular_to_cubemap.frag");
+    irradianceShader.init("irradianceShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/irradiance_convolution.frag");
+    prefilterShader.init("prefilterShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/prefilter.frag");
+    brdfShader.init("brdfShader", "shaders/renderer/pbr/brdf.vert", "shaders/renderer/pbr/brdf.frag");
 
     // HDR skybox shader
-    backgroundShader.init("background", "shaders/pbr_background.vert", "shaders/pbr_background.frag");
+    backgroundShader.init("background", "shaders/renderer/pbr/pbr_background.vert", "shaders/renderer/pbr/pbr_background.frag");
 
     // shared shaders
     Renderer::loadShaders();

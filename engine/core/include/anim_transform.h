@@ -10,7 +10,7 @@ namespace engine
         Relative
     };
 
-    struct AnimTransform
+    struct AnimTransform final
     {
         AnimTransform() = default;
         AnimTransform(const Transform& from_, const Transform& to_, AnimMode mode_, float duration_, bool loop_ = false);

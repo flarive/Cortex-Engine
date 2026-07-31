@@ -1,6 +1,7 @@
 #include "../../include/primitives/terrain.h"
 
 #include "../../include/managers/log_manager.h"
+#include "../../include/managers/texture_manager.h"
 
 engine::Terrain::Terrain(float heightFactor, unsigned int resolution, const glm::vec3& _position)
 	: Primitive(_position), m_heightFactor(heightFactor), m_resolution(resolution)
@@ -32,9 +33,9 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
     auto allTexturesLoaded = [this](bool) {
         if (this->m_material && this->m_material->hasHeightMap())
         {
-            TextureData data = Texture::getTextureData(this->m_material->getHeightTexPath());
-            m_textureWidth = std::get<2>(data);
-            m_textureHeight = std::get<3>(data);
+            TextureData data = TextureManager::getTextureData(this->m_material->getHeightTexPath());
+            m_textureWidth = data.width;
+            m_textureHeight = data.height;
         }
         else
         {

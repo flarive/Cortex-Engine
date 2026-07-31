@@ -19,7 +19,7 @@
 
 namespace engine
 {
-    class Model : public SharedModel
+    class Model final : public SharedModel
     {
     public:
         Model() = default;

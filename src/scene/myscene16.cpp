@@ -102,7 +102,7 @@ void MyScene16::init()
     //    "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
     //    ""), UvMapping(3.0f));
 
-    myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
+    myPlane->setup(make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
         "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
         "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_metal_2k.ktx2",
@@ -185,7 +185,7 @@ void MyScene16::init()
     
 
     // Stained glass lamp model
-    const string stainedGlassLampPath = FileSystem::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
+    const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
     shared_ptr<Model> cushionModel = make_shared<Model>(stainedGlassLampPath);
     auto trsCushion = Transform(vec3(0.0f, -11.0f, -10.0f), vec3(6.0f));
 

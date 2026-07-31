@@ -5,10 +5,10 @@ GLuint engine::ktxLoader::loadAndUploadKTX(const std::string& filename, bool isN
     ktxTexture* cpu = loadKTX(filename, isNormalMap, isHeightMap);
     if (!cpu) return 0;
 
-    GLuint tex = uploadKTX_OpenGL(cpu);
+    TextureUploadResult result = uploadKTX_OpenGL(cpu);
 
     ktxTexture_Destroy(cpu);
-    return tex;
+    return result.textureID;
 }
 
 ktxTexture* engine::ktxLoader::loadKTX(const std::string& filename, bool isNormalMap, bool isHeightMap)
@@ -42,10 +42,12 @@ ktxTexture* engine::ktxLoader::loadKTX(const std::string& filename, bool isNorma
     return kTexture;
 }
 
-GLuint engine::ktxLoader::uploadKTX_OpenGL(ktxTexture* kTexture)
+engine::TextureUploadResult engine::ktxLoader::uploadKTX_OpenGL(ktxTexture* kTexture)
 {
+    TextureUploadResult result{};
+    
     if (!kTexture)
-        return 0;
+        return result;
 
     GLuint tex = 0;
     glGenTextures(1, &tex);
@@ -57,8 +59,10 @@ GLuint engine::ktxLoader::uploadKTX_OpenGL(ktxTexture* kTexture)
     if (ktxTexture_GLUpload(kTexture, &tex, &target, &glerror) != KTX_SUCCESS)
     {
         glDeleteTextures(1, &tex);
-        return 0;
+        return result;
     }
+
+    result.textureID = tex;
 
     // Apply sampler parameters
     glBindTexture(target, tex);
@@ -67,7 +71,7 @@ GLuint engine::ktxLoader::uploadKTX_OpenGL(ktxTexture* kTexture)
     glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    return tex;
+    return result;
 }
 
 

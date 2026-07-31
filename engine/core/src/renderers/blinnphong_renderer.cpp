@@ -2,13 +2,16 @@
 
 #include "../../include/singleton.h"
 
-#include "../../include/tools/file_system.h"
+#include "../../include/managers/filesystem_manager.h"
 #include "../../include/debug/opengl_debug.h"
 #include "../../include/debug/debug_frame.h"
 
 #include "../../include/lights/spot_light.h"
 #include "../../include/lights/point_light.h"
 #include "../../include/lights/directional_light.h"
+
+
+#include "../../include/managers/texture_manager.h"
 
 #include "../../include/misc/colors.h"
 
@@ -47,8 +50,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     loadShaders();
 
 
-    LTC1Map = Texture::loadMTexture();
-    LTC2Map = Texture::loadLUTTexture();
+    LTC1Map = TextureManager::loadMTexture();
+    LTC2Map = TextureManager::loadLUTTexture();
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------

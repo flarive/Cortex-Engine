@@ -8,7 +8,7 @@
 
 namespace engine
 {
-    class FileSystem final : private NonCopyable
+    class FileSystemManager final : private NonCopyable
     {
     private:
         using Builder = std::string(*)(const std::string& path);
@@ -17,6 +17,7 @@ namespace engine
         static std::string getPath(const std::string& path);
         static std::string getDirectoryPath(const std::string& path);
         static std::string getFilename(const std::string& path);
+        static std::string getFullPath(const std::string& path);
         static std::string getShortenedPath(const std::string& path);
 
     private:

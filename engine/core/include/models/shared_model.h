@@ -15,7 +15,7 @@
 #include <assimp/postprocess.h>
 
 
-#include "SOIL2.h"
+//#include "SOIL2.h"
 
 #include <omp.h> // Include OpenMP header
 
@@ -117,12 +117,15 @@ namespace engine
 
         void reSetup();
 
+        std::shared_ptr<Material>& getMaterial() { return m_material; }
 
     private:
 
         
         std::string m_directory{};
         std::string m_filename{};
+
+        std::shared_ptr<Material> m_material{};
 
         // processes a node in a recursive fashion.
         // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -133,13 +136,7 @@ namespace engine
         bool checkMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
         
-
-
-
     protected:
-
-
-
         unsigned int m_numberOfMeshes{};
         unsigned int m_numberOfVertices{};
 

@@ -312,8 +312,8 @@
     <ClCompile Include="core\src\tools\system_monitor.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\tools\file_system.cpp">
-      <Filter>sources\core\tools</Filter>
+    <ClCompile Include="core\src\managers\filesystem_manager.cpp">
+      <Filter>sources\core\managers</Filter>
     </ClCompile>
     <ClCompile Include="core\src\ui\sprite.cpp">
       <Filter>sources\core\ui</Filter>
@@ -573,6 +573,9 @@
     <ClCompile Include="core\src\textures\texture.cpp">
       <Filter>sources\core\textures</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\managers\texture_manager.cpp">
+      <Filter>sources\core\managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -650,8 +653,8 @@
     <ClInclude Include="core\include\tools\system_monitor.h">
       <Filter>headers\core\tools</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\tools\file_system.h">
-      <Filter>headers\core\tools</Filter>
+    <ClInclude Include="core\include\managers\filesystem_manager.h">
+      <Filter>headers\core\managers</Filter>
     </ClInclude>
     <ClInclude Include="core\include\ui\sprite.h">
       <Filter>headers\core\ui</Filter>
@@ -952,6 +955,9 @@
     </ClInclude>
     <ClInclude Include="core\include\textures\texture.h">
       <Filter>headers\core\textures</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\managers\texture_manager.h">
+      <Filter>headers\core\managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "../../include/ui/text.h"
 
-#include "../../include/tools/file_system.h"
+#include "../../include/managers/filesystem_manager.h"
 
 #include "../../include/managers/log_manager.h"
 
@@ -41,7 +41,7 @@ void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int 
     }
 
     // find path to font
-    std::string font_name = FileSystem::getPath(fontPath);
+    std::string font_name = FileSystemManager::getPath(fontPath);
     if (font_name.empty())
     {
         std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;

@@ -1,12 +1,12 @@
 #include "../../include/editor/icon_atlas.h"
-#include "../../include/textures/texture.h"
+#include "../../include/managers/texture_manager.h"
 
 bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int atlasHeight)
 {
     m_atlasWidth = atlasWidth;
     m_atlasHeight = atlasHeight;
 
-    m_textureID = Texture::loadTexture(filePath.c_str(), TextureFlag_InvertY); // TextureFlag_InvertY
+    m_textureID = TextureManager::loadTexture(filePath.c_str(), TextureFlag_InvertY); // TextureFlag_InvertY
 
     return (m_textureID != 0);
 }

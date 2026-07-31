@@ -85,7 +85,7 @@ namespace engine
 
         virtual std::vector<Vertex> generateVertices() = 0;
 
-        std::shared_ptr<Material> getMaterial() { return m_material; }
+        std::shared_ptr<Material>& getMaterial() { return m_material; }
         
 
 
@@ -135,11 +135,14 @@ namespace engine
         bool isEnabled() const { return m_isEnabled; }
         void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
+        
+
     protected:
         bool m_isEnabled{ true };
         
 
         void setMaterial(const std::shared_ptr<Material>& material);
+        
 
 
     private:

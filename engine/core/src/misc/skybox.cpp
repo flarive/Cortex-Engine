@@ -1,6 +1,6 @@
 #include "../../include/misc/skybox.h"
 
-#include "../../include/textures/texture.h"
+#include "../../include/managers/texture_manager.h"
 #include "../../include/primitives/primitive.h"
 
 #include "../../include/debug/opengl_debug.h"
@@ -22,7 +22,7 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 
 
     // skybox textures
-    m_cubemapTexture = engine::Texture::loadCubemap(faces);
+    m_cubemapTexture = engine::TextureManager::loadCubemap(faces);
 
     m_isSetup = true;
 }

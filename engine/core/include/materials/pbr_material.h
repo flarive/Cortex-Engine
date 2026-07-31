@@ -2,8 +2,6 @@
 
 #include "material.h"
 
-#include "../cameras/camera.h"
-
 namespace engine
 {
 	class PBRMaterial final : public Material

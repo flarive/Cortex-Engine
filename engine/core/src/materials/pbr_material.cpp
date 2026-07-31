@@ -2,7 +2,8 @@
 
 engine::PBRMaterial::PBRMaterial(std::vector<Texture> _textures, float _shininess)
 	: Material(std::move(_textures), _shininess)
-{}
+{
+}
 
 engine::PBRMaterial::PBRMaterial(const Color& ambientColor) : Material(ambientColor)
 {

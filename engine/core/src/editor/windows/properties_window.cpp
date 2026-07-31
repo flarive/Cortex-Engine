@@ -429,8 +429,8 @@ void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<Primitiv
         EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
     }
 
-
     // material section
+    m_materialWidget.setMaterial(primitive->getMaterial());
     m_materialWidget.render();
 }
 
@@ -454,6 +454,10 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
     {
         EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
     }
+
+    // material section
+    m_materialWidget.setMaterial(model->getMaterial());
+    m_materialWidget.render();
 }
 
 void engine::PropertiesWindow::renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component)

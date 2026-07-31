@@ -1,7 +1,6 @@
 #include "../../include/ui/sprite.h"
 
-#include "../../include/textures/texture.h"
-
+#include "../../include/managers/texture_manager.h"
 #include "../../include/managers/log_manager.h"
 
 #include <tuple>
@@ -28,11 +27,11 @@ void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
     m_spriteShader.use();
     m_spriteShader.setMat4("projection", projection2);
 
-    auto textureTuple = Texture::loadTextureExtended(filepath, TextureFlag_None);
+    TextureData texData = TextureManager::loadTextureExtended(filepath, TextureFlag_None);
     
-    m_texture_id = std::get<0>(textureTuple);
-    width = std::get<2>(textureTuple);
-    height = std::get<3>(textureTuple);
+    m_texture_id = texData.id;
+    width = texData.width;
+    height = texData.height;
 
     initRenderData();
 }

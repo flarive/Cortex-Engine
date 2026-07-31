@@ -2,19 +2,30 @@
 
 #include "../imgui_element.h"
 
+#include "../../materials/material.h"
+
+#include "../../../include/managers/texture_manager.h"
+
 namespace engine
 {
     class MaterialWidget final : public ImGuiElement
     {
     public:
-        MaterialWidget() : ImGuiElement(Category::Widget, "ColorWidget") {}
+        MaterialWidget() : ImGuiElement(Category::Widget, "MaterialSubComponentWidget") {}
 
         void init() override;
+
+        void setMaterial(std::shared_ptr<Material> material);
 
     protected:
         void draw() override;
 
     private:
-        float m_color[3] = { 1, 1, 1 };
+        
+        bool m_isHeaderExpanded{ true };
+
+        std::weak_ptr<Material> m_material{};
+
+        void displayTexture(const TextureData& textData);
     };
 }

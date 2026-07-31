@@ -2,7 +2,7 @@
 
 #include "../../include/singleton.h"
 
-#include "../../include/tools/file_system.h"
+#include "../../include/managers/filesystem_manager.h"
 #include "../../include/debug/opengl_debug.h"
 #include "../../include/debug/debug_frame.h"
 
@@ -10,6 +10,7 @@
 #include "../../include/lights/point_light.h"
 #include "../../include/lights/directional_light.h"
 
+#include "../../include/managers/texture_manager.h"
 
 #include "../../include/misc/colors.h"
 
@@ -59,8 +60,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // generate on the fly textues in memory
     // -------------------------------------
-    LTC1Map = Texture::loadMTexture();
-    LTC2Map = Texture::loadLUTTexture();
+    LTC1Map = TextureManager::loadMTexture();
+    LTC2Map = TextureManager::loadLUTTexture();
 
     glm::mat4 projection = m_camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
 
@@ -146,7 +147,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: load the HDR environment map
     // ---------------------------------
-    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::Texture::loadHDRImage(FileSystem::getPath(settings.HDRSkyboxFilePath)) : 0;
+    unsigned int hdrTexture = !settings.HDRSkyboxFilePath.empty() ? engine::TextureManager::loadHDRImage(FileSystemManager::getPath(settings.HDRSkyboxFilePath)) : 0;
 
     // pbr: setup cubemap to render to and attach to framebuffer
     // ---------------------------------------------------------

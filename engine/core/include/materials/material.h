@@ -76,6 +76,11 @@ namespace engine
         const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
         const engine::Color& getSpecularColor() const { return m_specularColor; }
 
+
+
+
+
+
         const std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
         const std::string& getSpecularTexPath() const { return m_specularTexPath; }
         const std::string& getNormalTexPath() const { return m_normalTexPath; }

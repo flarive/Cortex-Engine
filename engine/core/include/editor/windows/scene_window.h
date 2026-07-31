@@ -6,6 +6,9 @@
 
 namespace engine
 {
+    /// <summary>
+    /// TODO ! Use WeakPtr instead of SharedPtr everywhere in editor !
+    /// </summary>
     class SceneWindow final : public ImGuiElement
     {
     public:

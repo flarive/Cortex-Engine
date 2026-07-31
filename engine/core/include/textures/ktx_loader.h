@@ -2,6 +2,8 @@
 
 #include "../common_defines.h"
 
+#include "../managers/texture_manager.h"
+
 //#define KTX_STATIC
 #include "ktx.h"
 
@@ -23,7 +25,7 @@ namespace engine
 	public:
 		static GLuint loadAndUploadKTX(const std::string& filename, bool isNormalMap, bool isHeightMap);
 		static ktxTexture* loadKTX(const std::string& filename, bool isNormalMap, bool isHeightMap);
-		static GLuint uploadKTX_OpenGL(ktxTexture* kTexture);
+		static engine::TextureUploadResult uploadKTX_OpenGL(ktxTexture* kTexture);
 
 		static int getKTXComponents(ktxTexture* tex, bool isNormalMap, bool isHeightMap);
 

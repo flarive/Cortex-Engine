@@ -218,6 +218,7 @@
     <ClCompile Include="core\src\managers\audio_manager.cpp" />
     <ClCompile Include="core\src\managers\entity_manager.cpp" />
     <ClCompile Include="core\src\managers\scene_manager.cpp" />
+    <ClCompile Include="core\src\managers\texture_manager.cpp" />
     <ClCompile Include="core\src\materials\material.cpp" />
     <ClCompile Include="core\src\materials\blinnphong_material.cpp" />
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
@@ -237,7 +238,7 @@
     <ClCompile Include="core\src\singleton.cpp" />
     <ClCompile Include="core\src\primitives\terrain.cpp" />
     <ClCompile Include="core\src\textures\ktx_loader.cpp" />
-    <ClCompile Include="core\src\tools\file_system.cpp" />
+    <ClCompile Include="core\src\managers\filesystem_manager.cpp" />
     <ClCompile Include="core\src\lights\directional_light.cpp" />
     <ClCompile Include="core\src\lights\light.cpp" />
     <ClCompile Include="core\src\lights\point_light.cpp" />
@@ -338,6 +339,7 @@
     <ClInclude Include="core\include\managers\app_manager.h" />
     <ClInclude Include="core\include\managers\audio_manager.h" />
     <ClInclude Include="core\include\managers\scene_manager.h" />
+    <ClInclude Include="core\include\managers\texture_manager.h" />
     <ClInclude Include="core\include\materials\material.h" />
     <ClInclude Include="core\include\materials\blinnphong_material.h" />
     <ClInclude Include="core\include\materials\pbr_material.h" />
@@ -362,7 +364,7 @@
     <ClInclude Include="core\include\textures\ktx_loader.h" />
     <ClInclude Include="core\include\tools\nvidia_monitor.h" />
     <ClInclude Include="core\include\tools\pdh_counters.h" />
-    <ClInclude Include="core\include\tools\file_system.h" />
+    <ClInclude Include="core\include\managers\filesystem_manager.h" />
     <ClInclude Include="core\include\lights\directional_light.h" />
     <ClInclude Include="core\include\lights\light.h" />
     <ClInclude Include="core\include\lights\point_light.h" />

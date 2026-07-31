@@ -1,7 +1,8 @@
 #include "../../include/models/shared_model.h"
 
+#include "../../include/managers/texture_manager.h"
 #include "../../include/managers/log_manager.h"
-#include "../../include/tools/file_system.h"
+#include "../../include/managers/filesystem_manager.h"
 #include "../../include/tools/helpers.h"
 
 #include "../../include/models/assimp_glm_helpers.h"
@@ -57,10 +58,10 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
 
 
     // retrieve the directory path of the filepath
-    m_directory = FileSystem::getDirectoryPath(path);
+    m_directory = FileSystemManager::getDirectoryPath(path);
 
     // retrieve the filename of the filepath
-    m_filename = FileSystem::getFilename(path);
+    m_filename = FileSystemManager::getFilename(path);
 
     
 
@@ -100,7 +101,7 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     // Print the time taken
-    logger.info("Loading model {} : {} milliseconds", FileSystem::getShortenedPath(path), duration.count());
+    logger.info("Loading model {} : {} milliseconds", FileSystemManager::getShortenedPath(path), duration.count());
 }
 
 
@@ -215,7 +216,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     SceneSettings& sceneSettings = singleton->sceneSettings();
 
 
-    std::shared_ptr<Material> meshMaterial{};
+    
 
     // get textures
     if (sceneSettings.method == RenderMethod::PBR)
@@ -268,7 +269,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     if (m_customMaterial)
     {
         // use a user defined material
-        meshMaterial = m_customMaterial;
+        m_material = m_customMaterial;
     }
     else
     {
@@ -276,18 +277,18 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         if (textures.size() > 0)
         {
             if (sceneSettings.method == RenderMethod::PBR)
-                meshMaterial = std::make_shared<PBRMaterial>(std::move(textures), shininess);
+                m_material = std::make_shared<PBRMaterial>(std::move(textures), shininess);
             else
-                meshMaterial = std::make_shared<BlinnPhongMaterial>(std::move(textures), shininess);
+                m_material = std::make_shared<BlinnPhongMaterial>(std::move(textures), shininess);
 
-            meshMaterial->setAllTexturesLoaded(true);
+            m_material->setAllTexturesLoaded(true);
         }
         else
         {
             if (sceneSettings.method == RenderMethod::PBR)
-                meshMaterial = std::make_shared<PBRMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
+                m_material = std::make_shared<PBRMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
             else
-                meshMaterial = std::make_shared<BlinnPhongMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
+                m_material = std::make_shared<BlinnPhongMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
         }
     }
 
@@ -295,7 +296,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh{ std::move(vertices), std::move(indices), meshMaterial };
+    return Mesh{ std::move(vertices), std::move(indices), m_material };
 }
 
 /// <summary>
@@ -330,6 +331,8 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
         aiString str{};
         mat->GetTexture(type, i, &str);
 
+        std::string fullTexPath = std::format("{}/{}", this->m_directory, str.C_Str());
+
         // Check if texture was already loaded
         bool skip = false;
         for (const auto& loaded : textures_loaded)
@@ -339,7 +342,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
                 // If this is a metallic/roughness MR texture, mark it as such
                 if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
                 {
-                    engine::Texture texture{ loaded.id, typeName, str.C_Str() };
+                    engine::Texture texture{ loaded.id, typeName, fullTexPath };
 
                     bool singleTexture = checkMRSingleTexture(scene, mat);
                     if (singleTexture)
@@ -355,7 +358,7 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
                 }
                 else
                 {
-                    textures.emplace_back(loaded.id, typeName, str.C_Str());
+                    textures.emplace_back(loaded.id, typeName, fullTexPath);
                 }
 
                 //std::cout << "Texture " << loaded.path.c_str() << " was already loaded (reuse)" << std::endl;
@@ -375,17 +378,24 @@ std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiS
                 const aiTexture* aiTex = scene->mTextures[index];
                 if (aiTex->mHeight == 0)
                 {
-                    texture.id = engine::Texture::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mFilename.C_Str());
+                    texture.id = engine::TextureManager::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mFilename.C_Str());
                 }
                 else
                 {
-                    texture.id = engine::Texture::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
+                    texture.id = engine::TextureManager::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
                 }
             }
             else
             {
                 // Texture from file
-                texture.id = engine::Texture::loadTextureFromFile(str.C_Str(), this->m_directory);
+                
+                // ugly !!!!!!!!!!!!!!!!!!!!!!!!
+                std::string filename = std::string(str.C_Str());
+                std::string fullPath = this->m_directory + '\\' + filename;
+
+                // TODO !!!!!!!! Should load textures async !!!!!!!!!!!!!!
+                texture.id = engine::TextureManager::loadTextureFromFile(fullPath);
+                texture.path = fullPath; // ugly !!!!!!!!!!!
             }
 
             if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)

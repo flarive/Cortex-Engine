@@ -259,6 +259,8 @@ void engine::TextureManager::processLoadedTextures()
     }
 }
 
+//E:\MyProjects\Cortex-Engine\samples\models\StainedGlassLamp\glTF\StainedGlassLamp_grill_occlusion-rough-metal.png
+
 /// <summary>
 /// Enqueue Texture Creation to Run on Main Thread
 /// </summary>
@@ -371,8 +373,8 @@ engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned
         return result;
 
     // Flip vertically if requested
-    if (hasFlag(flags, TextureFlag_InvertY))
-        flipImageVertically2(data, width, height, nrComponents);
+    //if (hasFlag(flags, TextureFlag_InvertY))
+    //    flipImageVertically2(data, width, height, nrComponents);
 
     // Create and bind OpenGL texture
     unsigned int textureID{};

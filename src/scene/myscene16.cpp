@@ -92,94 +92,94 @@ void MyScene16::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>(false);
+    //auto myPlane = make_shared<Plane>(false);
 
-    //myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
+    ////myPlane->setup(make_shared<PBRMaterial>(Color(0.2f),
+    ////    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
+    ////    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
+    ////    "textures/pbr/aerial-rocks/aerial_rocks_04_metal_2k.png",
+    ////    "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
+    ////    "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+    ////    ""), UvMapping(3.0f));
+
+    //myPlane->setup(make_shared<PBRMaterial>(Color(0.1f),
     //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
     //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_metal_2k.png",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_rough_2k.jpg",
-    //    "textures/pbr/aerial-rocks/aerial_rocks_04_ao_2k.jpg",
+    //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_metal_2k.ktx2",
+    //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_rough_2k.ktx2",
+    //    "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_ao_2k.ktx2",
     //    ""), UvMapping(3.0f));
 
-    myPlane->setup(make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_diff_2k.ktx2",
-        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_nor_gl_2k.ktx2",
-        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_metal_2k.ktx2",
-        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_rough_2k.ktx2",
-        "textures/pbr/aerial-rocks/ktx2/aerial_rocks_04_ao_2k.ktx2",
-        ""), UvMapping(3.0f));
+
+    //auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto entityPlane = make_shared<Entity>("MyPlane");
+    //entityPlane->addComponent<TransformComponent>(trsPlane);
+    //entityPlane->addComponent<PrimitiveComponent>(myPlane);
+    //getEntityManager().addChild(entityPlane);
 
 
-    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entityPlane = make_shared<Entity>("MyPlane");
-    entityPlane->addComponent<TransformComponent>(trsPlane);
-    entityPlane->addComponent<PrimitiveComponent>(myPlane);
-    getEntityManager().addChild(entityPlane);
+    //// sphere models
+    //auto sphere1 = make_shared<Sphere>();
 
 
-    // sphere models
-    auto sphere1 = make_shared<Sphere>();
-
-
-    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
-        "models/sphere/rounded-metal-cubes/albedo.png",
-        "models/sphere/rounded-metal-cubes/normal.png",
-        "models/sphere/rounded-metal-cubes/metallic.png",
-        "models/sphere/rounded-metal-cubes/roughness.png",
-        "models/sphere/rounded-metal-cubes/ao.png",
-        "models/sphere/rounded-metal-cubes/height.png");
+    //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    //    "models/sphere/rounded-metal-cubes/albedo.png",
+    //    "models/sphere/rounded-metal-cubes/normal.png",
+    //    "models/sphere/rounded-metal-cubes/metallic.png",
+    //    "models/sphere/rounded-metal-cubes/roughness.png",
+    //    "models/sphere/rounded-metal-cubes/ao.png",
+    //    "models/sphere/rounded-metal-cubes/height.png");
 
 
 
-    matSphere1->setNormalIntensity(5.0f);
+    //matSphere1->setNormalIntensity(5.0f);
 
-    sphere1->setup(matSphere1, UvMapping(2.0f));
+    //sphere1->setup(matSphere1, UvMapping(2.0f));
 
-    auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere1 = make_shared<Entity>("MySphere1");
-    entitySphere1->addComponent<TransformComponent>(trsSphere1);
-    entitySphere1->addComponent<PrimitiveComponent>(sphere1);
-    getEntityManager().addChild(entitySphere1);
+    //auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto entitySphere1 = make_shared<Entity>("MySphere1");
+    //entitySphere1->addComponent<TransformComponent>(trsSphere1);
+    //entitySphere1->addComponent<PrimitiveComponent>(sphere1);
+    //getEntityManager().addChild(entitySphere1);
 
 
-    // sphere models
-    auto sphere2 = make_shared<Sphere>();
+    //// sphere models
+    //auto sphere2 = make_shared<Sphere>();
+
+    ////auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+    ////    "textures/pbr/rusted_iron/albedo.png",
+    ////    "textures/pbr/rusted_iron/normal.png",
+    ////    "textures/pbr/rusted_iron/metallic.png",
+    ////    "textures/pbr/rusted_iron/roughness.png",
+    ////    "textures/pbr/rusted_iron/ao.png",
+    ////    "textures/pbr/rusted_iron/height.png");
+
+    ////auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+    ////  "textures/pbr/rusted_iron/ktx2/albedo.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/normal.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/metallic.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/roughness.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/ao.ktx2",
+    ////  "textures/pbr/rusted_iron/ktx2/height.ktx2");
 
     //auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-    //    "textures/pbr/rusted_iron/albedo.png",
-    //    "textures/pbr/rusted_iron/normal.png",
-    //    "textures/pbr/rusted_iron/metallic.png",
-    //    "textures/pbr/rusted_iron/roughness.png",
-    //    "textures/pbr/rusted_iron/ao.png",
-    //    "textures/pbr/rusted_iron/height.png");
-
-    //auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-    //  "textures/pbr/rusted_iron/ktx2/albedo.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/normal.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/metallic.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/roughness.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/ao.ktx2",
-    //  "textures/pbr/rusted_iron/ktx2/height.ktx2");
-
-    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-        "models/sphere/rounded-metal-cubes/ktx2/albedo.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/normal.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/metallic.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/roughness.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/ao.ktx2",
-        "models/sphere/rounded-metal-cubes/ktx2/height.ktx2");
+    //    "models/sphere/rounded-metal-cubes/ktx2/albedo.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/normal.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/metallic.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/roughness.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/ao.ktx2",
+    //    "models/sphere/rounded-metal-cubes/ktx2/height.ktx2");
 
 
-    matSphere2->setNormalIntensity(5.0f);
+    //matSphere2->setNormalIntensity(5.0f);
 
-    sphere2->setup(matSphere2, UvMapping(2.0f));
+    //sphere2->setup(matSphere2, UvMapping(2.0f));
 
-    auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
-    auto entitySphere2 = make_shared<Entity>("MySphere2");
-    entitySphere2->addComponent<TransformComponent>(trsSphere2);
-    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
-    getEntityManager().addChild(entitySphere2);
+    //auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto entitySphere2 = make_shared<Entity>("MySphere2");
+    //entitySphere2->addComponent<TransformComponent>(trsSphere2);
+    //entitySphere2->addComponent<PrimitiveComponent>(sphere2);
+    //getEntityManager().addChild(entitySphere2);
 
 
     

@@ -211,86 +211,13 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
 
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+	// load all textures asynchronously
+    m_material = loadMaterialTextures(scene, material);
+    if (m_material->hasDiffuseMap())
+        m_material->loadTexturesAsync();
 
 
-    
-
-    // get textures
-    if (sceneSettings.method == RenderMethod::PBR)
-    {
-        // 1. diffuse maps
-        std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
-        for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
-        // 3. normal maps
-        std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
-        for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
-        // 4. metallic maps (now tagged as "texture_metalness_from_combined")
-        std::vector<engine::Texture> metallicMaps = loadMaterialTextures(scene, material, aiTextureType_METALNESS, "texture_metalness"); //map_Pm
-        for (auto& texture : metallicMaps) { textures.push_back(std::move(texture)); }
-        // 5. roughness maps (now tagged as "texture_roughness_from_combined")
-        std::vector<engine::Texture> roughnessMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE_ROUGHNESS, "texture_roughness"); //map_Pr
-        for (auto& texture : roughnessMaps) { textures.push_back(std::move(texture)); }
-        // 6. ambient occlusion maps
-        std::vector<engine::Texture> ambientOcclusionMaps = loadMaterialTextures(scene, material, aiTextureType_SHEEN, "texture_ao"); // map_Ps (use sheen but hack) aiTextureType_LIGHTMAP
-        for (auto& texture : ambientOcclusionMaps) { textures.push_back(std::move(texture)); }
-        // 7. height maps
-        std::vector<engine::Texture> heightMaps = loadMaterialTextures(scene, material, aiTextureType_HEIGHT, "texture_height"); // bump
-        for (auto& texture : heightMaps) { textures.push_back(std::move(texture)); }
-        // 8. emissive maps
-        std::vector<engine::Texture> emissiveMaps = loadMaterialTextures(scene, material, aiTextureType_EMISSIVE, "texture_emissive"); // map_Ke
-        for (auto& texture : emissiveMaps) { textures.push_back(std::move(texture)); }
-    }
-    else
-    {
-        // 1. diffuse maps
-        std::vector<engine::Texture> diffuseMaps = loadMaterialTextures(scene, material, aiTextureType_DIFFUSE, "texture_diffuse"); // map_Kd
-        for (auto& texture : diffuseMaps) { textures.push_back(std::move(texture)); }
-        // 2. specular maps
-        std::vector<engine::Texture> specularMaps = loadMaterialTextures(scene, material, aiTextureType_SPECULAR, "texture_specular"); // map_Ks
-        for (auto& texture : specularMaps) { textures.push_back(std::move(texture)); }
-        // 3. normal maps
-        std::vector<engine::Texture> normalMaps = loadMaterialTextures(scene, material, aiTextureType_NORMALS, "texture_normal"); //map_Kn
-        for (auto& texture : normalMaps) { textures.push_back(std::move(texture)); }
-    }
-
-
-    float shininess{};
-    if (AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) || shininess <= 0.0f)
-    {
-        // if unsuccessful set a default
-        shininess = 32.0f;
-    }
-
-
-
-    if (m_customMaterial)
-    {
-        // use a user defined material
-        m_material = m_customMaterial;
-    }
-    else
-    {
-        // use material data embedded into model file
-        if (textures.size() > 0)
-        {
-            if (sceneSettings.method == RenderMethod::PBR)
-                m_material = std::make_shared<PBRMaterial>(std::move(textures), shininess);
-            else
-                m_material = std::make_shared<BlinnPhongMaterial>(std::move(textures), shininess);
-
-            m_material->setAllTexturesLoaded(true);
-        }
-        else
-        {
-            if (sceneSettings.method == RenderMethod::PBR)
-                m_material = std::make_shared<PBRMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
-            else
-                m_material = std::make_shared<BlinnPhongMaterial>(Color(ambient.r, ambient.g, ambient.b, ambient.a), Color(diffuse.r, diffuse.g, diffuse.b, diffuse.a), Color(specular.r, specular.g, specular.b, specular.a), shininess);
-        }
-    }
 
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
@@ -300,12 +227,58 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
 }
 
 /// <summary>
+/// ARM combined textures (ao + metalness + roughness)
+/// </summary>
+/// <param name="scene"></param>
+/// <param name="mat"></param>
+/// <returns></returns>
+bool engine::SharedModel::isARMSingleTexture(const aiScene* scene, aiMaterial* mat)
+{
+    aiString str1{};
+    aiString str2{};
+    aiString str3{};
+
+    for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION); i++)
+    {
+        mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, i, &str1);
+    }
+
+    if (str1.length == 0)
+    {
+        for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_LIGHTMAP); i++)
+        {
+            mat->GetTexture(aiTextureType_LIGHTMAP, i, &str1);
+        }
+    }
+
+    if (str1.length == 0)
+    {
+        for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_SHEEN); i++)
+        {
+            mat->GetTexture(aiTextureType_SHEEN, i, &str1);
+        }
+    }
+
+    for (unsigned int i = 0; i < mat->GetTextureCount(aiTextureType_METALNESS); i++)
+    {
+        mat->GetTexture(aiTextureType_METALNESS, i, &str2);
+    }
+
+    for (unsigned int j = 0; j < mat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS); j++)
+    {
+        mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, j, &str3);
+    }
+
+    return str1 == str2 && str2 == str3;
+}
+
+/// <summary>
 /// MR combined textures (metalness + roughness)
 /// </summary>
 /// <param name="scene"></param>
 /// <param name="mat"></param>
 /// <returns></returns>
-bool engine::SharedModel::checkMRSingleTexture(const aiScene* scene, aiMaterial* mat)
+bool engine::SharedModel::isMRSingleTexture(const aiScene* scene, aiMaterial* mat)
 {
     aiString str1{};
     aiString str2{};
@@ -323,100 +296,108 @@ bool engine::SharedModel::checkMRSingleTexture(const aiScene* scene, aiMaterial*
     return str1 == str2;
 }
 
-std::vector<engine::Texture> engine::SharedModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName)
+std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(const aiScene* scene, aiMaterial* mat)
 {
-    std::vector<engine::Texture> textures{};
+    std::shared_ptr<Material> material{};
+
+    float shininess = 1.0f;
+
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+
+    std::string texDiffuseFullPath{};
+    std::string texSpecularFullPath{};
+    std::string texNormalFullPath{};
+    std::string texMetalnessFullPath{};
+    std::string texRoughnessFullPath{};
+    std::string texAmbientOcclusionFullPath{};
+    std::string texHeightFullPath{};
+    std::string texEmissiveFullPath{};
+
+    std::string texArmFullPath{};
+    std::string texRmFullPath{};
+
+    bool useARMTexture = false;
+	bool useMRTexture = false;
+
+    if (sceneSettings.method == RenderMethod::PBR)
+    {
+        texDiffuseFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE);
+		texNormalFullPath = getTexture(mat, aiTextureType::aiTextureType_NORMALS);
+        texMetalnessFullPath = getTexture(mat, aiTextureType::aiTextureType_METALNESS);
+		texRoughnessFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS);
+		texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_AMBIENT_OCCLUSION);
+
+		if (texAmbientOcclusionFullPath.empty())
+		{
+			texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_LIGHTMAP);
+		}
+
+        if (texAmbientOcclusionFullPath.empty())
+        {
+            texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_SHEEN);
+        }
+
+		texHeightFullPath = getTexture(mat, aiTextureType::aiTextureType_HEIGHT);
+		texEmissiveFullPath = getTexture(mat, aiTextureType::aiTextureType_EMISSIVE);
+
+
+
+        if (useARMTexture = isARMSingleTexture(scene, mat))
+        {
+            texArmFullPath = texAmbientOcclusionFullPath;
+        }
+        else if (useMRTexture = isMRSingleTexture(scene, mat))
+        {
+			texRmFullPath = texMetalnessFullPath;
+        }
+    }
+    else
+    {
+        texDiffuseFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE);
+        texSpecularFullPath = getTexture(mat, aiTextureType::aiTextureType_SPECULAR);
+		texNormalFullPath = getTexture(mat, aiTextureType::aiTextureType_NORMALS);
+    }
+
+
+
+    if (sceneSettings.method == RenderMethod::PBR)
+    {
+        if (useARMTexture)
+        {
+            material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f), texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, shininess);
+		}
+		else if (useMRTexture)
+		{
+			material = std::make_shared<PBRMaterial>(CombinedTexture::RM, Color(0.1f), texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, shininess);
+		}
+        else
+        {
+            material = std::make_shared<PBRMaterial>(Color(0.1f), texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, shininess);
+        }
+	}
+	else
+	{
+        material = std::make_shared<BlinnPhongMaterial>(Color(0.1f), texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, shininess);
+	}
+
+    return material;
+}
+
+std::string engine::SharedModel::getTexture(aiMaterial* mat, aiTextureType type) const
+{
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str{};
         mat->GetTexture(type, i, &str);
 
-        std::string fullTexPath = std::format("{}/{}", this->m_directory, str.C_Str());
-
-        // Check if texture was already loaded
-        bool skip = false;
-        for (const auto& loaded : textures_loaded)
-        {
-            if (std::strcmp(loaded.path.c_str(), str.C_Str()) == 0)
-            {
-                // If this is a metallic/roughness MR texture, mark it as such
-                if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
-                {
-                    engine::Texture texture{ loaded.id, typeName, fullTexPath };
-
-                    bool singleTexture = checkMRSingleTexture(scene, mat);
-                    if (singleTexture)
-                    {
-                        // Tag the texture as metallic or roughness
-                        if (type == aiTextureType_METALNESS)
-                            texture.type = "texture_metalness_from_combined";
-                        //else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
-                        //    texture.type = "texture_roughness_from_combined";
-                    }
-
-                    textures.push_back(std::move(texture));
-                }
-                else
-                {
-                    textures.emplace_back(loaded.id, typeName, fullTexPath);
-                }
-
-                //std::cout << "Texture " << loaded.path.c_str() << " was already loaded (reuse)" << std::endl;
-
-                skip = true;
-                break;
-            }
-        }
-
-        if (!skip)
-        {
-            engine::Texture texture{ 0, typeName, str.C_Str() };
-            if (str.C_Str()[0] == '*')
-            {
-                // Embedded texture from model
-                int index = std::atoi(str.C_Str() + 1);
-                const aiTexture* aiTex = scene->mTextures[index];
-                if (aiTex->mHeight == 0)
-                {
-                    texture.id = engine::TextureManager::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mFilename.C_Str());
-                }
-                else
-                {
-                    texture.id = engine::TextureManager::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
-                }
-            }
-            else
-            {
-                // Texture from file
-                
-                // ugly !!!!!!!!!!!!!!!!!!!!!!!!
-                std::string filename = std::string(str.C_Str());
-                std::string fullPath = this->m_directory + '\\' + filename;
-
-                // TODO !!!!!!!! Should load textures async !!!!!!!!!!!!!!
-                texture.id = engine::TextureManager::loadTextureFromFile(fullPath);
-                texture.path = fullPath; // ugly !!!!!!!!!!!
-            }
-
-            if (type == aiTextureType_METALNESS || type == aiTextureType_DIFFUSE_ROUGHNESS)
-            {
-                bool singleTexture = checkMRSingleTexture(scene, mat);
-                if (singleTexture)
-                {
-                    // Tag the texture if it's metallic or roughness
-                    if (type == aiTextureType_METALNESS)
-                        texture.type = "texture_metalness_from_combined";
-                    else if (type == aiTextureType_DIFFUSE_ROUGHNESS)
-                        texture.type = "texture_roughness_from_combined";
-                }
-            }
-
-            textures.emplace_back(texture.id, texture.type, texture.path);
-            textures_loaded.emplace_back(texture.id, texture.type, texture.path);
-        }
+        return std::format("{}/{}", this->m_directory, str.C_Str());
     }
-
-    return textures;
+    
+    return "";
 }
 
 unsigned int engine::SharedModel::getMeshCount() const

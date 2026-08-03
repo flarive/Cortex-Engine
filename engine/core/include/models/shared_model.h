@@ -133,7 +133,8 @@ namespace engine
 
         virtual Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
-        bool checkMRSingleTexture(const aiScene* scene, aiMaterial* mat);
+        bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);
+        bool isMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
         
     protected:
@@ -151,8 +152,7 @@ namespace engine
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
 
-        // checks all material textures of a given type and loads the textures if they're not loaded yet.
-        // the required info is returned as a Texture struct.
-        std::vector<Texture> loadMaterialTextures(const aiScene* scene, aiMaterial* mat, aiTextureType type, const std::string& typeName);
+        std::shared_ptr<Material> loadMaterialTextures(const aiScene* scene, aiMaterial* mat);
+        std::string getTexture(aiMaterial* mat, aiTextureType type) const;
     };
 }

@@ -61,7 +61,7 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     m_directory = FileSystemManager::getDirectoryPath(path);
 
     // retrieve the filename of the filepath
-    m_filename = FileSystemManager::getFilename(path);
+    m_filename = FileSystemManager::getFileName(path);
 
     
 
@@ -210,12 +210,19 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
     aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
     aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
 
+    if (m_customMaterial)
+    {
+        // use a user defined material
+        m_materials.push_back(m_customMaterial);
+    }
+    else
+    {
+        m_materials.push_back(loadMaterialTextures(scene, material));
+    }
 
-
-	// load all textures asynchronously
-    m_material = loadMaterialTextures(scene, material);
-    if (m_material->hasDiffuseMap())
-        m_material->loadTexturesAsync();
+    // load all textures asynchronously
+    if (m_materials.back()->hasDiffuseMap())
+        m_materials.back()->loadTexturesAsync();
 
 
 
@@ -223,7 +230,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh{ std::move(vertices), std::move(indices), m_material };
+    return Mesh{ std::move(vertices), std::move(indices), m_materials.back() };
 }
 
 /// <summary>
@@ -346,6 +353,7 @@ std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(cons
 
 
 
+
         if (useARMTexture = isARMSingleTexture(scene, mat))
         {
             texArmFullPath = texAmbientOcclusionFullPath;
@@ -384,6 +392,8 @@ std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(cons
         material = std::make_shared<BlinnPhongMaterial>(Color(0.1f), texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, shininess);
 	}
 
+    material->setName(mat->GetName().C_Str());
+
     return material;
 }
 
@@ -394,7 +404,7 @@ std::string engine::SharedModel::getTexture(aiMaterial* mat, aiTextureType type)
         aiString str{};
         mat->GetTexture(type, i, &str);
 
-        return std::format("{}/{}", this->m_directory, str.C_Str());
+        return std::format("{}\\{}", this->m_directory, str.C_Str());
     }
     
     return "";

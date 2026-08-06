@@ -148,35 +148,35 @@ engine::TextureData engine::TextureManager::loadTextureExtended(const std::strin
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& filename)
+unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& path)
 {
-    if (filename.empty()) return 0;
+    if (path.empty()) return 0;
 
     std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureCacheMutex);
 
     // Check if the texture is already being loaded asynchronously
-    if (engine::TextureManagerInternal::asyncLoadingTextureCache.find(filename) != engine::TextureManagerInternal::asyncLoadingTextureCache.end()) {
+    if (engine::TextureManagerInternal::asyncLoadingTextureCache.find(path) != engine::TextureManagerInternal::asyncLoadingTextureCache.end()) {
         return 0; // Already loading
     }
 
-    logger.info("Loading async texture {}", filename);
+    logger.info("Loading async texture {}", FileSystemManager::getShortenedPath(path));
 
-    engine::TextureManagerInternal::asyncLoadingTextureCache[filename] =
+    engine::TextureManagerInternal::asyncLoadingTextureCache[path] =
     {
-        std::async(std::launch::async, [filename]() -> TexturePayload
+        std::async(std::launch::async, [path]() -> TexturePayload
         {
             TexturePayload payload;
 
-            if (isKTX2File(filename))
+            if (isKTX2File(path))
             {
                 // compressed texture, use ktx loader
                 // ktx lib can load ktx and ktx2
                 payload.type = TextureSourceType::KTXTexture;
 
                 payload.ktxData = ktxLoader::loadKTX(
-                    filename,
-                    isNormalMap(filename),
-                    isHeightMap(filename)
+                    path,
+                    isNormalMap(path),
+                    isHeightMap(path)
                 );
 
                 if (!payload.ktxData)
@@ -184,7 +184,7 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
 
                 payload.width = payload.ktxData->baseWidth;
                 payload.height = payload.ktxData->baseHeight;
-                payload.components = ktxLoader::getKTXComponents(payload.ktxData, isNormalMap(filename), isHeightMap(filename));
+                payload.components = ktxLoader::getKTXComponents(payload.ktxData, isNormalMap(path), isHeightMap(path));
 
                 return payload;
             }
@@ -195,7 +195,7 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                 payload.type = TextureSourceType::RawPixels;
 
                 payload.rawData = SOIL_load_image(
-                    filename.c_str(),
+                    path.c_str(),
                     &payload.width,
                     &payload.height,
                     &payload.components,

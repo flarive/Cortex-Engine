@@ -768,7 +768,7 @@ GLuint engine::EditorHelper::getIconAtlasTexture()
 /// <param name="p_checked"></param>
 /// <param name="flags"></param>
 /// <returns></returns>
-bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck)
+bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -780,7 +780,14 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     ImGuiID id = window->GetID(result);
     flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
 
+    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
+
+
     bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+
+    ImGui::PopStyleColor(3);
 
     //ImGuiContext& g = *GImGui;
     //const ImGuiStyle& style = g.Style;
@@ -791,7 +798,7 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
 
     //float checkbox_width = ImGui::GetFrameHeight();
     //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
-    ImVec2 checkbox_pos(32, pos.y - 67);
+    ImVec2 checkbox_pos(32, pos.y - 66);
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size
@@ -809,7 +816,7 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     return is_open;
 }
 
-bool engine::EditorHelper::collapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
+bool engine::EditorHelper::collapsingHeader(const char* label, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -821,16 +828,17 @@ bool engine::EditorHelper::collapsingHeader(const char* label, ImGuiTreeNodeFlag
     ImGuiID id = window->GetID(result);
     flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
 
+
+
+    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
+
     bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
 
-    /*ImGuiContext& g = *GImGui;
-    const ImGuiStyle& style = g.Style;*/
+    ImGui::PopStyleColor(3);
 
     ImVec2 pos = window->DC.CursorPos;
-    //ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
-    //ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
-
-    //float checkbox_width = ImGui::GetFrameHeight();
     ImVec2 label_pos(32, pos.y - 67);
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding

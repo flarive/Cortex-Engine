@@ -19,7 +19,7 @@ std::string engine::FileSystemManager::getDirectoryPath(const std::string& path)
     return folder.string();
 }
 
-std::string engine::FileSystemManager::getFilename(const std::string& path)
+std::string engine::FileSystemManager::getFileName(const std::string& path)
 {
     if (path.empty())
         return "";

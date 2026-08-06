@@ -117,7 +117,7 @@ namespace engine
 
         void reSetup();
 
-        std::shared_ptr<Material>& getMaterial() { return m_material; }
+        std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
 
     private:
 
@@ -125,7 +125,7 @@ namespace engine
         std::string m_directory{};
         std::string m_filename{};
 
-        std::shared_ptr<Material> m_material{};
+        std::vector<std::shared_ptr<Material>> m_materials{};
 
         // processes a node in a recursive fashion.
         // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

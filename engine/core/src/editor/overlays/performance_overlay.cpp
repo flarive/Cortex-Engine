@@ -373,20 +373,20 @@ ImVec4 engine::PerformanceOverlay::getPercentColor(float percent)
     const ImVec4 orange = ImVec4(1.0f, 0.5f, 0.1f, 1.0f);
     const ImVec4 green = ImVec4(0.2f, 1.0f, 0.2f, 1.0f);
 
-    //if (fps < 30.0f)
-    //    return red;
+    if (percent < 30.0f)
+        return red;
 
-    //if (fps < 45.0f)
-    //{
-    //    float t = (fps - 30.0f) / (45.0f - 30.0f);   // 0 => 1
-    //    return lerpColor(red, orange, t);
-    //}
+    if (percent < 45.0f)
+    {
+        float t = (percent - 30.0f) / (45.0f - 30.0f);   // 0 => 1
+        return lerpColor(red, orange, t);
+    }
 
-    //if (fps < 60.0f)
-    //{
-    //    float t = (fps - 45.0f) / (60.0f - 45.0f);   // 0 => 1
-    //    return lerpColor(orange, green, t);
-    //}
+    if (percent < 60.0f)
+    {
+        float t = (percent - 45.0f) / (60.0f - 45.0f);   // 0 => 1
+        return lerpColor(orange, green, t);
+    }
 
     return green;
 }

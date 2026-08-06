@@ -2,67 +2,116 @@
 
 #include "../../../include/editor/editor_helper.h"
 
+#include "../../../include/managers/filesystem_manager.h"
+
+#include "themes/imgui_spectrum.h"
 
 void engine::MaterialWidget::init()
 {
 }
 
-void engine::MaterialWidget::setMaterial(std::shared_ptr<Material> material)
+void engine::MaterialWidget::setMaterials(std::vector<std::shared_ptr<Material>>& materials)
 {
-    m_material = material;
+    m_materials.clear();
 
-    // This avoids subtle bugs when the caller accidentally passes a null pointer
-    if (!material)
-    {
-        m_material.reset();
-        return;
+    for (const auto& material : materials) {
+        m_materials.push_back(material);
     }
 }
 
 void engine::MaterialWidget::draw()
 {
-    auto mat = m_material.lock();
-    if (!mat)
-        return;
-    
-
-    std::string header = "Material";
-    if (mat->getTypeID() == MaterialType::PBR)
-        header = "PBR Material";
-    else if (mat->getTypeID() == MaterialType::blinnphong)
-        header = "BlinnPhong Material";
-
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None))
+    if (EditorHelper::collapsingHeader("Materials", ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400)))
     {
-        // Diffuse map
-        if (mat->hasDiffuseMap())
+        for (const auto& weakMaterial : m_materials)
         {
-            TextureData textData = TextureManager::getTextureData(mat->getDiffuseTexPath());
-            displayTexture(textData);
+            // Lock the weak_ptr to get a shared_ptr
+            if (auto sharedMaterial = weakMaterial.lock())
+            {
+                displayMaterial(sharedMaterial);
+            }
         }
     }
 }
 
-void engine::MaterialWidget::displayTexture(const TextureData& textData)
+void engine::MaterialWidget::displayMaterial(std::shared_ptr<engine::Material> material)
 {
-    const std::string tableUniqueID = std::format("TextureTable_{}", textData.id);
-    
-    if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
+    std::string header = "Material";
+
+    std::string materialName = material->getName();
+    if (!materialName.empty())
     {
-        ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthFixed, 100);
-        ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthStretch);
-
-        ImGui::TableNextRow();
-
-        ImGui::TableSetColumnIndex(0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData.thumbnailLevel);
-        ImGui::Image((ImTextureID)textData.id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text(textData.filePath.c_str());
-
-        ImGui::EndTable();
+        header = materialName;
+        
+        if (material->getTypeID() == MaterialType::PBR)
+            header = std::format("{} ({})", header, "PBR");
+        else if (material->getTypeID() == MaterialType::blinnphong)
+            header = std::format("{} ({})", header, "BlinnPhong");
     }
+    else
+    {
+        if (material->getTypeID() == MaterialType::PBR)
+            header = "Material (PBR)";
+        else if (material->getTypeID() == MaterialType::blinnphong)
+            header = "Material (BlinnPhong)";
+    }
+    
+    ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
+    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)))
+    {
+        const std::string tableUniqueID = std::format("TexturesTable_{}", material->getName());
+
+        if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
+        {
+            ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthStretch);
+
+            if (material->getTypeID() == MaterialType::PBR)
+            {
+                // PBR
+                displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
+                displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");
+                displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion");
+                displayTexture(TextureManager::getTextureData(material->getRoughnessTexPath()), "Roughness");
+                displayTexture(TextureManager::getTextureData(material->getMetallicTexPath()), "Metallic");
+                displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height");
+                displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive");
+            }
+            else
+            {
+                // BlinnPhong or Phong
+                displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
+                displayTexture(TextureManager::getTextureData(material->getSpecularTexPath()), "Specular");
+                displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");
+                displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height");
+                displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive");
+            }
+
+            ImGui::EndTable();
+        }
+    }
+}
+
+void engine::MaterialWidget::displayTexture(const TextureData& textData, const std::string& textType)
+{
+    ImGui::TableNextRow();
+
+    // get thumbnail from mipmaps on GPU side
+    ImGui::TableSetColumnIndex(0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData.thumbnailLevel);
+    ImGui::Image((ImTextureID)textData.id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+
+    ImGui::TableSetColumnIndex(1);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    ImGui::Text(textType.c_str());
+    ImGui::Text(FileSystemManager::getFileName(textData.filePath).c_str());
+
+    ImGui::PopFont();
+    ImGui::PopStyleVar();
+
 }

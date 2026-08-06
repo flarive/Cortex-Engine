@@ -95,8 +95,8 @@ namespace engine
 
 		static void endCenteredToolbar();
 
-		static bool collapsingHeader(const char* label, ImGuiTreeNodeFlags flags);
-		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, std::function<void(bool)> onCheck);
+		static bool collapsingHeader(const char* label, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor);
+		static bool collapsingCheckboxHeader(const char* label, bool* p_checked, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck);
 
 		static ImVec4 getEntityColor(const engine::EntityType entityType);
 

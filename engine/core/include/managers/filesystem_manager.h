@@ -16,7 +16,7 @@ namespace engine
     public:
         static std::string getPath(const std::string& path);
         static std::string getDirectoryPath(const std::string& path);
-        static std::string getFilename(const std::string& path);
+        static std::string getFileName(const std::string& path);
         static std::string getFullPath(const std::string& path);
         static std::string getShortenedPath(const std::string& path);
 

@@ -40,6 +40,11 @@ namespace engine
             return MaterialType::undefined;
         }
 
+
+        // parallax mapping
+        void setName(const std::string& name) { m_name = name; }
+        const std::string& getName() { return m_name; }
+
         void loadTextures();
         void loadTexturesAsync(std::function<void(bool)> texturesLoadedCallback = nullptr);
 
@@ -128,6 +133,8 @@ namespace engine
 
 
     protected:
+        std::string m_name{};
+        
         Color m_ambientColor{ Color(0.1f) };
         Color m_diffuseColor{ Color(1.0f) };
         Color m_specularColor{ Color(0.0f) };

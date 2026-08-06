@@ -15,7 +15,7 @@ namespace engine
 
         void init() override;
 
-        void setMaterial(std::shared_ptr<Material> material);
+        void setMaterials(std::vector<std::shared_ptr<Material>>& materials);
 
     protected:
         void draw() override;
@@ -24,8 +24,9 @@ namespace engine
         
         bool m_isHeaderExpanded{ true };
 
-        std::weak_ptr<Material> m_material{};
+        std::vector<std::weak_ptr<Material>> m_materials{};
 
-        void displayTexture(const TextureData& textData);
+        void displayMaterial(std::shared_ptr<engine::Material> material);
+        void displayTexture(const TextureData& textData, const std::string& textType);
     };
 }

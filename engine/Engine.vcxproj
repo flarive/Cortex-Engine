@@ -195,6 +195,7 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
+    <ClCompile Include="core\src\editor\widgets\mesh_widget.cpp" />
     <ClCompile Include="core\src\editor\windows\about_window.cpp" />
     <ClCompile Include="core\src\editor\widgets\material_widget.cpp" />
     <ClCompile Include="core\src\editor\windows\dialog_box.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
+    <ClInclude Include="core\include\editor\widgets\mesh_widget.h" />
     <ClInclude Include="core\include\editor\windows\about_window.h" />
     <ClInclude Include="core\include\editor\windows\dialog_box.h" />
     <ClInclude Include="core\include\editor\dockspaces\dockspace.h" />

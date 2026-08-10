@@ -13,13 +13,13 @@
 #include <string>
 
 engine::SharedModel::SharedModel(bool _gamma, bool _flipUV)
-    : gammaCorrection(_gamma), flipUV(_flipUV)
+    : m_gammaCorrection(_gamma), m_flipUV(_flipUV)
 {
     logger.trace("SharedModel constructor called");
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _flipUV)
-    : gammaCorrection(_gamma), flipUV(_flipUV)
+    : m_gammaCorrection(_gamma), m_flipUV(_flipUV)
 {
     logger.trace("SharedModel constructor called");
     
@@ -29,7 +29,7 @@ engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _fl
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV)
-    : gammaCorrection(_gamma), flipUV(_flipUV), m_customMaterial(_material)
+    : m_gammaCorrection(_gamma), m_flipUV(_flipUV), m_customMaterial(_material)
 {
     logger.trace("SharedModel constructor called");
 
@@ -54,17 +54,11 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     if (flipUVs)
         flags |= aiProcess_FlipUVs;
 
-
-
-
     // retrieve the directory path of the filepath
     m_directory = FileSystemManager::getDirectoryPath(path);
 
     // retrieve the filename of the filepath
     m_filename = FileSystemManager::getFileName(path);
-
-    
-
 
     const aiScene* scene = importer.ReadFile(path, flags);
 
@@ -74,10 +68,6 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
         logger.error("Model loading error : {}", importer.GetErrorString());
         return;
     }
-
-
-
-
 
     // check for bones or not
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
@@ -104,7 +94,6 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     logger.info("Loading model {} : {} milliseconds", FileSystemManager::getShortenedPath(path), duration.count());
 }
 
-
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void engine::SharedModel::processNode(aiNode* node, const aiScene* scene)
 {
@@ -114,7 +103,7 @@ void engine::SharedModel::processNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene. 
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        m_meshes.push_back(processMesh(mesh, scene));
     }
 
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
@@ -124,7 +113,7 @@ void engine::SharedModel::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene)
+std::shared_ptr<engine::Mesh> engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // Data to fill
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space
@@ -230,7 +219,7 @@ engine::Mesh engine::SharedModel::processMesh(aiMesh* mesh, const aiScene* scene
         extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return Mesh{ std::move(vertices), std::move(indices), m_materials.back() };
+    return std::make_shared<Mesh>(std::move(vertices), std::move(indices), m_materials.back());
 }
 
 /// <summary>
@@ -483,7 +472,7 @@ void engine::SharedModel::reSetup()
     std::filesystem::path fullpath = std::filesystem::path(m_directory) / m_filename;
     std::string fullpath_str = fullpath.string();
 
-    loadModel(fullpath_str, flipUV);
+    loadModel(fullpath_str, m_flipUV);
 }
 
 engine::SharedModel::~SharedModel()

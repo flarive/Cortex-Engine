@@ -760,7 +760,6 @@ GLuint engine::EditorHelper::getIconAtlasTexture()
 {
     return m_iconAtlas.getTextureID();
 }
-
 /// <summary>
 /// Hack FL !!!!!!!!!!!!!!! Collapsing header with checkbox
 /// </summary>
@@ -784,74 +783,47 @@ bool engine::EditorHelper::collapsingCheckboxHeader(const char* label, bool* p_c
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
 
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
 
     bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
 
+    ImGui::PopStyleVar();
+
     ImGui::PopStyleColor(3);
 
-    //ImGuiContext& g = *GImGui;
-    //const ImGuiStyle& style = g.Style;
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
 
-    ImVec2 pos = window->DC.CursorPos;
-    //ImVec2 size(ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight());
-    //ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+    ImGui::SameLine();
 
-    //float checkbox_width = ImGui::GetFrameHeight();
-    //ImVec2 checkbox_pos(bb.Max.x - checkbox_width - style.ItemSpacing.x, pos.y - 42);
-    ImVec2 checkbox_pos(32, pos.y - 66);
-
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.0f);       // Reduce corner rounding
-
-    ImGui::SetCursorPos(checkbox_pos);
+    ImVec2 screenPos = ImGui::GetCursorScreenPos();
+    screenPos.y += 2;
+    ImGui::SetCursorScreenPos(screenPos);
 
     if (ImGui::Checkbox(label, p_checked))
-    {
         onCheck(*p_checked);
-    }
 
-    ImGui::PopStyleVar(3); // Restore the previous style
+    ImGui::PopFont();
+    ImGui::PopStyleVar();
 
     return is_open;
 }
 
 bool engine::EditorHelper::collapsingHeader(const char* label, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor)
 {
-    ImGuiWindow* window = ImGui::GetCurrentWindow();
-    if (window->SkipItems)
-        return false;
+    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor);
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f));
 
-    char result[100];
-    snprintf(result, sizeof(result), "%s%s", "##collapsingHeader", label);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
 
-    ImGuiID id = window->GetID(result);
-    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+    bool open = ImGui::CollapsingHeader(label, flags);
 
-
-
-    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
-
-    bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+    ImGui::PopStyleVar();
 
     ImGui::PopStyleColor(3);
 
-    ImVec2 pos = window->DC.CursorPos;
-    ImVec2 label_pos(32, pos.y - 67);
-
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // Reduce padding
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0f);      // Reduce border size
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 2.0f);       // Reduce corner rounding
-
-    ImGui::SetCursorPos(label_pos);
-
-    ImGui::Text(label);
-
-    ImGui::PopStyleVar(3); // Restore the previous style
-
-    return is_open;
+    return open;
 }
 
 ImVec4 engine::EditorHelper::getEntityColor(const engine::EntityType entityType)
@@ -921,3 +893,57 @@ engine::EditorIcon engine::EditorHelper::convertEntityTypeToAtlasIcon(const engi
 
     return EditorIcon::undefined;
 }
+
+void engine::EditorHelper::drawTag(const char* txt, ImU32 bg, float rounding)
+{
+    ImVec2 pad(4, 2);
+    ImVec2 textSize = ImGui::CalcTextSize(txt);
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+
+    ImVec2 min = pos;
+    ImVec2 max = ImVec2(pos.x + textSize.x + pad.x * 2,
+        pos.y + textSize.y + pad.y * 2);
+
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    dl->AddRectFilled(min, max, bg, rounding);
+
+    ImGui::SetCursorScreenPos(ImVec2(pos.x + pad.x, pos.y + pad.y));
+    ImGui::TextUnformatted(txt);
+}
+
+void engine::EditorHelper::drawTagRightAligned(const char* txt, ImU32 bgColor, float tagHeight, float rounding)
+{
+    ImVec2 pad(4, 2);
+    ImVec2 textSize = ImGui::CalcTextSize(txt);
+    float tagWidth = textSize.x + pad.x * 2;
+
+    // Compute right edge of the cell
+    float cellRight = ImGui::GetCursorPosX() + ImGui::GetColumnWidth();
+
+    // Move cursor so tag touches the right side
+    ImGui::SetCursorPosX(cellRight - tagWidth);
+
+    // Now draw tag at this new position
+    //ImVec2 pos = ImGui::GetCursorScreenPos();
+    //ImVec2 min = pos;
+    //ImVec2 max = ImVec2(pos.x + tagWidth,
+    //    pos.y + textSize.y + pad.y * 2);
+
+    // Tag position
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 min = pos;
+    ImVec2 max = ImVec2(pos.x + tagWidth,
+        pos.y + tagHeight);   // <-- FIXED HEIGHT
+
+
+    ImDrawList* dl = ImGui::GetWindowDrawList();
+    dl->AddRectFilled(min, max, bgColor, rounding);
+
+    // Vertically center text inside the fixed-height tag
+    float textY = pos.y + (tagHeight - textSize.y) * 0.5f;
+
+    ImGui::SetCursorScreenPos(ImVec2(pos.x + pad.x, textY));
+    //ImGui::SetCursorScreenPos(ImVec2(pos.x + pad.x, pos.y + pad.y));
+    ImGui::TextUnformatted(txt);
+}
+

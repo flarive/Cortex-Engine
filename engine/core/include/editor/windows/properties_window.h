@@ -2,6 +2,7 @@
 
 #include "../imgui_element.h"
 
+#include "../widgets/mesh_widget.h"
 #include "../widgets/material_widget.h"
 
 #include "../../ecs/entity.h"
@@ -27,6 +28,7 @@ namespace engine
     private:
         std::shared_ptr<Entity> m_selectedEntity{};
 
+        MeshWidget m_meshWidget{};
         MaterialWidget m_materialWidget{};
 
         void renderPropertiesWidget();

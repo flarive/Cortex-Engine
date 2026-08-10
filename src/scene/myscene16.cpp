@@ -272,6 +272,9 @@ void MyScene16::scroll_callback(double xoffset, double yoffset)
 {
     Scene::scroll_callback(xoffset, yoffset);
 
+    if (is_editor_mode || show_demo_window)
+        return;
+
     getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
 }
 

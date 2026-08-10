@@ -56,6 +56,9 @@ namespace engine
 		inline static const ImVec4 im_dark{ 0.0f, 0.0f, 0.0f, 0.2f };
 		inline static const ImVec4 im_light{ 1.0f, 1.0f, 1.0f, 0.2f };
 
+		inline static const ImVec4 im_grey_dark{ 0.2f, 0.2f, 0.2f, 1.0f };
+		inline static const ImVec4 im_grey_trans{ 0.2f, 0.2f, 0.2f, 0.0f };
+
 		inline static auto green = IM_COL32(0, 151, 51, 255);
 		inline static auto blue = IM_COL32(44, 143, 255, 255);
 		inline static auto red = IM_COL32(255, 54, 83, 255);
@@ -101,6 +104,9 @@ namespace engine
 		static ImVec4 getEntityColor(const engine::EntityType entityType);
 
 		static engine::EditorIcon convertEntityTypeToAtlasIcon(const engine::EntityType type, unsigned int Iconsize);
+
+		static void drawTag(const char* txt, ImU32 bg, float rounding = 4.0f);
+		static void drawTagRightAligned(const char* txt, ImU32 bgColor, float tagHeight, float rounding = 2.0f);
 
 	private:
 		static std::unordered_map<std::string, bool> m_iconToggleStates;

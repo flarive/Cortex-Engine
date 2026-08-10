@@ -97,14 +97,14 @@ namespace engine
 
 
     protected:
-        Category m_category;
-        std::string m_name;
-        bool m_visible;
+        Category m_category{};
+        std::string m_name{};
+        bool m_visible{};
 
-        std::vector<ImFont*> m_fontStack;
-        std::vector<ImGuiCol> m_colorStack;
+        std::vector<ImFont*> m_fontStack{};
+        std::vector<ImGuiCol> m_colorStack{};
 
-        ImGuiUIManager* m_manager;
+        ImGuiUIManager* m_manager{};
 
         void emit(UIEventType type, const std::string& param, std::any payload);
 

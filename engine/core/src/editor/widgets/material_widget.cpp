@@ -22,7 +22,7 @@ void engine::MaterialWidget::setMaterials(std::vector<std::shared_ptr<Material>>
 void engine::MaterialWidget::draw()
 {
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingHeader("Materials", ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400)))
+    if (EditorHelper::collapsingHeader("Materials", ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
     {
         for (const auto& weakMaterial : m_materials)
         {
@@ -58,13 +58,13 @@ void engine::MaterialWidget::displayMaterial(std::shared_ptr<engine::Material> m
     }
     
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)))
+    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_Bullet, EditorHelper::im_grey_trans))
     {
         const std::string tableUniqueID = std::format("TexturesTable_{}", material->getName());
 
         if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
         {
-            ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthFixed, 34);
             ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthStretch);
 
             if (material->getTypeID() == MaterialType::PBR)
@@ -103,15 +103,62 @@ void engine::MaterialWidget::displayTexture(const TextureData& textData, const s
     ImGui::Image((ImTextureID)textData.id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 
+
+
     ImGui::TableSetColumnIndex(1);
 
+
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // remove text padding
+
     ImGui::PushFont(ImGui::Spectrum::fontSmall2);
 
-    ImGui::Text(textType.c_str());
-    ImGui::Text(FileSystemManager::getFileName(textData.filePath).c_str());
+    if (ImGui::BeginTable("##table", 2, ImGuiTableFlags_None))
+    {
+        // Remove table cell padding
+        ImGui::TableSetupColumn("col1", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("col2", ImGuiTableColumnFlags_WidthFixed, 50);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+
+        float rowHeight = 12.0f;
+
+        // --- Row 1 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        {
+            ImGui::TableNextColumn();
+            {
+                ImGui::Text(textType.c_str());
+            }
+
+            ImGui::TableNextColumn();
+            {
+                std::string resolution = std::format("{}x{}", textData.width, textData.height);
+                EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 255, 0, 255), 12.0f);
+            }
+        }
+
+        // --- Row 2 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        {
+            ImGui::TableNextColumn();
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                ImGui::Text(FileSystemManager::getFileName(textData.filePath).c_str());
+                ImGui::PopStyleColor();
+            }
+
+            ImGui::TableNextColumn();
+            {
+                std::string resolution = std::format("ID {}", textData.id);
+                EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 0, 255, 255), 12.0f);
+            }
+        }
+
+        ImGui::PopStyleVar(); // CellPadding
+        ImGui::EndTable();
+    }
 
     ImGui::PopFont();
-    ImGui::PopStyleVar();
-
+    ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
 }

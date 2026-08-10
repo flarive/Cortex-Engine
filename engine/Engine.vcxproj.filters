@@ -576,6 +576,9 @@
     <ClCompile Include="core\src\managers\texture_manager.cpp">
       <Filter>sources\core\managers</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\editor\widgets\mesh_widget.cpp">
+      <Filter>sources\core\editor\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -958,6 +961,9 @@
     </ClInclude>
     <ClInclude Include="core\include\managers\texture_manager.h">
       <Filter>headers\core\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\widgets\mesh_widget.h">
+      <Filter>headers\core\editor\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

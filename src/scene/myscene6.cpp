@@ -93,7 +93,7 @@ void MyScene6::init()
     entityHelmet->addComponent<ModelComponent>(helmetModel);
     getEntityManager().addChild(entityHelmet);
 
-    auto helmetMat = helmetModel->meshes[0].getMaterial();
+    auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
     if (helmetMat)
     {
         helmetMat->setAmbientIntensity(5.0f);

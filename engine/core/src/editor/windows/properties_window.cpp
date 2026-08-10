@@ -17,6 +17,7 @@ void engine::PropertiesWindow::init()
 
 
     m_materialWidget.init();
+	m_meshWidget.init();
 }
 
 void engine::PropertiesWindow::renderPropertiesWidget()
@@ -147,7 +148,7 @@ void engine::PropertiesWindow::renderTransformComponent(const std::shared_ptr<En
 
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(transformComponent->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(transformComponent->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         glm::vec3 position{ 0,0,0 };
         glm::vec3 rotation{ 0,0,0 };
@@ -380,7 +381,7 @@ void engine::PropertiesWindow::renderLightComponent(std::shared_ptr<LightCompone
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImVec4(0.2f, 0.2f, 0.2f, 1.0f), onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(light->getTypeID()));
     }
@@ -402,7 +403,7 @@ void engine::PropertiesWindow::renderCameraComponent(std::shared_ptr<CameraCompo
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(camera->getTypeID()));
     }
@@ -424,7 +425,7 @@ void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<Primitiv
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(primitive->getTypeID()));
     }
@@ -451,10 +452,15 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(model->getTypeID()));
     }
+
+	// meshes section
+    auto& meshes = model->getMeshes();
+    m_meshWidget.setMeshes(meshes);
+    m_meshWidget.render();
 
     // material section
     m_materialWidget.setMaterials(model->getMaterials());
@@ -477,7 +483,7 @@ void engine::PropertiesWindow::renderAnimatorComponent(std::shared_ptr<AnimatorC
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(animator->getTypeID()));
     }
@@ -499,7 +505,7 @@ void engine::PropertiesWindow::renderParticleSystemComponent(std::shared_ptr<Par
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(particleSystem->getTypeID()));
     }
@@ -521,7 +527,7 @@ void engine::PropertiesWindow::renderTerrainComponent(std::shared_ptr<TerrainCom
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, ImGui::ColorConvertU32ToFloat4(ImGui::Spectrum::BLUE400), onCheck))
+    if (EditorHelper::collapsingCheckboxHeader(component->getName().c_str(), &enabled, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
     {
         EditorHelper::renderDynamicProperties(component, to_string(terrain->getTypeID()));
     }

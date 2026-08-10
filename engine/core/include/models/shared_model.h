@@ -53,16 +53,6 @@ namespace engine
     class SharedModel : private NonCopyable
     {
     public:
-        // model data (TODO : make private with getters)
-        std::vector<Texture> textures_loaded{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-        std::vector<Mesh> meshes{};
-        
-        bool gammaCorrection{};
-        bool flipUV{};
-
-        bool highlight{};
-
-
         SharedModel(bool _gamma, bool _flipUV);
 
         // constructor, expects a filepath to a 3D model.
@@ -101,10 +91,8 @@ namespace engine
         bool& hasBones() { return m_hasBones; }
 
 
-        bool& getFlipUV() { return flipUV; }
-        void setFlipUV(bool _flipUV) { flipUV = _flipUV; }
-
-
+        bool& getFlipUV() { return m_flipUV; }
+        void setFlipUV(bool _flipUV) { m_flipUV = _flipUV; }
 
         void setVertexBoneDataToDefault(Vertex& vertex);
         void setVertexBoneData(Vertex& vertex, int boneID, float weight);
@@ -119,19 +107,24 @@ namespace engine
 
         std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
 
-    private:
+        std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
 
-        
+
+        std::vector<Texture>& getLoadedTextures() { return m_loadedTextures; }
+
+    private:
         std::string m_directory{};
         std::string m_filename{};
 
         std::vector<std::shared_ptr<Material>> m_materials{};
 
+        
+
         // processes a node in a recursive fashion.
         // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
         void processNode(aiNode* node, const aiScene* scene);
 
-        virtual Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+        std::shared_ptr<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
 
         bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);
         bool isMRSingleTexture(const aiScene* scene, aiMaterial* mat);
@@ -140,6 +133,16 @@ namespace engine
     protected:
         unsigned int m_numberOfMeshes{};
         unsigned int m_numberOfVertices{};
+
+        std::vector<Texture> m_loadedTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+        //std::vector<Mesh> m_meshes{};
+
+        std::vector<std::shared_ptr<Mesh>> m_meshes{};
+
+        bool m_gammaCorrection{};
+        bool m_flipUV{};
+
+        bool m_highlight{};
 
         bool m_hasBones{};
         std::map<std::string, BoneInfo> m_boneInfoMap{};

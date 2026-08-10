@@ -58,27 +58,27 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
     if (!m_shared_model)
     {
-        for (auto& mesh : meshes) {
-            mesh.draw(shader, transformMatrix);
+        for (auto& mesh : m_meshes) {
+            mesh->draw(shader, transformMatrix);
         }
     }
     else
     {
         // shared model, loaded one time, drawn multiple times
-        for (auto& mesh : m_shared_model->meshes) {
-            mesh.draw(shader, transformMatrix);
+        for (auto& mesh : m_shared_model->getMeshes()) {
+            mesh->draw(shader, transformMatrix);
         }
     }
 }
 
 void engine::Model::clean()
 {
-    for (unsigned int i = 0; i < meshes.size(); i++) {
-        meshes[i].clean();
+    for (unsigned int i = 0; i < m_meshes.size(); i++) {
+        m_meshes[i]->clean();
     }
 
-    textures_loaded.clear();
-    meshes.clear();
+    m_loadedTextures.clear();
+    m_meshes.clear();
 }
 
 unsigned int engine::Model::getMeshCount() const

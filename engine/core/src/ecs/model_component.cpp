@@ -46,9 +46,9 @@ engine::AABB engine::ModelComponent::generateBoundingVolume(const std::shared_pt
 
 	if (model)
 	{
-		for (auto&& mesh : model->meshes)
+		for (auto&& mesh : model->getMeshes())
 		{
-			for (auto&& vertex : mesh.vertices)
+			for (auto&& vertex : mesh->vertices)
 			{
 				minAABB.x = std::min(minAABB.x, vertex.position.x);
 				minAABB.y = std::min(minAABB.y, vertex.position.y);

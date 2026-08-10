@@ -458,8 +458,7 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
     }
 
 	// meshes section
-    auto& meshes = model->getMeshes();
-    m_meshWidget.setMeshes(meshes);
+    m_meshWidget.setMeshes(model->getMeshes());
     m_meshWidget.render();
 
     // material section

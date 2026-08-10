@@ -21,8 +21,12 @@ void engine::MaterialWidget::setMaterials(std::vector<std::shared_ptr<Material>>
 
 void engine::MaterialWidget::draw()
 {
+    const std::string header = std::format("Materials ({})", m_materials.size());
+
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+    
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingHeader("Materials", ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
+    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
     {
         for (const auto& weakMaterial : m_materials)
         {
@@ -33,9 +37,11 @@ void engine::MaterialWidget::draw()
             }
         }
     }
+
+    ImGui::PopFont();
 }
 
-void engine::MaterialWidget::displayMaterial(std::shared_ptr<engine::Material> material)
+void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& material)
 {
     std::string header = "Material";
 
@@ -106,8 +112,6 @@ void engine::MaterialWidget::displayTexture(const TextureData& textData, const s
 
 
     ImGui::TableSetColumnIndex(1);
-
-
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // remove text padding
 

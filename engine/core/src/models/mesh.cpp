@@ -6,8 +6,8 @@
 
 #include <memory>
 
-engine::Mesh::Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material)
-    : vertices(std::move(_vertices)), indices(std::move(_indices)), m_material(std::move((_material)))
+engine::Mesh::Mesh(const std::string& _name, std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material)
+    : m_name(_name), m_vertices(std::move(_vertices)), m_indices(std::move(_indices)), m_material(std::move((_material)))
 {
     logger.trace("Mesh constructor called");
 
@@ -105,10 +105,10 @@ void engine::Mesh::setupMesh()
     // A great thing about structs is that their memory layout is sequential for all its items.
     // The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
     // again translates to 3/2 floats which translates to a byte array.
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), &m_indices[0], GL_STATIC_DRAW);
 
     // set the vertex attribute pointers
     // 
@@ -144,14 +144,14 @@ void engine::Mesh::setupMesh()
 
 
     // During mesh setup
-    m_indexCount = static_cast<unsigned int>(indices.size());
+    m_indexCount = static_cast<unsigned int>(m_indices.size());
 }
 
 void engine::Mesh::clean()
 {
     // mesh Data
-    vertices.clear();
-    indices.clear();
+    m_vertices.clear();
+    m_indices.clear();
 
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);

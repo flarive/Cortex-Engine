@@ -20,8 +20,10 @@ namespace engine
 
     private:
 
-        bool m_isHeaderExpanded{ true };
+        bool m_isHeaderExpanded{ false };
 
         std::vector<std::weak_ptr<Mesh>> m_meshes{};
+
+        void displayMesh(const std::shared_ptr<engine::Mesh>& mesh);
     };
 }

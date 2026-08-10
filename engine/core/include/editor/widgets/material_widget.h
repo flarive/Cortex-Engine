@@ -22,11 +22,11 @@ namespace engine
 
     private:
         
-        bool m_isHeaderExpanded{ true };
+        bool m_isHeaderExpanded{ false };
 
         std::vector<std::weak_ptr<Material>> m_materials{};
 
-        void displayMaterial(std::shared_ptr<engine::Material> material);
+        void displayMaterial(const std::shared_ptr<Material>& material);
         void displayTexture(const TextureData& textData, const std::string& textType);
     };
 }

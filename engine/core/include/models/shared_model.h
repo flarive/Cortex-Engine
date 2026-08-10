@@ -135,7 +135,6 @@ namespace engine
         unsigned int m_numberOfVertices{};
 
         std::vector<Texture> m_loadedTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-        //std::vector<Mesh> m_meshes{};
 
         std::vector<std::shared_ptr<Mesh>> m_meshes{};
 

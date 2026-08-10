@@ -13,13 +13,8 @@ namespace engine
 	class Mesh final : private NonCopyableButMovable
     {
     public:
-        
-        // mesh Data
-        std::vector<Vertex> vertices{};
-        std::vector<unsigned int> indices{};
-
         // constructor
-        Mesh(std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material);
+        Mesh(const std::string& _name, std::vector<Vertex> _vertices, std::vector<unsigned int> _indices, std::shared_ptr<Material> _material);
 		~Mesh();
 
         // override a little NonCopyableButMovable
@@ -30,9 +25,21 @@ namespace engine
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
+		const std::string& getName() const { return m_name; }
+
+        const std::vector<Vertex>& getVertices() const { return m_vertices; }
+        const std::vector<unsigned int>& getIndices() const { return m_indices; }
+
         void clean();
        
     private:
+
+        std::string m_name{};
+
+        // mesh Data
+        std::vector<Vertex> m_vertices{};
+        std::vector<unsigned int> m_indices{};
+
         // render data 
         unsigned int m_VBO{}, m_EBO{}, m_VAO{};
 

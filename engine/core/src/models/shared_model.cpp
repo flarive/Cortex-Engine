@@ -219,7 +219,7 @@ std::shared_ptr<engine::Mesh> engine::SharedModel::processMesh(aiMesh* mesh, con
         extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return std::make_shared<Mesh>(std::move(vertices), std::move(indices), m_materials.back());
+    return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
 }
 
 /// <summary>

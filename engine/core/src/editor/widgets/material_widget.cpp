@@ -122,19 +122,16 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
 
 void engine::MaterialWidget::displayColor(const Color& color, const std::string& textType)
 {
-    ImGui::TableNextRow();
+    ImGui::TableNextRow(ImGuiTableRowFlags_None, TARGET_THUMB_SIZE + 4);
 
-    // get color
+
+    ImGui::TableSetColumnIndex(0);
     ImVec2 pos = ImGui::GetCursorScreenPos();
     ImVec2 size(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE);
-
     ImVec2 p0 = pos;
     ImVec2 p1 = ImVec2(pos.x + size.x, pos.y + size.y);
-
     ImDrawList* draw = ImGui::GetWindowDrawList();
     draw->AddRectFilled(p0, p1, IM_COL32(color.r * 255, color.g * 255, color.b * 255, 255));
-
-
 
 
     ImGui::TableSetColumnIndex(1);
@@ -198,12 +195,12 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
     
     ImGui::TableNextRow();
 
+
     // get thumbnail from mipmaps on GPU side
     ImGui::TableSetColumnIndex(0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData->thumbnailLevel);
     ImGui::Image((ImTextureID)textData->id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-
 
 
     ImGui::TableSetColumnIndex(1);

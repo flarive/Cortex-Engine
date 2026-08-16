@@ -223,7 +223,7 @@ void engine::BlinnPhongRenderer::loadShaders()
     
 
     // skybox reflection shader
-    skyboxReflectionShader.init("cubemap", "shaders/renderer/blinnphong/cubemap.vert", "shaders/renderer/blinnphong/cubemap.frag");
+    skyboxReflectionShader.init("cubemap", "shaders/renderer/blinnphong/blinnphong_cubemap.vert", "shaders/renderer/blinnphong/blinnphong_cubemap.frag");
 
 	// gradient background shader
     backgroundShader.init("background", "shaders/renderer/blinnphong/blinnphong_background.vert", "shaders/renderer/blinnphong/blinnphong_background.frag");

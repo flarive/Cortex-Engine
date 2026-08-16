@@ -47,7 +47,7 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.geom", "shaders/ParticleSourceGeometry.frag");
 	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
-	if (material && material->hasDiffuseMap())
+	if (material && material->hasTextureMap())
 		material->loadTexturesAsync();
 }
 

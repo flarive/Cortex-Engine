@@ -9,6 +9,7 @@ struct Material {
     sampler2D texture_diffuse;
     sampler2D texture_specular;
     sampler2D texture_normal;
+    sampler2D texture_emissive;
 
     vec3 diffuse_color;
     vec3 specular_color;
@@ -19,6 +20,7 @@ struct Material {
     bool has_texture_diffuse_map;
     bool has_texture_specular_map;
     bool has_texture_normal_map;
+    bool has_texture_emissive_map;
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -26,7 +28,7 @@ struct Material {
     float shadowMapsBlur;
     float normalMapIntensity;
     float parallaxMapIntensity;
-
+    float emissiveIntensity;
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
@@ -935,6 +937,9 @@ void main()
     vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+
+
     // Lighting
     for (int i = 0; i < pointLightsCount; i++)
     {
@@ -983,7 +988,8 @@ void main()
         }
     }
 
-
+    // Add emissive contribution
+    result += emissive;
 
 
     // Sample the alpha value from the diffuse texture

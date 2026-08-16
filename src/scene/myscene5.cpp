@@ -11,7 +11,7 @@ MyScene5::MyScene5(const string& _title, std::weak_ptr<App> _app) : Scene(_title
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .shadowIntensity = 0.9f,
         .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f,
+        .iblSpecularIntensity = 0.3f,
         .enableGammaCorrection = true
     })
 {

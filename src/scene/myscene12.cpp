@@ -100,7 +100,7 @@ void MyScene12::init()
         "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
         "textures/pbr/painted-wood/PaintedWood_Roughness.jpg",
         "textures/pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Displacement.jpg");
+        "textures/pbr/painted-wood/PaintedWood_Displacement.jpg", "", 0.0f);
     matPlane->setNormalIntensity(1.0f);
     myPlane->setup(matPlane, UvMapping(2.0f));
     auto trsPlane = Transform(vec3(0.0f, -15.0f, -15.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
@@ -120,7 +120,7 @@ void MyScene12::init()
         "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
+        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg", "", 0.0f);
     matSphere1->setNormalIntensity(1.0f);
 
     sphere1->setup(matSphere1, UvMapping(1.0f));
@@ -141,7 +141,7 @@ void MyScene12::init()
         "textures/pbr/porcelain/Porcelain_Metallic.png",
         "textures/pbr/porcelain/Porcelain_Roughness.png",
         "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
-        "textures/pbr/porcelain/Porcelain_Displace.png", 2.0f);
+        "textures/pbr/porcelain/Porcelain_Displace.png", "", 2.0f);
     matSphere2->setNormalIntensity(1.0f);
 
     sphere2->setup(matSphere2, UvMapping(1.0f));
@@ -161,7 +161,7 @@ void MyScene12::init()
         "textures/pbr/porcelain/white-marble_metallic.png",
         "textures/pbr/porcelain/white-marble_roughness.png",
         "textures/pbr/porcelain/white-marble_ao.png",
-        "textures/pbr/porcelain/white-marble_height.png", 0.5f);
+        "textures/pbr/porcelain/white-marble_height.png", "", 0.5f);
     matSphere3->setNormalIntensity(1.0f);
 
     sphere3->setup(matSphere3, UvMapping(2.0f));

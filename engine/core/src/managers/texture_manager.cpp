@@ -96,10 +96,11 @@ unsigned int engine::TextureManager::loadTexture(const std::string& filename, Te
     return textureID;
 }
 
+
 /// <summary>
-/// Synchronous texture loading with extended result
+/// Synchronous texture loading with extended result POUBELLE !!!!!!!!!!!!!!!!!!!!!!!!
 /// </summary>
-engine::TextureData engine::TextureManager::loadTextureExtended(const std::string& filename, TextureFlags flags)
+engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const std::string& filename, TextureFlags flags)
 {
     unsigned int textureID{};
     glGenTextures(1, &textureID);
@@ -194,13 +195,23 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                 // SOIL can load jpg, png, dds...
                 payload.type = TextureSourceType::RawPixels;
 
-                payload.rawData = SOIL_load_image(
-                    path.c_str(),
-                    &payload.width,
-                    &payload.height,
-                    &payload.components,
-                    SOIL_LOAD_AUTO
-                );
+                if (path.c_str()[path.size() - 2] == '*')
+                {
+					// Embedded texture from model (already loaded in memory), retrieve it from cache
+                    const TextureData* tex = getTextureData(path); // direct use of TexturePayload ?????????????????????
+                    if (tex)
+                    {
+						payload.rawData = tex->data;
+						payload.width = tex->width;
+						payload.height = tex->height;
+						payload.components = tex->nbComponents; 
+                    }
+                }
+                else
+                {
+                    // External texture file
+                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps | TextureFlag_InvertY);
+                }
 
                 return payload;
             }
@@ -258,8 +269,6 @@ void engine::TextureManager::processLoadedTextures()
         engine::TextureManagerInternal::textureUploadQueue.pop();
     }
 }
-
-//E:\MyProjects\Cortex-Engine\samples\models\StainedGlassLamp\glTF\StainedGlassLamp_grill_occlusion-rough-metal.png
 
 /// <summary>
 /// Enqueue Texture Creation to Run on Main Thread
@@ -341,6 +350,7 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
                         flags
                     );
 
+					// texture uploaded to GPU, now we can free CPU memory
                     SOIL_free_image_data(payload.rawData);
                 }
                 else if (payload.type == TextureSourceType::KTXTexture)
@@ -368,7 +378,8 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
 engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isCompressed, bool isNormalMap, bool isHeightMap, TextureFlags flags)
 {
     TextureUploadResult result{};
-    
+    result.nbComponents = nrComponents;
+
     if (!data)
         return result;
 
@@ -555,7 +566,21 @@ unsigned int engine::TextureManager::loadHDRImage(const std::string& filename, b
     return textureID;
 }
 
-unsigned int engine::TextureManager::loadTextureFromFile(const std::string& path, TextureFlags flags)
+engine::TexturePayload engine::TextureManager::loadTextureFromFile(const std::string& path, TextureFlags flags)
+{
+    logger.info("Loading texture {}", FileSystemManager::getShortenedPath(path));
+    
+    int width{}, height{}, nrComponents{};
+    unsigned char* data = SOIL_load_image(path.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+
+    if (hasFlag(flags, TextureFlag_InvertY))
+        flipImageVertically2(data, width, height, nrComponents);
+
+    // SOIL_free_image_data muts be called by caller after the texture is uploaded to GPU, otherwise the texture data will be lost and the texture will be black
+    return TexturePayload{ TextureSourceType::RawPixels, data, nullptr, width, height, nrComponents };
+}
+
+unsigned int engine::TextureManager::loadAndUploadTextureFromFile(const std::string& path, TextureFlags flags)
 {
     logger.info("Loading texture {}", FileSystemManager::getShortenedPath(path));
 
@@ -623,7 +648,7 @@ unsigned int engine::TextureManager::loadTextureFromFile(const std::string& path
     return textureID;
 }
 
-unsigned int engine::TextureManager::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags)
+engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags)
 {
     int width = 0, height = 0, channels = 0;
 
@@ -635,7 +660,7 @@ unsigned int engine::TextureManager::loadTextureFromMemory(const unsigned char* 
     if (!image)
     {
         std::cerr << "Failed to load embedded texture from memory." << std::endl;
-        return 0;
+        return TextureUploadResult{};
     }
 
     GLenum format = GL_RGB;
@@ -645,6 +670,8 @@ unsigned int engine::TextureManager::loadTextureFromMemory(const unsigned char* 
         format = GL_RGB;
     else if (channels == 4)
         format = GL_RGBA;
+
+    ubyte thumbnailLevel = 0; // ?????????????????????????
 
     unsigned int textureID = 0;
     glGenTextures(1, &textureID);
@@ -665,15 +692,15 @@ unsigned int engine::TextureManager::loadTextureFromMemory(const unsigned char* 
 
     SOIL_free_image_data(image);
 
-    return textureID;
+    return TextureUploadResult{ textureID, width, height, channels, thumbnailLevel };
 }
 
-unsigned int engine::TextureManager::loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags)
+engine::TextureUploadResult engine::TextureManager::loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags)
 {
     if (!data || height == 0 || width == 0)
     {
         std::cerr << "Invalid uncompressed texture." << std::endl;
-        return 0;
+        return TextureUploadResult{};
     }
 
     unsigned int textureID = 0;
@@ -696,7 +723,10 @@ unsigned int engine::TextureManager::loadUncompressedTexture(const unsigned char
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
-    return textureID;
+    int channels = 4; // aiTexel is always RGBA
+    ubyte thumbnailLevel = 0; // ?????????????????????????
+
+    return TextureUploadResult{ textureID, (int)width, (int)height, channels, thumbnailLevel };
 }
 
 GLuint engine::TextureManager::loadMTexture()
@@ -745,14 +775,14 @@ void engine::TextureManager::checkTextureIsValid(unsigned int textureID)
     std::cout << "textureID: " << textureID << ", width: " << width2 << ", height: " << height2 << ", format: " << internalFormat << std::endl;
 }
 
-engine::TextureData engine::TextureManager::getTextureData(const std::string& texturePath)
+// Best practice: avoid copying large texture data
+const engine::TextureData* engine::TextureManager::getTextureData(const std::string& texturePath)
 {
-    // retrieve a texture data from the global textures cache
-    if (engine::TextureManagerInternal::textureDataCache.find(texturePath) != engine::TextureManagerInternal::textureDataCache.end()) {
-        return engine::TextureManagerInternal::textureDataCache[texturePath];
-    }
+    auto it = engine::TextureManagerInternal::textureDataCache.find(texturePath);
+    if (it != engine::TextureManagerInternal::textureDataCache.end())
+        return &it->second;
 
-    return {}; // Return default if not found
+    return nullptr;
 }
 
 bool engine::TextureManager::isNormalMap(const std::string& filename)
@@ -807,3 +837,15 @@ GLenum engine::TextureManager::chooseCompressedFormat(bool isNormal, bool isHeig
     // BC3 is universally supported on all NVIDIA GPUs since 2004
     return gamma ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 }
+
+//void engine::TextureManager::loadFromMemory(unsigned char* data, int size)
+//{
+//    int w, h, comp;
+//    unsigned char* decoded = SOIL_load_image_from_memory(
+//        data,
+//        size,   // byte size
+//        &w, &h, &comp,
+//        SOIL_LOAD_AUTO
+//    );
+//
+//}

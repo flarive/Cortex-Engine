@@ -5,24 +5,25 @@ engine::PBRMaterial::PBRMaterial(std::vector<Texture> _textures, float _shinines
 {
 }
 
-engine::PBRMaterial::PBRMaterial(const Color& ambientColor) : Material(ambientColor)
+engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor)
+	: Material(MaterialType::PBR, baseColorFactor)
 {
 }
 
 engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess) 
-	: Material(ambientColor, diffuseColor, specularColor, shininess)
+	: Material(MaterialType::PBR, ambientColor, diffuseColor, specularColor, shininess)
 {
 }
 
-engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
-	: Material(ambientColor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath)
+engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
+	: Material(MaterialType::PBR, baseColorFactor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath, emissiveTexPath, shininess)
 {
 }
 
 /// <summary>
 /// PBR material with MR, ARM combined textures
 /// </summary>
-engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, float shininess)
-	: Material(combinedTextureType, ambientColor, diffuseTexPath, "", normalTexPath, rmOrArmTexPath, heightTexPath)
+engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
+	: Material(MaterialType::PBR, combinedTextureType, baseColorFactor, diffuseTexPath, "", normalTexPath, rmOrArmTexPath, heightTexPath, emissiveTexPath, shininess)
 {
 }

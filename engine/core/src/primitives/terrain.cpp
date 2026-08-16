@@ -33,9 +33,9 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
     auto allTexturesLoaded = [this](bool) {
         if (this->m_material && this->m_material->hasHeightMap())
         {
-            TextureData data = TextureManager::getTextureData(this->m_material->getHeightTexPath());
-            m_textureWidth = data.width;
-            m_textureHeight = data.height;
+            const TextureData* data = TextureManager::getTextureData(this->m_material->getHeightTexPath());
+            m_textureWidth = data->width;
+            m_textureHeight = data->height;
         }
         else
         {
@@ -187,7 +187,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         }
 
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-
+        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
         shader.setBool("material.canCastShadows", canCastShadows());
         shader.setBool("material.canReceiveShadows", canReceiveShadows());
@@ -195,9 +195,9 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
 
         if (type == ShaderType::PBRTessellation)
         {
+            shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
             shader.setVec3("material.ambient_color", m_material->getAmbientColor());
             shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
         }
     }
     else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)

@@ -66,6 +66,9 @@ namespace engine
     
     struct TextureUploadResult final {
         GLuint textureID;
+        int width;
+        int height;
+        int nbComponents;
         ubyte thumbnailLevel;
     };
 
@@ -90,7 +93,8 @@ namespace engine
 	public:
         static unsigned int loadTexture(const std::string& filename, TextureFlags flags = TextureFlag_None);
 
-        static TextureData loadTextureExtended(const std::string& filename, TextureFlags flags = TextureFlag_None);
+        
+        static TextureData loadAndUploadTextureExtended(const std::string& filename, TextureFlags flags = TextureFlag_None);
 
 
         static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
@@ -102,16 +106,20 @@ namespace engine
         static void processLoadedTextures();
         static TextureUploadResult createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isCompressed, bool isNormalMap, bool isHeightMap, TextureFlags flags);
 
-        static unsigned int loadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
-        static unsigned int loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
-        static unsigned int loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
+        static TexturePayload loadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_None);
+        static unsigned int loadAndUploadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
+
+        static TextureUploadResult loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
+        static TextureUploadResult loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
 
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();
 
         static void checkTextureIsValid(unsigned int textureID);
 
-        static TextureData getTextureData(const std::string& texturePath);
+        static const TextureData* getTextureData(const std::string& texturePath);
+
+        //static void loadFromMemory(unsigned char* data, int size);
 
     private:
         static unsigned char* flipImageVertically(unsigned char* data, int width, int height, int nrComponents);

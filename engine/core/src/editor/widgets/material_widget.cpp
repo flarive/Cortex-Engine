@@ -76,17 +76,38 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             if (material->getTypeID() == MaterialType::PBR)
             {
                 // PBR
+                displayColor(material->getBaseColorFactor(), "Base Color");
+
                 displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
                 displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");
-                displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion");
-                displayTexture(TextureManager::getTextureData(material->getRoughnessTexPath()), "Roughness");
-                displayTexture(TextureManager::getTextureData(material->getMetallicTexPath()), "Metallic");
+                
+                if (material->hasArmMap())
+                {
+                    displayTexture(TextureManager::getTextureData(material->getArmTexPath()), "ARM");
+
+                }
+                else if (material->hasRmMap())
+                {
+                    displayTexture(TextureManager::getTextureData(material->getRmTexPath()), "RM");
+                }
+                else
+                {
+                    displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion");
+                    displayTexture(TextureManager::getTextureData(material->getRoughnessTexPath()), "Roughness");
+                    displayTexture(TextureManager::getTextureData(material->getMetallicTexPath()), "Metallic");
+                }
+
                 displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height");
                 displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive");
             }
             else
             {
                 // BlinnPhong or Phong
+
+                displayColor(material->getAmbientColor(), "Ambient Color");
+                displayColor(material->getDiffuseColor(), "Diffuse Color");
+                displayColor(material->getSpecularColor(), "Specular Color");
+
                 displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
                 displayTexture(TextureManager::getTextureData(material->getSpecularTexPath()), "Specular");
                 displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");
@@ -99,14 +120,88 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
     }
 }
 
-void engine::MaterialWidget::displayTexture(const TextureData& textData, const std::string& textType)
+void engine::MaterialWidget::displayColor(const Color& color, const std::string& textType)
 {
+    ImGui::TableNextRow();
+
+    // get color
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 size(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE);
+
+    ImVec2 p0 = pos;
+    ImVec2 p1 = ImVec2(pos.x + size.x, pos.y + size.y);
+
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    draw->AddRectFilled(p0, p1, IM_COL32(color.r * 255, color.g * 255, color.b * 255, 255));
+
+
+
+
+    ImGui::TableSetColumnIndex(1);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // remove text padding
+
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    if (ImGui::BeginTable("##table", 2, ImGuiTableFlags_None))
+    {
+        // Remove table cell padding
+        ImGui::TableSetupColumn("col1", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("col2", ImGuiTableColumnFlags_WidthFixed, 50);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+
+        float rowHeight = 12.0f;
+
+        // --- Row 1 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        {
+            ImGui::TableNextColumn();
+            {
+                ImGui::Text(textType.c_str());
+            }
+
+            ImGui::TableNextColumn();
+            {
+
+            }
+        }
+
+        // --- Row 2 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        {
+            ImGui::TableNextColumn();
+            {
+
+            }
+
+            ImGui::TableNextColumn();
+            {
+
+            }
+        }
+
+        ImGui::PopStyleVar(); // CellPadding
+        ImGui::EndTable();
+    }
+
+    ImGui::PopFont();
+    ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
+}
+
+void engine::MaterialWidget::displayTexture(const TextureData* textData, const std::string& textType)
+{
+	if (!textData || textData->filePath.empty())
+	{
+		return; // Skip if the texture path is empty
+	}
+    
     ImGui::TableNextRow();
 
     // get thumbnail from mipmaps on GPU side
     ImGui::TableSetColumnIndex(0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData.thumbnailLevel);
-    ImGui::Image((ImTextureID)textData.id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData->thumbnailLevel);
+    ImGui::Image((ImTextureID)textData->id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 
 
@@ -137,7 +232,7 @@ void engine::MaterialWidget::displayTexture(const TextureData& textData, const s
 
             ImGui::TableNextColumn();
             {
-                std::string resolution = std::format("{}x{}", textData.width, textData.height);
+                std::string resolution = std::format("{}x{}", textData->width, textData->height);
                 EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 255, 0, 255), 12.0f);
             }
         }
@@ -148,13 +243,13 @@ void engine::MaterialWidget::displayTexture(const TextureData& textData, const s
             ImGui::TableNextColumn();
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-                ImGui::Text(FileSystemManager::getFileName(textData.filePath).c_str());
+                ImGui::Text(FileSystemManager::getFileName(textData->filePath).c_str());
                 ImGui::PopStyleColor();
             }
 
             ImGui::TableNextColumn();
             {
-                std::string resolution = std::format("ID {}", textData.id);
+                std::string resolution = std::format("ID {}", textData->id);
                 EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 0, 255, 255), 12.0f);
             }
         }

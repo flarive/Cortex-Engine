@@ -38,10 +38,10 @@ struct Material {
     float emissiveIntensity;
     float parallaxMapIntensity;
 
-    vec3 ambient_color;
+    vec3 ambient_color; // environment tint
     float ambient_intensity;
 
-
+    vec3 baseColorFactor;
 
     float iblDiffuseIntensity;  // New uniform for diffuse IBL intensity
     float iblSpecularIntensity; // New uniform for specular IBL intensity
@@ -808,6 +808,12 @@ void main()
     vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5);
     vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
+
+
+    albedo *= material.baseColorFactor.rgb;
+    mDiffuse *= material.baseColorFactor.rgb;
+
+
 
     float metallic = 0.0;
     float roughness = 0.0;

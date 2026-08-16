@@ -28,7 +28,7 @@ void engine::DirectionalLight::setup()
     m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
 
-    auto matDebugLight = std::make_shared<engine::Material>(engine::Color(1.0f, 1.0f, 1.0f, 0.2f));
+    auto matDebugLight = std::make_shared<engine::Material>(MaterialType::blinnphong, engine::Color(1.0f, 1.0f, 1.0f, 0.2f));
     m_debug_cylinder.setup(matDebugLight);
 }
 

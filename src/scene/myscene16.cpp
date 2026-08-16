@@ -21,7 +21,7 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
         .shadowMapsBiasFactor = 0.050f,
-        .iblDiffuseIntensity = 2.0f,
+        .iblDiffuseIntensity = 1.0f,
         .iblSpecularIntensity = 1.0f,
         .enableGammaCorrection = true, 
     })

@@ -33,24 +33,43 @@ engine::Material::Material(std::vector<Texture> _textures, float _shininess)
     }
 }
 
-engine::Material::Material(const Color& ambientColor)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(""), m_specularTexPath(""), m_normalTexPath(""), m_metallicTexPath(""), m_roughnessTexPath(""), m_aoTexPath(""), m_heightTexPath(""), m_shininess(0.0f)
+engine::Material::Material(MaterialType type, const Color& ambientColor)
+    : m_ambientColor(ambientColor)
 {
+    // bof
+    if (type == MaterialType::PBR)
+    {
+        m_baseColorFactor = ambientColor;
+        m_ambientColor = Color(0.1f);
+    }
 }
 
-engine::Material::Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess)
+engine::Material::Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess)
     : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_specularColor(specularColor), m_shininess(shininess)
 {
 }
 
-engine::Material::Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_metallicTexPath(fsm::getFullPath(metallicTexPath)), m_roughnessTexPath(fsm::getFullPath(roughnessTexPath)), m_aoTexPath(fsm::getFullPath(aoTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_shininess(shininess)
+engine::Material::Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_metallicTexPath(fsm::getFullPath(metallicTexPath)), m_roughnessTexPath(fsm::getFullPath(roughnessTexPath)), m_aoTexPath(fsm::getFullPath(aoTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_shininess(shininess)
 {
+    // bof
+    if (getTypeID() == MaterialType::PBR)
+    {
+        m_baseColorFactor = ambientColor;
+        m_ambientColor = Color(0.1f);
+    }
 }
 
-engine::Material::Material(CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_shininess(0.0f)
+engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_shininess(0.0f)
 {
+    // bof
+    if (getTypeID() == MaterialType::PBR)
+    {
+        m_baseColorFactor = ambientColor;
+        m_ambientColor = Color(0.1f);
+    }
+    
     if (mode == CombinedTexture::RM)
     {
         // packed Roughness/Metallic
@@ -90,6 +109,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_roughness_map", false);
         shader.setBool("material.has_texture_ao_map", false);
         shader.setBool("materialHeight.has_texture_height_map", false);
+        shader.setBool("material.has_texture_emissive_map", false);
     }
     else
     {
@@ -97,6 +117,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_specular_map", false);
         shader.setBool("material.has_texture_normal_map", false);
         shader.setBool("materialHeight.has_texture_height_map", false);
+        shader.setBool("material.has_texture_emissive_map", false);
     }
 
     for (const auto& tex : textures)
@@ -244,11 +265,6 @@ void engine::Material::loadTextures()
 
         unsigned int emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
-
-        if (!m_armTexPath.empty())
-        {
-            int i = 0;
-        }
     }
     else
     {
@@ -416,12 +432,34 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
     if (emissiveMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 
+    int expectedCount = 0;
 
-    if (diffuseMapId > 0) // BOFFFFF !!!!
+    // Count expected textures based on material type
+    if (type == MaterialType::PBR)
     {
-        // use textures.size() instead
-        m_allTexturesLoaded = true;
+        if (hasDiffuseMap())  expectedCount++;
+        if (hasNormalMap())   expectedCount++;
+
+        if (hasArmMap()) expectedCount++;
+        else if (hasRmMap()) expectedCount++;
+        else {
+            if (hasMetallicMap()) expectedCount++;
+            if (hasRoughnessMap()) expectedCount++;
+            if (hasAoMap())       expectedCount++;
+        }
+        if (hasHeightMap())   expectedCount++;
+        if (hasEmissiveMap()) expectedCount++;
     }
+    else
+    {
+        if (hasDiffuseMap())  expectedCount++;
+        if (hasSpecularMap()) expectedCount++;
+        if (hasNormalMap())   expectedCount++;
+        if (hasHeightMap())   expectedCount++;
+    }
+
+    // Now compare expected vs loaded
+    m_allTexturesLoaded = (textures.size() == expectedCount);
 
     if (texturesLoadedCallback)
         texturesLoadedCallback(m_allTexturesLoaded);

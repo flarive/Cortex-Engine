@@ -106,11 +106,8 @@ namespace engine
         void reSetup();
 
         std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
-
         std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
-
-
-        std::vector<Texture>& getLoadedTextures() { return m_loadedTextures; }
+        //std::vector<Texture>& getLoadedTextures() { return m_requestLoadingTextures; }
 
     private:
         std::string m_directory{};
@@ -134,7 +131,7 @@ namespace engine
         unsigned int m_numberOfMeshes{};
         unsigned int m_numberOfVertices{};
 
-        std::vector<Texture> m_loadedTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+        std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
         std::vector<std::shared_ptr<Mesh>> m_meshes{};
 
@@ -155,6 +152,6 @@ namespace engine
         void loadModel(const std::string& path, bool flipUVs = false);
 
         std::shared_ptr<Material> loadMaterialTextures(const aiScene* scene, aiMaterial* mat);
-        std::string getTexture(aiMaterial* mat, aiTextureType type) const;
+        std::string getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type);
     };
 }

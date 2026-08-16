@@ -4,6 +4,8 @@
 
 #include "../../materials/material.h"
 
+#include "../../common_defines.h"
+
 #include "../../../include/managers/texture_manager.h"
 
 namespace engine
@@ -27,6 +29,8 @@ namespace engine
         std::vector<std::weak_ptr<Material>> m_materials{};
 
         void displayMaterial(const std::shared_ptr<Material>& material);
-        void displayTexture(const TextureData& textData, const std::string& textType);
+
+        void displayColor(const Color& color, const std::string& textType);
+        void displayTexture(const TextureData* textData, const std::string& textType);
     };
 }

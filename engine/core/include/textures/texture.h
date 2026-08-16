@@ -51,5 +51,21 @@ namespace engine
 
         // override a little NonCopyableButMovable
         Texture(Texture&&) = default;
+        
+		// tomake it really movable, we need to implement the move assignment operator
+        //Texture& operator=(Texture&& other) noexcept
+        //{
+        //    if (this != &other)
+        //    {
+        //        id = other.id;
+        //        type = std::move(other.type);
+        //        path = std::move(other.path);
+        //        color = other.color;
+        //        thumbnailLevel = other.thumbnailLevel;
+
+        //        other.id = 0;
+        //    }
+        //    return *this;
+        //}
     };
 }

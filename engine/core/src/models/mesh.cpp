@@ -19,6 +19,9 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 {
     ShaderType type = shader.getShaderType();
 
+    auto& zzz = this->getName();
+    auto& mmm = m_material->getName();
+
     if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
@@ -54,12 +57,13 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
             }
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
             
             if (type == ShaderType::PBR)
             {
+                shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
                 shader.setVec3("material.ambient_color", m_material->getAmbientColor());
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-                shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
             }
         }
     }

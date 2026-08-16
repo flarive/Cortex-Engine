@@ -27,11 +27,11 @@ namespace engine
 
 
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
-        Material(const Color& ambientColor);
-        Material(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
-        Material(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, float shininess = 1.0f);
-        
-        Material(CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath);
+        Material(MaterialType type, const Color& ambientColor);
+        Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
+        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess = 1.0f);
+
+        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess);
 
         virtual ~Material() = default;
 
@@ -52,6 +52,18 @@ namespace engine
         bool bind2(engine::Shader& shader) const;
         void unbind(int baseUnit = MATERIAL_BASE_UNIT) const;
 
+
+        bool hasTextureMap()
+        {
+            if (getTypeID() == MaterialType::PBR)
+            {
+                return hasDiffuseMap() || hasNormalMap() || hasMetallicMap() || hasRoughnessMap() || hasAoMap() || hasArmMap() || hasRmMap() || hasHeightMap() || hasEmissiveMap();
+            }
+            else
+            {
+                return hasDiffuseMap() || hasSpecularMap() || hasHeightMap() || hasEmissiveMap();
+            }
+        }
 
         bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
         bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
@@ -81,8 +93,8 @@ namespace engine
         const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
         const engine::Color& getSpecularColor() const { return m_specularColor; }
 
-
-
+        const engine::Color& getBaseColorFactor() const { return m_baseColorFactor; }
+        
 
 
 
@@ -94,6 +106,12 @@ namespace engine
         const std::string& getAoTexPath() const { return m_aoTexPath; }
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
         const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
+
+
+        const std::string& getArmTexPath() const { return m_armTexPath; }
+        const std::string& getRmTexPath() const { return m_rmTexPath; }
+
+        
 
         const int getTextureHeightUnit() const;
         
@@ -138,6 +156,8 @@ namespace engine
         Color m_ambientColor{ Color(0.1f) };
         Color m_diffuseColor{ Color(1.0f) };
         Color m_specularColor{ Color(0.0f) };
+
+        Color m_baseColorFactor{ Color(1.0f) };
 
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};

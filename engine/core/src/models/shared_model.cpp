@@ -210,10 +210,8 @@ std::shared_ptr<engine::Mesh> engine::SharedModel::processMesh(aiMesh* mesh, con
     }
 
     // load all textures asynchronously
-    if (m_materials.back()->hasDiffuseMap())
+    if (m_materials.back()->hasTextureMap())
         m_materials.back()->loadTexturesAsync();
-
-
 
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
@@ -319,29 +317,28 @@ std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(cons
     bool useARMTexture = false;
 	bool useMRTexture = false;
 
+    auto ddd = mat->GetName();
+
     if (sceneSettings.method == RenderMethod::PBR)
     {
-        texDiffuseFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE);
-		texNormalFullPath = getTexture(mat, aiTextureType::aiTextureType_NORMALS);
-        texMetalnessFullPath = getTexture(mat, aiTextureType::aiTextureType_METALNESS);
-		texRoughnessFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS);
-		texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_AMBIENT_OCCLUSION);
+        texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
+		texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
+        texMetalnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_METALNESS);
+		texRoughnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS);
+		texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_AMBIENT_OCCLUSION);
 
 		if (texAmbientOcclusionFullPath.empty())
 		{
-			texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_LIGHTMAP);
+			texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_LIGHTMAP);
 		}
 
         if (texAmbientOcclusionFullPath.empty())
         {
-            texAmbientOcclusionFullPath = getTexture(mat, aiTextureType::aiTextureType_SHEEN);
+            texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SHEEN);
         }
 
-		texHeightFullPath = getTexture(mat, aiTextureType::aiTextureType_HEIGHT);
-		texEmissiveFullPath = getTexture(mat, aiTextureType::aiTextureType_EMISSIVE);
-
-
-
+		texHeightFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_HEIGHT);
+		texEmissiveFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_EMISSIVE);
 
         if (useARMTexture = isARMSingleTexture(scene, mat))
         {
@@ -354,31 +351,45 @@ std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(cons
     }
     else
     {
-        texDiffuseFullPath = getTexture(mat, aiTextureType::aiTextureType_DIFFUSE);
-        texSpecularFullPath = getTexture(mat, aiTextureType::aiTextureType_SPECULAR);
-		texNormalFullPath = getTexture(mat, aiTextureType::aiTextureType_NORMALS);
+        texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
+        texSpecularFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SPECULAR);
+		texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
     }
+
+
+    aiColor4D aiBaseColorFactor(1, 1, 1, 1);
+    mat->Get(AI_MATKEY_BASE_COLOR, aiBaseColorFactor);
+    Color baseColorFactor{aiBaseColorFactor.r, aiBaseColorFactor.g, aiBaseColorFactor.b, aiBaseColorFactor.a};
 
 
 
     if (sceneSettings.method == RenderMethod::PBR)
     {
-        if (useARMTexture)
+        if (useARMTexture && !texArmFullPath.empty())
         {
-            material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, Color(0.1f), texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, shininess);
+            material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
+                texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
 		}
-		else if (useMRTexture)
+		else if (useMRTexture && !texRmFullPath.empty())
 		{
-			material = std::make_shared<PBRMaterial>(CombinedTexture::RM, Color(0.1f), texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, shininess);
+			material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
+                texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
 		}
         else
         {
-            material = std::make_shared<PBRMaterial>(Color(0.1f), texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, shininess);
+            material = std::make_shared<PBRMaterial>(baseColorFactor,
+                texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+        }
+
+        if (!material->hasTextureMap())
+        {
+            material = std::make_shared<PBRMaterial>(baseColorFactor);
         }
 	}
 	else
 	{
-        material = std::make_shared<BlinnPhongMaterial>(Color(0.1f), texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, shininess);
+        material = std::make_shared<BlinnPhongMaterial>(baseColorFactor,
+            texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
 	}
 
     material->setName(mat->GetName().C_Str());
@@ -386,16 +397,53 @@ std::shared_ptr<engine::Material> engine::SharedModel::loadMaterialTextures(cons
     return material;
 }
 
-std::string engine::SharedModel::getTexture(aiMaterial* mat, aiTextureType type) const
+std::string engine::SharedModel::getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type)
 {
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str{};
         mat->GetTexture(type, i, &str);
+        
+        std::string filename = str.C_Str(); // safe conversion
+        std::string path = std::format("{}\\{}", this->m_directory, filename);
 
-        return std::format("{}\\{}", this->m_directory, str.C_Str());
+        // Check if texture was already loaded
+        bool skip = std::find(m_requestLoadingTextures.begin(), m_requestLoadingTextures.end(), path) != m_requestLoadingTextures.end();
+
+        if (skip)
+			return path;
+
+        if (filename[0] == '*')
+        {
+			// Embedded texture from model, load them synchronously
+            int index = std::atoi(str.C_Str() + 1);
+            const aiTexture* aiTex = scene->mTextures[index];
+
+
+            TextureUploadResult result;
+
+            if (aiTex->mHeight == 0)
+            {
+                // embedded and compressed
+                result = engine::TextureManager::loadTextureFromMemory(reinterpret_cast<unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mFilename.C_Str());
+            }
+            else
+            {
+                // embedded and uncompressed
+                result = engine::TextureManager::loadUncompressedTexture(reinterpret_cast<const unsigned char*>(aiTex->pcData), aiTex->mWidth, aiTex->mHeight);
+            }
+
+            // Cache result
+            engine::TextureManagerInternal::textureIDCache[path] = result.textureID;
+            engine::TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, reinterpret_cast<unsigned char*>(aiTex->pcData), path, result.width, result.height, result.nbComponents, result.thumbnailLevel };
+        }
+
+        // just to avoid loading 2 times the same texture path
+        m_requestLoadingTextures.push_back(path);
+
+        return path;
     }
-    
+        
     return "";
 }
 

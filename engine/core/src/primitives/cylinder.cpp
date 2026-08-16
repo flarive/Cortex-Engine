@@ -29,7 +29,7 @@ void engine::Cylinder::setup(const std::shared_ptr<Material>& material, const Uv
 
     geometrySetup();
 
-    if (material && material->hasDiffuseMap())
+    if (material && material->hasTextureMap())
         material->loadTexturesAsync();
 }
 
@@ -200,16 +200,16 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
             
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-            
+            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
 
             shader.setBool("material.canCastShadows", canCastShadows());
             shader.setBool("material.canReceiveShadows", canReceiveShadows());
 
             if (type == ShaderType::PBR)
             {
+                shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
                 shader.setVec3("material.ambient_color", m_material->getAmbientColor());
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-                shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
             }
         }
 

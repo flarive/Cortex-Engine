@@ -77,7 +77,7 @@ void engine::Model::clean()
         m_meshes[i]->clean();
     }
 
-    m_loadedTextures.clear();
+    m_requestLoadingTextures.clear();
     m_meshes.clear();
 }
 

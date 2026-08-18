@@ -27,8 +27,17 @@ void engine::DirectionalLight::setup()
     // load light cube debug shader
     m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
 
-    auto matDebugLight = std::make_shared<engine::Material>(MaterialType::blinnphong, engine::Color(1.0f, 1.0f, 1.0f, 0.2f));
+    std::shared_ptr<Material> matDebugLight;
+
+    if (sceneSettings.method == RenderMethod::PBR)
+        matDebugLight = std::make_shared<engine::PBRMaterial>(LIGHT_DEBUG_COLOR);
+    else
+        matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
+
     m_debug_cylinder.setup(matDebugLight);
 }
 

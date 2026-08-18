@@ -7,6 +7,9 @@
 
 #include "../misc/ordered_map.h"
 
+#include "../materials/blinnphong_material.h"
+#include "../materials/pbr_material.h"
+
 #include <vector>
 #include <map>
 #include <unordered_map>
@@ -17,6 +20,8 @@
 namespace engine
 {
     enum class LightType { undefined = 0, point = 1, directional = 2, spot = 3, area = 4 };
+
+    const engine::Color LIGHT_DEBUG_COLOR { 1.0f, 1.0f, 1.0f, 0.2f };
 
     const std::unordered_map<LightType, std::string> LightTypeNames = {
         {LightType::undefined, "undefined"},

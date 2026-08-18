@@ -185,7 +185,8 @@ void MyScene16::init()
     
 
     // Stained glass lamp model
-    const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
+    //const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
+    const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF-KTX-BasisU/StainedGlassLamp.glTF");
     shared_ptr<Model> cushionModel = make_shared<Model>(stainedGlassLampPath);
     auto trsCushion = Transform(vec3(0.0f, -11.0f, -10.0f), vec3(6.0f));
 

@@ -10,12 +10,7 @@
 #include "../transform.h"
 #include "bone.h"
 
-#include <assimp/importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-
-//#include "SOIL2.h"
+#include "mesh_loader.h"
 
 #include <omp.h> // Include OpenMP header
 
@@ -54,10 +49,7 @@ namespace engine
     {
     public:
         SharedModel(bool _gamma, bool _flipUV);
-
-        // constructor, expects a filepath to a 3D model.
         SharedModel(const std::string& _path, bool _gamma = false, bool _flipUV = false);
-
         SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV);
 
         // at least one virtual method to make it base class
@@ -94,10 +86,6 @@ namespace engine
         bool& getFlipUV() { return m_flipUV; }
         void setFlipUV(bool _flipUV) { m_flipUV = _flipUV; }
 
-        void setVertexBoneDataToDefault(Vertex& vertex);
-        void setVertexBoneData(Vertex& vertex, int boneID, float weight);
-        void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
-
         unsigned int getMeshCount() const;
         unsigned int getVertexCount() const;
 
@@ -106,8 +94,9 @@ namespace engine
         void reSetup();
 
         std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
-        std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
-        //std::vector<Texture>& getLoadedTextures() { return m_requestLoadingTextures; }
+        std::vector<std::shared_ptr<Mesh>>& getMeshes();
+
+
 
     private:
         std::string m_directory{};
@@ -115,25 +104,12 @@ namespace engine
 
         std::vector<std::shared_ptr<Material>> m_materials{};
 
-        
-
-        // processes a node in a recursive fashion.
-        // Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-        void processNode(aiNode* node, const aiScene* scene);
-
-        std::shared_ptr<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
-
-        bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);
-        bool isMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
         
     protected:
-        unsigned int m_numberOfMeshes{};
-        unsigned int m_numberOfVertices{};
+        std::unique_ptr<MeshLoader> m_meshLoader{};
 
-        std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-
-        std::vector<std::shared_ptr<Mesh>> m_meshes{};
+        //std::vector<std::shared_ptr<Mesh>> m_meshes{};
 
         bool m_gammaCorrection{};
         bool m_flipUV{};
@@ -150,8 +126,5 @@ namespace engine
 
         // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
-
-        std::shared_ptr<Material> loadMaterialTextures(const aiScene* scene, aiMaterial* mat);
-        std::string getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type);
     };
 }

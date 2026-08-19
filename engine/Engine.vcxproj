@@ -225,7 +225,10 @@
     <ClCompile Include="core\src\materials\pbr_material.cpp" />
     <ClCompile Include="core\src\managers\log_manager.cpp" />
     <ClCompile Include="core\src\animators\bone_animator.cpp" />
+    <ClCompile Include="core\src\models\assimp_loader.cpp" />
     <ClCompile Include="core\src\models\bone.cpp" />
+    <ClCompile Include="core\src\models\gltf_loader.cpp" />
+    <ClCompile Include="core\src\models\mesh_loader.cpp" />
     <ClCompile Include="core\src\models\shared_model.cpp" />
     <ClCompile Include="core\src\particles\particle.cpp" />
     <ClCompile Include="core\src\particles\particle_system.cpp" />
@@ -352,7 +355,10 @@
     <ClInclude Include="core\include\misc\ordered_map.h" />
     <ClInclude Include="core\include\animators\bone_animator.h" />
     <ClInclude Include="core\include\models\assimp_glm_helpers.h" />
+    <ClInclude Include="core\include\models\assimp_loader.h" />
     <ClInclude Include="core\include\models\bone.h" />
+    <ClInclude Include="core\include\models\gltf_loader.h" />
+    <ClInclude Include="core\include\models\mesh_loader.h" />
     <ClInclude Include="core\include\models\shared_model.h" />
     <ClInclude Include="core\include\particles\particle.h" />
     <ClInclude Include="core\include\particles\particle_system.h" />

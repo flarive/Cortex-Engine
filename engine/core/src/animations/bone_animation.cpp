@@ -2,6 +2,11 @@
 
 #include "../../include/managers/log_manager.h"
 
+
+#include <assimp/importer.hpp>
+//#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
 	: Animation(animationName, model, speedFactor), m_filepath(animationPath)
 {

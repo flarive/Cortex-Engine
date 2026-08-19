@@ -8,11 +8,6 @@
 
 #include <glm/glm.hpp>
 
-#include <assimp/importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-
 #include <string>
 #include <vector>
 #include <mutex>

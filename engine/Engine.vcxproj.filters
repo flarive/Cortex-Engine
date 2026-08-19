@@ -247,6 +247,12 @@
     <Filter Include="sources\core\textures">
       <UniqueIdentifier>{80c77795-05b6-4e8e-af76-11fc337b531b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\core\models\loaders">
+      <UniqueIdentifier>{4c6e0a92-a9d3-43e7-8260-423f54f02d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\models\loaders">
+      <UniqueIdentifier>{249dc107-b1f7-42ef-90c6-466f794672b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -579,6 +585,15 @@
     <ClCompile Include="core\src\editor\widgets\mesh_widget.cpp">
       <Filter>sources\core\editor\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\models\assimp_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\mesh_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\gltf_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -815,9 +830,6 @@
     <ClInclude Include="core\include\models\bone.h">
       <Filter>headers\core\models</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\assimp_glm_helpers.h">
-      <Filter>headers\core\models</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\models\shared_model.h">
       <Filter>headers\core\models</Filter>
     </ClInclude>
@@ -964,6 +976,18 @@
     </ClInclude>
     <ClInclude Include="core\include\editor\widgets\mesh_widget.h">
       <Filter>headers\core\editor\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\assimp_glm_helpers.h">
+      <Filter>headers\core\models\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\assimp_loader.h">
+      <Filter>headers\core\models\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\mesh_loader.h">
+      <Filter>headers\core\models\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\gltf_loader.h">
+      <Filter>headers\core\models\loaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

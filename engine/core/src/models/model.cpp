@@ -6,8 +6,6 @@
 #include "../../include/managers/log_manager.h"
 #include "../../include/tools/helpers.h"
 
-#include "SOIL2.h"
-
 #include <omp.h> // Include OpenMP header
 
 #include <format>
@@ -58,7 +56,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
     if (!m_shared_model)
     {
-        for (auto& mesh : m_meshes) {
+        for (auto& mesh : getMeshes()) {
             mesh->draw(shader, transformMatrix);
         }
     }
@@ -73,19 +71,24 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
 void engine::Model::clean()
 {
-    for (unsigned int i = 0; i < m_meshes.size(); i++) {
+    /*for (unsigned int i = 0; i < m_meshes.size(); i++) {
         m_meshes[i]->clean();
+    }*/
+
+    if (m_meshLoader)
+    {
+        m_meshLoader.reset(); // to test !!!!!!!!!!!!
     }
 
-    m_requestLoadingTextures.clear();
-    m_meshes.clear();
+    //m_requestLoadingTextures.clear();
+    //m_meshes.clear();
 }
 
 unsigned int engine::Model::getMeshCount() const
 {
     if (!m_shared_model)
     {
-        return m_numberOfMeshes;
+        return 0;// m_numberOfMeshes; ??????????????????????????????
     }
     else
     {

@@ -1130,6 +1130,10 @@ public:
         if (this != &o) { tg3_model_free(&m_); m_ = o.m_; memset(&o.m_, 0, sizeof(o.m_)); }
         return *this;
     }
+	
+	// FL added !!!
+	tg3_model& raw() { return m_; }
+    const tg3_model& raw() const { return m_; }
 
     tg3_model       *get()       { return &m_; }
     const tg3_model *get() const { return &m_; }

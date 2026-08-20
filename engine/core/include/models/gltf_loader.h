@@ -2,6 +2,9 @@
 
 #include "mesh_loader.h"
 
+// https://github.com/syoyo/tinygltf
+#include "tiny_gltf_v3.h"
+
 namespace engine
 {
 	class GLtfMeshLoader final : public MeshLoader

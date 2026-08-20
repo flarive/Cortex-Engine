@@ -594,6 +594,9 @@
     <ClCompile Include="core\src\models\gltf_loader.cpp">
       <Filter>sources\core\models\loaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\tinygltf\tiny_gltf_v3.c">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">

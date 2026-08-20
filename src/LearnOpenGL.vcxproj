@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)engine;$(SolutionDir)libs\imgui;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\ktx\include;$(SolutionDir)libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)engine;$(SolutionDir)libs\imgui;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;$(SolutionDir)libs\soil2\src\soil2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -173,7 +173,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)engine;$(SolutionDir)libs\imgui;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)engine;$(SolutionDir)libs\imgui;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>

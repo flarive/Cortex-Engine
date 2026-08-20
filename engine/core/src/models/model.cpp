@@ -71,24 +71,17 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
 void engine::Model::clean()
 {
-    /*for (unsigned int i = 0; i < m_meshes.size(); i++) {
-        m_meshes[i]->clean();
-    }*/
-
     if (m_meshLoader)
     {
-        m_meshLoader.reset(); // to test !!!!!!!!!!!!
+        m_meshLoader.reset();
     }
-
-    //m_requestLoadingTextures.clear();
-    //m_meshes.clear();
 }
 
 unsigned int engine::Model::getMeshCount() const
 {
     if (!m_shared_model)
     {
-        return 0;// m_numberOfMeshes; ??????????????????????????????
+        return SharedModel::getMeshCount();
     }
     else
     {

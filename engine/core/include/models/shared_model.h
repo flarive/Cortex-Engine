@@ -109,7 +109,6 @@ namespace engine
     protected:
         std::unique_ptr<MeshLoader> m_meshLoader{};
 
-        //std::vector<std::shared_ptr<Mesh>> m_meshes{};
 
         bool m_gammaCorrection{};
         bool m_flipUV{};

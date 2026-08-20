@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -172,6 +172,7 @@
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\libs\imgui\themes\imgui_spectrum.cpp" />
     <ClCompile Include="..\libs\stb\stb_vorbis.c" />
+    <ClCompile Include="..\libs\tinygltf\tiny_gltf_v3.c" />
     <ClCompile Include="core\src\aabb.cpp" />
     <ClCompile Include="core\src\animations\animation.cpp" />
     <ClCompile Include="core\src\animations\bone_animation.cpp" />

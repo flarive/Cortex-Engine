@@ -28,7 +28,7 @@ namespace engine
 
         std::vector<std::weak_ptr<Material>> m_materials{};
 
-        void displayMaterial(const std::shared_ptr<Material>& material);
+        void displayMaterial(const std::shared_ptr<Material>& material, size_t index);
 
         void displayColor(const Color& color, const std::string& textType);
         void displayTexture(const TextureData* textData, const std::string& textType);

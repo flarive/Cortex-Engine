@@ -1,8 +1,8 @@
 #include "../../include/models/assimp_loader.h"
 
-#include "../../include/managers/texture_manager.h"
 #include "../../include/managers/log_manager.h"
 #include "../../include/managers/filesystem_manager.h"
+#include "../../include/managers/texture_manager.h"
 
 #include "../../include/models/assimp_glm_helpers.h"
 
@@ -169,6 +169,7 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     if (m_materials.back()->hasTextureMap())
         m_materials.back()->loadTexturesAsync();
 
+    // load bones
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
 
@@ -331,8 +332,6 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadMaterialTextures
 
     bool useARMTexture = false;
     bool useMRTexture = false;
-
-    auto ddd = mat->GetName();
 
     if (sceneSettings.method == RenderMethod::PBR)
     {

@@ -379,6 +379,8 @@ engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned
 {
     TextureUploadResult result{};
     result.nbComponents = nrComponents;
+    result.width = width;
+    result.height = height;
 
     if (!data)
         return result;

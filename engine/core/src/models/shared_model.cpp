@@ -61,6 +61,15 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     logger.info("Loading model {} : {} milliseconds", FileSystemManager::getShortenedPath(path), duration.count());
 }
 
+std::vector<std::shared_ptr<engine::Material>>& engine::SharedModel::getMaterials()
+{
+	if (m_meshLoader)
+		return m_meshLoader->getMaterials();
+
+	static std::vector<std::shared_ptr<engine::Material>> emptyMaterials;
+	return emptyMaterials;
+}
+
 unsigned int engine::SharedModel::getMeshCount() const
 {
     if (m_meshLoader)

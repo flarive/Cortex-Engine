@@ -27,6 +27,7 @@ namespace engine
 		unsigned int getVertexCount() const { return m_numberOfVertices; }
 
 		std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
+		std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
 
 	protected:
 		std::string m_directory{};

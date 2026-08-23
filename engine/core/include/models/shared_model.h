@@ -93,7 +93,7 @@ namespace engine
 
         void reSetup();
 
-        std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
+        std::vector<std::shared_ptr<Material>>& getMaterials();
         std::vector<std::shared_ptr<Mesh>>& getMeshes();
 
 
@@ -102,7 +102,7 @@ namespace engine
         std::string m_directory{};
         std::string m_filename{};
 
-        std::vector<std::shared_ptr<Material>> m_materials{};
+        //std::vector<std::shared_ptr<Material>> m_materials{};
 
 
         

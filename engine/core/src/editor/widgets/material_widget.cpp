@@ -28,12 +28,13 @@ void engine::MaterialWidget::draw()
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
     if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
     {
-        for (const auto& weakMaterial : m_materials)
+        for (size_t i = 0; i < m_materials.size(); ++i)
         {
-            // Lock the weak_ptr to get a shared_ptr
+            const auto& weakMaterial = m_materials[i];
+
             if (auto sharedMaterial = weakMaterial.lock())
             {
-                displayMaterial(sharedMaterial);
+                displayMaterial(sharedMaterial, i);
             }
         }
     }
@@ -41,9 +42,9 @@ void engine::MaterialWidget::draw()
     ImGui::PopFont();
 }
 
-void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& material)
+void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& material, size_t index)
 {
-    std::string header = "Material";
+    std::string header = std::format("Unnamed material ({})", index);
 
     std::string materialName = material->getName();
     if (!materialName.empty())
@@ -58,9 +59,9 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
     else
     {
         if (material->getTypeID() == MaterialType::PBR)
-            header = "Material (PBR)";
+            header = std::format("Unnamed material ({}) (PBR)", index);
         else if (material->getTypeID() == MaterialType::blinnphong)
-            header = "Material (BlinnPhong)";
+            header = std::format("Unnamed material ({}) (BlinnPhong)", index);
     }
     
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);

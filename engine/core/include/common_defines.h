@@ -22,10 +22,11 @@ namespace engine
 {
 	using Color = glm::vec4;
 
-	using ulong = uint64_t;
-	using uint = uint32_t;
-	using ushort = uint16_t;
-	using ubyte = uint8_t;
+	using ulong = uint64_t;   // 0 to 18,446,744,073,709,551,615  (2^64 - 1)
+	using uint = uint32_t;    // 0 to 4,294,967,295               (2^32 - 1)
+	using ushort = uint16_t;  // 0 to 65,535                      (2^16 - 1)
+	using ubyte = uint8_t;    // 0 to 255                         (2^8  - 1)
+
 
 	//using long = int64_t;
 	//using int = int32_t;

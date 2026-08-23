@@ -18,6 +18,10 @@ namespace engine
     
     struct Vertex final : private NonCopyableButMovable
     {
+        //Vertex()
+        //    : Vertex(glm::vec3(), glm::vec3(), glm::vec2(), glm::vec3(), glm::vec3())
+        //{}
+        //
         Vertex(const glm::vec3& _pos)
             : Vertex(_pos, glm::vec3(), glm::vec2(), glm::vec3(), glm::vec3())
         {

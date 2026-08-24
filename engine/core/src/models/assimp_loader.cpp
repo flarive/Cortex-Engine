@@ -162,7 +162,7 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     //}
     //else
     //{
-        m_materials.push_back(loadMaterialTextures(scene, material));
+        m_materials.push_back(loadMaterial(scene, material));
     //}
 
     // load all textures asynchronously
@@ -306,7 +306,7 @@ bool engine::AssimpMeshLoader::isMRSingleTexture(const aiScene* scene, aiMateria
     return str1 == str2;
 }
 
-std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadMaterialTextures(const aiScene* scene, aiMaterial* mat)
+std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadMaterial(const aiScene* scene, aiMaterial* mat)
 {
     std::shared_ptr<Material> material{};
 

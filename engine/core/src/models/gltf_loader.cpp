@@ -57,7 +57,6 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
         {
             const tg3_primitive& prim = mesh.primitives[p];
 
-
             uint32_t posIndex = UINT32_MAX;
             uint32_t norIndex = UINT32_MAX;
             uint32_t tanIndex = UINT32_MAX;
@@ -271,6 +270,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t matIndex, const tg3_model& raw)
 {
     auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
     SceneSettings& sceneSettings = singleton->sceneSettings();
 
     const tg3_material& mat = raw.materials[matIndex];
@@ -301,7 +301,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
     if (!metallicTex.empty() && !roughnessTex.empty() && metallicTex == roughnessTex)
         useMR = true;
 
-    std::shared_ptr<Material> material;
+    std::shared_ptr<Material> material{};
 
     if (sceneSettings.method == RenderMethod::PBR)
     {
@@ -326,7 +326,8 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
         material = std::make_shared<BlinnPhongMaterial>(baseColorFactor, baseColorTex, metallicTex, normalTex, heightTex, emissiveTex, 1.0f);
     }
 
-    m_materials.push_back(material);
+    material->setName(toStdString(mat.name));
+
     return material;
 }
 
@@ -388,7 +389,6 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_o
 {
     return getTexture(raw, tg3_texture_info{ info.index, info.tex_coord, info.ext });
 }
-
 
 std::string engine::GLtfMeshLoader::toStdString(tg3_str s)
 {

@@ -197,20 +197,20 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
 
                 if (path.c_str()[path.size() - 2] == '*')
                 {
-					// Embedded texture from model (already loaded in memory), retrieve it from cache
+                    // Embedded texture from model (already loaded in memory), retrieve it from cache
                     const TextureData* tex = getTextureData(path); // direct use of TexturePayload ?????????????????????
                     if (tex)
                     {
-						payload.rawData = tex->data;
-						payload.width = tex->width;
-						payload.height = tex->height;
-						payload.components = tex->nbComponents; 
+                        payload.rawData = tex->data;
+                        payload.width = tex->width;
+                        payload.height = tex->height;
+                        payload.components = tex->nbComponents;
                     }
                 }
                 else
                 {
                     // External texture file
-                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps | TextureFlag_InvertY);
+                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps);// | TextureFlag_InvertY);
                 }
 
                 return payload;

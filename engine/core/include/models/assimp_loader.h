@@ -36,7 +36,7 @@ namespace engine
 		bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);
 		bool isMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
-		std::shared_ptr<Material> loadMaterialTextures(const aiScene* scene, aiMaterial* mat);
+		std::shared_ptr<Material> loadMaterial(const aiScene* scene, aiMaterial* mat);
 		std::string getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type);
 	};
 }

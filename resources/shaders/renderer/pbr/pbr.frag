@@ -807,11 +807,27 @@ void main()
     // material properties
     vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5);
     vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
+
+//    vec4 baseColor = material.has_texture_diffuse_map
+//        ? texture(material.texture_diffuse, texCoords)
+//        : vec4(0.5, 0.5, 0.5, 1.0);
+//
+//    // Apply glTF baseColorFactor (always multiply)
+//    baseColor *= vec4(material.baseColorFactor, 1.0);
+//
+//    // Split into components
+//    vec3 albedo = baseColor.rgb;
+//    //float alpha = baseColor.a;
+//
+//    // For LTC area lights (diffuse only)
+//    vec3 mDiffuse = albedo;
+
+
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
 
-    albedo *= material.baseColorFactor.rgb;
-    mDiffuse *= material.baseColorFactor.rgb;
+//    albedo *= material.baseColorFactor.rgb;
+//    mDiffuse *= material.baseColorFactor.rgb;
 
 
 

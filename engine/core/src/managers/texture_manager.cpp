@@ -210,7 +210,7 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                 else
                 {
                     // External texture file
-                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps);// | TextureFlag_InvertY);
+                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps | TextureFlag_InvertY);
                 }
 
                 return payload;
@@ -223,20 +223,20 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
     return 0;  // Temporary ID, real ID is set later
 }
 
-unsigned char* engine::TextureManager::flipImageVertically(unsigned char* data, int width, int height, int nrComponents)
-{
-    unsigned char* flippedData = new unsigned char[width * height * nrComponents];
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            for (int c = 0; c < nrComponents; c++) {
-                flippedData[(height - 1 - y) * width * nrComponents + x * nrComponents + c] =
-                    data[y * width * nrComponents + x * nrComponents + c];
-            }
-        }
-    }
-    delete[] data;
-    return flippedData;
-}
+//unsigned char* engine::TextureManager::flipImageVertically(unsigned char* data, int width, int height, int nrComponents)
+//{
+//    unsigned char* flippedData = new unsigned char[width * height * nrComponents];
+//    for (int y = 0; y < height; y++) {
+//        for (int x = 0; x < width; x++) {
+//            for (int c = 0; c < nrComponents; c++) {
+//                flippedData[(height - 1 - y) * width * nrComponents + x * nrComponents + c] =
+//                    data[y * width * nrComponents + x * nrComponents + c];
+//            }
+//        }
+//    }
+//    delete[] data;
+//    return flippedData;
+//}
 
 void engine::TextureManager::flipImageVertically2(unsigned char* data, int width, int height, int nrComponents)
 {
@@ -658,6 +658,9 @@ engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const 
 
     // Load image from memory buffer using SOIL
     unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);
+
+    if (hasFlag(flags, TextureFlag_InvertY))
+        flipImageVertically2(image, width, height, channels);
 
     if (!image)
     {

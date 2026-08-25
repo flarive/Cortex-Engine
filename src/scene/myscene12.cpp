@@ -157,11 +157,11 @@ void MyScene12::init()
 
     auto matSphere3 = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/white-marble/white-marble_albedo.png",
-        "textures/pbr/porcelain/white-marble_normal.png",
-        "textures/pbr/porcelain/white-marble_metallic.png",
-        "textures/pbr/porcelain/white-marble_roughness.png",
-        "textures/pbr/porcelain/white-marble_ao.png",
-        "textures/pbr/porcelain/white-marble_height.png", "", 0.5f);
+        "textures/pbr/white-marble/white-marble_normal.png",
+        "textures/pbr/white-marble/white-marble_metallic.png",
+        "textures/pbr/white-marble/white-marble_roughness.png",
+        "textures/pbr/white-marble/white-marble_ao.png",
+        "textures/pbr/white-marble/white-marble_height.png", "", 0.5f);
     matSphere3->setNormalIntensity(1.0f);
 
     sphere3->setup(matSphere3, UvMapping(2.0f));

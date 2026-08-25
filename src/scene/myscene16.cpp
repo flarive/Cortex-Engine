@@ -21,8 +21,8 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .shadowIntensity = 3.0f,
         .shadowMapsTextureSize = 2048,
         .shadowMapsBiasFactor = 0.050f,
-        .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f,
+        .iblDiffuseIntensity = 1.1f,
+        .iblSpecularIntensity = 0.0f,
         .enableGammaCorrection = true, 
     })
 {
@@ -185,8 +185,8 @@ void MyScene16::init()
     
 
     // Stained glass lamp model
-    const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
-    //const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF-KTX-BasisU/StainedGlassLamp.glTF");
+    //const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF/StainedGlassLamp.glTF");
+    const string stainedGlassLampPath = FileSystemManager::getPath("../../samples/models/StainedGlassLamp/glTF-KTX-BasisU/StainedGlassLamp.glTF");
     shared_ptr<Model> cushionModel = make_shared<Model>(stainedGlassLampPath);
     auto trsCushion = Transform(vec3(0.0f, -11.0f, -10.0f), vec3(6.0f));
 

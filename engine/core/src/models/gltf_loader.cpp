@@ -72,14 +72,6 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
                     const tg3_accessor& posAcc = raw.accessors[posIndex];
                     m_numberOfVertices += (uint)posAcc.count;
                 }
-                //else if (tg3_str_equals_cstr(pair.key, "NORMAL"))
-                //    norIndex = pair.value;
-
-                //else if (tg3_str_equals_cstr(pair.key, "TANGENT"))
-                //    tanIndex = pair.value;
-
-                //else if (tg3_str_equals_cstr(pair.key, "TEXCOORD_0"))
-                //    uvIndex = pair.value;
             }
         }
     }
@@ -253,7 +245,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         // load all textures asynchronously
         if (m_materials.back()->hasTextureMap())
-            m_materials.back()->loadTexturesAsync(true);
+            m_materials.back()->loadTexturesAsync(false);
 
         // load bones
         //if (m_hasBones)
@@ -275,12 +267,28 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
 
     const tg3_material& mat = raw.materials[matIndex];
 
-    Color baseColorFactor{
-        mat.pbr_metallic_roughness.base_color_factor[0],
-        mat.pbr_metallic_roughness.base_color_factor[1],
-        mat.pbr_metallic_roughness.base_color_factor[2],
-        mat.pbr_metallic_roughness.base_color_factor[3]
-    };
+    //Color baseColorFactor{
+    //    mat.pbr_metallic_roughness.base_color_factor[0],
+    //    mat.pbr_metallic_roughness.base_color_factor[1],
+    //    mat.pbr_metallic_roughness.base_color_factor[2],
+    //    mat.pbr_metallic_roughness.base_color_factor[3]
+    //};
+
+    Color baseColorFactor{ 0.3f, 0.3f, 0.3f, 1.0f };
+
+	if (mat.pbr_metallic_roughness.base_color_factor[0] != 1.0f &&
+		mat.pbr_metallic_roughness.base_color_factor[1] != 1.0f &&
+		mat.pbr_metallic_roughness.base_color_factor[2] != 1.0f &&
+        mat.pbr_metallic_roughness.base_color_factor[3] != 1.0f)
+	{
+		baseColorFactor = Color{
+			mat.pbr_metallic_roughness.base_color_factor[0],
+			mat.pbr_metallic_roughness.base_color_factor[1],
+			mat.pbr_metallic_roughness.base_color_factor[2],
+			mat.pbr_metallic_roughness.base_color_factor[3]
+		};
+	}
+
 
     std::string baseColorTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
     std::string normalTex = getTexture(raw, mat.normal_texture);
@@ -331,54 +339,49 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
     return material;
 }
 
-//std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_texture_info& info)
-//{
-//    if (info.index < 0)
-//        return "";
-//
-//    const tg3_texture& tex = raw.textures[info.index];
-//    const tg3_image& img = raw.images[tex.source];
-//
-//    std::string path = m_directory + "\\" + toStdString(img.uri);
-//
-//    bool skip = std::find(m_requestLoadingTextures.begin(), m_requestLoadingTextures.end(), path) != m_requestLoadingTextures.end();
-//
-//    if (skip)
-//        return path;
-//
-//    if (toStdString(img.uri).size() == 0)
-//    {
-//        // Embedded texture
-//        TextureUploadResult result;
-//
-//        if (img.height == 0)
-//        {
-//            // compressed
-//            result = TextureManager::loadTextureFromMemory(
-//                toUChar(img.image),
-//                size_t(img.width * img.height * img.component),
-//                toStdString(img.mime_type).c_str()
-//            );
-//        }
-//        else
-//        {
-//            // uncompressed
-//            result = TextureManager::loadUncompressedTexture(
-//                toUChar(img.image),
-//                img.width,
-//                img.height
-//            );
-//        }
-//
-//        // Cache result
-//        TextureManagerInternal::textureIDCache[path] = result.textureID;
-//        TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, toUChar(img.image), path, result.width, result.height, result.nbComponents, result.thumbnailLevel };
-//    }
-//
-//    // just to avoid loading 2 times the same texture path
-//    m_requestLoadingTextures.push_back(path);
-//    return path;
-//}
+int engine::GLtfMeshLoader::getTextureSource(const tg3_texture& tex)
+{
+    // Standard PNG/JPG
+    if (tex.source >= 0)
+        return tex.source;
+
+    // Extensions (KTX2, WebP, vendor extensions, future formats)
+    for (uint32_t i = 0; i < tex.ext.extensions_count; ++i)
+    {
+        const tg3_extension& ext = tex.ext.extensions[i];
+
+        // Convert tg3_str → std::string
+        std::string name(ext.name.data, ext.name.len);
+
+        // ---- KTX2 (KHR_texture_basisu) ----
+        if (name == "KHR_texture_basisu")
+        {
+            // ext.value is a tg3_value OBJECT containing { "source": int }
+            return toInt(ext.value);   // your recursive JSON → int converter
+        }
+
+        // ---- WebP (KHR_texture_webp) ----
+        if (name == "KHR_texture_webp")
+        {
+            return toInt(ext.value);
+        }
+
+        // ---- Vendor extensions (EXT_texture_*, etc.) ----
+        // If they contain a "source" field, your toInt() will extract it.
+        if (name.rfind("EXT_texture_", 0) == 0 ||
+            name.rfind("MSFT_texture_", 0) == 0 ||
+            name.rfind("KHR_texture_", 0) == 0)
+        {
+            int src = toInt(ext.value);
+            if (src >= 0)
+                return src;
+        }
+    }
+
+    // No usable source found
+    return -1;
+}
+
 
 
 std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_texture_info& info)
@@ -387,67 +390,74 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_t
         return "";
 
     const tg3_texture& tex = raw.textures[info.index];
-    const tg3_image& img = raw.images[tex.source];
+    int src = getTextureSource(tex);
 
-    // External texture path (may be empty for embedded)
-    std::string uri = toStdString(img.uri);
-    std::string path{};
+    if (src >= 0)
+    {
+        const tg3_image& img = raw.images[src];
 
-    if (!uri.empty())
-    {
-        path = m_directory + "\\" + uri;
-    }
-    else
-    {
-        path = m_directory + "\\*" + toStdString(img.name); // * means embedded texture path
-    }
+        // External texture path (may be empty for embedded)
+        std::string uri = toStdString(img.uri);
+        std::string path{};
 
-    // Avoid loading the same texture twice
-    if (std::find(m_requestLoadingTextures.begin(), m_requestLoadingTextures.end(), path) != m_requestLoadingTextures.end())
-    {
+        if (!uri.empty())
+        {
+            path = m_directory + "\\" + uri;
+        }
+        else
+        {
+            path = m_directory + "\\*" + toStdString(img.name); // * means embedded texture path
+        }
+
+        // Avoid loading the same texture twice
+        if (std::find(m_requestLoadingTextures.begin(), m_requestLoadingTextures.end(), path) != m_requestLoadingTextures.end())
+        {
+            return path;
+        }
+
+        // ------------------------------------------------------------
+        // CASE 1: Embedded texture (GLB) → img.uri == ""
+        // ------------------------------------------------------------
+        if (uri.empty())
+        {
+            const tg3_buffer_view& view = raw.buffer_views[img.buffer_view];
+            const tg3_buffer& buf = raw.buffers[view.buffer];
+
+            const unsigned char* data = buf.data.data + view.byte_offset;
+
+            size_t size = view.byte_length;
+
+            // Load using your compressed loader (PNG/JPEG/etc)
+            TextureUploadResult result =
+                TextureManager::loadTextureFromMemory(
+                    data,
+                    size,
+                    toStdString(img.mime_type).c_str(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture | TextureFlag_InvertY
+                );
+
+            // Cache
+            TextureManagerInternal::textureIDCache[path] = result.textureID;
+            TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, const_cast<unsigned char*>(data), path, result.width, result.height, result.nbComponents, result.thumbnailLevel
+            };
+
+            m_requestLoadingTextures.push_back(path);
+        }
+
         return path;
-    }
 
-    // ------------------------------------------------------------
-    // CASE 1: Embedded texture (GLB) → img.uri == ""
-    // ------------------------------------------------------------
-    if (uri.empty())
-    {
-        const tg3_buffer_view& view = raw.buffer_views[img.buffer_view];
-        const tg3_buffer& buf = raw.buffers[view.buffer];
 
-        const unsigned char* data = buf.data.data + view.byte_offset;
+        // ------------------------------------------------------------
+        // CASE 2: External texture (PNG/JPG file on disk)
+        // ------------------------------------------------------------
 
-        size_t size = view.byte_length;
-
-        // Load using your compressed loader (PNG/JPEG/etc)
-        TextureUploadResult result =
-            TextureManager::loadTextureFromMemory(
-                data,
-                size,
-				toStdString(img.mime_type).c_str(), TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture | TextureFlag_InvertY
-            );
-
-        // Cache
-        TextureManagerInternal::textureIDCache[path] = result.textureID;
-        TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, const_cast<unsigned char*>(data), path, result.width, result.height, result.nbComponents, result.thumbnailLevel
-        };
-
+        // just to avoid loading 2 times the same texture path
         m_requestLoadingTextures.push_back(path);
 
         return path;
     }
 
-    // ------------------------------------------------------------
-    // CASE 2: External texture (PNG/JPG file on disk)
-    // ------------------------------------------------------------
-    
-    // just to avoid loading 2 times the same texture path
-    m_requestLoadingTextures.push_back(path);
-
-    return path;
+    return "";
 }
-
 
 std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_normal_texture_info& info)
 {
@@ -461,13 +471,57 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_o
 
 std::string engine::GLtfMeshLoader::toStdString(tg3_str s)
 {
-    return std::string(s.data, s.len);
+    return s.len > 0 && s.data != nullptr ? std::string(s.data, s.len) : std::string();
 }
 
 unsigned char* engine::GLtfMeshLoader::toUChar(tg3_span_u8 span)
 {
     return const_cast<unsigned char*>(span.data);
 }
+
+int engine::GLtfMeshLoader::toInt(const tg3_value& v)
+{
+    switch (v.type)
+    {
+    case TG3_VALUE_INT:
+        return static_cast<int>(v.int_val);
+
+    case TG3_VALUE_REAL:
+        return static_cast<int>(v.real_val);
+
+    case TG3_VALUE_BOOL:
+        return v.bool_val ? 1 : 0;
+
+    case TG3_VALUE_STRING:
+        return std::atoi(v.string_val.data);
+
+    case TG3_VALUE_OBJECT:
+    {
+        // Example: extract the field named "source"
+        for (uint32_t i = 0; i < v.object_count; ++i)
+        {
+            const tg3_kv_pair& entry = v.object_data[i];
+
+            // entry.key is tg3_str
+            std::string key(entry.key.data, entry.key.len);
+
+            if (key == "source")
+            {
+                // Recursively convert the child value
+                return toInt(entry.value);
+            }
+        }
+
+        // No usable integer field found
+        return 0;
+    }
+
+    default:
+        return 0;
+    }
+}
+
+
 
 engine::GLtfMeshLoader::~GLtfMeshLoader()
 {

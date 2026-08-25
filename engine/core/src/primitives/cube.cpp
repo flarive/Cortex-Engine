@@ -50,7 +50,7 @@ void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapp
     geometrySetup(); // Geometry setup
 
     if (material && material->hasTextureMap())
-        material->loadTexturesAsync(); // Let material handle texture loading
+        material->loadTexturesAsync(true);
 }
 
 void engine::Cube::geometrySetup()

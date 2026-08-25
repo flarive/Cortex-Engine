@@ -283,7 +283,7 @@ void engine::Material::loadTextures()
     }
 }
 
-void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoadedCallback)
+void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback)
 {
     textures.clear();
     
@@ -310,26 +310,26 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
         textures.reserve(7);
         
         // request load textures async on another thread
-        engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath);
-        engine::TextureManager::requestLoadTextureAsync(m_normalTexPath);
+        engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_normalTexPath, flipY);
         
         if (hasArmMap())
         {
-            engine::TextureManager::requestLoadTextureAsync(m_armTexPath);
+            engine::TextureManager::requestLoadTextureAsync(m_armTexPath, flipY);
         }
         else if (hasRmMap())
         {
-            engine::TextureManager::requestLoadTextureAsync(m_rmTexPath);
+            engine::TextureManager::requestLoadTextureAsync(m_rmTexPath, flipY);
         }
         else
         {
-            engine::TextureManager::requestLoadTextureAsync(m_metallicTexPath);
-            engine::TextureManager::requestLoadTextureAsync(m_roughnessTexPath);
-            engine::TextureManager::requestLoadTextureAsync(m_aoTexPath);
+            engine::TextureManager::requestLoadTextureAsync(m_metallicTexPath, flipY);
+            engine::TextureManager::requestLoadTextureAsync(m_roughnessTexPath, flipY);
+            engine::TextureManager::requestLoadTextureAsync(m_aoTexPath, flipY);
         }
         
-        engine::TextureManager::requestLoadTextureAsync(m_heightTexPath);
-        engine::TextureManager::requestLoadTextureAsync(m_emissiveTexPath);
+        engine::TextureManager::requestLoadTextureAsync(m_heightTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_emissiveTexPath, flipY);
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
@@ -367,10 +367,10 @@ void engine::Material::loadTexturesAsync(std::function<void(bool)> texturesLoade
         // BlinnPhong, Blinn...
         textures.reserve(4);
         
-        engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath);
-        engine::TextureManager::requestLoadTextureAsync(m_specularTexPath);
-        engine::TextureManager::requestLoadTextureAsync(m_normalTexPath);
-        engine::TextureManager::requestLoadTextureAsync(m_heightTexPath);
+        engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_specularTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_normalTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_heightTexPath, flipY);
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;

@@ -253,7 +253,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         // load all textures asynchronously
         if (m_materials.back()->hasTextureMap())
-            m_materials.back()->loadTexturesAsync();
+            m_materials.back()->loadTexturesAsync(true);
 
         // load bones
         //if (m_hasBones)
@@ -275,15 +275,12 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
 
     const tg3_material& mat = raw.materials[matIndex];
 
-    Color baseColorFactor{};
-
-
-    //Color baseColorFactor{
-    //    mat.pbr_metallic_roughness.base_color_factor[0],
-    //    mat.pbr_metallic_roughness.base_color_factor[1],
-    //    mat.pbr_metallic_roughness.base_color_factor[2],
-    //    mat.pbr_metallic_roughness.base_color_factor[3]
-    //};
+    Color baseColorFactor{
+        mat.pbr_metallic_roughness.base_color_factor[0],
+        mat.pbr_metallic_roughness.base_color_factor[1],
+        mat.pbr_metallic_roughness.base_color_factor[2],
+        mat.pbr_metallic_roughness.base_color_factor[3]
+    };
 
     std::string baseColorTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
     std::string normalTex = getTexture(raw, mat.normal_texture);
@@ -402,7 +399,7 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_t
     }
     else
     {
-        path = m_directory + "\\" + "*1";//toStdString(img.name); // BOFFFFFFFFFFFFFFFF !!!!!
+        path = m_directory + "\\*" + toStdString(img.name); // * means embedded texture path
     }
 
     // Avoid loading the same texture twice

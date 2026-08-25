@@ -167,7 +167,7 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
 
     // load all textures asynchronously
     if (m_materials.back()->hasTextureMap())
-        m_materials.back()->loadTexturesAsync();
+        m_materials.back()->loadTexturesAsync(false);
 
     // load bones
     if (m_hasBones)

@@ -52,22 +52,22 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
         header = materialName;
         
         if (material->getTypeID() == MaterialType::PBR)
-            header = std::format("{} ({})", header, "PBR");
+            header = std::format("{} ({})##{}", header, "PBR", index);
         else if (material->getTypeID() == MaterialType::blinnphong)
-            header = std::format("{} ({})", header, "BlinnPhong");
+            header = std::format("{} ({})##{}", header, "BlinnPhong", index);
     }
     else
     {
         if (material->getTypeID() == MaterialType::PBR)
-            header = std::format("Unnamed material ({}) (PBR)", index);
+            header = std::format("Unnamed material (PBR)##{}", index);
         else if (material->getTypeID() == MaterialType::blinnphong)
-            header = std::format("Unnamed material ({}) (BlinnPhong)", index);
+            header = std::format("Unnamed material (BlinnPhong)##{}", index);
     }
     
     ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
     if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None | ImGuiTreeNodeFlags_Bullet, EditorHelper::im_grey_trans))
     {
-        const std::string tableUniqueID = std::format("TexturesTable_{}", material->getName());
+        const std::string tableUniqueID = std::format("TexturesTable_{}", index);
 
         if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
         {
@@ -77,7 +77,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             if (material->getTypeID() == MaterialType::PBR)
             {
                 // PBR
-                displayColor(material->getBaseColorFactor(), "Base Color");
+                displayColor(material->getBaseColorFactor(), "Base Color Factor");
 
                 displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
                 displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");

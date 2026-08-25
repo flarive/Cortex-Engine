@@ -30,7 +30,7 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapp
     geometrySetup();
 
     if (material && material->hasTextureMap())
-        material->loadTexturesAsync();
+        material->loadTexturesAsync(true);
 }
 
 void engine::Cone::geometrySetup()

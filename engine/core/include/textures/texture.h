@@ -14,6 +14,8 @@ namespace engine
         TextureFlag_GammaCorrect = 1 << 3
     };
 
+    
+
     inline TextureFlags operator|(TextureFlags a, TextureFlags b)
     {
         return static_cast<TextureFlags>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
@@ -24,6 +26,11 @@ namespace engine
         return static_cast<TextureFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
     }
 
+    inline TextureFlags& operator|=(TextureFlags& a, TextureFlags b)
+    {
+        a = a | b;
+        return a;
+    }
 
     inline bool hasFlag(TextureFlags flags, TextureFlags flag)
     {

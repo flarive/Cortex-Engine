@@ -826,8 +826,8 @@ void main()
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
 
-//    albedo *= material.baseColorFactor.rgb;
-//    mDiffuse *= material.baseColorFactor.rgb;
+    albedo *= material.baseColorFactor.rgb;
+    mDiffuse *= material.baseColorFactor.rgb;
 
 
 

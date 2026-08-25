@@ -48,7 +48,7 @@ void engine::Terrain::setup(const std::shared_ptr<Material>& material, const UvM
 
     if (m_material)
     {
-        m_material->loadTexturesAsync(allTexturesLoaded);
+        m_material->loadTexturesAsync(true, allTexturesLoaded);
     }
     else
     {

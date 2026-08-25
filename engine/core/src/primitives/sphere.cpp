@@ -31,7 +31,7 @@ void engine::Sphere::setup(const std::shared_ptr<Material>& material, const UvMa
     geometrySetup();
 
     if (material && material->hasTextureMap())
-        material->loadTexturesAsync();
+        material->loadTexturesAsync(true);
 }
 
 void engine::Sphere::geometrySetup()

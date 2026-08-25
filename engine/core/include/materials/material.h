@@ -46,7 +46,7 @@ namespace engine
         const std::string& getName() { return m_name; }
 
         void loadTextures();
-        void loadTexturesAsync(std::function<void(bool)> texturesLoadedCallback = nullptr);
+        void loadTexturesAsync(bool flipY = false, std::function<void(bool)> texturesLoadedCallback = nullptr);
 
         bool bind(Shader& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
         bool bind2(engine::Shader& shader) const;

@@ -149,7 +149,7 @@ engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const s
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& path)
+unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& path, bool flipY)
 {
     if (path.empty()) return 0;
 
@@ -164,7 +164,7 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
 
     engine::TextureManagerInternal::asyncLoadingTextureCache[path] =
     {
-        std::async(std::launch::async, [path]() -> TexturePayload
+        std::async(std::launch::async, [path, flipY]() -> TexturePayload
         {
             TexturePayload payload;
 
@@ -195,7 +195,9 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                 // SOIL can load jpg, png, dds...
                 payload.type = TextureSourceType::RawPixels;
 
-                if (path.c_str()[path.size() - 2] == '*')
+                const std::string filename = FileSystemManager::getFileName(path);
+
+                if (filename.starts_with('*'))
                 {
                     // Embedded texture from model (already loaded in memory), retrieve it from cache
                     const TextureData* tex = getTextureData(path); // direct use of TexturePayload ?????????????????????
@@ -209,8 +211,14 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                 }
                 else
                 {
+                    TextureFlags flags = TextureFlag_GenerateMipmaps;
+                    if (flipY)
+                    {
+                        flags |= TextureFlag_InvertY;
+                    }
+                    
                     // External texture file
-                    payload = loadTextureFromFile(path, TextureFlag_GenerateMipmaps | TextureFlag_InvertY);
+                    payload = loadTextureFromFile(path, flags);// | TextureFlag_InvertY); ***************
                 }
 
                 return payload;

@@ -30,7 +30,7 @@ void engine::Cylinder::setup(const std::shared_ptr<Material>& material, const Uv
     geometrySetup();
 
     if (material && material->hasTextureMap())
-        material->loadTexturesAsync();
+        material->loadTexturesAsync(true);
 }
 
 void engine::Cylinder::geometrySetup()

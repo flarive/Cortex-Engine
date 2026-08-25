@@ -101,7 +101,7 @@ namespace engine
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
         static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, TextureFlags flags = TextureFlag_RepeatTexture);
 
-        static unsigned int requestLoadTextureAsync(const std::string& path);
+        static unsigned int requestLoadTextureAsync(const std::string& path, bool flipY = false);
         static unsigned int enqueueAsyncTextureCreation(const std::string& path, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
         static void processLoadedTextures();
         static TextureUploadResult createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isCompressed, bool isNormalMap, bool isHeightMap, TextureFlags flags);

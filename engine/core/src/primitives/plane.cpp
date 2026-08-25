@@ -34,7 +34,7 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
     geometrySetup(); // Geometry setup
 
     if (material && material->hasTextureMap())
-        material->loadTexturesAsync(); // Let material handle texture loading
+        material->loadTexturesAsync(true);
 }
 
 void engine::Plane::geometrySetup()

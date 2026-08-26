@@ -26,7 +26,7 @@ namespace engine
 
 
     private:
-        std::shared_ptr<Entity> m_selectedEntity{};
+        std::weak_ptr<Entity> m_selectedEntity{};
 
         MeshWidget m_meshWidget{};
         MaterialWidget m_materialWidget{};

@@ -2,16 +2,15 @@
 
 #include "../../../include/editor/editor_helper.h"
 
-
-
 void engine::PropertiesWindow::init()
 {
     // listen for events from scene hierarchy window
     listen([this](const UIEvent& evt)
     {
-        if (evt.sender == "Scene" &&evt.type == UIEventType::EntitySelectionChanged)
+        if (evt.sender == "Scene" && evt.type == UIEventType::EntitySelectionChanged)
         {
-            m_selectedEntity = std::any_cast<std::shared_ptr<Entity>>(evt.value);
+            auto entity = std::any_cast<std::shared_ptr<Entity>>(evt.value);
+            m_selectedEntity = entity;   // store as weak_ptr
         }
     });
 
@@ -22,13 +21,13 @@ void engine::PropertiesWindow::init()
 
 void engine::PropertiesWindow::renderPropertiesWidget()
 {
-    if (m_selectedEntity)
+    if (auto entity = m_selectedEntity.lock())   // lock weak_ptr
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f); // Set rounding to 5 pixels
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f)); // 10 pixels padding on x and y
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
         ImGui::BeginChild("EntityPropertyRegion", ImVec2(0, 0), true, ImGuiWindowFlags_None);
-        displayEntityDetails(m_selectedEntity);
+        displayEntityDetails(entity);
         ImGui::EndChild();
         ImGui::PopStyleVar(3); // Restore default
     }

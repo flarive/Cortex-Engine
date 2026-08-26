@@ -253,6 +253,9 @@
     <Filter Include="sources\core\models\loaders">
       <UniqueIdentifier>{249dc107-b1f7-42ef-90c6-466f794672b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\core\ecs\system">
+      <UniqueIdentifier>{44aa0861-7677-4805-a68e-a4aca6abb644}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">

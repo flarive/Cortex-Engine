@@ -5,12 +5,15 @@
 #include "../../tools/system_monitor.h"
 #include "../../tools/vram_manager.h"
 
+#include "../../../include/managers/log_manager.h"
+
 namespace engine
 {
     class AboutWindow final : public ImGuiElement
     {
     public:
-        AboutWindow() : ImGuiElement(Category::Window, "About") {}
+        AboutWindow();
+        ~AboutWindow();
 
         void init() override;
 

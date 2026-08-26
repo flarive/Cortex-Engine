@@ -1,5 +1,10 @@
 #include "../../../include/editor/windows/about_window.h"
 
+engine::AboutWindow::AboutWindow() : ImGuiElement(Category::Window, "About")
+{
+    logger.trace("AboutWindow constructor called");
+}
+
 void engine::AboutWindow::init()
 {
     m_vramManager.init();
@@ -67,4 +72,9 @@ void engine::AboutWindow::renderTabAbout()
     ImGui::Text("RAM app : %.2f MB", cachedProcessRAM / (1024.0 * 1024.0));
 
     ImGui::EndChild();
+}
+
+engine::AboutWindow::~AboutWindow()
+{
+    logger.trace("AboutWindow destructor called");
 }

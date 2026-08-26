@@ -86,6 +86,10 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
 
 std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh& mesh, const tg3_model& raw)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
     std::vector<Vertex> vertices{};
     std::vector<unsigned int> indices{};
     std::shared_ptr<Material> material{};
@@ -232,6 +236,10 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 indices.push_back(src[i]);
         }
 
+
+        
+
+
         // Material
         //if (m_customMaterial) // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //{
@@ -240,7 +248,14 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         //}
         //else
         //{
-        m_materials.push_back(loadMaterial(prim.material, raw));
+        std::shared_ptr<engine::Material> material{};
+
+        if (sceneSettings.method == RenderMethod::PBR)
+            material = loadPBRMaterial(prim.material, raw);
+        else
+            material = loadBlinnPhongMaterial(prim.material, raw);
+
+        m_materials.push_back(material);
         //}
 
         // load all textures asynchronously
@@ -259,12 +274,8 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 }
 
 
-std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t matIndex, const tg3_model& raw)
+std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32_t matIndex, const tg3_model& raw)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
-
     const tg3_material& mat = raw.materials[matIndex];
 
     //Color baseColorFactor{
@@ -311,33 +322,150 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadMaterial(uint32_t 
 
     std::shared_ptr<Material> material{};
 
-    if (sceneSettings.method == RenderMethod::PBR)
+    if (useARM)
     {
-        if (useARM)
-        {
-            material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
-        }
-        else if (useMR)
-        {
-            material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
-        }
-        else
-        {
-            material = std::make_shared<PBRMaterial>(baseColorFactor, baseColorTex, normalTex, metallicTex, roughnessTex, aoTex, heightTex, emissiveTex, 1.0f);
-        }
-
-        if (!material->hasTextureMap())
-            material = std::make_shared<PBRMaterial>(baseColorFactor);
+        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
+    }
+    else if (useMR)
+    {
+        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
     }
     else
     {
-        material = std::make_shared<BlinnPhongMaterial>(baseColorFactor, baseColorTex, metallicTex, normalTex, heightTex, emissiveTex, 1.0f);
+        material = std::make_shared<PBRMaterial>(baseColorFactor, baseColorTex, normalTex, metallicTex, roughnessTex, aoTex, heightTex, emissiveTex, 1.0f);
     }
+
+    if (!material->hasTextureMap())
+        material = std::make_shared<PBRMaterial>(baseColorFactor);
+
 
     material->setName(toStdString(mat.name));
 
     return material;
 }
+
+std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial(uint32_t matIndex, const tg3_model& raw)
+{
+    const tg3_material& mat = raw.materials[matIndex];
+
+    Color ambientColor{ 0.1f, 0.1f, 0.1f, 1.0f };
+    Color diffuseColor{};
+    Color specularColor{ 1.0f };
+
+    std::string diffuseTex{};
+    std::string specularTex{};
+    std::string normalTex{};
+    float shininess{};
+
+    // -----------------------------
+    // 1. ALBEDO (baseColorTexture)
+    // -----------------------------
+    if (mat.pbr_metallic_roughness.base_color_texture.index >= 0)
+    {
+        diffuseTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
+    }
+    else
+    {
+        // fallback base color
+        auto bc = mat.pbr_metallic_roughness.base_color_factor;
+        diffuseColor = Color(bc[0], bc[1], bc[2], 1.0f);
+    }
+
+    // -----------------------------
+    // 2. NORMAL MAP
+    // -----------------------------
+    if (mat.normal_texture.index >= 0)
+    {
+        normalTex = getTexture(raw, mat.normal_texture);
+    }
+
+    // -----------------------------
+    // 3. METALLIC / ROUGHNESS
+    // -----------------------------
+    float metallic = static_cast<float>(mat.pbr_metallic_roughness.metallic_factor);
+    float roughness = static_cast<float>(mat.pbr_metallic_roughness.roughness_factor);
+
+    /*if (mat.pbr_metallic_roughness.metallic_roughness_texture.index >= 0)
+    {
+        metallicRoughnessTex = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
+    }*/
+
+    // Convert to Blinn‑Phong
+    
+    // Specular color approximation
+    glm::vec3 dielectricSpecular = glm::vec3(0.04f);
+
+    glm::vec3 tempSpecularColor = glm::mix(dielectricSpecular, glm::vec3(diffuseColor.r, diffuseColor.g, diffuseColor.b), metallic);
+    specularColor.r = tempSpecularColor.r;
+    specularColor.g = tempSpecularColor.g;
+    specularColor.b = tempSpecularColor.b;
+    specularColor.a = 1.0f;
+
+    // Shininess from roughness
+    float gloss = 1.0f - roughness;
+    shininess = 10.0f;// glm::pow(gloss, 4.0f) * 256.0f;
+
+    //const tg3_texture& tex = raw.textures[mat.pbr_metallic_roughness.base_color_texture.index];
+
+    // -----------------------------
+    // 4. SPECULAR‑GLOSSINESS EXTENSION
+    // -----------------------------
+    //bool foundExt = false;
+    //if (mat.ext.extensions_count > 0)
+    //{
+    //    // Extensions (KTX2, WebP, vendor extensions, future formats)
+    //    for (uint32_t i = 0; i < mat.ext.extensions_count; ++i)
+    //    {
+    //        const tg3_extension& ext = mat.ext.extensions[i];
+    //        
+    //        // Convert tg3_str → std::string
+    //        std::string name(ext.name.data, ext.name.len);
+
+    //        // ---- KTX2 (KHR_texture_basisu) ----
+    //        if (name == "KHR_materials_pbrSpecularGlossiness")
+    //        {
+    //            // diffuseTexture → albedo
+    //            //if (ext.Has("diffuseTexture"))
+    //            //{
+    //            //    int idx = ext.Get("diffuseTexture").Get("index").Get<int>();
+    //            //    result.albedoTexture = loadTexture(model, idx);
+    //            //}
+
+    //            //// specularGlossinessTexture → specular + glossiness
+    //            //if (ext.Has("specularGlossinessTexture"))
+    //            //{
+    //            //    int idx = ext.Get("specularGlossinessTexture").Get("index").Get<int>();
+    //            //    result.specularGlossinessTexture = loadTexture(model, idx);
+    //            //    result.usesSpecGlossWorkflow = true;
+    //            //}
+
+    //            //// factors
+    //            //if (ext.Has("specularFactor"))
+    //            //{
+    //            //    auto sf = ext.Get("specularFactor").Get<tinygltf::Value::Array>();
+    //            //    result.specularColor = glm::vec3(sf[0].Get<double>(),
+    //            //        sf[1].Get<double>(),
+    //            //        sf[2].Get<double>());
+    //            //}
+
+    //            //if (ext.Has("glossinessFactor"))
+    //            //{
+    //            //    result.glossiness = ext.Get("glossinessFactor").Get<double>();
+    //            //}
+    //        }
+    //    }
+    //}
+
+    std::shared_ptr<engine::Material> material{};
+    
+    if (!diffuseTex.empty())
+        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, "", "", shininess);
+    else
+        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseColor, specularColor, shininess);
+
+    return material;
+}
+
 
 int engine::GLtfMeshLoader::getTextureSource(const tg3_texture& tex)
 {

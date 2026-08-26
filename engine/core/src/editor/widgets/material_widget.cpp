@@ -3,8 +3,12 @@
 #include "../../../include/editor/editor_helper.h"
 
 #include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/managers/log_manager.h"
 
-#include "themes/imgui_spectrum.h"
+engine::MaterialWidget::MaterialWidget() : ImGuiElement(Category::Widget, "MaterialSubComponentWidget")
+{
+    logger.trace("MaterialWidget constructor called");
+}
 
 void engine::MaterialWidget::init()
 {
@@ -258,4 +262,9 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
 
     ImGui::PopFont();
     ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
+}
+
+engine::MaterialWidget::~MaterialWidget()
+{
+    logger.trace("MaterialWidget destructor called");
 }

@@ -9,7 +9,8 @@ namespace engine
     class MeshWidget final : public ImGuiElement
     {
     public:
-        MeshWidget() : ImGuiElement(Category::Widget, "MeshSubComponentWidget") {}
+        MeshWidget();
+        ~MeshWidget();
 
         void init() override;
 

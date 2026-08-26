@@ -20,9 +20,11 @@ namespace engine
 
 
 		std::shared_ptr<Mesh> processMesh(const tg3_mesh& mesh, const tg3_model& raw);
-		std::shared_ptr<engine::Material> loadMaterial(uint32_t matIndex, const tg3_model& raw);
-		std::string getTexture(const tg3_model& raw, const tg3_texture_info& info);
+		
+		std::shared_ptr<engine::Material> loadPBRMaterial(uint32_t matIndex, const tg3_model& raw);
+		std::shared_ptr<engine::Material> loadBlinnPhongMaterial(uint32_t matIndex, const tg3_model& raw);
 
+		std::string getTexture(const tg3_model& raw, const tg3_texture_info& info);
 		std::string getTexture(const tg3_model& raw, const tg3_normal_texture_info& info);
 		std::string getTexture(const tg3_model& raw, const tg3_occlusion_texture_info& info);
 

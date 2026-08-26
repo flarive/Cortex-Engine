@@ -13,7 +13,8 @@ namespace engine
     class MaterialWidget final : public ImGuiElement
     {
     public:
-        MaterialWidget() : ImGuiElement(Category::Widget, "MaterialSubComponentWidget") {}
+        MaterialWidget();
+        ~MaterialWidget();
 
         void init() override;
 

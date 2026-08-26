@@ -1035,7 +1035,28 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     {
         ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
         diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
-        specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+        //specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
+
+        // --- SPECULAR (single-channel + fallback) ---
+        float specValue;
+
+        if (material.has_texture_specular_map)
+        {
+            // Use R channel of specular texture
+            specValue = texture(material.texture_specular, texCoords).r;
+        }
+        else
+        {
+            // Fallback: grayscale diffuse
+            float grayscale = dot(diffuse, vec3(0.299, 0.587, 0.114));
+
+            // Optional: clamp to dielectric F0 range (prevents plastic shine)
+            //grayscale = clamp(grayscale, 0.02, 0.08);
+
+            specValue = grayscale;
+        }
+
+        specular = light.specular * spec * vec3(specValue);
     }
     else
     {

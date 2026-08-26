@@ -2,8 +2,16 @@
 
 #include "../../../include/editor/editor_helper.h"
 
+#include "../../../include/managers/log_manager.h"
+
 #include <string>
 #include <format>
+
+
+engine::MeshWidget::MeshWidget() : ImGuiElement(Category::Widget, "MeshSubComponentWidget")
+{
+    logger.trace("MeshWidget constructor called");
+}
 
 void engine::MeshWidget::init()
 {
@@ -64,4 +72,9 @@ void engine::MeshWidget::displayMesh(const std::shared_ptr<engine::Mesh>& mesh)
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
     ImGui::Text("%zu vertices", mesh->getVertices().size());
     ImGui::PopStyleColor();
+}
+
+engine::MeshWidget::~MeshWidget()
+{
+    logger.trace("MeshWidget desctructor called");
 }

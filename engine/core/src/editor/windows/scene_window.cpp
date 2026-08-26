@@ -4,17 +4,22 @@
 
 void engine::SceneWindow::renderHierarchyWidget()
 {
-    if (m_rootEntity)
+    if (auto root = m_rootEntity.lock())   // lock weak_ptr
     {
         ImGui::BeginChild("EntityTreeRegion", ImVec2(0, 0), true);
-        displayEntityHierarchy(m_rootEntity);
+        displayEntityHierarchy(root);
         ImGui::EndChild();
     }
 }
 
+
 void engine::SceneWindow::displayEntityHierarchy(const std::shared_ptr<Entity>& entity)
 {
-    bool isSelected = (m_selectedEntity == entity);
+    // Compare locked selected entity
+    bool isSelected = false;
+    if (auto selected = m_selectedEntity.lock())
+        isSelected = (selected == entity);
+
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DrawLinesFull;
     if (entity->children.empty())

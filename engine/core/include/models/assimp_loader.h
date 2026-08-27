@@ -17,12 +17,6 @@ namespace engine
 		void loadModel(const std::string& path, bool flipUVs) override;
 
 	private:
-
-
-		bool m_hasBones{};
-		std::map<std::string, BoneInfo> m_boneInfoMap{};
-		int m_boneCounter{};
-
 		// processes a node in a recursive fashion.
 		// Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 		void processNode(aiNode* node, const aiScene* scene);
@@ -36,7 +30,8 @@ namespace engine
 		bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);
 		bool isMRSingleTexture(const aiScene* scene, aiMaterial* mat);
 
-		std::shared_ptr<Material> loadMaterial(const aiScene* scene, aiMaterial* mat);
+		std::shared_ptr<Material> loadPBRMaterial(const aiScene* scene, aiMaterial* mat);
+		std::shared_ptr<Material> loadBlinnPhongMaterial(const aiScene* scene, aiMaterial* mat);
 		std::string getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type);
 	};
 }

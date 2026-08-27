@@ -19,12 +19,12 @@ namespace engine
         static std::string getFileName(const std::string& path);
         static std::string getFullPath(const std::string& path);
         static std::string getShortenedPath(const std::string& path);
+        static const std::string getFileExt(const std::string& filename);
 
     private:
         static const std::string& getRoot();
         static Builder getPathBuilder();
         static std::string getPathRelativeRoot(const std::string& path);
         static std::string getPathRelativeBinary(const std::string& path);
-
     };
 }

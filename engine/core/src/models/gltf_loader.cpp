@@ -248,14 +248,20 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         //}
         //else
         //{
-        std::shared_ptr<engine::Material> material{};
+            std::shared_ptr<engine::Material> material{};
 
-        if (sceneSettings.method == RenderMethod::PBR)
-            material = loadPBRMaterial(prim.material, raw);
-        else
-            material = loadBlinnPhongMaterial(prim.material, raw);
+            if (sceneSettings.method == RenderMethod::PBR)
+            {
+                material = loadPBRMaterial(prim.material, raw);
+            }
+            else
+            {
+                logger.warn("Using GLTF models is not recommended for legacy BlinnPhong scene");
+            
+                material = loadBlinnPhongMaterial(prim.material, raw);
+            }
 
-        m_materials.push_back(material);
+            m_materials.push_back(material);
         //}
 
         // load all textures asynchronously
@@ -273,7 +279,9 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     return meshPtr;
 }
 
-
+/// <summary>
+/// GLTF2 is a PBR geometry container first
+/// </summary>
 std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32_t matIndex, const tg3_model& raw)
 {
     const tg3_material& mat = raw.materials[matIndex];
@@ -344,6 +352,10 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
     return material;
 }
 
+/// <summary>
+/// GLTF2 is not a BlinnPhong geometry container
+/// No specular map support so normal maps won't look good
+/// </summary>
 std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial(uint32_t matIndex, const tg3_model& raw)
 {
     const tg3_material& mat = raw.materials[matIndex];
@@ -459,9 +471,11 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
     std::shared_ptr<engine::Material> material{};
     
     if (!diffuseTex.empty())
-        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, "", "", shininess);
+        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, std::string(), std::string(), shininess);
     else
         material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseColor, specularColor, shininess);
+
+    material->setName(toStdString(mat.name));
 
     return material;
 }

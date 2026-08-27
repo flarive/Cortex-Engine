@@ -4,7 +4,6 @@
 
 
 #include <assimp/importer.hpp>
-//#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std::string& animationPath, std::shared_ptr<Model> model, float speedFactor)
@@ -46,7 +45,7 @@ void engine::BoneAnimation::readMissingBones(const aiAnimation* animation, Model
 	int size = animation->mNumChannels;
 
 	auto& boneInfoMap = model.getBoneInfoMap(); //getting m_boneInfoMap from Model class
-	int& boneCount = model.getBoneCount(); //getting the m_boneCounter from Model class
+	int boneCount = model.getBoneCount(); //getting the m_boneCounter from Model class
 
 	//reading channels(bones engaged in an animation and their keyframes)
 	for (int i = 0; i < size; i++)

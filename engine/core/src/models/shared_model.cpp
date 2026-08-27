@@ -19,7 +19,7 @@ engine::SharedModel::SharedModel(bool _gamma, bool _flipUV)
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _flipUV)
-    : m_gammaCorrection(_gamma), m_flipUV(_flipUV)
+    : m_filePath(_path), m_fileName(FileSystemManager::getFileName(_path)), m_gammaCorrection(_gamma), m_flipUV(_flipUV)
 {
     logger.trace("SharedModel constructor called");
     
@@ -29,7 +29,7 @@ engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _fl
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV)
-    : m_gammaCorrection(_gamma), m_flipUV(_flipUV), m_customMaterial(_material)
+    : m_filePath(_path), m_fileName(FileSystemManager::getFileName(_path)), m_gammaCorrection(_gamma), m_flipUV(_flipUV), m_customMaterial(_material)
 {
     logger.trace("SharedModel constructor called");
 
@@ -45,11 +45,9 @@ void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
 
-    // ?????????????????????????????????????????????
+    // Create the right mesh loader according file extension (tinyGLTF for GLTF otherwise Assimp)
     m_meshLoader = MeshLoader::create(path);
     m_meshLoader->loadModel(path, flipUVs);
-
-
 
     // Stop the timer
     auto end = std::chrono::high_resolution_clock::now();
@@ -95,12 +93,39 @@ std::vector<std::shared_ptr<engine::Mesh>>& engine::SharedModel::getMeshes()
 	return emptyMeshes;
 }
 
+std::map<std::string, engine::BoneInfo>& engine::SharedModel::getBoneInfoMap()
+{
+    if (m_meshLoader)
+        return m_meshLoader->getBoneInfoMap();
+
+    static std::map<std::string, engine::BoneInfo> emptyBoneInfoMap;
+    return emptyBoneInfoMap;
+}
+
+int engine::SharedModel::getBoneCount()
+{
+    if (m_meshLoader)
+        return m_meshLoader->getBoneCount();
+
+    return 0;
+}
+
+bool engine::SharedModel::hasBones()
+{
+    if (m_meshLoader)
+        return m_meshLoader->hasBones();
+
+    return false;
+}
+
+
+
 void engine::SharedModel::reSetup()
 {
-    std::filesystem::path fullpath = std::filesystem::path(m_directory) / m_filename;
-    std::string fullpath_str = fullpath.string();
+    /*std::filesystem::path fullpath = std::filesystem::path(m_directory) / m_filename;
+    std::string fullpath_str = fullpath.string();*/
 
-    loadModel(fullpath_str, m_flipUV);
+    loadModel(m_filePath, m_flipUV);
 }
 
 engine::SharedModel::~SharedModel()

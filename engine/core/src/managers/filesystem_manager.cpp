@@ -46,6 +46,24 @@ std::string engine::FileSystemManager::getShortenedPath(const std::string& path)
     return full.string();
 }
 
+const std::string engine::FileSystemManager::getFileExt(const std::string& filename)
+{
+    // Find last dot
+    const size_t pos = filename.find_last_of('.');
+    if (pos == std::string::npos || pos == filename.size() - 1)
+        return ""; // no extension or trailing dot
+
+    // Extract extension
+    std::string ext = filename.substr(pos + 1);
+
+    // Normalize to lowercase (optional)
+    std::transform(ext.begin(), ext.end(), ext.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+
+    return ext;
+}
+
+
 const std::string& engine::FileSystemManager::getRoot()
 {
     std::filesystem::path dir(std::filesystem::current_path());

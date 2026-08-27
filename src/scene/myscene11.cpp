@@ -66,19 +66,20 @@ void MyScene11::init()
 
 
     // animated vampire model
-    //auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
-    //auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
-    //auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
-    //auto trsVampire = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.5f), vec3(0.0f));
-    //auto entityVampire = make_shared<Entity>("MyVampire");
-    //entityVampire->addComponent<TransformComponent>(trsVampire);
-    //entityVampire->addComponent<ModelComponent>(vampireModel);
-    //entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
-    //getEntityManager().addChild(entityVampire);
+    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
+    auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
+    auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
+    auto trsVampire = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
+    auto entityVampire = make_shared<Entity>("MyVampire");
+    entityVampire->addComponent<TransformComponent>(trsVampire);
+    entityVampire->addComponent<ModelComponent>(vampireModel);
+    entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
+    getEntityManager().addChild(entityVampire);
+
 
 
     // mixamo twist dance model
-    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
+    /*auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
@@ -87,12 +88,12 @@ void MyScene11::init()
     mixamoAnimations.push_back(mixamoAnimation2);
 
     auto mixamoAnimator = make_shared<BonesAnimator>(mixamoAnimations);
-    auto trsMixamo = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
+    auto trsMixamo = Transform(vec3(0.8f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityMixamo = make_shared<Entity>("MyMixamo");
     entityMixamo->addComponent<TransformComponent>(trsMixamo);
     entityMixamo->addComponent<ModelComponent>(mixamoModel);
     entityMixamo->addComponent<AnimatorComponent>(mixamoAnimator);
-    getEntityManager().addChild(entityMixamo);
+    getEntityManager().addChild(entityMixamo);*/
 
 
 
@@ -141,23 +142,23 @@ void MyScene11::mouse_callback(double xposIn, double yposIn)
     if (is_editor_mode || show_demo_window)
         return;
 
-    //float xpos{ static_cast<float>(xposIn) };
-    //float ypos{ static_cast<float>(yposIn) };
+    float xpos{ static_cast<float>(xposIn) };
+    float ypos{ static_cast<float>(yposIn) };
 
-    //if (firstMouse)
-    //{
-    //    lastX = xpos;
-    //    lastY = ypos;
-    //    firstMouse = false;
-    //}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-    //float xoffset{ xpos - lastX };
-    //float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
+    float xoffset{ xpos - lastX };
+    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
 
-    //lastX = xpos;
-    //lastY = ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-    //getActiveCamera()->processMouseMovement(xoffset, yoffset);
+    getActiveCamera()->processMouseMovement(xoffset, yoffset);
 }
 
 void MyScene11::scroll_callback(double xoffset, double yoffset)

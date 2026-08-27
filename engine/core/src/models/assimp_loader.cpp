@@ -71,6 +71,10 @@ void engine::AssimpMeshLoader::processNode(aiNode* node, const aiScene* scene)
 
 std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 {
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
     // Data to fill
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space
     std::vector<unsigned int> indices{};
@@ -139,7 +143,7 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
 
 
     // process materials
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    aiMaterial* aimaterial = scene->mMaterials[mesh->mMaterialIndex];
     // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
     // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
     // Same applies to other texture as the following list summarizes:
@@ -151,9 +155,9 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
 
     // get colors
     aiColor4D ambient, diffuse, specular;
-    aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &ambient);
-    aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
-    aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular);
+    aiGetMaterialColor(aimaterial, AI_MATKEY_COLOR_AMBIENT, &ambient);
+    aiGetMaterialColor(aimaterial, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
+    aiGetMaterialColor(aimaterial, AI_MATKEY_COLOR_SPECULAR, &specular);
 
     //if (m_customMaterial) // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //{
@@ -162,7 +166,19 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     //}
     //else
     //{
-        m_materials.push_back(loadMaterial(scene, material));
+
+    std::shared_ptr<Material> material{};
+
+    if (sceneSettings.method == RenderMethod::PBR)
+    {
+        material = loadPBRMaterial(scene, aimaterial);
+    }
+    else
+    {
+        material = loadBlinnPhongMaterial(scene, aimaterial);
+    }
+    
+    m_materials.push_back(material);
     //}
 
     // load all textures asynchronously
@@ -306,20 +322,11 @@ bool engine::AssimpMeshLoader::isMRSingleTexture(const aiScene* scene, aiMateria
     return str1 == str2;
 }
 
-std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadMaterial(const aiScene* scene, aiMaterial* mat)
+std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(const aiScene* scene, aiMaterial* mat)
 {
     std::shared_ptr<Material> material{};
 
-    float shininess = 1.0f;
-
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
-
-
     std::string texDiffuseFullPath{};
-    std::string texSpecularFullPath{};
     std::string texNormalFullPath{};
     std::string texMetalnessFullPath{};
     std::string texRoughnessFullPath{};
@@ -333,78 +340,93 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadMaterial(const a
     bool useARMTexture = false;
     bool useMRTexture = false;
 
-    if (sceneSettings.method == RenderMethod::PBR)
+    
+    texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
+    texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
+    texMetalnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_METALNESS);
+    texRoughnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS);
+    texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_AMBIENT_OCCLUSION);
+
+    if (texAmbientOcclusionFullPath.empty())
     {
-        texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
-        texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
-        texMetalnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_METALNESS);
-        texRoughnessFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS);
-        texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_AMBIENT_OCCLUSION);
-
-        if (texAmbientOcclusionFullPath.empty())
-        {
-            texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_LIGHTMAP);
-        }
-
-        if (texAmbientOcclusionFullPath.empty())
-        {
-            texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SHEEN);
-        }
-
-        texHeightFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_HEIGHT);
-        texEmissiveFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_EMISSIVE);
-
-        if (useARMTexture = isARMSingleTexture(scene, mat))
-        {
-            texArmFullPath = texAmbientOcclusionFullPath;
-        }
-        else if (useMRTexture = isMRSingleTexture(scene, mat))
-        {
-            texRmFullPath = texMetalnessFullPath;
-        }
+        texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_LIGHTMAP);
     }
-    else
+
+    if (texAmbientOcclusionFullPath.empty())
     {
-        texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
-        texSpecularFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SPECULAR);
-        texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
+        texAmbientOcclusionFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SHEEN);
     }
+
+    texHeightFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_HEIGHT);
+    texEmissiveFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_EMISSIVE);
+
+    if (useARMTexture = isARMSingleTexture(scene, mat))
+    {
+        texArmFullPath = texAmbientOcclusionFullPath;
+    }
+    else if (useMRTexture = isMRSingleTexture(scene, mat))
+    {
+        texRmFullPath = texMetalnessFullPath;
+    }
+   
 
 
     aiColor4D aiBaseColorFactor(1, 1, 1, 1);
     mat->Get(AI_MATKEY_BASE_COLOR, aiBaseColorFactor);
     Color baseColorFactor{ aiBaseColorFactor.r, aiBaseColorFactor.g, aiBaseColorFactor.b, aiBaseColorFactor.a };
 
+    float shininess = 1.0f; // TODO, remove shininess from PBR material !
 
-
-    if (sceneSettings.method == RenderMethod::PBR)
+    if (useARMTexture && !texArmFullPath.empty())
     {
-        if (useARMTexture && !texArmFullPath.empty())
-        {
-            material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
-                texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
-        }
-        else if (useMRTexture && !texRmFullPath.empty())
-        {
-            material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
-                texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
-        }
-        else
-        {
-            material = std::make_shared<PBRMaterial>(baseColorFactor,
-                texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
-        }
-
-        if (!material->hasTextureMap())
-        {
-            material = std::make_shared<PBRMaterial>(baseColorFactor);
-        }
+        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
+            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+    }
+    else if (useMRTexture && !texRmFullPath.empty())
+    {
+        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
+            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
     }
     else
     {
-        material = std::make_shared<BlinnPhongMaterial>(baseColorFactor,
-            texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+        material = std::make_shared<PBRMaterial>(baseColorFactor,
+            texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
     }
+
+    if (!material->hasTextureMap())
+    {
+        material = std::make_shared<PBRMaterial>(baseColorFactor);
+    }
+
+    material->setName(mat->GetName().C_Str());
+
+    return material;
+}
+
+std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadBlinnPhongMaterial(const aiScene* scene, aiMaterial* mat)
+{
+    float shininess = 1.0f;
+
+    std::string texDiffuseFullPath{};
+    std::string texSpecularFullPath{};
+    std::string texNormalFullPath{};
+    std::string texHeightFullPath{};
+    std::string texEmissiveFullPath{};
+
+
+    texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
+    texSpecularFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SPECULAR);
+    texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
+    
+
+
+    aiColor4D aiBaseColorFactor(1, 1, 1, 1);
+    mat->Get(AI_MATKEY_BASE_COLOR, aiBaseColorFactor);
+    Color baseColorFactor{ aiBaseColorFactor.r, aiBaseColorFactor.g, aiBaseColorFactor.b, aiBaseColorFactor.a };
+
+    // TODO, get shininess from assimp
+
+    std::shared_ptr<Material> material = std::make_shared<BlinnPhongMaterial>(baseColorFactor, texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
 
     material->setName(mat->GetName().C_Str());
 

@@ -2,8 +2,6 @@
 
 #include "../../include/singleton.h"
 
-
-
 engine::ModelComponent::ModelComponent(std::shared_ptr<Model> model)
     : m_model(model)
 {

@@ -118,7 +118,7 @@ void MyScene1::init()
 
 
     // backpack model
-    auto backpackModel = make_shared<Model>("models/backpack/backpack.glb");
+    auto backpackModel = make_shared<Model>("models/backpack/backpack.obj");
     auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f), vec3(90.0f, 0.0f, 0.0f));
     auto entityBackpack = make_shared<Entity>("MyBackpack");
     entityBackpack->addComponent<TransformComponent>(trsBackpack);

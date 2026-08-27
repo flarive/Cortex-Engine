@@ -10,6 +10,8 @@
 #include "../transform.h"
 #include "bone.h"
 
+#include "../managers/filesystem_manager.h"
+
 #include "mesh_loader.h"
 
 #include <omp.h> // Include OpenMP header
@@ -57,7 +59,7 @@ namespace engine
 
         ordered_map<std::string, EditorProperty> getPublicProperties() {
             return {
-                {"file", EditorProperty { "File", getFilename(), readonly, 0.0f, 0.0f, 0.0f, "%s"}},
+                {"file", EditorProperty { "File", m_fileName, readonly, 0.0f, 0.0f, 0.0f, "%s"}},
                 {"meshCount", EditorProperty { "Meshes count", getMeshCount(), readonly, 0.0f, 0.0f, 0.0f, "%u" }},
                 {"vertexCount", EditorProperty { "Vertex count", getVertexCount(), readonly, 0.0f, 0.0f, 0.0f, "%u" }},
                 {"bonesCount", EditorProperty { "Bones count", getBoneCount(), readonly, 0.0f, 0.0f, 0.0f, "%i" }},
@@ -76,12 +78,11 @@ namespace engine
             return ModelType::sharedModel;
         }
 
-        auto& getBoneInfoMap() { return m_boneInfoMap; }
-        int& getBoneCount() { return m_boneCounter; }
 
-
-        bool& hasBones() { return m_hasBones; }
-
+        bool hasBones();
+        int getBoneCount();
+        std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
+        
 
         bool& getFlipUV() { return m_flipUV; }
         void setFlipUV(bool _flipUV) { m_flipUV = _flipUV; }
@@ -89,21 +90,18 @@ namespace engine
         unsigned int getMeshCount() const;
         unsigned int getVertexCount() const;
 
-        std::string getFilename() const { return m_filename; }
+        std::string getFilePath() const { return m_filePath; }
+        std::string getFileName() const { return m_fileName; }
 
         void reSetup();
 
         std::vector<std::shared_ptr<Material>>& getMaterials();
         std::vector<std::shared_ptr<Mesh>>& getMeshes();
-
-
+        
 
     private:
-        std::string m_directory{};
-        std::string m_filename{};
-
-        //std::vector<std::shared_ptr<Material>> m_materials{};
-
+        std::string m_filePath{};
+        std::string m_fileName{};
 
         
     protected:
@@ -115,15 +113,10 @@ namespace engine
 
         bool m_highlight{};
 
-        bool m_hasBones{};
-        std::map<std::string, BoneInfo> m_boneInfoMap{};
-        int m_boneCounter{};
-
-        mutable std::mutex textureMutex;
+      
 
         std::shared_ptr<Material> m_customMaterial{};
 
-        // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
         void loadModel(const std::string& path, bool flipUVs = false);
     };
 }

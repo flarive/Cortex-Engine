@@ -3,48 +3,13 @@
 #include "../../include/models/assimp_glm_helpers.h"
 #include "../../include/managers/log_manager.h"
 
-engine::Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
-	: m_name(name), m_ID(ID), m_localTransform(1.0f)
+
+engine::Bone::Bone(const std::string& name, int id, std::vector<KeyPosition> positions, std::vector<KeyRotation> rotations,	std::vector<KeyScale> scales)
+	: m_name(name),	m_ID(id), m_positions(std::move(positions)), m_rotations(std::move(rotations)),	m_scales(std::move(scales)), m_localTransform(1.0f)
 {
-	logger.trace("Bone constructor called");
-
-	m_numPositions = channel->mNumPositionKeys;
-
-	for (int positionIndex = 0; positionIndex < m_numPositions; ++positionIndex)
-	{
-		aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
-		double timeStamp = channel->mPositionKeys[positionIndex].mTime;
-		KeyPosition data{ AssimpGLMHelpers::GetGLMVec(aiPosition), static_cast<float>(timeStamp) };
-		/*
-		KeyPosition data;
-		data.position = AssimpGLMHelpers::GetGLMVec(aiPosition);
-		data.timeStamp = static_cast<float>(timeStamp);*/
-		m_positions.push_back(data);
-	}
-
-	m_numRotations = channel->mNumRotationKeys;
-	for (int rotationIndex = 0; rotationIndex < m_numRotations; ++rotationIndex)
-	{
-		aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
-		double timeStamp = channel->mRotationKeys[rotationIndex].mTime;
-		KeyRotation data{ AssimpGLMHelpers::GetGLMQuat(aiOrientation), static_cast<float>(timeStamp) };
-		/*KeyRotation data;
-		data.orientation = AssimpGLMHelpers::GetGLMQuat(aiOrientation);
-		data.timeStamp = static_cast<float>(timeStamp);*/
-		m_rotations.push_back(data);
-	}
-
-	m_numScalings = channel->mNumScalingKeys;
-	for (int keyIndex = 0; keyIndex < m_numScalings; ++keyIndex)
-	{
-		aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-		double timeStamp = channel->mScalingKeys[keyIndex].mTime;
-		KeyScale data{ AssimpGLMHelpers::GetGLMVec(scale), static_cast<float>(timeStamp) };
-		/*KeyScale data;
-		data.scale = AssimpGLMHelpers::GetGLMVec(scale);
-		data.timeStamp = static_cast<float>(timeStamp);*/
-		m_scales.push_back(data);
-	}
+	m_numPositions = static_cast<int>(m_positions.size());
+	m_numRotations = static_cast<int>(m_rotations.size());
+	m_numScalings = static_cast<int>(m_scales.size());
 }
 
 void engine::Bone::update(float animationTime)

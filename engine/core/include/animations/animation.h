@@ -4,10 +4,6 @@
 #include <map>
 #include <functional>
 
-#include <glm/glm.hpp>
-#include <assimp/scene.h>
-#include <assimp/matrix4x4.h>
-
 #include "../anim_transform.h"
 
 #include "../models/model.h"

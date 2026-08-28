@@ -10,16 +10,16 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 	m_boneCount = animation->getBoneCount();
 	if (m_boneCount > 0)
 	{
-		auto animmFinalBoneMatrices = std::vector<glm::mat4>();
-		animmFinalBoneMatrices.reserve(m_boneCount);
+		auto animFinalBoneMatrices = std::vector<glm::mat4>();
+		animFinalBoneMatrices.reserve(m_boneCount);
 
 		for (unsigned int i = 0; i < m_boneCount; i++)
 		{
-			animmFinalBoneMatrices.push_back(glm::mat4(1.0f));
+			animFinalBoneMatrices.push_back(glm::mat4(1.0f));
 		}
 
 		// create a new entry
-		m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
+		m_animationsFinalBoneMatrices.emplace(animation->getName(), animFinalBoneMatrices);
 	}
 }
 
@@ -130,6 +130,9 @@ const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() cons
 {
 	static const std::vector<glm::mat4> kEmpty; // lives forever
 
+	if (!m_currentAnimation)
+		return kEmpty;
+
 	std::string currentAnimName = m_currentAnimation->getName();
 
 	bool keyExists = m_animationsFinalBoneMatrices.find(currentAnimName) != m_animationsFinalBoneMatrices.end();
@@ -144,7 +147,7 @@ const std::vector<glm::mat4>& engine::BonesAnimator::getFinalBoneMatrices() cons
 	return kEmpty;
 }
 
-void engine::BonesAnimator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void engine::BonesAnimator::calculateBoneTransform(const AnimNodeData* node, glm::mat4 parentTransform)
 {
 	const std::string& nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;

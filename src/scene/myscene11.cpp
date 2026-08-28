@@ -66,20 +66,20 @@ void MyScene11::init()
 
 
     // animated vampire model
-    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
-    auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.2f);
-    auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
-    auto trsVampire = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
-    auto entityVampire = make_shared<Entity>("MyVampire");
-    entityVampire->addComponent<TransformComponent>(trsVampire);
-    entityVampire->addComponent<ModelComponent>(vampireModel);
-    entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
-    getEntityManager().addChild(entityVampire);
+    //auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, true);
+    //auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.6f);
+    //auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
+    //auto trsVampire = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
+    //auto entityVampire = make_shared<Entity>("MyVampire");
+    //entityVampire->addComponent<TransformComponent>(trsVampire);
+    //entityVampire->addComponent<ModelComponent>(vampireModel);
+    //entityVampire->addComponent<AnimatorComponent>(vampireAnimator);
+    //getEntityManager().addChild(entityVampire);
 
 
 
     // mixamo twist dance model
-    /*auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.0f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
+    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.4f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
     auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
     auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
@@ -93,7 +93,7 @@ void MyScene11::init()
     entityMixamo->addComponent<TransformComponent>(trsMixamo);
     entityMixamo->addComponent<ModelComponent>(mixamoModel);
     entityMixamo->addComponent<AnimatorComponent>(mixamoAnimator);
-    getEntityManager().addChild(entityMixamo);*/
+    getEntityManager().addChild(entityMixamo);
 
 
 

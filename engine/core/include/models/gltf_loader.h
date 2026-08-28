@@ -28,6 +28,8 @@ namespace engine
 		std::string getTexture(const tg3_model& raw, const tg3_normal_texture_info& info);
 		std::string getTexture(const tg3_model& raw, const tg3_occlusion_texture_info& info);
 
+		void extractSkinBones(const tg3_model& raw);
+
 		int getTextureSource(const tg3_texture& tex);
 		int toInt(const tg3_value& v);
 	};

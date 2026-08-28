@@ -9,8 +9,13 @@ engine::Animator::Animator(std::shared_ptr<Animation> animation)
 }
 
 engine::Animator::Animator(const std::vector<std::shared_ptr<Animation>>& animations)
-	: m_currentTime(0.0), m_animations{ animations }, m_currentAnimation(animations[0])
+	: m_currentTime(0.0), m_animations{ animations }
 {
+	if (!animations.empty())
+	{
+		m_currentAnimation = animations[0];
+	}
+	
 	logger.trace("Animator base constructor called");
 }
 

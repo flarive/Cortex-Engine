@@ -7,6 +7,8 @@
 #include "../../include/singleton.h"
 
 
+#include <glm/gtc/type_ptr.hpp>
+
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
 {
     // directory + filename
@@ -47,6 +49,12 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
 
     const tg3_model& raw = model.raw();
 
+
+    // check for bones or not
+    if (raw.skins_count > 0)
+        m_hasBones = true;
+
+
     m_numberOfMeshes = raw.meshes_count;
 
     // Count vertices
@@ -82,6 +90,9 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
         const tg3_mesh& mesh = raw.meshes[i];
         processMesh(mesh, raw);
     }
+
+    if (m_hasBones)
+        extractSkinBones(raw);
 }
 
 std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh& mesh, const tg3_model& raw)
@@ -178,6 +189,63 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         vertices.reserve(posAcc.count);
 
+
+
+
+        // bones
+        uint32_t jointsIndex = UINT32_MAX;
+        uint32_t weightsIndex = UINT32_MAX;
+
+        for (uint32_t a = 0; a < prim.attributes_count; ++a)
+        {
+            const tg3_str_int_pair& pair = prim.attributes[a];
+
+            if (tg3_str_equals_cstr(pair.key, "JOINTS_0"))
+                jointsIndex = pair.value;
+
+            else if (tg3_str_equals_cstr(pair.key, "WEIGHTS_0"))
+                weightsIndex = pair.value;
+        }
+
+        bool hasJoints = (jointsIndex != UINT32_MAX);
+        bool hasWeights = (weightsIndex != UINT32_MAX);
+
+        const tg3_accessor* jointsAcc = nullptr;
+        const tg3_accessor* weightsAcc = nullptr;
+
+        if (hasJoints)
+            jointsAcc = &raw.accessors[jointsIndex];
+
+        if (hasWeights)
+            weightsAcc = &raw.accessors[weightsIndex];
+
+
+
+        const float* weights = nullptr;
+        const uint16_t* joints = nullptr;
+
+        if (weightsAcc)
+        {
+            const tg3_buffer_view& view = raw.buffer_views[weightsAcc->buffer_view];
+            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const uint8_t* base = buf.data.data;
+            const uint8_t* ptr = base + view.byte_offset + weightsAcc->byte_offset;
+            weights = reinterpret_cast<const float*>(ptr);
+        }
+
+        if (jointsAcc)
+        {
+            const tg3_buffer_view& view = raw.buffer_views[jointsAcc->buffer_view];
+            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const uint8_t* base = buf.data.data;
+            const uint8_t* ptr = base + view.byte_offset + jointsAcc->byte_offset;
+            joints = reinterpret_cast<const uint16_t*>(ptr);
+        }
+
+
+
+
+
         for (uint32_t i = 0; i < posAcc.count; ++i)
         {
             Vertex v{ glm::vec3() };
@@ -209,7 +277,28 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 );
 
             vertices.push_back(std::move(v));
+
+
+
+            // bones
+            if (m_hasBones && joints && weights)
+            {
+                for (int k = 0; k < 4; ++k) // glTF always uses 4 influences
+                {
+                    int jointIndex = joints[i * 4 + k];
+                    float weight = weights[i * 4 + k];
+
+                    if (weight > 0.0f)
+                    {
+                        setVertexBoneData(vertices[i], jointIndex, weight);
+                    }
+                }
+            }
+
         }
+
+
+
 
         // Indices
         const tg3_accessor& idxAcc = raw.accessors[prim.indices];
@@ -235,6 +324,10 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
             for (uint32_t i = 0; i < idxAcc.count; ++i)
                 indices.push_back(src[i]);
         }
+
+
+
+        
 
 
         
@@ -267,10 +360,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         // load all textures asynchronously
         if (m_materials.back()->hasTextureMap())
             m_materials.back()->loadTexturesAsync(false);
-
-        // load bones
-        //if (m_hasBones)
-        //    extractBoneWeightForVertices(vertices, mesh, scene);
     }
 
     auto meshPtr = std::make_shared<engine::Mesh>(toStdString(mesh.name), std::move(vertices), std::move(indices), m_materials.back());
@@ -663,6 +752,40 @@ int engine::GLtfMeshLoader::toInt(const tg3_value& v)
     }
 }
 
+void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
+{
+    for (uint32_t s = 0; s < raw.skins_count; ++s)
+    {
+        const tg3_skin& skin = raw.skins[s];
+
+        // inverse bind matrices
+        const tg3_accessor& ibmAcc = raw.accessors[skin.inverse_bind_matrices];
+        const tg3_buffer_view& view = raw.buffer_views[ibmAcc.buffer_view];
+        const tg3_buffer& buf = raw.buffers[view.buffer];
+
+        const float* ibmData = reinterpret_cast<const float*>(
+            buf.data.data + view.byte_offset + ibmAcc.byte_offset
+            );
+
+        for (uint32_t j = 0; j < skin.joints_count; ++j)
+        {
+            int nodeIndex = skin.joints[j];
+            const tg3_node& node = raw.nodes[nodeIndex];
+
+            std::string boneName = toStdString(node.name);
+
+            BoneInfo info{};
+            info.id = m_boneCounter++;
+
+            glm::mat4 ibm{};
+            memcpy(glm::value_ptr(ibm), ibmData + j * 16, sizeof(float) * 16);
+
+            info.offset = ibm;
+
+            m_boneInfoMap[boneName] = info;
+        }
+    }
+}
 
 
 engine::GLtfMeshLoader::~GLtfMeshLoader()

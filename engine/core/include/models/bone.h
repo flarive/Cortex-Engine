@@ -1,11 +1,8 @@
 #pragma once
 
-/* Container for bone data */
-
+#include <string>
 #include <vector>
 #include <list>
-
-#include <assimp/scene.h>
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -15,25 +12,25 @@
 
 namespace engine
 {
-	struct KeyPosition
+	struct KeyPosition final
 	{
 		glm::vec3 position;
 		float timeStamp;
 	};
 
-	struct KeyRotation
+	struct KeyRotation final
 	{
 		glm::quat orientation;
 		float timeStamp;
 	};
 
-	struct KeyScale
+	struct KeyScale final
 	{
 		glm::vec3 scale;
 		float timeStamp;
 	};
 
-	struct BoneInfo
+	struct BoneInfo final
 	{
 		/*id is index in finalBoneMatrices*/
 		int id;
@@ -42,10 +39,10 @@ namespace engine
 		glm::mat4 offset;
 	};
 
-	class Bone// : private NonCopyable
+	class Bone final// : private NonCopyable
 	{
 	public:
-		Bone(const std::string& name, int ID, const aiNodeAnim* channel);
+		Bone(const std::string& name, int id, std::vector<KeyPosition> positions, std::vector<KeyRotation> rotations, std::vector<KeyScale> scales);
 		~Bone();
 
 		void update(float animationTime);

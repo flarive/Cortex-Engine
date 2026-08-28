@@ -9,7 +9,7 @@
 
 namespace
 {
-	class AssimpGLMHelpers
+	class AssimpGLMHelpers final
 	{
 	public:
 

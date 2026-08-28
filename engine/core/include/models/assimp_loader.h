@@ -23,8 +23,7 @@ namespace engine
 
 		std::shared_ptr<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
 
-		void setVertexBoneDataToDefault(Vertex& vertex);
-		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
+		
 		void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
 		bool isARMSingleTexture(const aiScene* scene, aiMaterial* mat);

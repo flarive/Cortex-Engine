@@ -193,28 +193,6 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
 }
 
-void engine::AssimpMeshLoader::setVertexBoneDataToDefault(Vertex& vertex)
-{
-    for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
-    {
-        vertex.boneIDs[i] = -1;
-        vertex.weights[i] = 0.0f;
-    }
-}
-
-void engine::AssimpMeshLoader::setVertexBoneData(Vertex& vertex, int boneID, float weight)
-{
-    for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
-    {
-        if (vertex.boneIDs[i] < 0)
-        {
-            vertex.weights[i] = weight;
-            vertex.boneIDs[i] = boneID;
-            break;
-        }
-    }
-}
-
 void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
 {
     auto& boneInfoMap = m_boneInfoMap;

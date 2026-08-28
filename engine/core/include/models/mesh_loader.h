@@ -51,5 +51,8 @@ namespace engine
 		bool m_hasBones{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
+
+		void setVertexBoneDataToDefault(Vertex& vertex);
+		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
 	};
 }

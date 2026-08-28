@@ -4,8 +4,6 @@
 #include <map>
 #include <vector>
 #include <functional>
-#include <assimp/scene.h>
-#include <assimp/importer.hpp>
 
 #include "animator.h"
 #include "../animations/bone_animation.h"
@@ -61,7 +59,7 @@ namespace engine
 		std::shared_ptr<BoneAnimation> m_currentBoneAnimation{};
 		
 		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
-		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+		void calculateBoneTransform(const AnimNodeData* node, glm::mat4 parentTransform);
 		const std::vector<glm::mat4>& getFinalBoneMatrices() const;
 	};
 }

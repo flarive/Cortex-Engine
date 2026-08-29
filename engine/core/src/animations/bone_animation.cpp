@@ -15,6 +15,8 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 	logger.trace("BoneAnimation constructor called");
 
 	importBoneAnimationFromAssimp(animationPath, model);
+	
+	//importBoneAnimationFromGLTF(animationPath, model);
 }
 
 void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& animationPath, std::shared_ptr<Model> model)
@@ -90,12 +92,14 @@ void engine::BoneAnimation::importBoneAnimationFromGLTF(const std::string& anima
 	// GLTF animations use seconds, not ticks.
 	// tinyGLTF3 stores input accessor values directly as seconds.
 	m_ticksPerSecond = 1; // seconds → no conversion needed
-	m_duration = computeDurationFromGLTF(raw, animation); // seconds
-	m_durationInSeconds = m_duration;
+	m_duration = computeDurationFromGLTF(raw, animation) * 1000; // seconds // 9466.66602f;
+	m_durationInSeconds = m_duration / 1000.0f; // 9.46666622f
 
 	// Compute FPS from GLTF (same logic as Assimp but using GLTF channel)
 	m_desiredFPS = 30; // TO DO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! computeFPSFromGLTF(gltfModel, animation);
-	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
+	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS); // 284
+
+
 
 	// --- Hierarchy ---
 	// GLTF has multiple scene roots; use scene 0
@@ -157,7 +161,6 @@ void engine::BoneAnimation::readMissingBonesFromAssimp(const aiAnimation* animat
 		extractBoneKeysFromAssimp(channel, positions, rotations, scales);
 
 		Bone bone = createBone(boneName, boneInfoMap[boneName].id, positions, rotations, scales);
-
 		m_bones.push_back(bone);
 	}
 
@@ -169,37 +172,49 @@ void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel,
 	auto& boneInfoMap = engineModel.getBoneInfoMap();
 	int boneCount = engineModel.getBoneCount();
 
-	// Iterate over all animation channels (translation, rotation, scale)
+	// --- Step 1: group channels by node index ---
+	struct BoneChannelData {
+		std::vector<KeyPosition> positions;
+		std::vector<KeyRotation> rotations;
+		std::vector<KeyScale>    scales;
+	};
+
+	std::unordered_map<int, BoneChannelData> channelMap;
+
 	for (uint32_t i = 0; i < animation.channels_count; i++)
 	{
 		const tg3_animation_channel& channel = animation.channels[i];
-
-		// The channel targets a node → that node is the bone
 		int nodeIndex = channel.target.node;
-		const tg3_node& node = gltfModel.nodes[nodeIndex];
 
+		BoneChannelData& data = channelMap[nodeIndex];
+
+		// Fill only the relevant TRS component
+		extractBoneKeysFromGltf(
+			gltfModel,
+			animation,
+			channel,
+			data.positions,
+			data.rotations,
+			data.scales
+		);
+	}
+
+	// --- Step 2: create one Bone per node ---
+	for (auto& [nodeIndex, data] : channelMap)
+	{
+		const tg3_node& node = gltfModel.nodes[nodeIndex];
 		std::string boneName = node.name.data;
 
 		// Register bone if missing
 		if (boneInfoMap.find(boneName) == boneInfoMap.end())
 			boneInfoMap[boneName].id = boneCount++;
 
-		// Prepare keyframe containers
-		std::vector<KeyPosition> positions;
-		std::vector<KeyRotation> rotations;
-		std::vector<KeyScale>    scales;
-
-		// Fill keyframes from GLTF animation sampler
-		extractBoneKeysFromGltf(gltfModel, animation, channel,
-			positions, rotations, scales);
-
-		// Create Bone object
 		Bone bone = createBone(
 			boneName,
 			boneInfoMap[boneName].id,
-			positions,
-			rotations,
-			scales
+			data.positions,
+			data.rotations,
+			data.scales
 		);
 
 		m_bones.push_back(bone);
@@ -274,6 +289,19 @@ void engine::BoneAnimation::extractBoneKeysFromGltf(const tg3_model& model,	cons
 			scales.push_back({ scl, t });
 		}
 	}
+
+	if (rotations.empty()) {
+		rotations.resize(positions.size());
+		for (size_t i = 0; i < positions.size(); ++i)
+			rotations[i] = { glm::quat(1,0,0,0), positions[i].timeStamp };
+	}
+
+	if (scales.empty()) {
+		scales.resize(positions.size());
+		for (size_t i = 0; i < positions.size(); ++i)
+			scales[i] = { glm::vec3(1,1,1), positions[i].timeStamp };
+	}
+
 }
 
 

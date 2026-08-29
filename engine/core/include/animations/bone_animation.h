@@ -25,6 +25,14 @@ namespace engine
 		std::vector<AnimNodeData> children{};
 	};
 
+	struct BoneChannelData final
+	{
+		std::vector<KeyPosition> positions;
+		std::vector<KeyRotation> rotations;
+		std::vector<KeyScale>    scales;
+	};
+
+
 	class BoneAnimation final : public Animation
 	{
 	public:

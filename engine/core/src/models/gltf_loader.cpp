@@ -775,7 +775,9 @@ void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
             std::string boneName = toStdString(node.name);
 
             BoneInfo info{};
-            info.id = m_boneCounter++;
+            //info.id = m_boneCounter++;
+            info.id = j;  // ✅ match JOINTS_0 indices
+
 
             glm::mat4 ibm{};
             memcpy(glm::value_ptr(ibm), ibmData + j * 16, sizeof(float) * 16);
@@ -783,6 +785,8 @@ void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
             info.offset = ibm;
 
             m_boneInfoMap[boneName] = info;
+
+            m_boneCounter = std::max(m_boneCounter, (int)skin.joints_count);
         }
     }
 }

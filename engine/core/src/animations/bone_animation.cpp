@@ -14,9 +14,9 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 {
 	logger.trace("BoneAnimation constructor called");
 
-	importBoneAnimationFromAssimp(animationPath, model);
+	//importBoneAnimationFromAssimp(animationPath, model);
 	
-	//importBoneAnimationFromGLTF(animationPath, model);
+	importBoneAnimationFromGLTF(animationPath, model);
 }
 
 void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& animationPath, std::shared_ptr<Model> model)
@@ -42,18 +42,18 @@ void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& ani
 	readMissingBonesFromAssimp(animation, *model.get());
 }
 
-void engine::BoneAnimation::importBoneAnimationFromGLTF(const std::string& animationPath, std::shared_ptr<Model> model)
+void engine::BoneAnimation::importBoneAnimationFromGLTF(
+	const std::string& animationPath,
+	std::shared_ptr<Model> model)
 {
-	// --- Load GLTF file ---
 	tinygltf3::Model gltfModel;
 
 	tg3_parse_options opts{};
 	tg3_parse_options_init(&opts);
-	opts.images_as_is = 0; // keep raw bytes
+	opts.images_as_is = 0;
 
 	tg3_error_stack errors{};
 	tg3_error_stack_init(&errors);
-
 
 	tg3_error_code err = tg3_parse_file(
 		&gltfModel.raw(),
@@ -65,17 +65,15 @@ void engine::BoneAnimation::importBoneAnimationFromGLTF(const std::string& anima
 
 	if (err != TG3_OK)
 	{
-		// handle errors
-		logger.error("GLTF loading error: unknown");
-
-		for (uint32_t i = 0; i < errors.count; i++) {
-			fprintf(stderr, "[%d] %s\n", (int)errors.entries[i].severity,
+		logger.error("GLTF loading error: {}", animationPath);
+		for (uint32_t i = 0; i < errors.count; i++)
+		{
+			fprintf(stderr, "[%d] %s\n",
+				(int)errors.entries[i].severity,
 				errors.entries[i].message ? errors.entries[i].message : "(null)");
 		}
-
 		return;
 	}
-
 
 	const tg3_model& raw = gltfModel.raw();
 
@@ -85,39 +83,83 @@ void engine::BoneAnimation::importBoneAnimationFromGLTF(const std::string& anima
 		return;
 	}
 
-	// For now: use animation #0 (same as Assimp path)
+	// For now: use animation #0
 	const tg3_animation& animation = raw.animations[0];
 
 	// --- Timing ---
-	// GLTF animations use seconds, not ticks.
-	// tinyGLTF3 stores input accessor values directly as seconds.
-	m_ticksPerSecond = 1; // seconds → no conversion needed
-	m_duration = computeDurationFromGLTF(raw, animation) * 1000; // seconds // 9466.66602f;
-	m_durationInSeconds = m_duration / 1000.0f; // 9.46666622f
+	m_ticksPerSecond = 1000; // we’ll convert seconds → ms
+	float durationSeconds = computeDurationFromGLTF(raw, animation);
+	m_duration = durationSeconds * m_ticksPerSecond;
+	m_durationInSeconds = durationSeconds;
 
-	// Compute FPS from GLTF (same logic as Assimp but using GLTF channel)
-	m_desiredFPS = 30; // TO DO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! computeFPSFromGLTF(gltfModel, animation);
-	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS); // 284
+	m_desiredFPS = computeFPSFromGLTF(raw, animation);
+	if (m_desiredFPS == 0)
+		m_desiredFPS = 30; // fallback
 
+	m_numFrames = static_cast<unsigned int>(m_durationInSeconds * m_desiredFPS);
 
-
-	// --- Hierarchy ---
-	// GLTF has multiple scene roots; use scene 0
-	const tg3_scene& scene = raw.scenes[raw.default_scene]; // ?????????
-	if (scene.nodes_count == 0)
+	// --- Skeleton / hierarchy ---
+	if (raw.skins_count == 0)
 	{
-		logger.error("GLTF scene has no root nodes");
+		logger.error("GLTF has animation but no skins: {}", animationPath);
 		return;
 	}
 
-	// Build hierarchy from first root node
-	uint32_t rootIndex = scene.nodes[0];
-	const tg3_node& rootNode = raw.nodes[rootIndex];
-	readHierarchyDataFromGLTF(m_rootNode, raw, rootNode);
+	// For now: use skin #0 (matching your mesh)
+	const tg3_skin& skin = raw.skins[0];
 
-	// Bones
+	// Determine skeleton root
+	//uint32_t skeletonRootIndex;
+	//if (skin.skeleton != UINT32_MAX)
+	//{
+	//	skeletonRootIndex = skin.skeleton;
+	//}
+	//else
+	//{
+	//	// If no explicit skeleton root, use first joint as root
+	//	skeletonRootIndex = skin.joints[0];
+	//}
+
+	//const tg3_node& skeletonRootNode = raw.nodes[skeletonRootIndex];
+	//readHierarchyDataFromGLTF(m_rootNode, raw, skeletonRootNode);
+
+	//// --- Bones / animation channels ---
+	//readMissingBonesFromGLTF(raw, animation, *model.get());
+
+	// Try to find an "Armature" node to match Assimp
+	int armatureNodeIndex = -1;
+	for (uint32_t i = 0; i < raw.nodes_count; ++i)
+	{
+		std::string nodeName(raw.nodes[i].name.data, raw.nodes[i].name.len);
+		if (nodeName == "Armature")
+		{
+			armatureNodeIndex = (int)i;
+			break;
+		}
+	}
+
+	uint32_t skeletonRootIndex;
+	if (armatureNodeIndex >= 0)
+	{
+		// Match Assimp: root = Armature
+		skeletonRootIndex = (uint32_t)armatureNodeIndex;
+	}
+	else
+	{
+		// Fallback: use skin.skeleton or first joint
+		if (skin.skeleton != UINT32_MAX)
+			skeletonRootIndex = skin.skeleton;
+		else
+			skeletonRootIndex = skin.joints[0];
+	}
+
+	const tg3_node& skeletonRootNode = raw.nodes[skeletonRootIndex];
+	readHierarchyDataFromGLTF(m_rootNode, raw, skeletonRootNode);
+
+	// --- Bones / animation channels ---
 	readMissingBonesFromGLTF(raw, animation, *model.get());
 }
+
 
 
 engine::Bone* engine::BoneAnimation::findBone(const std::string& name)
@@ -167,12 +209,14 @@ void engine::BoneAnimation::readMissingBonesFromAssimp(const aiAnimation* animat
 	m_boneInfoMap = boneInfoMap;
 }
 
-void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel, const tg3_animation& animation, Model& engineModel)
+void engine::BoneAnimation::readMissingBonesFromGLTF(
+	const tg3_model& gltfModel,
+	const tg3_animation& animation,
+	Model& engineModel)
 {
 	auto& boneInfoMap = engineModel.getBoneInfoMap();
 	int boneCount = engineModel.getBoneCount();
 
-	// --- Step 1: group channels by node index ---
 	struct BoneChannelData {
 		std::vector<KeyPosition> positions;
 		std::vector<KeyRotation> rotations;
@@ -181,6 +225,7 @@ void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel,
 
 	std::unordered_map<int, BoneChannelData> channelMap;
 
+	// Group channels by node index
 	for (uint32_t i = 0; i < animation.channels_count; i++)
 	{
 		const tg3_animation_channel& channel = animation.channels[i];
@@ -188,7 +233,6 @@ void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel,
 
 		BoneChannelData& data = channelMap[nodeIndex];
 
-		// Fill only the relevant TRS component
 		extractBoneKeysFromGltf(
 			gltfModel,
 			animation,
@@ -199,19 +243,28 @@ void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel,
 		);
 	}
 
-	// --- Step 2: create one Bone per node ---
+	// Create one Bone per animated node
 	for (auto& [nodeIndex, data] : channelMap)
 	{
 		const tg3_node& node = gltfModel.nodes[nodeIndex];
 		std::string boneName = node.name.data;
 
-		// Register bone if missing
+		// If your Assimp path uses different names (e.g. "mixamorig:LeftArm"),
+		// you may need a remapping table here.
+
+		//if (boneInfoMap.find(boneName) == boneInfoMap.end())
+		//	boneInfoMap[boneName].id = boneCount++;
+
 		if (boneInfoMap.find(boneName) == boneInfoMap.end())
-			boneInfoMap[boneName].id = boneCount++;
+			continue; // skip channels for nodes that are not skinned
+
+
+
+		int id = boneInfoMap[boneName].id;
 
 		Bone bone = createBone(
 			boneName,
-			boneInfoMap[boneName].id,
+			id,
 			data.positions,
 			data.rotations,
 			data.scales
@@ -222,6 +275,7 @@ void engine::BoneAnimation::readMissingBonesFromGLTF(const tg3_model& gltfModel,
 
 	m_boneInfoMap = boneInfoMap;
 }
+
 
 
 void engine::BoneAnimation::extractBoneKeysFromAssimp(const aiNodeAnim* channel, std::vector<KeyPosition>& positions, std::vector<KeyRotation>& rotations, std::vector<KeyScale>& scales)
@@ -245,7 +299,13 @@ void engine::BoneAnimation::extractBoneKeysFromAssimp(const aiNodeAnim* channel,
 			});
 }
 
-void engine::BoneAnimation::extractBoneKeysFromGltf(const tg3_model& model,	const tg3_animation& anim, const tg3_animation_channel& channel, std::vector<KeyPosition>& positions, std::vector<KeyRotation>& rotations, std::vector<KeyScale>& scales)
+void engine::BoneAnimation::extractBoneKeysFromGltf(
+	const tg3_model& model,
+	const tg3_animation& anim,
+	const tg3_animation_channel& channel,
+	std::vector<KeyPosition>& positions,
+	std::vector<KeyRotation>& rotations,
+	std::vector<KeyScale>& scales)
 {
 	const tg3_animation_sampler& sampler = anim.samplers[channel.sampler];
 
@@ -270,39 +330,81 @@ void engine::BoneAnimation::extractBoneKeysFromGltf(const tg3_model& model,	cons
 
 	for (uint32_t i = 0; i < inputAcc.count; ++i)
 	{
-		float t = times[i];
+		//float t = times[i];
+		float t = times[i] * 1000.0f;
 
-		if (channel.target.path.data == std::string("translation"))
+		if (channel.target.path.data == "translation")
 		{
 			glm::vec3 pos(values[i * 3 + 0], values[i * 3 + 1], values[i * 3 + 2]);
 			positions.push_back({ pos, t });
 		}
-		else if (channel.target.path.data == std::string("rotation"))
+		else if (channel.target.path.data == "rotation")
 		{
-			glm::quat rot(values[i * 4 + 3], values[i * 4 + 0],
-				values[i * 4 + 1], values[i * 4 + 2]);
+			glm::quat rot(values[i * 4 + 3], values[i * 4 + 0], values[i * 4 + 1], values[i * 4 + 2]);
 			rotations.push_back({ rot, t });
 		}
-		else if (channel.target.path.data == std::string("scale"))
+		else if (channel.target.path.data == "scale")
 		{
 			glm::vec3 scl(values[i * 3 + 0], values[i * 3 + 1], values[i * 3 + 2]);
 			scales.push_back({ scl, t });
 		}
 	}
 
-	if (rotations.empty()) {
-		rotations.resize(positions.size());
-		for (size_t i = 0; i < positions.size(); ++i)
-			rotations[i] = { glm::quat(1,0,0,0), positions[i].timeStamp };
+	// If translation is missing, use node's default translation
+	if (positions.empty())
+	{
+		const tg3_node& node = model.nodes[channel.target.node];
+
+		glm::vec3 pos(node.translation[0],
+			node.translation[1],
+			node.translation[2]);
+
+		positions.push_back({ pos, 0.0f });
 	}
 
-	if (scales.empty()) {
-		scales.resize(positions.size());
-		for (size_t i = 0; i < positions.size(); ++i)
-			scales[i] = { glm::vec3(1,1,1), positions[i].timeStamp };
+	// If rotation is missing, use node's default rotation
+	if (rotations.empty())
+	{
+		const tg3_node& node = model.nodes[channel.target.node];
+
+		glm::quat rot(node.rotation[3], // w
+			node.rotation[0], // x
+			node.rotation[1], // y
+			node.rotation[2]);// z
+
+		rotations.push_back({ rot, 0.0f });
 	}
 
+	// If scale is missing, use node's default scale
+	if (scales.empty())
+	{
+		const tg3_node& node = model.nodes[channel.target.node];
+
+		glm::vec3 scl(node.scale[0],
+			node.scale[1],
+			node.scale[2]);
+
+		scales.push_back({ scl, 0.0f });
+	}
+
+
+
+	// Fill missing rotation/scale with identity
+	//if (rotations.empty())
+	//{
+	//	rotations.resize(positions.size());
+	//	for (size_t i = 0; i < positions.size(); ++i)
+	//		rotations[i] = { glm::quat(1,0,0,0), positions[i].timeStamp };
+	//}
+
+	//if (scales.empty())
+	//{
+	//	scales.resize(positions.size());
+	//	for (size_t i = 0; i < positions.size(); ++i)
+	//		scales[i] = { glm::vec3(1,1,1), positions[i].timeStamp };
+	//}
 }
+
 
 
 
@@ -322,20 +424,22 @@ void engine::BoneAnimation::readHierarchyDataFromAssimp(AnimNodeData& dest, cons
 	}
 }
 
-void engine::BoneAnimation::readHierarchyDataFromGLTF(AnimNodeData& dest, const tg3_model& model, const tg3_node& src)
+void engine::BoneAnimation::readHierarchyDataFromGLTF(
+	AnimNodeData& dest,
+	const tg3_model& model,
+	const tg3_node& src)
 {
 	dest.name = src.name.data;
 
 	glm::mat4 transform(1.0f);
 
-	// If matrix is explicitly set, use it
 	if (src.has_matrix == 1)
 	{
+		// GLTF matrices are column-major; tinygltf3 gives float[16] in column-major
 		transform = glm::make_mat4x4(src.matrix);
 	}
 	else
 	{
-		// Otherwise use TRS (always valid, defaults applied by tinygltf3)
 		glm::vec3 translation(src.translation[0],
 			src.translation[1],
 			src.translation[2]);
@@ -357,7 +461,6 @@ void engine::BoneAnimation::readHierarchyDataFromGLTF(AnimNodeData& dest, const 
 
 	dest.transformation = transform;
 
-	// Children
 	dest.childrenCount = src.children_count;
 
 	for (uint32_t i = 0; i < src.children_count; i++)
@@ -370,6 +473,7 @@ void engine::BoneAnimation::readHierarchyDataFromGLTF(AnimNodeData& dest, const 
 		dest.children.push_back(childData);
 	}
 }
+
 
 
 // ensure anim was exported at 30 FPS (should be always the case for mixamo anims)

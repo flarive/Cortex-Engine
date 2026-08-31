@@ -43,8 +43,21 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool flipUVs)
         m_numberOfVertices += mesh->mNumVertices;
     }
 
+
+
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
+
+
+    // 2. NOW m_boneInfoMap is filled
+    if (m_hasBones)
+    {
+        buildSkeletonFromAssimpScene(scene);
+        computeBindPoseMatrices();
+    }
+
+    // 3. Meshes can now safely receive bind-pose matrices
+    // DO IT here !!!!!!!!!!!!!!!!!!!!
 
     m_numberOfMeshes += scene->mNumMeshes;
 }
@@ -59,7 +72,16 @@ void engine::AssimpMeshLoader::processNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene. 
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(processMesh(mesh, scene));
+        
+
+        auto aa = processMesh(mesh, scene);
+
+        aa->bindPoseMatrices = m_finalBindPoseMatrices;
+        aa->hasBones = m_hasBones;
+        aa->hasAnimations = false; // because no BoneAnimation was loaded
+
+        m_meshes.push_back(aa);
+
     }
 
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
@@ -460,6 +482,70 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
 
     return "";
 }
+
+void engine::AssimpMeshLoader::buildSkeletonFromAssimpScene(const aiScene* scene)
+{
+    m_skeleton.clear();
+    m_skeleton.reserve(m_boneInfoMap.size());
+
+    std::unordered_map<std::string, int> boneIndexMap;
+
+    std::function<void(const aiNode*, int)> traverse =
+        [&](const aiNode* node, int parentIndex)
+        {
+            std::string nodeName = node->mName.C_Str();
+            auto it = m_boneInfoMap.find(nodeName);
+
+            if (it != m_boneInfoMap.end())
+            {
+                SkeletonBone bone{};
+                bone.name = nodeName;
+                bone.parentIndex = parentIndex;
+                bone.localBindTransform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
+                bone.offset = it->second.offset;
+
+                int newIndex = (int)m_skeleton.size();
+                m_skeleton.push_back(bone);
+                boneIndexMap[nodeName] = newIndex;
+
+                parentIndex = newIndex;
+            }
+
+            for (unsigned int i = 0; i < node->mNumChildren; i++)
+                traverse(node->mChildren[i], parentIndex);
+        };
+
+    traverse(scene->mRootNode, -1);
+}
+
+glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
+{
+    glm::mat4 global = m_skeleton[index].localBindTransform;
+
+    int parent = m_skeleton[index].parentIndex;
+    while (parent != -1)
+    {
+        global = m_skeleton[parent].localBindTransform * global;
+        parent = m_skeleton[parent].parentIndex;
+    }
+
+    return global;
+}
+
+void engine::AssimpMeshLoader::computeBindPoseMatrices()
+{
+    m_finalBindPoseMatrices.clear();
+    m_finalBindPoseMatrices.reserve(m_skeleton.size());
+
+    for (int i = 0; i < m_skeleton.size(); i++)
+    {
+        glm::mat4 global = computeGlobalFromSkeleton(i);
+        glm::mat4 offset = m_skeleton[i].offset;
+
+        m_finalBindPoseMatrices.push_back(global * offset);
+    }
+}
+
 
 engine::AssimpMeshLoader::~AssimpMeshLoader()
 {

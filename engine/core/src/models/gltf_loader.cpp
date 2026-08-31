@@ -131,6 +131,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 uvIndex = pair.value;
         }
 
+        bool hasPosition = (posIndex != UINT32_MAX);
         bool hasNormals = (norIndex != UINT32_MAX);
         bool hasTangents = (tanIndex != UINT32_MAX);
         bool hasTexCoords = (uvIndex != UINT32_MAX);
@@ -149,6 +150,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 		const float* texcoords = nullptr;
 
         // position
+        if (hasPosition)
         {
             const tg3_buffer_view& view = raw.buffer_views[posAcc.buffer_view];
             const tg3_buffer& buf = raw.buffers[view.buffer];
@@ -294,7 +296,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                     }
                 }
             }
-
         }
 
 

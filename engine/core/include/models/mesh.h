@@ -30,6 +30,13 @@ namespace engine
         const std::vector<Vertex>& getVertices() const { return m_vertices; }
         const std::vector<unsigned int>& getIndices() const { return m_indices; }
 
+
+        // Bind-pose fallback
+        std::vector<glm::mat4> bindPoseMatrices;
+        bool hasBones = false;
+        bool hasAnimations = false;
+
+
         void clean();
        
     private:
@@ -46,6 +53,12 @@ namespace engine
         unsigned int m_indexCount{};
 
         std::shared_ptr<Material> m_material{};
+
+
+
+
+
+
 
         // initializes all the buffer objects/arrays
         void setupMesh();

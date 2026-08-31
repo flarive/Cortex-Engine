@@ -19,9 +19,6 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 {
     ShaderType type = shader.getShaderType();
 
-    auto& zzz = this->getName();
-    auto& mmm = m_material->getName();
-
     if (!m_material || !shader.isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
@@ -75,6 +72,14 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
         shader.setBool("hasTangents", true);
+    }
+
+
+    if (hasBones && !hasAnimations)
+    {
+        // Use bind pose
+        for (int i = 0; i < bindPoseMatrices.size(); ++i)
+            shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", bindPoseMatrices[i]);
     }
 
 

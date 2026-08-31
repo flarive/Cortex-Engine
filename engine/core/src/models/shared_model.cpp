@@ -118,7 +118,13 @@ bool engine::SharedModel::hasBones()
     return false;
 }
 
+bool engine::SharedModel::hasAnimations()
+{
+    if (m_meshLoader)
+        return m_meshLoader->hasAnimations();
 
+    return false;
+}
 
 void engine::SharedModel::reSetup()
 {

@@ -33,7 +33,7 @@ namespace engine
 		auto& getBoneInfoMap() { return m_boneInfoMap; }
 		int& getBoneCount() { return m_boneCounter; }
 		bool& hasBones() { return m_hasBones; }
-		
+		bool& hasAnimations() { return m_hasAnimations; }
 
 	protected:
 		std::string m_directory{};
@@ -49,6 +49,7 @@ namespace engine
 		std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
 		bool m_hasBones{};
+		bool m_hasAnimations{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
 

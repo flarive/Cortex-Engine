@@ -49,15 +49,25 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool flipUVs)
     processNode(scene->mRootNode, scene);
 
 
-    // 2. NOW m_boneInfoMap is filled
+    // m_boneInfoMap is now filled
     if (m_hasBones)
     {
+        m_hasAnimations = false;// scene->HasAnimations();
+
         buildSkeletonFromAssimpScene(scene);
         computeBindPoseMatrices();
     }
 
-    // 3. Meshes can now safely receive bind-pose matrices
-    // DO IT here !!!!!!!!!!!!!!!!!!!!
+    // Meshes can now safely receive bind-pose matrices
+    //for (unsigned int i = 0; i < m_meshes.size() ; i++)
+    //{
+    //    // the node object only contains indices to index the actual objects in the scene. 
+    //    // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+    //    std::shared_ptr<Mesh> mesh = m_meshes[i];
+    //    mesh->bindPoseMatrices = m_finalBindPoseMatrices;
+    //    mesh->hasBones = m_hasBones;
+    //    mesh->hasAnimations = false; // because no BoneAnimation was loaded
+    //}
 
     m_numberOfMeshes += scene->mNumMeshes;
 }
@@ -72,16 +82,7 @@ void engine::AssimpMeshLoader::processNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene. 
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        
-
-        auto aa = processMesh(mesh, scene);
-
-        aa->bindPoseMatrices = m_finalBindPoseMatrices;
-        aa->hasBones = m_hasBones;
-        aa->hasAnimations = false; // because no BoneAnimation was loaded
-
-        m_meshes.push_back(aa);
-
+        m_meshes.push_back(processMesh(mesh, scene));
     }
 
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes

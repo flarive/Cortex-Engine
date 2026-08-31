@@ -64,6 +64,7 @@ namespace engine
                 {"vertexCount", EditorProperty { "Vertex count", getVertexCount(), readonly, 0.0f, 0.0f, 0.0f, "%u" }},
                 {"bonesCount", EditorProperty { "Bones count", getBoneCount(), readonly, 0.0f, 0.0f, 0.0f, "%i" }},
                 {"flipUV", EditorProperty { "Flip UV", getFlipUV(), readonly, 0.0f, 1.0f, 1.0f, "%s" }},
+                {"hasAnimations", EditorProperty { "Has Animations", hasAnimations(), readonly, 0.0f, 1.0f, 1.0f, "%s" }},
             };
         }
 
@@ -80,6 +81,7 @@ namespace engine
 
 
         bool hasBones();
+		bool hasAnimations();
         int getBoneCount();
         std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
         

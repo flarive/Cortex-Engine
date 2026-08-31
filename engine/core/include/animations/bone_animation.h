@@ -57,19 +57,12 @@ namespace engine
 		size_t getBoneCount() { return m_bones.size(); }
 
 
-
-		// ?????????????????????
-		//glm::mat4 getGlobalTransformOfBone(int index) const;
-		//glm::mat4 getBoneOffset(int index) const;
-
 	private:
 		std::string m_filepath{};
 		std::vector<Bone> m_bones{};
 		AnimNodeData m_rootNode{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 
-		//std::vector<SkeletonBone> m_skeleton{};
-		
 
 		void importBoneAnimationFromAssimp(const std::string& animationPath, std::shared_ptr<Model> model);
 		void importBoneAnimationFromGLTF(const std::string& animationPath, std::shared_ptr<Model> model);
@@ -89,11 +82,5 @@ namespace engine
 		
 		void extractBoneKeysFromAssimp(const aiNodeAnim* channel, std::vector<KeyPosition>& positions, std::vector<KeyRotation>& rotations, std::vector<KeyScale>& scales);
 		void extractBoneKeysFromGltf(const tg3_model& model, const tg3_animation& anim,	const tg3_animation_channel& channel, std::vector<KeyPosition>& positions, std::vector<KeyRotation>& rotations,	std::vector<KeyScale>& scales);
-
-		
-		// ?????????
-		// usefull even when model skeleton is having no anim
-		//void buildSkeletonFromHierarchy();
-
 	};
 }

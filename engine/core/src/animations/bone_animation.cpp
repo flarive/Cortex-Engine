@@ -40,8 +40,6 @@ void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& ani
 	
 	// Bones
 	readMissingBonesFromAssimp(animation, *model.get());
-
-	//buildSkeletonFromHierarchy();
 }
 
 void engine::BoneAnimation::importBoneAnimationFromGLTF(
@@ -160,8 +158,6 @@ void engine::BoneAnimation::importBoneAnimationFromGLTF(
 
 	// --- Bones / animation channels ---
 	readMissingBonesFromGLTF(raw, animation, *model.get());
-
-	//buildSkeletonFromHierarchy();
 }
 
 
@@ -573,63 +569,6 @@ float engine::BoneAnimation::computeDurationFromGLTF(const tg3_model& model, con
 
 	return maxTime - minTime;
 }
-
-
-//void engine::BoneAnimation::buildSkeletonFromHierarchy()
-//{
-//	m_skeleton.clear();
-//	m_skeleton.reserve(m_boneInfoMap.size());
-//
-//	// Map bone name → index in skeleton vector
-//	std::unordered_map<std::string, int> boneIndexMap;
-//
-//	// Recursive traversal
-//	std::function<void(const AnimNodeData&, int)> traverse =
-//		[&](const AnimNodeData& node, int parentIndex)
-//		{
-//			auto it = m_boneInfoMap.find(node.name);
-//
-//			if (it != m_boneInfoMap.end())
-//			{
-//				SkeletonBone bone{};
-//				bone.name = node.name;
-//				bone.parentIndex = parentIndex;
-//				bone.localBindTransform = node.transformation;
-//				bone.offset = it->second.offset;
-//
-//				int newIndex = (int)m_skeleton.size();
-//				m_skeleton.push_back(bone);
-//				boneIndexMap[node.name] = newIndex;
-//
-//				parentIndex = newIndex;
-//			}
-//
-//			for (const auto& child : node.children)
-//				traverse(child, parentIndex);
-//		};
-//
-//	traverse(m_rootNode, -1);
-//}
-
-//glm::mat4 engine::BoneAnimation::getGlobalTransformOfBone(int index) const
-//{
-//	glm::mat4 global = m_skeleton[index].localBindTransform;
-//
-//	int parent = m_skeleton[index].parentIndex;
-//	while (parent != -1)
-//	{
-//		global = m_skeleton[parent].localBindTransform * global;
-//		parent = m_skeleton[parent].parentIndex;
-//	}
-//
-//	return global;
-//}
-//
-//glm::mat4 engine::BoneAnimation::getBoneOffset(int index) const
-//{
-//	return m_skeleton[index].offset;
-//}
-
 
 engine::BoneAnimation::~BoneAnimation()
 {

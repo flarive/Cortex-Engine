@@ -8,7 +8,7 @@
 
 #include "../../include/singleton.h"
 
-void engine::AssimpMeshLoader::loadModel(const std::string& path, bool flipUVs)
+void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
@@ -47,12 +47,13 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool flipUVs)
     processNode(scene->mRootNode, scene);
 
     // m_boneInfoMap is now filled
-    if (m_hasBones)
+    if (m_hasBones && loadAnimation)
     {
-        m_hasAnimations = false; // because no BoneAnimation was loaded
+        // all mixamo models (such as xbot) have a default animation (idle, bindpose, tpose...)
+        m_hasAnimations = scene->HasAnimations();
 
-		// build full skeleton
-        buildSkeletonFromAssimpScene(scene);
+        // build full skeleton
+        buildSkeleton(scene);
         
 		// build a neutral bind-pose animation
         computeBindPoseMatrices();
@@ -441,8 +442,10 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
         aiString str{};
         mat->GetTexture(type, i, &str);
 
+        // TODO use FileSystemManager !!!
         std::string filename = str.C_Str(); // safe conversion
         std::string path = std::format("{}\\{}", this->m_directory, filename);
+        
 
         // Check if texture was already loaded
         bool skip = std::find(m_requestLoadingTextures.begin(), m_requestLoadingTextures.end(), path) != m_requestLoadingTextures.end();
@@ -484,7 +487,7 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
     return "";
 }
 
-void engine::AssimpMeshLoader::buildSkeletonFromAssimpScene(const aiScene* scene)
+void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 {
     m_skeleton.clear();
     m_skeleton.reserve(m_boneInfoMap.size());
@@ -502,8 +505,17 @@ void engine::AssimpMeshLoader::buildSkeletonFromAssimpScene(const aiScene* scene
                 SkeletonBone bone{};
                 bone.name = nodeName;
                 bone.parentIndex = parentIndex;
-                bone.localBindTransform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
                 bone.offset = it->second.offset;
+
+                // get accurate global model rotation and scale (reconstruct bind‑pose transforms from offset matrices)
+                glm::mat4 globalBindPose = glm::inverse(bone.offset);
+
+                glm::mat4 parentGlobal = glm::mat4(1.0f);
+                if (parentIndex != -1)
+                    parentGlobal = glm::inverse(m_skeleton[parentIndex].offset);
+
+                bone.localBindTransform = glm::inverse(parentGlobal) * globalBindPose;
+
 
                 int newIndex = (int)m_skeleton.size();
                 m_skeleton.push_back(bone);
@@ -517,20 +529,6 @@ void engine::AssimpMeshLoader::buildSkeletonFromAssimpScene(const aiScene* scene
         };
 
     traverse(scene->mRootNode, -1);
-}
-
-glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
-{
-    glm::mat4 global = m_skeleton[index].localBindTransform;
-
-    int parent = m_skeleton[index].parentIndex;
-    while (parent != -1)
-    {
-        global = m_skeleton[parent].localBindTransform * global;
-        parent = m_skeleton[parent].parentIndex;
-    }
-
-    return global;
 }
 
 void engine::AssimpMeshLoader::computeBindPoseMatrices()
@@ -547,6 +545,19 @@ void engine::AssimpMeshLoader::computeBindPoseMatrices()
     }
 }
 
+glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
+{
+    glm::mat4 global = m_skeleton[index].localBindTransform;
+
+    int parent = m_skeleton[index].parentIndex;
+    while (parent != -1)
+    {
+        global = m_skeleton[parent].localBindTransform * global;
+        parent = m_skeleton[parent].parentIndex;
+    }
+
+    return global;
+}
 
 engine::AssimpMeshLoader::~AssimpMeshLoader()
 {

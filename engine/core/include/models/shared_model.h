@@ -50,9 +50,9 @@ namespace engine
     class SharedModel : private NonCopyable
     {
     public:
-        SharedModel(bool _gamma, bool _flipUV);
-        SharedModel(const std::string& _path, bool _gamma = false, bool _flipUV = false);
-        SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV);
+        SharedModel(bool _loadAnimation, bool _gamma, bool _flipUV);
+        SharedModel(const std::string& _path, bool _loadAnimation, bool _gamma = false, bool _flipUV = false);
+        SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _loadAnimation, bool _gamma, bool _flipUV);
 
         // at least one virtual method to make it base class
         virtual ~SharedModel();
@@ -115,10 +115,9 @@ namespace engine
 
         bool m_highlight{};
 
-      
 
         std::shared_ptr<Material> m_customMaterial{};
 
-        void loadModel(const std::string& path, bool flipUVs = false);
+        void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false);
     };
 }

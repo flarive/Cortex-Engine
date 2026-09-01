@@ -17,7 +17,7 @@ namespace engine
 		MeshLoader() = default;
 		virtual ~MeshLoader();
 
-		virtual void loadModel(const std::string& path, bool flipUVs) = 0;
+		virtual void loadModel(const std::string& path, bool loadAnimation, bool flipUVs) = 0;
 		
 		static std::unique_ptr<MeshLoader> create(const std::string& path);
 
@@ -52,6 +52,10 @@ namespace engine
 		bool m_hasAnimations{};
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
+
+
+		std::vector<SkeletonBone> m_skeleton{};
+		std::vector<glm::mat4> m_finalBindPoseMatrices{};
 
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);

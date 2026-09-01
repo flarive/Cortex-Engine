@@ -32,7 +32,7 @@ namespace engine
 
 
         // Bind-pose fallback
-        std::vector<glm::mat4> bindPoseMatrices;
+        std::vector<glm::mat4> bindPoseMatrices{};
         bool hasBones = false;
         bool hasAnimations = false;
 

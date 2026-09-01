@@ -89,7 +89,7 @@ void MyScene7::init()
 
 
 
-    auto sharedModel = make_shared<SharedModel>("models/helmet/DamagedHelmet.glTF", false, true);
+    auto sharedModel = make_shared<SharedModel>("models/helmet/DamagedHelmet.glTF", false, false, true);
 
     
 

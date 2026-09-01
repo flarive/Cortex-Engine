@@ -12,13 +12,13 @@
 #include <filesystem>
 #include <string>
 
-engine::SharedModel::SharedModel(bool _gamma, bool _flipUV)
+engine::SharedModel::SharedModel(bool _loadAnimation, bool _gamma, bool _flipUV)
     : m_gammaCorrection(_gamma), m_flipUV(_flipUV)
 {
     logger.trace("SharedModel constructor called");
 }
 
-engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _flipUV)
+engine::SharedModel::SharedModel(const std::string& _path, bool _loadAnimation, bool _gamma, bool _flipUV)
     : m_filePath(_path), m_fileName(FileSystemManager::getFileName(_path)), m_gammaCorrection(_gamma), m_flipUV(_flipUV)
 {
     logger.trace("SharedModel constructor called");
@@ -28,7 +28,7 @@ engine::SharedModel::SharedModel(const std::string& _path, bool _gamma, bool _fl
     loadModel(_path, _flipUV);
 }
 
-engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma, bool _flipUV)
+engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _loadAnimation, bool _gamma, bool _flipUV)
     : m_filePath(_path), m_fileName(FileSystemManager::getFileName(_path)), m_gammaCorrection(_gamma), m_flipUV(_flipUV), m_customMaterial(_material)
 {
     logger.trace("SharedModel constructor called");
@@ -40,14 +40,14 @@ engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr
     loadModel(_path, _flipUV);
 }
 
-void engine::SharedModel::loadModel(const std::string& path, bool flipUVs)
+void engine::SharedModel::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
 
     // Create the right mesh loader according file extension (tinyGLTF for GLTF otherwise Assimp)
     m_meshLoader = MeshLoader::create(path);
-    m_meshLoader->loadModel(path, flipUVs);
+    m_meshLoader->loadModel(path, loadAnimation, flipUVs);
 
     // Stop the timer
     auto end = std::chrono::high_resolution_clock::now();

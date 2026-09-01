@@ -21,12 +21,11 @@ namespace engine
 		~Model();
 
         // constructor, expects a filepath to a 3D model.
-        Model(const std::string& _path, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
-
-        Model(const std::string& _path, const std::shared_ptr<Material>& _material, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::string& _path, bool _loadAnimation = true, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::string& _path, const std::shared_ptr<Material>& _material, bool _loadAnimation = true, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
         // constructor, expects a shared model to be displayed multiple times and loaded only one time.
-        Model(const std::shared_ptr<SharedModel>& _shared_model, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
+        Model(const std::shared_ptr<SharedModel>& _shared_model, bool _loadAnimation = true, bool _gamma = false, bool _flipUVs = false, const glm::vec3& _position = glm::vec3());
 
         ModelType getTypeID() const
         {

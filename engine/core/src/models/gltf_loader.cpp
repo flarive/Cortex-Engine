@@ -9,7 +9,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-void engine::GLtfMeshLoader::loadModel(const std::string& path, bool flipUVs)
+void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // directory + filename
     m_directory = FileSystemManager::getDirectoryPath(path);

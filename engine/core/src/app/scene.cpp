@@ -744,6 +744,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             else if (typeID == ComponentType::light)
             {
                 component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+
+                // TODO !!!! test if tesselation is used/needed
                 component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
             }
             else if (typeID == ComponentType::animator)

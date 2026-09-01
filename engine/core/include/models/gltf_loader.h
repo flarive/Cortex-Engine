@@ -12,7 +12,7 @@ namespace engine
 	public:
 		GLtfMeshLoader() = default;
 		virtual ~GLtfMeshLoader();
-		void loadModel(const std::string& path, bool flipUVs) override;
+		void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false) override;
 
 	private:
 		std::string toStdString(tg3_str s);

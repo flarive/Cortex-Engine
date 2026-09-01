@@ -82,7 +82,7 @@ void MyScene9::init()
 
 
     // helmet model
-    shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, true);
+    shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, false, true);
     auto trsHelmet = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
     auto entityHelmet = make_shared<Entity>("MyHelmet");
     entityHelmet->addComponent<TransformComponent>(trsHelmet);

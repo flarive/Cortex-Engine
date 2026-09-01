@@ -18,8 +18,7 @@ namespace engine
 
 	private:
 		
-		std::vector<SkeletonBone> m_skeleton{};
-		std::vector<glm::mat4> m_finalBindPoseMatrices{};
+
 
 		
 		// processes a node in a recursive fashion.

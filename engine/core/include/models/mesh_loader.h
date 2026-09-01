@@ -53,6 +53,9 @@ namespace engine
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
 
+		std::vector<SkeletonBone> m_skeleton{};
+		std::vector<glm::mat4> m_finalBindPoseMatrices{};
+
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
 	};

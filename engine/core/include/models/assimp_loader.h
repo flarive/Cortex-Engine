@@ -14,7 +14,7 @@ namespace engine
 	public:
 		AssimpMeshLoader() = default;
 		virtual ~AssimpMeshLoader();
-		void loadModel(const std::string& path, bool flipUVs) override;
+		void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false) override;
 
 	private:
 		
@@ -37,7 +37,7 @@ namespace engine
 		std::shared_ptr<Material> loadBlinnPhongMaterial(const aiScene* scene, aiMaterial* mat);
 		std::string getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type);
 
-		void buildSkeletonFromAssimpScene(const aiScene* scene);
+		void buildSkeleton(const aiScene* scene);
 
 
 		glm::mat4 computeGlobalFromSkeleton(int index);

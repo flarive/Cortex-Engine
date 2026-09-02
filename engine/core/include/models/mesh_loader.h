@@ -17,7 +17,7 @@ namespace engine
 		MeshLoader() = default;
 		virtual ~MeshLoader();
 
-		virtual void loadModel(const std::string& path, bool flipUVs) = 0;
+		virtual void loadModel(const std::string& path, bool loadAnimation, bool flipUVs) = 0;
 		
 		static std::unique_ptr<MeshLoader> create(const std::string& path);
 

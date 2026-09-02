@@ -48,6 +48,7 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
 
     shader.use();
     shader.setBool("isAnimated", hasBones());
+
     
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

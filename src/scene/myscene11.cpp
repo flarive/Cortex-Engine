@@ -80,7 +80,7 @@ void MyScene11::init()
 
     // mixamo twist dance model
     auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.4f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
-    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, true);
+    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, true, false, true);
     //auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
     //auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
     //auto mixamoAnimations = std::vector<std::shared_ptr<BoneAnimation>>();

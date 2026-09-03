@@ -25,7 +25,7 @@ engine::SharedModel::SharedModel(const std::string& _path, bool _loadAnimation, 
     
     assert(!_path.empty() && "Model path is empty !");
 
-    loadModel(_path, _flipUV);
+    loadModel(_path, _loadAnimation, _flipUV);
 }
 
 engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr<Material>& _material, bool _loadAnimation, bool _gamma, bool _flipUV)
@@ -37,7 +37,7 @@ engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr
 
     assert(_material && "Material is not defined !");
 
-    loadModel(_path, _flipUV);
+    loadModel(_path, _loadAnimation, _flipUV);
 }
 
 void engine::SharedModel::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)

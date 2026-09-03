@@ -6,6 +6,8 @@
 #include "mesh.h"
 #include "bone.h"
 
+#include <fstream>
+
 namespace engine
 {
 	/// <summary>
@@ -35,6 +37,10 @@ namespace engine
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
 
+
+		void createTrace(const std::string& name);
+		void trace(const std::string& meshName, int vertexIndex, const Vertex& v);
+
 	protected:
 		std::string m_directory{};
 		std::string m_filename{};
@@ -58,5 +64,10 @@ namespace engine
 
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
+
+
+		//temp !!!!!
+		std::ofstream m_stream;
+		int m_vertexCounter{};
 	};
 }

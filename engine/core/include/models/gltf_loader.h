@@ -34,8 +34,8 @@ namespace engine
 		std::string toStdString(tg3_str s);
 		unsigned char* toUChar(tg3_span_u8 span);
 
-
-		std::shared_ptr<Mesh> processMesh(const tg3_mesh& mesh, const tg3_model& raw, int nodeIndex);
+		void processNode(const tg3_model& model);
+		std::shared_ptr<Mesh> processMesh(const tg3_mesh& mesh, const tg3_model& model, int nodeIndex);
 		
 		std::shared_ptr<engine::Material> loadPBRMaterial(uint32_t matIndex, const tg3_model& raw);
 		std::shared_ptr<engine::Material> loadBlinnPhongMaterial(uint32_t matIndex, const tg3_model& raw);

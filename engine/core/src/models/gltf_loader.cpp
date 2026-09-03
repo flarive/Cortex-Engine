@@ -9,6 +9,15 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+// GLTF
+//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
+//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
+
+// Assimp
+//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
+//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
+
+
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // ------------------------------------------------------------
@@ -49,6 +58,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
     const tg3_model& raw = model.raw();
 
+    createTrace("d:\\GLtf_vertices.txt");
 
     // ------------------------------------------------------------
     // 2. Bones?
@@ -148,16 +158,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     // ------------------------------------------------------------
     // 7. Process meshes THROUGH NODES (correct GLTF behavior)
     // ------------------------------------------------------------
-    for (uint32_t i = 0; i < raw.nodes_count; ++i)
-    {
-        const tg3_node& n = raw.nodes[i];
-
-        if (n.mesh >= 0)
-        {
-            const tg3_mesh& mesh = raw.meshes[n.mesh];
-            processMesh(mesh, raw, (int)i);   // pass node index
-        }
-    }
+    processNode(raw);
 
     // ------------------------------------------------------------
     // 8. Finalize mesh bone data  (only if skin exists)
@@ -176,7 +177,21 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     }
 }
 
-std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh& mesh, const tg3_model& raw, int nodeIndex)
+void engine::GLtfMeshLoader::processNode(const tg3_model& model)
+{
+    for (uint32_t i = 0; i < model.nodes_count; ++i)
+    {
+        const tg3_node& node = model.nodes[i];
+
+        if (node.mesh >= 0)
+        {
+            const tg3_mesh& mesh = model.meshes[node.mesh];
+            m_meshes.push_back(processMesh(mesh, model, (int)i));
+        }
+    }
+}
+
+std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh& mesh, const tg3_model& model, int nodeIndex)
 {
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -232,10 +247,10 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         const bool hasTangents = (tanIndex != UINT32_MAX);
         const bool hasTexCoords = (uvIndex != UINT32_MAX);
 
-        const tg3_accessor& posAcc = raw.accessors[posIndex];
-        const tg3_accessor& norAcc = raw.accessors[norIndex];
-        const tg3_accessor& tanAcc = raw.accessors[tanIndex];
-        const tg3_accessor& uvAcc = raw.accessors[uvIndex];
+        const tg3_accessor& posAcc = model.accessors[posIndex];
+        const tg3_accessor& norAcc = model.accessors[norIndex];
+        const tg3_accessor& tanAcc = model.accessors[tanIndex];
+        const tg3_accessor& uvAcc = model.accessors[uvIndex];
 
         const float* positions = nullptr;
         const float* normals = nullptr;
@@ -247,32 +262,32 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         // ------------------------------------------------------------
         if (hasPosition)
         {
-            const tg3_buffer_view& view = raw.buffer_views[posAcc.buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[posAcc.buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             positions = reinterpret_cast<const float*>(
                 buf.data.data + view.byte_offset + posAcc.byte_offset);
         }
 
         if (hasNormals)
         {
-            const tg3_buffer_view& view = raw.buffer_views[norAcc.buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[norAcc.buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             normals = reinterpret_cast<const float*>(
                 buf.data.data + view.byte_offset + norAcc.byte_offset);
         }
 
         if (hasTangents)
         {
-            const tg3_buffer_view& view = raw.buffer_views[tanAcc.buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[tanAcc.buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             tangents = reinterpret_cast<const float*>(
                 buf.data.data + view.byte_offset + tanAcc.byte_offset);
         }
 
         if (hasTexCoords)
         {
-            const tg3_buffer_view& view = raw.buffer_views[uvAcc.buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[uvAcc.buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             texcoords = reinterpret_cast<const float*>(
                 buf.data.data + view.byte_offset + uvAcc.byte_offset);
         }
@@ -298,8 +313,8 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         const bool hasJoints = (jointsIndex != UINT32_MAX);
         const bool hasWeights = (weightsIndex != UINT32_MAX);
 
-        const tg3_accessor* jointsAcc = hasJoints ? &raw.accessors[jointsIndex] : nullptr;
-        const tg3_accessor* weightsAcc = hasWeights ? &raw.accessors[weightsIndex] : nullptr;
+        const tg3_accessor* jointsAcc = hasJoints ? &model.accessors[jointsIndex] : nullptr;
+        const tg3_accessor* weightsAcc = hasWeights ? &model.accessors[weightsIndex] : nullptr;
 
 
         const float* weightsF = nullptr;
@@ -308,8 +323,8 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         if (weightsAcc)
         {
-            const tg3_buffer_view& view = raw.buffer_views[weightsAcc->buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[weightsAcc->buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             const uint8_t* base = buf.data.data + view.byte_offset + weightsAcc->byte_offset;
 
             if (weightsAcc->component_type == TG3_COMPONENT_TYPE_FLOAT)
@@ -325,8 +340,8 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         if (jointsAcc)
         {
-            const tg3_buffer_view& view = raw.buffer_views[jointsAcc->buffer_view];
-            const tg3_buffer& buf = raw.buffers[view.buffer];
+            const tg3_buffer_view& view = model.buffer_views[jointsAcc->buffer_view];
+            const tg3_buffer& buf = model.buffers[view.buffer];
             const uint8_t* base = buf.data.data + view.byte_offset + jointsAcc->byte_offset;
 
             if (jointsAcc->component_type == TG3_COMPONENT_TYPE_UNSIGNED_SHORT)
@@ -339,7 +354,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         // ------------------------------------------------------------
         // Vertex assembly + transform
         // ------------------------------------------------------------
-        for (uint32_t i = 0; i < posAcc.count; ++i)
+        for (uint64_t i = 0; i < posAcc.count; ++i)
         {
             Vertex v{ glm::vec3(0.0f) };
 
@@ -389,9 +404,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 );
             }
 
-            vertices.push_back(std::move(v));
-
-
             // Bones
             if (m_hasBones && (joints16 || joints8) && (weightsF || weights8 || weights16))
             {
@@ -401,23 +413,26 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                         joints16 ? int(joints16[i * 4 + k])
                         : int(joints8[i * 4 + k]);
 
-                    float w =
+                    float weight =
                         weightsF ? weightsF[i * 4 + k] :
                         weights8 ? float(weights8[i * 4 + k]) / 255.0f :
                         float(weights16[i * 4 + k]) / 65535.0f;
 
-                    if (w > 0.0f)
-                        setVertexBoneData(vertices[i], jointIndex, w);
+                    setVertexBoneData(v, jointIndex, weight);
                 }
             }
+
+            trace(toStdString(mesh.name), i, v);
+
+            vertices.push_back(std::move(v));
         }
 
         // ------------------------------------------------------------
         // Indices
         // ------------------------------------------------------------
-        const tg3_accessor& idxAcc = raw.accessors[prim.indices];
-        const tg3_buffer_view& idxView = raw.buffer_views[idxAcc.buffer_view];
-        const tg3_buffer& idxBuf = raw.buffers[idxView.buffer];
+        const tg3_accessor& idxAcc = model.accessors[prim.indices];
+        const tg3_buffer_view& idxView = model.buffer_views[idxAcc.buffer_view];
+        const tg3_buffer& idxBuf = model.buffers[idxView.buffer];
 
         const uint8_t* idxPtr = idxBuf.data.data + idxView.byte_offset + idxAcc.byte_offset;
 
@@ -442,15 +457,18 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         std::shared_ptr<engine::Material> mat{};
 
         if (sceneSettings.method == RenderMethod::PBR)
-            mat = loadPBRMaterial(prim.material, raw);
+            mat = loadPBRMaterial(prim.material, model);
         else
-            mat = loadBlinnPhongMaterial(prim.material, raw);
+            mat = loadBlinnPhongMaterial(prim.material, model);
 
         m_materials.push_back(mat);
 
         if (mat->hasTextureMap())
             mat->loadTexturesAsync(false);
     }
+
+
+    logger.info("Mesh {} vertices {} / indices {}", toStdString(mesh.name), vertices.size(), indices.size());
 
     // ------------------------------------------------------------
     // Create Mesh
@@ -461,8 +479,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         std::move(indices),
         m_materials.back()
     );
-
-    m_meshes.push_back(meshPtr);
 
     return meshPtr;
 }

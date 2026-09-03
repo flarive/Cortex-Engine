@@ -8,6 +8,10 @@
 
 #include "../../include/singleton.h"
 
+
+//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
+//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
+
 void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // read file via ASSIMP
@@ -42,6 +46,8 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
 
         m_numberOfVertices += mesh->mNumVertices;
     }
+
+    createTrace("d:\\Assimp_vertices.txt");
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
@@ -209,9 +215,12 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     if (m_materials.back()->hasTextureMap())
         m_materials.back()->loadTexturesAsync(false);
 
-    // load bones
+    // load boneIds and weights
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
+
+
+    logger.info("Mesh {} vertices {} / indices {}", mesh->mName.C_Str(), vertices.size(), indices.size());
 
     // return a mesh object created from the extracted mesh data
     return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
@@ -248,7 +257,10 @@ void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>&
             int vertexId = weights[weightIndex].mVertexId;
             float weight = weights[weightIndex].mWeight;
             assert(vertexId <= vertices.size());
+
             setVertexBoneData(vertices[vertexId], boneID, weight);
+
+            trace(mesh->mName.C_Str(), vertexId, vertices[vertexId]);
         }
     }
 }

@@ -7,6 +7,9 @@
 
 #include <algorithm>
 
+
+
+
 std::unique_ptr<engine::MeshLoader> engine::MeshLoader::create(const std::string& path)
 {
     std::string ext = FileSystemManager::getFileExt(path);
@@ -41,6 +44,32 @@ void engine::MeshLoader::setVertexBoneData(Vertex& vertex, int boneID, float wei
     }
 }
 
+void engine::MeshLoader::createTrace(const std::string& name)
+{
+    m_stream.open(name, std::ios::app);
+
+    if (!m_stream.is_open()) {
+        logger.error("Failed to open trace");
+    }
+}
+
+void engine::MeshLoader::trace(const std::string& meshName, int vertexIndex, const Vertex& v)
+{
+    if (m_stream) {
+        m_stream << "### " << meshName << " " << vertexIndex << " " << m_vertexCounter
+            << " vpos:" << v.position.x << "/" << v.position.y << "/" << v.position.z
+            << " vnor:" << v.normal.x << "/" << v.normal.y << "/" << v.normal.z
+            << " vtan:" << v.tangent.x << "/" << v.tangent.y << "/" << v.tangent.z
+            << " vbtan:" << v.bitangent.x << "/" << v.bitangent.y << "/" << v.bitangent.z
+            << " vtex:" << v.texCoords.x << "/" << v.texCoords.y
+            << " vboneId:" << v.boneIDs[0] << "/" << v.boneIDs[1] << "/" << v.boneIDs[2] << "/" << v.boneIDs[3]
+            << " vweight:" << v.weights[0] << "/" << v.weights[1] << "/" << v.weights[2] << "/" << v.weights[3]
+            << std::endl;
+    }
+
+    m_vertexCounter++;
+}
+
 engine::MeshLoader::~MeshLoader()
 {
     logger.trace("MeshLoader destructor called");
@@ -60,4 +89,8 @@ engine::MeshLoader::~MeshLoader()
     m_materials.clear(); // TODO !!!!!!!!!!!!!!!!!!!!!!!
 
     m_boneInfoMap.clear();
+
+
+    if (m_stream.is_open())
+        m_stream.close();
 }

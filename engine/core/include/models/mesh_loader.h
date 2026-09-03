@@ -6,7 +6,7 @@
 #include "mesh.h"
 #include "bone.h"
 
-#include <fstream>
+//#include <fstream>
 
 namespace engine
 {
@@ -38,8 +38,8 @@ namespace engine
 		bool& hasAnimations() { return m_hasAnimations; }
 
 
-		void createTrace(const std::string& name);
-		void trace(const std::string& meshName, int vertexIndex, const Vertex& v);
+		//void createTrace(const std::string& name);
+		//void trace(const std::string& meshName, int vertexIndex, const Vertex& v);
 
 	protected:
 		std::string m_directory{};
@@ -55,7 +55,7 @@ namespace engine
 		std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
 		bool m_hasBones{};
-		bool m_hasAnimations{};
+		bool m_hasAnimations{ false };
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
 
@@ -67,7 +67,7 @@ namespace engine
 
 
 		//temp !!!!!
-		std::ofstream m_stream;
-		int m_vertexCounter{};
+		//std::ofstream m_stream;
+		//int m_vertexCounter{};
 	};
 }

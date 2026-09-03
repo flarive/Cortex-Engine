@@ -17,7 +17,11 @@ namespace engine
 		glm::mat4 global;
 	};
 
-
+	struct GLTFSkin
+	{
+		std::vector<int> joints;        // glTF node indices
+		std::vector<glm::mat4> inverseBindMatrices;
+	};
 
 	
 	class GLtfMeshLoader final : public MeshLoader
@@ -29,6 +33,11 @@ namespace engine
 
 	private:
 		std::vector<GLTFNode> m_nodes{};
+
+
+
+		std::vector<int> m_jointToBone{};     // size = skin.joints.size()
+
 
 		
 		std::string toStdString(tg3_str s);

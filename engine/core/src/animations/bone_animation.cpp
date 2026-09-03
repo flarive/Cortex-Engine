@@ -14,9 +14,9 @@ engine::BoneAnimation::BoneAnimation(const std::string& animationName, const std
 {
 	logger.trace("BoneAnimation constructor called");
 
-	//importBoneAnimationFromAssimp(animationPath, model);
+	importBoneAnimationFromAssimp(animationPath, model);
 	
-	importBoneAnimationFromGLTF(animationPath, model);
+	//importBoneAnimationFromGLTF(animationPath, model);
 }
 
 void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& animationPath, std::shared_ptr<Model> model)
@@ -42,9 +42,7 @@ void engine::BoneAnimation::importBoneAnimationFromAssimp(const std::string& ani
 	readMissingBonesFromAssimp(animation, *model.get());
 }
 
-void engine::BoneAnimation::importBoneAnimationFromGLTF(
-	const std::string& animationPath,
-	std::shared_ptr<Model> model)
+void engine::BoneAnimation::importBoneAnimationFromGLTF(const std::string& animationPath, std::shared_ptr<Model> model)
 {
 	tinygltf3::Model gltfModel;
 

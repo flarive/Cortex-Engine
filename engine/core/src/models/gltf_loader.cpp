@@ -9,15 +9,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-// GLTF
-//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
-//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
-
-// Assimp
-//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
-//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
-
-
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     // ------------------------------------------------------------
@@ -58,7 +49,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
     const tg3_model& raw = model.raw();
 
-    createTrace("d:\\GLtf_vertices.txt");
+    //createTrace("d:\\GLtf_vertices.txt");
 
     // ------------------------------------------------------------
     // 2. Bones?
@@ -351,6 +342,14 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         }
 
 
+
+        // Before vertex loop, decide if this primitive is actually skinned
+        const bool primHasSkin = hasJoints && hasWeights;
+
+
+
+
+
         // ------------------------------------------------------------
         // Vertex assembly + transform
         // ------------------------------------------------------------
@@ -358,71 +357,72 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         {
             Vertex v{ glm::vec3(0.0f) };
 
-            if (m_hasBones)
+            if (primHasSkin)
+            {
+                setVertexBoneDataToDefault(v); // will be filled by JOINTS_0 / WEIGHTS_0
+            }
+            else
+            {
+                // Rigid mesh: bind to bone 0 with full weight
                 setVertexBoneDataToDefault(v);
+                setVertexBoneData(v, 0, 1.0f);
+            }
 
-            // Position (apply node transform)
-            glm::vec3 localPos(
-                positions[i * 3 + 0],
-                positions[i * 3 + 1],
-                positions[i * 3 + 2]
-            );
 
-            //v.position = glm::vec3(modelMatrix * glm::vec4(localPos, 1.0f));
-            v.position = localPos;
+            // Position
+            v.position = glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]);
 
             // Normal
             if (hasNormals && normals)
             {
-                glm::vec3 localN(
-                    normals[i * 3 + 0],
-                    normals[i * 3 + 1],
-                    normals[i * 3 + 2]
-                );
-                //v.normal = glm::normalize(normalMatrix * localN);
-                v.normal = localN;
+                v.normal = glm::vec3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]);
             }
 
             // Tangent
             if (hasTangents && tangents)
             {
-                glm::vec3 localT(
-                    tangents[i * 4 + 0],
-                    tangents[i * 4 + 1],
-                    tangents[i * 4 + 2]
-                );
-                //v.tangent = glm::normalize(normalMatrix * localT);
-                v.tangent = localT;
+                v.tangent = glm::vec3(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2]);
             }
+
+            // Bitangent ?
 
             // UV
             if (hasTexCoords && texcoords)
             {
-                v.texCoords = glm::vec2(
-                    texcoords[i * 2 + 0],
-                    texcoords[i * 2 + 1]
-                );
+                v.texCoords = glm::vec2(texcoords[i * 2 + 0], texcoords[i * 2 + 1]);
             }
 
-            // Bones
-            if (m_hasBones && (joints16 || joints8) && (weightsF || weights8 || weights16))
+            // BoneIDs and weights
+            if (m_hasBones && hasJoints && hasWeights)
             {
+                setVertexBoneDataToDefault(v);
+
                 for (int k = 0; k < 4; ++k)
                 {
                     int jointIndex =
-                        joints16 ? int(joints16[i * 4 + k])
-                        : int(joints8[i * 4 + k]);
+                        joints16 ? int(joints16[i * 4 + k]) :
+                        joints8 ? int(joints8[i * 4 + k]) :
+                        -1;
+
+                    if (jointIndex < 0 || jointIndex >= (int)m_jointToBone.size())
+                        continue;
 
                     float weight =
                         weightsF ? weightsF[i * 4 + k] :
                         weights8 ? float(weights8[i * 4 + k]) / 255.0f :
-                        float(weights16[i * 4 + k]) / 65535.0f;
+                        weights16 ? float(weights16[i * 4 + k]) / 65535.0f :
+                        0.0f;
 
-                    setVertexBoneData(v, jointIndex, weight);
+                    if (weight <= 0.0f)
+                        continue;
+
+                    int boneID = m_jointToBone[jointIndex];
+
+                    setVertexBoneData(v, boneID, weight);
                 }
             }
 
-            trace(toStdString(mesh.name), i, v);
+            //trace(toStdString(mesh.name), i, v);
 
             vertices.push_back(std::move(v));
         }
@@ -467,8 +467,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
             mat->loadTexturesAsync(false);
     }
 
-
-    logger.info("Mesh {} vertices {} / indices {}", toStdString(mesh.name), vertices.size(), indices.size());
+    //logger.info("Mesh {} vertices {} / indices {}", toStdString(mesh.name), vertices.size(), indices.size());
 
     // ------------------------------------------------------------
     // Create Mesh
@@ -882,6 +881,9 @@ void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
             buf.data.data + view.byte_offset + ibmAcc.byte_offset
             );
 
+        // Resize mapping for this skin
+        m_jointToBone.resize(skin.joints_count);
+
         for (uint32_t j = 0; j < skin.joints_count; ++j)
         {
             int nodeIndex = skin.joints[j];
@@ -890,20 +892,21 @@ void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
             std::string boneName = toStdString(node.name);
 
             BoneInfo info{};
-            info.id = j;  // match JOINTS_0 indices
-
+            info.id = j;  // JOINTS_0 indices match this
 
             glm::mat4 ibm{};
             memcpy(glm::value_ptr(ibm), ibmData + j * 16, sizeof(float) * 16);
-
             info.offset = ibm;
 
             m_boneInfoMap[boneName] = info;
+
+            m_jointToBone[j] = info.id;
 
             m_boneCounter = std::max(m_boneCounter, (int)skin.joints_count);
         }
     }
 }
+
 
 glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
 {
@@ -949,11 +952,13 @@ void engine::GLtfMeshLoader::computeBindPoseMatrices()
     for (auto& kv : m_boneInfoMap)
     {
         const BoneInfo& info = kv.second;
-        m_finalBindPoseMatrices.push_back(info.offset); // GLTF inverse bind matrix
+
+        // Bind‑pose skinning matrix should be identity
+        glm::mat4 skinMat = glm::mat4(1.0f);
+
+        m_finalBindPoseMatrices.push_back(skinMat);
     }
 }
-
-
 
 engine::GLtfMeshLoader::~GLtfMeshLoader()
 {

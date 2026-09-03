@@ -47,7 +47,7 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
         m_numberOfVertices += mesh->mNumVertices;
     }
 
-    createTrace("d:\\Assimp_vertices.txt");
+    //createTrace("d:\\Assimp_vertices.txt");
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
@@ -119,9 +119,6 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     {
         Vertex vertex{ glm::vec3(0.0f, 0.0f, 0.0f) };
 
-        glm::vec3 vector{}; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
-
-
         if (m_hasBones)
             setVertexBoneDataToDefault(vertex);
 
@@ -135,22 +132,15 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
         // texture coordinates
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
-            glm::vec2 vec{};
             // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
             // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-            vec.x = mesh->mTextureCoords[0][i].x;
-            vec.y = mesh->mTextureCoords[0][i].y;
-            vertex.texCoords = vec;
+            vertex.texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+            
             // tangent
-            vector.x = mesh->mTangents[i].x;
-            vector.y = mesh->mTangents[i].y;
-            vector.z = mesh->mTangents[i].z;
-            vertex.tangent = vector;
+            vertex.tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+            
             // bitangent
-            vector.x = mesh->mBitangents[i].x;
-            vector.y = mesh->mBitangents[i].y;
-            vector.z = mesh->mBitangents[i].z;
-            vertex.bitangent = vector;
+            vertex.bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
         }
         else
         {
@@ -220,7 +210,7 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
         extractBoneWeightForVertices(vertices, mesh, scene);
 
 
-    logger.info("Mesh {} vertices {} / indices {}", mesh->mName.C_Str(), vertices.size(), indices.size());
+    //logger.info("Mesh {} vertices {} / indices {}", mesh->mName.C_Str(), vertices.size(), indices.size());
 
     // return a mesh object created from the extracted mesh data
     return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
@@ -260,7 +250,7 @@ void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>&
 
             setVertexBoneData(vertices[vertexId], boneID, weight);
 
-            trace(mesh->mName.C_Str(), vertexId, vertices[vertexId]);
+            //trace(mesh->mName.C_Str(), vertexId, vertices[vertexId]);
         }
     }
 }

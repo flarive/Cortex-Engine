@@ -183,7 +183,7 @@ void engine::BonesAnimator::calculateBoneTransform(const AnimNodeData* node, glm
 
 		if (keyExists)
 		{
-			auto& boneInfoMap = currentBoneAnimation->getBoneIDMap();
+			auto& boneInfoMap = currentBoneAnimation->getBonesInfoMap();
 
 			auto it = boneInfoMap.find(nodeName);
 			if (it != boneInfoMap.end())

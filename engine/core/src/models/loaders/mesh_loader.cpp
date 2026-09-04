@@ -1,22 +1,25 @@
-#include "../../include/models/mesh_loader.h"
-#include "../../include/models/assimp_loader.h"
-#include "../../include/models/gltf_loader.h"
+#include "../../../include/models/loaders/mesh_loader.h"
+#include "../../../include/models/loaders/assimp_mesh_loader.h"
+#include "../../../include/models/loaders/tinygltf_mesh_loader.h"
 
-#include "../../include/managers/log_manager.h"
-#include "../../include/managers/filesystem_manager.h"
+#include "../../../include/managers/log_manager.h"
+#include "../../../include/managers/filesystem_manager.h"
 
 #include <algorithm>
 
 
-
+engine::MeshLoader::MeshLoader()
+{
+    logger.trace("MeshLoader constructor called");
+}
 
 std::unique_ptr<engine::MeshLoader> engine::MeshLoader::create(const std::string& path)
 {
     std::string ext = FileSystemManager::getFileExt(path);
 
     // Use tinyGLTF for GLTF (more features than Assimp)
-    //if (ext == "gltf" || ext == "glb")
-    //    return std::make_unique<engine::GLtfMeshLoader>();
+    if (ext == "gltf" || ext == "glb")
+        return std::make_unique<engine::GLtfMeshLoader>();
 
     // Assimp supports many formats: obj, fbx, dae, ply, 3ds, etc.
     return std::make_unique<engine::AssimpMeshLoader>();
@@ -43,7 +46,7 @@ void engine::MeshLoader::setVertexBoneData(Vertex& vertex, int boneID, float wei
         }
     }
 }
-//
+
 //void engine::MeshLoader::createTrace(const std::string& name)
 //{
 //    m_stream.open(name, std::ios::app);
@@ -52,7 +55,7 @@ void engine::MeshLoader::setVertexBoneData(Vertex& vertex, int boneID, float wei
 //        logger.error("Failed to open trace");
 //    }
 //}
-//
+
 //void engine::MeshLoader::trace(const std::string& meshName, int vertexIndex, const Vertex& v)
 //{
 //    if (m_stream) {

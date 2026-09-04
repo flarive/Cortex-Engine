@@ -15,6 +15,8 @@ namespace engine
 
 		glm::mat4 local;
 		glm::mat4 global;
+
+		std::string name;
 	};
 
 	class GLtfMeshLoader final : public MeshLoader
@@ -28,6 +30,8 @@ namespace engine
 		std::vector<GLTFNode> m_nodes{};
 		std::vector<int> m_jointToBone{};
 
+
+		
 
 		
 		std::string toStdString(tg3_str s);

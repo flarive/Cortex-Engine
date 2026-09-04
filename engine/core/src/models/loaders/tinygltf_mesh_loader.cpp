@@ -1,10 +1,10 @@
-#include "../../include/models/gltf_loader.h"
+#include "../../../include/models/loaders/tinygltf_mesh_loader.h"
 
-#include "../../include/managers/log_manager.h"
-#include "../../include/managers/filesystem_manager.h"
-#include "../../include/managers/texture_manager.h"
+#include "../../../include/managers/log_manager.h"
+#include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/managers/texture_manager.h"
 
-#include "../../include/singleton.h"
+#include "../../../include/singleton.h"
 
 
 #include <glm/gtc/type_ptr.hpp>
@@ -108,6 +108,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
         node.index = i;
         node.parent = -1;
         node.local = getNodeLocalTransform(n);
+        node.name = toStdString(n.name);
 
         // children
         for (uint32_t c = 0; c < n.children_count; ++c)
@@ -871,6 +872,9 @@ void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
     for (uint32_t s = 0; s < raw.skins_count; ++s)
     {
         const tg3_skin& skin = raw.skins[s];
+
+        m_skeletonRootIndex = skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0];
+
 
         // inverse bind matrices
         const tg3_accessor& ibmAcc = raw.accessors[skin.inverse_bind_matrices];

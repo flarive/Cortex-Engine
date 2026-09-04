@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../misc/noncopyable.h"
-#include "../common_defines.h"
+#include "../../misc/noncopyable.h"
+#include "../../common_defines.h"
 
-#include "mesh.h"
-#include "bone.h"
+#include "../mesh.h"
+#include "../bone.h"
+
 
 //#include <fstream>
 
@@ -16,7 +17,7 @@ namespace engine
 	class MeshLoader : public NonCopyable
 	{
 	public:
-		MeshLoader() = default;
+		MeshLoader();
 		virtual ~MeshLoader();
 
 		virtual void loadModel(const std::string& path, bool loadAnimation, bool flipUVs) = 0;
@@ -36,6 +37,8 @@ namespace engine
 		int& getBoneCount() { return m_boneCounter; }
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
+
+		unsigned int getSkeletonRootIndex() const { return m_skeletonRootIndex; }
 
 
 		//void createTrace(const std::string& name);
@@ -58,6 +61,8 @@ namespace engine
 		bool m_hasAnimations{ false };
 		std::map<std::string, BoneInfo> m_boneInfoMap{};
 		int m_boneCounter{};
+
+		unsigned int m_skeletonRootIndex{};
 
 		std::vector<SkeletonBone> m_skeleton{};
 		std::vector<glm::mat4> m_finalBindPoseMatrices{};

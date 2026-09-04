@@ -1,16 +1,14 @@
-#include "../../include/models/assimp_loader.h"
+#include "../../../include/models/loaders/assimp_mesh_loader.h"
 
-#include "../../include/managers/log_manager.h"
-#include "../../include/managers/filesystem_manager.h"
-#include "../../include/managers/texture_manager.h"
+#include "../../../include/managers/log_manager.h"
+#include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/managers/texture_manager.h"
 
-#include "../../include/models/assimp_glm_helpers.h"
+#include "../../../include/models/loaders/assimp_glm_helpers.h"
 
-#include "../../include/singleton.h"
+#include "../../../include/singleton.h"
 
 
-//[cortex][info] Mesh Beta_Joints vertices 12473 / indices 62520
-//[cortex][info] Mesh Beta_Surface vertices 15901 / indices 84816
 
 void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
@@ -60,7 +58,7 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
 
         // build full skeleton
         buildSkeleton(scene);
-        
+
 		// build a neutral bind-pose animation
         computeBindPoseMatrices();
 
@@ -489,12 +487,58 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
     return "";
 }
 
+//void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
+//{
+//    m_skeleton.clear();
+//    m_skeleton.reserve(m_boneInfoMap.size());
+//
+//    std::unordered_map<std::string, int> boneIndexMap;
+//
+//    std::function<void(const aiNode*, int)> traverse =
+//        [&](const aiNode* node, int parentIndex)
+//        {
+//            std::string nodeName = node->mName.C_Str();
+//            auto it = m_boneInfoMap.find(nodeName);
+//
+//            if (it != m_boneInfoMap.end())
+//            {
+//                SkeletonBone bone{};
+//                bone.name = nodeName;
+//                bone.parentIndex = parentIndex;
+//                bone.offset = it->second.offset;
+//
+//                // get accurate global model rotation and scale (reconstruct bind‑pose transforms from offset matrices)
+//                glm::mat4 globalBindPose = glm::inverse(bone.offset);
+//
+//                glm::mat4 parentGlobal = glm::mat4(1.0f);
+//                if (parentIndex != -1)
+//                    parentGlobal = glm::inverse(m_skeleton[parentIndex].offset);
+//
+//                bone.localBindTransform = glm::inverse(parentGlobal) * globalBindPose;
+//
+//
+//                int newIndex = (int)m_skeleton.size();
+//                m_skeleton.push_back(bone);
+//                boneIndexMap[nodeName] = newIndex;
+//
+//                parentIndex = newIndex;
+//            }
+//
+//            for (unsigned int i = 0; i < node->mNumChildren; i++)
+//                traverse(node->mChildren[i], parentIndex);
+//        };
+//
+//    traverse(scene->mRootNode, -1);
+//}
+
 void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 {
     m_skeleton.clear();
     m_skeleton.reserve(m_boneInfoMap.size());
 
     std::unordered_map<std::string, int> boneIndexMap;
+
+    bool rootSet = false;
 
     std::function<void(const aiNode*, int)> traverse =
         [&](const aiNode* node, int parentIndex)
@@ -504,12 +548,18 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 
             if (it != m_boneInfoMap.end())
             {
+                // FIRST bone encountered = skeleton root
+                if (!rootSet)
+                {
+                    m_skeletonRootIndex = it->second.id;
+                    rootSet = true;
+                }
+
                 SkeletonBone bone{};
                 bone.name = nodeName;
                 bone.parentIndex = parentIndex;
                 bone.offset = it->second.offset;
 
-                // get accurate global model rotation and scale (reconstruct bind‑pose transforms from offset matrices)
                 glm::mat4 globalBindPose = glm::inverse(bone.offset);
 
                 glm::mat4 parentGlobal = glm::mat4(1.0f);
@@ -517,7 +567,6 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
                     parentGlobal = glm::inverse(m_skeleton[parentIndex].offset);
 
                 bone.localBindTransform = glm::inverse(parentGlobal) * globalBindPose;
-
 
                 int newIndex = (int)m_skeleton.size();
                 m_skeleton.push_back(bone);

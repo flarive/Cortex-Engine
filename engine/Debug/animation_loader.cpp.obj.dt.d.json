@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\flarive\\documents\\vs2022\\projects\\logl\\engine\\core\\src\\animations\\loaders\\animation_loader.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\flarive\\documents\\vs2022\\projects\\logl\\engine\\core\\include\\animations\\loaders\\animation_loader.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

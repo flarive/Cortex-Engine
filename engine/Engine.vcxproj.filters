@@ -256,6 +256,12 @@
     <Filter Include="headers\core\ecs\system">
       <UniqueIdentifier>{44aa0861-7677-4805-a68e-a4aca6abb644}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\core\animations\loaders">
+      <UniqueIdentifier>{076fcf0a-9d41-4c43-94e6-b5321b1f7bef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\animations\loaders">
+      <UniqueIdentifier>{de8d19da-e6c6-4533-a236-40ab6c3c8319}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -588,17 +594,26 @@
     <ClCompile Include="core\src\editor\widgets\mesh_widget.cpp">
       <Filter>sources\core\editor\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\models\assimp_loader.cpp">
-      <Filter>sources\core\models\loaders</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\models\mesh_loader.cpp">
-      <Filter>sources\core\models\loaders</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\models\gltf_loader.cpp">
-      <Filter>sources\core\models\loaders</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\tinygltf\tiny_gltf_v3.c">
       <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\loaders\animation_loader.cpp">
+      <Filter>sources\core\animations\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\loaders\assimp_animation_loader.cpp">
+      <Filter>sources\core\animations\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\animations\loaders\tinygltf_animation_loader.cpp">
+      <Filter>sources\core\animations\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\loaders\tinygltf_mesh_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\loaders\assimp_mesh_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\loaders\mesh_loader.cpp">
+      <Filter>sources\core\models\loaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -983,16 +998,25 @@
     <ClInclude Include="core\include\editor\widgets\mesh_widget.h">
       <Filter>headers\core\editor\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\assimp_glm_helpers.h">
+    <ClInclude Include="core\include\animations\loaders\assimp_animation_loader.h">
+      <Filter>headers\core\animations\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animations\loaders\animation_loader.h">
+      <Filter>headers\core\animations\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\animations\loaders\tinygltf_animation_loader.h">
+      <Filter>headers\core\animations\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\loaders\assimp_glm_helpers.h">
       <Filter>headers\core\models\loaders</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\assimp_loader.h">
+    <ClInclude Include="core\include\models\loaders\assimp_mesh_loader.h">
       <Filter>headers\core\models\loaders</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\mesh_loader.h">
+    <ClInclude Include="core\include\models\loaders\mesh_loader.h">
       <Filter>headers\core\models\loaders</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\models\gltf_loader.h">
+    <ClInclude Include="core\include\models\loaders\tinygltf_mesh_loader.h">
       <Filter>headers\core\models\loaders</Filter>
     </ClInclude>
   </ItemGroup>

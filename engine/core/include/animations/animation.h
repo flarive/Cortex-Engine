@@ -8,7 +8,7 @@
 
 #include "../models/model.h"
 #include "../models/bone.h"
-#include "../models/assimp_glm_helpers.h"
+#include "../models/loaders/assimp_glm_helpers.h"
 
 
 namespace engine

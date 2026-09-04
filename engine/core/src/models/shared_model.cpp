@@ -5,7 +5,7 @@
 #include "../../include/managers/filesystem_manager.h"
 #include "../../include/tools/helpers.h"
 
-#include "../../include/models/assimp_glm_helpers.h"
+#include "../../include/models/loaders/assimp_glm_helpers.h"
 
 #include "../../include/singleton.h"
 
@@ -124,6 +124,14 @@ bool engine::SharedModel::hasAnimations()
         return m_meshLoader->hasAnimations();
 
     return false;
+}
+
+unsigned int engine::SharedModel::getSkeletonRootIndex() const
+{
+    if (m_meshLoader)
+        return m_meshLoader->getSkeletonRootIndex();
+
+    return -1;
 }
 
 void engine::SharedModel::reSetup()

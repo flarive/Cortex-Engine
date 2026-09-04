@@ -12,7 +12,7 @@
 
 #include "../managers/filesystem_manager.h"
 
-#include "mesh_loader.h"
+#include "loaders/mesh_loader.h"
 
 #include <omp.h> // Include OpenMP header
 
@@ -84,6 +84,8 @@ namespace engine
 		bool hasAnimations();
         int getBoneCount();
         std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
+
+        unsigned int getSkeletonRootIndex() const;
         
 
         bool& getFlipUV() { return m_flipUV; }

@@ -80,25 +80,7 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
 	const tg3_skin& skin = raw.skins[0];
 
 	// Determine skeleton root
-	//uint32_t skeletonRootIndex;
-	//if (skin.skeleton != UINT32_MAX)
-	//{
-	//	skeletonRootIndex = skin.skeleton;
-	//}
-	//else
-	//{
-	//	// If no explicit skeleton root, use first joint as root
-	//	skeletonRootIndex = skin.joints[0];
-	//}
-
-	//const tg3_node& skeletonRootNode = raw.nodes[skeletonRootIndex];
-	//readHierarchyDataFromGLTF(m_rootNode, raw, skeletonRootNode);
-
-	//// --- Bones / animation channels ---
-	//readMissingBonesFromGLTF(raw, animation, *model.get());
-
-
-
+	// HARD CODED !!!!!!!!!!!!!!!!!!!!!!!
 	// Try to find an "Armature" node to match Assimp
 	int armatureNodeIndex = -1;
 	for (uint32_t i = 0; i < raw.nodes_count; ++i)
@@ -126,26 +108,19 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
 			skeletonRootIndex = skin.joints[0];
 	}
 
+	// Should get ROOT from here !!!!!!!!!!!!!
 	//unsigned int skeletonRootIndex = model->getSkeletonRootIndex();
 
 	const tg3_node& skeletonRootNode = raw.nodes[skeletonRootIndex];
-	readHierarchyData(m_rootNode, raw, skeletonRootNode);
 
 	//if (model->getBoneCount() == 0) {
 	//	// First GLB (the mesh) → build hierarchy
-	//	readHierarchyData(m_rootNode, raw, skeletonRootNode);
+	readHierarchyData(m_rootNode, raw, skeletonRootNode);
 	//}
 	//else {
 	//	// Animation-only GLB → DO NOT rebuild hierarchy
 	//	// Keep existing m_rootNode
 	//}
-
-	//m_rootNode = buildSkeletonFromGLTFHierarchy(
-	//	m_nodes,
-	//	m_boneInfoMap,
-	//	skeletonRootIndex
-	//);
-
 
 	// --- Bones / animation channels ---
 	readMissingBones(raw, animation, *model.get());
@@ -365,7 +340,6 @@ unsigned int engine::TinygltfAnimationLoader::computeFPS(const tg3_model& model,
 
 	return static_cast<unsigned int>(std::round(1.0f / delta));
 }
-
 
 float engine::TinygltfAnimationLoader::computeDuration(const tg3_model& model, const tg3_animation& anim)
 {

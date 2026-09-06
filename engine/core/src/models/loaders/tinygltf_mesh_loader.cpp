@@ -91,7 +91,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     if (m_hasBones)
     {
         extractSkinBones(raw);
-        computeBindPoseMatrices();
+        computeBindPoseMatrices(); // ?????????????????????
     }
 
 

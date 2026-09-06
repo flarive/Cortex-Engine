@@ -1,6 +1,6 @@
 #include "../../include/models/bone.h"
 
-#include "../../include/models/assimp_glm_helpers.h"
+#include "../../include/models/loaders/assimp_glm_helpers.h"
 #include "../../include/managers/log_manager.h"
 
 

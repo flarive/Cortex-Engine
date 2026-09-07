@@ -90,7 +90,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     // ------------------------------------------------------------
     if (m_hasBones)
     {
-        extractSkinBones(raw);
+        buildSkeleton(raw);
         computeBindPoseMatrices(); // ?????????????????????
     }
 
@@ -867,13 +867,18 @@ int engine::GLtfMeshLoader::toInt(const tg3_value& v)
     }
 }
 
-void engine::GLtfMeshLoader::extractSkinBones(const tg3_model& raw)
+void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
 {
+    if (raw.skins_count <= 0)
+        return;
+
+    m_skeleton = std::make_unique<Skeleton>();
+
     for (uint32_t s = 0; s < raw.skins_count; ++s)
     {
         const tg3_skin& skin = raw.skins[s];
 
-        m_skeletonRootIndex = skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0];
+        m_skeleton->m_skeletonRootIndex = skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0];
 
 
         // inverse bind matrices

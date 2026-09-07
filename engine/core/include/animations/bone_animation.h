@@ -6,6 +6,7 @@
 
 #include "animation.h"
 #include "../models/model.h"
+#include "../models/skeleton.h"
 #include "../models/bone.h"
 
 #include "../animations/loaders/animation_loader.h"
@@ -41,7 +42,7 @@ namespace engine
 		const AnimNodeData& getRootNode() const;
 		const std::map<std::string, BoneInfo>& getBonesInfoMap() const;
 
-
+		//Skeleton* skeleton = nullptr; // reference, not owned
 
 	private:
 		std::string m_filepath{};

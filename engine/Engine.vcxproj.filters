@@ -615,6 +615,12 @@
     <ClCompile Include="core\src\models\loaders\mesh_loader.cpp">
       <Filter>sources\core\models\loaders</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\editor\widgets\skeleton_widget.cpp">
+      <Filter>sources\core\editor\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\models\skeleton.cpp">
+      <Filter>sources\core\models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -1018,6 +1024,12 @@
     </ClInclude>
     <ClInclude Include="core\include\models\loaders\tinygltf_mesh_loader.h">
       <Filter>headers\core\models\loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\editor\widgets\skeleton_widget.h">
+      <Filter>headers\core\editor\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\models\skeleton.h">
+      <Filter>headers\core\models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

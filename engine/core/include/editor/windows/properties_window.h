@@ -4,6 +4,7 @@
 
 #include "../widgets/mesh_widget.h"
 #include "../widgets/material_widget.h"
+#include "../widgets/skeleton_widget.h"
 
 #include "../../ecs/entity.h"
 #include "../../ecs/transform_component.h"
@@ -29,6 +30,7 @@ namespace engine
         std::weak_ptr<Entity> m_selectedEntity{};
 
         MeshWidget m_meshWidget{};
+        SkeletonWidget m_skeletonWidget{};
         MaterialWidget m_materialWidget{};
 
         void renderPropertiesWidget();

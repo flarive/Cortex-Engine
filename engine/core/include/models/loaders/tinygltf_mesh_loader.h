@@ -48,7 +48,7 @@ namespace engine
 		std::string getTexture(const tg3_model& raw, const tg3_normal_texture_info& info);
 		std::string getTexture(const tg3_model& raw, const tg3_occlusion_texture_info& info);
 
-		void extractSkinBones(const tg3_model& raw);
+		void buildSkeleton(const tg3_model& raw);
 		glm::mat4 getNodeLocalTransform(const tg3_node& n);
 
 		int getTextureSource(const tg3_texture& tex);

@@ -30,16 +30,6 @@ namespace engine
 		float timeStamp;
 	};
 
-
-	struct SkeletonBone final
-	{
-		std::string name;
-		int parentIndex;          // -1 if root
-		glm::mat4 localBindTransform; // from aiNode->mTransformation
-		glm::mat4 offset;         // inverse bind pose (BoneInfo.offset)
-	};
-
-
 	struct BoneInfo final
 	{
 		/*id is index in finalBoneMatrices*/
@@ -59,7 +49,6 @@ namespace engine
 
 
 		glm::mat4 getLocalTransform() { return m_localTransform; }
-		//glm::mat4 getOffsetTransform() { return m_offset; }
 
 		std::string getBoneName() const { return m_name; }
 		int getBoneID() { return m_ID; }

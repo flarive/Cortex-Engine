@@ -14,9 +14,10 @@ void engine::PropertiesWindow::init()
         }
     });
 
-
+    // init widgets
     m_materialWidget.init();
 	m_meshWidget.init();
+    m_skeletonWidget.init();
 }
 
 void engine::PropertiesWindow::renderPropertiesWidget()
@@ -459,6 +460,8 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
 	// meshes section
     m_meshWidget.setMeshes(model->getMeshes());
     m_meshWidget.render();
+
+    m_skeletonWidget.render();
 
     // material section
     m_materialWidget.setMaterials(model->getMaterials());

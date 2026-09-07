@@ -4,10 +4,8 @@
 #include "../../common_defines.h"
 
 #include "../mesh.h"
+#include "../skeleton.h"
 #include "../bone.h"
-
-
-//#include <fstream>
 
 namespace engine
 {
@@ -31,6 +29,7 @@ namespace engine
 
 		std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
 		std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
+		std::unique_ptr<Skeleton>& getSkeleton() { return m_skeleton; }
 
 
 		auto& getBoneInfoMap() { return m_boneInfoMap; }
@@ -38,11 +37,8 @@ namespace engine
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
 
-		unsigned int getSkeletonRootIndex() const { return m_skeletonRootIndex; }
+		int getSkeletonRootIndex() const;
 
-
-		//void createTrace(const std::string& name);
-		//void trace(const std::string& meshName, int vertexIndex, const Vertex& v);
 
 	protected:
 		std::string m_directory{};
@@ -57,22 +53,17 @@ namespace engine
 
 		std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
+		// bons
 		bool m_hasBones{};
-		bool m_hasAnimations{ false };
-		std::map<std::string, BoneInfo> m_boneInfoMap{};
+		std::map<std::string, BoneInfo> m_boneInfoMap{}; // can be moved into Skeleton !!!!!!!!!!!!!!
 		int m_boneCounter{};
+		std::unique_ptr<Skeleton> m_skeleton{};
 
-		unsigned int m_skeletonRootIndex{};
-
-		std::vector<SkeletonBone> m_skeleton{};
+		// animations
+		bool m_hasAnimations{ false };
 		std::vector<glm::mat4> m_finalBindPoseMatrices{};
 
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
-
-
-		//temp !!!!!
-		//std::ofstream m_stream;
-		//int m_vertexCounter{};
 	};
 }

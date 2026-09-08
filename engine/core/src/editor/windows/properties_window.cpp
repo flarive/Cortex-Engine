@@ -461,6 +461,7 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
     m_meshWidget.setMeshes(model->getMeshes());
     m_meshWidget.render();
 
+    m_skeletonWidget.setSkeleton(model->getSkeleton());
     m_skeletonWidget.render();
 
     // material section

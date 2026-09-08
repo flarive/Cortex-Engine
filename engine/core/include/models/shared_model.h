@@ -8,6 +8,7 @@
 #include "mesh.h"
 #include "../shader.h"
 #include "../transform.h"
+#include "skeleton.h"
 #include "bone.h"
 
 #include "../managers/filesystem_manager.h"
@@ -62,9 +63,9 @@ namespace engine
                 {"file", EditorProperty { "File", m_fileName, readonly, 0.0f, 0.0f, 0.0f, "%s"}},
                 {"meshCount", EditorProperty { "Meshes count", getMeshCount(), readonly, 0.0f, 0.0f, 0.0f, "%u" }},
                 {"vertexCount", EditorProperty { "Vertex count", getVertexCount(), readonly, 0.0f, 0.0f, 0.0f, "%u" }},
-                {"bonesCount", EditorProperty { "Bones count", getBoneCount(), readonly, 0.0f, 0.0f, 0.0f, "%i" }},
                 {"flipUV", EditorProperty { "Flip UV", getFlipUV(), readonly, 0.0f, 1.0f, 1.0f, "%s" }},
-                {"hasAnimations", EditorProperty { "Has Animations", hasAnimations(), readonly, 0.0f, 1.0f, 1.0f, "%s" }},
+                {"hasBones", EditorProperty { "Has bones", hasBones(), readonly, 0.0f, 0.0f, 0.0f, "%s" }},
+                {"hasAnimations", EditorProperty { "Has animations", hasAnimations(), readonly, 0.0f, 0.0f, 0.0f, "%s" }},
             };
         }
 
@@ -86,6 +87,8 @@ namespace engine
         std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
 
         unsigned int getSkeletonRootIndex() const;
+
+        std::shared_ptr<Skeleton> getSkeleton();
         
 
         bool& getFlipUV() { return m_flipUV; }

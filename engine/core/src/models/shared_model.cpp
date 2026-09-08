@@ -110,6 +110,14 @@ int engine::SharedModel::getBoneCount()
     return 0;
 }
 
+std::shared_ptr<engine::Skeleton> engine::SharedModel::getSkeleton()
+{
+    if (m_meshLoader)
+        return m_meshLoader->getSkeleton();
+
+    return nullptr;
+}
+
 bool engine::SharedModel::hasBones()
 {
     if (m_meshLoader)
@@ -136,9 +144,6 @@ unsigned int engine::SharedModel::getSkeletonRootIndex() const
 
 void engine::SharedModel::reSetup()
 {
-    /*std::filesystem::path fullpath = std::filesystem::path(m_directory) / m_filename;
-    std::string fullpath_str = fullpath.string();*/
-
     loadModel(m_filePath, m_flipUV);
 }
 

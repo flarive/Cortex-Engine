@@ -9,6 +9,10 @@
 
 namespace engine
 {
+    /// <summary>
+    /// STATIC RIG DATA (never changes)
+    /// Not the same as Bone
+    /// </summary>
     struct SkeletonBone final
     {
         std::string name;
@@ -28,7 +32,7 @@ namespace engine
         // use simple std::unordered_map<std::string, int> m_nameToIndex; instead
         std::map<std::string, BoneInfo> m_boneInfoMap{};
 
-        const SkeletonBone& getBone(int index) const { return m_skeletonBones[index]; }
+        
 
         std::map<std::string, BoneInfo>& getBoneInfoMap() { return m_boneInfoMap; }
 
@@ -37,14 +41,14 @@ namespace engine
 
 
         // Lookup tables
-        //std::unordered_map<std::string, int> nameToIndex;
+        std::unordered_map<std::string, int> nameToIndex;
 
-        //const SkeletonBone& getBone(int index) const { return bones[index]; }
-        //int getIndex(const std::string& name) const
-        //{
-        //    auto it = nameToIndex.find(name);
-        //    return (it == nameToIndex.end()) ? -1 : it->second;
-        //}
+        const SkeletonBone& getBone(int index) const { return m_skeletonBones[index]; }
+        int getIndex(const std::string& name) const
+        {
+            auto it = nameToIndex.find(name);
+            return (it == nameToIndex.end()) ? -1 : it->second;
+        }
   
 
     private:

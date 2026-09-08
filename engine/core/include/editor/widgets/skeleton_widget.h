@@ -3,6 +3,7 @@
 #include "../imgui_element.h"
 
 #include "../../models/mesh.h"
+#include "../../models/skeleton.h"
 
 namespace engine
 {
@@ -14,7 +15,8 @@ namespace engine
 
         void init() override;
 
-        //void setSkeleton(const std::vector<std::shared_ptr<Mesh>>& meshes);
+        void setSkeleton(std::shared_ptr<Skeleton> skeleton);
+
 
     protected:
         void draw() override;
@@ -22,9 +24,8 @@ namespace engine
     private:
 
         bool m_isHeaderExpanded{ false };
+        std::weak_ptr<Skeleton> m_skeleton{};
 
-        //std::vector<std::weak_ptr<Mesh>> m_meshes{};
-
-        //void displayMesh(const std::shared_ptr<engine::Mesh>& mesh);
+        void displaySkeleton(const std::shared_ptr<Skeleton>& skeleton);
     };
 }

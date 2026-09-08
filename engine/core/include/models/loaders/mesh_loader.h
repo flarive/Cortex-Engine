@@ -29,13 +29,15 @@ namespace engine
 
 		std::vector<std::shared_ptr<Mesh>>& getMeshes() { return m_meshes; }
 		std::vector<std::shared_ptr<Material>>& getMaterials() { return m_materials; }
-		std::unique_ptr<Skeleton>& getSkeleton() { return m_skeleton; }
+		std::shared_ptr<Skeleton>& getSkeleton() { return m_skeleton; }
 
 
 		std::map<std::string, BoneInfo>& getBoneInfoMap();
 		unsigned int getBoneCount();
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
+
+		
 
 		int getSkeletonRootIndex() const;
 
@@ -53,9 +55,9 @@ namespace engine
 
 		std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 
-		// bons
+		// bones
 		bool m_hasBones{};
-		std::unique_ptr<Skeleton> m_skeleton{};
+		std::shared_ptr<Skeleton> m_skeleton{};
 
 		// animations
 		bool m_hasAnimations{ false };

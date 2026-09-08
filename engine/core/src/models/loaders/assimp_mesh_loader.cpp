@@ -40,7 +40,10 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         aiMesh* mesh = scene->mMeshes[i];
         if (mesh->HasBones())
+        {
             m_hasBones = true;
+            m_skeleton = std::make_unique<engine::Skeleton>();
+        }
 
         m_numberOfVertices += mesh->mNumVertices;
     }
@@ -217,8 +220,8 @@ void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>&
     if (!m_skeleton)
         return;
     
-    auto& boneInfoMap = m_skeleton->m_boneInfoMap;
-    unsigned int boneCount = m_skeleton->getBoneCount();
+    auto& boneInfoMap = m_skeleton->getBoneInfoMap();
+    auto& boneCount = m_skeleton->getBoneCount();
 
     for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
     {
@@ -487,8 +490,6 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
 
 void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 {
-    m_skeleton = std::make_unique<engine::Skeleton>();
-    
     std::unordered_map<std::string, int> boneIndexMap;
 
     bool rootSet = false;

@@ -55,8 +55,6 @@ namespace engine
 
 		// bons
 		bool m_hasBones{};
-		//std::map<std::string, BoneInfo> m_boneInfoMap{}; // can be moved into Skeleton !!!!!!!!!!!!!!
-		//int m_boneCounter{};
 		std::unique_ptr<Skeleton> m_skeleton{};
 
 		// animations

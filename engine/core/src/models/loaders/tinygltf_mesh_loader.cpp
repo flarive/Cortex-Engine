@@ -49,8 +49,6 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
     const tg3_model& raw = model.raw();
 
-    //createTrace("d:\\GLtf_vertices.txt");
-
     // ------------------------------------------------------------
     // 2. Bones?
     // ------------------------------------------------------------
@@ -422,8 +420,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                     setVertexBoneData(v, boneID, weight);
                 }
             }
-
-            //trace(toStdString(mesh.name), i, v);
 
             vertices.push_back(std::move(v));
         }

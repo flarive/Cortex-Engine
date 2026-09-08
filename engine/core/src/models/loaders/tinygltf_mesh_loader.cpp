@@ -907,11 +907,11 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
             memcpy(glm::value_ptr(ibm), ibmData + j * 16, sizeof(float) * 16);
             info.offset = ibm;
 
-            m_boneInfoMap[boneName] = info;
+            m_skeleton->m_boneInfoMap[boneName] = info;
 
             m_jointToBone[j] = info.id;
 
-            m_boneCounter = std::max(m_boneCounter, (int)skin.joints_count);
+            m_skeleton->setBoneCount(std::max(m_skeleton->getBoneCount(), (unsigned int)skin.joints_count));
         }
     }
 }
@@ -956,9 +956,9 @@ glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
 void engine::GLtfMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_boneInfoMap.size());
+    m_finalBindPoseMatrices.reserve(m_skeleton->m_boneInfoMap.size());
 
-    for (auto& kv : m_boneInfoMap)
+    for (auto& kv : m_skeleton->m_boneInfoMap)
     {
         const BoneInfo& info = kv.second;
 

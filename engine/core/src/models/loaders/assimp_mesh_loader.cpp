@@ -214,8 +214,11 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
 
 void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
 {
-    auto& boneInfoMap = m_boneInfoMap;
-    int& boneCount = m_boneCounter;
+    if (!m_skeleton)
+        return;
+    
+    auto& boneInfoMap = m_skeleton->m_boneInfoMap;
+    unsigned int boneCount = m_skeleton->getBoneCount();
 
     for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
     {
@@ -494,9 +497,9 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
         [&](const aiNode* node, int parentIndex)
         {
             std::string nodeName = node->mName.C_Str();
-            auto it = m_boneInfoMap.find(nodeName);
+            auto it = m_skeleton->m_boneInfoMap.find(nodeName);
 
-            if (it != m_boneInfoMap.end())
+            if (it != m_skeleton->m_boneInfoMap.end())
             {
                 // FIRST bone encountered = skeleton root
                 if (!rootSet)

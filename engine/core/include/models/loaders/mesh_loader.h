@@ -32,8 +32,8 @@ namespace engine
 		std::unique_ptr<Skeleton>& getSkeleton() { return m_skeleton; }
 
 
-		auto& getBoneInfoMap() { return m_boneInfoMap; }
-		int& getBoneCount() { return m_boneCounter; }
+		std::map<std::string, BoneInfo>& getBoneInfoMap();
+		unsigned int getBoneCount();
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
 
@@ -55,8 +55,8 @@ namespace engine
 
 		// bons
 		bool m_hasBones{};
-		std::map<std::string, BoneInfo> m_boneInfoMap{}; // can be moved into Skeleton !!!!!!!!!!!!!!
-		int m_boneCounter{};
+		//std::map<std::string, BoneInfo> m_boneInfoMap{}; // can be moved into Skeleton !!!!!!!!!!!!!!
+		//int m_boneCounter{};
 		std::unique_ptr<Skeleton> m_skeleton{};
 
 		// animations

@@ -18,8 +18,8 @@ std::unique_ptr<engine::MeshLoader> engine::MeshLoader::create(const std::string
     std::string ext = FileSystemManager::getFileExt(path);
 
     // Use tinyGLTF for GLTF (more features than Assimp)
-    if (ext == "gltf" || ext == "glb")
-        return std::make_unique<engine::GLtfMeshLoader>();
+    //if (ext == "gltf" || ext == "glb")
+    //    return std::make_unique<engine::GLtfMeshLoader>();
 
     // Assimp supports many formats: obj, fbx, dae, ply, 3ds, etc.
     return std::make_unique<engine::AssimpMeshLoader>();
@@ -55,6 +55,23 @@ int engine::MeshLoader::getSkeletonRootIndex() const
     return -1;
 }
 
+std::map<std::string, engine::BoneInfo>& engine::MeshLoader::getBoneInfoMap()
+{
+    if (m_skeleton)
+        return m_skeleton->m_boneInfoMap;
+    
+    static std::map<std::string, engine::BoneInfo> emptyMap;
+    return emptyMap ;
+}
+
+unsigned int engine::MeshLoader::getBoneCount()
+{
+	if (m_skeleton)
+		return m_skeleton->m_boneInfoMap.size();
+
+	return 0;
+}
+
 engine::MeshLoader::~MeshLoader()
 {
     logger.trace("MeshLoader destructor called");
@@ -73,5 +90,7 @@ engine::MeshLoader::~MeshLoader()
     //}
     m_materials.clear(); // TODO !!!!!!!!!!!!!!!!!!!!!!!
 
-    m_boneInfoMap.clear();
+    // ???????????????????????????????????
+    //if (m_skeleton)
+    //    m_skeleton->m_boneInfoMap.clear();
 }

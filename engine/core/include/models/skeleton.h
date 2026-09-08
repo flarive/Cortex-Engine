@@ -3,6 +3,7 @@
 #include "../misc/noncopyable.h"
 
 #include "../common_defines.h"
+#include "bone.h"
 
 #include <unordered_map>
 
@@ -23,13 +24,18 @@ namespace engine
         int m_skeletonRootIndex{ -1 };
 
         // Lookup tables
-        std::unordered_map<std::string, int> nameToIndex{}; // std::map<std::string, BoneInfo> m_boneInfoMap{}; // instead !!!!!!!!
+        //std::unordered_map<std::string, int> nameToIndex{}; // std::map<std::string, BoneInfo> m_boneInfoMap{}; // instead !!!!!!!!
+
+        std::map<std::string, BoneInfo> m_boneInfoMap{};
 
         const SkeletonBone& getBone(int index) const { return m_skeletonBones[index]; }
-        int getIndex(const std::string& name) const
-        {
-            auto it = nameToIndex.find(name);
-            return (it == nameToIndex.end()) ? -1 : it->second;
-        }
+        //BoneInfo* findBone(const std::string& name) const;
+
+		unsigned int getBoneCount() const { return m_boneCounter; }
+		void setBoneCount(unsigned int count) { m_boneCounter = count; }
+  
+
+    private:
+		unsigned int m_boneCounter{};
     };
 }

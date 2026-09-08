@@ -27,5 +27,9 @@ namespace engine
         std::weak_ptr<Skeleton> m_skeleton{};
 
         void displaySkeleton(const std::shared_ptr<Skeleton>& skeleton);
+
+        
+        void displaySkeletonBones(const std::vector<SkeletonBone>& bones);
+        void drawBoneRecursive(const std::vector<SkeletonBone>& bones, int index);
     };
 }

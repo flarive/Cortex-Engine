@@ -32,7 +32,7 @@ namespace engine
         // use simple std::unordered_map<std::string, int> m_nameToIndex; instead
         std::map<std::string, BoneInfo> m_boneInfoMap{};
 
-        
+		std::vector<SkeletonBone>& getBones() { return m_skeletonBones; }
 
         std::map<std::string, BoneInfo>& getBoneInfoMap() { return m_boneInfoMap; }
 

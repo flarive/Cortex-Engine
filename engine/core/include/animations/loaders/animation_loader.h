@@ -65,9 +65,9 @@ namespace engine
 	
 
 	protected:
-		std::vector<Bone> m_bones{};
+		std::vector<Bone> m_bones{}; // animated bones, not the same as SkeletonBones
 		AnimNodeData m_rootNode{};
-		std::map<std::string, BoneInfo> m_boneInfoMap{};
+		std::map<std::string, BoneInfo> m_boneInfoMap{}; // to remove by keeping a reference to the loaded model and then model->getBoneInfoMap()
 
 		float m_duration{};
 		float m_durationInSeconds{};

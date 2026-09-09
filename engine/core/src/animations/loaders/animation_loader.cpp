@@ -17,8 +17,8 @@ std::unique_ptr<engine::AnimationLoader> engine::AnimationLoader::create(const s
     std::string ext = FileSystemManager::getFileExt(path);
 
     // Use tinyGLTF for GLTF (more features than Assimp)
-    //if (ext == "gltf" || ext == "glb")
-    //    return std::make_unique<engine::TinygltfAnimationLoader>();
+    if (ext == "gltf" || ext == "glb")
+        return std::make_unique<engine::TinygltfAnimationLoader>();
 
     // Assimp supports many formats: obj, fbx, dae, ply, 3ds, etc.
     return std::make_unique<engine::AssimpAnimationLoader>();
@@ -35,7 +35,6 @@ engine::Bone* engine::AnimationLoader::findBone(const std::string& name)
 	if (iter == m_bones.end()) return nullptr;
 	else return &(*iter);
 }
-
 
 engine::Bone engine::AnimationLoader::createBone(const std::string& name, int id, std::vector<KeyPosition> positions, std::vector<KeyRotation> rotations, std::vector<KeyScale> scales)
 {

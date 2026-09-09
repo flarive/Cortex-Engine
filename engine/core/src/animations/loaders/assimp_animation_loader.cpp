@@ -39,9 +39,15 @@ void engine::AssimpAnimationLoader::importBoneAnimation(const std::string& anima
 	readMissingBones(animation, *model.get());
 }
 
+/// <summary>
+/// Sometimes when I loaded FBX model separately, it had some bones missing and I found those missing bones in the animation file
+/// </summary>
+/// <param name="animation"></param>
+/// <param name="model"></param>
 void engine::AssimpAnimationLoader::readMissingBones(const aiAnimation* animation, Model& model)
 {
-	auto& boneInfoMap = model.getBoneInfoMap();
+	// get boneInfoMap from model
+	std::map<std::string, engine::BoneInfo>& boneInfoMap = model.getBoneInfoMap();
 	unsigned int boneCount = model.getBoneCount();
 
 	for (unsigned i = 0; i < animation->mNumChannels; i++)
@@ -62,6 +68,7 @@ void engine::AssimpAnimationLoader::readMissingBones(const aiAnimation* animatio
 		m_bones.push_back(bone);
 	}
 
+	// store it for later use
 	m_boneInfoMap = boneInfoMap;
 }
 

@@ -119,9 +119,16 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
     readMissingBones(raw, animation, *model.get());
 }
 
+/// <summary>
+/// Sometimes when I loaded FBX model separately, it had some bones missing and I found those missing bones in the animation file
+/// </summary>
+/// <param name="gltfModel"></param>
+/// <param name="animation"></param>
+/// <param name="model"></param>
 void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfModel, const tg3_animation& animation, Model& model)
 {
-    auto& boneInfoMap = model.getBoneInfoMap();
+    // get boneInfoMap from model
+    std::map<std::string, engine::BoneInfo>& boneInfoMap = model.getBoneInfoMap();
     unsigned int boneCount = model.getBoneCount();
 
     struct BoneChannelData
@@ -140,8 +147,7 @@ void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfMode
         int nodeIndex = channel.target.node;
 
         BoneChannelData& data = channelMap[nodeIndex];
-        extractBoneKeys(gltfModel, animation, channel,
-            data.positions, data.rotations, data.scales);
+        extractBoneKeys(gltfModel, animation, channel, data.positions, data.rotations, data.scales);
     }
 
     m_bones.clear();
@@ -164,6 +170,7 @@ void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfMode
         m_bones.push_back(bone);
     }
 
+    // store it for later use
     m_boneInfoMap = boneInfoMap;
 }
 

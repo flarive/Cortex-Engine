@@ -250,10 +250,11 @@ void engine::TinygltfAnimationLoader::extractBoneKeys(
     {
         const tg3_node& node = model.nodes[channel.target.node];
 
-        glm::quat rot(node.rotation[3], // w
-            node.rotation[0], // x
-            node.rotation[1], // y
-            node.rotation[2]);// z
+        glm::quat rot(
+            static_cast<float>(node.rotation[3]), // w
+            static_cast<float>(node.rotation[0]), // x
+            static_cast<float>(node.rotation[1]), // y
+            static_cast<float>(node.rotation[2])); // z
 
         rotations.push_back({ rot, 0.0f });
     }
@@ -292,10 +293,11 @@ void engine::TinygltfAnimationLoader::readHierarchyData(AnimNodeData& dest, cons
             src.scale[1],
             src.scale[2]);
 
-        glm::quat rotation(src.rotation[3], // w
-            src.rotation[0], // x
-            src.rotation[1], // y
-            src.rotation[2]);// z
+        glm::quat rotation(
+            static_cast<float>(src.rotation[3]), // w
+            static_cast<float>(src.rotation[0]), // x
+            static_cast<float>(src.rotation[1]), // y
+            static_cast<float>(src.rotation[2]));// z
 
         transform =
             glm::translate(glm::mat4(1.0f), translation) *

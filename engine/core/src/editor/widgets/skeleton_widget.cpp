@@ -28,41 +28,41 @@ void engine::SkeletonWidget::draw()
 {
     ImGui::PushFont(ImGui::Spectrum::fontSmall2);
 
-    std::string header = std::format("Skeleton ({})", m_skeleton.expired() ? 0 : 1);
-
-    ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
+    // Lock the weak_ptr to get a shared_ptr
+    if (auto sharedSkeleton = m_skeleton.lock())
     {
-        // Lock the weak_ptr to get a shared_ptr
-        if (auto sharedSkeleton = m_skeleton.lock())
+        std::string header = std::format("Skeleton ({} bones)", m_skeleton.expired() ? 0 : sharedSkeleton->getBoneCount());
+
+        ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
+        if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
         {
             displaySkeleton(sharedSkeleton);
         }
-    }
 
-    ImGui::PopFont();
+        ImGui::PopFont();
+    }
 }
 
 void engine::SkeletonWidget::displaySkeleton(const std::shared_ptr<Skeleton>& skeleton)
 {
-    const std::string tableUniqueID = "SkeletonBonesTable";
-    if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
-    {
-        ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthFixed, 100);
+    //const std::string tableUniqueID = "SkeletonBonesTable";
+    //if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
+    //{
+    //    ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthStretch);
+    //    ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthFixed, 100);
 
-        ImGui::TableNextRow();
+    //    ImGui::TableNextRow();
 
-        ImGui::TableSetColumnIndex(0);
-        ImGui::Text("Nbr bones");
+    //    ImGui::TableSetColumnIndex(0);
+    //    ImGui::Text("Nbr bones");
 
-        ImGui::TableSetColumnIndex(1);
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-        ImGui::Text("%u bones", skeleton->getBoneCount());
-        ImGui::PopStyleColor();
+    //    ImGui::TableSetColumnIndex(1);
+    //    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+    //    ImGui::Text("%u bones", skeleton->getBoneCount());
+    //    ImGui::PopStyleColor();
 
-        ImGui::EndTable();
-    }
+    //    ImGui::EndTable();
+    //}
 
     displaySkeletonBones(skeleton->getBones());
 }

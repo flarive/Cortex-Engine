@@ -75,11 +75,11 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     }
 
 
-    if (hasBones && hasAnimations)
+    if (m_hasBones && m_hasAnimations)
     {
         // Use bind pose if no Bone Animations otherwise nothing will be renderer
-        for (int i = 0; i < bindPoseMatrices.size(); ++i)
-            shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", bindPoseMatrices[i]);
+        for (int i = 0; i < m_bindPoseMatrices.size(); ++i)
+            shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", m_bindPoseMatrices[i]);
     }
 
 

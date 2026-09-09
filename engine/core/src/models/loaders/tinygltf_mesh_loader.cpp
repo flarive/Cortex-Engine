@@ -164,9 +164,9 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
             std::shared_ptr<Mesh> mesh = m_meshes[i];
 
             // Bind-pose matrices (same for all meshes of the model)
-            mesh->bindPoseMatrices = m_finalBindPoseMatrices;
-            mesh->hasBones = m_hasBones;
-            mesh->hasAnimations = m_hasAnimations;
+            mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
+            mesh->setHasBones(m_hasBones);
+            mesh->setHasAnimations(m_hasAnimations);
         }
     }
 }
@@ -876,7 +876,7 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
 
 
     // Determine skeleton root
-    m_skeleton->m_skeletonRootIndex = skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0];
+    m_skeleton->setRootIndex(skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0]);
 
 
     // --- Load inverse bind matrices ---
@@ -891,10 +891,10 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
     // Resize mapping for this skin
     uint32_t jointCount = skin.joints_count;
 
-    m_skeleton->m_skeletonBones.resize(jointCount);
+    m_skeleton->getBones().resize(jointCount);
 
     // Build name → index map
-    m_skeleton->nameToIndex.reserve(jointCount);
+    m_skeleton->reserveNameToIndex(jointCount);
 
 
     m_jointToBone.resize(jointCount);
@@ -911,7 +911,7 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
         // Name
         std::string boneName = toStdString(node.name);
         bone.name = boneName;
-        m_skeleton->nameToIndex[bone.name] = j;
+        m_skeleton->setNameToIndexValue(bone.name, j);
 
 
         // Parent index
@@ -931,8 +931,8 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
         bone.offset = ibm;
 
         // Store bone
-        m_skeleton->m_boneInfoMap[boneName] = info;
-        m_skeleton->m_skeletonBones[j] = bone;
+        m_skeleton->getBoneInfoMap()[boneName] = info;
+        m_skeleton->setBone(j, bone);
 
         m_jointToBone[j] = info.id;
 
@@ -981,9 +981,9 @@ glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
 void engine::GLtfMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->m_boneInfoMap.size());
+    m_finalBindPoseMatrices.reserve(m_skeleton->getBoneInfoMap().size());
 
-    for (auto& kv : m_skeleton->m_boneInfoMap)
+    for (auto& kv : m_skeleton->getBoneInfoMap())
     {
         const BoneInfo& info = kv.second;
 
@@ -1001,7 +1001,11 @@ glm::mat4 engine::GLtfMeshLoader::extractNodeLocalTransform(const tg3_node& node
 
     glm::vec3 translation(node.translation[0], node.translation[1], node.translation[2]);
     glm::vec3 scale(node.scale[0], node.scale[1], node.scale[2]);
-    glm::quat rotation(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
+    glm::quat rotation(
+        static_cast<float>(node.rotation[3]), 
+        static_cast<float>(node.rotation[0]),
+        static_cast<float>(node.rotation[1]),
+        static_cast<float>(node.rotation[2]));
 
     return glm::translate(glm::mat4(1.0f), translation)
         * glm::toMat4(rotation)

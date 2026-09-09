@@ -52,26 +52,29 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
     processNode(scene->mRootNode, scene);
 
     // m_boneInfoMap is now filled
-    if (m_hasBones && loadAnimation)
+    if (m_hasBones)
     {
-        // all mixamo models (such as xbot) have a default animation (idle, bindpose, tpose...)
-        m_hasAnimations = scene->HasAnimations();
-
         // build full skeleton
         buildSkeleton(scene);
 
-		// build a neutral bind-pose animation
-        computeBindPoseMatrices();
-
-        // Meshes can now safely receive bind-pose matrices
-        for (unsigned int i = 0; i < m_meshes.size() ; i++)
+        if (loadAnimation)
         {
-            // the node object only contains indices to index the actual objects in the scene. 
-            // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
-            std::shared_ptr<Mesh> mesh = m_meshes[i];
-            mesh->bindPoseMatrices = m_finalBindPoseMatrices;
-            mesh->hasBones = m_hasBones;
-            mesh->hasAnimations = m_hasAnimations;
+            // all mixamo models (such as xbot) have a default animation (idle, bindpose, tpose...)
+            m_hasAnimations = scene->HasAnimations();
+
+            // build a neutral bind-pose animation
+            computeBindPoseMatrices();
+
+            // Meshes can now safely receive bind-pose matrices
+            for (unsigned int i = 0; i < m_meshes.size(); i++)
+            {
+                // the node object only contains indices to index the actual objects in the scene. 
+                // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+                std::shared_ptr<Mesh> mesh = m_meshes[i];
+                mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
+                mesh->setHasBones(m_hasBones);
+                mesh->setHasAnimations(m_hasAnimations);
+            }
         }
     }
 
@@ -498,14 +501,14 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
         [&](const aiNode* node, int parentIndex)
         {
             std::string nodeName = node->mName.C_Str();
-            auto it = m_skeleton->m_boneInfoMap.find(nodeName);
+            auto it = m_skeleton->getBoneInfoMap().find(nodeName);
 
-            if (it != m_skeleton->m_boneInfoMap.end())
+            if (it != m_skeleton->getBoneInfoMap().end())
             {
                 // FIRST bone encountered = skeleton root
                 if (!rootSet)
                 {
-                    m_skeleton->m_skeletonRootIndex = it->second.id;
+                    m_skeleton->setRootIndex(it->second.id);
                     rootSet = true;
                 }
 
@@ -518,12 +521,12 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 
                 glm::mat4 parentGlobal = glm::mat4(1.0f);
                 if (parentIndex != -1)
-                    parentGlobal = glm::inverse(m_skeleton->m_skeletonBones[parentIndex].offset);
+                    parentGlobal = glm::inverse(m_skeleton->getBone(parentIndex).offset);
 
                 bone.localBindTransform = glm::inverse(parentGlobal) * globalBindPose;
 
-                int newIndex = (int)m_skeleton->m_skeletonBones.size();
-                m_skeleton->m_skeletonBones.push_back(bone);
+                int newIndex = (int)m_skeleton->getBones().size();
+                m_skeleton->addBone(bone);
                 boneIndexMap[nodeName] = newIndex;
 
                 parentIndex = newIndex;
@@ -539,12 +542,12 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 void engine::AssimpMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->m_skeletonBones.size());
+    m_finalBindPoseMatrices.reserve(m_skeleton->getBones().size());
 
-    for (int i = 0; i < m_skeleton->m_skeletonBones.size(); i++)
+    for (int i = 0; i < m_skeleton->getBones().size(); i++)
     {
         glm::mat4 global = computeGlobalFromSkeleton(i);
-        glm::mat4 offset = m_skeleton->m_skeletonBones[i].offset;
+        glm::mat4 offset = m_skeleton->getBone(i).offset;
 
         m_finalBindPoseMatrices.push_back(global * offset);
     }
@@ -552,13 +555,13 @@ void engine::AssimpMeshLoader::computeBindPoseMatrices()
 
 glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
 {
-    glm::mat4 global = m_skeleton->m_skeletonBones[index].localBindTransform;
+    glm::mat4 global = m_skeleton->getBone(index).localBindTransform;
 
-    int parent = m_skeleton->m_skeletonBones[index].parentIndex;
+    int parent = m_skeleton->getBone(index).parentIndex;
     while (parent != -1)
     {
-        global = m_skeleton->m_skeletonBones[parent].localBindTransform * global;
-        parent = m_skeleton->m_skeletonBones[parent].parentIndex;
+        global = m_skeleton->getBone(parent).localBindTransform * global;
+        parent = m_skeleton->getBone(parent).parentIndex;
     }
 
     return global;

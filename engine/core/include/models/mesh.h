@@ -31,11 +31,16 @@ namespace engine
         const std::vector<unsigned int>& getIndices() const { return m_indices; }
 
 
-        // Bind-pose fallback
-        std::vector<glm::mat4> bindPoseMatrices{};
-        bool hasBones = false;
-        bool hasAnimations = false;
+        const std::vector<glm::mat4>& getBindPoseMatrices() const { return m_bindPoseMatrices; }
+        void setBindPoseMatrices(const std::vector<glm::mat4>& matrice) { m_bindPoseMatrices = matrice; }
 
+        const glm::mat4& getBindPoseMatrice(int index) const { return m_bindPoseMatrices[index]; }
+
+        const bool hasBones() const { return m_hasBones; }
+        void setHasBones(bool hasBones) { m_hasBones = hasBones; }
+
+        const bool hasAnimations() const { return m_hasAnimations; }
+        void setHasAnimations(bool hasAnimations) { m_hasAnimations = hasAnimations; }
 
         void clean();
        
@@ -56,7 +61,10 @@ namespace engine
 
 
 
-
+        // Bind-pose fallback
+        std::vector<glm::mat4> m_bindPoseMatrices{};
+        bool m_hasBones{ false };
+        bool m_hasAnimations{ false };
 
 
 

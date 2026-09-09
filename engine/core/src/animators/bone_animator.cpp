@@ -25,13 +25,6 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 		// create a new entry
 		m_animationsFinalBoneMatrices.emplace(animation->getName(), animFinalBoneMatrices);
 	}
-
-
-	// debug !!!!!!!!!!
-	auto& mats = m_animationsFinalBoneMatrices[animation->getName()];
-
-	for (int i = 0; i < m_boneCount; i++)
-		std::cout << glm::to_string(mats[i]) << std::endl;
 }
 
 engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations)

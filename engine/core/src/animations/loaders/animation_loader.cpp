@@ -17,8 +17,8 @@ std::unique_ptr<engine::AnimationLoader> engine::AnimationLoader::create(const s
     std::string ext = FileSystemManager::getFileExt(path);
 
     // Use tinyGLTF for GLTF (more features than Assimp)
-    if (ext == "gltf" || ext == "glb")
-        return std::make_unique<engine::TinygltfAnimationLoader>();
+    //if (ext == "gltf" || ext == "glb")
+    //    return std::make_unique<engine::TinygltfAnimationLoader>();
 
     // Assimp supports many formats: obj, fbx, dae, ply, 3ds, etc.
     return std::make_unique<engine::AssimpAnimationLoader>();

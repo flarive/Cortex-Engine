@@ -38,7 +38,7 @@ namespace engine
 
 
 		const std::vector<Bone>& getBones() const;
-		const size_t getBoneCount() const;
+		const unsigned int getBoneCount() const;
 		const AnimNodeData& getRootNode() const;
 		const std::map<std::string, BoneInfo>& getBonesInfoMap() const;
 

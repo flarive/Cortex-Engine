@@ -47,8 +47,8 @@ namespace engine
 
         std::map<std::string, BoneInfo>& getBoneInfoMap() { return m_boneInfoMap; }
 
-		unsigned int& getBoneCount() { return m_boneCounter; }
-		void setBoneCount(unsigned int count) { m_boneCounter = count; }
+		unsigned int getBoneCount() const { return static_cast<unsigned int>(m_skeletonBones.size()); }
+		
 
 
         
@@ -81,8 +81,6 @@ namespace engine
   
 
     private:
-		unsigned int m_boneCounter{};
-
         std::vector<SkeletonBone> m_skeletonBones{};     // flat list
         int m_skeletonRootIndex{ -1 };
 

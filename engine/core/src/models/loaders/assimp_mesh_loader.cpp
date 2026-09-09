@@ -224,7 +224,8 @@ void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>&
         return;
     
     auto& boneInfoMap = m_skeleton->getBoneInfoMap();
-    auto& boneCount = m_skeleton->getBoneCount();
+    //auto& boneCount = m_skeleton->getBoneCount();
+    unsigned int boneCount = m_skeleton->getBoneCount();
 
     for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
     {

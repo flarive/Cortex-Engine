@@ -102,7 +102,7 @@ std::map<std::string, engine::BoneInfo>& engine::SharedModel::getBoneInfoMap()
     return emptyBoneInfoMap;
 }
 
-int engine::SharedModel::getBoneCount()
+unsigned int engine::SharedModel::getBoneCount()
 {
     if (m_meshLoader)
         return m_meshLoader->getBoneCount();

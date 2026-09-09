@@ -42,7 +42,7 @@ void engine::AssimpAnimationLoader::importBoneAnimation(const std::string& anima
 void engine::AssimpAnimationLoader::readMissingBones(const aiAnimation* animation, Model& model)
 {
 	auto& boneInfoMap = model.getBoneInfoMap();
-	int boneCount = model.getBoneCount();
+	unsigned int boneCount = model.getBoneCount();
 
 	for (unsigned i = 0; i < animation->mNumChannels; i++)
 	{

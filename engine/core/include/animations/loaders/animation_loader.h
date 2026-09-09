@@ -50,7 +50,7 @@ namespace engine
 		engine::Bone* findBone(const std::string& name);
 
 		const std::vector<Bone>& getBones() const { return m_bones; }
-		const size_t getBoneCount() const { return m_bones.size(); }
+		const unsigned int getBoneCount() const { return static_cast<unsigned int>(m_bones.size()); }
 
 		const AnimNodeData& getRootNode() const { return m_rootNode; }
 		const std::map<std::string, engine::BoneInfo>& getBonesInfoMap() const { return m_boneInfoMap; }

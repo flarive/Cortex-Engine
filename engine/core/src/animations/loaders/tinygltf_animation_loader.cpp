@@ -122,7 +122,7 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
 void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfModel, const tg3_animation& animation, Model& model)
 {
     auto& boneInfoMap = model.getBoneInfoMap();
-    int   boneCount = model.getBoneCount();
+    unsigned int boneCount = model.getBoneCount();
 
     struct BoneChannelData
     {
@@ -160,13 +160,7 @@ void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfMode
 
         int id = boneInfoMap[boneName].id;
 
-        Bone bone = createBone(
-            boneName,
-            id,
-            data.positions,
-            data.rotations,
-            data.scales);
-
+        Bone bone = createBone(boneName, id, data.positions, data.rotations, data.scales);
         m_bones.push_back(bone);
     }
 

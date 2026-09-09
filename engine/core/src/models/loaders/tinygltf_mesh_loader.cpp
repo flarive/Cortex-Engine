@@ -936,7 +936,7 @@ void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
 
         m_jointToBone[j] = info.id;
 
-        m_skeleton->setBoneCount(std::max(m_skeleton->getBoneCount(), (unsigned int)skin.joints_count));
+        //m_skeleton->setBoneCount(std::max(m_skeleton->getBoneCount(), (unsigned int)skin.joints_count));
     }
     
 }
@@ -981,7 +981,7 @@ glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
 void engine::GLtfMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->getBoneInfoMap().size());
+    m_finalBindPoseMatrices.reserve(m_skeleton->getBoneCount());
 
     for (auto& kv : m_skeleton->getBoneInfoMap())
     {

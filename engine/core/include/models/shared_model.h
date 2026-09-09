@@ -83,7 +83,7 @@ namespace engine
 
         bool hasBones();
 		bool hasAnimations();
-        int getBoneCount();
+        unsigned int getBoneCount();
         std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
 
         unsigned int getSkeletonRootIndex() const;

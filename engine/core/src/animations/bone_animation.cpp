@@ -29,7 +29,7 @@ const std::vector<engine::Bone>& engine::BoneAnimation::getBones() const
 	return emptyBones;
 }
 
-const size_t engine::BoneAnimation::getBoneCount() const
+const unsigned int engine::BoneAnimation::getBoneCount() const
 {
 	if (m_animationLoader)
 		return m_animationLoader->getBoneCount();

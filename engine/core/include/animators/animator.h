@@ -65,7 +65,7 @@ namespace engine
 		float m_deltaTime{};
 		bool m_isPlaying{ false };
 
-		size_t m_boneCount{};
+		unsigned int m_boneCount{};
 
 		Transform m_initialTransform{};
     };

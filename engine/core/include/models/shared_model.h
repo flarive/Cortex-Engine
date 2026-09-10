@@ -84,11 +84,12 @@ namespace engine
         bool hasBones();
 		bool hasAnimations();
         unsigned int getBoneCount();
-        std::map<std::string, BoneInfo>& getBoneInfoMap(); // return reference to avoid recopy !!!!
 
         unsigned int getSkeletonRootIndex() const;
 
         std::shared_ptr<Skeleton> getSkeleton();
+        const std::shared_ptr<Skeleton> getSkeleton() const;
+        const std::vector<engine::SkeletonBone>& getSkeletonBones() const;
         
 
         bool& getFlipUV() { return m_flipUV; }

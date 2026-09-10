@@ -51,7 +51,6 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    // m_boneInfoMap is now filled
     if (m_hasBones)
     {
         // build full skeleton
@@ -211,9 +210,6 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     if (m_hasBones)
         extractBoneWeightForVertices(vertices, mesh, scene);
 
-
-    //logger.info("Mesh {} vertices {} / indices {}", mesh->mName.C_Str(), vertices.size(), indices.size());
-
     // return a mesh object created from the extracted mesh data
     return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
 }
@@ -222,42 +218,38 @@ void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>&
 {
     if (!m_skeleton)
         return;
-    
-    auto& boneInfoMap = m_skeleton->getBoneInfoMap();
-    //auto& boneCount = m_skeleton->getBoneCount();
-    unsigned int boneCount = m_skeleton->getBoneCount();
 
     for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
     {
-        int boneID = -1;
-        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (boneInfoMap.find(boneName) == boneInfoMap.end())
-        {
-            BoneInfo newBoneInfo;
-            newBoneInfo.id = boneCount;
-            newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-            boneInfoMap[boneName] = newBoneInfo;
-            boneID = boneCount;
-            boneCount++;
-        }
-        else
-        {
-            boneID = boneInfoMap[boneName].id;
-        }
-        assert(boneID != -1);
-        auto weights = mesh->mBones[boneIndex]->mWeights;
-        int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+        aiBone* aiBone = mesh->mBones[boneIndex];
+        std::string boneName = aiBone->mName.C_Str();
 
-        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-        {
-            int vertexId = weights[weightIndex].mVertexId;
-            float weight = weights[weightIndex].mWeight;
-            assert(vertexId <= vertices.size());
+        int skeletonIndex = findSkeletonBoneIndex(boneName);
 
-            setVertexBoneData(vertices[vertexId], boneID, weight);
+        // Create new skeleton bone if missing
+        if (skeletonIndex < 0)
+        {
+            SkeletonBone newBone{};
+            newBone.name = boneName;
+            newBone.parentIndex = -1; // will be fixed in buildSkeleton()
+            newBone.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(aiBone->mOffsetMatrix);
+            newBone.localBindTransform = glm::inverse(newBone.offset);
+
+            skeletonIndex = m_skeleton->addSkeletonBone(newBone);
+        }
+
+        // Apply weights
+        for (unsigned int w = 0; w < aiBone->mNumWeights; ++w)
+        {
+            int vertexId = aiBone->mWeights[w].mVertexId;
+            float weight = aiBone->mWeights[w].mWeight;
+
+            assert(vertexId < vertices.size());
+            setVertexBoneData(vertices[vertexId], skeletonIndex, weight);
         }
     }
 }
+
 
 /// <summary>
 /// ARM combined textures (ao + metalness + roughness)
@@ -494,43 +486,35 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
 
 void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
 {
-    std::unordered_map<std::string, int> boneIndexMap;
-
     bool rootSet = false;
 
     std::function<void(const aiNode*, int)> traverse =
         [&](const aiNode* node, int parentIndex)
         {
             std::string nodeName = node->mName.C_Str();
-            auto it = m_skeleton->getBoneInfoMap().find(nodeName);
+            int skeletonIndex = findSkeletonBoneIndex(nodeName);
 
-            if (it != m_skeleton->getBoneInfoMap().end())
+            if (skeletonIndex >= 0)
             {
-                // FIRST bone encountered = skeleton root
+                SkeletonBone& bone = m_skeleton->getSkeletonBone(skeletonIndex);
+
                 if (!rootSet)
                 {
-                    m_skeleton->setRootIndex(it->second.id);
+                    m_skeleton->setSkeletonRootIndex(skeletonIndex);
                     rootSet = true;
                 }
 
-                SkeletonBone bone{};
-                bone.name = nodeName;
                 bone.parentIndex = parentIndex;
-                bone.offset = it->second.offset;
 
                 glm::mat4 globalBindPose = glm::inverse(bone.offset);
 
                 glm::mat4 parentGlobal = glm::mat4(1.0f);
                 if (parentIndex != -1)
-                    parentGlobal = glm::inverse(m_skeleton->getBone(parentIndex).offset);
+                    parentGlobal = glm::inverse(m_skeleton->getSkeletonBone(parentIndex).offset);
 
                 bone.localBindTransform = glm::inverse(parentGlobal) * globalBindPose;
 
-                int newIndex = (int)m_skeleton->getBones().size();
-                m_skeleton->addBone(bone);
-                boneIndexMap[nodeName] = newIndex;
-
-                parentIndex = newIndex;
+                parentIndex = skeletonIndex;
             }
 
             for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -540,15 +524,16 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
     traverse(scene->mRootNode, -1);
 }
 
+
 void engine::AssimpMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->getBones().size());
+    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBones().size());
 
-    for (int i = 0; i < m_skeleton->getBones().size(); i++)
+    for (int i = 0; i < m_skeleton->getSkeletonBones().size(); i++)
     {
         glm::mat4 global = computeGlobalFromSkeleton(i);
-        glm::mat4 offset = m_skeleton->getBone(i).offset;
+        glm::mat4 offset = m_skeleton->getSkeletonBone(i).offset;
 
         m_finalBindPoseMatrices.push_back(global * offset);
     }
@@ -556,13 +541,13 @@ void engine::AssimpMeshLoader::computeBindPoseMatrices()
 
 glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
 {
-    glm::mat4 global = m_skeleton->getBone(index).localBindTransform;
+    glm::mat4 global = m_skeleton->getSkeletonBone(index).localBindTransform;
 
-    int parent = m_skeleton->getBone(index).parentIndex;
+    int parent = m_skeleton->getSkeletonBone(index).parentIndex;
     while (parent != -1)
     {
-        global = m_skeleton->getBone(parent).localBindTransform * global;
-        parent = m_skeleton->getBone(parent).parentIndex;
+        global = m_skeleton->getSkeletonBone(parent).localBindTransform * global;
+        parent = m_skeleton->getSkeletonBone(parent).parentIndex;
     }
 
     return global;

@@ -44,6 +44,23 @@ engine::Bone engine::AnimationLoader::createBone(const std::string& name, int id
 		std::move(scales));
 }
 
+int engine::AnimationLoader::findSkeletonBoneIndex(const engine::Model& model, const std::string& name)
+{
+	//const auto& skeleton = model.getSkeletonBones();
+	//for (int i = 0; i < skeleton.size(); i++)
+	//	if (skeleton[i].name == name)
+	//		return i;
+
+	//return -1; // bone not found
+
+	// faster
+	if (model.getSkeleton())
+		return model.getSkeleton()->getSkeletonNameIndex(name);
+
+	return -1; // bone not found
+}
+
+
 engine::AnimationLoader::~AnimationLoader()
 {
 	logger.trace("AnimationLoader destructor called");

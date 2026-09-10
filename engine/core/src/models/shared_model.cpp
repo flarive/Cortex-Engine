@@ -93,15 +93,6 @@ std::vector<std::shared_ptr<engine::Mesh>>& engine::SharedModel::getMeshes()
 	return emptyMeshes;
 }
 
-std::map<std::string, engine::BoneInfo>& engine::SharedModel::getBoneInfoMap()
-{
-    if (m_meshLoader)
-        return m_meshLoader->getBoneInfoMap();
-
-    static std::map<std::string, engine::BoneInfo> emptyBoneInfoMap;
-    return emptyBoneInfoMap;
-}
-
 unsigned int engine::SharedModel::getBoneCount()
 {
     if (m_meshLoader)
@@ -116,6 +107,24 @@ std::shared_ptr<engine::Skeleton> engine::SharedModel::getSkeleton()
         return m_meshLoader->getSkeleton();
 
     return nullptr;
+}
+
+const std::shared_ptr<engine::Skeleton> engine::SharedModel::getSkeleton() const
+{
+    if (m_meshLoader)
+        return m_meshLoader->getSkeleton();
+
+    return nullptr;
+}
+
+const std::vector<engine::SkeletonBone>& engine::SharedModel::getSkeletonBones() const
+{
+    if (m_meshLoader)
+        if (m_meshLoader->getSkeleton())
+            return m_meshLoader->getSkeleton()->getSkeletonBones();
+
+    static std::vector<engine::SkeletonBone> emptyBones;
+    return emptyBones;
 }
 
 bool engine::SharedModel::hasBones()

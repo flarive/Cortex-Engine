@@ -25,6 +25,10 @@ engine::BonesAnimator::BonesAnimator(std::shared_ptr<BoneAnimation> animation)
 		// create a new entry
 		m_animationsFinalBoneMatrices.emplace(animation->getName(), animFinalBoneMatrices);
 	}
+
+	auto model = animation->getModel();
+	if (model)
+		setSkeleton(model->getSkeletonBones());
 }
 
 engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnimation>>& animations)
@@ -51,7 +55,28 @@ engine::BonesAnimator::BonesAnimator(const std::vector<std::shared_ptr<BoneAnima
 				m_animationsFinalBoneMatrices.emplace(animation->getName(), animmFinalBoneMatrices);
 			}
 		}
+
+		auto model = animations[0]->getModel();
+		if (model)
+			setSkeleton(model->getSkeletonBones());
 	}
+}
+
+void engine::BonesAnimator::setSkeleton(const std::vector<engine::SkeletonBone>& skeleton)
+{
+	m_skeleton = &skeleton;
+}
+
+int engine::BonesAnimator::skeletonIndexFromName(const std::string& name) const
+{
+	if (!m_skeleton)
+		return -1;
+
+	for (int i = 0; i < m_skeleton->size(); i++)
+		if ((*m_skeleton)[i].name == name)
+			return i;
+
+	return -1;
 }
 
 std::vector<std::string> engine::BonesAnimator::getAnimationsStringList()
@@ -176,14 +201,27 @@ void engine::BonesAnimator::calculateBoneTransform(const AnimNodeData* node, glm
 
 		if (keyExists)
 		{
-			auto& boneInfoMap = currentBoneAnimation->getBonesInfoMap();
+			// old
+			//auto& boneInfoMap = currentBoneAnimation->getBonesInfoMap();
 
-			auto it = boneInfoMap.find(nodeName);
-			if (it != boneInfoMap.end())
+			//auto it = boneInfoMap.find(nodeName);
+			//if (it != boneInfoMap.end())
+			//{
+			//	int index = it->second.id;
+			//	glm::mat4 offset = it->second.offset;
+			//	m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * offset;
+			//}
+
+			// new
+			//int index = skeletonIndexFromName(nodeName);
+			//const SkeletonBone& skBone = (*m_skeleton)[index];
+			//m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * skBone.offset;
+
+			int index = skeletonIndexFromName(nodeName);
+			if (index >= 0)
 			{
-				int index = it->second.id;
-				glm::mat4 offset = it->second.offset;
-				m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * offset;
+				const SkeletonBone& skBone = (*m_skeleton)[index];
+				m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * skBone.offset;
 			}
 
 

@@ -32,7 +32,7 @@ namespace engine
 		std::shared_ptr<Skeleton>& getSkeleton() { return m_skeleton; }
 
 
-		std::map<std::string, BoneInfo>& getBoneInfoMap();
+		
 		unsigned int getBoneCount();
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
@@ -65,5 +65,7 @@ namespace engine
 
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);
+
+		int findSkeletonBoneIndex(const std::string& name) const;
 	};
 }

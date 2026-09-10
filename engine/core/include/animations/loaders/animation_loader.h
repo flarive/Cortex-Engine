@@ -23,15 +23,6 @@ namespace engine
 		std::vector<KeyScale> scales;
 	};
 
-	//struct AnimationClip final {
-	//	std::string name;
-	//	std::vector<Bone> bones;
-	//	float duration;
-	//	float ticksPerSecond;
-	//};
-
-	
-
 
 	/// <summary>
 	/// Abstract class for animations loader
@@ -53,7 +44,7 @@ namespace engine
 		const unsigned int getBoneCount() const { return static_cast<unsigned int>(m_bones.size()); }
 
 		const AnimNodeData& getRootNode() const { return m_rootNode; }
-		const std::map<std::string, engine::BoneInfo>& getBonesInfoMap() const { return m_boneInfoMap; }
+
 
 
 
@@ -62,12 +53,13 @@ namespace engine
 		unsigned int getTicksPerSecond() const { return m_ticksPerSecond; }
 		unsigned int getDesiredFPS() const { return m_desiredFPS; }
 		unsigned int getNumFrames() const { return m_numFrames; }
+
+		int findSkeletonBoneIndex(const Model& model, const std::string& name);
 	
 
 	protected:
 		std::vector<Bone> m_bones{}; // animated bones, not the same as SkeletonBones
 		AnimNodeData m_rootNode{};
-		std::map<std::string, BoneInfo> m_boneInfoMap{}; // to remove by keeping a reference to the loaded model and then model->getBoneInfoMap()
 
 		float m_duration{};
 		float m_durationInSeconds{};

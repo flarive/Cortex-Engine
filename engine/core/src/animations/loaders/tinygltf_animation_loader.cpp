@@ -111,11 +111,11 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
 
     const tg3_node& skeletonRootNode = raw.nodes[skeletonRootIndex];
 
-    // Build hierarchy (like AssimpAnimationLoader::readHierarchyData)
+    // Build hierarchy
     m_rootNode = AnimNodeData{};
     readHierarchyData(m_rootNode, raw, skeletonRootNode);
 
-    // --- Bones (same pattern as AssimpAnimationLoader::readMissingBones) ---
+    // Bones
     readMissingBones(raw, animation, *model.get());
 }
 
@@ -127,10 +127,6 @@ void engine::TinygltfAnimationLoader::importBoneAnimation(const std::string& ani
 /// <param name="model"></param>
 void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfModel, const tg3_animation& animation, Model& model)
 {
-    // get boneInfoMap from model
-    std::map<std::string, engine::BoneInfo>& boneInfoMap = model.getBoneInfoMap();
-    unsigned int boneCount = model.getBoneCount();
-
     struct BoneChannelData
     {
         std::vector<KeyPosition> positions;
@@ -158,21 +154,20 @@ void engine::TinygltfAnimationLoader::readMissingBones(const tg3_model& gltfMode
         const tg3_node& node = gltfModel.nodes[nodeIndex];
         std::string boneName(node.name.data, node.name.len);
 
-        // Mirror Assimp behavior: if bone not in map, assign new id
-        if (boneInfoMap.find(boneName) == boneInfoMap.end())
+        int skeletonIndex = findSkeletonBoneIndex(model, boneName);
+        if (skeletonIndex < 0)
         {
-            boneInfoMap[boneName].id = boneCount++;
+            logger.warn("Animation references bone '{}' not found in skeleton", boneName);
+            continue;
         }
 
-        int id = boneInfoMap[boneName].id;
+        Bone bone = createBone(boneName, skeletonIndex,
+            data.positions, data.rotations, data.scales);
 
-        Bone bone = createBone(boneName, id, data.positions, data.rotations, data.scales);
         m_bones.push_back(bone);
     }
-
-    // store it for later use
-    m_boneInfoMap = boneInfoMap;
 }
+
 
 void engine::TinygltfAnimationLoader::extractBoneKeys(
     const tg3_model& model,
@@ -286,11 +281,13 @@ void engine::TinygltfAnimationLoader::readHierarchyData(AnimNodeData& dest, cons
     }
     else
     {
-        glm::vec3 translation(src.translation[0],
+        glm::vec3 translation(
+            src.translation[0],
             src.translation[1],
             src.translation[2]);
 
-        glm::vec3 scale(src.scale[0],
+        glm::vec3 scale(
+            src.scale[0],
             src.scale[1],
             src.scale[2]);
 

@@ -7,6 +7,7 @@
 
 #include "animator.h"
 #include "../animations/bone_animation.h"
+#include "../models/skeleton.h"
 #include "../models/bone.h"
 
 namespace engine
@@ -53,6 +54,8 @@ namespace engine
 		void playAnimationAtIndex(unsigned short index) override;
 		void playAnimation() override;
 		void stopAnimation() override;
+
+		void setSkeleton(const std::vector<engine::SkeletonBone>& skeleton);
 		
 
 	private:
@@ -61,5 +64,12 @@ namespace engine
 		std::map<std::string, std::vector<glm::mat4>> m_animationsFinalBoneMatrices{};
 		void calculateBoneTransform(const AnimNodeData* node, glm::mat4 parentTransform);
 		const std::vector<glm::mat4>& getFinalBoneMatrices() const;
+
+		const std::vector<SkeletonBone>* m_skeleton = nullptr;
+
+		int skeletonIndexFromName(const std::string& name) const;
+
+
+
 	};
 }

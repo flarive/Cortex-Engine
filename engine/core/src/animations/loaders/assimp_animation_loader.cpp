@@ -46,17 +46,19 @@ void engine::AssimpAnimationLoader::importBoneAnimation(const std::string& anima
 /// <param name="model"></param>
 void engine::AssimpAnimationLoader::readMissingBones(const aiAnimation* animation, Model& model)
 {
-	// get boneInfoMap from model
-	std::map<std::string, engine::BoneInfo>& boneInfoMap = model.getBoneInfoMap();
-	unsigned int boneCount = model.getBoneCount();
+	const auto& skeleton = model.getSkeletonBones();
 
 	for (unsigned i = 0; i < animation->mNumChannels; i++)
 	{
 		const aiNodeAnim* channel = animation->mChannels[i];
 		std::string boneName = channel->mNodeName.data;
 
-		if (boneInfoMap.find(boneName) == boneInfoMap.end())
-			boneInfoMap[boneName].id = boneCount++;
+		int skeletonIndex = findSkeletonBoneIndex(model, boneName);
+		if (skeletonIndex < 0)
+		{
+			logger.warn("Animation references bone '{}' not found in skeleton", boneName);
+			continue; // skip unknown bones
+		}
 
 		std::vector<KeyPosition> positions;
 		std::vector<KeyRotation> rotations;
@@ -64,13 +66,11 @@ void engine::AssimpAnimationLoader::readMissingBones(const aiAnimation* animatio
 
 		extractBoneKeys(channel, positions, rotations, scales);
 
-		Bone bone = createBone(boneName, boneInfoMap[boneName].id, positions, rotations, scales);
+		Bone bone = createBone(boneName, skeletonIndex, positions, rotations, scales);
 		m_bones.push_back(bone);
 	}
-
-	// store it for later use
-	m_boneInfoMap = boneInfoMap;
 }
+
 
 void engine::AssimpAnimationLoader::extractBoneKeys(const aiNodeAnim* channel, std::vector<KeyPosition>& positions, std::vector<KeyRotation>& rotations, std::vector<KeyScale>& scales)
 {

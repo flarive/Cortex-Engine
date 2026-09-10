@@ -27,8 +27,8 @@ namespace engine
 		void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false) override;
 
 	private:
-		std::vector<GLTFNode> m_nodes{}; // to remove !!!!
-		std::vector<int> m_jointToBone{}; // to remove !!!!
+		std::vector<GLTFNode> m_nodes{};
+		std::vector<int> m_jointToBone{};
 
 		glm::mat4 extractNodeLocalTransform(const tg3_node& node);
 		int findParentIndex(const tg3_model& raw, const int32_t* joints, uint32_t jointCount, int nodeIndex);

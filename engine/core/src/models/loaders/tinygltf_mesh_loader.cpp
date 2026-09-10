@@ -88,16 +88,6 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
 
     // ------------------------------------------------------------
-    // 4. Extract bones (if any)
-    // ------------------------------------------------------------
-    if (m_hasBones)
-    {
-        buildSkeleton(raw);
-        computeBindPoseMatrices(); // ?????????????????????
-    }
-
-
-    // ------------------------------------------------------------
     // 5. Build GLTF node hierarchy (ALWAYS)
     // ------------------------------------------------------------
     m_nodes.resize(raw.nodes_count);
@@ -124,6 +114,18 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     {
         for (int child : m_nodes[i].children)
             m_nodes[child].parent = i;
+    }
+
+
+
+
+    // ------------------------------------------------------------
+    // 4. Extract bones (if any)
+    // ------------------------------------------------------------
+    if (m_hasBones)
+    {
+        buildSkeleton(raw);
+        computeBindPoseMatrices(); // ?????????????????????
     }
 
 
@@ -869,76 +871,60 @@ int engine::GLtfMeshLoader::toInt(const tg3_value& v)
 
 void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)
 {
-    if (raw.skins_count == 0)
-        return;
-
     const tg3_skin& skin = raw.skins[0];
 
+    m_jointToBone.clear();
+    m_jointToBone.resize(skin.joints_count, -1);
 
-    // Determine skeleton root
-    m_skeleton->setRootIndex(skin.skeleton != UINT32_MAX ? skin.skeleton : skin.joints[0]);
-
-
-    // --- Load inverse bind matrices ---
+    // Load inverse bind matrices
     const tg3_accessor& ibmAcc = raw.accessors[skin.inverse_bind_matrices];
-    const tg3_buffer_view& view = raw.buffer_views[ibmAcc.buffer_view];
-    const tg3_buffer& buf = raw.buffers[view.buffer];
+    const tg3_buffer_view& ibmView = raw.buffer_views[ibmAcc.buffer_view];
+    const tg3_buffer& ibmBuf = raw.buffers[ibmView.buffer];
 
     const float* ibmData = reinterpret_cast<const float*>(
-        buf.data.data + view.byte_offset + ibmAcc.byte_offset
-        );
+        ibmBuf.data.data + ibmView.byte_offset + ibmAcc.byte_offset);
 
-    // Resize mapping for this skin
-    uint32_t jointCount = skin.joints_count;
-
-    m_skeleton->getBones().resize(jointCount);
-
-    // Build name → index map
-    m_skeleton->reserveNameToIndex(jointCount);
-
-
-    m_jointToBone.resize(jointCount);
-
-    // --- Fill skeleton bones ---
     for (uint32_t j = 0; j < skin.joints_count; ++j)
     {
         int nodeIndex = skin.joints[j];
         const tg3_node& node = raw.nodes[nodeIndex];
 
         SkeletonBone bone{};
+        bone.name = toStdString(node.name);
+        bone.parentIndex = -1; // fixed later
+        bone.offset = glm::make_mat4x4(ibmData + j * 16);
+        bone.localBindTransform = glm::inverse(bone.offset);
 
+        int skeletonIndex = m_skeleton->addSkeletonBone(bone);
 
-        // Name
-        std::string boneName = toStdString(node.name);
-        bone.name = boneName;
-        m_skeleton->setNameToIndexValue(bone.name, j);
-
-
-        // Parent index
-        bone.parentIndex = findParentIndex(raw, skin.joints, skin.joints_count, nodeIndex);
-
-        // Local bind transform (from GLTF node)
-        bone.localBindTransform = extractNodeLocalTransform(node);
-
-
-
-        BoneInfo info{};
-        info.id = j;  // JOINTS_0 indices match this
-
-        glm::mat4 ibm{};
-        memcpy(glm::value_ptr(ibm), ibmData + j * 16, sizeof(float) * 16);
-        info.offset = ibm;
-        bone.offset = ibm;
-
-        // Store bone
-        m_skeleton->getBoneInfoMap()[boneName] = info;
-        m_skeleton->setBone(j, bone);
-
-        m_jointToBone[j] = info.id;
-
-        //m_skeleton->setBoneCount(std::max(m_skeleton->getBoneCount(), (unsigned int)skin.joints_count));
+        m_jointToBone[j] = skeletonIndex;
     }
-    
+
+    // Build hierarchy
+    for (uint32_t j = 0; j < skin.joints_count; ++j)
+    {
+        int nodeIndex = skin.joints[j];
+        const tg3_node& node = raw.nodes[nodeIndex];
+
+        int parentNode = m_nodes[nodeIndex].parent;
+
+        if (parentNode >= 0)
+        {
+            // Check if parent is also a joint
+            auto it = std::find(skin.joints, skin.joints + skin.joints_count, parentNode);
+            if (it != skin.joints + skin.joints_count)
+            {
+                int parentJoint = int(it - skin.joints);
+                int parentBoneIndex = m_jointToBone[parentJoint];
+                int boneIndex = m_jointToBone[j];
+
+                m_skeleton->getSkeletonBone(boneIndex).parentIndex = parentBoneIndex;
+            }
+        }
+    }
+
+    // Root bone
+    m_skeleton->setSkeletonRootIndex(m_jointToBone[0]);
 }
 
 
@@ -981,16 +967,14 @@ glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
 void engine::GLtfMeshLoader::computeBindPoseMatrices()
 {
     m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->getBoneCount());
+    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBoneCount());
 
-    for (auto& kv : m_skeleton->getBoneInfoMap())
+    const auto& bones = m_skeleton->getSkeletonBones();
+
+    for (int i = 0; i < bones.size(); i++)
     {
-        const BoneInfo& info = kv.second;
-
-        // Bind‑pose skinning matrix should be identity
-        glm::mat4 skinMat = glm::mat4(1.0f);
-
-        m_finalBindPoseMatrices.push_back(skinMat);
+        // GLTF bind‑pose skinning matrix = identity
+        m_finalBindPoseMatrices.push_back(glm::mat4(1.0f));
     }
 }
 

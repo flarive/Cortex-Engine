@@ -24,71 +24,36 @@ namespace engine
     class Skeleton final : public NonCopyable
     {
     public:
-        
-        std::vector<SkeletonBone>& getBones() { return m_skeletonBones; }
-        const SkeletonBone& getBone(int index) const { return m_skeletonBones[index]; }
+        std::vector<SkeletonBone>& getSkeletonBones() { return m_skeletonBones; }
 
-        void addBone(const SkeletonBone& bone)
-        {
-            int index = static_cast<int>(m_skeletonBones.size());
-            m_skeletonBones.push_back(bone);
-            m_nameToIndex[bone.name] = index;
-        }
+        // non-const: used when building / editing the skeleton
+        SkeletonBone& getSkeletonBone(int index);
 
-        void setBone(int index, const SkeletonBone& bone)
-        {
-            m_skeletonBones[index] = bone;
-            m_nameToIndex[bone.name] = index;
-        }
+        // const: used when reading the skeleton (render, animation, etc.)
+        const SkeletonBone& getSkeletonBone(int index) const;
+
+        int addSkeletonBone(const SkeletonBone& bone);
+        void setSkeletonBone(int index, const SkeletonBone& bone);
+
+        SkeletonBone* findSkeletonBone(const std::string& name);
+        const SkeletonBone* findSkeletonBone(const std::string& name) const;
         
 
-
+        unsigned int getSkeletonBoneCount() const;
 		
 
-        std::map<std::string, BoneInfo>& getBoneInfoMap() { return m_boneInfoMap; }
-
-		unsigned int getBoneCount() const { return static_cast<unsigned int>(m_skeletonBones.size()); }
-		
+        int getSkeletonRootIndex() const { return m_skeletonRootIndex; }
+        void setSkeletonRootIndex(int index) { m_skeletonRootIndex = index; }
 
 
-        
-
-        
-        int getNameIndex(const std::string& name) const
-        {
-            auto it = m_nameToIndex.find(name);
-            return (it == m_nameToIndex.end()) ? -1 : it->second;
-        }
-
-
-
-        
-
-        int getRootIndex() const { return m_skeletonRootIndex; }
-        void setRootIndex(int index) { m_skeletonRootIndex = index; }
-
-        
-
-        void reserveNameToIndex(unsigned int size)
-        {
-            m_nameToIndex.reserve(size);
-        }
-
-        void setNameToIndexValue(const std::string& key, int value)
-        {
-            m_nameToIndex[key] = value;
-        }
-  
+        // faster lookup, faster than vector
+        int getSkeletonNameIndex(const std::string& name) const;
 
     private:
-        std::vector<SkeletonBone> m_skeletonBones{};     // flat list
+        std::vector<SkeletonBone> m_skeletonBones{}; // flat list
         int m_skeletonRootIndex{ -1 };
 
-        // a legacy Assimp-style lookup table you no longer need (TO BE REMOVED)
-        // use simple std::unordered_map<std::string, int> m_nameToIndex; instead
-        std::map<std::string, BoneInfo> m_boneInfoMap{};
-
-        // Lookup tables
-        std::unordered_map<std::string, int> m_nameToIndex;
+        // Lookup tables (for performance)
+        std::unordered_map<std::string, int> m_nameToIndex{};
     };
 }

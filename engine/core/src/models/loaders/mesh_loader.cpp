@@ -50,26 +50,29 @@ void engine::MeshLoader::setVertexBoneData(Vertex& vertex, int boneID, float wei
 int engine::MeshLoader::getSkeletonRootIndex() const
 {
     if (m_skeleton)
-        return m_skeleton->getRootIndex();
+        return m_skeleton->getSkeletonRootIndex();
 
     return -1;
-}
-
-std::map<std::string, engine::BoneInfo>& engine::MeshLoader::getBoneInfoMap()
-{
-    if (m_skeleton)
-        return m_skeleton->getBoneInfoMap();
-    
-    static std::map<std::string, engine::BoneInfo> emptyMap;
-    return emptyMap ;
 }
 
 unsigned int engine::MeshLoader::getBoneCount()
 {
 	if (m_skeleton)
-        return m_skeleton->getBoneCount();
+        return m_skeleton->getSkeletonBoneCount();
 
 	return 0;
+}
+
+int engine::MeshLoader::findSkeletonBoneIndex(const std::string& name) const
+{
+    /*const auto& bones = m_skeleton->getSkeletonBones();
+    for (int i = 0; i < bones.size(); i++)
+        if (bones[i].name == name)
+            return i;
+    return -1;*/
+
+    // faster
+    return m_skeleton->getSkeletonNameIndex(name);
 }
 
 engine::MeshLoader::~MeshLoader()
@@ -89,8 +92,4 @@ engine::MeshLoader::~MeshLoader()
     //    m_materials[i]->clean();
     //}
     m_materials.clear(); // TODO !!!!!!!!!!!!!!!!!!!!!!!
-
-    // ???????????????????????????????????
-    //if (m_skeleton)
-    //    m_skeleton->m_boneInfoMap.clear();
 }

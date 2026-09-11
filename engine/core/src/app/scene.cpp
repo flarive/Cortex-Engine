@@ -68,15 +68,15 @@ void engine::Scene::before_init_internal()
     // Always run this code
 
 	// be notified when audio manager is initialized and ready
-   // m_audioManager.setInitCallback([](bool success) {
-   //     if (success) {
-			//logger.info("OpenAL initialized successfully!");
-   //         // Proceed with audio operations
-   //     }
-   //     else {
-			//logger.error("OpenAL initialization failed!");
-   //     }
-   //  });
+    m_audioManager.setInitCallback([](bool success) {
+        if (success) {
+			logger.info("OpenAL initialized successfully!");
+            // Proceed with audio operations
+        }
+        else {
+			logger.error("OpenAL initialization failed!");
+        }
+     });
 }
 
 void engine::Scene::after_init_internal()
@@ -1345,7 +1345,7 @@ engine::Scene::~Scene()
         m_renderer->clean();
     }
     m_entityManager.clean();
-    //m_audioManager.clean();
+    m_audioManager.clean();
 
     // Reset static state
     currentInstance = nullptr;

@@ -8,10 +8,15 @@
 
 #include "../../../include/singleton.h"
 
-
-
 void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
+    loadModel(path, loadAnimation, flipUVs, nullptr);
+}
+
+void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial)
+{
+    m_customMaterial = customMaterial;
+
     // read file via ASSIMP
     Assimp::Importer importer;
 
@@ -62,7 +67,7 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
             m_hasAnimations = scene->HasAnimations();
 
             // build a neutral bind-pose animation
-            computeBindPoseMatrices();
+            //computeBindPoseMatrices();
 
             // Meshes can now safely receive bind-pose matrices
             for (unsigned int i = 0; i < m_meshes.size(); i++)
@@ -70,7 +75,7 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
                 // the node object only contains indices to index the actual objects in the scene. 
                 // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
                 std::shared_ptr<Mesh> mesh = m_meshes[i];
-                mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
+                //mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
                 mesh->setHasBones(m_hasBones);
                 mesh->setHasAnimations(m_hasAnimations);
             }
@@ -180,27 +185,26 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
     aiGetMaterialColor(aimaterial, AI_MATKEY_COLOR_DIFFUSE, &diffuse);
     aiGetMaterialColor(aimaterial, AI_MATKEY_COLOR_SPECULAR, &specular);
 
-    //if (m_customMaterial) // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //{
-    //    // use a user defined material
-    //    m_materials.push_back(m_customMaterial);
-    //}
-    //else
-    //{
-
-    std::shared_ptr<Material> material{};
-
-    if (sceneSettings.method == RenderMethod::PBR)
+    if (m_customMaterial)
     {
-        material = loadPBRMaterial(scene, aimaterial);
+        // use a user defined material
+        m_materials.push_back(m_customMaterial);
     }
     else
     {
-        material = loadBlinnPhongMaterial(scene, aimaterial);
-    }
+        std::shared_ptr<Material> material{};
+
+        if (sceneSettings.method == RenderMethod::PBR)
+        {
+            material = loadPBRMaterial(scene, aimaterial);
+        }
+        else
+        {
+            material = loadBlinnPhongMaterial(scene, aimaterial);
+        }
     
-    m_materials.push_back(material);
-    //}
+        m_materials.push_back(material);
+    }
 
     // load all textures asynchronously
     if (m_materials.back()->hasTextureMap())
@@ -524,34 +528,33 @@ void engine::AssimpMeshLoader::buildSkeleton(const aiScene* scene)
     traverse(scene->mRootNode, -1);
 }
 
+//void engine::AssimpMeshLoader::computeBindPoseMatrices()
+//{
+//    m_finalBindPoseMatrices.clear();
+//    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBones().size());
+//
+//    for (int i = 0; i < m_skeleton->getSkeletonBones().size(); i++)
+//    {
+//        glm::mat4 global = computeGlobalFromSkeleton(i);
+//        glm::mat4 offset = m_skeleton->getSkeletonBone(i).offset;
+//
+//        m_finalBindPoseMatrices.push_back(global * offset);
+//    }
+//}
 
-void engine::AssimpMeshLoader::computeBindPoseMatrices()
-{
-    m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBones().size());
-
-    for (int i = 0; i < m_skeleton->getSkeletonBones().size(); i++)
-    {
-        glm::mat4 global = computeGlobalFromSkeleton(i);
-        glm::mat4 offset = m_skeleton->getSkeletonBone(i).offset;
-
-        m_finalBindPoseMatrices.push_back(global * offset);
-    }
-}
-
-glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
-{
-    glm::mat4 global = m_skeleton->getSkeletonBone(index).localBindTransform;
-
-    int parent = m_skeleton->getSkeletonBone(index).parentIndex;
-    while (parent != -1)
-    {
-        global = m_skeleton->getSkeletonBone(parent).localBindTransform * global;
-        parent = m_skeleton->getSkeletonBone(parent).parentIndex;
-    }
-
-    return global;
-}
+//glm::mat4 engine::AssimpMeshLoader::computeGlobalFromSkeleton(int index)
+//{
+//    glm::mat4 global = m_skeleton->getSkeletonBone(index).localBindTransform;
+//
+//    int parent = m_skeleton->getSkeletonBone(index).parentIndex;
+//    while (parent != -1)
+//    {
+//        global = m_skeleton->getSkeletonBone(parent).localBindTransform * global;
+//        parent = m_skeleton->getSkeletonBone(parent).parentIndex;
+//    }
+//
+//    return global;
+//}
 
 engine::AssimpMeshLoader::~AssimpMeshLoader()
 {

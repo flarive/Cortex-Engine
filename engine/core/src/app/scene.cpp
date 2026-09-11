@@ -68,15 +68,15 @@ void engine::Scene::before_init_internal()
     // Always run this code
 
 	// be notified when audio manager is initialized and ready
-    m_audioManager.setInitCallback([](bool success) {
-        if (success) {
-			logger.info("OpenAL initialized successfully!");
-            // Proceed with audio operations
-        }
-        else {
-			logger.error("OpenAL initialization failed!");
-        }
-     });
+   // m_audioManager.setInitCallback([](bool success) {
+   //     if (success) {
+			//logger.info("OpenAL initialized successfully!");
+   //         // Proceed with audio operations
+   //     }
+   //     else {
+			//logger.error("OpenAL initialization failed!");
+   //     }
+   //  });
 }
 
 void engine::Scene::after_init_internal()
@@ -584,6 +584,40 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
         }
     }
 
+    std::shared_ptr<AnimatorComponent> animatorComponent{};
+    std::shared_ptr<ModelComponent> modelComponent{};
+    std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+    std::shared_ptr<LightComponent> lightComponent{};
+    std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
+    std::shared_ptr<TerrainComponent> terrainComponent{};
+
+    // 1. First pass: collect components
+    for (const auto& [typeID, component] : entity->components)
+    {
+        if (typeID == ComponentType::model)
+            modelComponent = std::static_pointer_cast<ModelComponent>(component);
+        else if (typeID == ComponentType::primitive)
+            primitiveComponent = std::static_pointer_cast<PrimitiveComponent>(component);
+        else if (typeID == ComponentType::animator)
+            animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
+        else if (typeID == ComponentType::light)
+            lightComponent = std::static_pointer_cast<LightComponent>(component);
+        else if (typeID == ComponentType::particleSystem)
+            particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
+        else if (typeID == ComponentType::terrain)
+            terrainComponent = std::static_pointer_cast<TerrainComponent>(component);
+    }
+
+    if (modelComponent && modelComponent->getModel() && modelComponent->getModel()->hasBones() && animatorComponent == nullptr)
+    {
+        // model entity is having bones but no animator component, add a default bind pose one
+        auto model = modelComponent->getModel();
+        std::shared_ptr<BoneAnimation> bindPoseAnimation = std::make_shared<BoneAnimation>("BindPose", model->getFilePath(), model, 0.0f);
+        bindPoseAnimation->isBindPose = true;
+        auto bindPoseAnimatior = std::make_shared<BonesAnimator>(bindPoseAnimation);
+        entity->addComponent<AnimatorComponent>(bindPoseAnimatior);
+    }
+
     // init children
     for (const auto& child : entity->children)
     {
@@ -659,35 +693,8 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
             if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
             {
                 frustrumOk = true;
-                //std::cout << "Entity " << entity->id << " is inside frustum." << std::endl;
             }
-            //else if (shouldTestFrustrum)
-            //{
-            //    std::cout << "Entity " << entity->id << " is OUTSIDE frustum." << std::endl;
-
-            //    // Log which planes failed
-            //    if (boundingVolume)
-            //    {
-            //        std::cout << "Entity " << entity->id << " is being tested as AABB." << std::endl;
-            //        std::cout << "Near plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.nearFace) << std::endl;
-            //        std::cout << "Far plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.farFace) << std::endl;
-            //        std::cout << "Left plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.leftFace) << std::endl;
-            //        std::cout << "Right plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.rightFace) << std::endl;
-            //        std::cout << "Top plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.topFace) << std::endl;
-            //        std::cout << "Bottom plane test: " << boundingVolume->isOnOrForwardPlane(camFrustum.bottomFace) << std::endl;
-            //    }
-            //    else {
-            //        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
-            //    }
-            //}
         }
-        //else
-        //{
-        //    if (entity->getType() == EntityType::primitive || entity->getType() == EntityType::model)
-        //    {
-        //        std::cout << "Entity " << entity->name << " does not have a bounding volume." << std::endl;
-        //    }
-        //}
     }
 
     if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
@@ -713,67 +720,122 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
         auto& transform = entity->getTransform();
 
-        // looping over entity components
+        std::shared_ptr<AnimatorComponent> animatorComponent{};
+        std::shared_ptr<ModelComponent> modelComponent{};
+        std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+        std::shared_ptr<LightComponent> lightComponent{};
+        std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
+        std::shared_ptr<TerrainComponent> terrainComponent{};
+
+        // 1. First pass: collect components
         for (const auto& [typeID, component] : entity->components)
         {
-            if (typeID == ComponentType::primitive || typeID == ComponentType::model)
+            if (typeID == ComponentType::model)
+                modelComponent = std::static_pointer_cast<ModelComponent>(component);
+            else if (typeID == ComponentType::primitive)
+                primitiveComponent = std::static_pointer_cast<PrimitiveComponent>(component);
+            else if (typeID == ComponentType::animator)
+                animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
+            else if (typeID == ComponentType::light)
+                lightComponent = std::static_pointer_cast<LightComponent>(component);
+            else if (typeID == ComponentType::particleSystem)
+                particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
+            else if (typeID == ComponentType::terrain)
+                terrainComponent = std::static_pointer_cast<TerrainComponent>(component);
+        }
+
+
+        // 2. Update animator (once per frame)
+        if (animatorComponent && callsThisFrame == 1)
+        {
+            animatorComponent->update(deltaTime, transform);
+        }
+
+        // 3. Upload bones BEFORE drawing the model
+        if (animatorComponent)
+        {
+            animatorComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+        }
+
+        // 4. Draw model meshes
+        if (modelComponent)
+        {
+            bool shouldDraw = true;
+
+            // manage shadow casting or not
+            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
             {
-				bool shouldDraw = true;
-                
-                // manage shadow casting or not
-                if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+                auto properties = modelComponent->getPublicProperties();
+                if (properties.contains("canCastShadows"))
                 {
-                    auto properties = component->getPublicProperties();
-                    if (properties.contains("canCastShadows"))
+                    auto& canCastShadows = properties.at("canCastShadows");
+                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
                     {
-                        auto& canCastShadows = properties.at("canCastShadows");
-                        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-                        {
-                            shouldDraw = *pBool;
-                        }
+                        shouldDraw = *pBool;
                     }
                 }
-                
-                // primitive and model
-                if (shouldDraw) {
-                    component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            }
+
+            if (shouldDraw)
+                modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+
+            inFrustrumCount++;
+        }
+
+        // 5. Draw primitive meshes (if any)
+        if (primitiveComponent)
+        {
+            bool shouldDraw = true;
+
+            // manage shadow casting or not
+            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+            {
+                auto properties = primitiveComponent->getPublicProperties();
+                if (properties.contains("canCastShadows"))
+                {
+                    auto& canCastShadows = properties.at("canCastShadows");
+                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
+                    {
+                        shouldDraw = *pBool;
+                    }
                 }
+            }
 
-                inFrustrumCount++;
-            }
-            else if (typeID == ComponentType::light)
-            {
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform);
+            if (shouldDraw)
+                primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
 
-                // TODO !!!! test if tesselation is used/needed
-                component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
-            }
-            else if (typeID == ComponentType::animator)
-            {
-                // update should be called only one time per frame
-                if (callsThisFrame == 1)
-                    component->update(deltaTime, transform);
+            inFrustrumCount++;
+        }
 
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-            }
-            else if (typeID == ComponentType::particleSystem)
-            {
-                // update should be called only one time per frame
-                if (callsThisFrame == 1)
-                    component->update(deltaTime, transform);
-                
-                component->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-                inFrustrumCount++;
-            }
-            else if (typeID == ComponentType::terrain)
-            {
-                // update should be called only one time per frame
-                if (callsThisFrame == 1)
-                    component->update(deltaTime, transform);
+        // 6. Draw lights
+        if (lightComponent)
+        {
+            lightComponent->draw(projection, view, shader, entity->getWorldTransform(), transform);
 
-                component->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-                inFrustrumCount++;
-            }
+            // TODO !!!! test if tesselation is used/needed
+            lightComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
+        }
+
+        // 7. Draw particle systems
+        if (particleSystemComponent)
+        {
+            // update should be called only one time per frame
+            if (callsThisFrame == 1)
+                particleSystemComponent->update(deltaTime, transform);
+
+            particleSystemComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            inFrustrumCount++;
+        }
+
+        // 8. Draw terrains
+        if (terrainComponent)
+        {
+            // update should be called only one time per frame
+            if (callsThisFrame == 1)
+                terrainComponent->update(deltaTime, transform);
+
+            terrainComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            inFrustrumCount++;
         }
 
         if (shader.name == "outline")
@@ -1283,10 +1345,8 @@ engine::Scene::~Scene()
         m_renderer->clean();
     }
     m_entityManager.clean();
-    m_audioManager.clean();
+    //m_audioManager.clean();
 
     // Reset static state
     currentInstance = nullptr;
 }
-
-

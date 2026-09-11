@@ -24,6 +24,9 @@ namespace engine
     class Skeleton final : public NonCopyable
     {
     public:
+        Skeleton();
+        ~Skeleton();
+
         std::vector<SkeletonBone>& getSkeletonBones() { return m_skeletonBones; }
 
         // non-const: used when building / editing the skeleton

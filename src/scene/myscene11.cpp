@@ -36,7 +36,7 @@ void MyScene11::init()
     // light
     auto trsLight1 = Transform{ {0.5f, 1.5f, 3.0f} };
     auto light1 = make_shared<SpotLight>();
-    light1->setIntensity(6.0f);
+    light1->setIntensity(12.0f);
     light1->setCutoff(12.0f);
     light1->setOuterCutoff(48.0f);
     light1->setTarget(vec3(0.0f, 0.0f, 0.0f));
@@ -51,24 +51,26 @@ void MyScene11::init()
 
 
     // ground
-    //auto myPlane = make_shared<Plane>();
-    //myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f),
-    //    "textures/pbr/plastered-stone-wall/plastered_stone_wall_diff_1k.jpg",
-    //    "textures/pbr/plastered-stone-wall/plastered_stone_wall_spec_1k.jpg",
-    //    "textures/pbr/plastered-stone-wall/plastered_stone_wall_nor_gl_1k.jpg"), UvMapping(1.0f));
-    //auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(3.0f), vec3(0.0f));
-    //auto entityPlane = make_shared<Entity>("MyPlane");
-    //entityPlane->addComponent<TransformComponent>(trsPlane);
-    //entityPlane->addComponent<PrimitiveComponent>(myPlane);
-    //getEntityManager().addChild(entityPlane);
+    auto myPlane = make_shared<Plane>();
+    myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f),
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_diff_1k.jpg",
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_spec_1k.jpg",
+        "textures/pbr/plastered-stone-wall/plastered_stone_wall_nor_gl_1k.jpg"), UvMapping(1.0f));
+    auto trsPlane = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(3.0f), vec3(0.0f));
+    auto entityPlane = make_shared<Entity>("MyPlane");
+    entityPlane->addComponent<TransformComponent>(trsPlane);
+    entityPlane->addComponent<PrimitiveComponent>(myPlane);
+    getEntityManager().addChild(entityPlane);
 
 
 
 
     // animated vampire model
-    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", false, false, true);
-    auto vampireAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.6f);
-    auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimation);
+    auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", true, false, true);
+    auto vampireDancingAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.6f);
+    auto vampireAnimations = std::vector<std::shared_ptr<BoneAnimation>>();
+    vampireAnimations.push_back(vampireDancingAnimation);
+    auto vampireAnimator = make_shared<BonesAnimator>(vampireAnimations);
     auto trsVampire = Transform(vec3(-0.8f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityVampire = make_shared<Entity>("MyVampire");
     entityVampire->addComponent<TransformComponent>(trsVampire);
@@ -79,21 +81,20 @@ void MyScene11::init()
 
 
     // mixamo twist dance model
-    /*auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.4f), Color(0.669f, 0.241f, 0.210f, 1.0f), Color(0.487f), 3.675f);
-    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, false, false, true);
-    auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.2f);
-    auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.2f);
+    auto mixamoMat = std::make_shared<BlinnPhongMaterial>(Color(0.1f), Color(0.9f, 0.1f, 0.1f, 1.0f), Color(0.5f), 3.0f);
+    auto mixamoModel = make_shared<Model>("models/mixamo/Idle.glb", mixamoMat, true, false, true);
+    auto mixamoAnimation1 = make_shared<BoneAnimation>("TwistDance", "models/mixamo/TwistDance.glb", mixamoModel, 0.4f);
+    auto mixamoAnimation2 = make_shared<BoneAnimation>("HipHopDance", "models/mixamo/HipHopDance.glb", mixamoModel, 0.4f);
     auto mixamoAnimations = std::vector<std::shared_ptr<BoneAnimation>>();
     mixamoAnimations.push_back(mixamoAnimation1);
     mixamoAnimations.push_back(mixamoAnimation2);
-
     auto mixamoAnimator = make_shared<BonesAnimator>(mixamoAnimations);
     auto trsMixamo = Transform(vec3(0.8f, 0.0f, 0.0f), vec3(0.5f), vec3(0.0f));
     auto entityMixamo = make_shared<Entity>("MyMixamo");
     entityMixamo->addComponent<TransformComponent>(trsMixamo);
     entityMixamo->addComponent<ModelComponent>(mixamoModel);
     entityMixamo->addComponent<AnimatorComponent>(mixamoAnimator);
-    getEntityManager().addChild(entityMixamo);*/
+    getEntityManager().addChild(entityMixamo);
 
 
 

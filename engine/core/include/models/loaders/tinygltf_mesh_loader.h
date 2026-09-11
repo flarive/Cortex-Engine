@@ -25,6 +25,7 @@ namespace engine
 		GLtfMeshLoader() = default;
 		virtual ~GLtfMeshLoader();
 		void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false) override;
+		void loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial) override;
 
 	private:
 		std::vector<GLTFNode> m_nodes{};
@@ -56,6 +57,6 @@ namespace engine
 		int getTextureSource(const tg3_texture& tex);
 		
 
-		void computeBindPoseMatrices();
+		//void computeBindPoseMatrices();
 	};
 }

@@ -37,17 +37,17 @@ engine::SharedModel::SharedModel(const std::string& _path, const std::shared_ptr
 
     assert(_material && "Material is not defined !");
 
-    loadModel(_path, _loadAnimation, _flipUV);
+    loadModel(_path, _loadAnimation, _flipUV, _material);
 }
 
-void engine::SharedModel::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
+void engine::SharedModel::loadModel(const std::string& path, bool loadAnimation, bool flipUVs, std::shared_ptr<Material> customMaterial)
 {
     // Start the timer
     auto start = std::chrono::high_resolution_clock::now();
 
     // Create the right mesh loader according file extension (tinyGLTF for GLTF otherwise Assimp)
     m_meshLoader = MeshLoader::create(path);
-    m_meshLoader->loadModel(path, loadAnimation, flipUVs);
+    m_meshLoader->loadModel(path, loadAnimation, flipUVs, customMaterial);
 
     // Stop the timer
     auto end = std::chrono::high_resolution_clock::now();
@@ -126,6 +126,22 @@ const std::vector<engine::SkeletonBone>& engine::SharedModel::getSkeletonBones()
     static std::vector<engine::SkeletonBone> emptyBones;
     return emptyBones;
 }
+
+//const std::vector<glm::mat4>& engine::SharedModel::getBindPoseMatrices() const
+//{
+//    if (m_meshLoader)
+//    {
+//        const auto& meshes = m_meshLoader->getMeshes();
+//        if (!meshes.empty())
+//        {
+//            return meshes[0]->getBindPoseMatrices();
+//        }
+//    }
+//
+//    static std::vector<glm::mat4> emptyBindPoseMatrices;
+//    return emptyBindPoseMatrices;
+//}
+
 
 bool engine::SharedModel::hasBones()
 {

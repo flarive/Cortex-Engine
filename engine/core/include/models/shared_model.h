@@ -90,6 +90,8 @@ namespace engine
         std::shared_ptr<Skeleton> getSkeleton();
         const std::shared_ptr<Skeleton> getSkeleton() const;
         const std::vector<engine::SkeletonBone>& getSkeletonBones() const;
+
+        //const std::vector<glm::mat4>& getBindPoseMatrices() const;
         
 
         bool& getFlipUV() { return m_flipUV; }
@@ -124,6 +126,6 @@ namespace engine
 
         std::shared_ptr<Material> m_customMaterial{};
 
-        void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false);
+        void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false, std::shared_ptr<Material> customMaterial = nullptr);
     };
 }

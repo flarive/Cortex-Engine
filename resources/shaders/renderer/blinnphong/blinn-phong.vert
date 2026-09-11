@@ -30,7 +30,7 @@ uniform bool reverse_normals;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-const int MAX_BONES = 100;
+const int MAX_BONES = 128;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 uniform bool isAnimated; // Flag to determine if the model is animated with bones animation

@@ -9,8 +9,16 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
+    loadModel(path, loadAnimation, flipUVs, nullptr);
+}
+
+void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial)
+{
+    m_customMaterial = customMaterial;
+    
     // ------------------------------------------------------------
     // 1. Parse GLTF
     // ------------------------------------------------------------
@@ -125,7 +133,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     if (m_hasBones)
     {
         buildSkeleton(raw);
-        computeBindPoseMatrices(); // ?????????????????????
+        //computeBindPoseMatrices();
     }
 
 
@@ -166,7 +174,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
             std::shared_ptr<Mesh> mesh = m_meshes[i];
 
             // Bind-pose matrices (same for all meshes of the model)
-            mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
+            //mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
             mesh->setHasBones(m_hasBones);
             mesh->setHasAnimations(m_hasAnimations);
         }
@@ -457,20 +465,27 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         // ------------------------------------------------------------
         // Material
         // ------------------------------------------------------------
-        std::shared_ptr<engine::Material> mat{};
-
-        if (sceneSettings.method == RenderMethod::PBR)
-            mat = loadPBRMaterial(prim.material, model);
+        if (m_customMaterial)
+        {
+            // use a user defined material
+            m_materials.push_back(m_customMaterial);
+        }
         else
-            mat = loadBlinnPhongMaterial(prim.material, model);
+        {
+            std::shared_ptr<engine::Material> mat{};
 
-        m_materials.push_back(mat);
+            if (sceneSettings.method == RenderMethod::PBR)
+                mat = loadPBRMaterial(prim.material, model);
+            else
+                mat = loadBlinnPhongMaterial(prim.material, model);
 
-        if (mat->hasTextureMap())
-            mat->loadTexturesAsync(false);
+            m_materials.push_back(mat);
+        }
+
+        // load all textures asynchronously
+        if (m_materials.back()->hasTextureMap())
+            m_materials.back()->loadTexturesAsync(false);
     }
-
-    //logger.info("Mesh {} vertices {} / indices {}", toStdString(mesh.name), vertices.size(), indices.size());
 
     // ------------------------------------------------------------
     // Create Mesh
@@ -964,19 +979,19 @@ glm::mat4 engine::GLtfMeshLoader::getNodeLocalTransform(const tg3_node& n)
     return M;
 }
 
-void engine::GLtfMeshLoader::computeBindPoseMatrices()
-{
-    m_finalBindPoseMatrices.clear();
-    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBoneCount());
-
-    const auto& bones = m_skeleton->getSkeletonBones();
-
-    for (int i = 0; i < bones.size(); i++)
-    {
-        // GLTF bind‑pose skinning matrix = identity
-        m_finalBindPoseMatrices.push_back(glm::mat4(1.0f));
-    }
-}
+//void engine::GLtfMeshLoader::computeBindPoseMatrices()
+//{
+//    m_finalBindPoseMatrices.clear();
+//    m_finalBindPoseMatrices.reserve(m_skeleton->getSkeletonBoneCount());
+//
+//    const auto& bones = m_skeleton->getSkeletonBones();
+//
+//    for (int i = 0; i < bones.size(); i++)
+//    {
+//        // GLTF bind‑pose skinning matrix = identity
+//        m_finalBindPoseMatrices.push_back(glm::mat4(1.0f));
+//    }
+//}
 
 glm::mat4 engine::GLtfMeshLoader::extractNodeLocalTransform(const tg3_node& node)
 {

@@ -19,6 +19,7 @@ namespace engine
 		virtual ~MeshLoader();
 
 		virtual void loadModel(const std::string& path, bool loadAnimation, bool flipUVs) = 0;
+		virtual void loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial) = 0;
 		
 		static std::unique_ptr<MeshLoader> create(const std::string& path);
 
@@ -52,6 +53,8 @@ namespace engine
 		std::vector<std::shared_ptr<Mesh>> m_meshes{};
 
 		std::vector<std::shared_ptr<Material>> m_materials{};
+
+		std::shared_ptr<Material> m_customMaterial{};
 
 		std::vector<std::string> m_requestLoadingTextures{};	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 

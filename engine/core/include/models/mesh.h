@@ -31,10 +31,11 @@ namespace engine
         const std::vector<unsigned int>& getIndices() const { return m_indices; }
 
 
-        const std::vector<glm::mat4>& getBindPoseMatrices() const { return m_bindPoseMatrices; }
-        void setBindPoseMatrices(const std::vector<glm::mat4>& matrice) { m_bindPoseMatrices = matrice; }
-
+        /*const std::vector<glm::mat4>& getBindPoseMatrices() const { return m_bindPoseMatrices; }
         const glm::mat4& getBindPoseMatrice(int index) const { return m_bindPoseMatrices[index]; }
+        void setBindPoseMatrices(const std::vector<glm::mat4>& matrice) { m_bindPoseMatrices = matrice; }*/
+
+        
 
         const bool hasBones() const { return m_hasBones; }
         void setHasBones(bool hasBones) { m_hasBones = hasBones; }

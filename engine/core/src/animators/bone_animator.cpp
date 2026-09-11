@@ -99,12 +99,26 @@ void engine::BonesAnimator::init(Transform& transform)
 void engine::BonesAnimator::update(float dt, Transform& transform)
 {
 	m_deltaTime = dt;
-	if (m_currentAnimation && m_isPlaying)
+
+	if (!m_currentAnimation)
+		return;
+
+	auto currentBoneAnimation = std::static_pointer_cast<BoneAnimation>(m_currentAnimation);
+
+	if (currentBoneAnimation && currentBoneAnimation->isBindPose)
 	{
-		m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_currentAnimation->getSpeedFactor();
-		m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
-		calculateBoneTransform(&(std::static_pointer_cast<BoneAnimation>(m_currentAnimation)->getRootNode()), glm::mat4(1.0f));
+		// bind pose → force time = 0
+		m_currentTime = 0.0f;
 	}
+	else
+	{
+		// normal animation
+		m_currentTime += dt * m_currentAnimation->getTicksPerSecond() * m_currentAnimation->getSpeedFactor();
+		m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
+	}
+
+	// entry point for recursion
+	calculateBoneTransform(&(std::static_pointer_cast<BoneAnimation>(m_currentAnimation)->getRootNode()), glm::mat4(1.0f));
 }
 
 void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
@@ -201,29 +215,12 @@ void engine::BonesAnimator::calculateBoneTransform(const AnimNodeData* node, glm
 
 		if (keyExists)
 		{
-			// old
-			//auto& boneInfoMap = currentBoneAnimation->getBonesInfoMap();
-
-			//auto it = boneInfoMap.find(nodeName);
-			//if (it != boneInfoMap.end())
-			//{
-			//	int index = it->second.id;
-			//	glm::mat4 offset = it->second.offset;
-			//	m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * offset;
-			//}
-
-			// new
-			//int index = skeletonIndexFromName(nodeName);
-			//const SkeletonBone& skBone = (*m_skeleton)[index];
-			//m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * skBone.offset;
-
 			int index = skeletonIndexFromName(nodeName);
 			if (index >= 0)
 			{
 				const SkeletonBone& skBone = (*m_skeleton)[index];
 				m_animationsFinalBoneMatrices[currentAnimName][index] = globalTransformation * skBone.offset;
 			}
-
 
 			for (int i = 0; i < node->childrenCount; i++)
 			{

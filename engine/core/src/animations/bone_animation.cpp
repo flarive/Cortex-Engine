@@ -46,15 +46,6 @@ const engine::AnimNodeData& engine::BoneAnimation::getRootNode() const
 	return emptyAnimNodeData;
 }
 
-//const std::map<std::string, engine::BoneInfo>& engine::BoneAnimation::getBonesInfoMap() const
-//{
-//	if (m_animationLoader)
-//		return m_animationLoader->getBonesInfoMap();
-//
-//	static std::map<std::string, engine::BoneInfo> emptyBonesInfoMap;
-//	return emptyBonesInfoMap;
-//}
-
 engine::Bone* engine::BoneAnimation::findBone(const std::string& name)
 {
 	return m_animationLoader->findBone(name);

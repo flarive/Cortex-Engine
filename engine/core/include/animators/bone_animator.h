@@ -58,6 +58,7 @@ namespace engine
 		void setSkeleton(const std::vector<engine::SkeletonBone>& skeleton);
 		
 
+
 	private:
 		std::shared_ptr<BoneAnimation> m_currentBoneAnimation{};
 		

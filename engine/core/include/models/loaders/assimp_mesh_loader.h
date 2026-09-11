@@ -15,6 +15,9 @@ namespace engine
 		AssimpMeshLoader() = default;
 		virtual ~AssimpMeshLoader();
 		void loadModel(const std::string& path, bool loadAnimation = true, bool flipUVs = false) override;
+		void loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial) override;
+
+		
 
 	private:
 		// processes a node in a recursive fashion.
@@ -36,7 +39,7 @@ namespace engine
 		void buildSkeleton(const aiScene* scene);
 
 
-		glm::mat4 computeGlobalFromSkeleton(int index);
-		void computeBindPoseMatrices();
+		//glm::mat4 computeGlobalFromSkeleton(int index);
+		//void computeBindPoseMatrices();
 	};
 }

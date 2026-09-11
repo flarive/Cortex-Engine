@@ -26,7 +26,7 @@ namespace engine
 			return AnimationType::bones;
 		}
 
-
+		bool isBindPose = false;
 
 
 		inline std::string& getFilepath() { return m_filepath; }
@@ -40,9 +40,10 @@ namespace engine
 		const std::vector<Bone>& getBones() const;
 		const unsigned int getBoneCount() const;
 		const AnimNodeData& getRootNode() const;
-		//const std::map<std::string, BoneInfo>& getBonesInfoMap() const;
+		
 
-		//Skeleton* skeleton = nullptr; // reference, not owned
+		
+
 
 	private:
 		std::string m_filepath{};

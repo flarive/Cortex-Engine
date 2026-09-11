@@ -1,5 +1,13 @@
 #include "../../include/models/skeleton.h"
 
+#include "../../include/managers/log_manager.h"
+
+engine::Skeleton::Skeleton()
+{
+    logger.trace("Skeleton constructor called");
+}
+
+
 // non-const: used when building / editing the skeleton
 engine::SkeletonBone& engine::Skeleton::getSkeletonBone(int index)
 {
@@ -55,4 +63,9 @@ int engine::Skeleton::getSkeletonNameIndex(const std::string& name) const
 unsigned int engine::Skeleton::getSkeletonBoneCount() const
 {
     return static_cast<unsigned int>(m_skeletonBones.size());
+}
+
+engine::Skeleton::~Skeleton()
+{
+    logger.trace("Skeleton destructor called");
 }

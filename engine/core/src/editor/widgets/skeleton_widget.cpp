@@ -31,7 +31,7 @@ void engine::SkeletonWidget::draw()
     // Lock the weak_ptr to get a shared_ptr
     if (auto sharedSkeleton = m_skeleton.lock())
     {
-        std::string header = std::format("Skeleton ({} bones)", m_skeleton.expired() ? 0 : sharedSkeleton->getBoneCount());
+        std::string header = std::format("Skeleton ({} bones)", m_skeleton.expired() ? 0 : sharedSkeleton->getSkeletonBoneCount());
 
         ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
         if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
@@ -45,29 +45,8 @@ void engine::SkeletonWidget::draw()
 
 void engine::SkeletonWidget::displaySkeleton(const std::shared_ptr<Skeleton>& skeleton)
 {
-    //const std::string tableUniqueID = "SkeletonBonesTable";
-    //if (ImGui::BeginTable(tableUniqueID.c_str(), 2, ImGuiTableFlags_SizingStretchSame))
-    //{
-    //    ImGui::TableSetupColumn("1", ImGuiTableColumnFlags_WidthStretch);
-    //    ImGui::TableSetupColumn("2", ImGuiTableColumnFlags_WidthFixed, 100);
-
-    //    ImGui::TableNextRow();
-
-    //    ImGui::TableSetColumnIndex(0);
-    //    ImGui::Text("Nbr bones");
-
-    //    ImGui::TableSetColumnIndex(1);
-    //    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-    //    ImGui::Text("%u bones", skeleton->getBoneCount());
-    //    ImGui::PopStyleColor();
-
-    //    ImGui::EndTable();
-    //}
-
-    displaySkeletonBones(skeleton->getBones());
+    displaySkeletonBones(skeleton->getSkeletonBones());
 }
-
-
 
 void engine::SkeletonWidget::displaySkeletonBones(const std::vector<SkeletonBone>& bones)
 {

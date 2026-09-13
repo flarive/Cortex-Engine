@@ -911,7 +911,7 @@ void engine::EditorHelper::drawTag(const char* txt, ImU32 bg, float rounding)
     ImGui::TextUnformatted(txt);
 }
 
-void engine::EditorHelper::drawTagRightAligned(const char* txt, ImU32 bgColor, float tagHeight, float rounding)
+void engine::EditorHelper::drawTagRightAligned(const char* txt, ImU32 bgColor, ImU32 textColor, float tagHeight, float rounding)
 {
     ImVec2 pad(4, 2);
     ImVec2 textSize = ImGui::CalcTextSize(txt);
@@ -944,6 +944,21 @@ void engine::EditorHelper::drawTagRightAligned(const char* txt, ImU32 bgColor, f
 
     ImGui::SetCursorScreenPos(ImVec2(pos.x + pad.x, textY));
     //ImGui::SetCursorScreenPos(ImVec2(pos.x + pad.x, pos.y + pad.y));
+    ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
     ImGui::TextUnformatted(txt);
+    ImGui::PopFont();
+    ImGui::PopStyleColor();
 }
 
+void engine::EditorHelper::drawTextRightAlign(const char* txt, const ImVec4& textColor)
+{
+	ImVec2 textSize = ImGui::CalcTextSize(txt);
+	float cellWidth = ImGui::GetColumnWidth();
+	float textX = ImGui::GetCursorPosX() + (cellWidth - textSize.x);
+	ImGui::SetCursorPosX(textX);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+	ImGui::TextUnformatted(txt);
+    ImGui::PopStyleColor();
+}

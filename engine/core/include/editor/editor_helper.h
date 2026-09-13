@@ -31,6 +31,12 @@ namespace engine
 		
 		// dynamic counter
 		COUNT };
+
+	struct TagColors final
+	{
+		ImU32 bg;
+		ImU32 fg;
+	};
 	
 
 	class EditorHelper final
@@ -106,7 +112,9 @@ namespace engine
 		static engine::EditorIcon convertEntityTypeToAtlasIcon(const engine::EntityType type, unsigned int Iconsize);
 
 		static void drawTag(const char* txt, ImU32 bg, float rounding = 4.0f);
-		static void drawTagRightAligned(const char* txt, ImU32 bgColor, float tagHeight, float rounding = 2.0f);
+		static void drawTagRightAligned(const char* txt, ImU32 bgColor, ImU32 textColor, float tagHeight, float rounding = 2.0f);
+
+		static void drawTextRightAlign(const char* txt, const ImVec4& textColor);
 
 	private:
 		static std::unordered_map<std::string, bool> m_iconToggleStates;

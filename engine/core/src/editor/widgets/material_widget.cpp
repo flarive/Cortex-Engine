@@ -1,6 +1,6 @@
 #include "../../../include/editor/widgets/material_widget.h"
 
-#include "../../../include/editor/editor_helper.h"
+
 
 #include "../../../include/managers/filesystem_manager.h"
 #include "../../../include/managers/log_manager.h"
@@ -108,10 +108,9 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             else
             {
                 // BlinnPhong or Phong
-
-                displayColor(material->getAmbientColor(), "Ambient Color");
-                displayColor(material->getDiffuseColor(), "Diffuse Color");
-                displayColor(material->getSpecularColor(), "Specular Color");
+                displayColor(material->getAmbientColor(), "Ambient color");
+                displayColor(material->getDiffuseColor(), "Diffuse color");
+                displayColor(material->getSpecularColor(), "Specular color");
 
                 displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse");
                 displayTexture(TextureManager::getTextureData(material->getSpecularTexPath()), "Specular");
@@ -222,37 +221,41 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
 
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
 
-        float rowHeight = 12.0f;
-
         // --- Row 1 ---
-        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
         {
             ImGui::TableNextColumn();
             {
-                ImGui::Text(textType.c_str());
+                ImGui::Text("%s texture", textType.c_str());
             }
 
             ImGui::TableNextColumn();
             {
-                std::string resolution = std::format("{}x{}", textData->width, textData->height);
-                EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 255, 0, 255), 12.0f);
+                std::string resolution = std::format("{} x {}", textData->width, textData->height);
+				//auto tagColors = getImageSizeTagColor(textData->width, textData->height);
+                //EditorHelper::drawTagRightAligned(resolution.c_str(), tagColors.bg, tagColors.fg, ROW_HEIGHT);
+                //ImGui::Text("%s", resolution.c_str());
+                EditorHelper::drawTextRightAlign(resolution.c_str(), GREY_TEXT_COLOR);
             }
         }
 
         // --- Row 2 ---
-        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
         {
             ImGui::TableNextColumn();
             {
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Text, GREY_TEXT_COLOR);
                 ImGui::Text(FileSystemManager::getFileName(textData->filePath).c_str());
                 ImGui::PopStyleColor();
             }
 
             ImGui::TableNextColumn();
             {
-                std::string resolution = std::format("ID {}", textData->id);
-                EditorHelper::drawTagRightAligned(resolution.c_str(), IM_COL32(0, 0, 255, 255), 12.0f);
+                std::string openGLTexID = std::format("ID {}", textData->id);
+                //auto tagColors = getImageSizeTagColor(textData->width, textData->height);
+                //EditorHelper::drawTagRightAligned(resolution.c_str(), tagColors.bg, tagColors.fg, ROW_HEIGHT);
+                //ImGui::Text("%s", openGLTexID.c_str());
+                EditorHelper::drawTextRightAlign(openGLTexID.c_str(), GREY_TEXT_COLOR);
             }
         }
 
@@ -262,6 +265,28 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
 
     ImGui::PopFont();
     ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
+}
+
+engine::TagColors engine::MaterialWidget::getImageSizeTagColor(int width, int height)
+{
+    engine::TagColors tagColors;
+    tagColors.bg = IM_COL32(0, 0, 0, 0);
+    tagColors.fg = IM_COL32(255, 255, 255, 255);
+
+	if (width >= 2048 || height >= 2048)
+	{
+        tagColors.bg = IM_COL32(255, 0, 255, 255); // Purple for large textures
+	}
+	else if (width >= 1024 || height >= 1024)
+	{
+        tagColors.bg = IM_COL32(0, 0, 255, 255); // Blue for medium textures
+	}
+	else
+	{
+        tagColors.bg = IM_COL32(255, 165, 0, 255); // Orange for small textures
+	}
+
+    return tagColors;
 }
 
 engine::MaterialWidget::~MaterialWidget()

@@ -141,8 +141,8 @@ void MyScene3::init()
         "textures/pbr/rusted_iron/roughness.png",
         "textures/pbr/rusted_iron/ao.png",
         "textures/pbr/rusted_iron/height.png", "", "textures/pbr/alpha_cutter.png", 0.0f);
-    rustedIronMat->setOpacityIntensity(2.0f);
-    rustedIronMat->setAlphaCutOffEnabled(true);
+    rustedIronMat->setOpacityIntensity(0.2f);
+    rustedIronMat->setAlphaCutOffEnabled(false);
     rustedIronSphere->setup(rustedIronMat);
     
 

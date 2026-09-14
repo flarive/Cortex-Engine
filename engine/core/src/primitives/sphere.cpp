@@ -251,11 +251,6 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
-
-    if (transparent)
-    {
-        glDepthMask(GL_TRUE);
-    }
 }
 
 void engine::Sphere::clean()

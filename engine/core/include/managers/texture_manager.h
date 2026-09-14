@@ -118,11 +118,9 @@ namespace engine
         static void checkTextureIsValid(unsigned int textureID);
         
         static const TextureData* getTextureData(const std::string& texturePath);
-
-        //static void loadFromMemory(unsigned char* data, int size);
+        
 
     private:
-        //static unsigned char* flipImageVertically(unsigned char* data, int width, int height, int nrComponents);
         static void flipImageVertically2(unsigned char* data, int width, int height, int nrComponents);
 
         static bool isNormalMap(const std::string& filename);

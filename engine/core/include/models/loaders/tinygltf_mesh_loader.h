@@ -3,7 +3,7 @@
 #include "mesh_loader.h"
 
 // https://github.com/syoyo/tinygltf
-#include "tiny_gltf_v3.h"
+#include <tiny_gltf_v3.h>
 
 namespace engine
 {

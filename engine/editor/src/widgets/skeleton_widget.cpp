@@ -1,0 +1,86 @@
+#include "../../include/widgets/skeleton_widget.h"
+
+#include "../../include/editor_helper.h"
+#include "../../../core/include/managers/log_manager.h"
+
+#include <string>
+#include <format>
+
+
+engine::SkeletonWidget::SkeletonWidget() : ImGuiElement(Category::Widget, "SkeletonSubComponentWidget")
+{
+    logger.trace("SkeletonWidget constructor called");
+}
+
+void engine::SkeletonWidget::init()
+{
+
+}
+
+void engine::SkeletonWidget::setSkeleton(std::shared_ptr<engine::Skeleton> skeleton)
+{
+    m_skeleton = skeleton;
+}
+
+void engine::SkeletonWidget::draw()
+{
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    // Lock the weak_ptr to get a shared_ptr
+    if (auto sharedSkeleton = m_skeleton.lock())
+    {
+        std::string header = std::format("Skeleton ({} bones)", m_skeleton.expired() ? 0 : sharedSkeleton->getSkeletonBoneCount());
+
+        ImGui::SetNextItemOpen(m_isHeaderExpanded, ImGuiCond_Once);
+        if (EditorHelper::collapsingHeader(header.c_str(), ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
+        {
+            displaySkeleton(sharedSkeleton);
+        }
+
+        ImGui::PopFont();
+    }
+}
+
+void engine::SkeletonWidget::displaySkeleton(const std::shared_ptr<Skeleton>& skeleton)
+{
+    displaySkeletonBones(skeleton->getSkeletonBones());
+}
+
+void engine::SkeletonWidget::displaySkeletonBones(const std::vector<SkeletonBone>& bones)
+{
+    // Draw roots
+    for (size_t i = 0; i < bones.size(); ++i)
+    {
+        if (bones[i].parentIndex == -1)
+            drawBoneRecursive(bones, static_cast<int>(i));
+    }
+}
+
+void engine::SkeletonWidget::drawBoneRecursive(const std::vector<SkeletonBone>& bones, int index)
+{
+    const SkeletonBone& bone = bones[index];
+
+    ImGuiTreeNodeFlags flags =
+        ImGuiTreeNodeFlags_OpenOnArrow |
+        ImGuiTreeNodeFlags_OpenOnDoubleClick |
+        ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    bool open = ImGui::TreeNodeEx(bone.name.c_str(), flags);
+
+    if (open)
+    {
+        // Draw children
+        for (size_t i = 0; i < bones.size(); ++i)
+        {
+            if (bones[i].parentIndex == index)
+                drawBoneRecursive(bones, static_cast<int>(i));
+        }
+
+        ImGui::TreePop();
+    }
+}
+
+engine::SkeletonWidget::~SkeletonWidget()
+{
+    logger.trace("SkeletonWidget desctructor called");
+}

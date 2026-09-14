@@ -28,7 +28,6 @@ struct Material {
     // combined textures
     sampler2D texture_arm;
     sampler2D texture_rm;
-    sampler2D texture_metalness_from_combined;
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -60,7 +59,6 @@ struct Material {
     
     bool has_texture_arm_map;
     bool has_texture_rm_map;
-    bool has_texture_metalness_from_combined_map;
 
     bool has_texture_ao_map;
     bool has_texture_emissive_map;
@@ -850,15 +848,6 @@ void main()
         metallic = roughnessMetalness.b; // Extract metallic from Blue channel
         roughness = roughnessMetalness.g; // Extract roughness from Green channel
         ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 1.0; // Ambient occlusion defaults to white (1.0) 
-    }
-    else if (material.has_texture_metalness_from_combined_map)
-    {
-        // to remove !!!!!!!!!!!!! (merge with just above)
-        // Sample the MR combined texture
-        vec4 metalRoughness = texture(material.texture_metalness_from_combined, texCoords);
-        metallic = metalRoughness.b; // Extract metallic from Blue channel
-        roughness = metalRoughness.g; // Extract roughness from Green channel
-        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Ambient occlusion defaults to white (1.0) 
     }
     else
     {

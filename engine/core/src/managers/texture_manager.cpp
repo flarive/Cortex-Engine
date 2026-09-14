@@ -231,21 +231,6 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
     return 0;  // Temporary ID, real ID is set later
 }
 
-//unsigned char* engine::TextureManager::flipImageVertically(unsigned char* data, int width, int height, int nrComponents)
-//{
-//    unsigned char* flippedData = new unsigned char[width * height * nrComponents];
-//    for (int y = 0; y < height; y++) {
-//        for (int x = 0; x < width; x++) {
-//            for (int c = 0; c < nrComponents; c++) {
-//                flippedData[(height - 1 - y) * width * nrComponents + x * nrComponents + c] =
-//                    data[y * width * nrComponents + x * nrComponents + c];
-//            }
-//        }
-//    }
-//    delete[] data;
-//    return flippedData;
-//}
-
 void engine::TextureManager::flipImageVertically2(unsigned char* data, int width, int height, int nrComponents)
 {
     if (!data) return;
@@ -684,8 +669,6 @@ engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const 
     else if (channels == 4)
         format = GL_RGBA;
 
-    ubyte thumbnailLevel = 0; // ?????????????????????????
-
     unsigned int textureID = 0;
     glGenTextures(1, &textureID);
 
@@ -702,6 +685,18 @@ engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const 
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+
+    // Compute thumbnail mip level (target thumbnail size = 64x64)
+    int level = 0;
+    int w = width;
+
+    while (w > TARGET_THUMB_SIZE)
+    {
+        w >>= 1;   // divide by 2
+        level++;
+    }
+
+    ubyte thumbnailLevel = level;
 
     SOIL_free_image_data(image);
 
@@ -737,7 +732,18 @@ engine::TextureUploadResult engine::TextureManager::loadUncompressedTexture(cons
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
     int channels = 4; // aiTexel is always RGBA
-    ubyte thumbnailLevel = 0; // ?????????????????????????
+
+    // Compute thumbnail mip level (target thumbnail size = 64x64)
+    int level = 0;
+    int w = width;
+
+    while (w > TARGET_THUMB_SIZE)
+    {
+        w >>= 1;   // divide by 2
+        level++;
+    }
+
+    ubyte thumbnailLevel = level;
 
     return TextureUploadResult{ textureID, (int)width, (int)height, channels, thumbnailLevel };
 }
@@ -850,15 +856,3 @@ GLenum engine::TextureManager::chooseCompressedFormat(bool isNormal, bool isHeig
     // BC3 is universally supported on all NVIDIA GPUs since 2004
     return gamma ? GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 }
-
-//void engine::TextureManager::loadFromMemory(unsigned char* data, int size)
-//{
-//    int w, h, comp;
-//    unsigned char* decoded = SOIL_load_image_from_memory(
-//        data,
-//        size,   // byte size
-//        &w, &h, &comp,
-//        SOIL_LOAD_AUTO
-//    );
-//
-//}

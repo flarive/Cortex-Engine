@@ -2,7 +2,7 @@
 
 #include "animation_loader.h"
 
-#include "tiny_gltf_v3.h"
+#include <tiny_gltf_v3.h>
 
 namespace engine
 {

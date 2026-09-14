@@ -10,8 +10,8 @@
 
 #include "../misc/noncopyable.h"
 #include "../managers/filesystem_manager.h"
-#include "../editor/imgui_editor.h"
-#include "../editor/overlays/performance_overlay.h"
+#include "../../../editor/include/imgui_editor.h"
+#include "../../../editor/include/overlays/performance_overlay.h"
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"

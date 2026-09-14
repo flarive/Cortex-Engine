@@ -102,6 +102,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
 
                 displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height");
                 displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive");
+                displayTexture(TextureManager::getTextureData(material->getOpacityTexPath()), "Opacity");
             }
             else
             {
@@ -115,6 +116,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
                 displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal");
                 displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height");
                 displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive");
+                displayTexture(TextureManager::getTextureData(material->getOpacityTexPath()), "Opacity");
             }
 
             ImGui::EndTable();
@@ -126,7 +128,6 @@ void engine::MaterialWidget::displayColor(const Color& color, const std::string&
 {
     ImGui::TableNextRow(ImGuiTableRowFlags_None, TARGET_THUMB_SIZE + 4);
 
-
     ImGui::TableSetColumnIndex(0);
     ImVec2 pos = ImGui::GetCursorScreenPos();
     ImVec2 size(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE);
@@ -134,7 +135,6 @@ void engine::MaterialWidget::displayColor(const Color& color, const std::string&
     ImVec2 p1 = ImVec2(pos.x + size.x, pos.y + size.y);
     ImDrawList* draw = ImGui::GetWindowDrawList();
     draw->AddRectFilled(p0, p1, IM_COL32(color.r * 255, color.g * 255, color.b * 255, 255));
-
 
     ImGui::TableSetColumnIndex(1);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));

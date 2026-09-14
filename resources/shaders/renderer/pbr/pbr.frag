@@ -24,6 +24,8 @@ struct Material {
     sampler2D texture_roughness;
     sampler2D texture_ao;
     sampler2D texture_emissive;
+    sampler2D texture_opacity;
+
 
     // combined textures
     sampler2D texture_arm;
@@ -62,11 +64,14 @@ struct Material {
 
     bool has_texture_ao_map;
     bool has_texture_emissive_map;
+    bool has_texture_opacity_map;
 
     bool canCastShadows;
     bool canReceiveShadows;
 
     bool useParallaxMapping;
+
+    float opacity;   // base opacity (0–1)
 };
 
 struct MaterialHeight {
@@ -805,22 +810,6 @@ void main()
     // material properties
     vec3 albedo = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0.5);
     vec3 mDiffuse = texture(material.texture_diffuse, texCoords).xyz;
-
-//    vec4 baseColor = material.has_texture_diffuse_map
-//        ? texture(material.texture_diffuse, texCoords)
-//        : vec4(0.5, 0.5, 0.5, 1.0);
-//
-//    // Apply glTF baseColorFactor (always multiply)
-//    baseColor *= vec4(material.baseColorFactor, 1.0);
-//
-//    // Split into components
-//    vec3 albedo = baseColor.rgb;
-//    //float alpha = baseColor.a;
-//
-//    // For LTC area lights (diffuse only)
-//    vec3 mDiffuse = albedo;
-
-
     vec3 mSpecular = vec3(0.23f, 0.23f, 0.23f);
 
 
@@ -859,6 +848,7 @@ void main()
 
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
+    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : 1.0;
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
@@ -952,12 +942,12 @@ void main()
     //color = vec3(ToSRGB(color)); // same as above
 
     // Sample the alpha value from the diffuse texture
-    float alpha = texture(material.texture_diffuse, texCoords).a;
+    //float alpha = texture(material.texture_diffuse, texCoords).a;
 
     FragColor = vec4(color, alpha);
 
     // Discard transparent fragments (optional)
-    if (alpha < 0.1)
+    if (alpha < 0.05)
         discard;
 }
 

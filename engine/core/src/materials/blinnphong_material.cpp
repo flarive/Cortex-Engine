@@ -15,7 +15,7 @@ engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const 
 }
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, 
-	const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
-	: Material(MaterialType::blinnphong, ambientColor, diffuseTexPath, specularTexPath, normalTexPath, "", "", "", heightTexPath, emissiveTexPath, shininess)
+	const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+	: Material(MaterialType::blinnphong, ambientColor, diffuseTexPath, specularTexPath, normalTexPath, "", "", "", heightTexPath, emissiveTexPath, opacityTexPath, shininess)
 {
 }

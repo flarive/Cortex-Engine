@@ -1,4 +1,4 @@
-#include "myscene0.h"
+#include "../../include/scene/myscene0.h"
 
 using namespace std;
 using namespace glm;

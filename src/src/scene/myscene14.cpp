@@ -1,4 +1,4 @@
-#include "myscene14.h"
+#include "../../include/scene/myscene14.h"
 
 using namespace std;
 using namespace glm;
@@ -117,11 +117,11 @@ void MyScene14::init()
             "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_arm_2k.jpg",
-            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg", "", 0.0f);
+            "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg", "", "", 0.0f);
     }
     else
     {
-        matTerrain = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png");
+        matTerrain = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper_big.jpg", "", "", "textures/height/iceland_heightmap.png", "");
         //myTerrain->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/height/mountain_diffuse.jpg", "textures/height/mountain_specular.jpg", "textures/height/mountain_normal.jpg", "textures/height/mountain_height.jpg"), UvMapping(1.0f));
     }
     myTerrain->setup(matTerrain, UvMapping(1.0f));
@@ -141,7 +141,7 @@ void MyScene14::init()
             "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_ARM.jpg",
-            "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg", "", 0.0f);
+            "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg", "", "", 0.0f);
     }
     else {
         matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");
@@ -162,7 +162,7 @@ void MyScene14::init()
             "textures/pbr/porcelain/Porcelain_Color.png",
             "textures/pbr/porcelain/Porcelain_Normal.png",
             "textures/pbr/porcelain/Porcelain_Arm.png",
-            "textures/pbr/porcelain/Porcelain_Displace.png", "", 2.0f);
+            "textures/pbr/porcelain/Porcelain_Displace.png", "", "", 2.0f);
     }
     else {
         matSphere2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg");

@@ -30,6 +30,8 @@ engine::Material::Material(std::vector<Texture> _textures, float _shininess)
             m_heightTexPath = tex.path;
         else if (tex.type == "texture_emissive")
             m_emissiveTexPath = tex.path;
+        else if (tex.type == "texture_opacity")
+            m_opacityTexPath = tex.path;
     }
 }
 
@@ -49,8 +51,8 @@ engine::Material::Material(MaterialType type, const Color& ambientColor, const C
 {
 }
 
-engine::Material::Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_metallicTexPath(fsm::getFullPath(metallicTexPath)), m_roughnessTexPath(fsm::getFullPath(roughnessTexPath)), m_aoTexPath(fsm::getFullPath(aoTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_shininess(shininess)
+engine::Material::Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_metallicTexPath(fsm::getFullPath(metallicTexPath)), m_roughnessTexPath(fsm::getFullPath(roughnessTexPath)), m_aoTexPath(fsm::getFullPath(aoTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath), m_shininess(shininess)
 {
     // bof
     if (getTypeID() == MaterialType::PBR)
@@ -60,8 +62,8 @@ engine::Material::Material(MaterialType type, const Color& ambientColor, const s
     }
 }
 
-engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_shininess(0.0f)
+engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath), m_shininess(0.0f)
 {
     // bof
     if (getTypeID() == MaterialType::PBR)
@@ -110,6 +112,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_ao_map", false);
         shader.setBool("materialHeight.has_texture_height_map", false);
         shader.setBool("material.has_texture_emissive_map", false);
+        shader.setBool("material.has_texture_opacity_map", false);
     }
     else
     {
@@ -118,6 +121,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("material.has_texture_normal_map", false);
         shader.setBool("materialHeight.has_texture_height_map", false);
         shader.setBool("material.has_texture_emissive_map", false);
+        shader.setBool("material.has_texture_opacity_map", false);
     }
 
     for (const auto& tex : textures)
@@ -265,6 +269,9 @@ void engine::Material::loadTextures()
 
         unsigned int emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
+
+        unsigned int opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", m_opacityTexPath }));
     }
     else
     {
@@ -280,6 +287,12 @@ void engine::Material::loadTextures()
 
         unsigned int heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
+
+        unsigned int emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
+
+        unsigned int opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", m_opacityTexPath }));
     }
 }
 
@@ -295,6 +308,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
     unsigned int aoMapId{};
     //unsigned int heightMapId{};
     unsigned int emissiveMapId{};
+    unsigned int opacityMapId{};
 
 
     unsigned int armMapId{}; // packed AO/Roughness/Metallic
@@ -307,7 +321,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
     if (type == MaterialType::PBR)
     {
         // PBR
-        textures.reserve(7);
+        textures.reserve(8);
         
         // request load textures async on another thread
         engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath, flipY);
@@ -330,6 +344,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         
         engine::TextureManager::requestLoadTextureAsync(m_heightTexPath, flipY);
         engine::TextureManager::requestLoadTextureAsync(m_emissiveTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_opacityTexPath, flipY);
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
@@ -361,22 +376,27 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         
         heightMapId = hasHeightMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
         emissiveMapId = hasEmissiveMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
+        opacityMapId = hasOpacityMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath) : 0;
     }
     else
     {
         // BlinnPhong, Blinn...
-        textures.reserve(4);
+        textures.reserve(6);
         
         engine::TextureManager::requestLoadTextureAsync(m_diffuseTexPath, flipY);
         engine::TextureManager::requestLoadTextureAsync(m_specularTexPath, flipY);
         engine::TextureManager::requestLoadTextureAsync(m_normalTexPath, flipY);
         engine::TextureManager::requestLoadTextureAsync(m_heightTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_emissiveTexPath, flipY);
+        engine::TextureManager::requestLoadTextureAsync(m_opacityTexPath, flipY);
 
         // Queue OpenGL execution on main thread
         diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
         specularMapId = hasSpecularMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_specularTexPath) : 0;
         normalMapId = hasNormalMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
         heightMapId = hasHeightMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
+        emissiveMapId = hasEmissiveMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
+        opacityMapId = hasOpacityMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath) : 0;
     }
 
 
@@ -432,6 +452,10 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
     if (emissiveMapId > 0)
         textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
 
+    opacityMapId = engine::TextureManagerInternal::textureIDCache[getOpacityTexPath()];
+    if (opacityMapId > 0)
+        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", getOpacityTexPath() }));
+
     int expectedCount = 0;
 
     // Count expected textures based on material type
@@ -449,6 +473,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         }
         if (hasHeightMap())   expectedCount++;
         if (hasEmissiveMap()) expectedCount++;
+        if (hasOpacityMap()) expectedCount++;
     }
     else
     {
@@ -456,6 +481,8 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         if (hasSpecularMap()) expectedCount++;
         if (hasNormalMap())   expectedCount++;
         if (hasHeightMap())   expectedCount++;
+        if (hasEmissiveMap()) expectedCount++;
+        if (hasOpacityMap()) expectedCount++;
     }
 
     // Now compare expected vs loaded
@@ -475,5 +502,24 @@ const int engine::Material::getTextureHeightUnit() const
     return heightMapId;
 }
 
+bool engine::Material::isTransparent() const
+{
+    // Smooth transparency (blending)
+    if (m_opacityIntensity < 1.0f) return true;
+    if (!m_opacityTexPath.empty()) return true;
+
+    // glTF-style baseColor alpha
+    //if (baseColorFactor.a < 1.0f) return true;
+
+    //// Transmission/refraction (glass)
+    //if (transmission > 0.0f) return true;
+
+    return false;
+}
+
+bool engine::Material::isAlphaCutout() const
+{
+    return m_alphaCutoffEnabled; // or opacityMode == MASK
+}
 
 

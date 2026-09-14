@@ -161,6 +161,27 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         return;
     }
 
+    bool transparent = m_material->isTransparent();
+    bool cutout = m_material->isAlphaCutout();
+
+    if (cutout)
+    {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);   // cutout writes depth
+    }
+    else if (transparent)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(GL_FALSE);  // transparent does NOT write depth
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);   // opaque writes depth
+    }
+
+
     shader.use();
     OpenGLDebug::checkGLError("shader.use00");
 
@@ -229,6 +250,11 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
+    }
+
+    if (transparent)
+    {
+        glDepthMask(GL_TRUE);
     }
 }
 

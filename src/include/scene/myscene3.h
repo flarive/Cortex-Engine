@@ -20,7 +20,7 @@ private:
  
 
     UIText ourText{};
-    UISprite ourSprite{};
+    //UISprite ourSprite{};
 
     float rotation{};
 

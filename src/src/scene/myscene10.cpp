@@ -1,4 +1,4 @@
-#include "myscene10.h"
+#include "../../include/scene/myscene10.h"
 
 #include <random>
 

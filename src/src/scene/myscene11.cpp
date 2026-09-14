@@ -1,4 +1,4 @@
-#include "myscene11.h"
+#include "../../include/scene/myscene11.h"
 
 using namespace std;
 using namespace glm;
@@ -66,7 +66,7 @@ void MyScene11::init()
 
 
     // animated vampire model
-    auto vampireCustomMat = std::make_shared<BlinnPhongMaterial>(Color(0.1f), "models/vampire/Vampire_diffuse.png", "models/vampire/Vampire_specular.png", "models/vampire/Vampire_normal.png", "", "models/vampire/Vampire_emission.png");
+    auto vampireCustomMat = std::make_shared<BlinnPhongMaterial>(Color(0.1f), "models/vampire/Vampire_diffuse.png", "models/vampire/Vampire_specular.png", "models/vampire/Vampire_normal.png", "", "models/vampire/Vampire_emission.png", "");
     auto vampireModel = make_shared<Model>("models/vampire/dancing_vampire.dae", vampireCustomMat, true, false, true);
     auto vampireDancingAnimation = make_shared<BoneAnimation>("DanceAnim", "models/vampire/dancing_vampire.dae", vampireModel, 0.6f);
     auto vampireAnimations = std::vector<std::shared_ptr<BoneAnimation>>();

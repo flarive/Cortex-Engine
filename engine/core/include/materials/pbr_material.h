@@ -11,7 +11,8 @@ namespace engine
 		PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess = 0.0f);
 		PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath = ""
 			, const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = ""
-			, const std::string& heightTexPath = "", const std::string& emissiveTexPath = "", float shininess = 0.0f);
+			, const std::string& heightTexPath = "", const std::string& emissiveTexPath = "", const std::string& opacityTexPath = ""
+			, float shininess = 0.0f);
 
 		PBRMaterial(CombinedTexture combinedTextureType, const Color& baseColorFactor,
 			const std::string& diffuseTexPath,
@@ -19,6 +20,7 @@ namespace engine
 			const std::string& armOrRmTexPath,     // <-- packed AO/Roughness/Metallic or packed Roughness/Metallic
 			const std::string& heightTexPath,
 			const std::string& emissiveTexPath,
+			const std::string& opacityTexPath,
 			float shininess = 0.0f);
 
 

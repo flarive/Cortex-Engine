@@ -5,9 +5,6 @@
       <UniqueIdentifier>{f18ab499-84e1-499f-8eff-9754361e0e52}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="app">
-      <UniqueIdentifier>{ecba4d98-6140-47d5-9357-072e6fca9424}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{3d58d9a1-323d-4b8f-8aa3-8186fca19015}</UniqueIdentifier>
     </Filter>
@@ -140,9 +137,6 @@
     <Filter Include="resources\textures\pbr\rusted_iron\ktx2">
       <UniqueIdentifier>{2b8641de-33a4-41d9-8e8c-074794800295}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene">
-      <UniqueIdentifier>{6968f246-3d2b-45c0-bb97-73c2d8e94709}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resources\shaders\renderer">
       <UniqueIdentifier>{efae7791-7799-40b5-8141-0303a9b920a0}</UniqueIdentifier>
     </Filter>
@@ -158,61 +152,76 @@
     <Filter Include="resources\shaders\renderer\shared">
       <UniqueIdentifier>{4767804b-9746-49ea-8ac2-41efbdab0672}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers">
+      <UniqueIdentifier>{49067fa7-4413-4ad9-8270-135e24e6ce53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\app">
+      <UniqueIdentifier>{ecba4d98-6140-47d5-9357-072e6fca9424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\app">
+      <UniqueIdentifier>{eed66c67-8194-4a60-93c3-f9c2ef462b9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\scene">
+      <UniqueIdentifier>{6968f246-3d2b-45c0-bb97-73c2d8e94709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\scene">
+      <UniqueIdentifier>{6e3447e2-9d22-4c73-a8a0-4da09bbb5155}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene0.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene0.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene1.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene1.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene2.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene2.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene3.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene3.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene4.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene4.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene5.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene5.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene6.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene6.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene7.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene7.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene8.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene8.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene9.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene9.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene10.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene10.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene11.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene12.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene12.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene13.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene13.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene14.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene14.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene15.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene15.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene16.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\myscene16.cpp">
-      <Filter>scene</Filter>
+    <ClCompile Include="src\scene\myscene11.cpp">
+      <Filter>sources\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1140,64 +1149,70 @@
     <CopyFileToFolders Include="..\resources\shaders\renderer\pbr\equirectangular_to_cubemap.frag">
       <Filter>resources\shaders\renderer\pbr</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\alpha_smooth.png">
+      <Filter>resources\textures\pbr</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\alpha_cutter.png">
+      <Filter>resources\textures\pbr</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="app\myapp1.h">
-      <Filter>app</Filter>
+    <ClInclude Include="include\app\myapp0.h">
+      <Filter>headers\app</Filter>
     </ClInclude>
-    <ClInclude Include="app\myapp0.h">
-      <Filter>app</Filter>
+    <ClInclude Include="include\app\myapp1.h">
+      <Filter>headers\app</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene0.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene0.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene1.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene1.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene2.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene2.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene3.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene3.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene4.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene4.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene5.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene5.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene6.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene6.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene7.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene7.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene8.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene8.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene9.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene9.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene10.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene10.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene11.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene11.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene12.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene12.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene13.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene13.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene14.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene14.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene15.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene15.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\myscene16.h">
-      <Filter>scene</Filter>
+    <ClInclude Include="include\scene\myscene16.h">
+      <Filter>headers\scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

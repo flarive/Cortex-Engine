@@ -29,9 +29,9 @@ namespace engine
         Material(std::vector<Texture> _textures, float _shininess = 1.0f);
         Material(MaterialType type, const Color& ambientColor);
         Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
-        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess = 1.0f);
+        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess = 1.0f);
 
-        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess);
+        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess);
 
         virtual ~Material() = default;
 
@@ -57,11 +57,11 @@ namespace engine
         {
             if (getTypeID() == MaterialType::PBR)
             {
-                return hasDiffuseMap() || hasNormalMap() || hasMetallicMap() || hasRoughnessMap() || hasAoMap() || hasArmMap() || hasRmMap() || hasHeightMap() || hasEmissiveMap();
+                return hasDiffuseMap() || hasNormalMap() || hasMetallicMap() || hasRoughnessMap() || hasAoMap() || hasArmMap() || hasRmMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
             }
             else
             {
-                return hasDiffuseMap() || hasSpecularMap() || hasHeightMap() || hasEmissiveMap();
+                return hasDiffuseMap() || hasSpecularMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
             }
         }
 
@@ -73,6 +73,7 @@ namespace engine
         bool hasAoMap() const { return !std::empty(m_aoTexPath); }
         bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
         bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
+        bool hasOpacityMap() const { return !std::empty(m_opacityTexPath); }
 
         bool hasArmMap() const { return !std::empty(m_armTexPath); }
         bool hasRmMap() const { return !std::empty(m_rmTexPath); }
@@ -88,11 +89,12 @@ namespace engine
         std::vector<std::string> m_cubemapTextures{};
 
 
-
+        // BlinnPhong
         const engine::Color& getAmbientColor() const { return m_ambientColor; }
         const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
         const engine::Color& getSpecularColor() const { return m_specularColor; }
 
+        // PBR
         const engine::Color& getBaseColorFactor() const { return m_baseColorFactor; }
         
 
@@ -106,8 +108,9 @@ namespace engine
         const std::string& getAoTexPath() const { return m_aoTexPath; }
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
         const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
+        const std::string& getOpacityTexPath() const { return m_opacityTexPath; }
 
-
+        // combined textures (PBR only)
         const std::string& getArmTexPath() const { return m_armTexPath; }
         const std::string& getRmTexPath() const { return m_rmTexPath; }
 
@@ -122,6 +125,15 @@ namespace engine
         const float getShininessIntensity() const { return m_shininess; }
         const float getAmbientIntensity() const { return m_ambientIntensity; }
         const float getEmissiveIntensity() const { return m_emissiveIntensity; }
+        
+        float& getOpacityIntensity() { return m_opacityIntensity; }
+        void setOpacityIntensity(float opacity) { m_opacityIntensity = opacity; }
+
+        bool isAlphaCutOffEnabled() { return m_alphaCutoffEnabled; }
+        void setAlphaCutOffEnabled(bool enabled) { m_alphaCutoffEnabled = enabled; }
+        
+        bool isTransparent() const;
+        bool isAlphaCutout() const;
 
 
         void setShininessIntensity(float intensity) { m_shininess = intensity; }
@@ -144,6 +156,10 @@ namespace engine
         void setParallaxIntensity(float intensity) { m_parallaxIntensity = intensity; }
         float& getParallaxIntensity() { return m_parallaxIntensity; }
 
+
+
+
+
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
 
         void setCubeMapTexs(const std::vector<std::string>& faces);
@@ -153,11 +169,11 @@ namespace engine
     protected:
         std::string m_name{};
         
-        Color m_ambientColor{ Color(0.1f) };
-        Color m_diffuseColor{ Color(1.0f) };
-        Color m_specularColor{ Color(0.0f) };
+        Color m_ambientColor{ Color(0.1f) }; // blinnphong
+        Color m_diffuseColor{ Color(1.0f) }; // blinnphong
+        Color m_specularColor{ Color(0.0f) }; // blinnphong
 
-        Color m_baseColorFactor{ Color(1.0f) };
+        Color m_baseColorFactor{ Color(1.0f) }; // pbr
 
         std::string m_diffuseTexPath{};
         std::string m_specularTexPath{};
@@ -172,6 +188,7 @@ namespace engine
         
         std::string m_heightTexPath{};
         std::string m_emissiveTexPath{};
+        std::string m_opacityTexPath{}; // alpha texture
 
 
         // intensities
@@ -180,7 +197,9 @@ namespace engine
         float m_ambientIntensity{ 1.0f };
         float m_emissiveIntensity{ 1.0f };
         float m_parallaxIntensity{ 0.01f };
+        float m_opacityIntensity{ 1.0f };
 
+        bool m_alphaCutoffEnabled{ false };
 
         bool m_useParallaxMapping{ false };
 

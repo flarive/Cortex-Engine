@@ -1,4 +1,4 @@
-#include "myscene15.h"
+#include "../../include/scene/myscene15.h"
 
 using namespace std;
 using namespace glm;
@@ -77,10 +77,10 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/bricks2_disp.jpg");
+            "textures/bricks2_disp.jpg", "");
     }
     else {
-        matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+        matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg", "", "");
         //auto matPlane = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
     }
     matPlane->useParallaxMapping(true);
@@ -103,10 +103,10 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/toy_box_disp.png");
+            "textures/toy_box_disp.png", "");
     }
     else {
-        matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png");
+        matPlane2 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/wood_diffuse.png", "", "textures/toy_box_normal.png", "textures/toy_box_disp.png", "", "");
     }
     matPlane2->useParallaxMapping(true);
     myPlane2->setup(matPlane2, UvMapping(1.0f));
@@ -127,7 +127,7 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/stones_displace.png");
+            "textures/stones_displace.png", "");
     }
     else {
         matPlane3 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/stones.png", "", "textures/stones_normal.png", "textures/stones_displace.png");
@@ -151,10 +151,10 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/rocks_displace.png");
+            "textures/rocks_displace.png", "");
     }
     else {
-        matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png");
+        matPlane4 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/rocks_normal.png", "textures/rocks_displace.png", "", "");
     }
     matPlane4->useParallaxMapping(true);
     myPlane4->setup(matPlane4, UvMapping(1.0f));
@@ -179,7 +179,7 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/bricks2_disp.jpg");
+            "textures/bricks2_disp.jpg", "");
         //auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
     //    "textures/pbr/planks/albedo.jpg",
     //    "textures/pbr/planks/normal.jpg",
@@ -190,7 +190,7 @@ void MyScene15::init()
 
     }
     else {
-        matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg");
+        matSphere1 = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/bricks2.jpg", "", "textures/bricks2_normal.jpg", "textures/bricks2_disp.jpg", "", "");
     }
     matSphere1->useParallaxMapping(true);
     mySphere1->setup(matSphere1, UvMapping(1.0f));
@@ -217,10 +217,10 @@ void MyScene15::init()
             "textures/no_metalness.png",
             "textures/no_roughness.png",
             "textures/no_ao.png",
-            "textures/bricks2_disp.jpg");
+            "textures/bricks2_disp.jpg", "");
     }
     else {
-        matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png");
+        matCube = make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/rocks.jpg", "", "textures/saint_normal.png", "textures/saint_displace.png", "", "");
     }
     matCube->useParallaxMapping(true);
     myCube->setup(matCube, UvMapping(1.0f));

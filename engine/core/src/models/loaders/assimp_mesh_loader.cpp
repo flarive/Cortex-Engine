@@ -336,6 +336,7 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(cons
     std::string texAmbientOcclusionFullPath{};
     std::string texHeightFullPath{};
     std::string texEmissiveFullPath{};
+    std::string texOpacityFullPath{};
 
     std::string texArmFullPath{};
     std::string texRmFullPath{};
@@ -362,6 +363,7 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(cons
 
     texHeightFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_HEIGHT);
     texEmissiveFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_EMISSIVE);
+    texOpacityFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_OPACITY);
 
     if (useARMTexture = isARMSingleTexture(scene, mat))
     {
@@ -383,17 +385,17 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(cons
     if (useARMTexture && !texArmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
     }
     else if (useMRTexture && !texRmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
     }
     else
     {
         material = std::make_shared<PBRMaterial>(baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
     }
 
     if (!material->hasTextureMap())
@@ -415,12 +417,14 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadBlinnPhongMateri
     std::string texNormalFullPath{};
     std::string texHeightFullPath{};
     std::string texEmissiveFullPath{};
+    std::string texOpacityFullPath{};
 
 
     texDiffuseFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_DIFFUSE);
     texSpecularFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_SPECULAR);
     texNormalFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_NORMALS);
-    
+    texHeightFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_HEIGHT);
+    texOpacityFullPath = getTexture(scene, mat, aiTextureType::aiTextureType_OPACITY);
 
 
     aiColor4D aiBaseColorFactor(1, 1, 1, 1);
@@ -429,7 +433,7 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadBlinnPhongMateri
 
     // TODO, get shininess from assimp
 
-    std::shared_ptr<Material> material = std::make_shared<BlinnPhongMaterial>(baseColorFactor, texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, texEmissiveFullPath, shininess);
+    std::shared_ptr<Material> material = std::make_shared<BlinnPhongMaterial>(baseColorFactor, texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
 
     material->setName(mat->GetName().C_Str());
 

@@ -2,8 +2,8 @@
 #include "core/include/app/scene.h"
 #include "core/include/managers/log_manager.h"
 
-#include "app/myapp0.h" // app scenes switcher
-#include "app/myapp1.h" // single scene app
+#include "include/app/myapp0.h" // app scenes switcher
+#include "include/app/myapp1.h" // single scene app
 
 
 
@@ -18,7 +18,7 @@ int main(int, char**)
 {
     // Init the app
     AppManager appManager;
-    auto app = appManager.createApp<MyApp>("MyApp", 1280, 720, false); //1280, 720 //1280, 720
+    auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
     if (!app)
         return EXIT_FAILURE;
 

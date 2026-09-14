@@ -15,15 +15,15 @@ engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuse
 {
 }
 
-engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
-	: Material(MaterialType::PBR, baseColorFactor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath, emissiveTexPath, shininess)
+engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+	: Material(MaterialType::PBR, baseColorFactor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath, emissiveTexPath, opacityTexPath, shininess)
 {
 }
 
 /// <summary>
 /// PBR material with MR, ARM combined textures
 /// </summary>
-engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, float shininess)
-	: Material(MaterialType::PBR, combinedTextureType, baseColorFactor, diffuseTexPath, "", normalTexPath, rmOrArmTexPath, heightTexPath, emissiveTexPath, shininess)
+engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+	: Material(MaterialType::PBR, combinedTextureType, baseColorFactor, diffuseTexPath, "", normalTexPath, rmOrArmTexPath, heightTexPath, emissiveTexPath, opacityTexPath, shininess)
 {
 }

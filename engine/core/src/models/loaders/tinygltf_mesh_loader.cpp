@@ -529,7 +529,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 		};
 	}
 
-
+    float shininess = 1.0f; // hard coded !!!!
     std::string baseColorTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
     std::string normalTex = getTexture(raw, mat.normal_texture);
     std::string metallicTex = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
@@ -537,6 +537,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
     std::string aoTex = getTexture(raw, mat.occlusion_texture);
     std::string emissiveTex = getTexture(raw, mat.emissive_texture);
     std::string heightTex = ""; // GLTF rarely uses height
+    std::string opacityTex = "";
 
     bool useARM = false;
     bool useMR = false;
@@ -553,15 +554,15 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 
     if (useARM)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
+        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, opacityTex, shininess);
     }
     else if (useMR)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, 1.0f);
+        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, opacityTex, shininess);
     }
     else
     {
-        material = std::make_shared<PBRMaterial>(baseColorFactor, baseColorTex, normalTex, metallicTex, roughnessTex, aoTex, heightTex, emissiveTex, 1.0f);
+        material = std::make_shared<PBRMaterial>(baseColorFactor, baseColorTex, normalTex, metallicTex, roughnessTex, aoTex, heightTex, emissiveTex, opacityTex, shininess);
     }
 
     if (!material->hasTextureMap())
@@ -692,7 +693,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
     std::shared_ptr<engine::Material> material{};
     
     if (!diffuseTex.empty())
-        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, std::string(), std::string(), shininess);
+        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, std::string(), std::string(), std::string(), shininess);
     else
         material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseColor, specularColor, shininess);
 

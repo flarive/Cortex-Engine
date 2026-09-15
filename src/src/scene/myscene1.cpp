@@ -60,7 +60,7 @@ void MyScene1::init()
 
     // billboard
     auto myBillboard = make_shared<Billboard>();
-    myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png"), UvMapping(1.0f));
+    myBillboard->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/grass.png", "", "", "", "", "textures/grass_mask.png"), UvMapping(1.0f));
     auto trsBillboard = Transform(vec3(0.0f, -0.18f, 1.35f), vec3(0.7f));
     auto entityBillboard = make_shared<Entity>("MyBillboard");
     entityBillboard->addComponent<TransformComponent>(trsBillboard);

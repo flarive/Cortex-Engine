@@ -1155,6 +1155,9 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\alpha_cutter.png">
       <Filter>resources\textures\pbr</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\grass_mask.png">
+      <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\app\myapp0.h">

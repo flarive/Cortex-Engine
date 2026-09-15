@@ -48,22 +48,6 @@ namespace engine
     /// </summary>
     class Primitive
     {
-    protected:
-        unsigned int m_VBO{}, m_VAO{}, m_EBO{};
-
-        std::shared_ptr<Material> m_material{};
-
-        Color m_ambientColor{};
-
-        unsigned int m_cubemapTexture{};
-
-        float m_uvScale{ 1.0f };
-
-
-
-        bool m_canCastShadows{ true };
-        bool m_canReceiveShadows{ true };
-
     public:
         bool highlight{};
         
@@ -136,8 +120,22 @@ namespace engine
         void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
         
-
     protected:
+        unsigned int m_VBO{}, m_VAO{}, m_EBO{};
+
+        std::shared_ptr<Material> m_material{};
+
+        Color m_ambientColor{};
+
+        unsigned int m_cubemapTexture{};
+
+        float m_uvScale{ 1.0f };
+
+
+
+        bool m_canCastShadows{ true };
+        bool m_canReceiveShadows{ true };
+    
         bool m_isEnabled{ true };
         
 

@@ -4,6 +4,10 @@
 
 namespace engine
 {
+	/// <summary>
+	/// Blinn Phong material (legacy)
+	/// https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model
+	/// </summary>
 	class BlinnPhongMaterial final : public Material
 	{
 	public:

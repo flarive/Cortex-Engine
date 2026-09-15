@@ -64,7 +64,7 @@ void MyScene8::init()
     // ground
     auto myPlane = make_shared<Plane>();
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        myPlane->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
+        myPlane->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3), UvMapping(6.0f));
     }
     else {
         myPlane->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
@@ -80,7 +80,7 @@ void MyScene8::init()
     // cube 1
     auto myCube1 = make_shared<Cube>();
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        myCube1->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+        myCube1->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3));
     }
     else {
         myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
@@ -110,7 +110,7 @@ void MyScene8::init()
     // cube 2
     auto myCube2 = make_shared<Cube>();
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        myCube2->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+        myCube2->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3));
     }
     else {
         myCube2->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
@@ -125,7 +125,7 @@ void MyScene8::init()
     // cube 3
     auto myCube3 = make_shared<Cube>();
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        myCube3->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+        myCube3->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3));
     }
     else {
         myCube3->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
@@ -140,7 +140,7 @@ void MyScene8::init()
     // cube 4
     auto myCube4 = make_shared<Cube>();
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        myCube4->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+        myCube4->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3));
     }
     else {
         myCube4->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
@@ -156,7 +156,7 @@ void MyScene8::init()
     auto mySphere = make_shared<Sphere>();
 
     if (this->getSceneSettings().method == RenderMethod::PBR) {
-        mySphere->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3, 32.0f));
+        mySphere->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3));
     }
     else {
         mySphere->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));

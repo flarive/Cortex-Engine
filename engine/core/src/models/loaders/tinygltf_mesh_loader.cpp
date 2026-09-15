@@ -529,40 +529,39 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 		};
 	}
 
-    float shininess = 1.0f; // hard coded !!!!
-    std::string baseColorTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
-    std::string normalTex = getTexture(raw, mat.normal_texture);
-    std::string metallicTex = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
-    std::string roughnessTex = metallicTex; // GLTF packs metallic+roughness together
-    std::string aoTex = getTexture(raw, mat.occlusion_texture);
-    std::string emissiveTex = getTexture(raw, mat.emissive_texture);
-    std::string heightTex = ""; // GLTF rarely uses height
-    std::string opacityTex = "";
+    std::string texBaseColorFullPath = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
+    std::string texNormalFullPath = getTexture(raw, mat.normal_texture);
+    std::string texMetallicFullPath = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
+    std::string texRoughnessFullPath = texMetallicFullPath; // GLTF packs metallic+roughness together
+    std::string texAoFullPath = getTexture(raw, mat.occlusion_texture);
+    std::string texEmissiveFulPath = getTexture(raw, mat.emissive_texture);
+    std::string texHeightFullPath = ""; // GLTF rarely uses height
+    std::string texOpacityFullPath = ""; // TODO !!!
 
     bool useARM = false;
     bool useMR = false;
 
     // GLTF ARM detection (AO + Roughness + Metallic in one texture)
-    if (!aoTex.empty() && !metallicTex.empty() && aoTex == metallicTex)
+    if (!texAoFullPath.empty() && !texMetallicFullPath.empty() && texAoFullPath == texMetallicFullPath)
         useARM = true;
 
     // GLTF MR detection (Metallic + Roughness in one texture)
-    if (!metallicTex.empty() && !roughnessTex.empty() && metallicTex == roughnessTex)
+    if (!texMetallicFullPath.empty() && !texRoughnessFullPath.empty() && texMetallicFullPath == texRoughnessFullPath)
         useMR = true;
 
     std::shared_ptr<Material> material{};
 
     if (useARM)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, opacityTex, shininess);
+        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
     else if (useMR)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, baseColorTex, normalTex, metallicTex, heightTex, emissiveTex, opacityTex, shininess);
+        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
     else
     {
-        material = std::make_shared<PBRMaterial>(baseColorFactor, baseColorTex, normalTex, metallicTex, roughnessTex, aoTex, heightTex, emissiveTex, opacityTex, shininess);
+        material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
 
     if (!material->hasTextureMap())
@@ -586,9 +585,10 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
     Color diffuseColor{};
     Color specularColor{ 1.0f };
 
-    std::string diffuseTex{};
-    std::string specularTex{};
-    std::string normalTex{};
+    
+    std::string texDiffuseFullPath{};
+    std::string texSpecularFullPath{};
+    std::string texNormalFullPath{};
     float shininess{};
 
     // -----------------------------
@@ -596,7 +596,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
     // -----------------------------
     if (mat.pbr_metallic_roughness.base_color_texture.index >= 0)
     {
-        diffuseTex = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
+        texDiffuseFullPath = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
     }
     else
     {
@@ -610,7 +610,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
     // -----------------------------
     if (mat.normal_texture.index >= 0)
     {
-        normalTex = getTexture(raw, mat.normal_texture);
+        texNormalFullPath = getTexture(raw, mat.normal_texture);
     }
 
     // -----------------------------
@@ -692,8 +692,8 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadBlinnPhongMaterial
 
     std::shared_ptr<engine::Material> material{};
     
-    if (!diffuseTex.empty())
-        material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseTex, specularTex, normalTex, std::string(), std::string(), std::string(), shininess);
+    if (!texDiffuseFullPath.empty())
+        material = std::make_shared<BlinnPhongMaterial>(ambientColor, texDiffuseFullPath, texSpecularFullPath, texNormalFullPath, std::string(), std::string(), std::string(), shininess);
     else
         material = std::make_shared<BlinnPhongMaterial>(ambientColor, diffuseColor, specularColor, shininess);
 

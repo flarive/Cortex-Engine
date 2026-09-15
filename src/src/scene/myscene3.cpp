@@ -99,7 +99,7 @@ void MyScene3::init()
         "models/sphere/cliff/metallic.jpg",
         "models/sphere/cliff/roughness.jpg",
         "models/sphere/cliff/ao.jpg",
-        "models/sphere/cliff/height.jpg", "", "", 0.0f);
+        "models/sphere/cliff/height.jpg", "", "");
     matPlane->setNormalIntensity(1.0f);
     myPlane->setup(matPlane, UvMapping(2.0f));
     auto trsPlane = Transform(vec3(0.0f, -15.0f, -15.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
@@ -112,14 +112,13 @@ void MyScene3::init()
 
     // sphere models
     auto redSciFiMetalSphere = make_shared<Sphere>();
-
     auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
         "models/sphere/rounded-metal-cubes/albedo.dds",
         "models/sphere/rounded-metal-cubes/normal.png",
         "models/sphere/rounded-metal-cubes/metallic.png",
         "models/sphere/rounded-metal-cubes/roughness.png",
         "models/sphere/rounded-metal-cubes/ao.png",
-        "models/sphere/rounded-metal-cubes/height.png", "", "", 0.0f);
+        "models/sphere/rounded-metal-cubes/height.png", "", "");
     matSphere1->setNormalIntensity(5.0f);
 
     redSciFiMetalSphere->setup(matSphere1, UvMapping(2.0f));
@@ -140,8 +139,10 @@ void MyScene3::init()
         "textures/pbr/rusted_iron/metallic.png",
         "textures/pbr/rusted_iron/roughness.png",
         "textures/pbr/rusted_iron/ao.png",
-        "textures/pbr/rusted_iron/height.png", "", "textures/pbr/alpha_cutter.png", 0.0f);
-    rustedIronMat->setOpacityIntensity(0.2f);
+        "textures/pbr/rusted_iron/height.png",
+        "",
+        "textures/pbr/alpha_smooth.png");
+    rustedIronMat->setOpacityIntensity(0.5f);
     rustedIronMat->setAlphaCutOffEnabled(false);
     rustedIronSphere->setup(rustedIronMat);
     
@@ -160,7 +161,10 @@ void MyScene3::init()
         "textures/pbr/gold/normal.png",
         "textures/pbr/gold/metallic.png",
         "textures/pbr/gold/roughness.png",
-        "textures/pbr/gold/ao.png", "", "", "", 0.0f));
+        "textures/pbr/gold/ao.png",
+        "",
+        "",
+        "textures/pbr/alpha_cutter.png"));
 
     auto trsSphere3 = Transform(vec3(-1.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere3 = make_shared<Entity>("MySphere3");
@@ -176,7 +180,7 @@ void MyScene3::init()
         "textures/pbr/grass/normal.png",
         "textures/pbr/grass/metallic.png",
         "textures/pbr/grass/roughness.png",
-        "textures/pbr/grass/ao.png", "", "", "", 0.0f));
+        "textures/pbr/grass/ao.png", "", "", ""));
 
     auto trsSphere4 = Transform(vec3(1.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere4 = make_shared<Entity>("MySphere4");
@@ -192,7 +196,7 @@ void MyScene3::init()
         "textures/pbr/plastic/normal.png",
         "textures/pbr/plastic/metallic.png",
         "textures/pbr/plastic/roughness.png",
-        "textures/pbr/plastic/ao.png", "", "", "", 1.0f));
+        "textures/pbr/plastic/ao.png", "", "", ""));
 
     auto trsSphere5 = Transform(vec3(3.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere5 = make_shared<Entity>("MySphere5");
@@ -203,12 +207,14 @@ void MyScene3::init()
 
 
     auto wallSphere = make_shared<Sphere>();
-    wallSphere->setup(make_shared<PBRMaterial>(Color(0.1f),
+    auto wallMat = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/wall/albedo.png",
         "textures/pbr/wall/normal.png",
         "textures/pbr/wall/metallic.png",
         "textures/pbr/wall/roughness.png",
-        "textures/pbr/wall/ao.png", "", "", "", 0.0f), UvMapping(1.0f));
+        "textures/pbr/wall/ao.png", "", "", "");
+    wallMat->setNormalIntensity(1.0f);
+    wallSphere->setup(wallMat, UvMapping(1.0f));
 
     auto trsSphere6 = Transform(vec3(5.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere6 = make_shared<Entity>("MySphere6");
@@ -217,21 +223,17 @@ void MyScene3::init()
     getEntityManager().addChild(entitySphere6);
 
 
-    //auto wallPlane = wallSphere.getMaterial();
-    //if (wallPlane)
-    //{
-    //    wallPlane->setNormalIntensity(1.0f);
-    //}
-
 
 
     auto bronzeSphere = make_shared<Sphere>();
-    bronzeSphere->setup(make_shared<PBRMaterial>(Color(0.1f),
+    auto bronzeMat = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/bronze/albedo.png",
         "textures/pbr/bronze/normal.png",
         "textures/pbr/bronze/metallic.png",
         "textures/pbr/bronze/roughness.png",
-        "textures/pbr/bronze/ao.png", "", "", "", 0.0f), UvMapping(1.0f));
+        "textures/pbr/bronze/ao.png", "", "", "");
+    bronzeMat->setAmbientIntensity(5.0f);
+    bronzeSphere->setup(bronzeMat, UvMapping(1.0f));
 
     auto trsSphere7 = Transform(vec3(7.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere7 = make_shared<Entity>("MySphere6");
@@ -239,13 +241,6 @@ void MyScene3::init()
     entitySphere7->addComponent<PrimitiveComponent>(bronzeSphere);
     getEntityManager().addChild(entitySphere7);
 
-    //auto bronzeMat = bronzeSphere.getMaterial();
-    //if (bronzeMat)
-    //{
-    //    bronzeMat->setAmbientIntensity(5.0f);
-    //}
-
-    
 
 
     ourText.setup(getApp()->window, FONT_PATH, 28);

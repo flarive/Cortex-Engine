@@ -505,17 +505,24 @@ const int engine::Material::getTextureHeightUnit() const
 bool engine::Material::isTransparent() const
 {
     // Smooth transparency (blending)
-    if (m_opacityIntensity < 1.0f) return true;
-    if (!m_opacityTexPath.empty()) return true;
+    if (m_opacityIntensity < 1.0f)
+        return true;
 
-    // glTF-style baseColor alpha
-    //if (baseColorFactor.a < 1.0f) return true;
+    // Opacity texture exists AND can produce alpha < 1
+    if (hasOpacityMap())
+    {
+        // If the opacity texture is used, transparency depends on intensity
+        if (m_opacityIntensity < 1.0f)
+            return true;
 
-    //// Transmission/refraction (glass)
-    //if (transmission > 0.0f) return true;
+        // If baseColorFactor.a < 1, also transparent
+        //if (baseColorFactor.a < 1.0f)
+        //    return true;
+    }
 
     return false;
 }
+
 
 bool engine::Material::isAlphaCutout() const
 {

@@ -181,6 +181,13 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         glDepthMask(GL_TRUE);   // opaque writes depth
     }
 
+    if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
+    {
+        // DO NOT apply transparency logic here
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
+    }
+
 
     shader.use();
     OpenGLDebug::checkGLError("shader.use00");
@@ -215,6 +222,8 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
             shader.setBool("material.canCastShadows", canCastShadows());
             shader.setBool("material.canReceiveShadows", canReceiveShadows());
             
+
+            shader.setFloat("material.opacity", m_material->getOpacityIntensity());
 
             if (type == ShaderType::PBR)
             {

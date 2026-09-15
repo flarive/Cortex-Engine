@@ -380,22 +380,20 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(cons
     mat->Get(AI_MATKEY_BASE_COLOR, aiBaseColorFactor);
     Color baseColorFactor{ aiBaseColorFactor.r, aiBaseColorFactor.g, aiBaseColorFactor.b, aiBaseColorFactor.a };
 
-    float shininess = 1.0f; // TODO, remove shininess from PBR material !
-
     if (useARMTexture && !texArmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
     }
     else if (useMRTexture && !texRmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
     }
     else
     {
         material = std::make_shared<PBRMaterial>(baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath, shininess);
+            texDiffuseFullPath, texNormalFullPath, texMetalnessFullPath, texRoughnessFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
     }
 
     if (!material->hasTextureMap())

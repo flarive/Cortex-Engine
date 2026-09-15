@@ -369,57 +369,194 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
+//void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
+//{
+//    //DebugFrame::ensureIsCalledOncePerFrame("PbrRenderer", "loop");
+//
+//    auto* singleton = engine::Singleton::getInstance();
+//    assert(singleton != nullptr && "Singleton not initialized !");
+//    const SceneSettings& settings = singleton->sceneSettings();
+//
+//    // bind to color framebuffer and draw scene as we normally would to color texture
+//    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+//    glEnable(GL_DEPTH_TEST); // enable depth testing
+//    glEnable(GL_STENCIL_TEST); // enable stencil test
+//
+//
+//    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
+//
+//    updateEditorPropertySettings(width, height);
+//
+//    glm::mat4 projection = camera->getProjectionMatrix(width* 1.0f / height * 1.0f);
+//    glm::mat4 view = camera->getViewMatrix();
+//
+//
+//
+//
+//    // Apply wireframe *only for the scene pass* if enabled
+//    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
+//
+//    if (settings.drawAsWireframe)
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//
+//
+//    
+//    if (settings.showDebugGrid)
+//        renderDebugPlaneGrid(projection, view);
+//
+//
+//    // PBR shader
+//    pbrShader.use();
+//    pbrShader.setMat4("projection", projection);
+//    pbrShader.setMat4("view", view);
+//    pbrShader.setVec3("viewPos", camera->position);
+//    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
+//    pbrShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+//    pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+//    pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+//    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+//    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+//
+//
+//
+//
+//    if (supportTessellation())
+//    {
+//        pbrShaderTessellation.use();
+//        pbrShaderTessellation.setMat4("projection", projection);
+//        pbrShaderTessellation.setMat4("view", view);
+//        pbrShaderTessellation.setVec3("viewPos", camera->position);
+//        pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
+//        pbrShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+//        pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+//        pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+//        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+//        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+//    }
+//
+//    // bind pre-computed IBL data
+//    glActiveTexture(GL_TEXTURE0 + U_IRR);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+//    glActiveTexture(GL_TEXTURE0 + U_PREF);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+//    glActiveTexture(GL_TEXTURE0 + U_BRDF);
+//    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+//
+//    // bind pre-computed area light LTC data
+//    glActiveTexture(GL_TEXTURE0 + U_LTC1);
+//    glBindTexture(GL_TEXTURE_2D, LTC1Map);
+//    glActiveTexture(GL_TEXTURE0 + U_LTC2);
+//    glBindTexture(GL_TEXTURE_2D, LTC2Map);
+//
+//    
+//    // update user stuffs
+//    update(pbrShader, pbrShaderTessellation);
+//    //update(outlineColorShader);
+//
+//
+//
+//    // render skybox (render as last to prevent overdraw)
+//    backgroundShader.use();
+//    backgroundShader.setMat4("view", view);
+//    backgroundShader.setMat4("projection", projection);
+//    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
+//
+//    // Bind the cube map texture to texture unit 0
+//    glActiveTexture(GL_TEXTURE0 + U_BG_ENV);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+//
+//
+//    if (!settings.HDRSkyboxHide)
+//        renderCube();
+//
+//
+//    // compute light shadows using a depth map framebuffer
+//    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, pbrShader, pbrShaderTessellation, update);
+//
+//
+//    
+//
+//    // Resolve MSAA to screen or another texture FBO (SDR old)
+//    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+//    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+//    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+//
+//    
+//    // Resolve MSAA color to colorFramebuffer (HDR)
+//    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+//    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+//    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+//
+//
+//
+//
+//    // Restore whatever polygon mode was active before
+//    if (settings.drawAsWireframe)
+//        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]); // both front/back are same in core usage
+//
+//
+//
+//
+//    // render to framebuffer
+//    computeHDRColorFramebuffer(width, height, settings);
+//    //computeColorFramebuffer();
+//
+//    // display UI/HUD above the scene and outside the framebuffer
+//    updateUI();
+//}
+
 void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
 {
-    //DebugFrame::ensureIsCalledOncePerFrame("PbrRenderer", "loop");
+    const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
-
-    // bind to color framebuffer and draw scene as we normally would to color texture
+    // Bind HDR/MSAA color framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-    glEnable(GL_DEPTH_TEST); // enable depth testing
-    glEnable(GL_STENCIL_TEST); // enable stencil test
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
 
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     updateEditorPropertySettings(width, height);
 
-    glm::mat4 projection = camera->getProjectionMatrix(width* 1.0f / height * 1.0f);
+    glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
     glm::mat4 view = camera->getViewMatrix();
 
-
-
-
-    // Apply wireframe *only for the scene pass* if enabled
-    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
-
+    // Wireframe toggle
+    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes);
     if (settings.drawAsWireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
-    
     if (settings.showDebugGrid)
         renderDebugPlaneGrid(projection, view);
 
+    // --- 1) SKYBOX FIRST (depth writes OFF, depth test ON) ---
+    glDepthMask(GL_FALSE);
+    backgroundShader.use();
+    backgroundShader.setMat4("view", view);
+    backgroundShader.setMat4("projection", projection);
+    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
-    // PBR shader
+    glActiveTexture(GL_TEXTURE0 + U_BG_ENV);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+    if (!settings.HDRSkyboxHide)
+        renderCube();
+
+    glDepthMask(GL_TRUE); // restore depth writes
+
+    // --- 2) SETUP PBR SHADERS & IBL ---
     pbrShader.use();
     pbrShader.setMat4("projection", projection);
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("viewPos", camera->position);
     pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    pbrShader.setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
     pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
     pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
-
-
-
+    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
+    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
 
     if (supportTessellation())
     {
@@ -428,14 +565,14 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
         pbrShaderTessellation.setMat4("view", view);
         pbrShaderTessellation.setVec3("viewPos", camera->position);
         pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
-        pbrShaderTessellation.setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+        pbrShaderTessellation.setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
         pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
         pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
+        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
     }
 
-    // bind pre-computed IBL data
+    // Bind IBL + LTC
     glActiveTexture(GL_TEXTURE0 + U_IRR);
     glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
     glActiveTexture(GL_TEXTURE0 + U_PREF);
@@ -443,68 +580,46 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     glActiveTexture(GL_TEXTURE0 + U_BRDF);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
-    // bind pre-computed area light LTC data
     glActiveTexture(GL_TEXTURE0 + U_LTC1);
     glBindTexture(GL_TEXTURE_2D, LTC1Map);
     glActiveTexture(GL_TEXTURE0 + U_LTC2);
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 
-    
-    // update user stuffs
+    // --- 3) OPAQUE OBJECTS ---
+    // In your engine, `update(pbrShader, pbrShaderTessellation)` currently draws everything.
+    // You want to split it into:
+    //   updateOpaque(pbrShader, pbrShaderTessellation);
+    //   updateTransparent(pbrShader, pbrShaderTessellation);
+    //
+    // For now, assume update() draws opaque first, then transparent (sorted).
     update(pbrShader, pbrShaderTessellation);
-    //update(outlineColorShader);
 
+    // --- 4) SHADOW MAP PASS (if you keep your existing depth map logic) ---
+    computeDepthMapFramebuffer(width, height,
+        settings.enableShadows,
+        (GLsizei)settings.shadowMapsTextureSize,
+        pbrShader,
+        pbrShaderTessellation,
+        update);
 
-
-    // render skybox (render as last to prevent overdraw)
-    backgroundShader.use();
-    backgroundShader.setMat4("view", view);
-    backgroundShader.setMat4("projection", projection);
-    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
-
-    // Bind the cube map texture to texture unit 0
-    glActiveTexture(GL_TEXTURE0 + U_BG_ENV);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-
-
-    if (!settings.HDRSkyboxHide)
-        renderCube();
-
-
-    // compute light shadows using a depth map framebuffer
-    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, pbrShader, pbrShaderTessellation, update);
-
-
-    
-
-    // Resolve MSAA to screen or another texture FBO (SDR old)
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-    
-    // Resolve MSAA color to colorFramebuffer (HDR)
+    // --- 5) RESOLVE MSAA TO HDR RESOLVE FBO ---
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, width, height,
+        0, 0, width, height,
+        GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-
-
-
-    // Restore whatever polygon mode was active before
+    // Restore polygon mode
     if (settings.drawAsWireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]); // both front/back are same in core usage
+        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]);
 
-
-
-
-    // render to framebuffer
+    // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---
     computeHDRColorFramebuffer(width, height, settings);
-    //computeColorFramebuffer();
 
-    // display UI/HUD above the scene and outside the framebuffer
+    // --- 7) UI ---
     updateUI();
 }
+
 
 void engine::PbrRenderer::loadShaders()
 {

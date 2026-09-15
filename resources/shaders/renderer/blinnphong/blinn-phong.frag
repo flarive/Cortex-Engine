@@ -10,6 +10,7 @@ struct Material {
     sampler2D texture_specular;
     sampler2D texture_normal;
     sampler2D texture_emissive;
+    sampler2D texture_opacity;
 
     vec3 diffuse_color;
     vec3 specular_color;
@@ -21,6 +22,7 @@ struct Material {
     bool has_texture_specular_map;
     bool has_texture_normal_map;
     bool has_texture_emissive_map;
+    bool has_texture_opacity_map;
 
     int shadowCalculationMethod;
     float shadowIntensity; // Adjust to make shadows darker
@@ -36,6 +38,8 @@ struct Material {
     bool canReceiveShadows;
 
     bool useParallaxMapping;
+
+    float opacity;   // base opacity (0–1)
 }; 
 
 struct DirLight {
@@ -938,6 +942,7 @@ void main()
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : 1.0;
 
 
     // Lighting
@@ -991,9 +996,6 @@ void main()
     // Add emissive contribution
     result += emissive;
 
-
-    // Sample the alpha value from the diffuse texture
-    float alpha = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0;
 
     if (isTessellated)
     {

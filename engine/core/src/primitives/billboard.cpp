@@ -115,6 +115,8 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
                 return;
             }
 
+            //draw1(shader, type);
+
             if (type == ShaderType::BlinnPhong)
             {
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());

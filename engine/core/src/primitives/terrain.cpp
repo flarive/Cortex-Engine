@@ -179,12 +179,14 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
             return;
         }
 
-        if (type == ShaderType::BlinnPhongTessellation)
-        {
-            shader.setFloat("material.shininess", m_material->getShininessIntensity());
-            shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-            shader.setVec3("material.specular_color", m_material->getSpecularColor());
-        }
+        draw1(shader, type);
+
+        //if (type == ShaderType::BlinnPhongTessellation)
+        //{
+        //    shader.setFloat("material.shininess", m_material->getShininessIntensity());
+        //    shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        //    shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        //}
 
         shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
         shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());

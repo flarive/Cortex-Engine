@@ -383,12 +383,12 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadPBRMaterial(cons
     if (useARMTexture && !texArmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
+            texDiffuseFullPath, texNormalFullPath, texArmFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
     }
     else if (useMRTexture && !texRmFullPath.empty())
     {
         material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor,
-            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
+            texDiffuseFullPath, texNormalFullPath, texRmFullPath, texAmbientOcclusionFullPath, texHeightFullPath, texEmissiveFullPath, texOpacityFullPath);
     }
     else
     {

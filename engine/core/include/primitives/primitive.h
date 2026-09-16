@@ -141,7 +141,7 @@ namespace engine
 
         void setMaterial(const std::shared_ptr<Material>& material);
 
-        void draw1(Shader& shader, ShaderType type);
+        void setShaderCommonUniforms(Shader& shader, ShaderType type);
         void handleOpacity(Shader& shader);
         
 

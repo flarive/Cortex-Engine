@@ -553,14 +553,17 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 
     if (useARM)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
+        // AO + Roughness + Metallic combined textures
+        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, "", texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
     else if (useMR)
     {
-        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
+        // Metallic + Roughness combined textures
+        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
     else
     {
+        // no combined textures
         material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
 

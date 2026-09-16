@@ -223,6 +223,9 @@
     <ClCompile Include="src\scene\myscene11.cpp">
       <Filter>sources\scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene\myscene17.cpp">
+      <Filter>sources\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
@@ -1215,6 +1218,9 @@
       <Filter>headers\scene</Filter>
     </ClInclude>
     <ClInclude Include="include\scene\myscene16.h">
+      <Filter>headers\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scene\myscene17.h">
       <Filter>headers\scene</Filter>
     </ClInclude>
   </ItemGroup>

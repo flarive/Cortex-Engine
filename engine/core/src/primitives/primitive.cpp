@@ -28,7 +28,7 @@ void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
     m_material = material;
 }
 
-void engine::Primitive::draw1(Shader& shader, ShaderType type)
+void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
 {
     if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation)
     {
@@ -36,7 +36,7 @@ void engine::Primitive::draw1(Shader& shader, ShaderType type)
         shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
         shader.setVec3("material.specular_color", m_material->getSpecularColor());
     }
-    else if (type == ShaderType::PBR)
+    else if (type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
         shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());

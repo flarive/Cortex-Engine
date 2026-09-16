@@ -117,6 +117,7 @@ void MyScene14::init()
             "textures/pbr/aerial-rocks/aerial_rocks_04_diff_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_nor_gl_2k.jpg",
             "textures/pbr/aerial-rocks/aerial_rocks_04_arm_2k.jpg",
+            "",
             "textures/pbr/aerial-rocks/aerial_rocks_04_disp_2k.jpg", "", "");
     }
     else
@@ -141,6 +142,7 @@ void MyScene14::init()
             "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
             "textures/pbr/ceramic/ClayCeramicGlossy_ARM.jpg",
+            "",
             "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg", "", "");
     }
     else {
@@ -162,6 +164,7 @@ void MyScene14::init()
             "textures/pbr/porcelain/Porcelain_Color.png",
             "textures/pbr/porcelain/Porcelain_Normal.png",
             "textures/pbr/porcelain/Porcelain_Arm.png",
+            "",
             "textures/pbr/porcelain/Porcelain_Displace.png", "", "");
     }
     else {

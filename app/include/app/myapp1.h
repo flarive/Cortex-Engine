@@ -20,11 +20,12 @@
 #include "../scene/myscene14.h" // blinnphong/pbr terrain
 #include "../scene/myscene15.h" // blinnphong/pbr parallax mapping
 #include "../scene/myscene16.h" // ktx compressed textures
+#include "../scene/myscene17.h" // material opacity and glass
 
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene3;
+using MyScene = MyScene9;
 
 class MyApp1 final : public App
 {

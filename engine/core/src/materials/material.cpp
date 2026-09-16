@@ -62,7 +62,7 @@ engine::Material::Material(MaterialType type, const Color& ambientColor, const s
     }
 }
 
-engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
+engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
     : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath), m_shininess(0.0f)
 {
     // bof
@@ -76,6 +76,7 @@ engine::Material::Material(MaterialType type, CombinedTexture mode, const Color&
     {
         // packed Roughness/Metallic
         m_rmTexPath = rmOrArmTexPath;
+        m_aoTexPath = aoTexPath;
     }
     else if (mode == CombinedTexture::ARM)
     {
@@ -329,14 +330,18 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         
         if (hasArmMap())
         {
+            // ao + roughness + metallic
             engine::TextureManager::requestLoadTextureAsync(m_armTexPath, flipY);
         }
         else if (hasRmMap())
         {
+            // roughness + metallic
             engine::TextureManager::requestLoadTextureAsync(m_rmTexPath, flipY);
+            engine::TextureManager::requestLoadTextureAsync(m_aoTexPath, flipY);
         }
         else
         {
+            // no combined textures
             engine::TextureManager::requestLoadTextureAsync(m_metallicTexPath, flipY);
             engine::TextureManager::requestLoadTextureAsync(m_roughnessTexPath, flipY);
             engine::TextureManager::requestLoadTextureAsync(m_aoTexPath, flipY);
@@ -363,6 +368,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         {
             // RM combined texture(roughness and metalness)
             rmMapId = engine::TextureManager::enqueueAsyncTextureCreation(m_rmTexPath);
+            aoMapId = hasAoMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_aoTexPath) : 0;
 
             roughnessMapId = 0;
             metallicMapId = 0;
@@ -419,15 +425,22 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
 
     if (hasArmMap())
     {
+        // ao + roughness + metalness
         armMapId = engine::TextureManagerInternal::textureIDCache[m_armTexPath];
         if (armMapId > 0)
             textures.emplace_back(std::move(engine::Texture{ armMapId, "texture_arm", m_armTexPath }));
     }
     else if (hasRmMap())
     {
+        // roughness + metalness
         rmMapId = engine::TextureManagerInternal::textureIDCache[m_rmTexPath];
         if (rmMapId > 0)
             textures.emplace_back(std::move(engine::Texture{ rmMapId, "texture_rm", m_rmTexPath }));
+
+        // ao
+        aoMapId = engine::TextureManagerInternal::textureIDCache[m_aoTexPath];
+        if (aoMapId > 0)
+            textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
     }
     else
     {
@@ -464,8 +477,13 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
         if (hasDiffuseMap())  expectedCount++;
         if (hasNormalMap())   expectedCount++;
 
-        if (hasArmMap()) expectedCount++;
-        else if (hasRmMap()) expectedCount++;
+        if (hasArmMap()) {
+            expectedCount++;
+        }
+        else if (hasRmMap()) {
+            expectedCount++;
+            if (hasAoMap())       expectedCount++;
+        }
         else {
             if (hasMetallicMap()) expectedCount++;
             if (hasRoughnessMap()) expectedCount++;

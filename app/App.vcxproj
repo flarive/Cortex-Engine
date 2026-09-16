@@ -209,6 +209,7 @@
     <ClCompile Include="src\scene\myscene14.cpp" />
     <ClCompile Include="src\scene\myscene15.cpp" />
     <ClCompile Include="src\scene\myscene16.cpp" />
+    <ClCompile Include="src\scene\myscene17.cpp" />
     <ClCompile Include="src\scene\myscene2.cpp" />
     <ClCompile Include="src\scene\myscene3.cpp" />
     <ClCompile Include="src\scene\myscene4.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="include\scene\myscene14.h" />
     <ClInclude Include="include\scene\myscene15.h" />
     <ClInclude Include="include\scene\myscene16.h" />
+    <ClInclude Include="include\scene\myscene17.h" />
     <ClInclude Include="include\scene\myscene2.h" />
     <ClInclude Include="include\scene\myscene3.h" />
     <ClInclude Include="include\scene\myscene4.h" />

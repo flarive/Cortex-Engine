@@ -179,28 +179,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
             return;
         }
 
-        draw1(shader, type);
-
-        //if (type == ShaderType::BlinnPhongTessellation)
-        //{
-        //    shader.setFloat("material.shininess", m_material->getShininessIntensity());
-        //    shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        //    shader.setVec3("material.specular_color", m_material->getSpecularColor());
-        //}
-
-        shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-
-        shader.setBool("material.canCastShadows", canCastShadows());
-        shader.setBool("material.canReceiveShadows", canReceiveShadows());
-
-
-        if (type == ShaderType::PBRTessellation)
-        {
-            shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-            shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-            shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        }
+        setShaderCommonUniforms(shader, type);
     }
     else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)
     {

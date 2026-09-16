@@ -942,7 +942,7 @@ void main()
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
-    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : 1.0;
+    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0);
 
 
     // Lighting

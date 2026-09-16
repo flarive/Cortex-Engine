@@ -115,6 +115,8 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
+    handleOpacity(shader);
+
     shader.use();
     OpenGLDebug::checkGLError("shader.use33");
 
@@ -127,34 +129,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
             return;
         }
 
-        draw1(shader, type);
-
-        //if (type == ShaderType::BlinnPhong)
-        //{
-        //    shader.setFloat("material.shininess", m_material->getShininessIntensity());
-        //    shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        //    shader.setVec3("material.specular_color", m_material->getSpecularColor());
-        //}
-
-        
-        
-        //shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-        //shader.setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
-        //
-
-        //shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-        //shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
-
-        //shader.setBool("material.canCastShadows", canCastShadows());
-        //shader.setBool("material.canReceiveShadows", canReceiveShadows());
-
-
-        //if (type == ShaderType::PBR)
-        //{
-        //    shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-        //    shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-        //    shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
-        //}
+        setShaderCommonUniforms(shader, type);
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)

@@ -841,14 +841,14 @@ void main()
     else
     {
         // 3 distinct textures
-        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 0.0; // Ambient occlusion defaults to white (1.0) 
+        ao = material.has_texture_ao_map ? texture(material.texture_ao, texCoords).r : 1.0; // Ambient occlusion defaults to white (1.0) 
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
         metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
     }
 
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
-    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : 1.0;
+    float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

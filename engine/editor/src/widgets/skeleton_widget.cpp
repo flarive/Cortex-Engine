@@ -36,9 +36,9 @@ void engine::SkeletonWidget::draw()
         {
             displaySkeleton(sharedSkeleton);
         }
-
-        ImGui::PopFont();
     }
+
+    ImGui::PopFont();
 }
 
 void engine::SkeletonWidget::displaySkeleton(const std::shared_ptr<Skeleton>& skeleton)

@@ -60,32 +60,32 @@ void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
 
 void engine::Primitive::handleOpacity(Shader& shader)
 {
-    bool transparent = m_material->isTransparent();
-    bool cutout = m_material->isAlphaCutout();
+    //bool transparent = m_material->isTransparent();
+    //bool cutout = m_material->isAlphaCutout();
 
-    if (cutout)
-    {
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);   // cutout writes depth
-    }
-    else if (transparent)
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDepthMask(GL_FALSE);  // transparent does NOT write depth
-    }
-    else
-    {
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);   // opaque writes depth
-    }
+    //if (cutout)
+    //{
+    //    glDisable(GL_BLEND);
+    //    glDepthMask(GL_TRUE);   // cutout writes depth
+    //}
+    //else if (transparent)
+    //{
+    //    glEnable(GL_BLEND);
+    //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //    glDepthMask(GL_FALSE);  // transparent does NOT write depth
+    //}
+    //else
+    //{
+    //    glDisable(GL_BLEND);
+    //    glDepthMask(GL_TRUE);   // opaque writes depth
+    //}
 
-    if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
-    {
-        // DO NOT apply transparency logic here
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);
-    }
+    //if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
+    //{
+    //    // DO NOT apply transparency logic here
+    //    glDisable(GL_BLEND);
+    //    glDepthMask(GL_TRUE);
+    //}
 }
 
 void engine::Primitive::clean()

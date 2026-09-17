@@ -165,6 +165,10 @@ namespace engine
         void setCubeMapTexs(const std::vector<std::string>& faces);
 
 
+        unsigned int getDiffuseMapId() { return diffuseMapId; }
+        unsigned int getHeightMapId() { return heightMapId; }
+
+
 
     protected:
         std::string m_name{};
@@ -207,6 +211,7 @@ namespace engine
         bool m_allTexturesLoaded{};
 
     private:
+        unsigned int diffuseMapId{};
         unsigned int heightMapId{};
     };
 }

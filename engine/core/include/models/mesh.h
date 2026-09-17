@@ -43,6 +43,15 @@ namespace engine
         const bool hasAnimations() const { return m_hasAnimations; }
         void setHasAnimations(bool hasAnimations) { m_hasAnimations = hasAnimations; }
 
+        const bool hasNormals() const { return m_hasNormals; }
+        void setHasNormals(bool hasNormals) { m_hasNormals = hasNormals; }
+
+        const bool hasTangents() const { return m_hasTangents; }
+        void setHasTangents(bool hasTangents) { m_hasTangents = hasTangents; }
+
+        const bool hasTexCoords() const { return m_hasTexCoords; }
+        void setHasTexCoords(bool hasTexCoords) { m_hasTexCoords = hasTexCoords; }
+
         void clean();
        
     private:
@@ -67,7 +76,9 @@ namespace engine
         bool m_hasBones{ false };
         bool m_hasAnimations{ false };
 
-
+        bool m_hasNormals{ false };
+        bool m_hasTangents{ false };
+        bool m_hasTexCoords{ false };
 
         // initializes all the buffer objects/arrays
         void setupMesh();

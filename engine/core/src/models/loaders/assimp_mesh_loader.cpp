@@ -128,30 +128,41 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
         if (m_hasBones)
             setVertexBoneDataToDefault(vertex);
 
+
+        m_hasNormals = mesh->HasNormals();
+        m_hasTangents = mesh->HasTangentsAndBitangents();
+        m_hasTexCoords = mesh->HasTextureCoords(0);
+
+
         // positions
         vertex.position = AssimpGLMHelpers::GetGLMVec(mesh->mVertices[i]);
 
         // normals
-        if (mesh->HasNormals())
+        if (m_hasNormals)
             vertex.normal = AssimpGLMHelpers::GetGLMVec(mesh->mNormals[i]);
 
         // texture coordinates
-        if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+        if (m_hasTexCoords && mesh->mTextureCoords[0])
         {
             // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
             // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
             vertex.texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
-            
-            // tangent
-            vertex.tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
-            
-            // bitangent
-            vertex.bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
         }
         else
         {
             vertex.texCoords = glm::vec2(0.0f, 0.0f);
         }
+
+        
+        if (m_hasTangents)
+        {
+            // tangent
+            vertex.tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+
+            // bitangent
+            vertex.bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
+        }
+
 
         vertices.emplace_back(std::move(vertex));
     }
@@ -215,7 +226,12 @@ std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh
         extractBoneWeightForVertices(vertices, mesh, scene);
 
     // return a mesh object created from the extracted mesh data
-    return std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
+    auto meshPtr = std::make_shared<Mesh>(mesh->mName.C_Str(), std::move(vertices), std::move(indices), m_materials.back());
+    meshPtr->setHasNormals(m_hasNormals);
+    meshPtr->setHasTangents(m_hasTangents);
+    meshPtr->setHasTexCoords(m_hasTexCoords);
+
+    return meshPtr;
 }
 
 void engine::AssimpMeshLoader::extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)

@@ -12,7 +12,7 @@ MyScene9::MyScene9(const string& _title, std::weak_ptr<App> _app) : Scene(_title
         .HDRSkyboxBlurStrength = 0.0f,
         .shadowIntensity = 1.0f,
         .iblDiffuseIntensity = 0.4f,
-        .iblSpecularIntensity = 0.0f,
+        .iblSpecularIntensity = 1.0f,
         .enableGammaCorrection = true
     })
 {
@@ -79,7 +79,14 @@ void MyScene9::init()
     entityLight4->addComponent<LightComponent>(light4);
     getEntityManager().addChild(entityLight4);
 
-
+    //auto helmetCustomMat = std::make_shared<PBRMaterial>(CombinedTexture::RM, Color(0.3f),
+    //    "models/helmet/Default_albedo.jpg",
+    //    "models/helmet/Default_normal.jpg",
+    //    "models/helmet/Default_metalRoughness.jpg",
+    //    "models/helmet/Default_AO.jpg",
+    //    "",
+    //    "models/helmet/Default_Emissive.jpg");
+        
 
     // helmet model
     shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, false, true);
@@ -89,12 +96,12 @@ void MyScene9::init()
     entityHelmet->addComponent<ModelComponent>(helmetModel);
     getEntityManager().addChild(entityHelmet);
 
-    auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
-    if (helmetMat)
-    {
-        helmetMat->setAmbientIntensity(5.0f);
-        helmetMat->setEmissiveIntensity(5.0f);
-    }
+    //auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
+    //if (helmetMat)
+    //{
+    //    helmetMat->setAmbientIntensity(5.0f);
+    //    helmetMat->setEmissiveIntensity(5.0f);
+    //}
 
 
     ourText.setup(getApp()->window, FONT_PATH, 28);

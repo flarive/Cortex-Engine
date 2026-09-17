@@ -114,6 +114,9 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         shader.setBool("materialHeight.has_texture_height_map", false);
         shader.setBool("material.has_texture_emissive_map", false);
         shader.setBool("material.has_texture_opacity_map", false);
+
+        shader.setBool("material.has_texture_arm_map", false);
+        shader.setBool("material.has_texture_rm_map", false);
     }
     else
     {
@@ -250,7 +253,7 @@ void engine::Material::loadTextures()
     // Load textures asynchronously
     if (type == MaterialType::PBR)
     {
-        unsigned int diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
 
         unsigned int normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
@@ -265,7 +268,7 @@ void engine::Material::loadTextures()
         unsigned int aoMapId = hasAoMap() ? engine::TextureManager::loadTexture(m_aoTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
 
-        unsigned int heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
 
         unsigned int emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
@@ -277,7 +280,7 @@ void engine::Material::loadTextures()
     else
     {
         // BlinnPhong, Phong...
-        unsigned int diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
 
         unsigned int specularMapId = hasSpecularMap() ? engine::TextureManager::loadTexture(m_specularTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
@@ -286,7 +289,7 @@ void engine::Material::loadTextures()
         unsigned int normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
 
-        unsigned int heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
+        heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
 
         unsigned int emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
@@ -301,7 +304,7 @@ void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> t
 {
     textures.clear();
     
-    unsigned int diffuseMapId{};
+    //unsigned int diffuseMapId{};
     unsigned int specularMapId{};
     unsigned int normalMapId{};
     unsigned int metallicMapId{};

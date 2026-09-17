@@ -845,7 +845,7 @@ void main()
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
         metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
     }
-
+    
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0);
@@ -940,9 +940,6 @@ void main()
     // gamma correction
     //color = pow(color, vec3(1.0/2.2));
     //color = vec3(ToSRGB(color)); // same as above
-
-    // Sample the alpha value from the diffuse texture
-    //float alpha = texture(material.texture_diffuse, texCoords).a;
 
     FragColor = vec4(color, alpha);
 

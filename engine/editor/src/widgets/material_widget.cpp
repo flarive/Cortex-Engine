@@ -86,12 +86,13 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
                 
                 if (material->hasArmMap())
                 {
-                    displayTexture(TextureManager::getTextureData(material->getArmTexPath()), "ARM");
+                    displayTexture(TextureManager::getTextureData(material->getArmTexPath()), "AO + Roughness + Metallic");
 
                 }
                 else if (material->hasRmMap())
                 {
-                    displayTexture(TextureManager::getTextureData(material->getRmTexPath()), "RM");
+                    displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion");
+                    displayTexture(TextureManager::getTextureData(material->getRmTexPath()), "Roughness + Metallic");
                 }
                 else
                 {

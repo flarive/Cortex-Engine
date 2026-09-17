@@ -247,9 +247,9 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         }
 
         const bool hasPosition = (posIndex != UINT32_MAX);
-        const bool hasNormals = (norIndex != UINT32_MAX);
-        const bool hasTangents = (tanIndex != UINT32_MAX);
-        const bool hasTexCoords = (uvIndex != UINT32_MAX);
+        m_hasNormals = (norIndex != UINT32_MAX);
+        m_hasTangents = (tanIndex != UINT32_MAX);
+        m_hasTexCoords = (uvIndex != UINT32_MAX);
 
         const tg3_accessor& posAcc = model.accessors[posIndex];
         const tg3_accessor& norAcc = model.accessors[norIndex];
@@ -268,32 +268,28 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
         {
             const tg3_buffer_view& view = model.buffer_views[posAcc.buffer_view];
             const tg3_buffer& buf = model.buffers[view.buffer];
-            positions = reinterpret_cast<const float*>(
-                buf.data.data + view.byte_offset + posAcc.byte_offset);
+            positions = reinterpret_cast<const float*>(buf.data.data + view.byte_offset + posAcc.byte_offset);
         }
 
-        if (hasNormals)
+        if (m_hasNormals)
         {
             const tg3_buffer_view& view = model.buffer_views[norAcc.buffer_view];
             const tg3_buffer& buf = model.buffers[view.buffer];
-            normals = reinterpret_cast<const float*>(
-                buf.data.data + view.byte_offset + norAcc.byte_offset);
+            normals = reinterpret_cast<const float*>(buf.data.data + view.byte_offset + norAcc.byte_offset);
         }
 
-        if (hasTangents)
+        if (m_hasTangents)
         {
             const tg3_buffer_view& view = model.buffer_views[tanAcc.buffer_view];
             const tg3_buffer& buf = model.buffers[view.buffer];
-            tangents = reinterpret_cast<const float*>(
-                buf.data.data + view.byte_offset + tanAcc.byte_offset);
+            tangents = reinterpret_cast<const float*>(buf.data.data + view.byte_offset + tanAcc.byte_offset);
         }
 
-        if (hasTexCoords)
+        if (m_hasTexCoords)
         {
             const tg3_buffer_view& view = model.buffer_views[uvAcc.buffer_view];
             const tg3_buffer& buf = model.buffers[view.buffer];
-            texcoords = reinterpret_cast<const float*>(
-                buf.data.data + view.byte_offset + uvAcc.byte_offset);
+            texcoords = reinterpret_cast<const float*>(buf.data.data + view.byte_offset + uvAcc.byte_offset);
         }
 
         vertices.reserve(posAcc.count);
@@ -386,21 +382,26 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
             v.position = glm::vec3(positions[i * 3 + 0], positions[i * 3 + 1], positions[i * 3 + 2]);
 
             // Normal
-            if (hasNormals && normals)
+            if (m_hasNormals && normals)
             {
                 v.normal = glm::vec3(normals[i * 3 + 0], normals[i * 3 + 1], normals[i * 3 + 2]);
             }
 
             // Tangent
-            if (hasTangents && tangents)
+            if (m_hasTangents && tangents)
             {
                 v.tangent = glm::vec3(tangents[i * 4 + 0], tangents[i * 4 + 1], tangents[i * 4 + 2]);
+
+                // Bitangent
+                float handedness = tangents[i * 4 + 3];
+                glm::vec3 N = glm::normalize(v.normal);
+                glm::vec3 T = glm::normalize(v.tangent);
+                glm::vec3 B = handedness * glm::normalize(glm::cross(N, T));
+                v.bitangent = B;
             }
 
-            // Bitangent ?
-
             // UV
-            if (hasTexCoords && texcoords)
+            if (m_hasTexCoords && texcoords)
             {
                 v.texCoords = glm::vec2(texcoords[i * 2 + 0], texcoords[i * 2 + 1]);
             }
@@ -490,12 +491,10 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     // ------------------------------------------------------------
     // Create Mesh
     // ------------------------------------------------------------
-    auto meshPtr = std::make_shared<engine::Mesh>(
-        toStdString(mesh.name),
-        std::move(vertices),
-        std::move(indices),
-        m_materials.back()
-    );
+    auto meshPtr = std::make_shared<engine::Mesh>(toStdString(mesh.name), std::move(vertices), std::move(indices), m_materials.back());
+    meshPtr->setHasTangents(m_hasTangents);
+    meshPtr->setHasTangents(m_hasTangents);
+    meshPtr->setHasTexCoords(m_hasTexCoords);
 
     return meshPtr;
 }

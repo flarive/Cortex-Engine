@@ -38,7 +38,9 @@ namespace engine
 		bool& hasBones() { return m_hasBones; }
 		bool& hasAnimations() { return m_hasAnimations; }
 
-		
+		bool hasNormals() { return m_hasNormals; }
+		bool hasTangents() { return m_hasTangents; }
+		bool hasTexCoords() { return m_hasTexCoords; }
 
 		int getSkeletonRootIndex() const;
 
@@ -65,6 +67,11 @@ namespace engine
 		// animations
 		bool m_hasAnimations{ false };
 		std::vector<glm::mat4> m_finalBindPoseMatrices{};
+
+
+		bool m_hasNormals{ false };
+		bool m_hasTangents{ false };
+		bool m_hasTexCoords{ false };
 
 		void setVertexBoneDataToDefault(Vertex& vertex);
 		void setVertexBoneData(Vertex& vertex, int boneID, float weight);

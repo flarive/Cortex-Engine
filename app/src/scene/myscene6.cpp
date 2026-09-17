@@ -12,7 +12,7 @@ MyScene6::MyScene6(const string& _title, std::weak_ptr<App> _app) : Scene(_title
         .HDRSkyboxBlurStrength = 5.0f,
         .shadowIntensity = 1.0f,
         .iblDiffuseIntensity = 0.4f,
-        .iblSpecularIntensity = 0.0f,
+        .iblSpecularIntensity = 1.0f,
         .enableGammaCorrection = true
     })
 {
@@ -93,12 +93,30 @@ void MyScene6::init()
     entityHelmet->addComponent<ModelComponent>(helmetModel);
     getEntityManager().addChild(entityHelmet);
 
-    auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
-    if (helmetMat)
-    {
-        helmetMat->setAmbientIntensity(5.0f);
-        helmetMat->setEmissiveIntensity(5.0f);
-    }
+    //auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
+    //if (helmetMat)
+    //{
+    //    helmetMat->setAmbientIntensity(5.0f);
+    //    helmetMat->setEmissiveIntensity(5.0f);
+    //}
+
+    //auto pbr = std::dynamic_pointer_cast<PBRMaterial>(helmetModel->getMeshes()[0]->getMaterial());
+    //if (pbr)
+    //{
+    //    logger.info("PBR (Assimp/tinyGLTF): has_diffuse={}, has_normal={}, has_rm={}, has_arm={}, has_metal={}, has_rough={}, has_ao={}",
+    //        pbr->hasDiffuseMap(),
+    //        pbr->hasNormalMap(),
+    //        pbr->hasRmMap(),
+    //        pbr->hasArmMap(),
+    //        pbr->hasMetallicMap(),
+    //        pbr->hasRoughnessMap(),
+    //        pbr->hasAoMap());
+    //}
+
+    auto pbr = std::dynamic_pointer_cast<PBRMaterial>(helmetModel->getMeshes()[0]->getMaterial());
+    logger.info("Assimp diffuse texID = {}", pbr->getDiffuseMapId());
+
+
 
 
     ourText.setup(getApp()->window, FONT_PATH, 28);

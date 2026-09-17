@@ -21,10 +21,10 @@ namespace engine
 			const std::string& diffuseTexPath,
 			const std::string& normalTexPath,
 			const std::string& armOrRmTexPath,     // <-- packed AO/Roughness/Metallic or packed Roughness/Metallic
-			const std::string& aoTexPath,
-			const std::string& heightTexPath,
-			const std::string& emissiveTexPath,
-			const std::string& opacityTexPath);
+			const std::string& aoTexPath = "",
+			const std::string& heightTexPath = "",
+			const std::string& emissiveTexPath = "",
+			const std::string& opacityTexPath = "");
 
 
 		PBRMaterial(std::vector<Texture> _textures);

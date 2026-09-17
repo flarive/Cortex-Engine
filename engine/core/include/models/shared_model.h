@@ -85,6 +85,8 @@ namespace engine
 		bool hasAnimations();
         unsigned int getBoneCount();
 
+
+
         unsigned int getSkeletonRootIndex() const;
 
         std::shared_ptr<Skeleton> getSkeleton();

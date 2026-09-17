@@ -627,22 +627,10 @@
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_normal.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_AO2.jpg">
-      <Filter>resources\models\helmet</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\DamagedHelmet.mtl">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\models\helmet\glTF\DamagedHelmet.obj">
-      <Filter>resources\models\helmet</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalness2.jpg">
-      <Filter>resources\models\helmet</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_metalness.jpg">
-      <Filter>resources\models\helmet</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\helmet\glTF\Default_roughness.jpg">
       <Filter>resources\models\helmet</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\earth_diffuse.jpg">

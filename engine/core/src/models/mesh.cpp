@@ -62,6 +62,8 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
                 shader.setVec3("material.ambient_color", m_material->getAmbientColor());
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
             }
+
+            shader.setFloat("material.opacity", m_material->getOpacityIntensity());
         }
     }
 
@@ -71,7 +73,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader.setBool("hasTangents", true);
+        shader.setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
     }
 
     // Send to GPU

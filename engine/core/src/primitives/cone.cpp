@@ -155,8 +155,6 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    handleOpacity(shader);
-
     shader.use();
     OpenGLDebug::checkGLError("shader.use44");
 
@@ -171,6 +169,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
                 return;
             }
 
+            handleOpacity(shader);
             setShaderCommonUniforms(shader, type);
         }
     }
@@ -201,6 +200,10 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
+
+    // restore opacity defaults
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }
 
 void engine::Cone::clean()

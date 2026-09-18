@@ -172,7 +172,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
         return;
     }
 
-    handleOpacity(shader);
+    
 
     shader.use();
     OpenGLDebug::checkGLError("shader.use22");
@@ -188,6 +188,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
                 return;
             }
 
+            handleOpacity(shader);
             setShaderCommonUniforms(shader, type);
         }
 
@@ -218,6 +219,10 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
+
+    // restore opacity defaults
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }
 
 void engine::Cylinder::clean()

@@ -46,6 +46,8 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
                 return;
             }
 
+            handleOpacity(shader);
+
             if (type == ShaderType::BlinnPhong)
             {
                 shader.setFloat("material.shininess", m_material->getShininessIntensity());
@@ -91,6 +93,10 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
+
+    // restore opacity defaults
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }
 
 void engine::Mesh::setupMesh()
@@ -147,6 +153,36 @@ void engine::Mesh::setupMesh()
 
     // During mesh setup
     m_indexCount = static_cast<unsigned int>(m_indices.size());
+}
+
+void engine::Mesh::handleOpacity(Shader& shader)
+{
+    bool transparent = m_material->isTransparent();
+    bool cutout = m_material->isAlphaCutout();
+
+    if (cutout)
+    {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);   // cutout writes depth
+    }
+    else if (transparent)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(GL_FALSE);  // transparent does NOT write depth
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);   // opaque writes depth
+    }
+
+    if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
+    {
+        // DO NOT apply transparency logic here
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
+    }
 }
 
 void engine::Mesh::clean()

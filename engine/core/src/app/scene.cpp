@@ -148,7 +148,9 @@ void engine::Scene::initialize()
     cameras = m_entityManager.findEntitiesOfType<Camera>();
     if (cameras.size() == 0) logger.warn("Scene has no camera !");
 
+    #if EDITOR_MODE
     m_editor.initRenderGuizmo(getActiveCamera());
+    #endif
 
     // renderer should use tessellation shaders ?
     computeSupportTessellation(m_entityManager.getRootEntity());
@@ -562,10 +564,10 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
 
         appPtr->setWindowTitle();
     }
-    #endif
-
+    
     // render camera view guizmo in the top right corner of the screen
     m_editor.renderViewGuizmo(projection, view, m_displayViewTransformGuizmo);
+    #endif
 }
 
 void engine::Scene::initEntities()

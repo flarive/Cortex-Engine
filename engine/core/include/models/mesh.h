@@ -82,5 +82,6 @@ namespace engine
 
         // initializes all the buffer objects/arrays
         void setupMesh();
+        void handleOpacity(Shader& shader);
     };
 }

@@ -618,6 +618,11 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     // --- 7) UI ---
     updateUI();
+
+    // test glDepthMask(GL_FALSE) leakage
+    GLboolean depthMask;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
+    assert(depthMask == GL_TRUE);
 }
 
 

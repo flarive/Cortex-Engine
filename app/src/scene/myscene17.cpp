@@ -7,23 +7,13 @@ using namespace engine;
 
 MyScene17::MyScene17(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
-        //.method = RenderMethod::BlinnPhong,
-        //.enableShadows = true,
-        //.shadowIntensity = 3.0f,
-        //.shadowMapsTextureSize = 2048,
-        //.shadowMapsBiasFactor = 0.050f
-
         .method = RenderMethod::PBR,
-        .HDRSkyboxHide = true,
+        .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
-        .HDRSkyboxBlurStrength = 0.0f,
-        .enableShadows = true,
-        .shadowIntensity = 3.0f,
-        .shadowMapsTextureSize = 2048,
-        .shadowMapsBiasFactor = 0.050f,
-        .iblDiffuseIntensity = 1.1f,
-        .iblSpecularIntensity = 0.0f,
-        .enableGammaCorrection = true, 
+        .shadowIntensity = 1.5f,
+        .iblDiffuseIntensity = 0.2f,
+        .iblSpecularIntensity = 0.1f,
+        .enableGammaCorrection = true
     })
 {
     logger.trace("Scene {} constructor called", title);
@@ -136,19 +126,16 @@ void MyScene17::init()
 
     // sphere models
     auto sphere1 = make_shared<Sphere>();
-
     auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
         "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg", "", "");
+        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
     matSphere1->setNormalIntensity(1.0f);
-
     sphere1->setup(matSphere1, UvMapping(1.0f));
-
-    auto trsSphere1 = Transform(vec3(-3.0f, -14.0f, -10.0f), vec3(1.0f));
+    auto trsSphere1 = Transform(vec3(-3.0f, -14.0f, -10.0f), vec3(1.2f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
     entitySphere1->addComponent<TransformComponent>(trsSphere1);
     entitySphere1->addComponent<PrimitiveComponent>(sphere1);
@@ -156,44 +143,98 @@ void MyScene17::init()
 
 
 
-    auto sphere2 = make_shared<Sphere>();
-
-    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/porcelain/Porcelain_Color.png",
-        "textures/pbr/porcelain/Porcelain_Normal.png",
-        "textures/pbr/porcelain/Porcelain_Metallic.png",
-        "textures/pbr/porcelain/Porcelain_Roughness.png",
-        "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
-        "textures/pbr/porcelain/Porcelain_Displace.png", "", "");
-    matSphere2->setNormalIntensity(1.0f);
-
-    sphere2->setup(matSphere2, UvMapping(1.0f));
-
-    auto trsSphere2 = Transform(vec3(0.0f, -14.0f, -10.0f), vec3(1.0f));
-    auto entitySphere2 = make_shared<Entity>("MySphere2");
-    entitySphere2->addComponent<TransformComponent>(trsSphere2);
-    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
-    getEntityManager().addChild(entitySphere2);
-
 
     auto sphere3 = make_shared<Sphere>();
-
     auto matSphere3 = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/white-marble/white-marble_albedo.png",
         "textures/pbr/white-marble/white-marble_normal.png",
         "textures/pbr/white-marble/white-marble_metallic.png",
         "textures/pbr/white-marble/white-marble_roughness.png",
         "textures/pbr/white-marble/white-marble_ao.png",
-        "textures/pbr/white-marble/white-marble_height.png", "", "");
+        "textures/pbr/white-marble/white-marble_height.png");
     matSphere3->setNormalIntensity(1.0f);
-
     sphere3->setup(matSphere3, UvMapping(2.0f));
-
-    auto trsSphere3 = Transform(vec3(3.0f, -14.0f, -10.0f), vec3(1.0f));
+    auto trsSphere3 = Transform(vec3(3.0f, -14.0f, -10.0f), vec3(1.2f));
     auto entitySphere3 = make_shared<Entity>("MySphere3");
     entitySphere3->addComponent<TransformComponent>(trsSphere3);
     entitySphere3->addComponent<PrimitiveComponent>(sphere3);
     getEntityManager().addChild(entitySphere3);
+
+
+
+    
+
+
+
+
+
+
+    auto sphere2 = make_shared<Sphere>();
+    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/porcelain/Porcelain_Color.png",
+        "textures/pbr/porcelain/Porcelain_Normal.png",
+        "textures/pbr/porcelain/Porcelain_Metallic.png",
+        "textures/pbr/porcelain/Porcelain_Roughness.png",
+        "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
+        "textures/pbr/porcelain/Porcelain_Displace.png");
+    matSphere2->setNormalIntensity(1.0f);
+    sphere2->setup(matSphere2, UvMapping(1.0f));
+    auto trsSphere2 = Transform(vec3(0.0f, -14.0f, -10.0f), vec3(1.2f));
+    auto entitySphere2 = make_shared<Entity>("MySphere2");
+    entitySphere2->addComponent<TransformComponent>(trsSphere2);
+    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
+    getEntityManager().addChild(entitySphere2);
+
+
+
+
+    auto sphere4 = make_shared<Sphere>();
+    auto matSphere4 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/frosted-glass/Glass_Frosted_001_basecolor.jpg",
+        "textures/pbr/frosted-glass/Glass_Frosted_001_normal.jpg",
+        "",
+        "textures/pbr/frosted-glass/Glass_Frosted_001_roughness.jpg",
+        "textures/pbr/frosted-glass/Glass_Frosted_001_ambientOcclusion.jpg",
+        "textures/pbr/frosted-glass/Glass_Frosted_001_height.jpg",
+        "",
+        "textures/pbr/alpha_smooth.png");
+    matSphere4->setNormalIntensity(1.0f);
+    sphere4->setup(matSphere4, UvMapping(1.0f));
+    auto trsSphere4 = Transform(vec3(-2.2f, -13.0f, -20.0f), vec3(2.2f));
+    auto entitySphere4 = make_shared<Entity>("MySphere4");
+    entitySphere4->addComponent<TransformComponent>(trsSphere4);
+    entitySphere4->addComponent<PrimitiveComponent>(sphere4);
+    getEntityManager().addChild(entitySphere4);
+
+
+
+    auto sphere5 = make_shared<Sphere>();
+    auto matSphere5 = make_shared<PBRMaterial>(Color(0.1f),
+        "textures/pbr/glass-window/Glass_Window_004_basecolor.jpg",
+        "textures/pbr/glass-window/Glass_Window_004_normal.jpg",
+        "textures/pbr/glass-window/Glass_Window_004_metallic.jpg",
+        "textures/pbr/glass-window/Glass_Window_004_roughness.jpg",
+        "textures/pbr/glass-window/Glass_Window_004_ambientOcclusion.jpg",
+        "textures/pbr/glass-window/Glass_Window_004_height.png",
+        "",
+        "textures/pbr/glass-window/Glass_Window_004_opacity.jpg");
+    matSphere5->setNormalIntensity(1.0f);
+    sphere5->setup(matSphere5, UvMapping(1.0f));
+    auto trsSphere5 = Transform(vec3(2.2f, -13.0f, -20.0f), vec3(2.2f));
+    auto entitySphere5 = make_shared<Entity>("MySphere5");
+    entitySphere5->addComponent<TransformComponent>(trsSphere5);
+    entitySphere5->addComponent<PrimitiveComponent>(sphere5);
+    getEntityManager().addChild(entitySphere5);
+
+
+
+    // helmet model
+    //shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, false, true);
+    //auto trsHelmet = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(2.0f));
+    //auto entityHelmet = make_shared<Entity>("MyHelmet");
+    //entityHelmet->addComponent<TransformComponent>(trsHelmet);
+    //entityHelmet->addComponent<ModelComponent>(helmetModel);
+    //getEntityManager().addChild(entityHelmet);
 }
 
 

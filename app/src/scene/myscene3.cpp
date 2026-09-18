@@ -139,11 +139,7 @@ void MyScene3::init()
         "textures/pbr/rusted_iron/metallic.png",
         "textures/pbr/rusted_iron/roughness.png",
         "textures/pbr/rusted_iron/ao.png",
-        "textures/pbr/rusted_iron/height.png",
-        "",
-        "textures/pbr/alpha_smooth.png");
-    rustedIronMat->setOpacityIntensity(0.5f);
-    rustedIronMat->setAlphaCutOffEnabled(false);
+        "textures/pbr/rusted_iron/height.png");
     rustedIronSphere->setup(rustedIronMat);
     
 
@@ -161,10 +157,7 @@ void MyScene3::init()
         "textures/pbr/gold/normal.png",
         "textures/pbr/gold/metallic.png",
         "textures/pbr/gold/roughness.png",
-        "textures/pbr/gold/ao.png",
-        "",
-        "",
-        "textures/pbr/alpha_cutter.png"));
+        "textures/pbr/gold/ao.png"));
 
     auto trsSphere3 = Transform(vec3(-1.0f, -14.0f, -10.0f), vec3(1.0f));
     auto entitySphere3 = make_shared<Entity>("MySphere3");

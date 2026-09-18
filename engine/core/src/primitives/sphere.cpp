@@ -161,8 +161,6 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         return;
     }
 
-    handleOpacity(shader);
-
     shader.use();
     OpenGLDebug::checkGLError("shader.use00");
 
@@ -177,6 +175,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
                 return;
             }
 
+            handleOpacity(shader);
             setShaderCommonUniforms(shader, type);
         }
     }
@@ -207,6 +206,10 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
         OpenGLDebug::checkGLError("Unbind");
     }
+
+    // restore opacity defaults
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }
 
 void engine::Sphere::clean()

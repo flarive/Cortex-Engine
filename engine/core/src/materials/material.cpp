@@ -525,29 +525,33 @@ const int engine::Material::getTextureHeightUnit() const
 
 bool engine::Material::isTransparent() const
 {
-    // Smooth transparency (blending)
-    if (m_opacityIntensity < 1.0f)
-        return true;
+    //// Smooth transparency (blending)
+    //if (m_opacityIntensity < 1.0f)
+    //    return true;
 
     // Opacity texture exists AND can produce alpha < 1
     if (hasOpacityMap())
     {
+        return true;
         // If the opacity texture is used, transparency depends on intensity
-        if (m_opacityIntensity < 1.0f)
-            return true;
+        //if (m_opacityIntensity < 1.0f)
+        //    return true;
 
         // If baseColorFactor.a < 1, also transparent
         //if (baseColorFactor.a < 1.0f)
         //    return true;
     }
+    else
+    {
+        // Smooth transparency (blending)
+        if (m_opacityIntensity < 1.0f)
+            return true;
+    }
 
     return false;
 }
-
 
 bool engine::Material::isAlphaCutout() const
 {
     return m_alphaCutoffEnabled; // or opacityMode == MASK
 }
-
-

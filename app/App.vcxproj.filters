@@ -167,6 +167,15 @@
     <Filter Include="headers\scene">
       <UniqueIdentifier>{6e3447e2-9d22-4c73-a8a0-4da09bbb5155}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\frosted-glass">
+      <UniqueIdentifier>{4d7d8c3a-02d7-45bd-ad23-921e6b9b72d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\glass-window">
+      <UniqueIdentifier>{abc41573-480f-4dd4-b585-5767233fe5a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\glass-window-2">
+      <UniqueIdentifier>{5c60efdd-8744-4215-b78e-95a44d7e5204}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -1148,6 +1157,63 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\grass_mask.png">
       <Filter>resources\textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\frosted-glass\Glass_Frosted_001_ambientOcclusion.jpg">
+      <Filter>resources\textures\pbr\frosted-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_ambientOcclusion.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_ambientOcclusion.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\frosted-glass\Glass_Frosted_001_height.jpg">
+      <Filter>resources\textures\pbr\frosted-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\frosted-glass\Glass_Frosted_001_roughness.jpg">
+      <Filter>resources\textures\pbr\frosted-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\frosted-glass\Glass_Frosted_001_normal.jpg">
+      <Filter>resources\textures\pbr\frosted-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\frosted-glass\Glass_Frosted_001_basecolor.jpg">
+      <Filter>resources\textures\pbr\frosted-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_basecolor.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_height.png">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_metallic.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_normal.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_opacity.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window-2\Glass_Window_003_roughness.jpg">
+      <Filter>resources\textures\pbr\glass-window-2</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_basecolor.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_height.png">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_metallic.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_normal.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_opacity.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_roughness.jpg">
+      <Filter>resources\textures\pbr\glass-window</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

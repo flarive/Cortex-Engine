@@ -33,7 +33,6 @@
 
 #if EDITOR_MODE
 
-
 void engine::ImGuiEditor::init()
 {
     EditorHelper::registerIconAtlas();

@@ -86,6 +86,8 @@ namespace engine
 		void setIsTessellated(bool tessellated) { m_isTessellated = tessellated; }
 
 
+        bool isTransparent() const;
+
         static std::vector<Vertex> generatePlaneVertices(float uvScale = 1.0f, bool flipNormal = false);
         static std::vector<Vertex> generateBillboardVertices(float uvScale = 1.0f);
         static std::vector<Vertex> generateCubeVertices(float uvScale = 1.0f);

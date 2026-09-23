@@ -1,5 +1,6 @@
 #include "../../include/models/mesh.h"
 
+#include "../../include/tools/render_state.h"
 #include "../../include/debug/opengl_debug.h"
 
 #include "../../include/managers/log_manager.h"
@@ -35,7 +36,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use66");
+    OpenGLDebug::checkGLError("shader.use.mesh");
 
     if (m_material)
     {
@@ -80,23 +81,22 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.mesh");
 
     glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.mesh");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.mesh");
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.mesh");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Mesh::setupMesh()
@@ -162,26 +162,21 @@ void engine::Mesh::handleOpacity(Shader& shader)
 
     if (cutout)
     {
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);   // cutout writes depth
+        RenderState::setOpaque();
     }
     else if (transparent)
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDepthMask(GL_FALSE);  // transparent does NOT write depth
+        RenderState::setTransparent();
     }
     else
     {
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);   // opaque writes depth
+        RenderState::setOpaque();
     }
 
     if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
     {
         // DO NOT apply transparency logic here
-        glDisable(GL_BLEND);
-        glDepthMask(GL_TRUE);
+        RenderState::setOpaque();
     }
 }
 

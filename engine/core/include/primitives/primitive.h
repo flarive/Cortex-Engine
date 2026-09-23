@@ -14,6 +14,7 @@
 #include "../misc/noncopyable.h"
 #include "../misc/ordered_map.h"
 
+#include "../tools/render_state.h"
 
 #include "../transform.h"
 
@@ -87,6 +88,8 @@ namespace engine
 
 
         bool isTransparent() const;
+
+
 
         static std::vector<Vertex> generatePlaneVertices(float uvScale = 1.0f, bool flipNormal = false);
         static std::vector<Vertex> generateBillboardVertices(float uvScale = 1.0f);

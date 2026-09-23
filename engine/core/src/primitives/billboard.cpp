@@ -102,7 +102,7 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use55");
+    OpenGLDebug::checkGLError("shader.use.billboard");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -152,18 +152,18 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.billboard");
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.billboard");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.billboard");
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.billboard");
     }
 }
 

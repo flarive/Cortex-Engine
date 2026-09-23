@@ -162,7 +162,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use00");
+    OpenGLDebug::checkGLError("shader.use.sphere");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -193,23 +193,30 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.sphere");
+
+    // disable face culling for transparent primitives (to see back faces)
+    if (m_material->isTransparent())
+        RenderState::disableFaceCulling();
 
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawElements");
+    OpenGLDebug::checkGLError("glDrawElements.sphere");
+
+    // re enable face culling for transparent primitives if face culling was enabled
+    if (RenderState::isFaceCullingEnabled())
+        RenderState::enableFaceCulling();
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.sphere");
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.sphere");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Sphere::clean()

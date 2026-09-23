@@ -102,7 +102,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use11");
+    OpenGLDebug::checkGLError("shader.use.plane");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -135,13 +135,13 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.plane");
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.plane");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.plane");
 
 
     auto* singleton = engine::Singleton::getInstance();
@@ -155,12 +155,11 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.plane");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

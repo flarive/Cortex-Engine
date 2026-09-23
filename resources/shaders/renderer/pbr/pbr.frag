@@ -848,8 +848,13 @@ void main()
     
     vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
-    //float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r * material.opacity : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : 1.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : material.opacity);
+
+    // hard coded mirror
+//    metallic = 1.0;
+//    roughness = 0.0;
+//    albedo = vec3(1.0);
+
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

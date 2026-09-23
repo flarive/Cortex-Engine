@@ -50,7 +50,7 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     glDepthMask(GL_FALSE);
 
     m_skyboxShader.use();
-    OpenGLDebug::checkGLError("shader.use77");
+    OpenGLDebug::checkGLError("shader.use.skybox");
     m_skyboxShader.setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
     m_skyboxShader.setMat4("projection", projection);
     m_skyboxShader.setInt("texture_skybox", 0);
@@ -62,13 +62,13 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 
     // Send skybox cube to GPU
     glBindVertexArray(m_skyboxVAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.skybox");
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.skybox");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.skybox");
 
     
 

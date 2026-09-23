@@ -615,6 +615,9 @@
     <ClCompile Include="editor\src\windows\dialog_box.cpp">
       <Filter>sources\editor\windows</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\tools\render_state.cpp">
+      <Filter>sources\core\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -1024,6 +1027,12 @@
     </ClInclude>
     <ClInclude Include="editor\include\windows\dialog_box.h">
       <Filter>headers\editor\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\app\cmdline_settings.h">
+      <Filter>headers\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\tools\render_state.h">
+      <Filter>headers\core\tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

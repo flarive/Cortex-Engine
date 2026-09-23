@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../app/cmdline_settings.h"
+
 #include <memory>
 
 namespace engine
@@ -24,6 +26,9 @@ namespace engine
             m_app = std::make_shared<T>(std::forward<Args>(args)...);
             return std::static_pointer_cast<T>(m_app); // Explicitly cast to std::shared_ptr<T>
         }
+
+        CmdLineSettings buildAppSettings(int argc, char* argv[]);
+        
 
 
         App& getApp()

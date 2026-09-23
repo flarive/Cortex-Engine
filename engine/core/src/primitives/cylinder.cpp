@@ -175,7 +175,7 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
     
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use22");
+    OpenGLDebug::checkGLError("shader.use.cylinder");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -206,23 +206,22 @@ void engine::Cylinder::draw(Shader& shader, const glm::mat4& projection, const g
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cylinder");
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.cylinder");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cylinder");
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.cylinder");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Cylinder::clean()

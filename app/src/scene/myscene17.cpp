@@ -11,8 +11,8 @@ MyScene17::MyScene17(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .HDRSkyboxHide = false,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .shadowIntensity = 1.5f,
-        .iblDiffuseIntensity = 0.2f,
-        .iblSpecularIntensity = 0.1f,
+        .iblDiffuseIntensity = 1.0f,
+        .iblSpecularIntensity = 1.0f,
         .enableGammaCorrection = true
     })
 {
@@ -50,16 +50,16 @@ void MyScene17::init()
 
 
     // lights
-    auto trsLight5 = Transform{ { 0.0f, 4.0f, -2.0f } };
-    auto light5 = make_shared<SpotLight>();
-    light5->setIntensity(10.0f);
-    light5->setCutoff(12.5f);
-    light5->setOuterCutoff(27.5f);
-    light5->setTarget(vec3(0.0f, 0.0f, -4.0f));
-    auto entityLight5 = make_shared<Entity>("Light5");
-    entityLight5->addComponent<TransformComponent>(trsLight5);
-    entityLight5->addComponent<LightComponent>(light5);
-    getEntityManager().addChild(entityLight5);
+    //auto trsLight5 = Transform{ { 0.0f, 4.0f, -2.0f } };
+    //auto light5 = make_shared<SpotLight>();
+    //light5->setIntensity(10.0f);
+    //light5->setCutoff(12.5f);
+    //light5->setOuterCutoff(27.5f);
+    //light5->setTarget(vec3(0.0f, 0.0f, -4.0f));
+    //auto entityLight5 = make_shared<Entity>("Light5");
+    //entityLight5->addComponent<TransformComponent>(trsLight5);
+    //entityLight5->addComponent<LightComponent>(light5);
+    //getEntityManager().addChild(entityLight5);
 
 
 
@@ -74,7 +74,7 @@ void MyScene17::init()
 
 
 
-    auto trsLight2 = Transform{ { 10.0f, 10.0f, 10.0f } };
+    /*auto trsLight2 = Transform{ { 10.0f, 10.0f, 10.0f } };
     auto light2 = make_shared<PointLight>();
     light2->setIntensity(10.0f);
     auto entityLight2 = make_shared<Entity>("Light2");
@@ -100,7 +100,7 @@ void MyScene17::init()
     auto entityLight4 = make_shared<Entity>("Light4");
     entityLight4->addComponent<TransformComponent>(trsLight4);
     entityLight4->addComponent<LightComponent>(light4);
-    getEntityManager().addChild(entityLight4);
+    getEntityManager().addChild(entityLight4);*/
 
 
 
@@ -201,9 +201,13 @@ void MyScene17::init()
     matSphere4->setNormalIntensity(1.0f);
     sphere4->setup(matSphere4, UvMapping(1.0f));
     auto trsSphere4 = Transform(vec3(-2.2f, -13.0f, -20.0f), vec3(2.2f));
+    AnimTransform animSphere4{ trsSphere4, Transform(trsSphere4).addRotationY(360.0f), AnimMode::Absolute, 30.0f, true };
+    auto trsSphereAnimation4 = make_shared<TransformAnimation>("animSphere4", animSphere4);
+    auto trsSphereAnimator4 = make_shared<TransformAnimator>(trsSphereAnimation4);
     auto entitySphere4 = make_shared<Entity>("MySphere4");
     entitySphere4->addComponent<TransformComponent>(trsSphere4);
     entitySphere4->addComponent<PrimitiveComponent>(sphere4);
+    entitySphere4->addComponent<AnimatorComponent>(trsSphereAnimator4);
     getEntityManager().addChild(entitySphere4);
 
 
@@ -221,9 +225,13 @@ void MyScene17::init()
     matSphere5->setNormalIntensity(1.0f);
     sphere5->setup(matSphere5, UvMapping(1.0f));
     auto trsSphere5 = Transform(vec3(2.2f, -13.0f, -20.0f), vec3(2.2f));
+    AnimTransform animSphere5{ trsSphere5, Transform(trsSphere5).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
+    auto trsSphereAnimation5 = make_shared<TransformAnimation>("animSphere5", animSphere5);
+    auto trsSphereAnimator5 = make_shared<TransformAnimator>(trsSphereAnimation5);
     auto entitySphere5 = make_shared<Entity>("MySphere5");
     entitySphere5->addComponent<TransformComponent>(trsSphere5);
     entitySphere5->addComponent<PrimitiveComponent>(sphere5);
+    entitySphere5->addComponent<AnimatorComponent>(trsSphereAnimator5);
     getEntityManager().addChild(entitySphere5);
 
 

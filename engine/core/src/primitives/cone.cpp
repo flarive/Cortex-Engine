@@ -156,7 +156,7 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use44");
+    OpenGLDebug::checkGLError("shader.use.cone");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -187,23 +187,22 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cone");
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.cone");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cone");
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.cone");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Cone::clean()

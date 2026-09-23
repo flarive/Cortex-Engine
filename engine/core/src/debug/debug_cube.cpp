@@ -134,7 +134,7 @@ void engine::DebugCube::draw(const glm::mat4& projection, const glm::mat4& view,
     }
     
     m_shader.use();
-    OpenGLDebug::checkGLError("shader.use88");
+    OpenGLDebug::checkGLError("shader.use.debug_cube");
  
     m_shader.setMat4("model", transformMatrix);
     m_shader.setMat4("projection", projection);
@@ -143,15 +143,13 @@ void engine::DebugCube::draw(const glm::mat4& projection, const glm::mat4& view,
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.debug_cube");
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.debug_cube");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
-
-    //glUseProgram(0);
+    OpenGLDebug::checkGLError("glBindVertexArray.debug_cube");
 }
 
 void engine::DebugCube::clean()

@@ -199,6 +199,7 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
+    <ClCompile Include="core\src\tools\render_state.cpp" />
     <ClCompile Include="editor\src\widgets\mesh_widget.cpp" />
     <ClCompile Include="editor\src\widgets\skeleton_widget.cpp" />
     <ClCompile Include="editor\src\windows\about_window.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="core\include\animators\transform_animator.h" />
     <ClInclude Include="core\include\anim_transform.h" />
     <ClInclude Include="core\include\app\app.h" />
+    <ClInclude Include="core\include\app\cmdline_settings.h" />
     <ClInclude Include="core\include\app\gpu_selector.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
@@ -325,6 +327,7 @@
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
+    <ClInclude Include="core\include\tools\render_state.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
     <ClInclude Include="editor\include\widgets\skeleton_widget.h" />
     <ClInclude Include="editor\include\windows\about_window.h" />

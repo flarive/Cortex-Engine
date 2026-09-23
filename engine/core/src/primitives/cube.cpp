@@ -116,7 +116,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
     }
 
     shader.use();
-    OpenGLDebug::checkGLError("shader.use33");
+    OpenGLDebug::checkGLError("shader.use.cube");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
@@ -144,13 +144,13 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
 
     // Send to GPU
     glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cube");
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    OpenGLDebug::checkGLError("glDrawArrays");
+    OpenGLDebug::checkGLError("glDrawArrays.cube");
 
     glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray");
+    OpenGLDebug::checkGLError("glBindVertexArray.cube");
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -163,12 +163,11 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
         m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind");
+        OpenGLDebug::checkGLError("Unbind.cube");
     }
 
     // restore opacity defaults
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
+    RenderState::setOpaque();
 }
 
 void engine::Cube::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

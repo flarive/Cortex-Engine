@@ -37,18 +37,18 @@ void engine::Renderer::enableDepthTest(bool enable)
 {
     // enable z buffer (depth test) to have correct objects depth ordering
     if (enable)
-        glEnable(GL_DEPTH_TEST);
+        RenderState::enableDepthTest();
     else
-        glDisable(GL_DEPTH_TEST);
+        RenderState::disableDepthTest();
 }
 
 void engine::Renderer::enableStencilTest(bool enable)
 {
     // enable stencil buffer (stencil test) to have objects outlining
     if (enable)
-        glEnable(GL_STENCIL_TEST);
+        RenderState::enableStencilTest();
     else
-        glDisable(GL_STENCIL_TEST);
+        RenderState::disableStencilTest();
 }
 
 void engine::Renderer::enableFaceCulling(bool enable)
@@ -57,13 +57,13 @@ void engine::Renderer::enableFaceCulling(bool enable)
     {
         // optim : do not display hidden faces
         // consistent winding orders needed (counter-clockwise by default)
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
+        RenderState::enableFaceCulling();
+        RenderState::setCullFace(GL_BACK);
+        RenderState::setFrontFace(GL_CCW);
     }
     else
     {
-        glDisable(GL_CULL_FACE);
+        RenderState::disableFaceCulling();
     }
 }
 

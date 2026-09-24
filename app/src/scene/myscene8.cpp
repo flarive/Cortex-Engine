@@ -15,9 +15,8 @@ MyScene8::MyScene8(const string& _title, std::weak_ptr<App> _app) : Scene(_title
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
-        .shadowIntensity = 3.0f,
+        .shadowIntensity = 5.0f,
         .shadowMapsTextureSize = 2048,
-        .shadowMapsBiasFactor = 0.050f
     })
 {
     // my application specific state gets initialized here
@@ -62,7 +61,7 @@ void MyScene8::init()
 
 
     // ground
-    auto myPlane = make_shared<Plane>();
+    auto myPlane = make_shared<Plane>(false);
     if (this->getSceneSettings().method == RenderMethod::PBR) {
         myPlane->setup(make_shared<PBRMaterial>(zzz, zzz2, zzz3), UvMapping(6.0f));
     }

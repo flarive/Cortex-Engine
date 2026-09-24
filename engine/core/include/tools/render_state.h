@@ -24,6 +24,10 @@ namespace engine
         static void setDepthFunc(GLenum func);
         static void setDepthWrite(bool enabled);
 
+        // Depth Mask
+        static void enableDepthMask();
+        static void disableDepthMask();
+
         // Stencil Testing
         static void enableStencilTest();
         static void disableStencilTest();
@@ -36,6 +40,7 @@ namespace engine
         // Wireframe / Fill
         static void enableWireframe();
         static void disableWireframe();
+        static void setPolygonMode(GLint value);
 
         // Front Face
         static void setFrontFace(GLenum winding);
@@ -43,5 +48,9 @@ namespace engine
         // Common presets
         static void setOpaque();
         static void setTransparent();
+
+        // Cubemap
+        static void enableCubeMapSeamless();
+        static void disableCubeMapSeamless();
     };
 }

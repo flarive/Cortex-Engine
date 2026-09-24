@@ -51,6 +51,19 @@ namespace engine
         glDepthMask(enabled ? GL_TRUE : GL_FALSE);
     }
 
+    //--------------------------------------------------------------------------
+    // Depth Mask
+    //--------------------------------------------------------------------------
+
+    void RenderState::enableDepthMask()
+    {
+        glDepthMask(GL_TRUE);
+    }
+    
+    void RenderState::disableDepthMask()
+    {
+        glDepthMask(GL_FALSE);
+    }
 
     //--------------------------------------------------------------------------
     // Stencil Testing
@@ -99,6 +112,11 @@ namespace engine
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    void RenderState::setPolygonMode(GLint value)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, value);
+    }
+
     //--------------------------------------------------------------------------
     // Front Face
     //--------------------------------------------------------------------------
@@ -123,5 +141,19 @@ namespace engine
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthMask(GL_FALSE);
+    }
+
+    //--------------------------------------------------------------------------
+    // Cubemap
+    //--------------------------------------------------------------------------
+
+    void RenderState::enableCubeMapSeamless()
+    {
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    }
+
+    void RenderState::disableCubeMapSeamless()
+    {
+        glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     }
 }

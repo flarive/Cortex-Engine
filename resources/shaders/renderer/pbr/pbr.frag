@@ -607,12 +607,11 @@ float ShadowCalculationCubeMap(vec3 fragPos, vec3 plightPos)
 
     vec3 dir = normalize(fragToLight);
     float closestDepth = texture(texture_shadowMapCube, dir).r * far_plane;
+    
+    float bias = material.shadowMapsBias;
 
-    float bias =  material.shadowMapsBias;
-
-    return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    return currentDepth - bias > closestDepth ? 1.0 : 0.0; // binary values !!!!!!! add smooth values !!!!!!!!!!
 }
-
 
 float rand2(vec2 co)
 {
@@ -936,6 +935,7 @@ void main()
 
     // add light and shadow contribution
     vec3 color = ambient + Lo;
+    //vec3 color = Lo;
 
     // Add emissive contribution before gamma correction
     color += emissive;
@@ -1033,12 +1033,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
         // calculate shadow
         shadow = enableShadows && material.canCastShadows && material.canReceiveShadows ? ShadowCalculationCubeMap(fragPos, light.position) : 0.0;
         // Apply shadow intensity for darker/lighter shadows
-        shadow = clamp(shadow * material.shadowIntensity, 0.0, 10.0);
+        shadow = clamp(shadow * material.shadowIntensity, 0.0, 1.0);
     }
-    
+
     // Apply shadow factor to the light intensity
     radiance *= (1.0 - shadow);
-    
+
     // Cook-Torrance BRDF
     vec3 H = normalize(viewDir + L);
     float NDF = DistributionGGX(normal, H, roughness);
@@ -1054,7 +1054,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 geoNormal, vec3 fragPos,
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;
-
     float NdotL = max(dot(normal, L), 0.0);
     return (kD * albedo / PI + specular) * radiance * NdotL;
 }

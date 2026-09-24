@@ -31,7 +31,7 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     // enable depth testing
     enableDepthTest(true);
     // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    RenderState::enableCubeMapSeamless();
     // enable objects outlining
     enableStencilTest(true);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -121,8 +121,8 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     
     // bind to color framebuffer and draw scene as we normally would to color texture 
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-    glEnable(GL_DEPTH_TEST); // enable depth testing (is disabled for rendering screen-space quad)
-
+    RenderState::enableDepthTest(); // enable depth testing (is disabled for rendering screen-space quad)
+    
 
 
     renderBackground(settings); // Render your gradient or custom background
@@ -133,7 +133,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
 
     if (settings.drawAsWireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        RenderState::enableWireframe();
 
 
     
@@ -204,7 +204,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
 
     // Restore whatever polygon mode was active before
     if (settings.drawAsWireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, m_prevPolyModes[0]); // both front/back are same in core usage
+        RenderState::setPolygonMode(m_prevPolyModes[0]); // both front/back are same in core usage
 
 
     // render to framebuffer

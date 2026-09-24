@@ -119,7 +119,7 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
         }
     }
 
-    glEnable(GL_BLEND);
+    RenderState::enableBlending();
 
     // Get camera's right and up vectors from the view matrix
     glm::mat4 viewInverse = glm::inverse(view);

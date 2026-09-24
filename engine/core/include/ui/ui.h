@@ -4,6 +4,8 @@
 #include "../common_defines.h"
 #include "../misc/colors.h"
 
+#include "../tools/render_state.h"
+
 #include "../shader.h"
 
 #include <glm/glm.hpp>

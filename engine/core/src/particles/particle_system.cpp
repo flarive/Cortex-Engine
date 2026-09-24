@@ -218,9 +218,9 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 		m_shaderSourceInstanced.setMat4("projection", projection);
 	}
 
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	RenderState::disableDepthMask();
+	RenderState::enableBlending();
+	RenderState::setBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	
 	if (m_type == ParticleSystemType::basic)

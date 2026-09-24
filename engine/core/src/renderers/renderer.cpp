@@ -587,11 +587,11 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     //draw color framebuffer to screen
 
     // IMPORTANT: restore to fill before drawing the screen quad
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    RenderState::disableWireframe();
 
     //now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+    RenderState::disableDepthTest(); // disable depth test so screen-space quad isn't discarded due to depth test.
     // clear all relevant buffers
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // set clear color (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT);
@@ -619,11 +619,11 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
 void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const SceneSettings& settings)
 {
     // IMPORTANT: restore to fill before drawing the screen quad
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    RenderState::disableWireframe();
 
     // Bind default framebuffer (usually SDR)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST);
+    RenderState::disableDepthTest();
     glViewport(0, 0, width, height);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -675,7 +675,7 @@ void engine::Renderer::updateEditorPropertySettings(int width, int height)
     static bool lastRenderModeWireframe = settings.drawAsWireframe;
     if (lastRenderModeWireframe != settings.drawAsWireframe)
     {
-        glPolygonMode(GL_FRONT_AND_BACK, settings.drawAsWireframe ? GL_LINE : GL_FILL);
+        settings.drawAsWireframe ? RenderState::enableWireframe() : RenderState::disableWireframe();
         lastRenderModeWireframe = settings.drawAsWireframe;
     }
 

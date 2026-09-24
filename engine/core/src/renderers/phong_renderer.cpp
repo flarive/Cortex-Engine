@@ -37,7 +37,7 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     loadShaders();
 
     // solid/wireframe polygons
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);// settings.drawAsWireframe ? GL_LINE : GL_FILL);
+    RenderState::enableWireframe();
 }
 
 void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)

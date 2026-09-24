@@ -46,8 +46,8 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     }
     
     // draw skybox as last
-    glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
-    glDepthMask(GL_FALSE);
+    RenderState::setDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
+    RenderState::disableDepthMask();
 
     m_skyboxShader.use();
     OpenGLDebug::checkGLError("shader.use.skybox");
@@ -78,8 +78,8 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 
     //glUseProgram(0);
 
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LESS); // set depth function back to default
+    RenderState::enableDepthMask();
+    RenderState::setDepthFunc(GL_LESS); // set depth function back to default
 }
 
 // optional: de-allocate all resources once they've outlived their purpose

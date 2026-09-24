@@ -67,8 +67,8 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
     m_rectShader.setFloat("borderPx", borderThickness);    // border thickness in pixels
 
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    RenderState::enableBlending();
+    RenderState::setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Send to GPU
     glBindVertexArray(m_VAO);

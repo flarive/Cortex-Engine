@@ -21,8 +21,8 @@ int main(int argc, char* argv[])
     // Init the app
     AppManager appManager;
     CmdLineSettings settings = appManager.buildAppSettings(argc, argv);
-    //auto app = appManager.createApp<MyApp>("MyApp", settings.width, settings.height, settings.fullscreen);
-    auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
+    auto app = appManager.createApp<MyApp>("MyApp", settings.width, settings.height, settings.fullscreen);
+    //auto app = appManager.createApp<MyApp>("MyApp", 320, 240, false); //320, 240 //1280, 720
     if (!app)
         return EXIT_FAILURE;
 

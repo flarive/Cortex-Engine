@@ -55,7 +55,7 @@ void MyScene17::init()
     // lights
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
-    light1->setIntensity(10.0f);
+    light1->setIntensity(4.0f);
     light1->setAmbientColor(Color(0.1f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
@@ -161,14 +161,14 @@ void MyScene17::init()
         "textures/pbr/alpha_smooth.png");
     matSphere4->setNormalIntensity(1.0f);
     sphere4->setup(matSphere4, UvMapping(1.0f));
-    auto trsSphere4 = Transform(vec3(-0.15f, -0.35f, -0.8f), vec3(0.15f));
-    AnimTransform animSphere4{ trsSphere4, Transform(trsSphere4).addRotationY(360.0f), AnimMode::Absolute, 30.0f, true };
+    auto trsSphere4 = Transform(vec3(-0.15f, -0.35f, 0.8f), vec3(0.15f));
+    AnimTransform animSphere4{ trsSphere4, Transform(trsSphere4).addRotationY(360.0f), AnimMode::Absolute, 10.0f, true };
     auto trsSphereAnimation4 = make_shared<TransformAnimation>("animSphere4", animSphere4);
     auto trsSphereAnimator4 = make_shared<TransformAnimator>(trsSphereAnimation4);
     auto entitySphere4 = make_shared<Entity>("MySphere4");
     entitySphere4->addComponent<TransformComponent>(trsSphere4);
     entitySphere4->addComponent<PrimitiveComponent>(sphere4);
-    //entitySphere4->addComponent<AnimatorComponent>(trsSphereAnimator4);
+    entitySphere4->addComponent<AnimatorComponent>(trsSphereAnimator4);
     getEntityManager().addChild(entitySphere4);
 
 
@@ -185,14 +185,14 @@ void MyScene17::init()
         "textures/pbr/glass-window/Glass_Window_004_opacity.jpg");
     matSphere5->setNormalIntensity(1.0f);
     sphere5->setup(matSphere5, UvMapping(1.0f));
-    auto trsSphere5 = Transform(vec3(0.15f, -0.35f, -0.8f), vec3(0.15f));
+    auto trsSphere5 = Transform(vec3(0.15f, -0.35f, 0.8f), vec3(0.15f));
     AnimTransform animSphere5{ trsSphere5, Transform(trsSphere5).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
     auto trsSphereAnimation5 = make_shared<TransformAnimation>("animSphere5", animSphere5);
     auto trsSphereAnimator5 = make_shared<TransformAnimator>(trsSphereAnimation5);
     auto entitySphere5 = make_shared<Entity>("MySphere5");
     entitySphere5->addComponent<TransformComponent>(trsSphere5);
     entitySphere5->addComponent<PrimitiveComponent>(sphere5);
-    //entitySphere5->addComponent<AnimatorComponent>(trsSphereAnimator5);
+    entitySphere5->addComponent<AnimatorComponent>(trsSphereAnimator5);
     getEntityManager().addChild(entitySphere5);
 
 

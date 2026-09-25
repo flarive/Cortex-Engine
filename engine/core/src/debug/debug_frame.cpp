@@ -5,29 +5,25 @@
 #include <iostream>
 #include <sstream>
 
-void engine::DebugFrame::ensureIsCalledOncePerFrame(const std::string& className, const std::string& methodName)
+void engine::DebugFrame::ensureIsCalledOncePerFrame(std::string_view className, std::string_view methodName, std::string_view instanceId)
 {
     extern uint64_t globalFrameIndex;
-    static uint64_t lastFrameSeen = UINT64_MAX;
-    static int callsThisFrame = 0;
 
-    if (globalFrameIndex != lastFrameSeen)
+    // reserve + append to avoid multiple temporary allocations
+    std::string key;
+    key.reserve(className.size() + methodName.size() + instanceId.size() + 3);
+    key.append(className);
+    key.append("::");
+    key.append(methodName);
+    key.append(":");
+    key.append(instanceId);
+
+    auto it = m_lastFramePerInstance.find(key);
+
+    if (it != m_lastFramePerInstance.end() && it->second == globalFrameIndex)
     {
-        // New frame
-        if (callsThisFrame > 1)
-        {
-            std::ostringstream oss;
-            oss << className << "::" << methodName << " called " << callsThisFrame << " times in frame " << lastFrameSeen << std::endl;
-            logger.warn("{}", oss.str());
-        }
-
-        callsThisFrame = 0;
-        lastFrameSeen = globalFrameIndex;
+        logger.warn("{} called twice during frame {}", key, globalFrameIndex);
     }
 
-    callsThisFrame++;
-
-    //std::ostringstream oss;
-    //oss << className << "::" << methodName << " - frame=" << globalFrameIndex << " call#=" << callsThisFrame << std::endl;
-    //logger.info("{}", oss.str());
+    m_lastFramePerInstance[key] = globalFrameIndex;
 }

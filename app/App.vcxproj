@@ -200,6 +200,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\myapp0.cpp" />
+    <ClCompile Include="src\app\myapp1.cpp" />
     <ClCompile Include="src\scene\myscene0.cpp" />
     <ClCompile Include="src\scene\myscene1.cpp" />
     <ClCompile Include="src\scene\myscene10.cpp" />

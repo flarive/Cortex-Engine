@@ -40,48 +40,9 @@ void engine::AnimTransform::setup(const Transform& current,
     }
 }
 
-//bool engine::AnimTransform::update(float dt, Transform& outTransform)
-//{
-//    //std::ostringstream oss2;
-//    //oss2 << "[AnimTransform::update] dt: " << dt
-//    //    << "s, elapsed: " << elapsed
-//    //    << "s, duration: " << duration
-//    //    << "s, t: " << (elapsed / duration);
-//
-//    //logger.info("{}", oss2.str());
-//
-//
-//
-//    DebugFrame::ensureIsCalledOncePerFrame("AnimTransform", "update");
-//    
-//    elapsed += dt;
-//
-//    float t = glm::clamp(elapsed / duration, 0.0f, 1.0f);
-//
-//    // Interpolate TRS
-//    outTransform.setLocalPosition(
-//        glm::mix(from.getLocalPosition(), to.getLocalPosition(), t)
-//    );
-//
-//    outTransform.setLocalRotation(
-//        glm::mix(from.getLocalRotation(), to.getLocalRotation(), t)
-//    );
-//
-//    outTransform.setLocalScale(
-//        glm::mix(from.getLocalScale(), to.getLocalScale(), t)
-//    );
-//
-//    //std::ostringstream oss;
-//    //oss << "Frame dt=" << dt << " now=" << timeNow();
-//    //logger.info("{}", oss.str());
-//
-//    return (t >= 1.0f); // finished?
-//}
-
-
-bool engine::AnimTransform::update(float dt, Transform& outTransform)
+bool engine::AnimTransform::update(float dt, Transform& outTransform, const std::string& hash)
 {
-    DebugFrame::ensureIsCalledOncePerFrame("AnimTransform", "update");
+    DebugFrame::ensureIsCalledOncePerFrame("AnimTransform", "update", hash);
 
     elapsed += dt;
 

@@ -235,6 +235,12 @@
     <ClCompile Include="src\scene\myscene17.cpp">
       <Filter>sources\scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\myapp0.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\myapp1.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">

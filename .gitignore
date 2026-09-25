@@ -43,3 +43,7 @@ inspiration.txt
 
 sources
 samples
+app/debug
+app/release
+engine/debug
+engine/release

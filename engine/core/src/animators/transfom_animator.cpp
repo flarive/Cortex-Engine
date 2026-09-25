@@ -21,44 +21,24 @@ void engine::TransformAnimator::init(Transform& transform)
 
 void engine::TransformAnimator::update(float dt, Transform& transform)
 {
-	//m_deltaTime = dt;
-	//if (m_isPlaying && m_currentTransformAnimation)
-	//{
-	//	//m_CurrentTime += m_CurrentAnimation->getTicksPerSecond() * dt;
-	//	//m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->getDuration());
-
-	//	//std::cout << "[TransformAnimator::update] dt: " << dt << "s" << std::endl;
-
-
-	//	auto& animTransform = m_currentTransformAnimation->getAnimTransform();
-	//	bool finished = animTransform.update(dt, m_animatedResult);
-	//	if (finished)
-	//	{
-	//		m_isPlaying = false;  // or loop, depending on your system
-	//	}
-	//}
-
-	//if (m_isPlaying) {
-	//	std::cout << "Animator sets position: "
-	//		<< m_animatedResult.getLocalRotation().x << " "
-	//		<< m_animatedResult.getLocalRotation().y << " "
-	//		<< m_animatedResult.getLocalRotation().z << std::endl;
-	//}
-
 	m_deltaTime = dt;
+
+
+	// build a hash of this instance
+	//size_t hash = std::hash<void*>{}(this);
+	std::string thisInstanceHash = std::to_string(reinterpret_cast<uintptr_t>(this));
+
 
 	if (m_isPlaying && m_currentTransformAnimation)
 	{
 		auto& animTransform = m_currentTransformAnimation->getAnimTransform();
-		bool finished = animTransform.update(dt, m_animatedResult);
+		bool finished = animTransform.update(dt, m_animatedResult, thisInstanceHash);
 
 		transform = m_animatedResult;
 
 		if (finished)
 			m_isPlaying = false;
 	}
-
-	//callsThisFrame = 0;
 }
 
 void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)

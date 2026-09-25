@@ -35,7 +35,7 @@ namespace engine
             bool loop_ = false);
 
         // Apply animation each frame
-        bool update(float dt, Transform& outTransform);
+        bool update(float dt, Transform& outTransform, const std::string& hash);
 
         std::string timeNow();
     };

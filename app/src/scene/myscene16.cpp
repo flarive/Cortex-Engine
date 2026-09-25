@@ -111,7 +111,7 @@ void MyScene16::init()
     //    ""), UvMapping(3.0f));
 
 
-    //auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f));
     //auto entityPlane = make_shared<Entity>("MyPlane");
     //entityPlane->addComponent<TransformComponent>(trsPlane);
     //entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -136,7 +136,7 @@ void MyScene16::init()
 
     //sphere1->setup(matSphere1, UvMapping(2.0f));
 
-    //auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto trsSphere1 = Transform(vec3(-1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f));
     //auto entitySphere1 = make_shared<Entity>("MySphere1");
     //entitySphere1->addComponent<TransformComponent>(trsSphere1);
     //entitySphere1->addComponent<PrimitiveComponent>(sphere1);
@@ -175,7 +175,7 @@ void MyScene16::init()
 
     //sphere2->setup(matSphere2, UvMapping(2.0f));
 
-    //auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    //auto trsSphere2 = Transform(vec3(1.5f, -9.85f + 1.0f, -10.0f), vec3(1.0f));
     //auto entitySphere2 = make_shared<Entity>("MySphere2");
     //entitySphere2->addComponent<TransformComponent>(trsSphere2);
     //entitySphere2->addComponent<PrimitiveComponent>(sphere2);

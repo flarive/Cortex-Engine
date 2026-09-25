@@ -55,7 +55,7 @@ void MyScene17::init()
     // lights
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
-    light1->setIntensity(4.0f);
+    light1->setIntensity(3.0f);
     light1->setAmbientColor(Color(0.1f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
@@ -70,19 +70,18 @@ void MyScene17::init()
     // ground
     auto myPlane = make_shared<Plane>(false);
     auto matPlane = make_shared<PBRMaterial>(Color(0.2f),
-        "textures/pbr/painted-wood/PaintedWood_Color.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Normal.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Metallic.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Roughness.jpg",
-        "textures/pbr/painted-wood/PaintedWood_AmbientOcclusion.jpg",
-        "textures/pbr/painted-wood/PaintedWood_Displacement.jpg", "", "");
-    myPlane->setup(matPlane, UvMapping(2.0f));
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
+        "textures/pbr/old-wood-cracked-knots/old-wood-cracked-knots_albedo.jpg",
+        "textures/pbr/old-wood-cracked-knots/old-wood-cracked-knots_normal.jpg",
+        "",
+        "textures/pbr/old-wood-cracked-knots/old-wood-cracked-knots_roughness.jpg",
+        "textures/pbr/old-wood-cracked-knots/old-wood-cracked-knots_ao.jpg",
+        "textures/pbr/old-wood-cracked-knots/old-wood-cracked-knots_height.jpg", "", "");
+    myPlane->setup(matPlane, UvMapping(1.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(2.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
     getEntityManager().addChild(entityPlane);
-
 
 
     // sphere models
@@ -94,7 +93,6 @@ void MyScene17::init()
         "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
         "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
-    matSphere1->setNormalIntensity(1.0f);
     sphere1->setup(matSphere1, UvMapping(1.0f));
     auto trsSphere1 = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
     auto entitySphere1 = make_shared<Entity>("MySphere1");
@@ -113,7 +111,6 @@ void MyScene17::init()
         "textures/pbr/white-marble/white-marble_roughness.png",
         "textures/pbr/white-marble/white-marble_ao.png",
         "textures/pbr/white-marble/white-marble_height.png");
-    matSphere3->setNormalIntensity(1.0f);
     sphere3->setup(matSphere3, UvMapping(2.0f));
     auto trsSphere3 = Transform(vec3(0.3f, -0.35f, 0.0f), vec3(0.15f));
     auto entitySphere3 = make_shared<Entity>("MySphere3");
@@ -138,7 +135,6 @@ void MyScene17::init()
         "textures/pbr/porcelain/Porcelain_Roughness.png",
         "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
         "textures/pbr/porcelain/Porcelain_Displace.png");
-    matSphere2->setNormalIntensity(1.0f);
     sphere2->setup(matSphere2, UvMapping(1.0f));
     auto trsSphere2 = Transform(vec3(-0.3f, -0.35f, 0.0f), vec3(0.15f));
     auto entitySphere2 = make_shared<Entity>("MySphere2");
@@ -159,7 +155,6 @@ void MyScene17::init()
         "textures/pbr/frosted-glass/Glass_Frosted_001_height.jpg",
         "",
         "textures/pbr/alpha_smooth.png");
-    matSphere4->setNormalIntensity(1.0f);
     sphere4->setup(matSphere4, UvMapping(1.0f));
     auto trsSphere4 = Transform(vec3(-0.15f, -0.35f, 0.8f), vec3(0.15f));
     AnimTransform animSphere4{ trsSphere4, Transform(trsSphere4).addRotationY(360.0f), AnimMode::Absolute, 10.0f, true };
@@ -183,7 +178,6 @@ void MyScene17::init()
         "textures/pbr/glass-window/Glass_Window_004_height.png",
         "",
         "textures/pbr/glass-window/Glass_Window_004_opacity.jpg");
-    matSphere5->setNormalIntensity(1.0f);
     sphere5->setup(matSphere5, UvMapping(1.0f));
     auto trsSphere5 = Transform(vec3(0.15f, -0.35f, 0.8f), vec3(0.15f));
     AnimTransform animSphere5{ trsSphere5, Transform(trsSphere5).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
@@ -194,6 +188,30 @@ void MyScene17::init()
     entitySphere5->addComponent<PrimitiveComponent>(sphere5);
     entitySphere5->addComponent<AnimatorComponent>(trsSphereAnimator5);
     getEntityManager().addChild(entitySphere5);
+
+
+
+    auto sphere6 = make_shared<Sphere>();
+    auto matSphere6 = make_shared<PBRMaterial>(Color(1.0f),
+        "textures/pbr/pure-glass/albedo.png",
+        "textures/pbr/pure-glass/normal.png",
+        "textures/pbr/pure-glass/metallic.png",
+        "textures/pbr/pure-glass/roughness.png",
+        "textures/pbr/pure-glass/ao.png",
+        "",
+        "",
+        "textures/pbr/pure-glass/opacity.png");
+    matSphere6->setIOR(2.42f);
+    sphere6->setup(matSphere6, UvMapping(1.0f));
+    auto trsSphere6 = Transform(vec3(0.0f, -0.35f, 1.6f), vec3(0.15f));
+    AnimTransform animSphere6{ trsSphere6, Transform(trsSphere6).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
+    auto trsSphereAnimation6 = make_shared<TransformAnimation>("animSphere6", animSphere6);
+    auto trsSphereAnimator6 = make_shared<TransformAnimator>(trsSphereAnimation6);
+    auto entitySphere6 = make_shared<Entity>("MySphere6");
+    entitySphere6->addComponent<TransformComponent>(trsSphere6);
+    entitySphere6->addComponent<PrimitiveComponent>(sphere6);
+    //entitySphere6->addComponent<AnimatorComponent>(trsSphereAnimator6);
+    getEntityManager().addChild(entitySphere6);
 
 
 

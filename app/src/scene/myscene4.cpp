@@ -77,7 +77,7 @@ void MyScene4::init()
         "textures/pbr/planks/roughness.jpg",
         "textures/pbr/planks/ao.jpg",
         ""), UvMapping(1.0f));
-    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(12.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -86,7 +86,7 @@ void MyScene4::init()
 
     // cushion model
     shared_ptr<Model> cushionModel = make_shared<Model>("models/cushion/cushion.obj");
-    auto trsCushion = Transform(vec3(0.0f, -9.85f + 1.0f, -10.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsCushion = Transform(vec3(0.0f, -9.85f + 1.0f, -10.0f), vec3(1.0f));
     auto entityCushion = make_shared<Entity>("MyCushion");
     entityCushion->addComponent<TransformComponent>(trsCushion);
     entityCushion->addComponent<ModelComponent>(cushionModel);

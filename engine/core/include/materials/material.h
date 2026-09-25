@@ -166,9 +166,22 @@ namespace engine
 
 
         unsigned int getDiffuseMapId() { return diffuseMapId; }
+        unsigned int getSpecularMapId() { return specularMapId; }
+        unsigned int getNormalMapId() { return normalMapId; }
+        unsigned int getMetallicMapId() { return metallicMapId; }
+        unsigned int getRoughnessMapId() { return roughnessMapId; }
+        unsigned int getAOMapId() { return aoMapId; }
         unsigned int getHeightMapId() { return heightMapId; }
+        unsigned int getEmissiveMapId() { return emissiveMapId; }
+        unsigned int getOpacityMapId() { return opacityMapId; }
+        
+        unsigned int getArmMapId() { return armMapId; } // packed AO/Roughness/Metallic
+        unsigned int getRmMapId() { return rmMapId; } // packed Roughness/Metallic
 
+        
 
+        void setIOR(float ior) { m_IOR = ior; }
+        float& getIOR() { return m_IOR; }
 
     protected:
         std::string m_name{};
@@ -180,17 +193,17 @@ namespace engine
         Color m_baseColorFactor{ Color(1.0f) }; // pbr
 
         std::string m_diffuseTexPath{};
-        std::string m_specularTexPath{};
+        std::string m_specularTexPath{}; // blinnphong
         std::string m_normalTexPath{};
         
-        std::string m_aoTexPath{};
-        std::string m_roughnessTexPath{};
-        std::string m_metallicTexPath{};
+        std::string m_aoTexPath{}; // pbr
+        std::string m_roughnessTexPath{}; // pbr
+        std::string m_metallicTexPath{}; // pbr
 
-        std::string m_rmTexPath{}; // roughness and metallic textures combined
-        std::string m_armTexPath{}; // ambient occlusion, roughness and metallic textures combined
+        std::string m_rmTexPath{}; // pbr roughness and metallic textures combined
+        std::string m_armTexPath{}; // pbr ambient occlusion, roughness and metallic textures combined
         
-        std::string m_heightTexPath{};
+        std::string m_heightTexPath{}; // displacement
         std::string m_emissiveTexPath{};
         std::string m_opacityTexPath{}; // alpha texture
 
@@ -207,11 +220,34 @@ namespace engine
 
         bool m_useParallaxMapping{ false };
 
-        float m_shininess{};
+        
         bool m_allTexturesLoaded{};
+
+        // BlinnPhong only
+        float m_shininess{};
+
+        // PBR only
+        // Air          1.00
+        // Water        1.33
+        // Skin         1.40
+        // Plastic      1.45 - 1.55
+        // Glass        1.50 - 1.60
+        // Quartz       1.54
+        // Diamond      2.42
+        float m_IOR{ 1.5f }; // For non-transparent dielectric materials (wood, plastic, concrete, leather, painted metal, skin, rubber, etc.)
 
     private:
         unsigned int diffuseMapId{};
+        unsigned int specularMapId{};
+        unsigned int normalMapId{};
+        unsigned int metallicMapId{};
+        unsigned int roughnessMapId{};
+        unsigned int aoMapId{};
         unsigned int heightMapId{};
+        unsigned int emissiveMapId{};
+        unsigned int opacityMapId{};
+
+        unsigned int armMapId{}; // packed AO/Roughness/Metallic
+        unsigned int rmMapId{}; // packed Roughness/Metallic
     };
 }

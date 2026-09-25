@@ -176,6 +176,12 @@
     <Filter Include="resources\textures\pbr\glass-window-2">
       <UniqueIdentifier>{5c60efdd-8744-4215-b78e-95a44d7e5204}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\textures\pbr\old-wood-cracked-knots">
+      <UniqueIdentifier>{9f91911b-cb56-4135-9231-b40cd8e47d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\textures\pbr\pure-glass">
+      <UniqueIdentifier>{0b07c589-b82f-4c09-86d5-5a93a52717a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -1220,6 +1226,28 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\glass-window\Glass_Window_004_roughness.jpg">
       <Filter>resources\textures\pbr\glass-window</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_albedo.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ao.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_height.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_normal.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ORM.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_roughness.jpg" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_metallic.png">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\albedo.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\ao.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\metallic.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\normal.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\roughness.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\transmission.png" />
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\opacity.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

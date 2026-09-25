@@ -86,7 +86,7 @@ void MyScene5::init()
         "textures/pbr/planks/ao.jpg",
         ""), UvMapping(1.0f));
 
-    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(10.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -11.0f, -16.0f), vec3(10.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -95,7 +95,7 @@ void MyScene5::init()
 
     // buddha model
     shared_ptr<Model> buddhaModel = make_shared<Model>("models/buddha/buddha1.obj");
-    auto trsBuddha = Transform(vec3(0.0f, -11.0f + 1.0f, -10.0f), vec3(0.5f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsBuddha = Transform(vec3(0.0f, -11.0f + 1.0f, -10.0f), vec3(0.5f));
     auto entityBuddha = make_shared<Entity>("MyBuddha");
     entityBuddha->addComponent<TransformComponent>(trsBuddha);
     entityBuddha->addComponent<ModelComponent>(buddhaModel);

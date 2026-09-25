@@ -68,7 +68,7 @@ void MyScene8::init()
     else {
         myPlane->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f), UvMapping(6.0f));
     }
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(2.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(2.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -84,7 +84,7 @@ void MyScene8::init()
     else {
         myCube1->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     }
-    auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube1 = Transform(vec3(-1.0f, -0.35f, -1.0f), vec3(0.15f));
 
     AnimTransform anim1{ trsCube1, Transform(trsCube1).addRotationX(90.0f).addRotationY(90.0f), AnimMode::Absolute, 10.0f };
     auto trsAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
@@ -114,7 +114,7 @@ void MyScene8::init()
     else {
         myCube2->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     }
-    auto trsCube2 = Transform(vec3(1.0f, -0.35f, 1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube2 = Transform(vec3(1.0f, -0.35f, 1.0f), vec3(0.15f));
     auto entityCube2 = make_shared<Entity>("MyCube2");
     entityCube2->addComponent<TransformComponent>(trsCube2);
     entityCube2->addComponent<PrimitiveComponent>(myCube2);
@@ -129,7 +129,7 @@ void MyScene8::init()
     else {
         myCube3->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     }
-    auto trsCube3 = Transform(vec3(1.0f, -0.35f, -1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube3 = Transform(vec3(1.0f, -0.35f, -1.0f), vec3(0.15f));
     auto entityCube3 = make_shared<Entity>("MyCube3");
     entityCube3->addComponent<TransformComponent>(trsCube3);
     entityCube3->addComponent<PrimitiveComponent>(myCube3);
@@ -144,7 +144,7 @@ void MyScene8::init()
     else {
         myCube4->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     }
-    auto trsCube4 = Transform(vec3(-1.0f, -0.35f, 1.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsCube4 = Transform(vec3(-1.0f, -0.35f, 1.0f), vec3(0.15f));
     auto entityCube4 = make_shared<Entity>("MyCube4");
     entityCube4->addComponent<TransformComponent>(trsCube4);
     entityCube4->addComponent<PrimitiveComponent>(myCube4);
@@ -161,7 +161,7 @@ void MyScene8::init()
         mySphere->setup(make_shared<BlinnPhongMaterial>(zzz, zzz2, zzz3, 32.0f));
     }
 
-    auto trsSphere = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsSphere = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
     auto entitySphere = make_shared<Entity>("MySphere");
     entitySphere->addComponent<TransformComponent>(trsSphere);
     entitySphere->addComponent<PrimitiveComponent>(mySphere);

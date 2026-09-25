@@ -97,7 +97,7 @@ void MyScene13::init()
     else {
         myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
     }
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -114,7 +114,7 @@ void MyScene13::init()
     else {
         myParticleSystem->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/rect.jpg"), UvMapping(1.0f));
     }
-    auto trsParticleSystem = Transform(vec3(-1.5f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsParticleSystem = Transform(vec3(-1.5f, -0.5f, 0.0f), vec3(0.4f));
     auto entityParticleSystem = make_shared<Entity>("MyParticleSystem1");
     entityParticleSystem->addComponent<TransformComponent>(trsParticleSystem);
     entityParticleSystem->addComponent<ParticleSystemComponent>(myParticleSystem);
@@ -127,7 +127,7 @@ void MyScene13::init()
     else {
         myParticleSystem2->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/fire.png"), UvMapping(1.0f));
     }
-    auto trsParticleSystem2 = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsParticleSystem2 = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(0.4f));
     auto entityParticleSystem2 = make_shared<Entity>("MyParticleSystem2");
     entityParticleSystem2->addComponent<TransformComponent>(trsParticleSystem2);
     entityParticleSystem2->addComponent<ParticleSystemComponent>(myParticleSystem2);
@@ -140,7 +140,7 @@ void MyScene13::init()
     else {
         myParticleSystem3->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/particles/purple.png"), UvMapping(1.0f));
     }
-    auto trsParticleSystem3 = Transform(vec3(1.5f, -0.5f, 0.0f), vec3(0.4f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsParticleSystem3 = Transform(vec3(1.5f, -0.5f, 0.0f), vec3(0.4f));
     auto entityParticleSystem3 = make_shared<Entity>("MyParticleSystem3");
     entityParticleSystem3->addComponent<TransformComponent>(trsParticleSystem3);
     entityParticleSystem3->addComponent<ParticleSystemComponent>(myParticleSystem3);

@@ -72,6 +72,11 @@ struct Material {
     bool useParallaxMapping;
 
     float opacity;   // base opacity (0–1)
+
+    // Water      1.33 -> F0 = 0.020
+    // Glass      1.52 -> F0 = 0.042
+    // Diamond    2.42 -> F0 = 0.172
+    float IOR; // indice of reflection (for transparent materials)
 };
 
 struct MaterialHeight {
@@ -798,11 +803,14 @@ void main()
 
     // input lighting data
     vec3 normal = getNormalFromMap(texCoords);
-    vec3 N = normalize(Normal);
+    //vec3 N = normalize(Normal);
+    vec3 N = normalize(normal);
     vec3 V = normalize(viewPos - FragPos); // View direction
-    vec3 R = reflect(-V, normal);
+    //vec3 R = reflect(-V, normal);
+    vec3 R = reflect(-V, N);
     vec3 P = FragPos;
-    float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+    //float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
+    float dotNV = max(dot(N, V), 0.0);
 
 
 
@@ -849,16 +857,17 @@ void main()
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : material.opacity);
 
-    // hard coded mirror
-//    metallic = 1.0;
-//    roughness = 0.0;
-//    albedo = vec3(1.0);
-
-
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
-    vec3 F0 = vec3(0.04); 
+//    vec3 F0 = vec3(0.04); 
+//    F0 = mix(F0, albedo, metallic);
+
+    float f0Scalar =
+    pow((material.IOR - 1.0) / (material.IOR + 1.0), 2.0);
+
+    vec3 F0 = vec3(f0Scalar);
     F0 = mix(F0, albedo, metallic);
+
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
@@ -877,12 +886,14 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;
 
-    vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
+    //vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
+    vec3 irradiance = texture(material.texture_irradiance, N).rgb;
     vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
 
     const float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
-    vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
+    //vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
+    vec2 brdf = texture(material.texture_brdfLUT, vec2(dotNV, roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
     vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
 

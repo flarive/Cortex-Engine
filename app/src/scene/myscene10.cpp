@@ -65,7 +65,7 @@ void MyScene10::init()
     // ground
     auto myPlane = make_shared<Plane>(false);
     myPlane->setup(make_shared<PBRMaterial>(Color(10.0f), "textures/concrete_diffuse.png", "textures/concrete_normal.png"), UvMapping(6.0f));
-    auto trsPlane = Transform(vec3(0.0f, 0.2f, 0.0f), vec3(16.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, 0.2f, 0.0f), vec3(16.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);

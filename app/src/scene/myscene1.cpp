@@ -51,7 +51,7 @@ void MyScene1::init()
     // ground
     auto myPlane = make_shared<Plane>();
     myPlane->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(6.0f));
-    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -0.5f, 0.0f), vec3(8.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);
@@ -119,7 +119,7 @@ void MyScene1::init()
 
     // backpack model
     auto backpackModel = make_shared<Model>("models/backpack/backpack.obj");
-    auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsBackpack = Transform(vec3(-1.0f, -0.25f, 0.0f), vec3(0.12f));
     auto entityBackpack = make_shared<Entity>("MyBackpack");
     entityBackpack->addComponent<TransformComponent>(trsBackpack);
     entityBackpack->addComponent<ModelComponent>(backpackModel);

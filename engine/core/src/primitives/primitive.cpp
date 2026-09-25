@@ -42,6 +42,8 @@ void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
         shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
+        shader.setFloat("material.IOR", m_material->getIOR());
     }
 
     shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());

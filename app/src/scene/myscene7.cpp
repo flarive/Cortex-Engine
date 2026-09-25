@@ -160,7 +160,7 @@ void MyScene7::init()
         "textures/rusted_metal_diffuse.jpg",
         "textures/rusted_metal_specular.jpg"), UvMapping(1.0f));
 
-    auto trsPlane = Transform(vec3(0.0f, -10.0f, -10.0f), vec3(10.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsPlane = Transform(vec3(0.0f, -10.0f, -10.0f), vec3(10.0f));
     auto entityPlane = make_shared<Entity>("MyPlane");
     entityPlane->addComponent<TransformComponent>(trsPlane);
     entityPlane->addComponent<PrimitiveComponent>(myPlane);

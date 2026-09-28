@@ -146,8 +146,20 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
     glBindVertexArray(m_VAO);
     OpenGLDebug::checkGLError("glBindVertexArray.cube");
 
+    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
+
+    // disable face culling for transparent primitives (to see back faces)
+    if (m_material->isTransparent() || m_material->hasTransmission())
+        RenderState::disableFaceCulling();
+
     glDrawArrays(GL_TRIANGLES, 0, 36);
     OpenGLDebug::checkGLError("glDrawArrays.cube");
+
+    // re enable face culling for transparent primitives if face culling was enabled
+    if (wasFaceCullingEnabled)
+        RenderState::enableFaceCulling();
+    else
+        RenderState::disableFaceCulling();
 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.cube");

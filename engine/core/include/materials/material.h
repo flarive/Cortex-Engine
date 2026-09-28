@@ -122,7 +122,7 @@ namespace engine
         float& getHeightIntensity() { return m_heightIntensity; }
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         
-        const float getShininessIntensity() const { return m_shininess; }
+        float& getShininessIntensity() { return m_shininess; }
         const float getAmbientIntensity() const { return m_ambientIntensity; }
         const float getEmissiveIntensity() const { return m_emissiveIntensity; }
         
@@ -185,6 +185,7 @@ namespace engine
 
         void setTransmission(float transmission) { m_transmission = transmission; }
         float& getTransmission() { return m_transmission; }
+        bool hasTransmission() { return m_transmission > 0.0f; }
 
         void setThickness(float thickness) { m_thickness = thickness; }
         float& getThickness() { return m_thickness; }
@@ -222,16 +223,16 @@ namespace engine
 
 
         // intensities
-        float m_heightIntensity{};
-        float m_normalIntensity{ 1.0f };
         float m_ambientIntensity{ 1.0f };
+        float m_normalIntensity{ 1.0f };
+        float m_heightIntensity{};
         float m_emissiveIntensity{ 1.0f };
-        float m_parallaxIntensity{ 0.01f };
         float m_opacityIntensity{ 1.0f }; // fully opaque
 
         bool m_alphaCutoffEnabled{ false };
 
         bool m_useParallaxMapping{ false };
+        float m_parallaxIntensity{ 0.01f };
 
         
         bool m_allTexturesLoaded{};

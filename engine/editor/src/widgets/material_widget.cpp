@@ -37,6 +37,9 @@ void engine::MaterialWidget::draw()
             if (auto sharedMaterial = weakMaterial.lock())
             {
                 displayMaterial(sharedMaterial, i);
+
+                // intensities
+                //displayIntensities(sharedMaterial);
             }
         }
     }
@@ -121,6 +124,27 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             }
 
             ImGui::EndTable();
+        }
+    }
+}
+
+void engine::MaterialWidget::displayIntensities(const std::shared_ptr<Material>& material)
+{
+    if (material->getTypeID() == MaterialType::PBR)
+    {
+        static float normalIntensity = 1.0f;
+        if (EditorHelper::renderSliderFloatWithLabel("Normal Intensity", material->getNormalIntensity(), normalIntensity, 0.0f, 10.0f, "%.1f"))
+        {
+            emit(UIEventType::SceneSettingChanged, "material_normal_intensity", material->getNormalIntensity());
+        }
+    }
+    else
+    {
+        // BlinnPhong & Phong
+        static float shininessIntensity = 1.0f;
+        if (EditorHelper::renderSliderFloatWithLabel("Shininess", material->getShininessIntensity(), shininessIntensity, 0.0f, 10.0f, "%.1f"))
+        {
+            emit(UIEventType::SceneSettingChanged, "material_shininess_intensity", material->getShininessIntensity());
         }
     }
 }

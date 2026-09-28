@@ -198,7 +198,7 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
 
     // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent() || m_material->getTransmission() > 0.0f)
+    if (m_material->isTransparent() || m_material->hasTransmission())
         RenderState::disableFaceCulling();
 
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);

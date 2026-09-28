@@ -35,6 +35,7 @@ namespace engine
 
         void displayColor(const Color& color, const std::string& textType);
         void displayTexture(const TextureData* textData, const std::string& textType);
+        void displayIntensities(const std::shared_ptr<Material>& material);
 
         engine::TagColors getImageSizeTagColor(int width, int height);
     };

@@ -10,10 +10,10 @@ engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor)
 {
 }
 
-engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor)
-	: Material(MaterialType::PBR, ambientColor, diffuseColor, specularColor, 0.0f)
-{
-}
+//engine::PBRMaterial::PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor) // should be removed !
+//	: Material(MaterialType::PBR, ambientColor, diffuseColor, specularColor, 0.0f)
+//{
+//}
 
 engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
 	: Material(MaterialType::PBR, baseColorFactor, diffuseTexPath, "", normalTexPath, metallicTexPath, roughnessTexPath, aoTexPath, heightTexPath, emissiveTexPath, opacityTexPath, 0.0f)

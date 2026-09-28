@@ -221,7 +221,22 @@ void MyScene17::init()
 
 
     // helmet model
-    //shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, false, true);
+    //auto helmetCustomMat = make_shared<PBRMaterial>(Color(1.0f),
+    //    "textures/pbr/pure-glass/albedo.png",
+    //    "textures/pbr/pure-glass/normal.png",
+    //    "textures/pbr/pure-glass/metallic.png",
+    //    "textures/pbr/pure-glass/roughness.png",
+    //    "textures/pbr/pure-glass/ao.png",
+    //    "",
+    //    "",
+    //    "textures/pbr/pure-glass/opacity.png");
+    //matSphere6->setIOR(1.52f);
+    //matSphere6->setTransmission(1.0f);
+    //matSphere6->setThickness(0.5f);
+    //matSphere6->setAttenuationColor(Color(0.98f, 1.00f, 0.98f, 1.0f));
+    //matSphere6->setAttenuationDistance(5.0f);
+
+    //shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", helmetCustomMat, false, false, true);
     //auto trsHelmet = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(2.0f));
     //auto entityHelmet = make_shared<Entity>("MyHelmet");
     //entityHelmet->addComponent<TransformComponent>(trsHelmet);

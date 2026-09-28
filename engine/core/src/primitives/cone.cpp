@@ -189,8 +189,20 @@ void engine::Cone::draw(Shader& shader, const glm::mat4& projection, const glm::
     glBindVertexArray(m_VAO);
     OpenGLDebug::checkGLError("glBindVertexArray.cone");
 
+    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
+
+    // disable face culling for transparent primitives (to see back faces)
+    if (m_material->isTransparent() || m_material->hasTransmission())
+        RenderState::disableFaceCulling();
+
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
     OpenGLDebug::checkGLError("glDrawArrays.cone");
+
+    // re enable face culling for transparent primitives if face culling was enabled
+    if (wasFaceCullingEnabled)
+        RenderState::enableFaceCulling();
+    else
+        RenderState::disableFaceCulling();
 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.cone");

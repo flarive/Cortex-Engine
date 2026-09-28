@@ -195,16 +195,20 @@ void engine::Sphere::draw(Shader& shader, const glm::mat4& projection, const glm
     glBindVertexArray(m_VAO);
     OpenGLDebug::checkGLError("glBindVertexArray.sphere");
 
+    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
+
     // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent())
+    if (m_material->isTransparent() || m_material->getTransmission() > 0.0f)
         RenderState::disableFaceCulling();
 
     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
     OpenGLDebug::checkGLError("glDrawElements.sphere");
 
     // re enable face culling for transparent primitives if face culling was enabled
-    if (RenderState::isFaceCullingEnabled())
+    if (wasFaceCullingEnabled)
         RenderState::enableFaceCulling();
+    else
+        RenderState::disableFaceCulling();
 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.sphere");

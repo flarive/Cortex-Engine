@@ -183,6 +183,19 @@ namespace engine
         void setIOR(float ior) { m_IOR = ior; }
         float& getIOR() { return m_IOR; }
 
+        void setTransmission(float transmission) { m_transmission = transmission; }
+        float& getTransmission() { return m_transmission; }
+
+        void setThickness(float thickness) { m_thickness = thickness; }
+        float& getThickness() { return m_thickness; }
+
+        void setAttenuationColor(const Color& attenuationColor) { m_attenuationColor = attenuationColor; }
+        Color& getAttenuationColor() { return m_attenuationColor; }
+
+        void setAttenuationDistance(float attenuationDistance) { m_attenuationDistance = attenuationDistance; }
+        float& getAttenuationDistance() { return m_attenuationDistance; }
+
+
     protected:
         std::string m_name{};
         
@@ -235,6 +248,13 @@ namespace engine
         // Quartz       1.54
         // Diamond      2.42
         float m_IOR{ 1.5f }; // For non-transparent dielectric materials (wood, plastic, concrete, leather, painted metal, skin, rubber, etc.)
+        float m_transmission{ 0.0f }; // 0 = opaque, 1 = fully transmissive
+        float m_thickness{ 0.0f }; // object thickness in meters
+        Color m_attenuationColor{};
+        float m_attenuationDistance{ 0.0f };
+
+        
+        
 
     private:
         unsigned int diffuseMapId{};

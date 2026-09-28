@@ -77,6 +77,10 @@ struct Material {
     // Glass      1.52 -> F0 = 0.042
     // Diamond    2.42 -> F0 = 0.172
     float IOR; // indice of reflection (for transparent materials)
+    float transmission;
+    float thickness;
+    vec3 attenuationColor;
+    float attenuationDistance;
 };
 
 struct MaterialHeight {
@@ -189,6 +193,7 @@ uniform AreaLight areaLights[NBR_MAX_LIGHTS];
 
 
 const float PI = 3.14159265359;
+const float MAX_REFLECTION_LOD = 4.0;
 
 
 // function prototypes
@@ -790,6 +795,16 @@ vec2 SteepParallaxMapping(vec2 texCoords, vec3 viewDir)
     return currentTexCoords;
 }
 
+vec3 ApplyVolumeAttenuation(vec3 color, float thickness, vec3 attenuationColor, float attenuationDistance)
+{
+    if (attenuationDistance <= 0.0)
+        return color;
+
+    vec3 attenuationCoeff = -log(max(attenuationColor, vec3(0.0001))) / attenuationDistance;
+
+    return color * exp(-attenuationCoeff * thickness);
+}
+
 // ----------------------------------------------------------------------------
 void main()
 {		
@@ -803,13 +818,20 @@ void main()
 
     // input lighting data
     vec3 normal = getNormalFromMap(texCoords);
-    //vec3 N = normalize(Normal);
     vec3 N = normalize(normal);
+
+    if (!gl_FrontFacing)
+    {
+        N = -N;
+    }
+    
     vec3 V = normalize(viewPos - FragPos); // View direction
-    //vec3 R = reflect(-V, normal);
     vec3 R = reflect(-V, N);
+
+    float eta = 1.0 / material.IOR;
+    vec3 T = refract(-V, N, eta);
+
     vec3 P = FragPos;
-    //float dotNV = clamp(dot(N, V), 0.0f, 1.0f);
     float dotNV = max(dot(N, V), 0.0);
 
 
@@ -859,12 +881,7 @@ void main()
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    
-//    vec3 F0 = vec3(0.04); 
-//    F0 = mix(F0, albedo, metallic);
-
-    float f0Scalar =
-    pow((material.IOR - 1.0) / (material.IOR + 1.0), 2.0);
-
+    float f0Scalar = pow((material.IOR - 1.0) / (material.IOR + 1.0), 2.0);
     vec3 F0 = vec3(f0Scalar);
     F0 = mix(F0, albedo, metallic);
 
@@ -888,14 +905,19 @@ void main()
 
     //vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
     vec3 irradiance = texture(material.texture_irradiance, N).rgb;
-    vec3 diffuse = irradiance * albedo * material.iblDiffuseIntensity; // Apply iblDiffuseIntensity
+    float diffuseWeight = (1.0 - metallic) * (1.0 - material.transmission);
+    vec3 diffuse = irradiance * albedo * diffuseWeight * material.iblDiffuseIntensity;
 
-    const float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;    
-    //vec2 brdf  = texture(material.texture_brdfLUT, vec2(max(dot(normal, V), 0.0), roughness)).rg;
+    
+    vec3 prefilteredColor = textureLod(material.texture_prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;
+    
+    vec3 transmissionColor = textureLod(material.texture_prefilter, T, roughness * MAX_REFLECTION_LOD).rgb;
+    transmissionColor = ApplyVolumeAttenuation(transmissionColor, material.thickness, material.attenuationColor, material.attenuationDistance);
+
     vec2 brdf = texture(material.texture_brdfLUT, vec2(dotNV, roughness)).rg;
-    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity; // Apply iblSpecularIntensity
-    vec3 ambient = (kD * diffuse + specular) * ao * material.ambient_color * material.ambient_intensity;
+    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity;
+    vec3 transmissionIBL = transmissionColor * material.transmission * (1.0 - F);
+    vec3 ambient = (kD * diffuse + specular + transmissionIBL) * ao * material.ambient_color * material.ambient_intensity;
 
 
     // lights
@@ -946,7 +968,6 @@ void main()
 
     // add light and shadow contribution
     vec3 color = ambient + Lo;
-    //vec3 color = Lo;
 
     // Add emissive contribution before gamma correction
     color += emissive;
@@ -1126,3 +1147,4 @@ vec3 CalcAreaLight(AreaLight light, vec3 normal, vec3 N, vec3 V, vec3 P, mat3 Mi
 
     return lighting;
 }
+

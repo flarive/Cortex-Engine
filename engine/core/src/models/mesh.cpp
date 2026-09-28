@@ -66,6 +66,10 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
                 shader.setFloat("material.IOR", m_material->getIOR());
+                shader.setFloat("material.transmission", m_material->getTransmission());
+                shader.setFloat("material.thickness", m_material->getThickness());
+                shader.setVec3("material.attenuationColor", m_material->getAttenuationColor());
+                shader.setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
             }
 
             shader.setFloat("material.opacity", m_material->getOpacityIntensity());

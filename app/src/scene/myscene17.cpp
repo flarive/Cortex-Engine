@@ -201,7 +201,12 @@ void MyScene17::init()
         "",
         "",
         "textures/pbr/pure-glass/opacity.png");
-    matSphere6->setIOR(2.42f);
+    matSphere6->setIOR(1.52f);
+    matSphere6->setTransmission(1.0f);
+    matSphere6->setThickness(0.5f);
+    matSphere6->setAttenuationColor(Color(0.98f, 1.00f, 0.98f, 1.0f));
+    matSphere6->setAttenuationDistance(5.0f);
+
     sphere6->setup(matSphere6, UvMapping(1.0f));
     auto trsSphere6 = Transform(vec3(0.0f, -0.35f, 1.6f), vec3(0.15f));
     AnimTransform animSphere6{ trsSphere6, Transform(trsSphere6).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };

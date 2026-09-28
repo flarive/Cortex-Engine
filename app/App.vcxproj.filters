@@ -1230,24 +1230,44 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_albedo.jpg">
       <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ao.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_height.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_normal.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ORM.jpg" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_roughness.jpg" />
     <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_metallic.png">
       <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\albedo.png">
       <Filter>resources\textures\pbr\pure-glass</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\ao.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\metallic.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\normal.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\roughness.png" />
-    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\transmission.png" />
     <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\opacity.png">
       <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\ao.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\metallic.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\normal.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\roughness.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\pure-glass\transmission.png">
+      <Filter>resources\textures\pbr\pure-glass</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ao.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_height.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_normal.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_ORM.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_roughness.jpg">
+      <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

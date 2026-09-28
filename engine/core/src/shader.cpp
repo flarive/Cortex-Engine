@@ -9,6 +9,14 @@
 
 #include "../include/app/gpu_selector.h"
 
+#include "../include/managers/filesystem_manager.h"
+
+#include <fstream>
+#include <string>
+#include <format>
+#include <filesystem>
+#include <stdexcept>
+
 /// <summary>
 /// OpenGL simple pipeline
 /// VS => FS
@@ -20,39 +28,24 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
     std::string fragmentCode{};
-    std::ifstream vShaderFile{};
-    std::ifstream fShaderFile{};
-    // ensure ifstream objects can throw exceptions:
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try
     {
-        // open files
-        vShaderFile.open(vertexPath);
-        fShaderFile.open(fragmentPath);
-        std::stringstream vShaderStream, fShaderStream;
-        // read file's buffer contents into streams
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-        // close file handlers
-        vShaderFile.close();
-        fShaderFile.close();
-        // convert stream into string
-        vertexCode = vShaderStream.str();
-        fragmentCode = fShaderStream.str();
+        vertexCode = readTextFile(vertexPath);
+        fragmentCode = readTextFile(fragmentPath);
     }
-    catch (std::ifstream::failure& e)
+    catch (const std::exception& e)
     {
-        const char* error = e.what();
-        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
-        throw std::runtime_error("Shader file read failed");
+        logger.error("Shader {}: {}", shaderName, e.what());
+        throw;
     }
+
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
+
     // 2. compile shaders
-    unsigned int vertex, fragment;
+    GLuint vertex, fragment;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
@@ -130,7 +123,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     const char* fShaderCode = fragmentCode.c_str();
     const char* gShaderCode = geometryCode.c_str();
     // 2. compile shaders
-    unsigned int vertex, fragment, geometry;
+    GLuint vertex, fragment, geometry;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
@@ -238,7 +231,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     // 2. compile shaders
-    unsigned int vertex, fragment;
+    GLuint vertex, fragment;
     // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
@@ -664,4 +657,24 @@ void engine::Shader::getActiveUniformsList(const std::string& uniformName)
             // Not assignable (e.g., special/opaque, or driver reports location -1)
         }
     }
+}
+
+std::string engine::Shader::readTextFile(const std::string& path)
+{
+ //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
+	//if (!std::filesystem::exists(absFullPath))
+	//{
+	//	throw std::runtime_error(std::format("File does not exist: {}", path));
+	//}
+    
+    std::ifstream file(path, std::ios::binary);
+
+    if (!file)
+    {
+        throw std::runtime_error(std::format("Failed to open file: {}", path));
+    }
+
+    return std::string(
+        std::istreambuf_iterator<char>(file),
+        std::istreambuf_iterator<char>());
 }

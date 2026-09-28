@@ -6,6 +6,8 @@
 #include <string>
 
 
+
+
 namespace engine
 {
     enum class ShaderType {
@@ -72,5 +74,7 @@ namespace engine
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------
         void checkCompileErrors(unsigned int shader, std::string type);
+
+        static std::string readTextFile(const std::string& path);
     };
 }

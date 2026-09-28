@@ -215,33 +215,34 @@ void MyScene17::init()
     auto entitySphere6 = make_shared<Entity>("MySphere6");
     entitySphere6->addComponent<TransformComponent>(trsSphere6);
     entitySphere6->addComponent<PrimitiveComponent>(sphere6);
-    //entitySphere6->addComponent<AnimatorComponent>(trsSphereAnimator6);
+    entitySphere6->addComponent<AnimatorComponent>(trsSphereAnimator6);
     getEntityManager().addChild(entitySphere6);
 
 
 
     // helmet model
-    //auto helmetCustomMat = make_shared<PBRMaterial>(Color(1.0f),
-    //    "textures/pbr/pure-glass/albedo.png",
-    //    "textures/pbr/pure-glass/normal.png",
-    //    "textures/pbr/pure-glass/metallic.png",
-    //    "textures/pbr/pure-glass/roughness.png",
-    //    "textures/pbr/pure-glass/ao.png",
-    //    "",
-    //    "",
-    //    "textures/pbr/pure-glass/opacity.png");
-    //matSphere6->setIOR(1.52f);
-    //matSphere6->setTransmission(1.0f);
-    //matSphere6->setThickness(0.5f);
-    //matSphere6->setAttenuationColor(Color(0.98f, 1.00f, 0.98f, 1.0f));
-    //matSphere6->setAttenuationDistance(5.0f);
+    auto helmetCustomMat = make_shared<PBRMaterial>(Color(1.0f),
+        "textures/pbr/pure-glass/albedo.png",
+        "textures/pbr/pure-glass/normal.png",
+        "textures/pbr/pure-glass/metallic.png",
+        "textures/pbr/pure-glass/roughness.png",
+        "textures/pbr/pure-glass/ao.png",
+        "",
+        "",
+        "textures/pbr/pure-glass/opacity.png");
+    matSphere6->setIOR(1.52f);
+    matSphere6->setTransmission(1.0f);
+    matSphere6->setThickness(0.5f);
+    matSphere6->setAttenuationColor(Color(0.98f, 1.00f, 0.98f, 1.0f));
+    matSphere6->setAttenuationDistance(5.0f);
 
-    //shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", helmetCustomMat, false, false, true);
-    //auto trsHelmet = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(2.0f));
-    //auto entityHelmet = make_shared<Entity>("MyHelmet");
-    //entityHelmet->addComponent<TransformComponent>(trsHelmet);
-    //entityHelmet->addComponent<ModelComponent>(helmetModel);
-    //getEntityManager().addChild(entityHelmet);
+    shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", helmetCustomMat, false, false, true);
+    auto trsHelmet = Transform(vec3(0.5f, -0.2f, 0.0f), vec3(0.2f), vec3(0.0f, 180.0f, 0.0f));
+    auto entityHelmet = make_shared<Entity>("MyHelmet");
+    entityHelmet->addComponent<TransformComponent>(trsHelmet);
+    entityHelmet->addComponent<ModelComponent>(helmetModel);
+    entityHelmet->addComponent<AnimatorComponent>(trsHelmetAnimator);
+    getEntityManager().addChild(entityHelmet);
 }
 
 

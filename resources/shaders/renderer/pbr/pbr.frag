@@ -903,7 +903,6 @@ void main()
     // have no diffuse light).
     kD *= 1.0 - metallic;
 
-    //vec3 irradiance = texture(material.texture_irradiance, normal).rgb;
     vec3 irradiance = texture(material.texture_irradiance, N).rgb;
     float diffuseWeight = (1.0 - metallic) * (1.0 - material.transmission);
     vec3 diffuse = irradiance * albedo * diffuseWeight * material.iblDiffuseIntensity;

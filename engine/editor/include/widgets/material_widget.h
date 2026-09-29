@@ -9,6 +9,21 @@
 
 namespace engine
 {
+    enum class TextureSlot
+    {
+        Diffuse,
+        Normal,
+        AO,
+        Roughness,
+        Metallic,
+        Height,
+        Emissive,
+        Opacity,
+        Specular,
+        ARM,
+        RM
+    };
+
     class MaterialWidget final : public ImGuiElement
     {
     public:
@@ -34,8 +49,8 @@ namespace engine
         void displayMaterial(const std::shared_ptr<Material>& material, size_t index);
 
         void displayColor(const Color& color, const std::string& textType);
-        void displayTexture(const TextureData* textData, const std::string& textType);
-        void displayIntensities(const std::shared_ptr<Material>& material);
+        void displayTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<Material>& material);
+        void displayTextureControl(TextureSlot slot, const std::shared_ptr<Material>& material);
 
         engine::TagColors getImageSizeTagColor(int width, int height);
     };

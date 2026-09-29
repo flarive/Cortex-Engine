@@ -11,6 +11,7 @@ namespace engine
         ButtonClicked,
         EntitySelectionChanged,
         SceneSettingChanged,
+        MaterialPropertyChanged,
         WindowClosed,
         Custom
     };

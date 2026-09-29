@@ -118,13 +118,15 @@ namespace engine
 
         const int getTextureHeightUnit() const;
         
-        
+        // not really used for the moment
         float& getHeightIntensity() { return m_heightIntensity; }
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         
         float& getShininessIntensity() { return m_shininess; }
         const float getAmbientIntensity() const { return m_ambientIntensity; }
-        const float getEmissiveIntensity() const { return m_emissiveIntensity; }
+        
+        float& getEmissiveIntensity() { return m_emissiveIntensity; }
+        void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
         
         float& getOpacityIntensity() { return m_opacityIntensity; }
         void setOpacityIntensity(float opacity) { m_opacityIntensity = opacity; }
@@ -146,7 +148,7 @@ namespace engine
         
         
         
-        void setEmissiveIntensity(float intensity) { m_emissiveIntensity = intensity; }
+        
 
 
         // parallax mapping

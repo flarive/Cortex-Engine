@@ -343,11 +343,11 @@ bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, 
     return false;
 }
 
-bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, const char* format)
+bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
 {
     static bool isDraggingSlider = false;
 
-    ImGui::SetNextItemWidth(FIELD_WIDTH);
+    ImGui::SetNextItemWidth(width);
 
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::SliderFloat(

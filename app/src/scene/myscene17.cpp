@@ -238,6 +238,11 @@ void MyScene17::init()
 
     shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", helmetCustomMat, false, false, true);
     auto trsHelmet = Transform(vec3(0.5f, -0.2f, 0.0f), vec3(0.2f), vec3(0.0f, 180.0f, 0.0f));
+
+    AnimTransform animHelmet{ trsHelmet, Transform(trsHelmet).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
+    auto trsHelmetAnimation = make_shared<TransformAnimation>("animHelmet", animHelmet);
+    auto trsHelmetAnimator = make_shared<TransformAnimator>(trsHelmetAnimation);
+
     auto entityHelmet = make_shared<Entity>("MyHelmet");
     entityHelmet->addComponent<TransformComponent>(trsHelmet);
     entityHelmet->addComponent<ModelComponent>(helmetModel);

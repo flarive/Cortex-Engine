@@ -87,34 +87,19 @@ void MyScene6::init()
 
     // helmet model
     auto helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, true);
+
+    if (std::shared_ptr<engine::Material> material = helmetModel->getMaterial())
+        material->setNormalIntensity(2.0f);
+
     auto trsHelmet = Transform(vec3(0.0f, -15.0f, -10.0f), vec3(8.0f), vec3(0.0f, 180.0f, 0.0f));
+    AnimTransform animHelmet{ trsHelmet, Transform(trsHelmet).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
+    auto trsHelmetAnimation = make_shared<TransformAnimation>("animHelmet", animHelmet);
+    auto trsHelmetAnimator = make_shared<TransformAnimator>(trsHelmetAnimation);
     auto entityHelmet = make_shared<Entity>("MyHelmet");
     entityHelmet->addComponent<TransformComponent>(trsHelmet);
     entityHelmet->addComponent<ModelComponent>(helmetModel);
+    entityHelmet->addComponent<AnimatorComponent>(trsHelmetAnimator);
     getEntityManager().addChild(entityHelmet);
-
-    //auto helmetMat = helmetModel->getMeshes()[0]->getMaterial();
-    //if (helmetMat)
-    //{
-    //    helmetMat->setAmbientIntensity(5.0f);
-    //    helmetMat->setEmissiveIntensity(5.0f);
-    //}
-
-    //auto pbr = std::dynamic_pointer_cast<PBRMaterial>(helmetModel->getMeshes()[0]->getMaterial());
-    //if (pbr)
-    //{
-    //    logger.info("PBR (Assimp/tinyGLTF): has_diffuse={}, has_normal={}, has_rm={}, has_arm={}, has_metal={}, has_rough={}, has_ao={}",
-    //        pbr->hasDiffuseMap(),
-    //        pbr->hasNormalMap(),
-    //        pbr->hasRmMap(),
-    //        pbr->hasArmMap(),
-    //        pbr->hasMetallicMap(),
-    //        pbr->hasRoughnessMap(),
-    //        pbr->hasAoMap());
-    //}
-
-    auto pbr = std::dynamic_pointer_cast<PBRMaterial>(helmetModel->getMeshes()[0]->getMaterial());
-    logger.info("Assimp diffuse texID = {}", pbr->getDiffuseMapId());
 
 
 
@@ -241,16 +226,16 @@ void MyScene6::drawScene(Shader& shader)
 {
     (void)shader;   //Do nothing
 
-    auto myHelmet = getEntityManager().findEntityByName("MyHelmet");
-    if (myHelmet)
-    {
-        auto& trs = myHelmet->getTransform();
-        auto& rot = trs.getLocalRotation();
-        trs.setLocalRotation(vec3(rot.x, rot.y + rotation, rot.z));
-        myHelmet->setTransform(trs);
-    }
+    //auto myHelmet = getEntityManager().findEntityByName("MyHelmet");
+    //if (myHelmet)
+    //{
+    //    auto& trs = myHelmet->getTransform();
+    //    auto& rot = trs.getLocalRotation();
+    //    trs.setLocalRotation(vec3(rot.x, rot.y + rotation, rot.z));
+    //    myHelmet->setTransform(trs);
+    //}
 
-    rotation += deltaTime * 0.002f;
+    //rotation += deltaTime * 0.002f;
 }
 
 void MyScene6::drawUI()

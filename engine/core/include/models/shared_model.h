@@ -107,6 +107,7 @@ namespace engine
 
         void reSetup();
 
+        std::shared_ptr<Material> getMaterial();
         std::vector<std::shared_ptr<Material>>& getMaterials();
         std::vector<std::shared_ptr<Mesh>>& getMeshes();
         

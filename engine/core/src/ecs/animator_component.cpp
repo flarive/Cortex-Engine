@@ -51,6 +51,12 @@ std::unordered_map<std::string, std::function<void(engine::EditorPropertyValue)>
 
 void engine::AnimatorComponent::setProperty(const std::string& key, engine::EditorPropertyValue value)
 {
+	auto it = m_propertySetters.find(key);
+	if (it != m_propertySetters.end())
+	{
+		it->second(value);
+		m_animator->reSetup(); // Assuming all primitives have a reSetup() method
+	}
 }
 
 void engine::AnimatorComponent::setEnabled(bool enabled)

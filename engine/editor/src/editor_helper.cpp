@@ -371,6 +371,51 @@ bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& 
     return false;
 }
 
+bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
+{
+    static bool isDraggingSlider = false;
+
+    char valueText[32];
+    snprintf(valueText, sizeof(valueText), format, value);
+
+    // Reserve space and right-align text
+    const float valueWidth = 20.0f;
+
+    float textWidth = ImGui::CalcTextSize(valueText).x;
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + valueWidth - textWidth);
+    ImGui::TextUnformatted(valueText);
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(4.0f, 0.0f)); // 4px right margin
+    ImGui::SameLine();
+
+    //ImGui::SameLine();
+
+    ImGui::SetNextItemWidth(width);
+
+    // Use DragInt with a step of 256 (or your desired step)
+    ImGui::SliderFloat(
+        label,
+        &value,
+        min,  // Minimum value
+        max,   // Maximum value
+        "", // Display format
+        ImGuiSliderFlags_NoInput
+    );
+    isDraggingSlider = ImGui::IsItemActive();
+
+    // Apply changes only on release
+    if (!isDraggingSlider && ImGui::IsItemDeactivatedAfterEdit())
+    {
+        if (lastValue != value)
+            lastValue = value;
+
+        return true;
+    }
+
+    return false;
+}
+
 bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format)
 {
     static bool isDraggingSlider = false;

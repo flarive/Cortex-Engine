@@ -56,6 +56,7 @@ namespace engine
 		std::shared_ptr<Animator> m_animator{};
 		std::unique_ptr<AABB> m_boundingVolume{};
 
+		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> m_propertySetters{};
 
 		AABB generateBoundingVolume(const std::shared_ptr<Animator> animator);
 	};

@@ -167,6 +167,15 @@ unsigned int engine::SharedModel::getSkeletonRootIndex() const
     return -1;
 }
 
+
+std::shared_ptr<engine::Material> engine::SharedModel::getMaterial()
+{
+	if (m_meshLoader)
+		return m_meshLoader->getMaterials().empty() ? nullptr : m_meshLoader->getMaterials()[0];
+
+	return nullptr;
+}
+
 void engine::SharedModel::reSetup()
 {
     loadModel(m_filePath, m_flipUV);

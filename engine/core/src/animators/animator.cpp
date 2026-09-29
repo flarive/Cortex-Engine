@@ -19,6 +19,11 @@ engine::Animator::Animator(const std::vector<std::shared_ptr<Animation>>& animat
 	logger.trace("Animator base constructor called");
 }
 
+void engine::Animator::reSetup()
+{
+	int a = 0;
+}
+
 engine::Animator::~Animator()
 {
 	logger.trace("Animator base destructor called");

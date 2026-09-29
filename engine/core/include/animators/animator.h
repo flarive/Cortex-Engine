@@ -57,6 +57,8 @@ namespace engine
 
 		void setBoneCount(unsigned int boneCount) { m_boneCount = boneCount; }
 
+		void reSetup();
+
 
 	protected:
 		std::vector<std::shared_ptr<Animation>> m_animations{};

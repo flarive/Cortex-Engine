@@ -37,9 +37,6 @@ void engine::MaterialWidget::draw()
             if (auto sharedMaterial = weakMaterial.lock())
             {
                 displayMaterial(sharedMaterial, i);
-
-                // intensities
-                //displayIntensities(sharedMaterial);
             }
         }
     }
@@ -162,7 +159,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasNormalMap())
             {
                 float& value = material->getNormalIntensity();
-                if (EditorHelper::renderSliderFloatWithLabel("##NormalIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##NormalIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
                     emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", value);
                 }
             }
@@ -173,7 +170,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasHeightMap())
             {
                 float& value = material->getHeightIntensity();
-                if (EditorHelper::renderSliderFloatWithLabel("##HeightIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##HeightIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
                     emit(UIEventType::MaterialPropertyChanged, "material_height_intensity", value);
                 }
             }
@@ -184,7 +181,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasEmissiveMap())
             {
                 float& value = material->getEmissiveIntensity();
-                if (EditorHelper::renderSliderFloatWithLabel("##EmissiveIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##EmissiveIntensity", value, value, 0.0f, 100.0f, 80.0f, "%.1f")) {
                     emit(UIEventType::MaterialPropertyChanged, "material_emissive_intensity", value);
                 }
             }
@@ -287,7 +284,7 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
     {
         // Remove table cell padding
         ImGui::TableSetupColumn("col1", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("col2", ImGuiTableColumnFlags_WidthFixed, 80);
+        ImGui::TableSetupColumn("col2", ImGuiTableColumnFlags_WidthFixed, 104);
 
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
 

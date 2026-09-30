@@ -23,7 +23,7 @@
 
 std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; // Define the static member
 engine::IconAtlas engine::EditorHelper::m_iconAtlas; // Define the static member
-
+const float engine::EditorHelper::ROW_HEIGHT = 12.0f;
 
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
 {
@@ -40,8 +40,11 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
         ImGui::TableSetupColumn("Controls", ImGuiTableColumnFlags_WidthStretch);
         properties.forEach([&](const std::string& key, EditorProperty& property)
             {
-                ImGui::TableNextRow();
+                //ImGui::TableNextRow();
+                ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
                 ImGui::TableSetColumnIndex(0);
+
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // X, Y padding
 
                 if (property.type & label)
                 {
@@ -67,7 +70,14 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
  
                     if (float* pValue = std::get_if<float>(&property.value))
                     {
-                        if (property.type & readonly) {
+                        if (property.type & slider) {
+                            if (ImGui::SliderFloat(std::format("##{}{}{}", componentName, componentType, key).c_str(), pValue, 0.0f, 10.0f, "%.1f", ImGuiSliderFlags_NoInput))
+                            {
+                                // float value changed
+                                component->setProperty(key, *pValue);
+                            }
+                        }
+                        else if (property.type & readonly) {
                             ImGui::Text("%.2f%s", *pValue, !property.suffix.empty() ? std::format(" {}", property.suffix).c_str() : "");
                         }
                         else {
@@ -240,6 +250,8 @@ void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> co
                         }
                     }
                 }
+
+				ImGui::PopStyleVar(); // Pop FramePadding
         });
         ImGui::EndTable();
     }
@@ -542,10 +554,7 @@ void engine::EditorHelper::renderStringVectorButtonListTable(const std::string& 
     }
 }
 
-void engine::EditorHelper::renderStringVectorComboboxTable(
-    const std::string& key,
-    const std::vector<std::string>& items,
-    const EditorProperty& property)
+void engine::EditorHelper::renderStringVectorComboboxTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property)
 {
     // One selected index per combobox key
     static std::unordered_map<std::string, int> selectedIndex;

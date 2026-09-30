@@ -24,14 +24,14 @@ namespace engine
 				{"animation_duration", EditorProperty { "Duration", getCurrentAnimation()->getDurationInSeconds(), readonly, 0.0f, 0.0f, 0.0f, "", "sec" }},
 				{"animation_frames", EditorProperty { "Length", getCurrentAnimation()->getFramesCount(), readonly, 0.0f, 0.0f, 0.0f, "", "frames" }},
 				{"animation_fps", EditorProperty { "FPS", getCurrentAnimation()->getFPS(), readonly }},
-				{"animation_speed", EditorProperty { "Speed", getCurrentAnimation()->getSpeedFactor(), editable, 0.0f, 100.0f, 1.0f, "%.0f"}},
+				{"animation_speed", EditorProperty { "Speed", getCurrentAnimation()->getSpeedFactor(), editable | slider, 0.0f, 100.0f, 1.0f, "%.0f"}},
 				{"label_animations", EditorProperty { "Animations", 0, label }},
 				{"animations", EditorProperty { "*", getAnimationsStringList(), noheader | readonly, 0.0f, 0.0f, 0.0f, "", "", [this](unsigned short index) { this->playAnimationAtIndex(index); }}}
 			};
 		}
 		std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
 			return {
-			{ "animation_speed", [this](EditorPropertyValue value) {  getCurrentAnimation()->getSpeedFactor() = *(std::get_if<float>(&value)); } },
+				{ "animation_speed", [this](EditorPropertyValue value) {  getCurrentAnimation()->setSpeedFactor(*(std::get_if<float>(&value))); } },
 			};
 		}
 
@@ -42,6 +42,8 @@ namespace engine
 		void init(Transform& transform) override;
 		void update(float dt, Transform& transform) override;
 		void draw(Shader& shader, Transform& localTransform) override;
+
+		void reSetup() override;
 
 		void playAnimation(std::shared_ptr<Animation> pAnimation) override;
 		void playAnimationAtIndex(unsigned short index) override;

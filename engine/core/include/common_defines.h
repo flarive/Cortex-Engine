@@ -41,6 +41,7 @@ namespace engine
 		label = 1 << 2, // 4
 		noheader = 1 << 3, // 8
 		combobox = 1 << 4, // 16
+		slider = 1 << 5, // 32
 	};
 
 	struct EditorProperty

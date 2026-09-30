@@ -57,7 +57,7 @@ namespace engine
 
 		void setBoneCount(unsigned int boneCount) { m_boneCount = boneCount; }
 
-		void reSetup();
+		virtual void reSetup() = 0;
 
 
 	protected:

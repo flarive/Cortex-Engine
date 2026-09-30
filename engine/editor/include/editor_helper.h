@@ -118,6 +118,8 @@ namespace engine
 		static void drawTextRightAlign(const char* txt, const ImVec4& textColor);
 
 	private:
+		static const float ROW_HEIGHT;
+
 		static std::unordered_map<std::string, bool> m_iconToggleStates;
 
 		static engine::IconAtlas m_iconAtlas;

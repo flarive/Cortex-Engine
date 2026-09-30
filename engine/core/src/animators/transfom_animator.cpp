@@ -25,14 +25,21 @@ void engine::TransformAnimator::update(float dt, Transform& transform)
 
 
 	// build a hash of this instance
-	//size_t hash = std::hash<void*>{}(this);
 	std::string thisInstanceHash = std::to_string(reinterpret_cast<uintptr_t>(this));
 
 
 	if (m_isPlaying && m_currentTransformAnimation)
 	{
 		auto& animTransform = m_currentTransformAnimation->getAnimTransform();
-		bool finished = animTransform.update(dt, m_animatedResult, thisInstanceHash);
+		//bool finished = animTransform.update(dt, m_animatedResult, thisInstanceHash);
+
+		float scaledDt = dt * m_currentTransformAnimation->getSpeedFactor();
+
+		bool finished = animTransform.update(
+			scaledDt,
+			m_animatedResult,
+			thisInstanceHash
+		);
 
 		transform = m_animatedResult;
 
@@ -43,11 +50,6 @@ void engine::TransformAnimator::update(float dt, Transform& transform)
 
 void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)
 {
-	// Officially updates the entity's transform in the world
-	//if (m_isPlaying)
-	//{
-	//	localTransform = m_animatedResult;
-	//}
 }
 
 std::vector<std::string> engine::TransformAnimator::getAnimationsStringList()
@@ -120,6 +122,10 @@ void engine::TransformAnimator::playAnimationAtIndex(unsigned short index)
 
 		loop++;
 	}
+}
+
+void engine::TransformAnimator::reSetup()
+{
 }
 
 engine::TransformAnimator::~TransformAnimator()

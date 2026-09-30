@@ -8,12 +8,18 @@ engine::AnimatorComponent::AnimatorComponent(std::shared_ptr<Animator> animator)
 	: m_animator(animator)
 {
 	m_boundingVolume = std::make_unique<AABB>(generateBoundingVolume(animator));
+
+	// Initialize property setters based on primitive type
+	m_propertySetters = m_animator->getPropertySetters();
 }
 
 void engine::AnimatorComponent::init(Transform& transform)
 {
 	m_animator->init(transform);
 	m_animator->playAnimationAtIndex(0);
+
+	// Initialize property setters based on primitive type
+	m_propertySetters = m_animator->getPropertySetters();
 }
 
 void engine::AnimatorComponent::update(float deltaTime, Transform& transform)

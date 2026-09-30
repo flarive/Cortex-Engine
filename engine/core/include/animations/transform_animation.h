@@ -13,7 +13,7 @@ namespace engine
 	{
 	public:
 		TransformAnimation() = default;
-		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform);
+		TransformAnimation(const std::string& animationName, const AnimTransform& animationTransform, float speedFactor = 1.0f);
 		~TransformAnimation() override;
 
 		AnimationType getTypeID() const override

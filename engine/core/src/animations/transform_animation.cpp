@@ -2,7 +2,7 @@
 
 #include "../../include/managers/log_manager.h"
 
-engine::TransformAnimation::TransformAnimation(const std::string & animationName, const AnimTransform& animationTransform)
+engine::TransformAnimation::TransformAnimation(const std::string & animationName, const AnimTransform& animationTransform, float speedFactor)
 	: Animation(animationName, nullptr, 1.0f), m_animTransform(animationTransform)
 {
     logger.trace("TransformAnimation constructor called");

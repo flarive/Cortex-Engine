@@ -230,6 +230,10 @@ void engine::BonesAnimator::calculateBoneTransform(const AnimNodeData* node, glm
 	}
 }
 
+void engine::BonesAnimator::reSetup()
+{
+}
+
 engine::BonesAnimator::~BonesAnimator()
 {
 	logger.trace("BonesAnimator destructor called");

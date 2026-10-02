@@ -19,7 +19,7 @@ namespace engine
 
 
     protected:
-        void draw() override;
+        void draw(glm::mat4& projection, glm::mat4& view) override;
 
     private:
 

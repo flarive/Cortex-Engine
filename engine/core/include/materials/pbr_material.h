@@ -12,7 +12,7 @@ namespace engine
 	{
 	public:
 		PBRMaterial(const Color& baseColorFactor);
-		//PBRMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor);
+
 		PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath = ""
 			, const std::string& metallicTexPath = "", const std::string& roughnessTexPath = "", const std::string& aoTexPath = ""
 			, const std::string& heightTexPath = "", const std::string& emissiveTexPath = "", const std::string& opacityTexPath = "");

@@ -11,6 +11,7 @@ namespace engine
     {
     public:
         SettingsWindow() : ImGuiElement(Category::Window, "Settings") {}
+		~SettingsWindow() = default;
 
 		void init() override;
 
@@ -44,7 +45,7 @@ namespace engine
 
 		ubyte sceneSetting_framebufferMsaaSamples{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
 
-        void draw() override
+        void draw(glm::mat4& projection, glm::mat4& view) override
         {
             renderTabSettings();
         }

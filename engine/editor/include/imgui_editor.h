@@ -49,9 +49,8 @@ namespace engine
 		
 		
 
-		void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
-
-		void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);
+		//void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
+		//void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);
 
 		void renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo);
 

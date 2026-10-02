@@ -10,9 +10,10 @@ namespace engine
         DialogBox(const std::string& title)
             : ImGuiElement(Category::Window, title)
         {}
+        ~DialogBox() = default;
 
     protected:
-        void draw() override
+        void draw(glm::mat4& projection, glm::mat4& view) override
         {
             ImGui::Text("This is a dialog box");
             if (ImGui::Button("Close"))

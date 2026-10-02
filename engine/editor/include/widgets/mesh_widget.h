@@ -17,7 +17,7 @@ namespace engine
         void setMeshes(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
     protected:
-        void draw() override;
+        void draw(glm::mat4& projection, glm::mat4& view) override;
 
     private:
 

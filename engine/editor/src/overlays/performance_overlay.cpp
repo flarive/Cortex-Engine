@@ -17,7 +17,7 @@ void engine::PerformanceOverlay::updatePerformanceCounters(const PerformanceCoun
     m_counters = counters;
 }
     
-void engine::PerformanceOverlay::draw()
+void engine::PerformanceOverlay::draw(glm::mat4& projection, glm::mat4& view)
 {
     // You probably want these values to come from your engine profiler.
     // For now, I keep them static placeholders.

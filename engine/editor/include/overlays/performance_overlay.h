@@ -14,6 +14,7 @@ namespace engine
     {
     public:
         PerformanceOverlay() : ImGuiElement(Category::Overlay, "PerformanceOverlay") {}
+        ~PerformanceOverlay() = default;
 
         void init() override;
         void updatePerformanceCounters(const PerformanceCounters& counters);
@@ -57,6 +58,6 @@ namespace engine
         static ImVec4 lerpColor(const ImVec4& a, const ImVec4& b, float t);
 
     protected:
-        void draw() override;
+        void draw(glm::mat4& projection, glm::mat4& view) override;
     };
 }

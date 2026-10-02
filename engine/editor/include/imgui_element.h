@@ -14,6 +14,8 @@
 
 #include "../../core/include/misc/event.h"
 
+#include <glm/glm.hpp>
+
 namespace engine
 {
     class ImGuiUIManager;
@@ -23,7 +25,8 @@ namespace engine
         DockSpace = 0,
         Window = 1,
         Widget = 2,
-        Overlay = 3
+        Overlay = 3,
+        FloatingWindow = 4
     };
 
     class ImGuiElement
@@ -40,13 +43,17 @@ namespace engine
 
 
         // Main entry point called by your UI manager
-        void render()
+        void render(glm::mat4& projection, glm::mat4& view)
         {
             if (!m_visible)
                 return;
 
+
+            //m_projection = projection;
+            //m_view = view;
+
             begin();
-            draw();
+            draw(projection, view);
             end();
         }
 
@@ -106,11 +113,15 @@ namespace engine
 
         ImGuiUIManager* m_manager{};
 
+
+        //glm::mat4 m_projection{};
+        //glm::mat4 m_view{};
+
         void emit(UIEventType type, const std::string& param, std::any payload);
 
         // Derived classes override these
         virtual void begin();
-        virtual void draw() = 0;
+        virtual void draw(glm::mat4& projection, glm::mat4& view) = 0;
         virtual void end();
     };
 }

@@ -22,6 +22,7 @@ namespace engine
     {
     public:
         PropertiesWindow() : ImGuiElement(Category::Window, "Properties") {}
+        ~PropertiesWindow() = default;
 
         void init() override;
 
@@ -33,16 +34,16 @@ namespace engine
         SkeletonWidget m_skeletonWidget{};
         MaterialWidget m_materialWidget{};
 
-        void renderPropertiesWidget();
-        void displayEntityDetails(const std::shared_ptr<Entity>& entity);
+        void renderPropertiesWidget(glm::mat4& projection, glm::mat4& view);
+        void displayEntityDetails(const std::shared_ptr<Entity>& entity, glm::mat4& projection, glm::mat4& view);
 
-        void renderComponents(const std::shared_ptr<Entity>& entity);
+        void renderComponents(const std::shared_ptr<Entity>& entity, glm::mat4& projection, glm::mat4& view);
 
         void renderTransformComponent(const std::shared_ptr<Entity>& entity);
         void renderLightComponent(std::shared_ptr<LightComponent>& component);
         void renderCameraComponent(std::shared_ptr<CameraComponent>& component);
-        void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component);
-        void renderModelComponent(std::shared_ptr<ModelComponent>& component);
+        void renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, glm::mat4& projection, glm::mat4& view);
+        void renderModelComponent(std::shared_ptr<ModelComponent>& component, glm::mat4& projection, glm::mat4& view);
         void renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component);
         void renderParticleSystemComponent(std::shared_ptr<ParticleSystemComponent>& component);
         void renderTerrainComponent(std::shared_ptr<TerrainComponent>& component);
@@ -50,9 +51,9 @@ namespace engine
         void updateTransformComponent(std::shared_ptr<TransformComponent>& transformComponent, const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
     protected:
-        void draw() override
+        void draw(glm::mat4& projection, glm::mat4& view) override
         {
-            renderPropertiesWidget();
+            renderPropertiesWidget(projection, view);
         }
     };
 }

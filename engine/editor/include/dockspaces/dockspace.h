@@ -10,10 +10,11 @@ namespace engine
     {
     public:
         DockSpaceElement() : ImGuiElement(Category::DockSpace, "DockSpace") {}
+        ~DockSpaceElement() = default;
 
     protected:
         void begin() override;
-        void draw() override;
+        void draw(glm::mat4& projection, glm::mat4& view) override;
         void end() override;
     };
 }

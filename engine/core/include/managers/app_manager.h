@@ -2,6 +2,7 @@
 
 #include "../app/cmdline_settings.h"
 
+#include <string>
 #include <memory>
 
 namespace engine
@@ -15,19 +16,29 @@ namespace engine
         AppManager() = default;
         ~AppManager();
 
+        CmdLineSettings buildAppSettings(int argc, char* argv[]);
+
 
         /// <summary>
         /// Create a new app
         /// </summary>
-        template <typename T, typename... Args>
-        std::shared_ptr<T> createApp(Args&&... args)
+        //template <typename T, typename... Args>
+        //std::shared_ptr<T> createApp(Args&&... args)
+        //{
+        //    static_assert(std::is_base_of_v<App, T>);
+        //    m_app = std::make_shared<T>(std::forward<Args>(args)...);
+        //    return std::static_pointer_cast<T>(m_app); // Explicitly cast to std::shared_ptr<T>
+        //}
+
+        template <typename T>
+        std::shared_ptr<T> createApp(const std::string& appName, const CmdLineSettings& cmdlineSettings)
         {
             static_assert(std::is_base_of_v<App, T>);
-            m_app = std::make_shared<T>(std::forward<Args>(args)...);
+            m_app = std::make_shared<T>(appName, cmdlineSettings.width, cmdlineSettings.height, cmdlineSettings.fullscreen);
             return std::static_pointer_cast<T>(m_app); // Explicitly cast to std::shared_ptr<T>
         }
 
-        CmdLineSettings buildAppSettings(int argc, char* argv[]);
+        
         
 
 

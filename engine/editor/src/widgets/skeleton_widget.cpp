@@ -22,7 +22,7 @@ void engine::SkeletonWidget::setSkeleton(std::shared_ptr<engine::Skeleton> skele
     m_skeleton = skeleton;
 }
 
-void engine::SkeletonWidget::draw()
+void engine::SkeletonWidget::draw(glm::mat4& projection, glm::mat4& view)
 {
     ImGui::PushFont(ImGui::Spectrum::fontSmall2);
 

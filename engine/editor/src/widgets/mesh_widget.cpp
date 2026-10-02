@@ -28,7 +28,7 @@ void engine::MeshWidget::setMeshes(const std::vector<std::shared_ptr<Mesh>>& mes
     }
 }
 
-void engine::MeshWidget::draw()
+void engine::MeshWidget::draw(glm::mat4& projection, glm::mat4& view)
 {
     const std::string header = std::format("Meshes ({})", m_meshes.size());
 

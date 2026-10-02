@@ -20,7 +20,7 @@ void engine::PropertiesWindow::init()
     m_skeletonWidget.init();
 }
 
-void engine::PropertiesWindow::renderPropertiesWidget()
+void engine::PropertiesWindow::renderPropertiesWidget(glm::mat4& projection, glm::mat4& view)
 {
     if (auto entity = m_selectedEntity.lock())   // lock weak_ptr
     {
@@ -28,13 +28,13 @@ void engine::PropertiesWindow::renderPropertiesWidget()
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10.0f, 10.0f)); // 10 pixels padding on x and y
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
         ImGui::BeginChild("EntityPropertyRegion", ImVec2(0, 0), true, ImGuiWindowFlags_None);
-        displayEntityDetails(entity);
+        displayEntityDetails(entity, projection, view);
         ImGui::EndChild();
         ImGui::PopStyleVar(3); // Restore default
     }
 }
 
-void engine::PropertiesWindow::displayEntityDetails(const std::shared_ptr<Entity>& entity)
+void engine::PropertiesWindow::displayEntityDetails(const std::shared_ptr<Entity>& entity, glm::mat4& projection, glm::mat4& view)
 {
     if (entity)
     {
@@ -63,11 +63,11 @@ void engine::PropertiesWindow::displayEntityDetails(const std::shared_ptr<Entity
 
         ImGui::EndGroup();
 
-        renderComponents(entity);
+        renderComponents(entity, projection, view);
     }
 }
 
-void engine::PropertiesWindow::renderComponents(const std::shared_ptr<Entity>& entity)
+void engine::PropertiesWindow::renderComponents(const std::shared_ptr<Entity>& entity, glm::mat4& projection, glm::mat4& view)
 {
     std::shared_ptr<TransformComponent> transformComponent{};
 
@@ -96,13 +96,13 @@ void engine::PropertiesWindow::renderComponents(const std::shared_ptr<Entity>& e
         {
             // model component
             auto modelComponent = dynamic_pointer_cast<ModelComponent>(component);
-            if (modelComponent) renderModelComponent(modelComponent);
+            if (modelComponent) renderModelComponent(modelComponent, projection, view);
         }
         else if (typeID == ComponentType::primitive)
         {
             // primitive component
             auto primitiveComponent = dynamic_pointer_cast<PrimitiveComponent>(component);
-            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent);
+            if (primitiveComponent) renderPrimitiveComponent(primitiveComponent, projection, view);
         }
         else if (typeID == ComponentType::animator)
         {
@@ -409,7 +409,7 @@ void engine::PropertiesWindow::renderCameraComponent(std::shared_ptr<CameraCompo
     }
 }
 
-void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component)
+void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<PrimitiveComponent>& component, glm::mat4& projection, glm::mat4& view)
 {
     auto primitive = component->getPrimitive();
     if (!primitive)
@@ -433,10 +433,10 @@ void engine::PropertiesWindow::renderPrimitiveComponent(std::shared_ptr<Primitiv
     // material section
     std::vector<std::shared_ptr<Material>> materials = { primitive->getMaterial() };
     m_materialWidget.setMaterials(materials);
-    m_materialWidget.render();
+    m_materialWidget.render(projection, view);
 }
 
-void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelComponent>& component)
+void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelComponent>& component, glm::mat4& projection, glm::mat4& view)
 {
     auto model = component->getModel();
     if (!model)
@@ -459,14 +459,14 @@ void engine::PropertiesWindow::renderModelComponent(std::shared_ptr<ModelCompone
 
 	// meshes section
     m_meshWidget.setMeshes(model->getMeshes());
-    m_meshWidget.render();
+    m_meshWidget.render(projection, view);
 
     m_skeletonWidget.setSkeleton(model->getSkeleton());
-    m_skeletonWidget.render();
+    m_skeletonWidget.render(projection, view);
 
     // material section
     m_materialWidget.setMaterials(model->getMaterials());
-    m_materialWidget.render();
+    m_materialWidget.render(projection, view);
 }
 
 void engine::PropertiesWindow::renderAnimatorComponent(std::shared_ptr<AnimatorComponent>& component)

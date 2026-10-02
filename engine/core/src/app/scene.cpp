@@ -439,7 +439,7 @@ void engine::Scene::gameLoop()
     {
         m_perfOverlay.init();
         m_perfOverlay.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });
-        m_perfOverlay.render();
+        m_perfOverlay.render(projection, view);
     }
 
     // fps capping (begin)

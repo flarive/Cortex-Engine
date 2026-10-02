@@ -21,7 +21,7 @@ void engine::MaterialWidget::setMaterials(std::vector<std::shared_ptr<Material>>
     }
 }
 
-void engine::MaterialWidget::draw()
+void engine::MaterialWidget::draw(glm::mat4& projection, glm::mat4& view)
 {
     const std::string header = std::format("Materials ({})", m_materials.size());
 
@@ -158,9 +158,9 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
         {
             if (material->hasNormalMap())
             {
-                float& value = material->getNormalIntensity();
-                if (EditorHelper::renderSliderFloat("##NormalIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", value);
+                float& intensity = material->getNormalIntensity();
+                if (EditorHelper::renderSliderFloat("##NormalIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", intensity);
                 }
             }
             break;
@@ -169,9 +169,9 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
         {
             if (material->hasHeightMap())
             {
-                float& value = material->getHeightIntensity();
-                if (EditorHelper::renderSliderFloat("##HeightIntensity", value, value, 0.0f, 10.0f, 80.0f, "%.1f")) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_height_intensity", value);
+                float& intensity = material->getHeightIntensity();
+                if (EditorHelper::renderSliderFloat("##HeightIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_height_intensity", intensity);
                 }
             }
             break;
@@ -180,9 +180,9 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
         {
             if (material->hasEmissiveMap())
             {
-                float& value = material->getEmissiveIntensity();
-                if (EditorHelper::renderSliderFloat("##EmissiveIntensity", value, value, 0.0f, 100.0f, 80.0f, "%.1f")) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_emissive_intensity", value);
+                float& intensity = material->getEmissiveIntensity();
+                if (EditorHelper::renderSliderFloat("##EmissiveIntensity", intensity, intensity, 0.0f, 100.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_emissive_intensity", intensity);
                 }
             }
             break;

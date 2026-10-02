@@ -55,7 +55,7 @@ namespace engine
         }
 
         // Render all elements
-        void render()
+        void render(glm::mat4& projection, glm::mat4& view)
         {
             std::sort(m_elements.begin(), m_elements.end(),
                 [](const auto& a, const auto& b)
@@ -64,7 +64,7 @@ namespace engine
                 });
 
             for (auto& e : m_elements)
-                e->render();
+                e->render(projection, view);
         }
 
         // Toggle visibility by name

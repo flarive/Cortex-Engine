@@ -10,6 +10,7 @@ namespace engine
     {
     public:
         SceneWindow() : ImGuiElement(Category::Window, "Scene") {}
+        ~SceneWindow() = default;
         
         void setRootEntity(const std::shared_ptr<Entity>& entity)
         {
@@ -24,7 +25,7 @@ namespace engine
         void displayEntityHierarchy(const std::shared_ptr<Entity>& entity);
 
     protected:
-        void draw() override
+        void draw(glm::mat4& projection, glm::mat4& view) override
         {
             renderHierarchyWidget();
         }

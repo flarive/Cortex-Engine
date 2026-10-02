@@ -27,7 +27,7 @@ void engine::DockSpaceElement::begin()
 	ImGui::PopStyleVar(3);
 }
 
-void engine::DockSpaceElement::draw()
+void engine::DockSpaceElement::draw(glm::mat4& projection, glm::mat4& view)
 {
 	ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
 

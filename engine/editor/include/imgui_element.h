@@ -114,8 +114,7 @@ namespace engine
         ImGuiUIManager* m_manager{};
 
 
-        //glm::mat4 m_projection{};
-        //glm::mat4 m_view{};
+
 
         void emit(UIEventType type, const std::string& param, std::any payload);
 

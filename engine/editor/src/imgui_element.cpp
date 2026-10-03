@@ -55,8 +55,6 @@ void engine::ImGuiElement::begin()
         break;
 
     case Category::FloatingWindow:
-        //ImGuizmo::BeginFrame();
-        
         ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
 
         // Render the Editor window (no-decoration, for gizmo)
@@ -67,7 +65,7 @@ void engine::ImGuiElement::begin()
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
 
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
 
         ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);

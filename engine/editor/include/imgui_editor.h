@@ -31,7 +31,7 @@ namespace engine
 
 		void initEditor();
 
-		void renderEditor(bool show, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
+		void renderEditor(bool show, glm::mat4& projection, glm::mat4& view);
 
 		// Let parent register a callback
 		void setOnSelectionChanged(std::function<void(std::shared_ptr<Entity>)> callback) {
@@ -46,16 +46,7 @@ namespace engine
 
 		void initRenderGuizmo(const std::shared_ptr<Camera> camera);
 
-		
-		
-
-		//void renderGuizmo(const ImGuiID& dockspace_id, glm::mat4& projection, glm::mat4& view, const bool displayObjectTransformGuizmo);
-		//void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);
-
 		void renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo);
-
-
-		
 
 
 	private:
@@ -90,10 +81,6 @@ namespace engine
 		const float camYAngle{ 165.f / 180.f * 3.14159f };
 		const float camXAngle{ 32.f / 180.f * 3.14159f };
 		float camDistance{};
-		int gizmoCount{ 1 };
-
-		bool firstFrame{ true };
-		int lastUsing{};
 
 
 		ImGuiUIManager m_ui;

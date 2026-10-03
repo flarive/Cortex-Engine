@@ -45,8 +45,6 @@ void engine::FloatingToolbarWindow::renderGuizmo(glm::mat4& projection, glm::mat
     if (!m_guizmoCamera)
         return;
 
-    //ImGuiID dockspace_id = ImGui::GetID("MyDockspace");
-
     // Convert glm::mat4 to const float*
     const float* projectionPtr = glm::value_ptr(projection);
     const float* viewPtr = glm::value_ptr(view);
@@ -62,51 +60,26 @@ void engine::FloatingToolbarWindow::renderGuizmo(glm::mat4& projection, glm::mat
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
 
-    //ImGui::SetNextWindowPos(ImVec2(500, 200), ImGuiCond_Always);
-
     ImGuizmo::BeginFrame();
+    ImGuizmo::SetOrthographic(!m_guizmoCamera->getIsPerspective());
 
-    /*if (displayObjectTransformGuizmo)
-    {*/
-        ImGuizmo::SetOrthographic(!m_guizmoCamera->getIsPerspective());
 
-        //// Render the Editor window (no-decoration, for gizmo)
-        //ImGui::SetNextWindowDockID(dockspace_id, ImGuiCond_FirstUseEver);
+    if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
+    {
+        glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
+        float* objectMatrixPtr = glm::value_ptr(objectMatrix);
 
-        // Remove tab from dock panel
-        //ImGuiWindowClass window_class;
-        //window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
-        //ImGui::SetNextWindowClass(&window_class);
-
-        //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        //ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
-
-        //ImGui::Begin("FloatingToolbar", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-
-        //
-
-        if (m_selectedEntity && m_selectedEntity->name != EntityManager::ROOT_ENTITY_NAME)
+        for (int matId = 0; matId < gizmoCount; matId++)
         {
-            glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
-            float* objectMatrixPtr = glm::value_ptr(objectMatrix);
+            ImGuizmo::SetID(matId);
 
-            for (int matId = 0; matId < gizmoCount; matId++)
+            editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity);
+            if (ImGuizmo::IsUsing())
             {
-                ImGuizmo::SetID(matId);
-
-                editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity);
-                if (ImGuizmo::IsUsing())
-                {
-                    lastUsing = matId;
-                }
+                lastUsing = matId;
             }
         }
-
-        //ImGui::End();
-
-        //ImGui::PopStyleVar(1);
-        //ImGui::PopStyleColor(1);
-    //}
+    }
 }
 
 void engine::FloatingToolbarWindow::editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity)

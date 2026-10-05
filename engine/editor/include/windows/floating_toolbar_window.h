@@ -22,18 +22,11 @@ namespace engine
         void setSelectedEntity(std::shared_ptr<Entity> selectedEntity);
 
     private:
-        
-        float camDistance{};
-        int gizmoCount{ 1 };
-
-        
-        int lastUsing{};
-
-
         std::shared_ptr<Entity> m_selectedEntity{};
         std::shared_ptr<Camera> m_guizmoCamera{};
 
-
+        int m_gizmoCount{ 1 };
+        int m_lastUsing{};
 
         void renderGuizmo(glm::mat4& projection, glm::mat4& view);
         void editTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition, std::shared_ptr<Entity> entity);

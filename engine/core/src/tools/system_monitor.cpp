@@ -10,6 +10,43 @@
 #include <cstring>
 
 
+engine::SystemMonitor::SystemMonitor()
+{
+#if defined(_WIN32)
+    initVendor();
+    initWindowsCPU();
+
+    m_PDHCounters = new PDHCounters();
+#else
+    // Linux
+    readProcStat(prevIdle, prevTotal);
+#endif
+}
+
+void engine::SystemMonitor::update()
+{
+#if defined(_WIN32)
+    updateWindows();
+#else
+    updateLinux();
+#endif
+}
+
+void engine::SystemMonitor::updateVendor()
+{
+    if (m_isNvidia)
+    {
+        getNvidiaGPUInfo();
+    }
+    else if (m_isAmd)
+    {
+        // Implement AMD GPU monitoring here
+    }
+    else if (m_isIntel)
+    {
+        // Implement Intel GPU monitoring here
+    }
+}
 
 std::string engine::SystemMonitor::GetGPUVendor() {
     return reinterpret_cast<const char*>(glGetString(GL_VENDOR));
@@ -95,8 +132,7 @@ double engine::SystemMonitor::getCPUTotalUsedPDH()
     if (elapsed < 100)
         return lastCPU;
 
-    if (m_PDHCounters == nullptr)
-        m_PDHCounters = new PDHCounters();
+    prevTime = now;
 
     double cpu = m_PDHCounters->getTotalUsedCPUQueryValue();
 
@@ -126,8 +162,7 @@ double engine::SystemMonitor::getCPUProcessUsedPDH()
     if (elapsed < 100)
         return lastCPU;
 
-    if (m_PDHCounters == nullptr)
-        m_PDHCounters = new PDHCounters();
+    prevTime = now;
 
     double cpu = m_PDHCounters->getProcessUsedCPUQueryValue();
 
@@ -204,3 +239,102 @@ void engine::SystemMonitor::getNvidiaGPUInfo()
     m_vendorTemperature = m_nvidiaMonitor.getTemperatureC();
     m_vendorPowerUsageWatts = m_nvidiaMonitor.getPowerUsageWatts();
 }
+
+uint64_t engine::SystemMonitor::fileTimeToUint64(const FILETIME& ft)
+{
+    return (static_cast<uint64_t>(ft.dwHighDateTime) << 32) |
+        static_cast<uint64_t>(ft.dwLowDateTime);
+}
+
+#if defined(_WIN32)
+
+void engine::SystemMonitor::initWindowsCPU()
+{
+    FILETIME idleTime, kernelTime, userTime;
+    if (GetSystemTimes(&idleTime, &kernelTime, &userTime))
+    {
+        uint64_t idle = fileTimeToUint64(idleTime);
+        uint64_t kernel = fileTimeToUint64(kernelTime);
+        uint64_t user = fileTimeToUint64(userTime);
+
+        prevIdle = idle;
+        prevTotal = idle + kernel + user;
+    }
+}
+
+void engine::SystemMonitor::updateWindows()
+{
+    updateVendor();
+
+    // using Windows PDH (closest to Task manager value)
+    m_cpuTotalUsedPercent = getCPUTotalUsedPDH();
+    m_cpuProcessPercent = getCPUProcessUsedPDH();
+
+
+    // RAM
+    MEMORYSTATUSEX mem{};
+    mem.dwLength = sizeof(mem);
+    GlobalMemoryStatusEx(&mem);
+
+    m_ramTotalBytes = mem.ullTotalPhys;
+    m_ramUsedBytes = mem.ullTotalPhys - mem.ullAvailPhys;
+}
+
+#else
+
+void engine::SystemMonitor::readProcStat(uint64_t& idle, uint64_t& total)
+{
+    FILE* file = fopen("/proc/stat", "r");
+    if (!file) return;
+
+    char cpu[5];
+    uint64_t user, nice, system, idle_t, iowait, irq, softirq, steal;
+
+    fscanf(file, "%s %lu %lu %lu %lu %lu %lu %lu %lu",
+        cpu, &user, &nice, &system, &idle_t, &iowait, &irq, &softirq, &steal);
+    fclose(file);
+
+    idle = idle_t + iowait;
+    total = user + nice + system + idle_t + iowait + irq + softirq + steal;
+}
+
+void engine::SystemMonitor::updateLinux()
+{
+    // CPU
+    uint64_t idle, total;
+    readProcStat(idle, total);
+
+    uint64_t idleDelta = idle - prevIdle;
+    uint64_t totalDelta = total - prevTotal;
+
+    prevIdle = idle;
+    prevTotal = total;
+
+    if (totalDelta > 0)
+        cpuPercent = (1.0 - (double(idleDelta) / double(totalDelta))) * 100.0;
+
+    // RAM
+    FILE* file = fopen("/proc/meminfo", "r");
+    if (!file) return;
+
+    char label[64];
+    uint64_t value;
+    char unit[8];
+
+    uint64_t memTotal = 0;
+    uint64_t memAvailable = 0;
+
+    while (fscanf(file, "%63s %lu %7s", label, &value, unit) != EOF)
+    {
+        if (strcmp(label, "MemTotal:") == 0)
+            memTotal = value * 1024;
+        else if (strcmp(label, "MemAvailable:") == 0)
+            memAvailable = value * 1024;
+    }
+    fclose(file);
+
+    ramTotalBytes = memTotal;
+    ramUsedBytes = memTotal - memAvailable;
+}
+
+#endif

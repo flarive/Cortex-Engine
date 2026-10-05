@@ -1,7 +1,5 @@
 #include "../../include/windows/floating_toolbar_window.h"
 
-
-
 // https://github.com/TheCherno/ImGuizmo
 #include "extensions/imGuizmo/ImGuizmo.h"
 
@@ -28,11 +26,9 @@ void engine::FloatingToolbarWindow::init()
         });
 }
 
-
 void engine::FloatingToolbarWindow::setCamera(std::shared_ptr<Camera> camera)
 {
     m_guizmoCamera = camera;
-    camDistance = camera->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
 }
 
 void engine::FloatingToolbarWindow::setSelectedEntity(std::shared_ptr<Entity> selectedEntity)
@@ -69,14 +65,14 @@ void engine::FloatingToolbarWindow::renderGuizmo(glm::mat4& projection, glm::mat
         glm::mat4& objectMatrix = m_selectedEntity->getWorldTransform();
         float* objectMatrixPtr = glm::value_ptr(objectMatrix);
 
-        for (int matId = 0; matId < gizmoCount; matId++)
+        for (int matId = 0; matId < m_gizmoCount; matId++)
         {
             ImGuizmo::SetID(matId);
 
-            editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), lastUsing == matId, m_selectedEntity);
+            editTransform(viewPtr, projectionPtr2, glm::value_ptr(objectMatrix[matId]), m_lastUsing == matId, m_selectedEntity);
             if (ImGuizmo::IsUsing())
             {
-                lastUsing = matId;
+                m_lastUsing = matId;
             }
         }
     }

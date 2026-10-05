@@ -618,6 +618,9 @@
     <ClCompile Include="core\src\tools\render_state.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\tools\pdh_counters.cpp">
+      <Filter>sources\core\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">

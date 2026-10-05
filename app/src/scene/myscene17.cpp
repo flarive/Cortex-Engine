@@ -8,7 +8,7 @@ using namespace engine;
 MyScene17::MyScene17(const string& _title, std::weak_ptr<App> _app) : Scene(_title, _app, SceneSettings
     {
         .method = RenderMethod::PBR,
-        .HDRSkyboxHide = false,
+        .HDRSkyboxHide = true,
         .HDRSkyboxFilePath = "textures/hdr/blue_photo_studio_2k.hdr",
         .HDRSkyboxBlurStrength = 0.0f,
         .enableShadows = true,
@@ -85,66 +85,6 @@ void MyScene17::init()
 
 
     // sphere models
-    auto sphere1 = make_shared<Sphere>();
-    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f, 0.7f, 0.3f, 1.0f),
-        "textures/pbr/ceramic/ClayCeramicGlossy_BaseColor.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Normal.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Metallic.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Roughness.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_AmbientOcclusion.jpg",
-        "textures/pbr/ceramic/ClayCeramicGlossy_Displacement.jpg");
-    sphere1->setup(matSphere1, UvMapping(1.0f));
-    auto trsSphere1 = Transform(vec3(0.0f, -0.35f, 0.0f), vec3(0.15f));
-    auto entitySphere1 = make_shared<Entity>("MySphere1");
-    entitySphere1->addComponent<TransformComponent>(trsSphere1);
-    entitySphere1->addComponent<PrimitiveComponent>(sphere1);
-    //getEntityManager().addChild(entitySphere1);
-
-
-
-
-    auto sphere3 = make_shared<Sphere>();
-    auto matSphere3 = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/white-marble/white-marble_albedo.png",
-        "textures/pbr/white-marble/white-marble_normal.png",
-        "textures/pbr/white-marble/white-marble_metallic.png",
-        "textures/pbr/white-marble/white-marble_roughness.png",
-        "textures/pbr/white-marble/white-marble_ao.png",
-        "textures/pbr/white-marble/white-marble_height.png");
-    sphere3->setup(matSphere3, UvMapping(2.0f));
-    auto trsSphere3 = Transform(vec3(0.3f, -0.35f, 0.0f), vec3(0.15f));
-    auto entitySphere3 = make_shared<Entity>("MySphere3");
-    entitySphere3->addComponent<TransformComponent>(trsSphere3);
-    entitySphere3->addComponent<PrimitiveComponent>(sphere3);
-    //getEntityManager().addChild(entitySphere3);
-
-
-
-    
-
-
-
-
-
-
-    auto sphere2 = make_shared<Sphere>();
-    auto matSphere2 = make_shared<PBRMaterial>(Color(0.1f),
-        "textures/pbr/porcelain/Porcelain_Color.png",
-        "textures/pbr/porcelain/Porcelain_Normal.png",
-        "textures/pbr/porcelain/Porcelain_Metallic.png",
-        "textures/pbr/porcelain/Porcelain_Roughness.png",
-        "textures/pbr/porcelain/Porcelain_AmbientOcclusion.png",
-        "textures/pbr/porcelain/Porcelain_Displace.png");
-    sphere2->setup(matSphere2, UvMapping(1.0f));
-    auto trsSphere2 = Transform(vec3(-0.3f, -0.35f, 0.0f), vec3(0.15f));
-    auto entitySphere2 = make_shared<Entity>("MySphere2");
-    entitySphere2->addComponent<TransformComponent>(trsSphere2);
-    entitySphere2->addComponent<PrimitiveComponent>(sphere2);
-    //getEntityManager().addChild(entitySphere2);
-
-
-
-
     auto sphere4 = make_shared<Sphere>();
     auto matSphere4 = make_shared<PBRMaterial>(Color(0.1f),
         "textures/pbr/frosted-glass/Glass_Frosted_001_basecolor.jpg",
@@ -209,13 +149,25 @@ void MyScene17::init()
 
     sphere6->setup(matSphere6, UvMapping(1.0f));
     auto trsSphere6 = Transform(vec3(0.0f, -0.35f, 1.6f), vec3(0.15f));
-    AnimTransform animSphere6{ trsSphere6, Transform(trsSphere6).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
-    auto trsSphereAnimation6 = make_shared<TransformAnimation>("animSphere6", animSphere6);
-    auto trsSphereAnimator6 = make_shared<TransformAnimator>(trsSphereAnimation6);
+
+
+    AnimTransform anim1{ trsSphere6, Transform(trsSphere6).addTranslationY(0.4f), AnimMode::Absolute, 3.0f };
+    auto trsAnimation1 = make_shared<TransformAnimation>("anim1", anim1);
+
+    AnimTransform anim2{ trsSphere6, Transform(trsSphere6).addTranslationY(-0.4f) , AnimMode::Absolute , 3.0f };
+    auto trsAnimation2 = make_shared<TransformAnimation>("anim2", anim2);
+
+
+    auto transformAnimations = std::vector<std::shared_ptr<TransformAnimation>>();
+    transformAnimations.push_back(trsAnimation1);
+    transformAnimations.push_back(trsAnimation2);
+
+    auto trsAnimator = make_shared<TransformAnimator>(transformAnimations);
+
     auto entitySphere6 = make_shared<Entity>("MySphere6");
     entitySphere6->addComponent<TransformComponent>(trsSphere6);
     entitySphere6->addComponent<PrimitiveComponent>(sphere6);
-    entitySphere6->addComponent<AnimatorComponent>(trsSphereAnimator6);
+    entitySphere6->addComponent<AnimatorComponent>(trsAnimator);
     getEntityManager().addChild(entitySphere6);
 
 
@@ -237,7 +189,7 @@ void MyScene17::init()
     matSphere6->setAttenuationDistance(5.0f);
 
     shared_ptr<Model> helmetModel = make_shared<Model>("models/helmet/DamagedHelmet.glTF", helmetCustomMat, false, false, true);
-    auto trsHelmet = Transform(vec3(0.5f, -0.2f, 0.0f), vec3(0.2f), vec3(0.0f, 180.0f, 0.0f));
+    auto trsHelmet = Transform(vec3(0.65f, -0.31f, 0.0f), vec3(0.15f), vec3(0.0f, 180.0f, 0.0f));
 
     AnimTransform animHelmet{ trsHelmet, Transform(trsHelmet).addRotationY(360.0f), AnimMode::Absolute, 15.0f, true };
     auto trsHelmetAnimation = make_shared<TransformAnimation>("animHelmet", animHelmet);

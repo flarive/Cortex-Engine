@@ -4,10 +4,6 @@
 
 #include <imgui_internal.h>
 
-
-//// https://github.com/TheCherno/ImGuizmo
-//#include "extensions/imGuizmo/ImGuizmo.h"
-
 engine::ImGuiElement::ImGuiElement(Category category, const std::string& name)
     : m_category(category), m_name(name), m_visible(true), m_manager(nullptr)
 {

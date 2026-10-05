@@ -199,6 +199,7 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
+    <ClCompile Include="core\src\tools\pdh_counters.cpp" />
     <ClCompile Include="core\src\tools\render_state.cpp" />
     <ClCompile Include="editor\src\widgets\mesh_widget.cpp" />
     <ClCompile Include="editor\src\widgets\skeleton_widget.cpp" />

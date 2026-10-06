@@ -35,9 +35,16 @@ struct Material {
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
+    
     float normalMapIntensity;
-    float emissiveIntensity;
+    float roughnessMapIntensity;
+    float metallicMapIntensity;
+    float ambientOcclusionMapIntensity;
+    float emissiveMapIntensity;
+    
     float parallaxMapIntensity;
+
+    
 
     vec3 ambient_color; // environment tint
     float ambient_intensity;
@@ -874,8 +881,12 @@ void main()
         roughness = material.has_texture_roughness_map ? texture(material.texture_roughness, texCoords).r : 0.5;
         metallic = material.has_texture_metalness_map ? texture(material.texture_metalness, texCoords).r : 0.0;
     }
-    
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveIntensity : vec3(0.0);
+
+    roughness = clamp(roughness * material.roughnessMapIntensity, 0.04, 1.0); // roughness should never be 0
+    metallic = clamp(metallic * material.metallicMapIntensity, 0.0, 1.0);
+    ao = mix(1.0, ao, material.ambientOcclusionMapIntensity);
+
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveMapIntensity : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : material.opacity);
 

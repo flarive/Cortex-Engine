@@ -57,13 +57,17 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
             }
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-            shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+            shader.setFloat("material.emissiveMapIntensity", m_material->getEmissiveIntensity());
             
             if (type == ShaderType::PBR)
             {
                 shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
                 shader.setVec3("material.ambient_color", m_material->getAmbientColor());
                 shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+
+                shader.setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
+                shader.setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
+                shader.setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
 
                 shader.setFloat("material.IOR", m_material->getIOR());
                 shader.setFloat("material.transmission", m_material->getTransmission());

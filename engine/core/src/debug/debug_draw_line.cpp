@@ -1,6 +1,7 @@
 #include "../../include/debug/debug_draw_line.h"
 
-#include <glad/glad.h>
+#include "../../include/common_defines.h"
+
 #include <iostream>
 
 engine::Shader engine::DebugDraw::m_shader; // Define the static member

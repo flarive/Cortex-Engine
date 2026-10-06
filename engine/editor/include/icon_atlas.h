@@ -5,7 +5,8 @@
 #include <string>
 #include <stdexcept>
 
-#include <glad/glad.h>
+#include "../../core/include/common_defines.h"
+
 #include <imgui.h>
 
 namespace engine {

@@ -165,6 +165,39 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             }
             break;
         }
+        case TextureSlot::Roughness:
+        {
+            if (material->hasRoughnessMap())
+            {
+                float& intensity = material->getRougnessIntensity();
+                if (EditorHelper::renderSliderFloat("##RoughnesslIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_roughness_intensity", intensity);
+                }
+            }
+            break;
+        }
+        case TextureSlot::Metallic:
+        {
+            if (material->hasMetallicMap())
+            {
+                float& intensity = material->getMetallicIntensity();
+                if (EditorHelper::renderSliderFloat("##MetallicIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_metallic_intensity", intensity);
+                }
+            }
+            break;
+        }
+        case TextureSlot::AO:
+        {
+            if (material->hasAoMap())
+            {
+                float& intensity = material->getAmbientOcclusionIntensity();
+                if (EditorHelper::renderSliderFloat("##AmbientOcclusionIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_ao_intensity", intensity);
+                }
+            }
+            break;
+        }
         case TextureSlot::Height:
         {
             if (material->hasHeightMap())

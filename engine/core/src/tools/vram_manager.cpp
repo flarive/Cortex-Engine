@@ -1,6 +1,6 @@
 #include "../../include/tools/vram_manager.h"
 
-#include <glad/glad.h>
+#include "../../include/common_defines.h"
 
 // for LINUX
 #include <fstream>

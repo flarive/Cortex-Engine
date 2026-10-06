@@ -43,6 +43,10 @@ void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
         shader.setVec3("material.ambient_color", m_material->getAmbientColor());
         shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
 
+        shader.setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
+        shader.setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
+        shader.setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
+
         shader.setFloat("material.IOR", m_material->getIOR());
         shader.setFloat("material.transmission", m_material->getTransmission());
         shader.setFloat("material.thickness", m_material->getThickness());
@@ -56,7 +60,7 @@ void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
 
 
     shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-    shader.setFloat("material.emissiveIntensity", m_material->getEmissiveIntensity());
+    shader.setFloat("material.emissiveMapIntensity", m_material->getEmissiveIntensity());
 
     shader.setBool("material.canCastShadows", canCastShadows());
     shader.setBool("material.canReceiveShadows", canReceiveShadows());

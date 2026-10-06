@@ -145,9 +145,16 @@ namespace engine
         // normal mapping
         float& getNormalIntensity() { return m_normalIntensity; }
         void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
+
         
+        float& getRougnessIntensity() { return m_roughnessIntensity; }
+        void setRougnessIntensity(float intensity) { m_roughnessIntensity = intensity; }
+
+        float& getMetallicIntensity() { return m_metallicIntensity; }
+        void setMetallicIntensity(float intensity) { m_metallicIntensity = intensity; }
         
-        
+        float& getAmbientOcclusionIntensity() { return m_ambientOcclusionIntensity; }
+        void setAmbientOcclusionIntensity(float intensity) { m_ambientOcclusionIntensity = intensity; }
         
 
 
@@ -227,9 +234,14 @@ namespace engine
         // intensities
         float m_ambientIntensity{ 1.0f };
         float m_normalIntensity{ 1.0f };
-        float m_heightIntensity{};
+        float m_heightIntensity{ 1.0f };
         float m_emissiveIntensity{ 1.0f };
         float m_opacityIntensity{ 1.0f }; // fully opaque
+
+        float m_roughnessIntensity{ 1.0f };
+        float m_metallicIntensity{ 1.0f };
+        float m_ambientOcclusionIntensity{ 1.0f };
+
 
         bool m_alphaCutoffEnabled{ false };
 

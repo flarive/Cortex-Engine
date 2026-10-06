@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <glfw/glfw3.h> // Will drag system OpenGL headers
+#include "../common_defines.h"
 
 namespace engine
 {

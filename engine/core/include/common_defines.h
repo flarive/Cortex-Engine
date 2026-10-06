@@ -15,7 +15,8 @@
 #include <map>
 #include <functional>
 
-#define EDITOR_MODE true
+//Project Properties → C / C++ → Preprocessor → Preprocessor Definitions
+//#define EDITOR_MODE 1
 
 
 namespace engine

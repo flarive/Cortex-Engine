@@ -46,8 +46,8 @@ struct Material {
 
     
 
-    vec3 ambient_color; // environment tint
-    float ambient_intensity;
+    vec3 ambientColor; // environment tint
+    float ambientIntensity;
 
     vec3 baseColorFactor;
 
@@ -927,7 +927,7 @@ void main()
     vec2 brdf = texture(material.texture_brdfLUT, vec2(dotNV, roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y) * material.iblSpecularIntensity;
     vec3 transmissionIBL = transmissionColor * material.transmission * (1.0 - F);
-    vec3 ambient = (kD * diffuse + specular + transmissionIBL) * ao * material.ambient_color * material.ambient_intensity;
+    vec3 ambient = (kD * diffuse + specular + transmissionIBL) * ao * material.ambientColor * material.ambientIntensity;
 
 
     // lights

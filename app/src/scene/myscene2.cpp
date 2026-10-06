@@ -63,6 +63,13 @@ void MyScene2::init()
 
     // cushion model
     auto cushionModel = make_shared<Model>("models/cushion/cushion.obj");
+
+    if (std::shared_ptr<engine::Material> cushionMaterial = cushionModel->getMaterial())
+    {
+        cushionMaterial->setNormalIntensity(2.0f);
+        cushionMaterial->setSpecularIntensity(2.0f);
+    }
+
     auto trsCushion = Transform(vec3(0.0f, 0.25f, 0.0f), vec3(0.5f), vec3(0.0f, 45.0f, 0.0f));
     auto entityCushion = make_shared<Entity>("MyCushion");
     entityCushion->addComponent<TransformComponent>(trsCushion);

@@ -49,21 +49,12 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 
             handleOpacity(shader);
 
-            if (type == ShaderType::BlinnPhong)
-            {
-                shader.setFloat("material.shininess", m_material->getShininessIntensity());
-                shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-                shader.setVec3("material.specular_color", m_material->getSpecularColor());
-            }
-
-            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-            shader.setFloat("material.emissiveMapIntensity", m_material->getEmissiveIntensity());
             
             if (type == ShaderType::PBR)
             {
                 shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-                shader.setVec3("material.ambient_color", m_material->getAmbientColor());
-                shader.setFloat("material.ambient_intensity", m_material->getAmbientIntensity());
+                shader.setVec3("material.ambientColor", m_material->getAmbientColor());
+                shader.setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
 
                 shader.setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
                 shader.setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
@@ -75,7 +66,16 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
                 shader.setVec3("material.attenuationColor", m_material->getAttenuationColor());
                 shader.setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
             }
+            else if (type == ShaderType::BlinnPhong)
+            {
+                shader.setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
+                shader.setFloat("material.shininess", m_material->getShininessIntensity());
+                shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
+                shader.setVec3("material.specular_color", m_material->getSpecularColor());
+            }
 
+            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader.setFloat("material.emissiveMapIntensity", m_material->getEmissiveIntensity());
             shader.setFloat("material.opacity", m_material->getOpacityIntensity());
         }
     }

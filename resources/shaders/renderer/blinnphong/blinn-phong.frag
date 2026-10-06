@@ -28,6 +28,7 @@ struct Material {
     float shadowIntensity; // Adjust to make shadows darker
     float shadowMapsBias; // Offset to reduce shadow acne
     float shadowMapsBlur;
+    float specularMapIntensity;
     float normalMapIntensity;
     float parallaxMapIntensity;
     float emissiveMapIntensity;
@@ -1037,28 +1038,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     {
         ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
         diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
-        specular = light.specular * spec * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
-
-        // --- SPECULAR (single-channel + fallback) ---
-//        float specValue;
-//
-//        if (material.has_texture_specular_map)
-//        {
-//            // Use R channel of specular texture
-//            specValue = texture(material.texture_specular, texCoords).r;
-//        }
-//        else
-//        {
-//            // Fallback: grayscale diffuse
-//            float grayscale = dot(diffuse, vec3(0.299, 0.587, 0.114));
-//
-//            // Optional: clamp to dielectric F0 range (prevents plastic shine)
-//            //grayscale = clamp(grayscale, 0.02, 0.08);
-//
-//            specValue = grayscale;
-//        }
-//
-//        specular = light.specular * spec * vec3(specValue);
+        specular = light.specular * spec * material.specularMapIntensity * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
     }
     else
     {
@@ -1080,9 +1060,11 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
         float diffTS = max(dot(parallaxNormal, lightDirTS), 0.0);
         diffuse = light.diffuse * diffTS * color;
         // specular
+        vec3 specularColor = material.has_texture_specular_map ? texture(material.texture_specular, texCoords).rgb : material.specular_color;
         vec3 halfwayTS = normalize(lightDirTS + viewDirTS);
         float specTS = pow(max(dot(parallaxNormal, halfwayTS), 0.0), material.shininess);
-        specular = light.specular * specTS;
+        //specular = light.specular * specTS * material.specularMapIntensity;
+        specular = light.specular * specTS * specularColor * material.specularMapIntensity;
     }
 
     float intensity = light.intensity / INTENSITY_REDUCER_FACTOR;

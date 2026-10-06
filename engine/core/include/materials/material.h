@@ -142,6 +142,9 @@ namespace engine
         void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
 
 
+        float& getSpecularIntensity() { return m_specularIntensity; }
+        void setSpecularIntensity(float intensity) { m_specularIntensity = intensity; }
+
         // normal mapping
         float& getNormalIntensity() { return m_normalIntensity; }
         void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
@@ -238,6 +241,7 @@ namespace engine
         float m_emissiveIntensity{ 1.0f };
         float m_opacityIntensity{ 1.0f }; // fully opaque
 
+        // pbr only
         float m_roughnessIntensity{ 1.0f };
         float m_metallicIntensity{ 1.0f };
         float m_ambientOcclusionIntensity{ 1.0f };
@@ -252,6 +256,7 @@ namespace engine
         bool m_allTexturesLoaded{};
 
         // BlinnPhong only
+        float m_specularIntensity{ 1.0f };
         float m_shininess{};
 
         // PBR only

@@ -56,7 +56,7 @@ namespace engine
 
 		std::function<void(std::shared_ptr<Entity>)> m_onSelectionChanged; // << callback
 
-		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
+		std::function<void(const std::string&, SceneSetting)> m_onSceneSettingChanged; // << callback
 
 		
 

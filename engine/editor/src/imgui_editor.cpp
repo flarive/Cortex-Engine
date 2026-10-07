@@ -81,11 +81,11 @@ void engine::ImGuiEditor::renderEditor(bool show, glm::mat4& projection, glm::ma
 
 void engine::ImGuiEditor::initRenderGuizmo(const std::shared_ptr<Camera> camera)
 {
+    assert(camera != nullptr);
+
     m_guizmoCamera = camera;
     camDistance = camera->getDistanceToTarget(glm::vec3(0.0f, -0.35f, 0.0f));
 }
-
-#endif
 
 void engine::ImGuiEditor::renderViewGuizmo(glm::mat4& projection, glm::mat4& view, bool displayViewTransformGuizmo)
 {
@@ -181,5 +181,4 @@ void engine::ImGuiEditor::onEditorUIEvent(const UIEvent& evt)
 
     // You can handle more event types here
 }
-
-
+#endif

@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
 {
     // Init the app
     AppManager appManager;
-    CmdLineSettings settings = appManager.buildAppSettings(argc, argv);
-    //CmdLineSettings settings{ 320, 240, false };
+    //CmdLineSettings settings = appManager.buildAppSettings(argc, argv);
+    CmdLineSettings settings{ 320, 240, false };
     auto app = appManager.createApp<MyApp>("MyApp", settings);
     if (!app)
         return EXIT_FAILURE;

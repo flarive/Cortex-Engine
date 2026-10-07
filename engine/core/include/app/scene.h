@@ -10,8 +10,14 @@
 
 #include "../misc/noncopyable.h"
 #include "../managers/filesystem_manager.h"
+
+#if EDITOR_MODE
 #include "../../../editor/include/imgui_editor.h"
 #include "../../../editor/include/overlays/performance_overlay.h"
+#endif
+
+
+
 
 #include "../managers/entity_manager.h"
 #include "../managers/audio_manager.h"
@@ -41,6 +47,7 @@ namespace engine
 
         #if EDITOR_MODE
         ImGuiEditor m_editor{};
+        PerformanceOverlay m_perfOverlay{};
         #endif
 
 
@@ -49,7 +56,7 @@ namespace engine
 
 
         
-        PerformanceOverlay m_perfOverlay{};
+        
         
 
         void before_init_internal();
@@ -151,7 +158,7 @@ namespace engine
 
         std::shared_ptr<engine::Camera> getActiveCamera() const
         {
-            assert(m_activeCameraIndex >= cameras.size() == 0 && "Bad camera index !");
+            assert(m_activeCameraIndex < cameras.size() && "Bad camera index !");
             
             return cameras[m_activeCameraIndex];
         }
@@ -230,9 +237,10 @@ namespace engine
 
         #if EDITOR_MODE
         void listenForEditorChanges();
-
         void setEditorMode(glm::mat4& projection, glm::mat4& view);
-        
+        #endif
+
+       
         void computeLightCount();
 
         //void performRayCasting(double xpos, double ypos);
@@ -243,6 +251,6 @@ namespace engine
         //    const engine::AABB* aabb,
         //    float& outDistance);
 
-        #endif
+        
     };
 }

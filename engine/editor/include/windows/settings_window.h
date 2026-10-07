@@ -16,7 +16,7 @@ namespace engine
 		void init() override;
 
     private:
-		std::function<void(std::string, SceneSetting)> m_onSceneSettingChanged; // << callback
+		std::function<void(const std::string&, SceneSetting)> m_onSceneSettingChanged; // << callback
 
 		void renderTabSettings();
 

@@ -170,15 +170,16 @@ void engine::Scene::initialize()
     // listen for editor selected entity changed
     #if EDITOR_MODE
     listenForEditorChanges();
+    
+    EditorHelper::setIconToggleState("translate", true);
+    EditorHelper::setIconToggleState("rotate", false);
+    EditorHelper::setIconToggleState("scale", false);
     #endif
+
 
     // mouse picking for editor mode
     //if (show_demo_window)
         //glfwSetMouseButtonCallback(app->window, mouseButtonCallback);
-
-    EditorHelper::setIconToggleState("translate", true);
-    EditorHelper::setIconToggleState("rotate", false);
-    EditorHelper::setIconToggleState("scale", false);
 
 
     after_init();
@@ -422,7 +423,9 @@ void engine::Scene::gameLoop()
     framerate = io.Framerate;
 
     // Switch to Editor mode if needed
+    #if EDITOR_MODE
     setEditorMode(projection, view);
+    #endif
     
 
     // Dear ImGui demo windows
@@ -434,13 +437,14 @@ void engine::Scene::gameLoop()
     std::chrono::duration<double, std::milli> uiDuration1 = uiEnd1 - uiStart1;
     uiTime = uiDuration1.count();
 
-
+    #if EDITOR_MODE
     if (show_perf_overlay && !is_editor_mode)
     {
         m_perfOverlay.init();
         m_perfOverlay.updatePerformanceCounters({ framerate, deltaTime, cpuTime, gpuTime, uiTime });
         m_perfOverlay.render(projection, view);
     }
+    #endif
 
     // fps capping (begin)
     std::chrono::steady_clock::time_point start_time{};
@@ -544,12 +548,12 @@ void engine::Scene::gameLoop()
     cpuTime = cpuFrameDuration.count();
 }
 
+#if EDITOR_MODE
 void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
 {
     m_displayObjectTransformGuizmo = is_editor_mode;
     m_displayViewTransformGuizmo = !is_editor_mode;
 
-    #if EDITOR_MODE
     if (auto appPtr = getApp())
     {
         if (is_editor_mode)
@@ -567,8 +571,8 @@ void engine::Scene::setEditorMode(glm::mat4& projection, glm::mat4& view)
     
     // render camera view guizmo in the top right corner of the screen
     m_editor.renderViewGuizmo(projection, view, m_displayViewTransformGuizmo);
-    #endif
 }
+#endif
 
 void engine::Scene::initEntities()
 {
@@ -902,6 +906,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
             }
             break;
         case GLFW_KEY_F1:
+            // Open editor mode
             if (action == GLFW_PRESS && !key_F1_pressed) {
                 is_editor_mode = !is_editor_mode;
                 key_F1_pressed = true;
@@ -912,7 +917,8 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
             break;
         case GLFW_KEY_SPACE:
             if (action == GLFW_RELEASE) {
-                show_demo_window = !show_demo_window;
+                //show_demo_window = !show_demo_window;
+                show_perf_overlay = !show_perf_overlay;
             }
             break;
         }

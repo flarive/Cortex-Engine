@@ -143,7 +143,7 @@ void MyScene5::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode || show_demo_window)
+    if (is_editor_mode)
         return;
 
     float xpos = static_cast<float>(xposIn);

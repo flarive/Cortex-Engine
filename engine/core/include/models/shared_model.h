@@ -102,6 +102,8 @@ namespace engine
         unsigned int getMeshCount() const;
         unsigned int getVertexCount() const;
 
+		bool hasTransparentMeshes() const;
+
         std::string getFilePath() const { return m_filePath; }
         std::string getFileName() const { return m_fileName; }
 

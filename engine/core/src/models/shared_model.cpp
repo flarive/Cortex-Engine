@@ -176,6 +176,14 @@ std::shared_ptr<engine::Material> engine::SharedModel::getMaterial()
 	return nullptr;
 }
 
+bool engine::SharedModel::hasTransparentMeshes() const
+{
+    if (m_meshLoader)
+        return m_meshLoader->getMaterials().empty() ? false : m_meshLoader->getMaterials()[0]->isTransparent();
+
+    return false;
+}
+
 void engine::SharedModel::reSetup()
 {
     loadModel(m_filePath, m_flipUV);

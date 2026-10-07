@@ -643,6 +643,13 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     if (shader.name != "outline")
         m_entityManager.getRootEntity()->updateSelfAndChild();
 
+
+    opaqueQueue.clear();
+    transparentQueue.clear();
+
+    
+
+
     float width = 0;
     float height = 0;
 
@@ -658,6 +665,12 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     glm::mat4 view = cam->getViewMatrix();
     const Frustum camFrustum = cam->createFrustumFromCamera(ratio, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
+
+
+    
+
+
+
     
     // check the number of times entities are drawn per frame (should be called only once !)
     extern uint64_t globalFrameIndex;
@@ -672,9 +685,19 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
 
     callsThisFrame++;
 
+    
+
+
+
+    collectRenderItemsRecursive(m_entityManager.getRootEntity(), cam->position, camFrustum);
+
+    sortRenderItems();
+
+    drawOpaqueQueue(shader, shaderTessellation, projection, view);
+
 
     // Draw using stored world transforms
-    drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
+    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 }
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
@@ -917,8 +940,11 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
             break;
         case GLFW_KEY_SPACE:
             if (action == GLFW_RELEASE) {
-                //show_demo_window = !show_demo_window;
-                show_perf_overlay = !show_perf_overlay;
+                // performance overlay
+                if (!is_editor_mode)
+                {
+                    show_perf_overlay = !show_perf_overlay;
+                }
             }
             break;
         }
@@ -932,7 +958,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
 // -------------------------------------------------------
 void engine::Scene::mouse_callback(double xposIn, double yposIn)
 {
-    if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
+    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
         ImGui_ImplGlfw_CursorPosCallback(appPtr->window, xposIn, yposIn);
 }
 
@@ -940,7 +966,7 @@ void engine::Scene::mouse_callback(double xposIn, double yposIn)
 // ----------------------------------------------------------------------
 void engine::Scene::scroll_callback(double xoffset, double yoffset)
 {
-    if (auto appPtr = getApp(); appPtr && (is_editor_mode || show_demo_window))
+    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
         ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
 }
 
@@ -1125,6 +1151,257 @@ void engine::Scene::computeSupportTessellation(std::shared_ptr<Entity>& entity)
         }
     }
 }
+
+void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& entity, const glm::vec3& cameraPos, const Frustum& camFrustum)
+{
+    if (!entity->enabled)
+        return;
+
+    bool visible = true;
+
+    auto* singleton = engine::Singleton::getInstance();
+    const SceneSettings& settings = singleton->sceneSettings();
+
+    if (settings.enableCameraFrustrumCulling)
+    {
+        if (auto* boundingVolume = entity->getBoundingVolume())
+        {
+            visible = boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform());
+        }
+    }
+
+    if (visible)
+    {
+        if (auto modelComponent = entity->getComponent<ModelComponent>())
+        {
+            RenderItem item;
+            item.entity = entity.get();
+            item.component = modelComponent.get();
+            item.world = entity->getWorldTransform();
+
+            glm::vec3 center = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+
+            item.distanceToCamera = glm::distance(center, cameraPos);
+            item.transparent = modelComponent->getModel()->hasTransparentMeshes();
+
+            if (item.transparent)
+                transparentQueue.push_back(item);
+            else
+                opaqueQueue.push_back(item);
+        }
+        else if (auto primitiveComponent = entity->getComponent<PrimitiveComponent>())
+        {
+            RenderItem item;
+            item.entity = entity.get();
+            item.component = primitiveComponent.get();
+            item.world = entity->getWorldTransform();
+
+            glm::vec3 center = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+
+            item.distanceToCamera = glm::distance(center, cameraPos);
+            item.transparent = primitiveComponent->getPrimitive()->isTransparent();
+
+            if (item.transparent)
+                transparentQueue.push_back(item);
+            else
+                opaqueQueue.push_back(item);
+        }
+    }
+
+    for (auto& child : entity->children)
+    {
+        collectRenderItemsRecursive(child, cameraPos, camFrustum);
+    }
+}
+
+void engine::Scene::sortRenderItems()
+{
+	// Sort opaque items front-to-back
+    // Near -> Far
+    // This improves early-z efficiency.
+	std::sort(opaqueQueue.begin(), opaqueQueue.end(),
+		[](const RenderItem& a, const RenderItem& b) {
+			return a.distanceToCamera < b.distanceToCamera;
+		});
+
+	// Sort transparent items back-to-front
+	// Far -> Near
+	// This ensures correct blending of transparent objects.
+	std::sort(transparentQueue.begin(), transparentQueue.end(),
+		[](const RenderItem& a, const RenderItem& b) {
+			return a.distanceToCamera > b.distanceToCamera;
+		});
+}
+
+void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+
+    for (RenderItem& item : opaqueQueue)
+    {
+        Entity* entity = item.entity;
+
+        if (!entity)
+            continue;
+
+        auto worldTransform = entity->getWorldTransform();
+        auto& transform = entity->getTransform();
+
+        if (auto* modelComponent = dynamic_cast<ModelComponent*>(item.component))
+        {
+            // Model
+            bool shouldDraw = true;
+
+            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+            {
+                auto properties = modelComponent->getPublicProperties();
+
+                if (properties.contains("canCastShadows"))
+                {
+                    auto& value = properties.at("canCastShadows");
+
+                    if (auto pBool = std::get_if<bool>(&value.value))
+                    {
+                        shouldDraw = *pBool;
+                    }
+                }
+            }
+
+            if (shouldDraw)
+            {
+                modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+
+                ++inFrustrumCount;
+            }
+        }
+
+        
+        else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
+        {
+            // Primitive
+            bool shouldDraw = true;
+
+            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+            {
+                auto properties = primitiveComponent->getPublicProperties();
+
+                if (properties.contains("canCastShadows"))
+                {
+                    auto& value = properties.at("canCastShadows");
+
+                    if (auto pBool = std::get_if<bool>(&value.value))
+                    {
+                        shouldDraw = *pBool;
+                    }
+                }
+            }
+
+            if (shouldDraw)
+            {
+                primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+
+                ++inFrustrumCount;
+            }
+        }
+
+        //
+        // Terrain
+        //
+        //else if (auto* terrainComponent =
+        //    dynamic_cast<TerrainComponent*>(item.component))
+        //{
+        //    terrainComponent->draw(
+        //        projection,
+        //        view,
+        //        shaderTessellation,
+        //        worldTransform,
+        //        transform,
+        //        entity->getBoundingVolume());
+
+        //    ++inFrustrumCount;
+        //}
+    }
+}
+
+void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_DEPTH_TEST);
+
+    // Important:
+    // read depth but don't write it
+    glDepthMask(GL_FALSE);
+
+    for (RenderItem& item : transparentQueue)
+    {
+        Entity* entity = item.entity;
+
+        if (!entity)
+            continue;
+
+        auto& transform = entity->getTransform();
+        auto worldTransform = entity->getWorldTransform();
+
+        //
+        // Transparent model
+        //
+        if (auto* modelComponent =
+            dynamic_cast<ModelComponent*>(item.component))
+        {
+            modelComponent->draw(
+                projection,
+                view,
+                shader,
+                worldTransform,
+                transform,
+                entity->getBoundingVolume());
+
+            ++inFrustrumCount;
+        }
+
+        //
+        // Transparent primitive
+        //
+        else if (auto* primitiveComponent =
+            dynamic_cast<PrimitiveComponent*>(item.component))
+        {
+            primitiveComponent->draw(
+                projection,
+                view,
+                shader,
+                worldTransform,
+                transform,
+                entity->getBoundingVolume());
+
+            ++inFrustrumCount;
+        }
+
+        //
+        // Transparent terrain
+        //
+        //else if (auto* terrainComponent =
+        //    dynamic_cast<TerrainComponent*>(item.component))
+        //{
+        //    terrainComponent->draw(
+        //        projection,
+        //        view,
+        //        shaderTessellation,
+        //        worldTransform,
+        //        transform,
+        //        entity->getBoundingVolume());
+
+        //    ++inFrustrumCount;
+        //}
+    }
+
+    // Restore default state
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+}
+
 
 //void engine::Scene::performRayCasting(double xpos, double ypos)
 //{

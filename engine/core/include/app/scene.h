@@ -31,6 +31,16 @@
 
 namespace engine
 {
+    struct RenderItem
+    {
+        Entity* entity;
+        Component* component;
+        glm::mat4 world;
+        float distanceToCamera;
+        bool transparent;
+        bool castsShadow;
+    };
+    
     /// <summary>
     /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
     /// </summary>
@@ -56,14 +66,17 @@ namespace engine
 
 
         
-        
+        std::vector<RenderItem> opaqueQueue;
+        std::vector<RenderItem> transparentQueue;
         
 
         void before_init_internal();
         void after_init_internal();
 
-
-
+        void collectRenderItemsRecursive(const std::shared_ptr<Entity>& entity, const glm::vec3& cameraPos, const Frustum& camFrustum);
+        void sortRenderItems();
+        void drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
+        void drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
 
 
     protected:
@@ -106,7 +119,6 @@ namespace engine
 
     public:
         bool is_editor_mode{ false };
-        bool show_demo_window{ false };
         bool show_perf_overlay{ false };
         
 		std::string getName() const { return title; }

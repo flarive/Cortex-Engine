@@ -18,11 +18,6 @@
 //Project Properties → C / C++ → Preprocessor → Preprocessor Definitions
 //#define EDITOR_MODE 0
 
-#define STRINGIFY2(x) #x
-#define STRINGIFY(x) STRINGIFY2(x)
-
-//#pragma message("EDITOR_MODE=" STRINGIFY(EDITOR_MODE))
-
 
 
 
@@ -30,16 +25,18 @@
 #define EDITOR_MODE 0
 #endif
 
+//#define STRINGIFY2(x) #x
+//#define STRINGIFY(x) STRINGIFY2(x)
 
-#ifdef EDITOR_MODE
-#pragma message("EDITOR_MODE defined")
-#endif
-
-#if EDITOR_MODE
-#pragma message("EDITOR_MODE true")
-#else
-#pragma message("EDITOR_MODE false")
-#endif
+//#ifdef EDITOR_MODE
+//#pragma message("EDITOR_MODE defined")
+//#endif
+//
+//#if EDITOR_MODE
+//#pragma message("EDITOR_MODE true")
+//#else
+//#pragma message("EDITOR_MODE false")
+//#endif
 
 
 namespace engine

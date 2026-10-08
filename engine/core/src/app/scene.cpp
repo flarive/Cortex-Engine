@@ -688,16 +688,15 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     
 
 
+    // Draw using stored world transforms
+    drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 
     collectRenderItemsRecursive(m_entityManager.getRootEntity(), cam->position, camFrustum);
 
     sortRenderItems();
 
     drawOpaqueQueue(shader, shaderTessellation, projection, view);
-
-
-    // Draw using stored world transforms
-    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
+    drawTransparentQueue(shader, shaderTessellation, projection, view);
 }
 
 void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
@@ -789,51 +788,51 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         // 4. Draw model meshes
         if (modelComponent)
         {
-            bool shouldDraw = true;
+            //bool shouldDraw = true;
 
-            // manage shadow casting or not
-            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            {
-                auto properties = modelComponent->getPublicProperties();
-                if (properties.contains("canCastShadows"))
-                {
-                    auto& canCastShadows = properties.at("canCastShadows");
-                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-                    {
-                        shouldDraw = *pBool;
-                    }
-                }
-            }
+            //// manage shadow casting or not
+            //if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+            //{
+            //    auto properties = modelComponent->getPublicProperties();
+            //    if (properties.contains("canCastShadows"))
+            //    {
+            //        auto& canCastShadows = properties.at("canCastShadows");
+            //        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
+            //        {
+            //            shouldDraw = *pBool;
+            //        }
+            //    }
+            //}
 
-            if (shouldDraw)
-                modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            //if (shouldDraw)
+            //    modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
 
-            inFrustrumCount++;
+            //inFrustrumCount++;
         }
 
         // 5. Draw primitive meshes (if any)
         if (primitiveComponent)
         {
-            bool shouldDraw = true;
+            //bool shouldDraw = true;
 
-            // manage shadow casting or not
-            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            {
-                auto properties = primitiveComponent->getPublicProperties();
-                if (properties.contains("canCastShadows"))
-                {
-                    auto& canCastShadows = properties.at("canCastShadows");
-                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-                    {
-                        shouldDraw = *pBool;
-                    }
-                }
-            }
+            //// manage shadow casting or not
+            //if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+            //{
+            //    auto properties = primitiveComponent->getPublicProperties();
+            //    if (properties.contains("canCastShadows"))
+            //    {
+            //        auto& canCastShadows = properties.at("canCastShadows");
+            //        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
+            //        {
+            //            shouldDraw = *pBool;
+            //        }
+            //    }
+            //}
 
-            if (shouldDraw)
-                primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+            //if (shouldDraw)
+            //    primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
 
-            inFrustrumCount++;
+            //inFrustrumCount++;
         }
 
         // 6. Draw lights
@@ -929,7 +928,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
             }
             break;
         case GLFW_KEY_F1:
-            // Open editor mode
+            // Open/close editor mode
             if (action == GLFW_PRESS && !key_F1_pressed) {
                 is_editor_mode = !is_editor_mode;
                 key_F1_pressed = true;
@@ -940,7 +939,7 @@ void engine::Scene::key_callback(int key, int scancode, int action, int mods)
             break;
         case GLFW_KEY_SPACE:
             if (action == GLFW_RELEASE) {
-                // performance overlay
+                // Open/close performance overlay
                 if (!is_editor_mode)
                 {
                     show_perf_overlay = !show_perf_overlay;
@@ -1179,9 +1178,9 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
             item.component = modelComponent.get();
             item.world = entity->getWorldTransform();
 
-            glm::vec3 center = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+            glm::vec3 modelCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
 
-            item.distanceToCamera = glm::distance(center, cameraPos);
+            item.distanceToCamera = glm::distance(modelCenter, cameraPos);
             item.transparent = modelComponent->getModel()->hasTransparentMeshes();
 
             if (item.transparent)
@@ -1196,9 +1195,9 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
             item.component = primitiveComponent.get();
             item.world = entity->getWorldTransform();
 
-            glm::vec3 center = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+            glm::vec3 primitiveCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
 
-            item.distanceToCamera = glm::distance(center, cameraPos);
+            item.distanceToCamera = glm::distance(primitiveCenter, cameraPos);
             item.transparent = primitiveComponent->getPrimitive()->isTransparent();
 
             if (item.transparent)
@@ -1245,7 +1244,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
         if (!entity)
             continue;
 
-        auto worldTransform = entity->getWorldTransform();
+        auto& worldTransform = entity->getWorldTransform();
         auto& transform = entity->getTransform();
 
         if (auto* modelComponent = dynamic_cast<ModelComponent*>(item.component))
@@ -1271,8 +1270,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
             if (shouldDraw)
             {
                 modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-
-                ++inFrustrumCount;
+                inFrustrumCount++;
             }
         }
 
@@ -1300,8 +1298,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
             if (shouldDraw)
             {
                 primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-
-                ++inFrustrumCount;
+                inFrustrumCount++;
             }
         }
 
@@ -1319,7 +1316,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
         //        transform,
         //        entity->getBoundingVolume());
 
-        //    ++inFrustrumCount;
+        //    inFrustrumCount++;
         //}
     }
 }
@@ -1343,40 +1340,19 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
             continue;
 
         auto& transform = entity->getTransform();
-        auto worldTransform = entity->getWorldTransform();
+        auto& worldTransform = entity->getWorldTransform();
 
-        //
-        // Transparent model
-        //
-        if (auto* modelComponent =
-            dynamic_cast<ModelComponent*>(item.component))
+        if (auto* modelComponent = dynamic_cast<ModelComponent*>(item.component))
         {
-            modelComponent->draw(
-                projection,
-                view,
-                shader,
-                worldTransform,
-                transform,
-                entity->getBoundingVolume());
-
-            ++inFrustrumCount;
+            // Transparent model
+            modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
         }
-
-        //
-        // Transparent primitive
-        //
-        else if (auto* primitiveComponent =
-            dynamic_cast<PrimitiveComponent*>(item.component))
+        else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
         {
-            primitiveComponent->draw(
-                projection,
-                view,
-                shader,
-                worldTransform,
-                transform,
-                entity->getBoundingVolume());
-
-            ++inFrustrumCount;
+            // Transparent primitive
+            primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
         }
 
         //

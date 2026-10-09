@@ -31,14 +31,15 @@
 
 namespace engine
 {
-    struct RenderItem
+    struct RenderItem final
     {
-        Entity* entity;
-        Component* component;
-        glm::mat4 world;
-        float distanceToCamera;
-        bool transparent;
-        bool castsShadow;
+        Entity* entity{};
+        Component* component{};
+        AnimatorComponent* animator{};
+        glm::mat4 world{};
+        float distanceToCamera{};
+        bool transparent{};
+        bool castsShadow{};
     };
     
     /// <summary>
@@ -63,7 +64,9 @@ namespace engine
 
         bool m_displayViewTransformGuizmo{ true };
         bool m_displayObjectTransformGuizmo{ false };
-
+        
+        
+        
 
         
         std::vector<RenderItem> opaqueQueue;
@@ -73,10 +76,18 @@ namespace engine
         void before_init_internal();
         void after_init_internal();
 
+        void updateEntityRecursive(const std::shared_ptr<Entity>& entity, int callsThisFrame);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
+        //void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
+
         void collectRenderItemsRecursive(const std::shared_ptr<Entity>& entity, const glm::vec3& cameraPos, const Frustum& camFrustum);
         void sortRenderItems();
+        
+        void drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
         void drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
         void drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
+
+        bool canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const Shader& shader) const;
 
 
     protected:
@@ -184,7 +195,7 @@ namespace engine
         void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
         void drawEntities(Shader& shader, Shader& shaderTessellation);
-        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
+        
 
 
 

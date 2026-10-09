@@ -647,13 +647,9 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     opaqueQueue.clear();
     transparentQueue.clear();
 
-    
-
 
     float width = 0;
     float height = 0;
-
-
     if (auto appPtr = getApp()) {
         width = appPtr->width;
         height = appPtr->height;
@@ -666,12 +662,6 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     const Frustum camFrustum = cam->createFrustumFromCamera(ratio, glm::radians(cam->getZoom()), 0.1f, 100.0f);
 
 
-
-    
-
-
-
-    
     // check the number of times entities are drawn per frame (should be called only once !)
     extern uint64_t globalFrameIndex;
     static uint64_t lastFrameSeen = UINT64_MAX;
@@ -685,200 +675,41 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
 
     callsThisFrame++;
 
-    
+    auto root = m_entityManager.getRootEntity();
 
+    //update
+    updateEntityRecursive(root, callsThisFrame);
+    
+    // draw
+    drawEntityRecursive(root, cam, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 
     // Draw using stored world transforms
-    drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
-
-    collectRenderItemsRecursive(m_entityManager.getRootEntity(), cam->position, camFrustum);
-
-    sortRenderItems();
-
-    drawOpaqueQueue(shader, shaderTessellation, projection, view);
-    drawTransparentQueue(shader, shaderTessellation, projection, view);
+    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 }
 
-void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
+void engine::Scene::updateEntityRecursive(const std::shared_ptr<Entity>& entity, int callsThisFrame)
 {
-    if (!entity->enabled)
+    if (!entity || !entity->enabled)
         return;
 
-    bool shouldTestFrustrumForEntity = false;
-    bool frustrumOk = false;
+    auto animator = entity->getComponent<AnimatorComponent>();
+    auto particleSystem = entity->getComponent<ParticleSystemComponent>();
+    auto terrain = entity->getComponent<TerrainComponent>();
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& sceneSettings = singleton->sceneSettings();
+    auto& transform = entity->getTransform();
 
-    if (sceneSettings.enableCameraFrustrumCulling)
-    {
-        if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
-        {
-            shouldTestFrustrumForEntity = true;
+    if (animator && callsThisFrame == 1)
+        animator->update(deltaTime, transform);
 
-            // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
-            if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
-            {
-                frustrumOk = true;
-            }
-        }
-    }
+    if (particleSystem && callsThisFrame == 1)
+        particleSystem->update(deltaTime, transform);
 
-    if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
-    {
-        // Use the precomputed transform
-        shader.use();
+    if (terrain && callsThisFrame == 1)
+        terrain->update(deltaTime, transform);
 
-        if (shader.name != "outline")
-        {
-            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
-            glStencilMask(0xFF);
-        }
-        else if (m_selectedEntity)
-        {
-            // Only draw outline where stencil != objectID
-            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
-            glStencilMask(0x00); // disable stencil writes
+    for (const auto& child : entity->children)
+        updateEntityRecursive(child, callsThisFrame);
 
-            shader.setMat4("view", view);
-            shader.setMat4("projection", projection);
-            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
-        }
-
-        auto& transform = entity->getTransform();
-
-        std::shared_ptr<AnimatorComponent> animatorComponent{};
-        std::shared_ptr<ModelComponent> modelComponent{};
-        std::shared_ptr<PrimitiveComponent> primitiveComponent{};
-        std::shared_ptr<LightComponent> lightComponent{};
-        std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
-        std::shared_ptr<TerrainComponent> terrainComponent{};
-
-        // 1. First pass: collect components
-        for (const auto& [typeID, component] : entity->components)
-        {
-            if (typeID == ComponentType::model)
-                modelComponent = std::static_pointer_cast<ModelComponent>(component);
-            else if (typeID == ComponentType::primitive)
-                primitiveComponent = std::static_pointer_cast<PrimitiveComponent>(component);
-            else if (typeID == ComponentType::animator)
-                animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
-            else if (typeID == ComponentType::light)
-                lightComponent = std::static_pointer_cast<LightComponent>(component);
-            else if (typeID == ComponentType::particleSystem)
-                particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
-            else if (typeID == ComponentType::terrain)
-                terrainComponent = std::static_pointer_cast<TerrainComponent>(component);
-        }
-
-
-        // 2. Update animator (once per frame)
-        if (animatorComponent && callsThisFrame == 1)
-        {
-            animatorComponent->update(deltaTime, transform);
-        }
-
-        // 3. Upload bones BEFORE drawing the model
-        if (animatorComponent)
-        {
-            animatorComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-        }
-
-        // 4. Draw model meshes
-        if (modelComponent)
-        {
-            //bool shouldDraw = true;
-
-            //// manage shadow casting or not
-            //if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            //{
-            //    auto properties = modelComponent->getPublicProperties();
-            //    if (properties.contains("canCastShadows"))
-            //    {
-            //        auto& canCastShadows = properties.at("canCastShadows");
-            //        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-            //        {
-            //            shouldDraw = *pBool;
-            //        }
-            //    }
-            //}
-
-            //if (shouldDraw)
-            //    modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-
-            //inFrustrumCount++;
-        }
-
-        // 5. Draw primitive meshes (if any)
-        if (primitiveComponent)
-        {
-            //bool shouldDraw = true;
-
-            //// manage shadow casting or not
-            //if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            //{
-            //    auto properties = primitiveComponent->getPublicProperties();
-            //    if (properties.contains("canCastShadows"))
-            //    {
-            //        auto& canCastShadows = properties.at("canCastShadows");
-            //        if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-            //        {
-            //            shouldDraw = *pBool;
-            //        }
-            //    }
-            //}
-
-            //if (shouldDraw)
-            //    primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-
-            //inFrustrumCount++;
-        }
-
-        // 6. Draw lights
-        if (lightComponent)
-        {
-            lightComponent->draw(projection, view, shader, entity->getWorldTransform(), transform);
-
-            // TODO !!!! test if tesselation is used/needed
-            lightComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
-        }
-
-        // 7. Draw particle systems
-        if (particleSystemComponent)
-        {
-            // update should be called only one time per frame
-            if (callsThisFrame == 1)
-                particleSystemComponent->update(deltaTime, transform);
-
-            particleSystemComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-            inFrustrumCount++;
-        }
-
-        // 8. Draw terrains
-        if (terrainComponent)
-        {
-            // update should be called only one time per frame
-            if (callsThisFrame == 1)
-                terrainComponent->update(deltaTime, transform);
-
-            terrainComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-            inFrustrumCount++;
-        }
-
-        if (shader.name == "outline")
-        {
-            // Restore state
-            glStencilMask(0xFF);
-            glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        }
-
-        // Draw children
-        for (const auto& child : entity->children)
-        {
-            drawEntityRecursive(child, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
-        }
-    }
 
     auto entityType = entity->getType(); // could be optimized/avoided
     if (entityType != EntityType::undefined && entityType != EntityType::light && entityType != EntityType::camera)
@@ -886,6 +717,213 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
         totalFrustrumCount++;
     }
 }
+
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shadertessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camfrustum, const int& callsthisframe)
+{
+    if (!entity || !entity->enabled)
+        return;
+
+    if (!camera)
+        return;
+
+    collectRenderItemsRecursive(entity, camera->position, camfrustum);
+    sortRenderItems();
+
+    drawNonQueuedComponentsRecursive(entity, shader, shadertessellation, projection, view);
+    drawOpaqueQueue(shader, shadertessellation, projection, view);
+    drawTransparentQueue(shader, shadertessellation, projection, view);
+}
+
+//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
+//{
+//    if (!entity->enabled)
+//        return;
+//
+//    bool shouldTestFrustrumForEntity = false;
+//    bool frustrumOk = false;
+//
+//    auto* singleton = engine::Singleton::getInstance();
+//    assert(singleton != nullptr && "Singleton not initialized !");
+//    const SceneSettings& sceneSettings = singleton->sceneSettings();
+//
+//    if (sceneSettings.enableCameraFrustrumCulling)
+//    {
+//        if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
+//        {
+//            shouldTestFrustrumForEntity = true;
+//
+//            // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
+//            if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
+//            {
+//                frustrumOk = true;
+//            }
+//        }
+//    }
+//
+//    if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
+//    {
+//        // Use the precomputed transform
+//        shader.use();
+//
+//        if (shader.name != "outline")
+//        {
+//            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+//            glStencilMask(0xFF);
+//        }
+//        else if (m_selectedEntity)
+//        {
+//            // Only draw outline where stencil != objectID
+//            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+//            glStencilMask(0x00); // disable stencil writes
+//
+//            shader.setMat4("view", view);
+//            shader.setMat4("projection", projection);
+//            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+//        }
+//
+//        auto& transform = entity->getTransform();
+//
+//        std::shared_ptr<AnimatorComponent> animatorComponent{};
+//        std::shared_ptr<ModelComponent> modelComponent{};
+//        std::shared_ptr<PrimitiveComponent> primitiveComponent{};
+//        std::shared_ptr<LightComponent> lightComponent{};
+//        std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
+//        std::shared_ptr<TerrainComponent> terrainComponent{};
+//
+//        // 1. First pass: collect components
+//        for (const auto& [typeID, component] : entity->components)
+//        {
+//            if (typeID == ComponentType::model)
+//                modelComponent = std::static_pointer_cast<ModelComponent>(component);
+//            else if (typeID == ComponentType::primitive)
+//                primitiveComponent = std::static_pointer_cast<PrimitiveComponent>(component);
+//            else if (typeID == ComponentType::animator)
+//                animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
+//            else if (typeID == ComponentType::light)
+//                lightComponent = std::static_pointer_cast<LightComponent>(component);
+//            else if (typeID == ComponentType::particleSystem)
+//                particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
+//            else if (typeID == ComponentType::terrain)
+//                terrainComponent = std::static_pointer_cast<TerrainComponent>(component);
+//        }
+//
+//
+//        // 2. Update animator (once per frame)
+//        if (animatorComponent && callsThisFrame == 1)
+//        {
+//            animatorComponent->update(deltaTime, transform);
+//        }
+//
+//        // 3. Upload bones BEFORE drawing the model
+//        if (animatorComponent)
+//        {
+//            animatorComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+//        }
+//
+//        // 4. Draw model meshes
+//        if (modelComponent)
+//        {
+//            bool shouldDraw = true;
+//
+//            // manage shadow casting or not
+//            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+//            {
+//                auto properties = modelComponent->getPublicProperties();
+//                if (properties.contains("canCastShadows"))
+//                {
+//                    auto& canCastShadows = properties.at("canCastShadows");
+//                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
+//                    {
+//                        shouldDraw = *pBool;
+//                    }
+//                }
+//            }
+//
+//            if (shouldDraw)
+//                modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+//
+//            inFrustrumCount++;
+//        }
+//
+//        // 5. Draw primitive meshes (if any)
+//        if (primitiveComponent)
+//        {
+//            bool shouldDraw = true;
+//
+//            // manage shadow casting or not
+//            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
+//            {
+//                auto properties = primitiveComponent->getPublicProperties();
+//                if (properties.contains("canCastShadows"))
+//                {
+//                    auto& canCastShadows = properties.at("canCastShadows");
+//                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
+//                    {
+//                        shouldDraw = *pBool;
+//                    }
+//                }
+//            }
+//
+//            if (shouldDraw)
+//                primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+//
+//            inFrustrumCount++;
+//        }
+//
+//        // 6. Draw lights
+//        if (lightComponent)
+//        {
+//            lightComponent->draw(projection, view, shader, entity->getWorldTransform(), transform);
+//
+//            // TODO !!!! test if tesselation is used/needed
+//            lightComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
+//        }
+//
+//        // 7. Draw particle systems
+//        if (particleSystemComponent)
+//        {
+//            // update should be called only one time per frame
+//            if (callsThisFrame == 1)
+//                particleSystemComponent->update(deltaTime, transform);
+//
+//            particleSystemComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+//            inFrustrumCount++;
+//        }
+//
+//        // 8. Draw terrains
+//        if (terrainComponent)
+//        {
+//            // update should be called only one time per frame
+//            if (callsThisFrame == 1)
+//                terrainComponent->update(deltaTime, transform);
+//
+//            terrainComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
+//            inFrustrumCount++;
+//        }
+//
+//        if (shader.name == "outline")
+//        {
+//            // Restore state
+//            glStencilMask(0xFF);
+//            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+//        }
+//
+//        // Draw children
+//        for (const auto& child : entity->children)
+//        {
+//            drawEntityRecursive(child, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
+//        }
+//    }
+//
+//    auto entityType = entity->getType(); // could be optimized/avoided
+//    if (entityType != EntityType::undefined && entityType != EntityType::light && entityType != EntityType::camera)
+//    {
+//        totalFrustrumCount++;
+//    }
+//}
+
+
+
 
 void engine::Scene::exit()
 {
@@ -1156,6 +1194,9 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
     if (!entity->enabled)
         return;
 
+    static int visibleCount = 0;
+    visibleCount = 0;
+
     bool visible = true;
 
     auto* singleton = engine::Singleton::getInstance();
@@ -1176,6 +1217,7 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
             RenderItem item;
             item.entity = entity.get();
             item.component = modelComponent.get();
+            item.animator = entity->getComponent<AnimatorComponent>().get();
             item.world = entity->getWorldTransform();
 
             glm::vec3 modelCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
@@ -1205,6 +1247,27 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
             else
                 opaqueQueue.push_back(item);
         }
+        //else if (auto terrainComponent = entity->getComponent<TerrainComponent>())
+        //{
+        //    RenderItem item;
+        //    item.entity = entity.get();
+        //    item.component = terrainComponent.get();
+        //    item.world = entity->getWorldTransform();
+
+        //    glm::vec3 terrainCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+
+        //    item.distanceToCamera = glm::distance(terrainCenter, cameraPos);
+        //    item.transparent = false;
+
+        //    if (item.transparent)
+        //        transparentQueue.push_back(item);
+        //    else
+        //        opaqueQueue.push_back(item);
+        //}
+
+        visibleCount++;
+
+        logger.trace("visible entities {}", visibleCount);
     }
 
     for (auto& child : entity->children)
@@ -1244,80 +1307,66 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
         if (!entity)
             continue;
 
+
+        // Use the precomputed transform
+        shader.use();
+
+        if (shader.name != "outline")
+        {
+            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+            glStencilMask(0xFF);
+        }
+        else if (m_selectedEntity)
+        {
+            // Only draw outline where stencil != objectID
+            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+            glStencilMask(0x00); // disable stencil writes
+
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+        }
+
         auto& worldTransform = entity->getWorldTransform();
         auto& transform = entity->getTransform();
 
         if (auto* modelComponent = dynamic_cast<ModelComponent*>(item.component))
         {
             // Model
-            bool shouldDraw = true;
+            if (!canCastShadows(modelComponent->getPublicProperties(), shader))
+                continue;
 
-            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            {
-                auto properties = modelComponent->getPublicProperties();
+            if (item.animator)
+                item.animator->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
 
-                if (properties.contains("canCastShadows"))
-                {
-                    auto& value = properties.at("canCastShadows");
-
-                    if (auto pBool = std::get_if<bool>(&value.value))
-                    {
-                        shouldDraw = *pBool;
-                    }
-                }
-            }
-
-            if (shouldDraw)
-            {
-                modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-                inFrustrumCount++;
-            }
+            modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
         }
-
-        
         else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
         {
             // Primitive
-            bool shouldDraw = true;
+            if (!canCastShadows(primitiveComponent->getPublicProperties(), shader))
+                continue;
 
-            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-            {
-                auto properties = primitiveComponent->getPublicProperties();
-
-                if (properties.contains("canCastShadows"))
-                {
-                    auto& value = properties.at("canCastShadows");
-
-                    if (auto pBool = std::get_if<bool>(&value.value))
-                    {
-                        shouldDraw = *pBool;
-                    }
-                }
-            }
-
-            if (shouldDraw)
-            {
-                primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-                inFrustrumCount++;
-            }
+            primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
         }
-
-        //
-        // Terrain
-        //
-        //else if (auto* terrainComponent =
-        //    dynamic_cast<TerrainComponent*>(item.component))
+        //else if (auto* terrainComponent = dynamic_cast<TerrainComponent*>(item.component))
         //{
-        //    terrainComponent->draw(
-        //        projection,
-        //        view,
-        //        shaderTessellation,
-        //        worldTransform,
-        //        transform,
-        //        entity->getBoundingVolume());
+        //    // Terrain
+        //    if (!canCastShadows(terrainComponent->getPublicProperties(), shader))
+        //        continue;
 
+        //    terrainComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
         //    inFrustrumCount++;
         //}
+        
+        if (shader.name == "outline")
+        {
+            // Restore state
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        }
     }
 }
 
@@ -1339,38 +1388,56 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
         if (!entity)
             continue;
 
+        // Use the precomputed transform
+        shader.use();
+
+        if (shader.name != "outline")
+        {
+            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+            glStencilMask(0xFF);
+        }
+        else if (m_selectedEntity)
+        {
+            // Only draw outline where stencil != objectID
+            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+            glStencilMask(0x00); // disable stencil writes
+
+            shader.setMat4("view", view);
+            shader.setMat4("projection", projection);
+            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+        }
+
         auto& transform = entity->getTransform();
         auto& worldTransform = entity->getWorldTransform();
 
         if (auto* modelComponent = dynamic_cast<ModelComponent*>(item.component))
         {
             // Transparent model
+            if (!canCastShadows(modelComponent->getPublicProperties(), shader))
+                continue;
+
+            if (item.animator)
+                item.animator->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+
             modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
             inFrustrumCount++;
         }
         else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
         {
             // Transparent primitive
+            if (!canCastShadows(primitiveComponent->getPublicProperties(), shader))
+                continue;
+
             primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
             inFrustrumCount++;
         }
+    }
 
-        //
-        // Transparent terrain
-        //
-        //else if (auto* terrainComponent =
-        //    dynamic_cast<TerrainComponent*>(item.component))
-        //{
-        //    terrainComponent->draw(
-        //        projection,
-        //        view,
-        //        shaderTessellation,
-        //        worldTransform,
-        //        transform,
-        //        entity->getBoundingVolume());
-
-        //    ++inFrustrumCount;
-        //}
+    if (shader.name == "outline")
+    {
+        // Restore state
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
     }
 
     // Restore default state
@@ -1378,6 +1445,77 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
     glDisable(GL_BLEND);
 }
 
+void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+{
+    if (!entity->enabled)
+        return;
+
+    // Use the precomputed transform
+    //shader.use();
+
+    //if (shader.name != "outline")
+    //{
+    //    glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
+    //    glStencilMask(0xFF);
+    //}
+    //else if (m_selectedEntity)
+    //{
+    //    // Only draw outline where stencil != objectID
+    //    glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
+    //    glStencilMask(0x00); // disable stencil writes
+
+    //    shader.setMat4("view", view);
+    //    shader.setMat4("projection", projection);
+    //    shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+    //}
+
+    auto light = entity->getComponent<LightComponent>();
+    auto particles = entity->getComponent<ParticleSystemComponent>();
+    auto terrain = entity->getComponent<TerrainComponent>();
+
+    auto& transform = entity->getTransform();
+    auto& world = entity->getWorldTransform();
+
+    if (light)
+    {
+        light->draw(projection, view, shader, world, transform);
+        light->draw(projection, view, shaderTessellation, world, transform);
+    }
+
+    if (particles)
+    {
+        particles->draw(projection, view, shader, world, transform, entity->getBoundingVolume());
+    }
+
+    if (terrain)
+    {
+        terrain->draw(projection, view, shaderTessellation, world, transform, entity->getBoundingVolume());
+    }
+
+    //if (shader.name == "outline")
+    //{
+    //    // Restore state
+    //    glStencilMask(0xFF);
+    //    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    //}
+
+    for (const auto& child : entity->children)
+        drawNonQueuedComponentsRecursive(child, shader, shaderTessellation, projection, view);
+}
+
+bool engine::Scene::canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const Shader& shader) const
+{
+    if (shader.name != "simpleDepthBuffer1" && shader.name != "simpleDepthBuffer2")
+        return true;
+
+    if (const auto* prop = properties.tryGet("canCastShadows")) {
+        if (auto pBool = std::get_if<bool>(&prop->value)) {
+            return *pBool;
+        }
+    }
+
+    return true;
+}
 
 //void engine::Scene::performRayCasting(double xpos, double ypos)
 //{

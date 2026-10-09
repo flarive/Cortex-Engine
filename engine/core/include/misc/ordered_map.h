@@ -65,8 +65,29 @@ namespace engine
             return map.at(key);
         }
 
+        const Value& at(const Key& key) const {
+            return map.at(key);
+        }
+
         bool contains(const Key& key) const {
             return map.find(key) != map.end();
+        }
+
+        auto find(const Key& key) {
+            return map.find(key);
+        }
+
+        auto find(const Key& key) const {
+            return map.find(key);
+        }
+
+        const Value* tryGet(const Key& key) const {
+            auto it = map.find(key);
+
+            if (it == map.end())
+                return nullptr;
+
+            return &it->second;
         }
 
         template<typename Func>

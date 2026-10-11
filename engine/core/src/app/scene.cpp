@@ -1247,23 +1247,32 @@ void engine::Scene::collectRenderItemsRecursive(const std::shared_ptr<Entity>& e
             else
                 opaqueQueue.push_back(item);
         }
-        //else if (auto terrainComponent = entity->getComponent<TerrainComponent>())
-        //{
-        //    RenderItem item;
-        //    item.entity = entity.get();
-        //    item.component = terrainComponent.get();
-        //    item.world = entity->getWorldTransform();
+        else if (auto terrainComponent = entity->getComponent<TerrainComponent>())
+        {
+            RenderItem item;
+            item.entity = entity.get();
+            item.component = terrainComponent.get();
+            item.world = entity->getWorldTransform();
 
-        //    glm::vec3 terrainCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+            glm::vec3 terrainCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
 
-        //    item.distanceToCamera = glm::distance(terrainCenter, cameraPos);
-        //    item.transparent = false;
+            item.distanceToCamera = glm::distance(terrainCenter, cameraPos);
+            item.transparent = false;
+            opaqueQueue.push_back(item);
+        }
+        else if (auto particleSystemComponent = entity->getComponent<ParticleSystemComponent>())
+        {
+            RenderItem item;
+            item.entity = entity.get();
+            item.component = particleSystemComponent.get();
+            item.world = entity->getWorldTransform();
 
-        //    if (item.transparent)
-        //        transparentQueue.push_back(item);
-        //    else
-        //        opaqueQueue.push_back(item);
-        //}
+            glm::vec3 particleSystemCenter = entity->getBoundingVolume() ? entity->getBoundingVolume()->center : glm::vec3(item.world[3]);
+
+            item.distanceToCamera = glm::distance(particleSystemCenter, cameraPos);
+            item.transparent = true;
+            transparentQueue.push_back(item);
+        }
 
         visibleCount++;
 
@@ -1351,15 +1360,16 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
             primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
             inFrustrumCount++;
         }
-        //else if (auto* terrainComponent = dynamic_cast<TerrainComponent*>(item.component))
-        //{
-        //    // Terrain
-        //    if (!canCastShadows(terrainComponent->getPublicProperties(), shader))
-        //        continue;
+        else if (auto* terrainComponent = dynamic_cast<TerrainComponent*>(item.component))
+        {
+            // Terrain
+            if (!canCastShadows(terrainComponent->getPublicProperties(), shader))
+                continue;
 
-        //    terrainComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-        //    inFrustrumCount++;
-        //}
+            terrainComponent->draw(projection, view, shaderTessellation, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
+        }
+        
         
         if (shader.name == "outline")
         {
@@ -1431,6 +1441,15 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
             primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
             inFrustrumCount++;
         }
+        else if (auto* particleSystemComponent = dynamic_cast<ParticleSystemComponent*>(item.component))
+        {
+            // Particle System
+            if (!canCastShadows(particleSystemComponent->getPublicProperties(), shader))
+                continue;
+
+            particleSystemComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            inFrustrumCount++;
+        }
     }
 
     if (shader.name == "outline")
@@ -1450,28 +1469,9 @@ void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entit
     if (!entity->enabled)
         return;
 
-    // Use the precomputed transform
-    //shader.use();
-
-    //if (shader.name != "outline")
-    //{
-    //    glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
-    //    glStencilMask(0xFF);
-    //}
-    //else if (m_selectedEntity)
-    //{
-    //    // Only draw outline where stencil != objectID
-    //    glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
-    //    glStencilMask(0x00); // disable stencil writes
-
-    //    shader.setMat4("view", view);
-    //    shader.setMat4("projection", projection);
-    //    shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
-    //}
 
     auto light = entity->getComponent<LightComponent>();
-    auto particles = entity->getComponent<ParticleSystemComponent>();
-    auto terrain = entity->getComponent<TerrainComponent>();
+    //auto particles = entity->getComponent<ParticleSystemComponent>();
 
     auto& transform = entity->getTransform();
     auto& world = entity->getWorldTransform();
@@ -1482,21 +1482,9 @@ void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entit
         light->draw(projection, view, shaderTessellation, world, transform);
     }
 
-    if (particles)
-    {
-        particles->draw(projection, view, shader, world, transform, entity->getBoundingVolume());
-    }
-
-    if (terrain)
-    {
-        terrain->draw(projection, view, shaderTessellation, world, transform, entity->getBoundingVolume());
-    }
-
-    //if (shader.name == "outline")
+    //if (particles)
     //{
-    //    // Restore state
-    //    glStencilMask(0xFF);
-    //    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    //    particles->draw(projection, view, shader, world, transform, entity->getBoundingVolume());
     //}
 
     for (const auto& child : entity->children)

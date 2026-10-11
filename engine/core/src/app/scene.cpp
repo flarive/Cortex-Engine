@@ -1306,8 +1306,8 @@ void engine::Scene::sortRenderItems()
 
 void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
 {
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
+    RenderState::enableDepthTest();
+    RenderState::enableDepthMask();
 
     for (RenderItem& item : opaqueQueue)
     {
@@ -1374,8 +1374,8 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
         if (shader.name == "outline")
         {
             // Restore state
-            glStencilMask(0xFF);
-            glStencilFunc(GL_ALWAYS, 0, 0xFF);
+            RenderState::enableStencilWrite();
+            RenderState::setStencilFunc(GL_ALWAYS, 0, 0xFF);    // write pass
         }
     }
 }
@@ -1454,8 +1454,8 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
     if (shader.name == "outline")
     {
         // Restore state
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        RenderState::enableStencilWrite();
+        RenderState::setStencilFunc(GL_ALWAYS, 0, 0xFF);    // write pass
     }
 
     // Restore default state

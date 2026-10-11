@@ -27,9 +27,16 @@ namespace engine
         static void enableDepthMask();
         static void disableDepthMask();
 
-        // Stencil Testing
+        // Stencil
         static void enableStencilTest();
         static void disableStencilTest();
+
+        // Stencil Mask
+        static void enableStencilWrite();
+        static void disableStencilWrite();
+
+        static void setStencilFunc(GLenum func, GLint ref, GLuint mask);
+
 
         // Blending
         static void enableBlending();

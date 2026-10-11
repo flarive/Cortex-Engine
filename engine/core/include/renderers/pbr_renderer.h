@@ -34,5 +34,12 @@ namespace engine
 		void loadShaders() override;
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;
+
+		void initBloomBuffers(int width, int height);
+
+		void extractBloomBrightPass(float bloomThreshold);
+		void blurBloomTexture();
+
+		
 	};
 }

@@ -116,5 +116,11 @@ namespace engine
         bool drawNormalsVisualHelpers{ DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS };
 
         ubyte frameBufferAntiAliasingSamplesQuality{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
+
+
+        bool enableBloom = true;
+        float bloomThreshold = 1.0f;
+        float bloomStrength = 0.03f;
+        int bloomBlurPasses = 10;
     };
 }

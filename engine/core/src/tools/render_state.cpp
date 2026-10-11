@@ -66,7 +66,7 @@ namespace engine
     }
 
     //--------------------------------------------------------------------------
-    // Stencil Testing
+    // Stencil
     //--------------------------------------------------------------------------
 
     void RenderState::enableStencilTest()
@@ -77,6 +77,22 @@ namespace engine
     void RenderState::disableStencilTest()
     {
         glDisable(GL_STENCIL_TEST);
+    }
+
+    // Stencil Mask
+    void RenderState::enableStencilWrite()
+    {
+        glStencilMask(0xFF);
+    }
+
+    void RenderState::disableStencilWrite()
+    {
+        glStencilMask(0x00);
+    }
+
+    void RenderState::setStencilFunc(GLenum func, GLint ref, GLuint mask)
+    {
+        glStencilFunc(func, ref, mask);
     }
 
     //--------------------------------------------------------------------------

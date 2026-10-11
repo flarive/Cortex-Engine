@@ -119,6 +119,8 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     // -------------------------
     initFramebuffer(RenderMethod::PBR, width, height, settings.frameBufferAntiAliasingSamplesQuality); // HDR and AA
 
+    if (settings.enableBloom)
+        initBloomBuffers(width, height);
 
     int vsize{ 512 };
     //int scrWidth, scrHeight;
@@ -468,9 +470,13 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     // --- 5) RESOLVE MSAA TO HDR RESOLVE FBO ---
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    glBlitFramebuffer(0, 0, width, height,
-        0, 0, width, height,
-        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    if (settings.enableBloom)
+    {
+        extractBloomBrightPass(settings.bloomThreshold);
+        blurBloomTexture();
+    }
 
     // Restore polygon mode
     if (settings.drawAsWireframe)
@@ -488,6 +494,43 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     assert(depthMask == GL_TRUE);
 }
 
+void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_bloomFBO);
+
+    bloomBrightExtractionShader.use();
+    bloomBrightExtractionShader.setInt("screenTexture", 0);
+	bloomBrightExtractionShader.setFloat("bloomThreshold", bloomThreshold); // or 2.0f, depending on your scene's brightness
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+
+    renderQuad();
+}
+
+void engine::PbrRenderer::blurBloomTexture()
+{
+    bool horizontal = true;
+    bool firstIteration = true;
+
+    // Classic ping-pong
+    for (int i = 0; i < 10; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_pingPongFBO[horizontal]);
+
+        bloomBlurShader.use();
+        bloomBlurShader.setBool("horizontal", horizontal);
+
+        glBindTexture(GL_TEXTURE_2D, firstIteration ? m_bloomBrightTexture : m_pingPongColorBuffer[!horizontal]);
+
+        renderQuad();
+
+        horizontal = !horizontal;
+
+        if (firstIteration)
+            firstIteration = false;
+    }
+}
 
 void engine::PbrRenderer::loadShaders()
 {
@@ -526,6 +569,87 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
     setCounts(pbrShaderTessellation);
 }
 
+void engine::PbrRenderer::initBloomBuffers(int width, int height)
+{
+    //----------------------------------------------------------------------
+    // Bright-pass framebuffer
+    //----------------------------------------------------------------------
+
+    glGenFramebuffers(1, &m_bloomFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_bloomFBO);
+
+    glGenTextures(1, &m_bloomBrightTexture);
+    glBindTexture(GL_TEXTURE_2D, m_bloomBrightTexture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        m_bloomBrightTexture,
+        0
+    );
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        logger.error("Bloom framebuffer is not complete");
+    }
+
+    //----------------------------------------------------------------------
+    // Ping-pong framebuffers for Gaussian blur
+    //----------------------------------------------------------------------
+
+    glGenFramebuffers(2, m_pingPongFBO);
+    glGenTextures(2, m_pingPongColorBuffer);
+
+    for (int i = 0; i < 2; ++i)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_pingPongFBO[i]);
+
+        glBindTexture(GL_TEXTURE_2D, m_pingPongColorBuffer[i]);
+
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RGBA16F,
+            width,
+            height,
+            0,
+            GL_RGBA,
+            GL_FLOAT,
+            nullptr
+        );
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_TEXTURE_2D,
+            m_pingPongColorBuffer[i],
+            0
+        );
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            logger.error("Bloom ping-pong framebuffer {} is not complete", i);
+        }
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 engine::Shader& engine::PbrRenderer::getShader()
 {
     return pbrShader;
@@ -547,6 +671,11 @@ void engine::PbrRenderer::clean()
     glDeleteTextures(1, &irradianceMap);
     glDeleteTextures(1, &prefilterMap);
     glDeleteTextures(1, &brdfLUTTexture);
+
+    glDeleteFramebuffers(1, &m_bloomFBO);
+    glDeleteFramebuffers(2, m_pingPongFBO);
+    glDeleteTextures(1, &m_bloomBrightTexture);
+    glDeleteTextures(2, m_pingPongColorBuffer);
 }
 
 engine::PbrRenderer::~PbrRenderer()

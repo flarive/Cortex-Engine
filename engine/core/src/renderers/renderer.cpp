@@ -31,6 +31,11 @@ void engine::Renderer::loadShaders()
 
     // Editor mode outline shader
     outlineColorShader.init("outline", "shaders/debug/stencil_testing.vert", "shaders/debug/stencil_testing.frag");
+
+	// Bloom shaders
+    bloomBrightExtractionShader.init("brightExtraction", "shaders/postfx/bloom_bright_extraction.vert", "shaders/postfx/bloom_bright_extraction.frag");
+    bloomBlurShader.init("bloomBlur", "shaders/postfx/bloom_blur.vert", "shaders/postfx/bloom_blur.frag");
+    bloomFinalShader.init("bloomFinal", "shaders/postfx/bloom_combine_final.vert", "shaders/postfx/bloom_combine_final.frag");  
 }
 
 void engine::Renderer::enableDepthTest(bool enable)
@@ -629,20 +634,47 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    screenShader.use();
-    screenShader.setInt("screenTexture", 0);
-    screenShader.setFloat("exposure", settings.exposure);
-    screenShader.setBool("useGamma", settings.enableGammaCorrection);
-    screenShader.setBool("useToneMapping", settings.enableToneMapping);
-    screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
-    // test that HDR is working
-    //testHDR(width, height);
+    if (settings.enableBloom)
+    {
+        bloomFinalShader.use();
 
-    // render HDR framebuffer to screen as a big fullscreen quad
+        bloomFinalShader.setInt("screenTexture", 0);
+        bloomFinalShader.setInt("bloomTexture", 1);
+
+        bloomFinalShader.setBool("useBloom", settings.enableBloom);
+        bloomFinalShader.setBool("useToneMapping", settings.enableToneMapping);
+        bloomFinalShader.setBool("useGamma", settings.enableGammaCorrection);
+
+        bloomFinalShader.setFloat("exposure", settings.exposure);
+        bloomFinalShader.setFloat("bloomStrength", settings.bloomStrength);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_finalBloomTexture);
+    }
+    else
+    {
+        screenShader.use();
+        screenShader.setInt("screenTexture", 0);
+        screenShader.setFloat("exposure", settings.exposure);
+        screenShader.setBool("useGamma", settings.enableGammaCorrection);
+        screenShader.setBool("useToneMapping", settings.enableToneMapping);
+        screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
+
+        // test that HDR is working
+        testHDR(width, height);
+
+        // render HDR framebuffer to screen as a big fullscreen quad
+        renderQuad();
+    }
+
     renderQuad();
 }
 

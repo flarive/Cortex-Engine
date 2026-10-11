@@ -182,6 +182,9 @@
     <Filter Include="resources\textures\pbr\pure-glass">
       <UniqueIdentifier>{0b07c589-b82f-4c09-86d5-5a93a52717a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resources\shaders\postfx">
+      <UniqueIdentifier>{78528a78-adb2-404d-b063-d7937ebc3dbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -726,12 +729,6 @@
     <CopyFileToFolders Include="..\resources\sounds\Example.ogg">
       <Filter>resources\sounds</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\gaussianblur.frag">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\shaders\gaussianblur.vert">
-      <Filter>resources\shaders</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\depthToColorShader.frag">
       <Filter>resources\shaders</Filter>
     </CopyFileToFolders>
@@ -1269,6 +1266,15 @@
     <CopyFileToFolders Include="..\resources\textures\pbr\old-wood-cracked-knots\old-wood-cracked-knots_roughness.jpg">
       <Filter>resources\textures\pbr\old-wood-cracked-knots</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\postfx\bloom_bright_extraction.frag">
+      <Filter>resources\shaders\postfx</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\postfx\bloom_blur.frag">
+      <Filter>resources\shaders\postfx</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\postfx\bloom_combine_final.vert">
+      <Filter>resources\shaders\postfx</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\app\myapp0.h">
@@ -1331,5 +1337,16 @@
     <ClInclude Include="include\scene\myscene17.h">
       <Filter>headers\scene</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\postfx\bloom_bright_extraction.vert">
+      <Filter>resources\shaders\postfx</Filter>
+    </None>
+    <None Include="..\resources\shaders\postfx\bloom_blur.vert">
+      <Filter>resources\shaders\postfx</Filter>
+    </None>
+    <None Include="..\resources\shaders\postfx\bloom_combine_final.frag">
+      <Filter>resources\shaders\postfx</Filter>
+    </None>
   </ItemGroup>
 </Project>

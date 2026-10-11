@@ -113,10 +113,26 @@ namespace engine
 
 		Shader outlineColorShader{};
 
+		// bloom
+		Shader bloomBrightExtractionShader{};
+		Shader bloomBlurShader{};
+		Shader bloomFinalShader{};
+
 		
 
 		// HDR
 		unsigned int resolveFBO{};
+
+
+
+		// bloom
+		GLuint m_bloomBrightTexture = 0;
+
+		GLuint m_pingPongFBO[2]{};
+		GLuint m_pingPongColorBuffer[2]{};
+
+		GLuint m_bloomFBO = 0;
+		GLuint m_finalBloomTexture = 0;
 
 
 		unsigned int irradianceMap{};
@@ -208,6 +224,9 @@ namespace engine
 
 	private:
 		bool m_supportTessellation{ false };
+
+
+
 		
 		void testHDR(int width, int height);
 

@@ -48,6 +48,9 @@ namespace engine
         static void setOpaque();
         static void setTransparent();
 
+        // Blend modes
+        static void blend();
+
         // Cubemap
         static void enableCubeMapSeamless();
         static void disableCubeMapSeamless();

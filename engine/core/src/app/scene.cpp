@@ -1382,14 +1382,13 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
 
 void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
 {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glEnable(GL_DEPTH_TEST);
+    RenderState::enableBlending();
+    RenderState::blend();
+    RenderState::enableDepthTest();
 
     // Important:
     // read depth but don't write it
-    glDepthMask(GL_FALSE);
+    RenderState::disableDepthMask();
 
     for (RenderItem& item : transparentQueue)
     {
@@ -1460,8 +1459,8 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
     }
 
     // Restore default state
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
+    RenderState::enableDepthMask();
+    RenderState::disableBlending();
 }
 
 void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
@@ -1471,7 +1470,6 @@ void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entit
 
 
     auto light = entity->getComponent<LightComponent>();
-    //auto particles = entity->getComponent<ParticleSystemComponent>();
 
     auto& transform = entity->getTransform();
     auto& world = entity->getWorldTransform();
@@ -1481,11 +1479,6 @@ void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entit
         light->draw(projection, view, shader, world, transform);
         light->draw(projection, view, shaderTessellation, world, transform);
     }
-
-    //if (particles)
-    //{
-    //    particles->draw(projection, view, shader, world, transform, entity->getBoundingVolume());
-    //}
 
     for (const auto& child : entity->children)
         drawNonQueuedComponentsRecursive(child, shader, shaderTessellation, projection, view);

@@ -21,11 +21,13 @@
 #include "../scene/myscene15.h" // blinnphong/pbr parallax mapping
 #include "../scene/myscene16.h" // ktx compressed textures
 #include "../scene/myscene17.h" // material opacity and glass
+#include "../scene/myscene18.h" // Cornell box
+#include "../scene/myscene19.h" // Test emissive and bloom post fx
 
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene3;
+using MyScene = MyScene19;
 
 class MyApp1 final : public App
 {

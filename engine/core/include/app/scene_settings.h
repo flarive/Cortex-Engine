@@ -79,6 +79,11 @@ namespace engine
 
     const ubyte DEFAULT_FRAMEBUFFER_MSAA_SAMPLES{ 4 };
 
+    const bool DEFAULT_USE_BLOOM{ false };
+    const float DEFAULT_BLOOM_THRESHOLD{ 1.0f };
+    const float DEFAULT_BLOOM_STRENGTH{ 0.03f };
+    const ubyte DEFAULT_BLOOM_BLUR_PASSES{ 10 };
+
     struct SceneSettings final
     {
         RenderMethod method{ DEFAULT_RENDER_METHOD };
@@ -118,9 +123,9 @@ namespace engine
         ubyte frameBufferAntiAliasingSamplesQuality{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
 
 
-        bool enableBloom = true;
-        float bloomThreshold = 1.0f;
-        float bloomStrength = 0.03f;
-        int bloomBlurPasses = 10;
+        bool enableBloom{ DEFAULT_USE_BLOOM };
+        float bloomThreshold{ DEFAULT_BLOOM_THRESHOLD };
+        float bloomStrength{ DEFAULT_BLOOM_STRENGTH };
+        ubyte bloomBlurPasses{ DEFAULT_BLOOM_BLUR_PASSES };
     };
 }

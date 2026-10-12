@@ -38,7 +38,7 @@ namespace engine
 		void initBloomBuffers(int width, int height);
 
 		void extractBloomBrightPass(float bloomThreshold);
-		void blurBloomTexture();
+		void blurBloomTexture(ubyte bloomBlurPasses);
 
 		
 	};

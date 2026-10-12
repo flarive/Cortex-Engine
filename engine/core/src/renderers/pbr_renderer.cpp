@@ -475,7 +475,7 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     if (settings.enableBloom)
     {
         extractBloomBrightPass(settings.bloomThreshold);
-        blurBloomTexture();
+        blurBloomTexture(settings.bloomBlurPasses);
     }
 
     // Restore polygon mode
@@ -508,13 +508,13 @@ void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
     renderQuad();
 }
 
-void engine::PbrRenderer::blurBloomTexture()
+void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
 {
     bool horizontal = true;
     bool firstIteration = true;
 
     // Classic ping-pong
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < bloomBlurPasses; i++)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_pingPongFBO[horizontal]);
 

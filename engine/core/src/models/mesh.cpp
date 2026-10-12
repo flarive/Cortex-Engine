@@ -83,9 +83,22 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
     shader.setMat4("model", transformMatrix);
 
+    /*glm::mat4 finalTransform = transformMatrix * m_nodeTransform;
+    shader.setMat4("model", finalTransform);*/
+
+
+    //logger.info(
+    //    "Drawing {} at ({}, {}, {})",
+    //    m_name,
+    //    finalTransform[3][0],
+    //    finalTransform[3][1],
+    //    finalTransform[3][2]
+    //);
+
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
         shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        //shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
         shader.setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
     }
 
@@ -202,6 +215,16 @@ void engine::Mesh::handleOpacity(Shader& shader)
         // DO NOT apply transparency logic here
         RenderState::setOpaque();
     }
+}
+
+void engine::Mesh::setNodeTransform(const glm::mat4& transform)
+{
+    m_nodeTransform = transform;
+}
+
+const glm::mat4& engine::Mesh::getNodeTransform() const
+{
+    return m_nodeTransform;
 }
 
 void engine::Mesh::clean()

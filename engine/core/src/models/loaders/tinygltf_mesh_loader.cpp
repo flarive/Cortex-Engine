@@ -492,9 +492,38 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     // Create Mesh
     // ------------------------------------------------------------
     auto meshPtr = std::make_shared<engine::Mesh>(toStdString(mesh.name), std::move(vertices), std::move(indices), m_materials.back());
-    meshPtr->setHasTangents(m_hasTangents);
+    meshPtr->setHasNormals(m_hasNormals);
     meshPtr->setHasTangents(m_hasTangents);
     meshPtr->setHasTexCoords(m_hasTexCoords);
+
+	// Set the node transform for the mesh (for instance rendering or hierarchical transformations)
+    meshPtr->setNodeTransform(modelMatrix);
+
+
+    //logger.info("Creating mesh {} for node {}", mesh.name.data, nodeIndex);
+    //logger.info("Total meshes = {}", m_meshes.size());
+
+    //logger.info(
+    //    "{} indices={} vertices={}",
+    //    meshPtr->getName(),
+    //    meshPtr->getIndices().size(),
+    //    meshPtr->getVertices().size()
+    //);
+
+    //logger.info(
+    //    "{} material={}",
+    //    meshPtr->getName(),
+    //    meshPtr->getMaterial()->getName()
+    //);
+
+    logger.info(
+        "{} node={} pos=({}, {}, {})",
+        mesh.name.data,
+        nodeIndex,
+        modelMatrix[3][0],
+        modelMatrix[3][1],
+        modelMatrix[3][2]
+    );
 
     return meshPtr;
 }

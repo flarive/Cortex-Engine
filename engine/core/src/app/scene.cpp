@@ -734,7 +734,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     drawTransparentQueue(shader, shadertessellation, projection, view);
 }
 
-//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
+//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
 //{
 //    if (!entity->enabled)
 //        return;
@@ -911,7 +911,7 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
 //        // Draw children
 //        for (const auto& child : entity->children)
 //        {
-//            drawEntityRecursive(child, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
+//            drawEntityRecursive(child, camera, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 //        }
 //    }
 //

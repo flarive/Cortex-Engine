@@ -78,7 +78,7 @@ namespace engine
 
         void updateEntityRecursive(const std::shared_ptr<Entity>& entity, int callsThisFrame);
         void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
-        //void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
+        //void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
 
         void collectRenderItemsRecursive(const std::shared_ptr<Entity>& entity, const glm::vec3& cameraPos, const Frustum& camFrustum);
         void sortRenderItems();

@@ -52,6 +52,11 @@ namespace engine
         const bool hasTexCoords() const { return m_hasTexCoords; }
         void setHasTexCoords(bool hasTexCoords) { m_hasTexCoords = hasTexCoords; }
 
+        void setNodeTransform(const glm::mat4& transform);
+        const glm::mat4& getNodeTransform() const;
+
+
+
         void clean();
        
     private:
@@ -68,6 +73,11 @@ namespace engine
         unsigned int m_indexCount{};
 
         std::shared_ptr<Material> m_material{};
+
+
+        glm::mat4 m_nodeTransform{ 1.0f };
+
+
 
 
 

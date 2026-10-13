@@ -78,6 +78,11 @@ namespace engine
 		std::function<void(unsigned short)> function{};
 	};
 
+	const float DEBUG_DRAW_NORMAL_LENGTH = 1.0f;
+	const float DEBUG_DRAW_NORMAL_ARROW_SIZE = 0.25f;
+	const glm::vec3 DEBUG_DRAW_NORMAL_COLOR = glm::vec3(1.0f, 0.0f, 0.0f);
+	const bool DEBUG_DRAW_NORMAL_DRAW_ARROW = true;
+
 	struct PerformanceCounters
 	{
 		float fps;

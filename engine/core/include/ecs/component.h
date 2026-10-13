@@ -26,6 +26,8 @@ namespace engine
         return static_cast<unsigned int>(type);
     }
 
+    class Entity;
+
     
     class Component
 	{
@@ -50,8 +52,15 @@ namespace engine
 		bool isEnabled() const { return m_isEnabled; }
         virtual void setEnabled(bool enabled) = 0;
 
+
+        //void setParentEntity(const std::shared_ptr<Entity>& entity) {
+        //    m_parentEntity = entity;
+        //}
+
     private:
 		bool m_isEnabled{ true };
+
+        //std::weak_ptr<Entity> m_parentEntity{};
 	};
 
     /// <summary>
@@ -63,8 +72,6 @@ namespace engine
     public:
         ComponentBase() = default;
         virtual ~ComponentBase() = default;
-
-        
 
         virtual ComponentType getTypeID() const final
         {

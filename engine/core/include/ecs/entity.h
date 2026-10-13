@@ -82,6 +82,7 @@ namespace engine
 			auto component = std::make_shared<T>(std::forward<Args>(args)...);
 			ComponentType typeID = T::getStaticTypeID(); // Static call
 			components[typeID] = component;
+			//component->setParentEntity(this);
 			return static_cast<T*>(component.get());
 		}
 

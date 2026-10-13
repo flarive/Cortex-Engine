@@ -4,6 +4,7 @@
 #include "../../include/debug/opengl_debug.h"
 
 #include "../../include/managers/log_manager.h"
+#include "../../include/singleton.h"
 
 #include <memory>
 
@@ -16,7 +17,7 @@ engine::Mesh::Mesh(const std::string& _name, std::vector<Vertex> _vertices, std:
 }
 
 // render the mesh
-void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
+void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
     ShaderType type = shader.getShaderType();
 
@@ -81,24 +82,16 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader.setMat4("model", transformMatrix);
+    glm::mat4 finalTransform = transformMatrix;
 
-    /*glm::mat4 finalTransform = transformMatrix * m_nodeTransform;
-    shader.setMat4("model", finalTransform);*/
+    if (!m_isSkinned)
+        finalTransform *= m_nodeTransform;
 
-
-    //logger.info(
-    //    "Drawing {} at ({}, {}, {})",
-    //    m_name,
-    //    finalTransform[3][0],
-    //    finalTransform[3][1],
-    //    finalTransform[3][2]
-    //);
+    shader.setMat4("model", finalTransform);
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        //shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
+        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
         shader.setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
     }
 
@@ -125,6 +118,15 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& transformMatrix)
 
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.mesh");
+
+    // draw normals for debug
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    if (sceneSettings.drawNormalsVisualHelpers) {
+        drawDebugNormals(projection, view, transformMatrix);
+    }
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {
@@ -217,14 +219,59 @@ void engine::Mesh::handleOpacity(Shader& shader)
     }
 }
 
-void engine::Mesh::setNodeTransform(const glm::mat4& transform)
+void engine::Mesh::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
-    m_nodeTransform = transform;
-}
+    m_debugDrawLine.init();
 
-const glm::mat4& engine::Mesh::getNodeTransform() const
-{
-    return m_nodeTransform;
+    glm::mat4 finalTransform = transformMatrix;
+
+    if (!m_isSkinned)
+        finalTransform *= m_nodeTransform;
+
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(finalTransform)));
+
+    // vertex normal
+    for (const Vertex& vertex : m_vertices)
+    {
+        glm::vec3 start = glm::vec3(finalTransform * glm::vec4(vertex.position, 1.0f));
+        glm::vec3 normal = glm::normalize(normalMatrix * vertex.normal);
+        glm::vec3 end = start + normal * DEBUG_DRAW_NORMAL_LENGTH; // Scale for visibility
+        m_debugDrawLine.addLine(start, end, DEBUG_DRAW_NORMAL_COLOR, DEBUG_DRAW_NORMAL_DRAW_ARROW, DEBUG_DRAW_NORMAL_ARROW_SIZE);
+    }
+
+    // triangle normal
+    /*for (size_t i = 0; i + 2 < m_indices.size(); i += 3)
+    {
+        const Vertex& v0 = m_vertices[m_indices[i]];
+        const Vertex& v1 = m_vertices[m_indices[i + 1]];
+        const Vertex& v2 = m_vertices[m_indices[i + 2]];
+
+        glm::vec3 center =
+            (v0.position + v1.position + v2.position) / 3.0f;
+
+        glm::vec3 faceNormal =
+            glm::normalize(
+                glm::cross(
+                    v1.position - v0.position,
+                    v2.position - v0.position));
+
+        glm::vec3 start =
+            glm::vec3(finalTransform * glm::vec4(center, 1.0f));
+
+        glm::vec3 end =
+            start +
+            glm::normalize(normalMatrix * faceNormal) * 0.2f;
+
+        m_debugDrawLine.addLine(
+            start,
+            end,
+            glm::vec3(1, 0, 0),
+            true,
+            0.01f);
+    }*/
+
+    m_debugDrawLine.render(view, projection);
+    m_debugDrawLine.clear();
 }
 
 void engine::Mesh::clean()
@@ -240,6 +287,9 @@ void engine::Mesh::clean()
     m_VAO = 0;
     m_VBO = 0;
     m_EBO = 0;
+
+    if (m_debugDrawLine.isInitialized())
+        m_debugDrawLine.clean();
 }
 
 engine::Mesh::~Mesh()

@@ -594,6 +594,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
     std::shared_ptr<ModelComponent> modelComponent{};
     std::shared_ptr<PrimitiveComponent> primitiveComponent{};
     std::shared_ptr<LightComponent> lightComponent{};
+    std::shared_ptr<CameraComponent> cameraComponent{};
     std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
     std::shared_ptr<TerrainComponent> terrainComponent{};
 
@@ -608,6 +609,8 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
             animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
         else if (typeID == ComponentType::light)
             lightComponent = std::static_pointer_cast<LightComponent>(component);
+        else if (typeID == ComponentType::camera)
+            cameraComponent = std::static_pointer_cast<CameraComponent>(component);
         else if (typeID == ComponentType::particleSystem)
             particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
         else if (typeID == ComponentType::terrain)
@@ -623,7 +626,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
         auto bindPoseAnimatior = std::make_shared<BonesAnimator>(bindPoseAnimation);
         entity->addComponent<AnimatorComponent>(bindPoseAnimatior);
     }
-
+    
     // init children
     for (const auto& child : entity->children)
     {

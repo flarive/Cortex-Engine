@@ -60,9 +60,43 @@ void engine::Camera::setup()
 {
 }
 
+bool engine::Camera::checkPlanes()
+{
+    if (m_nearPlane < MIN_CAMERA_NEAR_PLANE)
+    {
+        logger.warn("Camera {} near plane is invalid", m_name);
+        return false;
+    }
+
+    if (m_farPlane > MAX_CAMERA_FAR_PLANE)
+    {
+        logger.warn("Camera {} far plane is invalid", m_name);
+        return false;
+    }
+
+    if (m_farPlane < m_nearPlane)
+    {
+        logger.warn("Camera {} near/far planes are invalid", m_name);
+        return false;
+    }
+
+    float farNearRatio = m_farPlane / m_nearPlane;
+    if (farNearRatio > 100000)
+    {
+        logger.warn("Camera {} dangerous far/near planes ratio, possible z-fighting issues", m_name);
+        return false;
+    }
+
+    return true;
+}
+
+
 // https://learnopengl.com/code_viewer_gh.php?code=src/8.guest/2021/1.scene/2.frustum_culling/frustum_culling.cpp
 engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar)
 {
+    // check near and far planes are valid
+    checkPlanes();
+
     engine::Frustum frustum;
 
     if (m_enabled)
@@ -90,49 +124,6 @@ engine::Frustum engine::Camera::createFrustumFromCamera(float aspect, float fovY
 
     return frustum;
 }
-
-//engine::FrustumCorners engine::Camera::getBounds(float aspect, float fovY, float zNear, float zFar)
-//{
-//    engine::FrustumCorners frustumCorners;
-//
-//    if (!m_enabled) {
-//        // Return zeroed corners if camera is disabled
-//        for (auto& corner : frustumCorners.corners) {
-//            corner = glm::vec3(0.0f);
-//        }
-//        return frustumCorners;
-//    }
-//
-//    // Compute half dimensions of the near and far planes
-//    const float halfVSideNear = zNear * tanf(fovY * 0.5f);
-//    const float halfHSideNear = halfVSideNear * aspect;
-//    const float halfVSideFar = zFar * tanf(fovY * 0.5f);
-//    const float halfHSideFar = halfVSideFar * aspect;
-//
-//    // Compute the center of the near and far planes
-//    glm::vec3 frontNear = position + front * zNear;
-//    glm::vec3 frontFar = position + front * zFar;
-//
-//    // Compute the 4 corners of the near and far planes
-//    glm::vec3 rightNear = right * halfHSideNear;
-//    glm::vec3 upNear = up * halfVSideNear;
-//    glm::vec3 rightFar = right * halfHSideFar;
-//    glm::vec3 upFar = up * halfVSideFar;
-//
-//    // Near plane corners
-//    frustumCorners.corners[0] = frontNear - rightNear - upNear; // Bottom-left
-//    frustumCorners.corners[1] = frontNear + rightNear - upNear; // Bottom-right
-//    frustumCorners.corners[2] = frontNear + rightNear + upNear; // Top-right
-//    frustumCorners.corners[3] = frontNear - rightNear + upNear; // Top-left
-//
-//    // Far plane corners
-//    frustumCorners.corners[4] = frontFar - rightFar - upFar; // Bottom-left
-//    frustumCorners.corners[5] = frontFar + rightFar - upFar; // Bottom-right
-//    frustumCorners.corners[6] = frontFar + rightFar + upFar; // Top-right
-//    frustumCorners.corners[7] = frontFar - rightFar + upFar; // Top-left
-//
-//    return frustumCorners;
-//}
 
 engine::Bounds2D engine::Camera::getBounds(float aspect, float fovY, float zNear)
 {

@@ -27,7 +27,7 @@ void engine::ModelComponent::update(float deltaTime, Transform& transform)
 
 void engine::ModelComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-    m_model->draw(shader, worldTransformMatrix, localTransform);
+    m_model->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
 	auto* singleton = engine::Singleton::getInstance();
 	assert(singleton != nullptr && "Singleton not initialized !");

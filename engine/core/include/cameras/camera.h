@@ -37,6 +37,9 @@ namespace engine
     const float SENSITIVITY{ 0.3f };
     const float ZOOM{ 45.0f };
 
+    const float MIN_CAMERA_NEAR_PLANE{ 0.1f };
+    const float MAX_CAMERA_FAR_PLANE{ 1000.0f };
+
     enum class CameraType { undefined = 0, fps = 1, fly = 2, orbit = 3 };
 
     const std::unordered_map<CameraType, std::string> CameraTypeNames = {
@@ -124,8 +127,9 @@ namespace engine
 
         Frustum createFrustumFromCamera(float aspect, float fovY, float zNear, float zFar);
 
-        //FrustumCorners getBounds(float aspect, float fovY, float zNear, float zFar);
         Bounds2D getBounds(float aspect, float fovY, float zNear);
+
+        bool checkPlanes();
 
         // Inside the Camera class definition
         float getDistanceToTarget(const glm::vec3& target) const
@@ -135,11 +139,15 @@ namespace engine
 
         void reSetup() { setup(); };
 
+        const std::string& getName() { return m_name; }
+        void setName(const std::string& name) { m_name = name; }
+
         bool getEnabled() const { return m_enabled; }
         void setEnabled(bool enabled) { m_enabled = enabled; }
 
         float& getNearPlane() { return m_nearPlane; }
         float& getFarPlane() { return m_farPlane; }
+
         void setNearPlane(float near) { m_nearPlane = near; }
         void setFarPlane(float far) { m_farPlane = far; }
 
@@ -154,6 +162,8 @@ namespace engine
     protected:
         bool m_enabled{ true };
 
+        std::string m_name{};
+
         bool m_isPerspective{ true };
 
         float m_zoom{}; // fov
@@ -161,8 +171,21 @@ namespace engine
         glm::mat4 m_viewMatrix{}; // Store the view matrix
         glm::mat4 m_projection{};
 
+        // For a standard renderer: 0.1f
+        // For first-person games: 0.03f
+        // Never goes bellow 0.01f to avoid severe z-fighting issues
         float m_nearPlane{ 0.1f };
-        float m_farPlane{ 100.0f };
+        
+        // Indoor game: 100.0f
+        // Third-person action game: 500.0f;
+        // Open-world game: between 2000.0f and 10000.0f;
+        float m_farPlane{ 500.0f };
+
+        // far/near ratio
+        // 1, 000    excellent
+        // 10, 000   good
+        // 100, 000  acceptable
+        // 1, 000, 000 + dangerous (likely z-fighting)
 
         // calculates the front vector from the Camera's (updated) Euler Angles
         virtual void updateCameraVectors() = 0;

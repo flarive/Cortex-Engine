@@ -186,10 +186,10 @@ void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat
     glm::vec3 worldNormal = glm::normalize(glm::mat3(transformMatrix) * localNormal);
 
     // Compute the end point of the normal line
-    glm::vec3 end = center + worldNormal * 0.5f; // Scale for visibility
+    glm::vec3 end = center + worldNormal * DEBUG_DRAW_NORMAL_LENGTH; // Scale for visibility
 
     // Add the debug line
-    m_debugDrawLine.addLine(center, end, glm::vec3(1.0f, 0.0f, 0.0f), true, 0.06f); // Red color for normal
+    m_debugDrawLine.addLine(center, end, DEBUG_DRAW_NORMAL_COLOR, DEBUG_DRAW_NORMAL_DRAW_ARROW, DEBUG_DRAW_NORMAL_ARROW_SIZE);
 
     m_debugDrawLine.render(view, projection);
     m_debugDrawLine.clear();

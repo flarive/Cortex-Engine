@@ -37,7 +37,7 @@ engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _lo
 }
 
 // draws the model, and thus all its meshes
-void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Model::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
@@ -58,14 +58,14 @@ void engine::Model::draw(Shader& shader, const glm::mat4& transformMatrix, Trans
     if (!m_shared_model)
     {
         for (auto& mesh : getMeshes()) {
-            mesh->draw(shader, transformMatrix);
+            mesh->draw(shader, projection, view, transformMatrix);
         }
     }
     else
     {
         // shared model, loaded one time, drawn multiple times
         for (auto& mesh : m_shared_model->getMeshes()) {
-            mesh->draw(shader, transformMatrix);
+            mesh->draw(shader, projection, view, transformMatrix);
         }
     }
 }

@@ -213,9 +213,9 @@ void engine::Cube::drawDebugNormals(const glm::mat4& projection, const glm::mat4
         // Transform the normal to world space
         glm::vec3 worldNormal = glm::normalize(glm::mat3(transformMatrix) * localNormals[i]);
         // Compute the end point of the normal line
-        glm::vec3 end = worldFaceCenter + worldNormal * 0.25f; // Scale for visibility
+        glm::vec3 end = worldFaceCenter + worldNormal * DEBUG_DRAW_NORMAL_LENGTH; // Scale for visibility
         // Add the debug line (with arrow)
-        m_debugDrawLine.addLine(worldFaceCenter, end, glm::vec3(1.0f, 0.0f, 0.0f), true, 0.06f); // Red color for normal
+        m_debugDrawLine.addLine(worldFaceCenter, end, DEBUG_DRAW_NORMAL_COLOR, DEBUG_DRAW_NORMAL_DRAW_ARROW, DEBUG_DRAW_NORMAL_ARROW_SIZE);
     }
 
     // Render all debug lines

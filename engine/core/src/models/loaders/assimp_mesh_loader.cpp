@@ -76,7 +76,8 @@ void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnima
                 // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
                 std::shared_ptr<Mesh> mesh = m_meshes[i];
                 //mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
-                mesh->setHasBones(m_hasBones);
+                //mesh->setHasBones(m_hasBones);
+                mesh->setIsSkinned(m_hasBones);
                 mesh->setHasAnimations(m_hasAnimations);
             }
         }

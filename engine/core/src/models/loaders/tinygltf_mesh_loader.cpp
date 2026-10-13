@@ -140,15 +140,14 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
     // ------------------------------------------------------------
     // 6. Compute global transforms
     // ------------------------------------------------------------
-    std::function<void(int, glm::mat4)> computeGlobal =
-        [&](int index, glm::mat4 parentTransform)
-        {
-            GLTFNode& node = m_nodes[index];
-            node.global = parentTransform * node.local;
+    std::function<void(int, glm::mat4)> computeGlobal = [&](int index, glm::mat4 parentTransform)
+    {
+        GLTFNode& node = m_nodes[index];
+        node.global = parentTransform * node.local;
 
-            for (int child : node.children)
-                computeGlobal(child, node.global);
-        };
+        for (int child : node.children)
+            computeGlobal(child, node.global);
+    };
 
     const tg3_scene& scene = raw.scenes[raw.default_scene];
 
@@ -175,7 +174,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
             // Bind-pose matrices (same for all meshes of the model)
             //mesh->setBindPoseMatrices(m_finalBindPoseMatrices);
-            mesh->setHasBones(m_hasBones);
+            //mesh->setHasBones(m_hasBones);
             mesh->setHasAnimations(m_hasAnimations);
         }
     }
@@ -216,6 +215,10 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     std::vector<Vertex> vertices{};
     std::vector<unsigned int> indices{};
     std::shared_ptr<Material> material{};
+
+
+    bool meshHasSkin = false;
+
 
     // ------------------------------------------------------------
     // Process all primitives of this mesh
@@ -284,6 +287,8 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
             const tg3_buffer& buf = model.buffers[view.buffer];
             tangents = reinterpret_cast<const float*>(buf.data.data + view.byte_offset + tanAcc.byte_offset);
         }
+
+
 
         if (m_hasTexCoords)
         {
@@ -354,7 +359,7 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
 
         // Before vertex loop, decide if this primitive is actually skinned
         const bool primHasSkin = hasJoints && hasWeights;
-
+        meshHasSkin |= primHasSkin;
 
 
 
@@ -463,6 +468,11 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 indices.push_back(src[i]);
         }
 
+
+        
+
+
+
         // ------------------------------------------------------------
         // Material
         // ------------------------------------------------------------
@@ -495,9 +505,11 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     meshPtr->setHasNormals(m_hasNormals);
     meshPtr->setHasTangents(m_hasTangents);
     meshPtr->setHasTexCoords(m_hasTexCoords);
-
-	// Set the node transform for the mesh (for instance rendering or hierarchical transformations)
+    meshPtr->setIsSkinned(meshHasSkin);
+    
+    // Set the node transform for the mesh
     meshPtr->setNodeTransform(modelMatrix);
+    
 
 
     //logger.info("Creating mesh {} for node {}", mesh.name.data, nodeIndex);
@@ -516,14 +528,14 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     //    meshPtr->getMaterial()->getName()
     //);
 
-    logger.info(
+    /*logger.info(
         "{} node={} pos=({}, {}, {})",
         mesh.name.data,
         nodeIndex,
         modelMatrix[3][0],
         modelMatrix[3][1],
         modelMatrix[3][2]
-    );
+    );*/
 
     return meshPtr;
 }
@@ -579,7 +591,11 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 
     std::shared_ptr<Material> material{};
 
-    if (useARM)
+    if (texBaseColorFullPath.empty())
+    {
+        material = std::make_shared<PBRMaterial>(baseColorFactor);
+    }
+    else if (useARM)
     {
         // AO + Roughness + Metallic combined textures
         material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, "", texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
@@ -594,10 +610,6 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
         // no combined textures
         material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
-
-    if (!material->hasTextureMap())
-        material = std::make_shared<PBRMaterial>(baseColorFactor);
-
 
     material->setName(toStdString(mat.name));
 

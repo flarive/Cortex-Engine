@@ -6,6 +6,7 @@
 
 #include "../vertex.h"
 #include "../materials/material.h"
+#include "../debug/debug_draw_line.h"
 #include "../shader.h"
 
 namespace engine
@@ -21,7 +22,7 @@ namespace engine
         Mesh(Mesh&&) = default;
 
         // render the mesh
-        void draw(Shader& shader, const glm::mat4& transformMatrix = glm::mat4(1.0f));
+        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
@@ -37,8 +38,8 @@ namespace engine
 
         
 
-        const bool hasBones() const { return m_hasBones; }
-        void setHasBones(bool hasBones) { m_hasBones = hasBones; }
+        //const bool hasBones() const { return m_hasBones; }
+        //void setHasBones(bool hasBones) { m_hasBones = hasBones; }
 
         const bool hasAnimations() const { return m_hasAnimations; }
         void setHasAnimations(bool hasAnimations) { m_hasAnimations = hasAnimations; }
@@ -52,10 +53,11 @@ namespace engine
         const bool hasTexCoords() const { return m_hasTexCoords; }
         void setHasTexCoords(bool hasTexCoords) { m_hasTexCoords = hasTexCoords; }
 
-        void setNodeTransform(const glm::mat4& transform);
-        const glm::mat4& getNodeTransform() const;
+        void setNodeTransform(const glm::mat4& transform) { m_nodeTransform = transform; }
+        const glm::mat4& getNodeTransform() const { return m_nodeTransform; };
 
-
+        void setIsSkinned(bool hasSkin) { m_isSkinned = hasSkin; }
+        const bool isSkinned() const { return m_isSkinned; }
 
         void clean();
        
@@ -77,13 +79,14 @@ namespace engine
 
         glm::mat4 m_nodeTransform{ 1.0f };
 
-
+        DebugDraw m_debugDrawLine{};
 
 
 
         // Bind-pose fallback
         std::vector<glm::mat4> m_bindPoseMatrices{};
-        bool m_hasBones{ false };
+        //bool m_hasBones{ false }; // model level property, not mesh level
+        bool m_isSkinned{ false }; // mesh level property
         bool m_hasAnimations{ false };
 
         bool m_hasNormals{ false };
@@ -93,5 +96,7 @@ namespace engine
         // initializes all the buffer objects/arrays
         void setupMesh();
         void handleOpacity(Shader& shader);
+
+        void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
     };
 }

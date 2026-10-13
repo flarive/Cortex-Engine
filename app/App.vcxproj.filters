@@ -1287,9 +1287,6 @@
     <CopyFileToFolders Include="..\resources\models\cornellbox\ColorMapWithOpacityAlpha512.png">
       <Filter>resources\models\cornellbox</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="..\resources\models\cornellbox\GlowMapWithReflectionAlpha512.png" />
-    <CopyFileToFolders Include="..\resources\models\cornellbox\cornell.bin" />
-    <CopyFileToFolders Include="..\resources\models\cornellbox\cornell.gltf" />
     <CopyFileToFolders Include="..\resources\shaders\postfx\bloom_blur.vert">
       <Filter>resources\shaders\postfx</Filter>
     </CopyFileToFolders>
@@ -1298,6 +1295,15 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\resources\shaders\postfx\bloom_combine_final.frag">
       <Filter>resources\shaders\postfx</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cornellbox\cornell.bin">
+      <Filter>resources\models\cornellbox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cornellbox\cornell.gltf">
+      <Filter>resources\models\cornellbox</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\models\cornellbox\GlowMapWithReflectionAlpha512.png">
+      <Filter>resources\models\cornellbox</Filter>
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>

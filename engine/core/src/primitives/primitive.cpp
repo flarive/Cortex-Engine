@@ -60,7 +60,8 @@ void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
     shader.setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
 
     shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-    shader.setFloat("material.emissiveMapIntensity", m_material->getEmissiveIntensity());
+    shader.setFloat("material.emissiveMapStrength", m_material->getEmissiveStrength());
+    shader.setVec3("material.emissiveMapFactor", m_material->getEmissiveFactor());
 
     shader.setBool("material.canCastShadows", canCastShadows());
     shader.setBool("material.canReceiveShadows", canReceiveShadows());

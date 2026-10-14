@@ -31,7 +31,8 @@ struct Material {
     float specularMapIntensity;
     float normalMapIntensity;
     float parallaxMapIntensity;
-    float emissiveMapIntensity;
+    float emissiveMapStrength;
+    vec3 emissiveMapFactor;
 
     vec4 albedoRoughness; // (x,y,z) = color, w = roughness (for area light only)
 
@@ -942,7 +943,7 @@ void main()
     vec3 mDiffuse = material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).rgb : vec3(0);
     vec3 mSpecular = vec3(0.23, 0.23, 0.23); // ???????????
 
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveMapIntensity : vec3(0.0);
+    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveMapStrength * material.emissiveMapFactor : vec3(0.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : material.opacity);
 
 

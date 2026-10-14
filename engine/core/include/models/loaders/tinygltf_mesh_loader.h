@@ -40,6 +40,8 @@ namespace engine
 		std::string toStdString(tg3_str s);
 		unsigned char* toUChar(tg3_span_u8 span);
 		int toInt(const tg3_value& v);
+		float toFloat(const tg3_value& v);
+		glm::vec3 toVec3(const tg3_value& v);
 
 		void processNode(const tg3_model& model);
 		std::shared_ptr<Mesh> processMesh(const tg3_mesh& mesh, const tg3_model& model, int nodeIndex);

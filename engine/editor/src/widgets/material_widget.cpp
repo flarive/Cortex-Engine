@@ -199,9 +199,9 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
         {
             if (material->hasEmissiveMap())
             {
-                float& intensity = material->getEmissiveIntensity();
-                if (EditorHelper::renderSliderFloat("##EmissiveIntensity", intensity, intensity, 0.0f, 100.0f, 80.0f, "%.1f")) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_emissive_intensity", intensity);
+                float& intensity = material->getEmissiveStrength();
+                if (EditorHelper::renderSliderFloat("##EmissiveStrength", intensity, intensity, 0.0f, 100.0f, 80.0f, "%.1f")) {
+                    emit(UIEventType::MaterialPropertyChanged, "material_emissive_strength", intensity);
                 }
             }
             break;

@@ -38,6 +38,9 @@ namespace engine
     const float ZOOM{ 45.0f };
 
     const float MIN_CAMERA_NEAR_PLANE{ 0.1f };
+    const float MAX_CAMERA_NEAR_PLANE{ 10.0f };
+
+    const float MIN_CAMERA_FAR_PLANE{ 100.0f };
     const float MAX_CAMERA_FAR_PLANE{ 1000.0f };
 
     enum class CameraType { undefined = 0, fps = 1, fly = 2, orbit = 3 };

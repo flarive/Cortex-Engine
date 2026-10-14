@@ -64,26 +64,26 @@ bool engine::Camera::checkPlanes()
 {
     if (m_nearPlane < MIN_CAMERA_NEAR_PLANE)
     {
-        logger.warn("Camera {} near plane is invalid", m_name);
+        logger.warn("Current camera near plane is invalid");
         return false;
     }
 
     if (m_farPlane > MAX_CAMERA_FAR_PLANE)
     {
-        logger.warn("Camera {} far plane is invalid", m_name);
+        logger.warn("Current camera far plane is invalid");
         return false;
     }
 
     if (m_farPlane < m_nearPlane)
     {
-        logger.warn("Camera {} near/far planes are invalid", m_name);
+        logger.warn("Current camera near/far planes are invalid");
         return false;
     }
 
     float farNearRatio = m_farPlane / m_nearPlane;
     if (farNearRatio > 100000)
     {
-        logger.warn("Camera {} dangerous far/near planes ratio, possible z-fighting issues", m_name);
+        logger.warn("Current camera dangerous far/near planes ratio, possible z-fighting issues");
         return false;
     }
 

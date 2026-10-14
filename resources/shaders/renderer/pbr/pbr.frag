@@ -40,7 +40,8 @@ struct Material {
     float roughnessMapIntensity;
     float metallicMapIntensity;
     float ambientOcclusionMapIntensity;
-    float emissiveMapIntensity;
+    float emissiveMapStrength;
+    vec3 emissiveMapFactor;
     
     float parallaxMapIntensity;
 
@@ -886,7 +887,14 @@ void main()
     metallic = clamp(metallic * material.metallicMapIntensity, 0.0, 1.0);
     ao = mix(1.0, ao, material.ambientOcclusionMapIntensity);
 
-    vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveMapIntensity : vec3(0.0);
+    // Emissive: factor is always applied; texture (if present) modulates it
+    vec3 emissive = material.emissiveMapFactor;
+    if (material.has_texture_emissive_map)
+        emissive *= texture(material.texture_emissive, texCoords).rgb;
+    emissive *= material.emissiveMapStrength;
+
+
+    //vec3 emissive = material.has_texture_emissive_map ? texture(material.texture_emissive, texCoords).rgb * material.emissiveMapStrength * material.emissiveMapFactor : vec3(0.0);
     vec3 height = materialHeight.has_texture_height_map ? texture(materialHeight.texture_height, texCoords).rgb : vec3(0.0);
     float alpha = material.has_texture_opacity_map ? texture(material.texture_opacity, texCoords).r : (material.has_texture_diffuse_map ? texture(material.texture_diffuse, texCoords).a : material.opacity);
 

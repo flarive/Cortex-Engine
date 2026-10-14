@@ -21,14 +21,18 @@ namespace engine
             return {
                 {"zoom", EditorProperty { "Zoom", getZoom(), editable, 0.0f, 100.0f, 1.0f, "%.2f"}},
                 {"yaw", EditorProperty { "Yaw", getYaw(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
-                {"pitch", EditorProperty { "Pitch", getPitch(), editable, -90.0f, 90.0f, 1.0f, "%.2f" }}
+                {"pitch", EditorProperty { "Pitch", getPitch(), editable, -90.0f, 90.0f, 1.0f, "%.2f" }},
+                {"near", EditorProperty { "Near", getNearPlane(), editable, MIN_CAMERA_NEAR_PLANE, MAX_CAMERA_NEAR_PLANE, 0.1f, "%.2f" }},
+                {"far", EditorProperty { "Far", getFarPlane(), editable, MIN_CAMERA_FAR_PLANE, MAX_CAMERA_FAR_PLANE, 10.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {
             return {
                 { "zoom", [this](EditorPropertyValue value) { getZoom() = *(std::get_if<float>(&value)); } },
                 { "yaw", [this](EditorPropertyValue value) { getYaw() = *(std::get_if<float>(&value)); } },
-                { "pitch", [this](EditorPropertyValue value) { getPitch() = *(std::get_if<float>(&value)); } }
+                { "pitch", [this](EditorPropertyValue value) { getPitch() = *(std::get_if<float>(&value)); } },
+                { "near", [this](EditorPropertyValue value) { getNearPlane() = *(std::get_if<float>(&value)); } },
+                { "far", [this](EditorPropertyValue value) { getFarPlane() = *(std::get_if<float>(&value)); } }
             };
         }
 

@@ -45,7 +45,7 @@ void MyScene19::init()
 {
     // cameras
     auto trsCamera1 = Transform{ { 0.0f, 0.0f, 5.0f } };
-    auto camera1 = make_shared<FlyCamera>(78.0f, -90.0f, -2.0f, 10.0f);
+    auto camera1 = make_shared<FlyCamera>(48.0f, -90.0f, -2.0f, 10.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -68,7 +68,7 @@ void MyScene19::init()
 
     const string modelPath = FileSystemManager::getPath("../../samples/models/EmissiveStrengthTest/glTF/EmissiveStrengthTest.glTF");
     shared_ptr<Model> sampleModel = make_shared<Model>(modelPath, false, false, false);
-    auto trsSampleModel = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f), vec3(0.0f, 0.0f, 0.0f));
+    auto trsSampleModel = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.3f), vec3(0.0f, 0.0f, 0.0f));
     auto entitySampleModel = make_shared<Entity>("EmissiveStrengthTest");
     entitySampleModel->addComponent<TransformComponent>(trsSampleModel);
     entitySampleModel->addComponent<ModelComponent>(sampleModel);

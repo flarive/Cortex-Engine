@@ -22,8 +22,8 @@ namespace engine
                 {"zoom", EditorProperty { "Zoom", getZoom(), editable, 0.0f, 100.0f, 1.0f, "%.2f"}},
                 {"yaw", EditorProperty { "Yaw", getYaw(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
                 {"pitch", EditorProperty { "Pitch", getPitch(), editable, -90.0f, 90.0f, 1.0f, "%.2f" }},
-                {"near", EditorProperty { "Near", getNearPlane(), editable, 0.0f, 10.0f, 0.1f, "%.2f" }},
-                {"far", EditorProperty { "Far", getFarPlane(), editable, 100.0f, 100000.0f, 10.0f, "%.2f" }}
+                {"near", EditorProperty { "Near", getNearPlane(), editable, MIN_CAMERA_NEAR_PLANE, MAX_CAMERA_NEAR_PLANE, 0.1f, "%.2f" }},
+                {"far", EditorProperty { "Far", getFarPlane(), editable, MIN_CAMERA_FAR_PLANE, MAX_CAMERA_FAR_PLANE, 10.0f, "%.2f" }}
             };
         }
         std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() override {

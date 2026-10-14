@@ -540,6 +540,82 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     return meshPtr;
 }
 
+///// <summary>
+///// GLTF2 is a PBR geometry container first
+///// </summary>
+//std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32_t matIndex, const tg3_model& raw)
+//{
+//    const tg3_material& mat = raw.materials[matIndex];
+//
+//    //Color baseColorFactor{
+//    //    mat.pbr_metallic_roughness.base_color_factor[0],
+//    //    mat.pbr_metallic_roughness.base_color_factor[1],
+//    //    mat.pbr_metallic_roughness.base_color_factor[2],
+//    //    mat.pbr_metallic_roughness.base_color_factor[3]
+//    //};
+//
+//    Color baseColorFactor{ 0.3f, 0.3f, 0.3f, 1.0f };
+//
+//	if (mat.pbr_metallic_roughness.base_color_factor[0] != 1.0f &&
+//		mat.pbr_metallic_roughness.base_color_factor[1] != 1.0f &&
+//		mat.pbr_metallic_roughness.base_color_factor[2] != 1.0f &&
+//        mat.pbr_metallic_roughness.base_color_factor[3] != 1.0f)
+//	{
+//		baseColorFactor = Color{
+//			mat.pbr_metallic_roughness.base_color_factor[0],
+//			mat.pbr_metallic_roughness.base_color_factor[1],
+//			mat.pbr_metallic_roughness.base_color_factor[2],
+//			mat.pbr_metallic_roughness.base_color_factor[3]
+//		};
+//	}
+//
+//    std::string texBaseColorFullPath = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
+//    std::string texNormalFullPath = getTexture(raw, mat.normal_texture);
+//    std::string texMetallicFullPath = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
+//    std::string texRoughnessFullPath = texMetallicFullPath; // GLTF packs metallic+roughness together
+//    std::string texAoFullPath = getTexture(raw, mat.occlusion_texture);
+//    std::string texEmissiveFulPath = getTexture(raw, mat.emissive_texture);
+//    std::string texHeightFullPath = ""; // GLTF rarely uses height
+//    std::string texOpacityFullPath = ""; // TODO !!!
+//
+//    bool useARM = false;
+//    bool useMR = false;
+//
+//    // GLTF ARM detection (AO + Roughness + Metallic in one texture)
+//    if (!texAoFullPath.empty() && !texMetallicFullPath.empty() && texAoFullPath == texMetallicFullPath)
+//        useARM = true;
+//
+//    // GLTF MR detection (Metallic + Roughness in one texture)
+//    if (!texMetallicFullPath.empty() && !texRoughnessFullPath.empty() && texMetallicFullPath == texRoughnessFullPath)
+//        useMR = true;
+//
+//    std::shared_ptr<Material> material{};
+//
+//    if (texBaseColorFullPath.empty())
+//    {
+//        material = std::make_shared<PBRMaterial>(baseColorFactor);
+//    }
+//    else if (useARM)
+//    {
+//        // AO + Roughness + Metallic combined textures
+//        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, "", texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
+//    }
+//    else if (useMR)
+//    {
+//        // Metallic + Roughness combined textures
+//        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
+//    }
+//    else
+//    {
+//        // no combined textures
+//        material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
+//    }
+//
+//    material->setName(toStdString(mat.name));
+//
+//    return material;
+//}
+
 /// <summary>
 /// GLTF2 is a PBR geometry container first
 /// </summary>
@@ -547,28 +623,74 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
 {
     const tg3_material& mat = raw.materials[matIndex];
 
-    //Color baseColorFactor{
-    //    mat.pbr_metallic_roughness.base_color_factor[0],
-    //    mat.pbr_metallic_roughness.base_color_factor[1],
-    //    mat.pbr_metallic_roughness.base_color_factor[2],
-    //    mat.pbr_metallic_roughness.base_color_factor[3]
-    //};
-
+    // ------------------------------------------------------------
+    // Base color factor
+    // ------------------------------------------------------------
     Color baseColorFactor{ 0.3f, 0.3f, 0.3f, 1.0f };
 
-	if (mat.pbr_metallic_roughness.base_color_factor[0] != 1.0f &&
-		mat.pbr_metallic_roughness.base_color_factor[1] != 1.0f &&
-		mat.pbr_metallic_roughness.base_color_factor[2] != 1.0f &&
+    if (mat.pbr_metallic_roughness.base_color_factor[0] != 1.0f &&
+        mat.pbr_metallic_roughness.base_color_factor[1] != 1.0f &&
+        mat.pbr_metallic_roughness.base_color_factor[2] != 1.0f &&
         mat.pbr_metallic_roughness.base_color_factor[3] != 1.0f)
-	{
-		baseColorFactor = Color{
-			mat.pbr_metallic_roughness.base_color_factor[0],
-			mat.pbr_metallic_roughness.base_color_factor[1],
-			mat.pbr_metallic_roughness.base_color_factor[2],
-			mat.pbr_metallic_roughness.base_color_factor[3]
-		};
-	}
+    {
+        baseColorFactor = Color{
+            mat.pbr_metallic_roughness.base_color_factor[0],
+            mat.pbr_metallic_roughness.base_color_factor[1],
+            mat.pbr_metallic_roughness.base_color_factor[2],
+            mat.pbr_metallic_roughness.base_color_factor[3]
+        };
+    }
 
+    // ------------------------------------------------------------
+    // Metallic / Roughness factors
+    // ------------------------------------------------------------
+    const float metallicFactor = static_cast<float>(mat.pbr_metallic_roughness.metallic_factor);
+    const float roughnessFactor = static_cast<float>(mat.pbr_metallic_roughness.roughness_factor);
+
+    // ------------------------------------------------------------
+    // Emissive factor
+    // glTF spec: emissive = emissiveTexture.rgb * emissiveFactor
+    // ------------------------------------------------------------
+    glm::vec3 emissiveFactor(1.0f);
+
+    // If your tg3_material exposes the emissive factor directly:
+    emissiveFactor = glm::vec3(mat.emissive_factor[0], mat.emissive_factor[1], mat.emissive_factor[2]);
+
+    // Otherwise (or additionally), read it from the material extensions
+    for (uint32_t i = 0; i < mat.ext.extensions_count; ++i)
+    {
+        const std::string name = toStdString(mat.ext.extensions[i].name);
+
+        if (name == "emissiveFactor")
+        {
+            // Array of 3 floats stored as a value object/array
+            glm::vec3 f = toVec3(mat.ext.extensions[i].value);
+            if (f != glm::vec3(0.0f))
+                emissiveFactor = f;
+        }
+    }
+
+    // ------------------------------------------------------------
+    // Emissive strength (KHR_materials_emissive_strength)
+    // This is what pushes emissive above 1.0 so bloom picks it up
+    // ------------------------------------------------------------
+    float emissiveStrength = 1.0f;
+
+    for (uint32_t i = 0; i < mat.ext.extensions_count; ++i)
+    {
+        const std::string name = toStdString(mat.ext.extensions[i].name);
+
+        if (name == "KHR_materials_emissive_strength")
+        {
+            float s = toFloat(mat.ext.extensions[i].value);
+            if (s > 0.0f)
+                emissiveStrength = s;
+        }
+    }
+
+    // ------------------------------------------------------------
+    // Textures
+    // ------------------------------------------------------------
     std::string texBaseColorFullPath = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
     std::string texNormalFullPath = getTexture(raw, mat.normal_texture);
     std::string texMetallicFullPath = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
@@ -610,6 +732,16 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
         // no combined textures
         material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
     }
+
+    // ------------------------------------------------------------
+    // Emissive + PBR factors
+    // ------------------------------------------------------------
+    auto pbrMaterial = std::static_pointer_cast<PBRMaterial>(material);
+
+    pbrMaterial->setEmissiveFactor(emissiveFactor);
+    pbrMaterial->setEmissiveStrength(emissiveStrength); // final emissive = emissiveTex.rgb * factor * strength
+    pbrMaterial->setMetallicIntensity(metallicFactor);
+    pbrMaterial->setRougnessIntensity(roughnessFactor);
 
     material->setName(toStdString(mat.name));
 
@@ -926,6 +1058,57 @@ int engine::GLtfMeshLoader::toInt(const tg3_value& v)
     default:
         return 0;
     }
+}
+
+float engine::GLtfMeshLoader::toFloat(const tg3_value& v)
+{
+    switch (v.type)
+    {
+    case TG3_VALUE_INT:
+        return static_cast<float>(v.int_val);
+
+    case TG3_VALUE_REAL:
+        return static_cast<float>(v.real_val);
+
+    case TG3_VALUE_BOOL:
+        return v.bool_val ? 1.0f : 0.0f;
+
+    case TG3_VALUE_STRING:
+        return static_cast<float>(std::atof(v.string_val.data));
+
+    case TG3_VALUE_OBJECT:
+    {
+        // Example: KHR_materials_emissive_strength stores
+        // { "emissiveStrength": 5.0 }
+        for (uint32_t i = 0; i < v.object_count; ++i)
+        {
+            const tg3_kv_pair& entry = v.object_data[i];
+
+            std::string key(entry.key.data, entry.key.len);
+
+            if (key == "emissiveStrength")
+                return toFloat(entry.value);
+        }
+        return 0.0f;
+    }
+
+    default:
+        return 0.0f;
+    }
+}
+
+glm::vec3 engine::GLtfMeshLoader::toVec3(const tg3_value& v)
+{
+    glm::vec3 result(0.0f);
+
+    // Only meaningful for array-type values, e.g. [r, g, b]
+    if (v.type == TG3_VALUE_ARRAY)
+    {
+        for (uint32_t i = 0; i < v.array_count && i < 3; ++i)
+            result[i] = toFloat(v.array_data[i]);
+    }
+
+    return result;
 }
 
 void engine::GLtfMeshLoader::buildSkeleton(const tg3_model& raw)

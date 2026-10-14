@@ -25,6 +25,8 @@ namespace engine
                 {"radius", EditorProperty { "Radius", getRadius(), editable, 0.0f, 100.0f, 1.0f, "%.2f" }},
                 {"theta", EditorProperty { "Theta", getTheta(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
                 {"phi", EditorProperty { "Phi", getPhi(), editable, -180.0f, 180.0f, 1.0f, "%.2f" }},
+                {"near", EditorProperty { "Near", getNearPlane(), editable, MIN_CAMERA_NEAR_PLANE, MAX_CAMERA_NEAR_PLANE, 0.1f, "%.2f" }},
+                {"far", EditorProperty { "Far", getFarPlane(), editable, MIN_CAMERA_FAR_PLANE, MAX_CAMERA_FAR_PLANE, 10.0f, "%.2f" }}
                 
             };
         }
@@ -33,7 +35,9 @@ namespace engine
                 { "target", [this](EditorPropertyValue value) { getTarget() = *(std::get_if<glm::vec3>(&value)); } },
                 { "radius", [this](EditorPropertyValue value) { getRadius() = *(std::get_if<float>(&value)); } },
                 { "theta", [this](EditorPropertyValue value) { getTheta() = *(std::get_if<float>(&value)); } },
-                { "phi", [this](EditorPropertyValue value) { getPhi() = *(std::get_if<float>(&value)); } }
+                { "phi", [this](EditorPropertyValue value) { getPhi() = *(std::get_if<float>(&value)); } },
+                { "near", [this](EditorPropertyValue value) { getNearPlane() = *(std::get_if<float>(&value)); } },
+                { "far", [this](EditorPropertyValue value) { getFarPlane() = *(std::get_if<float>(&value)); } }
             };
         }
 

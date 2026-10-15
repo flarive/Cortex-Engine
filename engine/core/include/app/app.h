@@ -70,10 +70,32 @@ namespace engine
 
         // returns a unique instance of managers per app (no copy !)
         SceneManager& getSceneManager() { return m_sceneManager; }
+        InputManager& getInputManager() { return m_inputManager; }
     
-
+        // old to remove !!!!
         virtual void onKey(int key, int scancode, int action, int mods);
+
+        // new !!!!!!!!!!!!!
+        //static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+        //{
+        //    if (auto* app = getAppFromWindow(window))
+        //    {
+        //        app->getInputManager().onKey(key, scancode, action, mods);
+        //    }
+        //}
+
+        // old to remove !!!!
         virtual void onMouseMove(double x, double y);
+
+        // new
+        //static void mouseCallback(GLFWwindow* window, double x, double y)
+        //{
+        //    if (auto* app = getAppFromWindow(window))
+        //    {
+        //        app->getInputManager().onMouseMove(x, y);
+        //    }
+        //}
+
         virtual void onScroll(double xoffset, double yoffset);
         virtual void onResize(int width, int height);
         virtual void onRefresh();
@@ -120,10 +142,12 @@ namespace engine
             }
         }
 
+
         
 
     protected:
         SceneManager m_sceneManager{};
+        InputManager m_inputManager{};
 
     private:
         std::string m_title{};

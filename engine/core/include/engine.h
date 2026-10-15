@@ -82,3 +82,4 @@
 #include "managers/app_manager.h"
 #include "managers/log_manager.h"
 #include "managers/audio_manager.h"
+#include "managers/input_manager.h"

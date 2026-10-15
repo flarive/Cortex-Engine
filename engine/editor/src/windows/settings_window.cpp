@@ -28,6 +28,11 @@ void engine::SettingsWindow::init()
     sceneSetting_iblDiffuseIntensity = settings.iblDiffuseIntensity;
     sceneSetting_iblSpecularIntensity = settings.iblSpecularIntensity;
 	sceneSetting_framebufferMsaaSamples = settings.frameBufferAntiAliasingSamplesQuality;
+
+    sceneSetting_enableBloom = settings.enableBloom;
+    sceneSetting_bloomThreshold = settings.bloomThreshold;
+    sceneSetting_bloomStrength = settings.bloomStrength;
+    sceneSetting_bloomBlurPasses = settings.bloomBlurPasses;
 }
 
 void engine::SettingsWindow::renderTabSettings()
@@ -183,13 +188,9 @@ void engine::SettingsWindow::renderTabSettings()
     // ------------------------------------------------------------------------
 
     static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
-    if (ImGui::Toggle("Enable shadows", &sceneSetting_enableShadows, toggle_config))
+    if (EditorHelper::renderToggleButtonWithLabel("Enable shadows", sceneSetting_enableShadows, lastEnableShadows))
     {
-        if (lastEnableShadows != sceneSetting_enableShadows)
-        {
-            emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
-            lastEnableShadows = sceneSetting_enableShadows;
-        }
+        emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
     }
 
     static int lastShadowCalculationMethod = static_cast<int>(DEFAULT_SHADOWS_METHOD);
@@ -243,6 +244,35 @@ void engine::SettingsWindow::renderTabSettings()
         {
             emit(UIEventType::SceneSettingChanged, "pbr_ibl_specular_intensity", sceneSetting_iblSpecularIntensity);
         }
+    }
+
+
+    // ------------------------------------------------------------------------
+    // bloom
+    // ------------------------------------------------------------------------
+
+    static bool lastEnableBloom = DEFAULT_USE_BLOOM;
+    if (EditorHelper::renderToggleButtonWithLabel("Enable bloom", sceneSetting_enableBloom, lastEnableBloom))
+    {
+        emit(UIEventType::SceneSettingChanged, "enable_bloom", sceneSetting_enableBloom);
+    }
+
+    static float lastBloomThreshold = DEFAULT_BLOOM_THRESHOLD;
+    if (EditorHelper::renderDragFloatWithLabel("Bloom threshold", sceneSetting_bloomThreshold, lastBloomThreshold, 0.0f, 10.0f, 0.1f, "%.3f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "bloom_threshold", sceneSetting_bloomThreshold);
+    }
+
+    static float lastBloomStrength = DEFAULT_BLOOM_STRENGTH;
+    if (EditorHelper::renderDragFloatWithLabel("Bloom strength", sceneSetting_bloomStrength, lastBloomStrength, 0.0f, 10.0f, 0.1f, "%.3f"))
+    {
+        emit(UIEventType::SceneSettingChanged, "bloom_strength", sceneSetting_bloomStrength);
+    }
+
+    static ubyte lastBloomBlurPasses = DEFAULT_BLOOM_BLUR_PASSES;
+    if (EditorHelper::renderDragUnsignedByteWithLabel("Bloom blur passes", sceneSetting_bloomBlurPasses, lastBloomBlurPasses, 0, 10, 1))
+    {
+        emit(UIEventType::SceneSettingChanged, "bloom_blur_passes", sceneSetting_bloomBlurPasses);
     }
 
     ImGui::PopStyleVar();

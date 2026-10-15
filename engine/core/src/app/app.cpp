@@ -30,6 +30,8 @@ bool engine::App::isRunning()
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
+    m_inputManager.update();
+
     return !glfwWindowShouldClose(window);
 }
 
@@ -62,8 +64,7 @@ void engine::App::setup()
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
     if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
         // enable openGL debut ouput
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        RenderState::enableDebugOutput();
         glDebugMessageCallback(openglDebugCallback, nullptr);
     }
     else {

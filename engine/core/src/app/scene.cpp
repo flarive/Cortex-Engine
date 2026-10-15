@@ -349,6 +349,18 @@ void engine::Scene::listenForEditorChanges()
             else if (key == "framebuffer_msaa_samples") {
                 sceneSettings.frameBufferAntiAliasingSamplesQuality = unsignedByteValue;
             }
+            else if (key == "enable_bloom") {
+                sceneSettings.enableBloom = boolValue;
+            }
+            else if (key == "bloom_threshold") {
+                sceneSettings.bloomThreshold = floatValue;
+            }
+            else if (key == "bloom_strength") {
+                sceneSettings.bloomStrength = floatValue;
+            }
+            else if (key == "bloom_blur_passes") {
+                sceneSettings.bloomBlurPasses = unsignedByteValue;
+            }
         });
 }
 #endif

@@ -47,6 +47,9 @@ namespace engine
         static void enableWireframe();
         static void disableWireframe();
         static void setPolygonMode(GLint value);
+        static void enableDepthBiasingForFilledPolygons();
+        static void disableDepthBiasingForFilledPolygons();
+        static void setPolygonOffset(float x, float y);
 
         // Front Face
         static void setFrontFace(GLenum winding);
@@ -61,5 +64,9 @@ namespace engine
         // Cubemap
         static void enableCubeMapSeamless();
         static void disableCubeMapSeamless();
+
+        // Debug
+        static void enableDebugOutput();
+        static void disableDebugOutput();
     };
 }

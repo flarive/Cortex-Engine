@@ -39,6 +39,7 @@ namespace engine
 	};
 	
 
+
 	class EditorHelper final
 	{
 	public:
@@ -49,6 +50,8 @@ namespace engine
 
 		static bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		static void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
+
+		static bool renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue);
 
 		static bool renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max);
 		static bool renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max);

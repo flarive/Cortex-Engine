@@ -264,11 +264,10 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     glClear(GL_DEPTH_BUFFER_BIT);
 
 
-    glEnable(GL_POLYGON_OFFSET_FILL); // fix peter panning
-    glPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
-    //glPolygonOffset(1.1f, 4.0f);
+    RenderState::enableDepthBiasingForFilledPolygons(); // fix peter panning
+    RenderState::setPolygonOffset(2.0f, 4.0f); // Adjust these values to fine-tune shadow biasing
     update(directionalDepthMapShader, directionalDepthMapTessellationShader);
-    glDisable(GL_POLYGON_OFFSET_FILL);
+    RenderState::disableDepthBiasingForFilledPolygons();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

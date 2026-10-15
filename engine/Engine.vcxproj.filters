@@ -621,6 +621,9 @@
     <ClCompile Include="core\src\tools\pdh_counters.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\managers\input_manager.cpp">
+      <Filter>sources\core\managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -1036,6 +1039,9 @@
     </ClInclude>
     <ClInclude Include="core\include\tools\render_state.h">
       <Filter>headers\core\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\managers\input_manager.h">
+      <Filter>headers\core\managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

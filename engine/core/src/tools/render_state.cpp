@@ -133,6 +133,21 @@ namespace engine
         glPolygonMode(GL_FRONT_AND_BACK, value);
     }
 
+    void RenderState::enableDepthBiasingForFilledPolygons()
+    {
+        glEnable(GL_POLYGON_OFFSET_FILL);
+    }
+
+    void RenderState::disableDepthBiasingForFilledPolygons()
+    {
+        glDisable(GL_POLYGON_OFFSET_FILL);
+    }
+
+    void RenderState::setPolygonOffset(float x, float y)
+    {
+        glPolygonOffset(x, y);
+    }
+    
     //--------------------------------------------------------------------------
     // Front Face
     //--------------------------------------------------------------------------
@@ -180,5 +195,21 @@ namespace engine
     void RenderState::disableCubeMapSeamless()
     {
         glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    }
+
+    //--------------------------------------------------------------------------
+    // Debug
+    //--------------------------------------------------------------------------
+
+    void RenderState::enableDebugOutput()
+    {
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    }
+
+    void RenderState::disableDebugOutput()
+    {
+        glDisable(GL_DEBUG_OUTPUT);
+        glDisable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     }
 }

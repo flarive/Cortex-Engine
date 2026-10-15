@@ -25,6 +25,7 @@ std::unordered_map<std::string, bool> engine::EditorHelper::m_iconToggleStates; 
 engine::IconAtlas engine::EditorHelper::m_iconAtlas; // Define the static member
 const float engine::EditorHelper::ROW_HEIGHT = 12.0f;
 
+
 void engine::EditorHelper::renderDynamicProperties(std::shared_ptr<Component> component, const std::string& componentType)
 {
     if (!component)
@@ -301,6 +302,52 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
     ImGui::PopStyleColor(3);
 
     return res;
+}
+
+bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue)
+{
+    static const ImVec4 imGray(0.882f, 0.882f, 0.882f, 1.0f);
+    static const ImVec4 imBlue(0.149f, 0.502f, 0.922f, 1.0f);
+    static const ImVec4 imWhite(1.0f, 1.0f, 1.0f, 1.0f);
+
+    ImGuiTogglePalette material_palette_on;
+    material_palette_on.Frame = imWhite;
+    material_palette_on.Knob = imBlue;
+    material_palette_on.KnobHover = imBlue;
+    material_palette_on.FrameBorder = imGray;
+
+    ImGuiTogglePalette material_palette_off;
+    material_palette_off.Frame = imWhite;
+    material_palette_off.Knob = imGray;
+    material_palette_off.KnobHover = imBlue;
+    material_palette_off.FrameBorder = imGray;
+
+    ImGuiToggleConfig toggle_config;
+    toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
+    toggle_config.Size = ImVec2(30.0f, 18.0f);
+    toggle_config.On.Palette = &material_palette_on;
+    toggle_config.Off.Palette = &material_palette_off;
+
+    ImGui::Spacing();
+
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    
+    if (ImGui::Toggle(label, &value, toggle_config))
+    {
+        if (lastValue != value)
+        {
+            //emit(UIEventType::SceneSettingChanged, "enable_shadows", value);
+            lastValue = value;
+
+            ImGui::PopStyleVar();
+            return true;
+        }
+    }
+
+    ImGui::PopStyleVar();
+
+    return false;
 }
 
 bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max)

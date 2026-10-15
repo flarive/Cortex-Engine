@@ -15,9 +15,13 @@ MyScene19::MyScene19(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .shadowIntensity = 1.0f,
         .shadowMapsTextureSize = 2048,
         .shadowMapsBiasFactor = 0.015f,
-        .iblDiffuseIntensity = 1.0f,
-        .iblSpecularIntensity = 1.0f,
-        .enableGammaCorrection = true
+        .iblDiffuseIntensity = 0.1f,
+        .iblSpecularIntensity = 0.1f,
+        .enableGammaCorrection = true,
+        .enableBloom = true,
+        .bloomThreshold = 1.0f,
+        .bloomStrength = 0.03f,
+        .bloomBlurPasses= 10
     })
 {
     logger.trace("Scene {} constructor called", title);
@@ -55,7 +59,7 @@ void MyScene19::init()
     // lights
     auto trsLight1 = Transform{ {0.0f, 1.5f, 0.0f} };
     auto light1 = make_shared<PointLight>();
-    light1->setIntensity(3.0f);
+    light1->setIntensity(0.5f);
     light1->setAmbientColor(Color(0.1f));
     light1->setDiffuseColor(Color(1.0f));
     light1->setSpecularColor(Color(1.0f));
@@ -65,7 +69,7 @@ void MyScene19::init()
     getEntityManager().addChild(entityLight1);
 
 
-
+    // model
     const string modelPath = FileSystemManager::getPath("../../samples/models/EmissiveStrengthTest/glTF/EmissiveStrengthTest.glTF");
     shared_ptr<Model> sampleModel = make_shared<Model>(modelPath, false, false, false);
     auto trsSampleModel = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(0.3f), vec3(0.0f, 0.0f, 0.0f));

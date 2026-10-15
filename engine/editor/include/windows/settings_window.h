@@ -45,6 +45,11 @@ namespace engine
 
 		ubyte sceneSetting_framebufferMsaaSamples{ DEFAULT_FRAMEBUFFER_MSAA_SAMPLES };
 
+		bool sceneSetting_enableBloom{ DEFAULT_USE_BLOOM };
+		float sceneSetting_bloomThreshold{ DEFAULT_BLOOM_THRESHOLD };
+		float sceneSetting_bloomStrength{ DEFAULT_BLOOM_STRENGTH };
+		ubyte sceneSetting_bloomBlurPasses{ DEFAULT_BLOOM_BLUR_PASSES };
+
         void draw(glm::mat4& projection, glm::mat4& view) override
         {
             renderTabSettings();

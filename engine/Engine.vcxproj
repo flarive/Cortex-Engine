@@ -199,6 +199,7 @@
     <ClCompile Include="core\src\ecs\animator_component.cpp" />
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
+    <ClCompile Include="core\src\managers\input_manager.cpp" />
     <ClCompile Include="core\src\tools\pdh_counters.cpp" />
     <ClCompile Include="core\src\tools\render_state.cpp" />
     <ClCompile Include="editor\src\widgets\mesh_widget.cpp" />
@@ -328,6 +329,7 @@
     <ClInclude Include="core\include\ecs\animator_component.h" />
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
+    <ClInclude Include="core\include\managers\input_manager.h" />
     <ClInclude Include="core\include\tools\render_state.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
     <ClInclude Include="editor\include\widgets\skeleton_widget.h" />

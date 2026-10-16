@@ -27,7 +27,7 @@
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene19;
+using MyScene = MyScene1;
 
 class MyApp1 final : public App
 {
@@ -37,8 +37,9 @@ public:
 
 
     void start() override;
+
+    void handleInput() override;
     
-    void onKey(int key, int scancode, int action, int mods) override;
     void onMouseMove(double x, double y) override;
     void onScroll(double x, double y) override;
     void onResize(int w, int h) override;

@@ -55,13 +55,11 @@ void MyApp1::start()
     exit();
 }
 
-void MyApp1::onKey(int key, int scancode, int action, int mods)
+void MyApp1::handleInput()
 {
-    App::onKey(key, scancode, action, mods);
+    App::handleInput();
 
-    if (auto scene = m_scene.lock()) {
-        scene->key_callback(key, scancode, action, mods);
-    }
+    //auto& input = getInputManager();
 }
 
 void MyApp1::onMouseMove(double x, double y)

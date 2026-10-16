@@ -1,5 +1,14 @@
 #include "../../include/managers/input_manager.h"
 
+void engine::InputManager::beginFrame()
+{
+	m_previousKeys = m_currentKeys;
+
+	m_mouseDeltaX = 0.0f;
+	m_mouseDeltaY = 0.0f;
+
+	m_scrollOffset = 0.0f;
+}
 
 void engine::InputManager::update()
 {
@@ -14,11 +23,12 @@ void engine::InputManager::update()
 	m_scrollOffset = 0.f;
 }
 
-
-
-void engine::InputManager::onKey(int key, int scancode, int action, int mods)
+void engine::InputManager::onKey(int key, int scancode,	int action,	int mods)
 {
+	if (key < 0 || key >= KEY_COUNT)
+		return;
 
+	m_currentKeys[key] = (action != GLFW_RELEASE);
 }
 
 void engine::InputManager::onMouseMove(double x, double y)
@@ -33,20 +43,26 @@ void engine::InputManager::onScroll(double xoffset, double yoffset)
 
 bool engine::InputManager::isKeyDown(int key) const
 {
-	// temp
-	return false;
+	if (key < 0 || key >= KEY_COUNT)
+		return false;
+
+	return m_currentKeys[key];
 }
 
 bool engine::InputManager::isKeyPressed(int key) const
 {
-	// temp
-	return false;
+	if (key < 0 || key >= KEY_COUNT)
+		return false;
+
+	return m_currentKeys[key] && !m_previousKeys[key];
 }
 
 bool engine::InputManager::isKeyReleased(int key) const
 {
-	// temp
-	return false;
+	if (key < 0 || key >= KEY_COUNT)
+		return false;
+
+	return !m_currentKeys[key] && m_previousKeys[key];
 }
 
 bool engine::InputManager::isMouseButtonDown(int button) const

@@ -199,11 +199,10 @@ namespace engine
 
 
 
-        // glfw: whenever a key is pressed or released, this callback is called
-        // --------------------------------------------------------------------
-        virtual void key_callback(int key, int scancode, int action, int mods);
-    
+        virtual void handleInput();
 
+
+        // old !!!!!!!!!!!!!!!!!
         // glfw: whenever the mouse moves, this callback is called
         // -------------------------------------------------------
         virtual void mouse_callback(double xposIn, double yposIn);
@@ -228,8 +227,6 @@ namespace engine
         void refreshFullscreen();
 
         uint64_t getTotalElapsedFrames() const;
-
-        //static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 
     private:

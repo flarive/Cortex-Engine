@@ -33,9 +33,9 @@ public:
     ~MyApp0() override;
 
     void start() override;
-    
 
-    void onKey(int key, int scancode, int action, int mods) override;
+    void handleInput() override;
+    
     void onMouseMove(double x, double y) override;
     void onScroll(double x, double y) override;
     void onResize(int w, int h) override;
@@ -47,4 +47,8 @@ public:
     private:
         unsigned int m_currentSceneIndex{};
         weak_ptr<Scene> m_scene{};
+
+
+        void previousScene();
+        void nextScene();
 };

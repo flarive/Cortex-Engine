@@ -57,11 +57,15 @@ namespace engine
         float getMouseDeltaX() const;
         float getMouseDeltaY() const;
 
+        void beginFrame();
+
     private:
         static constexpr size_t KEY_COUNT = GLFW_KEY_LAST + 1;
-
         std::array<bool, KEY_COUNT> m_currentKeys{};
         std::array<bool, KEY_COUNT> m_previousKeys{};
+
+        static constexpr size_t MOUSE_BUTTON_COUNT = GLFW_MOUSE_BUTTON_LAST + 1;
+        std::array<bool, MOUSE_BUTTON_COUNT> m_mouseButtons{};
 
         
 

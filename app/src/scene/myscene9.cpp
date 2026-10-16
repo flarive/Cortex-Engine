@@ -117,43 +117,38 @@ void MyScene9::init()
         });
 }
 
-
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void MyScene9::key_callback(int key, int scancode, int action, int mods)
+void MyScene9::handleInput()
 {
-    Scene::key_callback(key, scancode, action, mods);
+    Scene::handleInput();
 
-    //// Detect Shift key state
-    ////bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    //if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //{
-    //    getActiveCamera()->processKeyboard(LEFT, deltaTime);
-    //    getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
-    //}
+    auto& input = getApp()->getInputManager();
 
+    if (input.isKeyDown(GLFW_KEY_LEFT))
+    {
+        camera->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(LEFT, deltaTime);
+    }
 
+    if (input.isKeyDown(GLFW_KEY_RIGHT))
+    {
+        camera->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(RIGHT, deltaTime);
+    }
 
-    //if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //{
-    //    getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-    //    getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
-    //}
+    if (input.isKeyDown(GLFW_KEY_UP))
+    {
+        camera->processKeyboard(FORWARD, deltaTime);
+    }
 
-
-    //if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //{
-    //    getActiveCamera()->processKeyboard(FORWARD, deltaTime);
-    //}
-
-    //if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-    //{
-    //    getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
-    //}
+    if (input.isKeyDown(GLFW_KEY_DOWN))
+    {
+        camera->processKeyboard(BACKWARD, deltaTime);
+    }
 }
-
 
 void MyScene9::mouse_callback(double xposIn, double yposIn)
 {

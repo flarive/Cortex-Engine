@@ -25,7 +25,7 @@ void MyScene1::init()
 {
     // camera
     auto trsCamera1 = Transform{ {0.0f, 0.1f, 5.0f} };
-    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
+    auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 1.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -167,33 +167,46 @@ void MyScene1::init()
     textTotalCount.setup(getApp()->window, FONT_PATH, 20);
 }
 
-
-void MyScene1::key_callback(int key, int scancode, int action, int mods)
+void MyScene1::handleInput()
 {
-    Scene::key_callback(key, scancode, action, mods);
+    Scene::handleInput();
 
-    // Detect Shift key state
-    bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    if (shiftPressed && key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
-    else if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(LEFT, deltaTime);
+    auto& input = getApp()->getInputManager();
 
-    if (shiftPressed && key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
-    else if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
+    bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
 
-    if (shiftPressed && key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_UP, deltaTime);
-    else if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+    if (shiftPressed)
+    {
+        if (input.isKeyDown(GLFW_KEY_LEFT))
+            camera->processKeyboard(YAW_DOWN, deltaTime);
 
-    if (shiftPressed && key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(PITCH_DOWN, deltaTime);
-    else if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+        if (input.isKeyDown(GLFW_KEY_RIGHT))
+            camera->processKeyboard(YAW_UP, deltaTime);
+
+        if (input.isKeyDown(GLFW_KEY_UP))
+            camera->processKeyboard(PITCH_UP, deltaTime);
+
+        if (input.isKeyDown(GLFW_KEY_DOWN))
+            camera->processKeyboard(PITCH_DOWN, deltaTime);
+    }
+    else
+    {
+        if (input.isKeyDown(GLFW_KEY_LEFT))
+            camera->processKeyboard(LEFT, deltaTime);
+
+        if (input.isKeyDown(GLFW_KEY_RIGHT))
+            camera->processKeyboard(RIGHT, deltaTime);
+
+        if (input.isKeyDown(GLFW_KEY_UP))
+            camera->processKeyboard(FORWARD, deltaTime);
+
+        if (input.isKeyDown(GLFW_KEY_DOWN))
+            camera->processKeyboard(BACKWARD, deltaTime);
+    }
 }
 
 void MyScene1::mouse_callback(double xposIn, double yposIn)

@@ -72,55 +72,56 @@ void MyScene10::init()
     getEntityManager().addChild(entityPlane);
 }
 
-
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void MyScene10::key_callback(int key, int scancode, int action, int mods)
+void MyScene10::handleInput()
 {
-    Scene::key_callback(key, scancode, action, mods);
+    Scene::handleInput();
 
-    // Detect Shift key state
-    bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    auto& input = getApp()->getInputManager();
+
+    if (input.isKeyDown(GLFW_KEY_LEFT))
     {
-        getActiveCamera()->processKeyboard(LEFT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(LEFT, deltaTime);
     }
 
-    if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_RIGHT))
     {
-        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(RIGHT, deltaTime);
     }
 
-    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_UP))
     {
-        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+        camera->processKeyboard(FORWARD, deltaTime);
     }
 
-    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_DOWN))
     {
-        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+        camera->processKeyboard(BACKWARD, deltaTime);
     }
 
-    if (shiftPressed && key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
+
+    if (shiftPressed && input.isKeyPressed(GLFW_KEY_R))
         incrementRoughness(-0.1f);
-    else if (key == GLFW_KEY_R && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    else if (input.isKeyPressed(GLFW_KEY_R))
         incrementRoughness(0.1f);
-
-    if (shiftPressed && key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        
+    if (shiftPressed && input.isKeyPressed(GLFW_KEY_I))
         incrementLightIntensity(-0.1f);
-    else if (key == GLFW_KEY_I && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    else if (input.isKeyPressed(GLFW_KEY_I))
         incrementLightIntensity(0.1f);
-
-    if (shiftPressed && key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        
+    if (shiftPressed && input.isKeyPressed(GLFW_KEY_S))
         switchTwoSided(false);
-    else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    else if (input.isKeyPressed(GLFW_KEY_S))
         switchTwoSided(true);
-
-    if (key == GLFW_KEY_O && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        
+    if (input.isKeyDown(GLFW_KEY_O))
         playOggFile();
 }
     

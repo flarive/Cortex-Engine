@@ -79,37 +79,38 @@ void MyScene19::init()
     getEntityManager().addChild(entitySampleModel);
 }
 
-
-void MyScene19::key_callback(int key, int scancode, int action, int mods)
+void MyScene19::handleInput()
 {
-    Scene::key_callback(key, scancode, action, mods);
+    Scene::handleInput();
 
-    // Detect Shift key state
-    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    auto& input = getApp()->getInputManager();
+
+    if (input.isKeyDown(GLFW_KEY_LEFT))
     {
-        getActiveCamera()->processKeyboard(LEFT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(LEFT, deltaTime);
     }
 
-    if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_RIGHT))
     {
-        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(RIGHT, deltaTime);
     }
 
-    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_UP))
     {
-        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+        camera->processKeyboard(FORWARD, deltaTime);
     }
 
-    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_DOWN))
     {
-        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+        camera->processKeyboard(BACKWARD, deltaTime);
     }
 }
-
 void MyScene19::mouse_callback(double xposIn, double yposIn)
 {
     Scene::mouse_callback(xposIn, yposIn);

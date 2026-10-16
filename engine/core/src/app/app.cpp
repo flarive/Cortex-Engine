@@ -27,12 +27,16 @@ const bool engine::App::capFramerate()
 
 bool engine::App::isRunning()
 {
+    m_inputManager.beginFrame();
+
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
-    m_inputManager.update();
+    handleInput();
 
-    return !glfwWindowShouldClose(window);
+    bool running = !glfwWindowShouldClose(window);
+
+    return running;
 }
 
 void engine::App::setup()
@@ -355,24 +359,6 @@ void engine::App::unregisterWindowInputCallbacks()
     glfwSetWindowRefreshCallback(window, nullptr);
 }
 
-void engine::App::onKey(int key, int scancode, int action, int mods)
-{
-    (void)scancode;   //Do nothing
-    (void)mods;   //Do nothing
-    (void)action;   //Do nothing
-
-    // basic window handling
-    switch (key)
-    {
-    case GLFW_KEY_ESCAPE:
-        glfwSetWindowShouldClose(window, GL_TRUE);
-        break;
-    }
-
-    // always pass input to ImGui *after*
-    //ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
-}
-
 void engine::App::onMouseMove(double x, double y)
 {
     (void)x;   //Do nothing
@@ -394,6 +380,15 @@ void engine::App::onResize(int width, int height)
 void engine::App::onRefresh()
 {
 
+}
+
+void engine::App::handleInput()
+{
+    if (m_inputManager.isKeyPressed(GLFW_KEY_ESCAPE))
+    {
+        // closing app
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
 }
 
 engine::App::~App()

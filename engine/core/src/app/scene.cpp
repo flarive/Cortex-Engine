@@ -408,6 +408,9 @@ void engine::Scene::gameLoop()
     io.DeltaTime = deltaTime;
 
 
+    // Handle keyboard/mouse/gamepad input
+    //handleInput();
+
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
 
@@ -962,47 +965,34 @@ GLFWwindow* engine::Scene::getWindow()
     return nullptr;
 }
 
-void engine::Scene::key_callback(int key, int scancode, int action, int mods)
+
+void engine::Scene::handleInput()
 {
-    (void)scancode;   //Do nothing
-    (void)mods;   //Do nothing
+    auto app = getApp();
+    if (!app)
+        return;
 
-    // basic window handling
-    if (auto appPtr = getApp())
+    auto& input = app->getInputManager();
+
+    if (input.isKeyPressed(GLFW_KEY_F))
     {
-        switch (key)
-        {
-        case GLFW_KEY_F:
-            if (action == GLFW_RELEASE)
+        app->toggleFullscreen([this]()
             {
-                appPtr->toggleFullscreen([this]() {
-                    this->refreshFullscreen();
-                    });
-            }
-            break;
-        case GLFW_KEY_F1:
-            // Open/close editor mode
-            if (action == GLFW_PRESS && !key_F1_pressed) {
-                is_editor_mode = !is_editor_mode;
-                key_F1_pressed = true;
-            }
-            else if (action == GLFW_RELEASE) {
-                key_F1_pressed = false;
-            }
-            break;
-        case GLFW_KEY_SPACE:
-            if (action == GLFW_RELEASE) {
-                // Open/close performance overlay
-                if (!is_editor_mode)
-                {
-                    show_perf_overlay = !show_perf_overlay;
-                }
-            }
-            break;
-        }
+                refreshFullscreen();
+            });
+    }
 
-        // always pass input to ImGui *after*
-        ImGui_ImplGlfw_KeyCallback(appPtr->window, key, scancode, action, mods);
+    if (input.isKeyPressed(GLFW_KEY_F1))
+    {
+        is_editor_mode = !is_editor_mode;
+    }
+
+    if (input.isKeyPressed(GLFW_KEY_SPACE))
+    {
+        if (!is_editor_mode)
+        {
+            show_perf_overlay = !show_perf_overlay;
+        }
     }
 }
 

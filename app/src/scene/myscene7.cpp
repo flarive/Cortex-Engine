@@ -209,60 +209,61 @@ void MyScene7::after_init_hook()
     // do something here if needed
 }
 
-
-
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void MyScene7::key_callback(int key, int scancode, int action, int mods)
+void MyScene7::handleInput()
 {
-    Scene::key_callback(key, scancode, action, mods);
+    Scene::handleInput();
 
-    // Detect Shift key state
-    //bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto camera = getActiveCamera();
+    if (!camera)
+        return;
 
-    if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    auto& input = getApp()->getInputManager();
+
+    if (input.isKeyDown(GLFW_KEY_LEFT))
     {
-        getActiveCamera()->processKeyboard(LEFT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(YAW_DOWN, deltaTime);
+        camera->processKeyboard(LEFT, deltaTime);
     }
 
-    if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_RIGHT))
     {
-        getActiveCamera()->processKeyboard(RIGHT, deltaTime);
-        getActiveCamera()->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(YAW_UP, deltaTime);
+        camera->processKeyboard(RIGHT, deltaTime);
     }
 
-    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_UP))
     {
-        getActiveCamera()->processKeyboard(FORWARD, deltaTime);
+        camera->processKeyboard(PITCH_UP, deltaTime);
+        camera->processKeyboard(FORWARD, deltaTime);
     }
 
-    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+    if (input.isKeyDown(GLFW_KEY_DOWN))
     {
-        getActiveCamera()->processKeyboard(BACKWARD, deltaTime);
+        camera->processKeyboard(PITCH_DOWN, deltaTime);
+        camera->processKeyboard(BACKWARD, deltaTime);
     }
 
-    if (key == GLFW_KEY_N && action == GLFW_PRESS)
+    if (input.isKeyPressed(GLFW_KEY_N))
     {
         auto trs = Transform{};
         trs.setLocalPosition({ offset_dynamic, -32.0f, -10.0f });
         trs.setLocalScale(vec3(2.0f));
         trs.setLocalRotation({ 0.0f, 180.0f, 0.0f });
-
+        
         auto model = make_shared<Model>("models/helmet/DamagedHelmet.glTF", false, true);
         auto entity = make_shared<Entity>(format("Child{}", 88));
+        entity->addComponent<TransformComponent>(trs);
+        entity->addComponent<ModelComponent>(model);
         getEntityManager().addChild(entity);
-
+        
         offset_dynamic += 5.0f;
     }
-
-    if (key == GLFW_KEY_M && action == GLFW_PRESS)
+        
+    if (input.isKeyPressed(GLFW_KEY_M))
     {
         getEntityManager().remove("Child88");
     }
 }
-
 
 void MyScene7::mouse_callback(double xposIn, double yposIn)
 {

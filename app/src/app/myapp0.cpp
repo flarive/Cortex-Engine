@@ -20,20 +20,6 @@ MyApp0::MyApp0(const string& _title, unsigned int _width, unsigned int _height, 
 
 void MyApp0::start()
 {
-    // Set the callbacks
-    /*glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetCursorPosCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
-    glfwSetWindowRefreshCallback(window, windowRefreshCallback);*/
-
-    //int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
-    //if (present > 0)
-    //{
-    //    const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-    //    logger.info("Joystick present {}", name);
-    //}
-
     // Load scenes in the app
     m_sceneManager.addScene<MyScene1>("Scene1", shared_from_this());
     m_sceneManager.addScene<MyScene2>("Scene2", shared_from_this());
@@ -78,53 +64,60 @@ void MyApp0::start()
     exit();
 }
 
-void MyApp0::onKey(int key, int scancode, int action, int mods)
+void MyApp0::handleInput()
 {
-    App::onKey(key, scancode, action, mods);
+    App::handleInput();
 
-    // Detect Shift key state
-    bool shiftPressed = (mods & GLFW_MOD_SHIFT);
+    auto& input = getInputManager();
 
-    if (shiftPressed && key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+    bool shift = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
+
+    if (shift && input.isKeyPressed(GLFW_KEY_LEFT))
     {
-        if (m_currentSceneIndex > 0)
-        {
-            m_currentSceneIndex--;
-
-            // switch to previous scene
-            auto previousScene = this->getSceneManager().setCurrentScene(m_currentSceneIndex);
-            if (previousScene)
-            {
-                logger.info("Switching to scene index {} ({})", m_currentSceneIndex, previousScene->getName());
-                // Observe only
-                m_scene = this->getSceneManager().getCurrentScene();
-                previousScene->initialize();
-                return;
-            }
-        }
+        previousScene();
     }
 
-    if (shiftPressed && key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+    if (shift && input.isKeyPressed(GLFW_KEY_RIGHT))
     {
-        if (m_currentSceneIndex < this->getSceneManager().getSceneCount())
-        {
-            m_currentSceneIndex++;
+        nextScene();
+    }
+}
 
-            // switch to next scene
-            auto nextScene = this->getSceneManager().setCurrentScene(m_currentSceneIndex);
-            if (nextScene)
-            {
-                logger.info("Switching to scene index {} ({})", m_currentSceneIndex, nextScene->getName());
-                // Observe only
-                m_scene = this->getSceneManager().getCurrentScene();
-                nextScene->initialize();
-                return;
-            }
+void MyApp0::previousScene()
+{
+    if (m_currentSceneIndex > 0)
+    {
+        m_currentSceneIndex--;
+        
+        // switch to previous scene
+        auto previousScene = this->getSceneManager().setCurrentScene(m_currentSceneIndex);
+        if (previousScene)
+        {
+            logger.info("Switching to scene index {} ({})", m_currentSceneIndex, previousScene->getName());
+            // Observe only
+            m_scene = this->getSceneManager().getCurrentScene();
+            previousScene->initialize();
+            return;
         }
     }
+}
 
-    if (auto scene = m_scene.lock()) {
-        scene->key_callback(key, scancode, action, mods);
+void MyApp0::nextScene()
+{
+    if (m_currentSceneIndex < this->getSceneManager().getSceneCount())
+    {
+        m_currentSceneIndex++;
+        
+        // switch to next scene
+        auto nextScene = this->getSceneManager().setCurrentScene(m_currentSceneIndex);
+        if (nextScene)
+        {
+            logger.info("Switching to scene index {} ({})", m_currentSceneIndex, nextScene->getName());
+            // Observe only
+            m_scene = this->getSceneManager().getCurrentScene();
+            nextScene->initialize();
+            return;
+        }
     }
 }
 

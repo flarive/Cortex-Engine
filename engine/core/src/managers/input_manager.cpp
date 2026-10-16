@@ -7,20 +7,8 @@ void engine::InputManager::beginFrame()
 	m_mouseDeltaX = 0.0f;
 	m_mouseDeltaY = 0.0f;
 
-	m_scrollOffset = 0.0f;
-}
-
-void engine::InputManager::update()
-{
-	m_previousKeys = m_currentKeys;
-
-	m_mouseDeltaX = m_mouseX - m_lastMouseX;
-	m_mouseDeltaY = m_mouseY - m_lastMouseY;
-
-	m_lastMouseX = m_mouseX;
-	m_lastMouseY = m_mouseY;
-
-	m_scrollOffset = 0.f;
+	m_scrollX = 0.0f;
+	m_scrollY = 0.0f;
 }
 
 void engine::InputManager::onKey(int key, int scancode,	int action,	int mods)
@@ -33,12 +21,32 @@ void engine::InputManager::onKey(int key, int scancode,	int action,	int mods)
 
 void engine::InputManager::onMouseMove(double x, double y)
 {
+	if (m_firstMouse)
+	{
+		m_mouseX = static_cast<float>(x);
+		m_mouseY = static_cast<float>(y);
 
+		m_previousMouseX = m_mouseX;
+		m_previousMouseY = m_mouseY;
+
+		m_firstMouse = false;
+		return;
+	}
+
+	m_mouseX = static_cast<float>(x);
+	m_mouseY = static_cast<float>(y);
+
+	m_mouseDeltaX = m_mouseX - m_previousMouseX;
+	m_mouseDeltaY = m_previousMouseY - m_mouseY;
+
+	m_previousMouseX = m_mouseX;
+	m_previousMouseY = m_mouseY;
 }
 
 void engine::InputManager::onScroll(double xoffset, double yoffset)
 {
-
+	m_scrollX += static_cast<float>(xoffset);
+	m_scrollY += static_cast<float>(yoffset);
 }
 
 bool engine::InputManager::isKeyDown(int key) const
@@ -67,18 +75,29 @@ bool engine::InputManager::isKeyReleased(int key) const
 
 bool engine::InputManager::isMouseButtonDown(int button) const
 {
-	// temp
-	return false;
+	if (button < 0 || button >= static_cast<int>(MOUSE_BUTTON_COUNT))
+		return false;
+
+	return m_mouseButtons[button];
 }
 
 float engine::InputManager::getMouseDeltaX() const
 {
-	// temp
-	return 0.0f;
+	return m_mouseDeltaX;
 }
 
 float engine::InputManager::getMouseDeltaY() const
 {
-	// temp
-	return 0.0f;
+	return m_mouseDeltaY;
 }
+
+float engine::InputManager::getScrollX() const
+{
+	return m_scrollX;
+}
+
+float engine::InputManager::getScrollY() const
+{
+	return m_scrollY;
+}
+

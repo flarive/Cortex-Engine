@@ -10,11 +10,6 @@ using namespace engine;
 class MyScene6 final : public Scene
 {
 private:
-    bool firstMouse{ true };
-
-    float lastX{ 0.0f };
-    float lastY{ 0.0f };
-
     const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
@@ -39,8 +34,6 @@ public:
 
     void handleInput() override;
 
-    void mouse_callback(double xposIn, double yposIn) override;
-    void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
 
     void framebuffer_size_callback(int newWidth, int newHeight);

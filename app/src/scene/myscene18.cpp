@@ -23,22 +23,12 @@ MyScene18::MyScene18(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
     logger.trace("Scene {} constructor called", title);
 
     // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
 }
 
 MyScene18::MyScene18(const string& _title, std::weak_ptr<App> _app, const SceneSettings& _settings)
     : Scene(_title, _app, _settings)
 {
     // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
 }
 
 void MyScene18::init()
@@ -130,42 +120,12 @@ void MyScene18::handleInput()
     {
         camera->processKeyboard(BACKWARD, deltaTime);
     }
-}
 
-void MyScene18::mouse_callback(double xposIn, double yposIn)
-{
-    Scene::mouse_callback(xposIn, yposIn);
+    // handle mouse
+    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
 
-    if (is_editor_mode)
-        return;
-
-    float xpos{ static_cast<float>(xposIn) };
-    float ypos{ static_cast<float>(yposIn) };
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset{ xpos - lastX };
-    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
-}
-
-void MyScene18::scroll_callback(double xoffset, double yoffset)
-{
-    Scene::scroll_callback(xoffset, yoffset);
-
-    if (is_editor_mode)
-        return;
-
-    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+    // handle mouse scroll
+    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene18::gamepad_callback(const GLFWgamepadstate& state)

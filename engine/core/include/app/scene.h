@@ -205,7 +205,7 @@ namespace engine
         // old !!!!!!!!!!!!!!!!!
         // glfw: whenever the mouse moves, this callback is called
         // -------------------------------------------------------
-        virtual void mouse_callback(double xposIn, double yposIn);
+        //virtual void mouse_callback(double xposIn, double yposIn);
 
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called

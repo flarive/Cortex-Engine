@@ -10,12 +10,6 @@ using namespace engine;
 class MyScene15 final : public Scene
 {
 private:
-    bool firstMouse{ true };
-
-    float lastX{ 0.0f };
-    float lastY{ 0.0f };
-
-
     const string FONT_PATH{ "fonts/Antonio-Regular.ttf" };
 
 
@@ -43,7 +37,6 @@ private:
 
 public:
     MyScene15(const string& _title, std::weak_ptr<App> _app);
-    MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneSettings& settings);
     ~MyScene15() override;
 
     void init() override;
@@ -53,7 +46,6 @@ public:
 
     void handleInput() override;
 
-    void mouse_callback(double xposIn, double yposIn) override;
     void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
@@ -61,5 +53,4 @@ public:
 private:
     float m_parallaxIntensity{ 0.0f };
     void incrementParallaxIntensity(float intensity);
-    void switchRenderMode(RenderMethod method);
 };

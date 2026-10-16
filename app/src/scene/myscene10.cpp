@@ -19,14 +19,7 @@ MyScene10::MyScene10(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
     })
 {
     // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
 }
-
-
 
 void MyScene10::init()
 {
@@ -123,41 +116,14 @@ void MyScene10::handleInput()
         
     if (input.isKeyDown(GLFW_KEY_O))
         playOggFile();
+
+    // handle mouse
+    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
+
+    // handle mouse scroll
+    camera->processMouseScroll(input.getScrollY());
 }
     
-void MyScene10::mouse_callback(double xposIn, double yposIn)
-{
-    Scene::mouse_callback(xposIn, yposIn);
-
-    if (is_editor_mode)
-        return;
-
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
-}
-
-void MyScene10::scroll_callback(double xoffset, double yoffset)
-{
-    Scene::scroll_callback(xoffset, yoffset);
-
-    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
-}
-
 void MyScene10::gamepad_callback(const GLFWgamepadstate& state)
 {
     (void)state;   //Do nothing

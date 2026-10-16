@@ -26,22 +26,6 @@ MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
     logger.trace("Scene {} constructor called", title);
 
     // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
-}
-
-MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app, const SceneSettings& _settings)
-    : Scene(_title, _app, _settings)
-{
-    // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
 }
 
 void MyScene15::init()
@@ -288,45 +272,13 @@ void MyScene15::handleInput()
         incrementParallaxIntensity(-0.01f);
     else if (input.isKeyPressed(GLFW_KEY_KP_ADD))
         incrementParallaxIntensity(0.01f);
-    
-    if (input.isKeyPressed(GLFW_KEY_KP_ENTER))
-    {
-        auto newMethod = this->getSceneSettings().method == RenderMethod::PBR ? RenderMethod::BlinnPhong : RenderMethod::PBR;
-        switchRenderMode(newMethod);
-    }
-}
 
-void MyScene15::mouse_callback(double xposIn, double yposIn)
-{
-    Scene::mouse_callback(xposIn, yposIn);
 
-    if (is_editor_mode)
-        return;
+    // handle mouse
+    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
 
-    float xpos{ static_cast<float>(xposIn) };
-    float ypos{ static_cast<float>(yposIn) };
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset{ xpos - lastX };
-    float yoffset{ lastY - ypos }; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
-}
-
-void MyScene15::scroll_callback(double xoffset, double yoffset)
-{
-    Scene::scroll_callback(xoffset, yoffset);
-
-    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+    // handle mouse scroll
+    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene15::gamepad_callback(const GLFWgamepadstate& state)
@@ -398,13 +350,6 @@ void MyScene15::incrementParallaxIntensity(float intensity)
     updateMaterial(getEntityManager().findEntityByName("MyPlane3"));
     updateMaterial(getEntityManager().findEntityByName("MyPlane4"));
     updateMaterial(getEntityManager().findEntityByName("MyCube"));
-}
-
-void MyScene15::switchRenderMode(RenderMethod method)
-{
-    (void)method;
-
-    getApp()->getSceneManager().requestSceneUnload();
 }
 
 void MyScene15::clean()

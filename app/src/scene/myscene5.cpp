@@ -16,11 +16,6 @@ MyScene5::MyScene5(const string& _title, std::weak_ptr<App> _app) : Scene(_title
     })
 {
     // my application specific state gets initialized here
-
-    if (auto appPtr = getApp()) {
-        lastX = appPtr->width / 2.0f;
-        lastY = appPtr->height / 2.0f;
-    }
 }
 
 void MyScene5::init()
@@ -148,40 +143,12 @@ void MyScene5::handleInput()
         else
             camera->processKeyboard(BACKWARD, deltaTime);
     }
-}
 
+    // handle mouse
+    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
 
-void MyScene5::mouse_callback(double xposIn, double yposIn)
-{
-    Scene::mouse_callback(xposIn, yposIn);
-
-    if (is_editor_mode)
-        return;
-
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    getActiveCamera()->processMouseMovement(xoffset, yoffset);
-}
-
-void MyScene5::scroll_callback(double xoffset, double yoffset)
-{
-    Scene::scroll_callback(xoffset, yoffset);
-
-    getActiveCamera()->processMouseScroll(static_cast<float>(yoffset));
+    // handle mouse scroll
+    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene5::gamepad_callback(const GLFWgamepadstate& state)

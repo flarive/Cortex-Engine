@@ -6,42 +6,11 @@
 
 namespace engine
 {
-    /*enum class Key
-    {
-        Unknown = 0,
-
-        W,
-        A,
-        S,
-        D,
-
-        Space,
-        Escape,
-
-        LeftShift,
-        LeftCtrl,
-
-        F1,
-        F2,
-        F3,
-
-        Count
-    };
-
-    enum class MouseButton
-    {
-        Left = 0,
-        Right,
-        Middle,
-
-        Count
-    };*/
-
     class InputManager final
     {
     public:
 
-        void update();
+        void beginFrame();
 
         void onKey(int key, int scancode, int action, int mods);
         void onMouseMove(double x, double y);
@@ -57,7 +26,8 @@ namespace engine
         float getMouseDeltaX() const;
         float getMouseDeltaY() const;
 
-        void beginFrame();
+        float getScrollX() const;
+        float getScrollY() const;
 
     private:
         static constexpr size_t KEY_COUNT = GLFW_KEY_LAST + 1;
@@ -69,15 +39,19 @@ namespace engine
 
         
 
-        double m_mouseX{};
-        double m_mouseY{};
+        float m_mouseX{};
+        float m_mouseY{};
 
-        double m_mouseDeltaX{};
-        double m_mouseDeltaY{};
+        float m_previousMouseX{};
+        float m_previousMouseY{};
 
-        double m_lastMouseX{};
-        double m_lastMouseY{};
+        float m_mouseDeltaX{};
+        float m_mouseDeltaY{};
 
-        float m_scrollOffset{};
+        bool m_firstMouse{ true };
+
+   
+        float m_scrollX{};
+        float m_scrollY{};
     };
 }

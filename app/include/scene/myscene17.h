@@ -9,16 +9,6 @@ using namespace engine;
 
 class MyScene17 final : public Scene
 {
-private:
-    bool firstMouse{ true };
-
-    float lastX{ 0.0f };
-    float lastY{ 0.0f };
-
-
-
-
-
 public:
     MyScene17(const string& _title, std::weak_ptr<App> _app);
     MyScene17(const string& _title, std::weak_ptr<App> _app, const SceneSettings& settings);
@@ -31,8 +21,6 @@ public:
 
     void handleInput() override;
 
-    void mouse_callback(double xposIn, double yposIn) override;
-    void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
 };

@@ -407,9 +407,8 @@ void engine::Scene::gameLoop()
     lastFrameTime = currentFrameTime;
     io.DeltaTime = deltaTime;
 
-
-    // Handle keyboard/mouse/gamepad input
-    //handleInput();
+    // Handle keyboard/mouse/gamepad input (scene level)
+    handleInput();
 
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
@@ -998,19 +997,19 @@ void engine::Scene::handleInput()
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-void engine::Scene::mouse_callback(double xposIn, double yposIn)
-{
-    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
-        ImGui_ImplGlfw_CursorPosCallback(appPtr->window, xposIn, yposIn);
-}
+//void engine::Scene::mouse_callback(double xposIn, double yposIn)
+//{
+//    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
+//        ImGui_ImplGlfw_CursorPosCallback(appPtr->window, xposIn, yposIn);
+//}
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void engine::Scene::scroll_callback(double xoffset, double yoffset)
-{
-    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
-        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
-}
+//void engine::Scene::scroll_callback(double xoffset, double yoffset)
+//{
+//    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
+//        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
+//}
 
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
 void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)

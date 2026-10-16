@@ -75,8 +75,8 @@ namespace engine
         virtual void handleInput();
 
         // old to remove !!!!
-        virtual void onMouseMove(double x, double y);
-        virtual void onScroll(double xoffset, double yoffset);
+        //virtual void onMouseMove(double x, double y);
+        //virtual void onScroll(double xoffset, double yoffset);
         virtual void onResize(int width, int height);
         virtual void onRefresh();
 
@@ -87,11 +87,10 @@ namespace engine
             return static_cast<App*>(glfwGetWindowUserPointer(window));
         }
 
-        // new !!!!!!!!!!!!!
+        
         static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
-            if (auto* app = getAppFromWindow(window))
-            {
+            if (auto* app = getAppFromWindow(window)) {
                 app->getInputManager().onKey(key, scancode, action, mods);
             }
         }
@@ -99,14 +98,14 @@ namespace engine
         static void mouseCallback(GLFWwindow* window, double x, double y)
         {
             if (auto* app = getAppFromWindow(window)) {
-                app->onMouseMove(x, y);
+                app->getInputManager().onMouseMove(x, y);
             }
         }
 
         static void scrollCallback(GLFWwindow* window, double x, double y)
         {
             if (auto* app = getAppFromWindow(window)) {
-                app->onScroll(x, y);
+                app->getInputManager().onScroll(x, y);
             }
         }
 

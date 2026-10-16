@@ -32,11 +32,10 @@ bool engine::App::isRunning()
     // Poll and handle events (inputs, window resize, etc.)
     glfwPollEvents();
 
+    // Handle keyboard/mouse/gamepad input (app level)
     handleInput();
 
-    bool running = !glfwWindowShouldClose(window);
-
-    return running;
+    return !glfwWindowShouldClose(window);
 }
 
 void engine::App::setup()
@@ -359,17 +358,17 @@ void engine::App::unregisterWindowInputCallbacks()
     glfwSetWindowRefreshCallback(window, nullptr);
 }
 
-void engine::App::onMouseMove(double x, double y)
-{
-    (void)x;   //Do nothing
-    (void)y;   //Do nothing
-}
+//void engine::App::onMouseMove(double x, double y)
+//{
+//    (void)x;   //Do nothing
+//    (void)y;   //Do nothing
+//}
 
-void engine::App::onScroll(double xoffset, double yoffset)
-{
-    (void)xoffset;   //Do nothing
-    (void)yoffset;   //Do nothing
-}
+//void engine::App::onScroll(double xoffset, double yoffset)
+//{
+//    (void)xoffset;   //Do nothing
+//    (void)yoffset;   //Do nothing
+//}
 
 void engine::App::onResize(int width, int height)
 {

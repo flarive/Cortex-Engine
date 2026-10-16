@@ -36,8 +36,8 @@ public:
 
     void handleInput() override;
     
-    void onMouseMove(double x, double y) override;
-    void onScroll(double x, double y) override;
+    //void onMouseMove(double x, double y) override;
+    //void onScroll(double x, double y) override;
     void onResize(int w, int h) override;
     void onRefresh() override;
 

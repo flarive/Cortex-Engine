@@ -20,7 +20,6 @@ public:
 
     void handleInput() override;
 
-    void scroll_callback(double xoffset, double yoffset);
     void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
 };

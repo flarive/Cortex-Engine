@@ -210,7 +210,7 @@ namespace engine
 
         // glfw: whenever the mouse scroll wheel scrolls, this callback is called
         // ----------------------------------------------------------------------
-        virtual void scroll_callback(double xoffset, double yoffset);
+        //virtual void scroll_callback(double xoffset, double yoffset);
 
 
         // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp

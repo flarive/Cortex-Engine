@@ -121,20 +121,6 @@ void MyApp0::nextScene()
     }
 }
 
-//void MyApp0::onMouseMove(double x, double y)
-//{
-//    if (auto scene = m_scene.lock()) {
-//        scene->mouse_callback(x, y);
-//    }
-//}
-
-//void MyApp0::onScroll(double x, double y)
-//{
-//    if (auto scene = m_scene.lock()) {
-//        scene->scroll_callback(x, y);
-//    }
-//}
-
 void MyApp0::onResize(int w, int h)
 {
     if (auto scene = m_scene.lock()) {

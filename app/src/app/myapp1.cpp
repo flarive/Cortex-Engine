@@ -60,20 +60,6 @@ void MyApp1::handleInput()
     App::handleInput();
 }
 
-//void MyApp1::onMouseMove(double x, double y)
-//{
-//    if (auto scene = m_scene.lock()) {
-//        scene->mouse_callback(x, y);
-//    }
-//}
-
-//void MyApp1::onScroll(double x, double y)
-//{
-//    if (auto scene = m_scene.lock()) {
-//        scene->scroll_callback(x, y);
-//    }
-//}
-
 void MyApp1::onResize(int w, int h)
 {
     if (auto scene = m_scene.lock()) {

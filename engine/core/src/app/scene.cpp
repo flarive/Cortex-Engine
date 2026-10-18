@@ -408,7 +408,7 @@ void engine::Scene::gameLoop()
     io.DeltaTime = deltaTime;
 
     // Handle keyboard/mouse/gamepad input (scene level)
-    handleInput();
+    onInputUpdate();
 
     // measure ui time (part 1 begin)
     auto uiStart1 = Clock::now();
@@ -965,7 +965,7 @@ GLFWwindow* engine::Scene::getWindow()
 }
 
 
-void engine::Scene::handleInput()
+void engine::Scene::onInputUpdate()
 {
     auto app = getApp();
     if (!app)
@@ -1012,26 +1012,26 @@ void engine::Scene::handleInput()
 //}
 
 // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
-void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)
-{
-    getActiveCamera()->processJoystickMovement(state);
-
-    //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
-    //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
-
-    if (GLFW_PRESS == state.buttons[1])
-    {
-        std::cout << "Pressed" << std::endl;
-    }
-    else if (GLFW_RELEASE == state.buttons[0])
-    {
-        //std::cout << "Released" << std::endl;
-    }
-}
+//void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)
+//{
+//    getActiveCamera()->processJoystickMovement(state);
+//
+//    //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
+//    //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
+//    //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
+//    //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
+//    //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
+//    //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
+//
+//    if (GLFW_PRESS == state.buttons[1])
+//    {
+//        std::cout << "Pressed" << std::endl;
+//    }
+//    else if (GLFW_RELEASE == state.buttons[0])
+//    {
+//        //std::cout << "Released" << std::endl;
+//    }
+//}
 
 void engine::Scene::window_refresh_callback()
 {

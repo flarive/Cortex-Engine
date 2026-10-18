@@ -119,7 +119,8 @@ namespace engine
         // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
         virtual void processMouseScroll(float yoffset) = 0;
 
-        virtual void processJoystickMovement(const GLFWgamepadstate& state) = 0;
+        //virtual void processJoystickMovement(const GLFWgamepadstate& state) = 0;
+        virtual void processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime) = 0;
 
         virtual ordered_map<std::string, EditorProperty> getPublicProperties() = 0;
         virtual std::unordered_map<std::string, std::function<void(EditorPropertyValue)>> getPropertySetters() = 0;

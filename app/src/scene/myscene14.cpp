@@ -182,9 +182,9 @@ void MyScene14::init()
     textTotalCount.setup(getApp()->window, FONT_PATH, 20);
 }
 
-void MyScene14::handleInput()
+void MyScene14::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -228,11 +228,6 @@ void MyScene14::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene14::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene14::framebuffer_size_callback(int newWidth, int newHeight)

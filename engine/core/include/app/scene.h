@@ -199,7 +199,7 @@ namespace engine
 
 
 
-        virtual void handleInput();
+        virtual void onInputUpdate();
 
 
         // old !!!!!!!!!!!!!!!!!
@@ -214,7 +214,7 @@ namespace engine
 
 
         // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
-        virtual void gamepad_callback(const GLFWgamepadstate& state);
+        //virtual void gamepad_callback(const GLFWgamepadstate& state);
 
 
         // glfw: whenever the window size changed (by OS or user resize) this callback function executes

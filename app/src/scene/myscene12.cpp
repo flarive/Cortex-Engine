@@ -167,9 +167,9 @@ void MyScene12::init()
     getEntityManager().addChild(entitySphere3);
 }
 
-void MyScene12::handleInput()
+void MyScene12::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -213,11 +213,6 @@ void MyScene12::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene12::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene12::framebuffer_size_callback(int newWidth, int newHeight)

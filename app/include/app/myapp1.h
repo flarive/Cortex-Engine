@@ -38,10 +38,9 @@ public:
 
     void start() override;
 
-    void handleInput() override;
+    void onInputUpdate() override;
     
-    //void onMouseMove(double x, double y) override;
-    //void onScroll(double x, double y) override;
+
     void onResize(int w, int h) override;
     void onRefresh() override;
    

@@ -192,9 +192,9 @@ void MyScene17::init()
     getEntityManager().addChild(entityHelmet);
 }
 
-void MyScene17::handleInput()
+void MyScene17::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -229,11 +229,6 @@ void MyScene17::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene17::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene17::framebuffer_size_callback(int newWidth, int newHeight)

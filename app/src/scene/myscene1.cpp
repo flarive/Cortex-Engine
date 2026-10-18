@@ -163,9 +163,9 @@ void MyScene1::init()
     textTotalCount.setup(getApp()->window, FONT_PATH, 20);
 }
 
-void MyScene1::handleInput()
+void MyScene1::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -209,11 +209,30 @@ void MyScene1::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
 
-void MyScene1::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
+    // handle gamepad
+    if (input.isGamepadPresent())
+    {
+        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
+        {
+            logger.info("Jump");
+        }
+
+        float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+
+        float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+        float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
+
+        float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+        camera->processJoystickMovement(
+            leftX,
+            leftY,
+            rightX,
+            rightY,
+            deltaTime);
+    }
 }
 
 void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)

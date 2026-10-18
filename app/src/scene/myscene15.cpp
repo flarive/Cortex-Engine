@@ -236,9 +236,9 @@ void MyScene15::init()
 }
 
 
-void MyScene15::handleInput()
+void MyScene15::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -279,11 +279,6 @@ void MyScene15::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene15::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene15::framebuffer_size_callback(int newWidth, int newHeight)

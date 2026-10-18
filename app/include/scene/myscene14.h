@@ -36,8 +36,7 @@ public:
     void updateUI() override;
     void clean() override;
 
-    void handleInput() override;
+    void onInputUpdate() override;
 
-    void gamepad_callback(const GLFWgamepadstate& state);
     void framebuffer_size_callback(int newWidth, int newHeight);
 };

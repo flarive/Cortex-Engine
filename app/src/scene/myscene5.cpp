@@ -100,9 +100,9 @@ void MyScene5::init()
 }
 
 
-void MyScene5::handleInput()
+void MyScene5::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -149,27 +149,6 @@ void MyScene5::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene5::gamepad_callback(const GLFWgamepadstate& state)
-{
-    getActiveCamera()->processJoystickMovement(state);
-
-    //cout << "Left Stick X Axis: " << state.axes[0] << endl; // tested with PS4 controller connected via micro USB cable
-    //cout << "Left Stick Y Axis: " << state.axes[1] << endl; // tested with PS4 controller connected via micro USB cable
-    //cout << "Right Stick X Axis: " << state.axes[2] << endl; // tested with PS4 controller connected via micro USB cable
-    //cout << "Right Stick Y Axis: " << state.axes[3] << endl; // tested with PS4 controller connected via micro USB cable
-    //cout << "Left Trigger/L2: " << state.axes[4] << endl; // tested with PS4 controller connected via micro USB cable
-    //cout << "Right Trigger/R2: " << state.axes[5] << endl; // tested with PS4 controller connected via micro USB cable
-
-    if (GLFW_PRESS == state.buttons[1])
-    {
-        cout << "Pressed" << endl;
-    }
-    else if (GLFW_RELEASE == state.buttons[0])
-    {
-        //cout << "Released" << endl;
-    }
 }
 
 void MyScene5::framebuffer_size_callback(int newWidth, int newHeight)

@@ -168,9 +168,9 @@ void MyScene8::init()
 }
 
 
-void MyScene8::handleInput()
+void MyScene8::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -214,11 +214,6 @@ void MyScene8::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene8::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene8::framebuffer_size_callback(int newWidth, int newHeight)

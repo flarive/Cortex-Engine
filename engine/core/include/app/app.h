@@ -72,11 +72,9 @@ namespace engine
         SceneManager& getSceneManager() { return m_sceneManager; }
         InputManager& getInputManager() { return m_inputManager; }
     
-        virtual void handleInput();
+        virtual void onInputUpdate();
 
-        // old to remove !!!!
-        //virtual void onMouseMove(double x, double y);
-        //virtual void onScroll(double xoffset, double yoffset);
+        // events
         virtual void onResize(int width, int height);
         virtual void onRefresh();
 

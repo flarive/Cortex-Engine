@@ -44,9 +44,9 @@ void MyScene0::init()
     getEntityManager().addChild(entityLight1);
 }
 
-void MyScene0::handleInput()
+void MyScene0::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -90,11 +90,6 @@ void MyScene0::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene0::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene0::framebuffer_size_callback(int newWidth, int newHeight)

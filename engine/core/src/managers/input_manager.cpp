@@ -9,6 +9,16 @@ void engine::InputManager::beginFrame()
 
 	m_scrollX = 0.0f;
 	m_scrollY = 0.0f;
+
+	// Gamepad
+	m_previousGamepad = m_currentGamepad;
+
+	m_gamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+
+	if (m_gamepadConnected)
+	{
+		glfwGetGamepadState(GLFW_JOYSTICK_1, &m_currentGamepad);
+	}
 }
 
 void engine::InputManager::onKey(int key, int scancode,	int action,	int mods)
@@ -99,5 +109,59 @@ float engine::InputManager::getScrollX() const
 float engine::InputManager::getScrollY() const
 {
 	return m_scrollY;
+}
+
+bool engine::InputManager::isGamepadPresent() const
+{
+	return m_gamepadConnected;
+}
+
+bool engine::InputManager::isGamepadButtonDown(int button) const
+{
+	if (!m_gamepadConnected)
+	{
+		return false;
+	}
+
+	return m_currentGamepad.buttons[button] == GLFW_PRESS;
+}
+
+bool engine::InputManager::isGamepadButtonPressed(int button) const
+{
+	if (!m_gamepadConnected)
+	{
+		return false;
+	}
+
+	return m_currentGamepad.buttons[button] == GLFW_PRESS && m_previousGamepad.buttons[button] == GLFW_RELEASE;
+}
+
+bool engine::InputManager::isGamepadButtonReleased(int button) const
+{
+	if (!m_gamepadConnected)
+	{
+		return false;
+	}
+
+	return m_currentGamepad.buttons[button] == GLFW_RELEASE && m_previousGamepad.buttons[button] == GLFW_PRESS;
+}
+
+float engine::InputManager::getGamepadAxis(int axis) const
+{
+	if (!m_gamepadConnected)
+	{
+		return 0.0f;
+	}
+
+	constexpr float deadZone = 0.15f;
+
+	float value = m_currentGamepad.axes[axis];
+
+	if (std::abs(value) < deadZone)
+	{
+		value = 0.0f;
+	}
+
+	return value;
 }
 

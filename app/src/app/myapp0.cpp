@@ -50,8 +50,6 @@ void MyApp0::start()
     // start game loop
     while (isRunning())
     {
-        //gamepadCallback(window); // Update gamepad state
-
         if (auto scene = m_scene.lock()) {
             scene->gameLoop();
         }
@@ -64,9 +62,9 @@ void MyApp0::start()
     exit();
 }
 
-void MyApp0::handleInput()
+void MyApp0::onInputUpdate()
 {
-    App::handleInput();
+    App::onInputUpdate();
 
     auto& input = getInputManager();
 

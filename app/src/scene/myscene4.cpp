@@ -90,9 +90,9 @@ void MyScene4::init()
     ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
-void MyScene4::handleInput()
+void MyScene4::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -139,11 +139,6 @@ void MyScene4::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene4::gamepad_callback(const GLFWgamepadstate& state)
-{
-    (void)state;   //Do nothing
 }
 
 void MyScene4::framebuffer_size_callback(int newWidth, int newHeight)

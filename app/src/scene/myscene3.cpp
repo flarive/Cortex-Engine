@@ -235,9 +235,9 @@ void MyScene3::init()
     //ourSprite.setup(getApp()->window, "UI/cortex-logo.png");
 }
 
-void MyScene3::handleInput()
+void MyScene3::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -284,13 +284,6 @@ void MyScene3::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene3::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
-
-
 }
 
 void MyScene3::framebuffer_size_callback(int newWidth, int newHeight)

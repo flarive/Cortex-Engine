@@ -89,9 +89,9 @@ void MyScene18::init()
     getEntityManager().addChild(entityBackPlane);
 }
 
-void MyScene18::handleInput()
+void MyScene18::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -126,11 +126,6 @@ void MyScene18::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene18::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene18::framebuffer_size_callback(int newWidth, int newHeight)

@@ -29,7 +29,8 @@ void MyApp1::start()
         scene->initialize();
     }
 
-
+    // Check if a gamepad is connected
+    bool aa = getInputManager().isgamepadConnected();
 
     //int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
     //if (present > 0)
@@ -55,9 +56,9 @@ void MyApp1::start()
     exit();
 }
 
-void MyApp1::handleInput()
+void MyApp1::onInputUpdate()
 {
-    App::handleInput();
+    App::onInputUpdate();
 }
 
 void MyApp1::onResize(int w, int h)

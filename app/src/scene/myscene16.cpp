@@ -203,9 +203,9 @@ void MyScene16::init()
 }
 
 
-void MyScene16::handleInput()
+void MyScene16::onInputUpdate()
 {
-    Scene::handleInput();
+    Scene::onInputUpdate();
 
     auto camera = getActiveCamera();
     if (!camera)
@@ -240,11 +240,6 @@ void MyScene16::handleInput()
 
     // handle mouse scroll
     camera->processMouseScroll(input.getScrollY());
-}
-
-void MyScene16::gamepad_callback(const GLFWgamepadstate& state)
-{
-    Scene::gamepad_callback(state);
 }
 
 void MyScene16::framebuffer_size_callback(int newWidth, int newHeight)

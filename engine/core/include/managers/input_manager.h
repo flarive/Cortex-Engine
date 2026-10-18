@@ -17,6 +17,8 @@ namespace engine
         void onScroll(double xoffset, double yoffset);
 
         
+
+        
         bool isKeyDown(int key) const;
         bool isKeyPressed(int key) const;
         bool isKeyReleased(int key) const;
@@ -28,6 +30,13 @@ namespace engine
 
         float getScrollX() const;
         float getScrollY() const;
+
+        bool isGamepadPresent() const;
+        bool isGamepadButtonDown(int button) const;
+        bool isGamepadButtonPressed(int button) const;
+        bool isGamepadButtonReleased(int button) const;
+
+        float getGamepadAxis(int axis) const;
 
     private:
         static constexpr size_t KEY_COUNT = GLFW_KEY_LAST + 1;
@@ -53,5 +62,10 @@ namespace engine
    
         float m_scrollX{};
         float m_scrollY{};
+
+
+        GLFWgamepadstate m_currentGamepad{};
+        GLFWgamepadstate m_previousGamepad{};
+        bool m_gamepadConnected = false;
     };
 }

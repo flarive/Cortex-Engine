@@ -78,49 +78,10 @@ void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboo
     updateCameraVectors();
 }
 
-//void engine::FlyCamera::processJoystickMovement(const GLFWgamepadstate& state)
-//{
-//    if (!m_enabled)
-//        return;
-//    
-//    float deadZone = 0.2f; // Dead zone threshold to prevent drift
-//
-//    float leftX = (fabs(state.axes[0]) > deadZone) ? state.axes[0] : 0.0f; // Left stick X-axis (left/right movement)
-//    float leftY = (fabs(state.axes[1]) > deadZone) ? state.axes[1] : 0.0f; // Left stick Y-axis (forward/backward movement)
-//    float rightX = (fabs(state.axes[2]) > deadZone) ? state.axes[2] : 0.0f; // Right stick X-axis (yaw rotation)
-//    float rightY = (fabs(state.axes[3]) > deadZone) ? state.axes[3] : 0.0f; // Right stick Y-axis (pitch rotation)
-//    float triggerL = (state.axes[4] > -0.9f) ? state.axes[4] : -1.0f; // Left trigger (down movement)
-//    float triggerR = (state.axes[5] > -0.9f) ? state.axes[5] : -1.0f; // Right trigger (up movement)
-//
-//    float velocity = movementSpeed * 0.1f; // Adjust movement speed
-//    float rotationSpeed = mouseSensitivity * 2.0f; // Adjust rotation sensitivity
-//
-//    // Apply movement (left stick)
-//    position += front * (-leftY * velocity); // Forward/backward
-//    position += right * (leftX * velocity); // Left/right
-//
-//    // Vertical movement using triggers
-//    if (triggerL > -0.9f) position -= up * ((triggerL + 1.0f) * 0.5f * velocity); // L2 moves down
-//    if (triggerR > -0.9f) position += up * ((triggerR + 1.0f) * 0.5f * velocity); // R2 moves up
-//
-//    // Apply camera rotation (right stick)
-//    yaw += rightX * rotationSpeed;
-//    pitch -= rightY * rotationSpeed;
-//
-//    // Clamp pitch to avoid flipping
-//    if (pitch > 89.0f) pitch = 89.0f;
-//    if (pitch < -89.0f) pitch = -89.0f;
-//
-//    // Update camera vectors
-//    updateCameraVectors();
-//}
-
 void engine::FlyCamera::processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime)
 {
     if (!m_enabled)
-    {
         return;
-    }
 
     const float velocity = movementSpeed * deltaTime;
 
@@ -128,9 +89,7 @@ void engine::FlyCamera::processJoystickMovement(float leftX, float leftY, float 
 
     position += front * (-leftY * velocity);
     position += right * (leftX * velocity);
-
     position -= up * ((triggerL + 1.0f) * 0.5f * velocity);
-
     position += up * ((triggerR + 1.0f) * 0.5f * velocity);
 
     yaw += rightX * rotationSpeed;

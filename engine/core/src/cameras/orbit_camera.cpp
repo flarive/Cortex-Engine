@@ -54,20 +54,10 @@ void engine::OrbitCamera::processKeyboard(CameraMovement direction, float deltaT
 
 }
 
-//void engine::OrbitCamera::processJoystickMovement(const GLFWgamepadstate& state)
-//{
-//    (void)state;   //Do nothing
-//
-//    if (!m_enabled)
-//        return;
-//}
-
 void engine::OrbitCamera::processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime)
 {
     if (!m_enabled)
-    {
         return;
-    }
 
     const float velocity = movementSpeed * deltaTime;
 
@@ -75,9 +65,7 @@ void engine::OrbitCamera::processJoystickMovement(float leftX, float leftY, floa
 
     position += front * (-leftY * velocity);
     position += right * (leftX * velocity);
-
     position -= up * ((triggerL + 1.0f) * 0.5f * velocity);
-
     position += up * ((triggerR + 1.0f) * 0.5f * velocity);
 
     yaw += rightX * rotationSpeed;

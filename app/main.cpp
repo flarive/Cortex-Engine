@@ -11,7 +11,7 @@ using namespace engine;
 
 
 // make it easier to switch between scenes
-using MyApp = MyApp1;
+using MyApp = MyApp0;
 
 
 // Startup method
@@ -22,9 +22,9 @@ int main(int argc, char* argv[])
     AppManager appManager;
     CmdLineSettings settings = appManager.buildAppSettings(argc, argv);
 
-    settings.width = 320;
-    settings.height = 240;
-    settings.fullscreen = false;
+    //settings.width = 320;
+    //settings.height = 240;
+    //settings.fullscreen = false;
 
     auto app = appManager.createApp<MyApp>("MyApp", settings);
     if (!app)

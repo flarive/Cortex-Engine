@@ -109,6 +109,8 @@ namespace engine
 
         static void joystickCallback(int jid, int event)
         {
+            (void)jid;   //Do nothing
+            
             if (event == GLFW_CONNECTED)
             {
                 logger.info("Gamepad connected");

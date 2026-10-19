@@ -54,7 +54,6 @@ namespace engine
         void processMouseScroll(float yoffset) override;
 
         // processes input received from a gamepad
-        //void processJoystickMovement(const GLFWgamepadstate& state) override;
         void processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime) override;
         
 

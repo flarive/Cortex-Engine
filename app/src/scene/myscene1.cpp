@@ -211,24 +211,39 @@ void MyScene1::onInputUpdate()
     camera->processMouseScroll(input.getScrollY());
 
     // handle gamepad
-    if (input.isGamepadPresent())
-    {
-        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
-        {
-            logger.info("Jump");
-        }
+    //if (input.isGamepadPresent())
+    //{
+    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
+    //    {
+    //        logger.info("Gamepad button A pressed");
+    //    }
 
-        float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
-        float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_B))
+    //    {
+    //        logger.info("Gamepad button B pressed");
+    //    }
 
-        float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
-        float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
+    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_X))
+    //    {
+    //        logger.info("Gamepad button X pressed");
+    //    }
 
-        float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
-        float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_Y))
+    //    {
+    //        logger.info("Gamepad button Y pressed");
+    //    }
 
-        camera->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
-    }
+    //    float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+    //    float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+    //    float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
+    //    float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+    //    float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
+    //    float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+    //    camera->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
+    //}
 }
 
 void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)

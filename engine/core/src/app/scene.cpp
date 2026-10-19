@@ -993,45 +993,42 @@ void engine::Scene::onInputUpdate()
             show_perf_overlay = !show_perf_overlay;
         }
     }
+
+    // handle gamepad
+    if (input.isGamepadPresent())
+    {
+        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
+        {
+            logger.info("Gamepad button A pressed");
+        }
+
+        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_B))
+        {
+            logger.info("Gamepad button B pressed");
+        }
+
+        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_X))
+        {
+            logger.info("Gamepad button X pressed");
+        }
+
+        if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_Y))
+        {
+            logger.info("Gamepad button Y pressed");
+        }
+
+        float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+        float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+        float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
+        float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
+
+        float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
+        float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+		getActiveCamera()->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
+    }
 }
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-//void engine::Scene::mouse_callback(double xposIn, double yposIn)
-//{
-//    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
-//        ImGui_ImplGlfw_CursorPosCallback(appPtr->window, xposIn, yposIn);
-//}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-//void engine::Scene::scroll_callback(double xoffset, double yoffset)
-//{
-//    if (auto appPtr = getApp(); appPtr && (is_editor_mode))
-//        ImGui_ImplGlfw_ScrollCallback(appPtr->window, xoffset, yoffset);
-//}
-
-// https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
-//void engine::Scene::gamepad_callback(const GLFWgamepadstate& state)
-//{
-//    getActiveCamera()->processJoystickMovement(state);
-//
-//    //std::cout << "Left Stick X Axis: " << state.axes[0] << std::endl; // tested with PS4 controller connected via micro USB cable
-//    //std::cout << "Left Stick Y Axis: " << state.axes[1] << std::endl; // tested with PS4 controller connected via micro USB cable
-//    //std::cout << "Right Stick X Axis: " << state.axes[2] << std::endl; // tested with PS4 controller connected via micro USB cable
-//    //std::cout << "Right Stick Y Axis: " << state.axes[3] << std::endl; // tested with PS4 controller connected via micro USB cable
-//    //std::cout << "Left Trigger/L2: " << state.axes[4] << std::endl; // tested with PS4 controller connected via micro USB cable
-//    //std::cout << "Right Trigger/R2: " << state.axes[5] << std::endl; // tested with PS4 controller connected via micro USB cable
-//
-//    if (GLFW_PRESS == state.buttons[1])
-//    {
-//        std::cout << "Pressed" << std::endl;
-//    }
-//    else if (GLFW_RELEASE == state.buttons[0])
-//    {
-//        //std::cout << "Released" << std::endl;
-//    }
-//}
 
 void engine::Scene::window_refresh_callback()
 {

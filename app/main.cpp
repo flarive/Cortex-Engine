@@ -11,7 +11,7 @@ using namespace engine;
 
 
 // make it easier to switch between scenes
-using MyApp = MyApp0;
+using MyApp = MyApp1;
 
 
 // Startup method

@@ -115,14 +115,7 @@ void engine::FlyCamera::processMouseMovement(float xoffset, float yoffset, GLboo
 //    updateCameraVectors();
 //}
 
-void engine::FlyCamera::processJoystickMovement(
-    float leftX,
-    float leftY,
-    float rightX,
-    float rightY,
-    float triggerL,
-    float triggerR,
-    float deltaTime)
+void engine::FlyCamera::processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime)
 {
     if (!m_enabled)
     {
@@ -136,19 +129,14 @@ void engine::FlyCamera::processJoystickMovement(
     position += front * (-leftY * velocity);
     position += right * (leftX * velocity);
 
-    position -= up *
-        ((triggerL + 1.0f) * 0.5f * velocity);
+    position -= up * ((triggerL + 1.0f) * 0.5f * velocity);
 
-    position += up *
-        ((triggerR + 1.0f) * 0.5f * velocity);
+    position += up * ((triggerR + 1.0f) * 0.5f * velocity);
 
     yaw += rightX * rotationSpeed;
     pitch -= rightY * rotationSpeed;
 
-    pitch = glm::clamp(
-        pitch,
-        -89.0f,
-        89.0f);
+    pitch = glm::clamp(pitch, -89.0f, 89.0f);
 
     updateCameraVectors();
 }

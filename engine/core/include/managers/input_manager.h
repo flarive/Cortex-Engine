@@ -17,7 +17,7 @@ namespace engine
         void onScroll(double xoffset, double yoffset);
 
         
-
+        void updateGamepad();
         
         bool isKeyDown(int key) const;
         bool isKeyPressed(int key) const;
@@ -62,7 +62,6 @@ namespace engine
    
         float m_scrollX{};
         float m_scrollY{};
-
 
         GLFWgamepadstate m_currentGamepad{};
         GLFWgamepadstate m_previousGamepad{};

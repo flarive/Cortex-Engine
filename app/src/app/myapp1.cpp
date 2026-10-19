@@ -30,7 +30,7 @@ void MyApp1::start()
     }
 
     // Check if a gamepad is connected
-    bool aa = getInputManager().isgamepadConnected();
+    //bool aa = getInputManager().isgamepadConnected();
 
     //int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
     //if (present > 0)

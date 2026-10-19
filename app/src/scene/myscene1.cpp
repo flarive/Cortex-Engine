@@ -219,19 +219,15 @@ void MyScene1::onInputUpdate()
         }
 
         float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
-
         float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
 
         float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
-
         float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
 
-        camera->processJoystickMovement(
-            leftX,
-            leftY,
-            rightX,
-            rightY,
-            deltaTime);
+        float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
+        float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+        camera->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
     }
 }
 

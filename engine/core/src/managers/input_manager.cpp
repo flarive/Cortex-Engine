@@ -13,12 +13,7 @@ void engine::InputManager::beginFrame()
 	// Gamepad
 	m_previousGamepad = m_currentGamepad;
 
-	m_gamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
-
-	if (m_gamepadConnected)
-	{
-		glfwGetGamepadState(GLFW_JOYSTICK_1, &m_currentGamepad);
-	}
+	updateGamepad();
 }
 
 void engine::InputManager::onKey(int key, int scancode,	int action,	int mods)
@@ -165,3 +160,24 @@ float engine::InputManager::getGamepadAxis(int axis) const
 	return value;
 }
 
+void engine::InputManager::updateGamepad()
+{
+	m_gamepadConnected = glfwJoystickIsGamepad(GLFW_JOYSTICK_1);
+
+	if (!m_gamepadConnected)
+		return;
+
+	GLFWgamepadstate state;
+	if (glfwGetGamepadState(GLFW_JOYSTICK_1, &state))
+	{
+		for (int i = 0; i <= GLFW_GAMEPAD_BUTTON_LAST; ++i)
+		{
+			m_currentGamepad.buttons[i] = (state.buttons[i] == GLFW_PRESS);
+		}
+
+		for (int i = 0; i <= GLFW_GAMEPAD_AXIS_LAST; ++i)
+		{
+			m_currentGamepad.axes[i] = state.axes[i];
+		}
+	}
+}

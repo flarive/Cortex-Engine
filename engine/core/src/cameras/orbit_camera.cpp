@@ -54,12 +54,38 @@ void engine::OrbitCamera::processKeyboard(CameraMovement direction, float deltaT
 
 }
 
-void engine::OrbitCamera::processJoystickMovement(const GLFWgamepadstate& state)
-{
-    (void)state;   //Do nothing
+//void engine::OrbitCamera::processJoystickMovement(const GLFWgamepadstate& state)
+//{
+//    (void)state;   //Do nothing
+//
+//    if (!m_enabled)
+//        return;
+//}
 
+void engine::OrbitCamera::processJoystickMovement(float leftX, float leftY, float rightX, float rightY, float triggerL, float triggerR, float deltaTime)
+{
     if (!m_enabled)
+    {
         return;
+    }
+
+    const float velocity = movementSpeed * deltaTime;
+
+    const float rotationSpeed = mouseSensitivity * 100.0f * deltaTime;
+
+    position += front * (-leftY * velocity);
+    position += right * (leftX * velocity);
+
+    position -= up * ((triggerL + 1.0f) * 0.5f * velocity);
+
+    position += up * ((triggerR + 1.0f) * 0.5f * velocity);
+
+    yaw += rightX * rotationSpeed;
+    pitch -= rightY * rotationSpeed;
+
+    pitch = glm::clamp(pitch, -89.0f, 89.0f);
+
+    updateCameraVectors();
 }
 
 // returns the view matrix calculated using Euler Angles and the LookAt Matrix

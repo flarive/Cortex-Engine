@@ -107,6 +107,18 @@ namespace engine
             }
         }
 
+        static void joystickCallback(int jid, int event)
+        {
+            if (event == GLFW_CONNECTED)
+            {
+                logger.info("Gamepad connected");
+            }
+            else if (event == GLFW_DISCONNECTED)
+            {
+                logger.info("Gamepad disconnected");
+            }
+        }
+
         static void framebufferSizeCallback(GLFWwindow* window, int w, int h)
         {
             if (auto* app = getAppFromWindow(window)) {

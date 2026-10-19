@@ -347,6 +347,8 @@ void engine::App::registerWindowInputCallbacks()
     glfwSetCursorPosCallback(window, mouseCallback);
     glfwSetScrollCallback(window, scrollCallback);
     glfwSetWindowRefreshCallback(window, windowRefreshCallback);
+    
+    glfwSetJoystickCallback(joystickCallback);
 }
 
 void engine::App::unregisterWindowInputCallbacks()
@@ -356,6 +358,8 @@ void engine::App::unregisterWindowInputCallbacks()
     glfwSetCursorPosCallback(window, nullptr);
     glfwSetScrollCallback(window, nullptr);
     glfwSetWindowRefreshCallback(window, nullptr);
+
+    glfwSetJoystickCallback(nullptr);
 }
 
 void engine::App::onResize(int width, int height)

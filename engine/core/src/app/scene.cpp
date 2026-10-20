@@ -973,29 +973,36 @@ void engine::Scene::onInputUpdate()
 
     auto& input = app->getInputManager();
 
-    if (input.isKeyPressed(GLFW_KEY_F))
-    {
-        app->toggleFullscreen([this]()
-            {
+    // built in default keyboard shortcuts
+    if (input.isKeyPressed(GLFW_KEY_F)) {
+        app->toggleFullscreen([this]() {
                 refreshFullscreen();
             });
     }
 
-    if (input.isKeyPressed(GLFW_KEY_F1))
-    {
+    if (input.isKeyPressed(GLFW_KEY_F1)) {
         is_editor_mode = !is_editor_mode;
     }
 
-    if (input.isKeyPressed(GLFW_KEY_SPACE))
-    {
-        if (!is_editor_mode)
-        {
+    if (input.isKeyPressed(GLFW_KEY_SPACE)) {
+        if (!is_editor_mode) {
             show_perf_overlay = !show_perf_overlay;
         }
     }
+    
+    // built in default keyboard navigation
+    if (m_useKeyboardNavigation && !is_editor_mode)
+    {
+    }
 
-    // handle gamepad
-    if (input.isGamepadPresent())
+    // built in default mouse navigation
+    if (m_useMouseNavigation && !is_editor_mode)
+    {
+
+    }
+
+    // built in default gamepad navigation
+    if (m_useGamepadNavigation && input.isGamepadPresent() && !is_editor_mode)
     {
         if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
         {

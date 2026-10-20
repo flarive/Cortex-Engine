@@ -3,15 +3,14 @@
 void engine::InputManager::beginFrame()
 {
 	m_previousKeys = m_currentKeys;
+	m_previousMouseButtons = m_mouseButtons;
+	m_previousGamepad = m_currentGamepad;
 
 	m_mouseDeltaX = 0.0f;
 	m_mouseDeltaY = 0.0f;
 
 	m_scrollX = 0.0f;
 	m_scrollY = 0.0f;
-
-	// Gamepad
-	m_previousGamepad = m_currentGamepad;
 
 	updateGamepad();
 }
@@ -46,6 +45,16 @@ void engine::InputManager::onMouseMove(double x, double y)
 
 	m_previousMouseX = m_mouseX;
 	m_previousMouseY = m_mouseY;
+}
+
+void engine::InputManager::onMouseButton(int button, int action, int mods)
+{
+	(void)mods;
+
+	if (button < 0 || button >= static_cast<int>(MOUSE_BUTTON_COUNT))
+		return;
+
+	m_mouseButtons[button] = (action != GLFW_RELEASE);
 }
 
 void engine::InputManager::onScroll(double xoffset, double yoffset)
@@ -85,6 +94,25 @@ bool engine::InputManager::isMouseButtonDown(int button) const
 
 	return m_mouseButtons[button];
 }
+
+bool engine::InputManager::isMouseButtonPressed(int button) const
+{
+	if (button < 0 || button >= static_cast<int>(MOUSE_BUTTON_COUNT))
+		return false;
+
+	return m_mouseButtons[button] &&
+		!m_previousMouseButtons[button];
+}
+
+bool engine::InputManager::isMouseButtonReleased(int button) const
+{
+	if (button < 0 || button >= static_cast<int>(MOUSE_BUTTON_COUNT))
+		return false;
+
+	return !m_mouseButtons[button] &&
+		m_previousMouseButtons[button];
+}
+
 
 float engine::InputManager::getMouseDeltaX() const
 {

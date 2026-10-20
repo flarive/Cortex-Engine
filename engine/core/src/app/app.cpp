@@ -345,6 +345,7 @@ void engine::App::registerWindowInputCallbacks()
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
     glfwSetScrollCallback(window, scrollCallback);
     glfwSetWindowRefreshCallback(window, windowRefreshCallback);
     glfwSetJoystickCallback(joystickCallback);
@@ -355,6 +356,7 @@ void engine::App::unregisterWindowInputCallbacks()
     glfwSetFramebufferSizeCallback(window, nullptr);
     glfwSetKeyCallback(window, nullptr);
     glfwSetCursorPosCallback(window, nullptr);
+    glfwSetMouseButtonCallback(window, nullptr);
     glfwSetScrollCallback(window, nullptr);
     glfwSetWindowRefreshCallback(window, nullptr);
     glfwSetJoystickCallback(nullptr);

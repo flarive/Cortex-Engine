@@ -202,23 +202,7 @@ namespace engine
         virtual void onInputUpdate();
 
 
-        // old !!!!!!!!!!!!!!!!!
-        // glfw: whenever the mouse moves, this callback is called
-        // -------------------------------------------------------
-        //virtual void mouse_callback(double xposIn, double yposIn);
 
-
-        // glfw: whenever the mouse scroll wheel scrolls, this callback is called
-        // ----------------------------------------------------------------------
-        //virtual void scroll_callback(double xoffset, double yoffset);
-
-
-        // https://github.com/SonarSystems/OpenGL-Tutorials/blob/master/GLFW%20Joystick%20Input/main.cpp
-        //virtual void gamepad_callback(const GLFWgamepadstate& state);
-
-
-        // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-        // ---------------------------------------------------------------------------------------------
         void framebuffer_size_callback(int newWidth, int newHeight);
 
         void window_refresh_callback();
@@ -227,6 +211,11 @@ namespace engine
         void refreshFullscreen();
 
         uint64_t getTotalElapsedFrames() const;
+
+
+
+        void setUseBuiltinKeyboardNavigation(bool use) { m_useKeyboardNavigation = use; }
+        const bool getUseBuiltinKeyboardNavigation() const { return m_useKeyboardNavigation; }
 
 
     private:
@@ -238,6 +227,14 @@ namespace engine
         int m_queryFrameIndex{ 0 }; // toggles between 0 and 1
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)
         GLuint m_primitiveQuery[2]{};       // double-buffered primitive count queries (for GL_PRIMITIVES_GENERATED)
+
+
+
+        bool m_useKeyboardNavigation{ true };
+        bool m_useMouseNavigation{ true };
+        bool m_useGamepadNavigation{ true };
+
+
 
         void computeLightsIndexes();
 

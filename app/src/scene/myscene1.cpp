@@ -167,6 +167,9 @@ void MyScene1::onInputUpdate()
 {
     Scene::onInputUpdate();
 
+    if (is_editor_mode)
+        return;
+
     auto camera = getActiveCamera();
     if (!camera)
         return;

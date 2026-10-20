@@ -91,6 +91,9 @@ namespace engine
             if (auto* app = getAppFromWindow(window)) {
                 app->getInputManager().onKey(key, scancode, action, mods);
             }
+
+            // forward event to imGui
+            ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
         }
 
         static void mouseCallback(GLFWwindow* window, double x, double y)
@@ -98,6 +101,20 @@ namespace engine
             if (auto* app = getAppFromWindow(window)) {
                 app->getInputManager().onMouseMove(x, y);
             }
+
+            // forward event to imGui
+            ImGui_ImplGlfw_CursorPosCallback(window, x, y);
+        }
+
+        static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+        {
+            if (auto* app = getAppFromWindow(window))
+            {
+                app->getInputManager().onMouseButton(button, action, mods);
+            }
+
+            // forward event to imGui
+            ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
         }
 
         static void scrollCallback(GLFWwindow* window, double x, double y)
@@ -105,11 +122,14 @@ namespace engine
             if (auto* app = getAppFromWindow(window)) {
                 app->getInputManager().onScroll(x, y);
             }
+
+            // forward event to imGui
+            ImGui_ImplGlfw_ScrollCallback(window, x, y);
         }
 
         static void joystickCallback(int jid, int event)
         {
-            (void)jid;   //Do nothing
+            (void)jid;   // Do nothing with jid
             
             if (event == GLFW_CONNECTED)
             {

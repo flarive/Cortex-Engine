@@ -14,6 +14,7 @@ namespace engine
 
         void onKey(int key, int scancode, int action, int mods);
         void onMouseMove(double x, double y);
+        void onMouseButton(int button, int action, int mods);
         void onScroll(double xoffset, double yoffset);
 
         
@@ -24,6 +25,9 @@ namespace engine
         bool isKeyReleased(int key) const;
 
         bool isMouseButtonDown(int button) const;
+        bool isMouseButtonPressed(int button) const;
+        bool isMouseButtonReleased(int button) const;
+
 
         float getMouseDeltaX() const;
         float getMouseDeltaY() const;
@@ -45,7 +49,7 @@ namespace engine
 
         static constexpr size_t MOUSE_BUTTON_COUNT = GLFW_MOUSE_BUTTON_LAST + 1;
         std::array<bool, MOUSE_BUTTON_COUNT> m_mouseButtons{};
-
+        std::array<bool, MOUSE_BUTTON_COUNT> m_previousMouseButtons{};
         
 
         float m_mouseX{};

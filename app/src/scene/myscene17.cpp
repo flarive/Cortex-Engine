@@ -33,9 +33,11 @@ MyScene17::MyScene17(const string& _title, std::weak_ptr<App> _app, const SceneS
 
 void MyScene17::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // cameras
     auto trsCamera1 = Transform{ { 0.0f, -0.2f, 3.0f } };
-    auto camera1 = make_shared<FlyCamera>(18.0f, -90.0f, -2.0f, 10.0f);
+    auto camera1 = make_shared<FlyCamera>(18.0f, -90.0f, -2.0f, 1.0f);
     auto entityCamera1 = make_shared<Entity>("Camera1");
     entityCamera1->addComponent<TransformComponent>(trsCamera1);
     entityCamera1->addComponent<CameraComponent>(camera1);
@@ -223,12 +225,6 @@ void MyScene17::onInputUpdate()
     {
         camera->processKeyboard(BACKWARD, deltaTime);
     }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene17::framebuffer_size_callback(int newWidth, int newHeight)

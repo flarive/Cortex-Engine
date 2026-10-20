@@ -109,49 +109,6 @@ void MyScene11::init()
 void MyScene11::onInputUpdate()
 {
     Scene::onInputUpdate();
-
-    auto camera = getActiveCamera();
-    if (!camera)
-        return;
-
-    auto& input = getApp()->getInputManager();
-
-    bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
-
-    if (shiftPressed)
-    {
-        if (input.isKeyDown(GLFW_KEY_LEFT))
-            camera->processKeyboard(YAW_DOWN, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_RIGHT))
-            camera->processKeyboard(YAW_UP, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_UP))
-            camera->processKeyboard(PITCH_UP, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_DOWN))
-            camera->processKeyboard(PITCH_DOWN, deltaTime);
-    }
-    else
-    {
-        if (input.isKeyDown(GLFW_KEY_LEFT))
-            camera->processKeyboard(LEFT, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_RIGHT))
-            camera->processKeyboard(RIGHT, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_UP))
-            camera->processKeyboard(FORWARD, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_DOWN))
-            camera->processKeyboard(BACKWARD, deltaTime);
-    }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene11::framebuffer_size_callback(int newWidth, int newHeight)

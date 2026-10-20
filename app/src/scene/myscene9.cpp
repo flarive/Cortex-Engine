@@ -21,6 +21,8 @@ MyScene9::MyScene9(const string& _title, std::weak_ptr<App> _app) : Scene(_title
 
 void MyScene9::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // camera
     auto trsCamera1 = Transform{ { 0.0f, 5.0f, 3.0f } };
     auto camera1 = make_shared<OrbitCamera>();
@@ -141,12 +143,6 @@ void MyScene9::onInputUpdate()
     {
         camera->processKeyboard(BACKWARD, deltaTime);
     }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene9::framebuffer_size_callback(int newWidth, int newHeight)

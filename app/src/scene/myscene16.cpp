@@ -39,6 +39,8 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app, const SceneS
 
 void MyScene16::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // cameras
     auto trsCamera1 = Transform{ {0.0f, -8.0f, 2.0f } };
     auto camera1 = make_shared<FlyCamera>(45.0f, -90.0f, 0.0f, 10.0f);
@@ -234,12 +236,6 @@ void MyScene16::onInputUpdate()
     {
         camera->processKeyboard(BACKWARD, deltaTime);
     }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene16::framebuffer_size_callback(int newWidth, int newHeight)

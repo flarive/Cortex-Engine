@@ -306,21 +306,39 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
 
 bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue)
 {
-    static const ImVec4 imGray(0.882f, 0.882f, 0.882f, 1.0f);
-    static const ImVec4 imBlue(0.149f, 0.502f, 0.922f, 1.0f);
-    static const ImVec4 imWhite(1.0f, 1.0f, 1.0f, 1.0f);
+    //static const ImVec4 imGray(0.882f, 0.882f, 0.882f, 1.0f);
+    //static const ImVec4 imBlue(0.149f, 0.502f, 0.922f, 1.0f);
+    //static const ImVec4 imWhite(1.0f, 1.0f, 1.0f, 1.0f);
+
+    //ImGuiTogglePalette material_palette_on;
+    //material_palette_on.Frame = imGray;
+    //material_palette_on.Knob = imBlue;
+    //material_palette_on.KnobHover = imBlue;
+    //material_palette_on.FrameBorder = imGray;
+
+    //ImGuiTogglePalette material_palette_off;
+    //material_palette_off.Frame = imGray;
+    //material_palette_off.Knob = imGray;
+    //material_palette_off.KnobHover = imBlue;
+    //material_palette_off.FrameBorder = imGray;
+
+    //ImGuiToggleConfig toggle_config;
+    //toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
+    //toggle_config.Size = ImVec2(30.0f, 18.0f);
+    //toggle_config.On.Palette = &material_palette_on;
+    //toggle_config.Off.Palette = &material_palette_off;
 
     ImGuiTogglePalette material_palette_on;
-    material_palette_on.Frame = imWhite;
-    material_palette_on.Knob = imBlue;
-    material_palette_on.KnobHover = imBlue;
-    material_palette_on.FrameBorder = imGray;
+    material_palette_on.Frame = EditorHelper::im_dark;
+    material_palette_on.Knob = EditorHelper::im_blue;
+    material_palette_on.KnobHover = EditorHelper::im_blue;
+    material_palette_on.FrameBorder = EditorHelper::im_light;
 
     ImGuiTogglePalette material_palette_off;
-    material_palette_off.Frame = imWhite;
-    material_palette_off.Knob = imGray;
-    material_palette_off.KnobHover = imBlue;
-    material_palette_off.FrameBorder = imGray;
+    material_palette_off.Frame = EditorHelper::im_dark;
+    material_palette_off.Knob = EditorHelper::im_gray;
+    material_palette_off.KnobHover = EditorHelper::im_gray;
+    material_palette_off.FrameBorder = EditorHelper::im_light;
 
     ImGuiToggleConfig toggle_config;
     toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;

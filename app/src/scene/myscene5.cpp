@@ -103,52 +103,6 @@ void MyScene5::init()
 void MyScene5::onInputUpdate()
 {
     Scene::onInputUpdate();
-
-    auto camera = getActiveCamera();
-    if (!camera)
-        return;
-
-    auto& input = getApp()->getInputManager();
-
-    bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
-
-    if (input.isKeyDown(GLFW_KEY_LEFT))
-    {
-        if (shiftPressed)
-            camera->processKeyboard(YAW_DOWN, deltaTime);
-        else
-            camera->processKeyboard(LEFT, deltaTime);
-    }
-
-    if (input.isKeyDown(GLFW_KEY_RIGHT))
-    {
-        if (shiftPressed)
-            camera->processKeyboard(YAW_UP, deltaTime);
-        else
-            camera->processKeyboard(RIGHT, deltaTime);
-    }
-
-    if (input.isKeyDown(GLFW_KEY_UP))
-    {
-        if (shiftPressed)
-            camera->processKeyboard(PITCH_UP, deltaTime);
-        else
-            camera->processKeyboard(FORWARD, deltaTime);
-    }
-
-    if (input.isKeyDown(GLFW_KEY_DOWN))
-    {
-        if (shiftPressed)
-            camera->processKeyboard(PITCH_DOWN, deltaTime);
-        else
-            camera->processKeyboard(BACKWARD, deltaTime);
-    }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene5::framebuffer_size_callback(int newWidth, int newHeight)

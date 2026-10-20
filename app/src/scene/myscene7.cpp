@@ -27,6 +27,8 @@ void MyScene7::before_init_hook()
 
 void MyScene7::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // cameras
     auto trsCamera1 = Transform{ { 0.0f, -16.0f, 2.0f } };
     auto camera1 = make_shared<FlyCamera>(100.0f, -90.0f, 0.0f, 10.0f);
@@ -258,12 +260,6 @@ void MyScene7::onInputUpdate()
     {
         getEntityManager().remove("Child88");
     }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene7::framebuffer_size_callback(int newWidth, int newHeight)

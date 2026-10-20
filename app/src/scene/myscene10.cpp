@@ -23,6 +23,8 @@ MyScene10::MyScene10(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
 
 void MyScene10::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // camera
     auto trsCamera1 = Transform{ { 0.0f, 1.0f, 0.0f } };
     auto camera1 = make_shared<FlyCamera>();
@@ -116,12 +118,6 @@ void MyScene10::onInputUpdate()
         
     if (input.isKeyDown(GLFW_KEY_O))
         playOggFile();
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene10::framebuffer_size_callback(int newWidth, int newHeight)

@@ -30,6 +30,8 @@ MyScene15::MyScene15(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
 
 void MyScene15::init()
 {
+    this->setUseBuiltinKeyboardNavigation(false);
+
     // camera
     auto trsCamera1 = Transform{ {0.0f, 1.0f, 5.0f} };
     auto camera1 = make_shared<FlyCamera>(25.0f, -90.0f, 0.0f, 10.0f);
@@ -272,13 +274,6 @@ void MyScene15::onInputUpdate()
         incrementParallaxIntensity(-0.01f);
     else if (input.isKeyPressed(GLFW_KEY_KP_ADD))
         incrementParallaxIntensity(0.01f);
-
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
 }
 
 void MyScene15::framebuffer_size_callback(int newWidth, int newHeight)

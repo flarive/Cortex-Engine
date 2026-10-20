@@ -66,6 +66,8 @@ namespace engine
 		inline static const ImVec4 im_dark{ 0.0f, 0.0f, 0.0f, 0.2f };
 		inline static const ImVec4 im_light{ 1.0f, 1.0f, 1.0f, 0.2f };
 
+		inline static const ImVec4 im_blue{ 0.149f, 0.502f, 0.922f, 1.0f };
+
 		inline static const ImVec4 im_grey_dark{ 0.2f, 0.2f, 0.2f, 1.0f };
 		inline static const ImVec4 im_grey_trans{ 0.2f, 0.2f, 0.2f, 0.0f };
 

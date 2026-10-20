@@ -217,6 +217,12 @@ namespace engine
         void setUseBuiltinKeyboardNavigation(bool use) { m_useKeyboardNavigation = use; }
         const bool getUseBuiltinKeyboardNavigation() const { return m_useKeyboardNavigation; }
 
+        void setUseBuiltinMouseNavigation(bool use) { m_useMouseNavigation = use; }
+        const bool getUseBuiltinMouseNavigation() const { return m_useMouseNavigation; }
+
+        void setUseBuiltinGamepadNavigation(bool use) { m_useGamepadNavigation = use; }
+        const bool getUseBuiltinGamepadNavigation() const { return m_useGamepadNavigation; }
+
 
     private:
         

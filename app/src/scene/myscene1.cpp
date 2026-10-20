@@ -167,86 +167,14 @@ void MyScene1::onInputUpdate()
 {
     Scene::onInputUpdate();
 
-    if (is_editor_mode)
-        return;
+    //if (is_editor_mode)
+    //    return;
 
-    auto camera = getActiveCamera();
-    if (!camera)
-        return;
+    //auto camera = getActiveCamera();
+    //if (!camera)
+    //    return;
 
-    auto& input = getApp()->getInputManager();
-
-    bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
-
-    if (shiftPressed)
-    {
-        if (input.isKeyDown(GLFW_KEY_LEFT))
-            camera->processKeyboard(YAW_DOWN, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_RIGHT))
-            camera->processKeyboard(YAW_UP, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_UP))
-            camera->processKeyboard(PITCH_UP, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_DOWN))
-            camera->processKeyboard(PITCH_DOWN, deltaTime);
-    }
-    else
-    {
-        if (input.isKeyDown(GLFW_KEY_LEFT))
-            camera->processKeyboard(LEFT, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_RIGHT))
-            camera->processKeyboard(RIGHT, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_UP))
-            camera->processKeyboard(FORWARD, deltaTime);
-
-        if (input.isKeyDown(GLFW_KEY_DOWN))
-            camera->processKeyboard(BACKWARD, deltaTime);
-    }
-
-    // handle mouse
-    camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
-
-    // handle mouse scroll
-    camera->processMouseScroll(input.getScrollY());
-
-    // handle gamepad
-    //if (input.isGamepadPresent())
-    //{
-    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_A))
-    //    {
-    //        logger.info("Gamepad button A pressed");
-    //    }
-
-    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_B))
-    //    {
-    //        logger.info("Gamepad button B pressed");
-    //    }
-
-    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_X))
-    //    {
-    //        logger.info("Gamepad button X pressed");
-    //    }
-
-    //    if (input.isGamepadButtonPressed(GLFW_GAMEPAD_BUTTON_Y))
-    //    {
-    //        logger.info("Gamepad button Y pressed");
-    //    }
-
-    //    float leftX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
-    //    float leftY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
-
-    //    float rightX = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_X);
-    //    float rightY = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_Y);
-
-    //    float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
-    //    float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
-
-    //    camera->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
-    //}
+    //auto& input = getApp()->getInputManager();
 }
 
 void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)

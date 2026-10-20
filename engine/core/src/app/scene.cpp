@@ -971,6 +971,8 @@ void engine::Scene::onInputUpdate()
     if (!app)
         return;
 
+	auto camera = getActiveCamera();
+
     auto& input = app->getInputManager();
 
     // built in default keyboard shortcuts
@@ -993,12 +995,46 @@ void engine::Scene::onInputUpdate()
     // built in default keyboard navigation
     if (m_useKeyboardNavigation && !is_editor_mode)
     {
+        bool shiftPressed = input.isKeyDown(GLFW_KEY_LEFT_SHIFT) || input.isKeyDown(GLFW_KEY_RIGHT_SHIFT);
+
+        if (shiftPressed)
+        {
+            if (input.isKeyDown(GLFW_KEY_LEFT))
+                camera->processKeyboard(YAW_DOWN, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_RIGHT))
+                camera->processKeyboard(YAW_UP, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_UP))
+                camera->processKeyboard(PITCH_UP, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_DOWN))
+                camera->processKeyboard(PITCH_DOWN, deltaTime);
+        }
+        else
+        {
+            if (input.isKeyDown(GLFW_KEY_LEFT))
+                camera->processKeyboard(LEFT, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_RIGHT))
+                camera->processKeyboard(RIGHT, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_UP))
+                camera->processKeyboard(FORWARD, deltaTime);
+
+            if (input.isKeyDown(GLFW_KEY_DOWN))
+                camera->processKeyboard(BACKWARD, deltaTime);
+        }
     }
 
     // built in default mouse navigation
     if (m_useMouseNavigation && !is_editor_mode)
     {
+        // handle mouse move
+        camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());
 
+        // handle mouse scroll
+        camera->processMouseScroll(input.getScrollY());
     }
 
     // built in default gamepad navigation
@@ -1033,7 +1069,7 @@ void engine::Scene::onInputUpdate()
         float triggerL = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
         float triggerR = input.getGamepadAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
 
-		getActiveCamera()->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
+        camera->processJoystickMovement(leftX, leftY, rightX, rightY, triggerL, triggerR, deltaTime);
     }
 }
 

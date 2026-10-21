@@ -306,28 +306,6 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
 
 bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue)
 {
-    //static const ImVec4 imGray(0.882f, 0.882f, 0.882f, 1.0f);
-    //static const ImVec4 imBlue(0.149f, 0.502f, 0.922f, 1.0f);
-    //static const ImVec4 imWhite(1.0f, 1.0f, 1.0f, 1.0f);
-
-    //ImGuiTogglePalette material_palette_on;
-    //material_palette_on.Frame = imGray;
-    //material_palette_on.Knob = imBlue;
-    //material_palette_on.KnobHover = imBlue;
-    //material_palette_on.FrameBorder = imGray;
-
-    //ImGuiTogglePalette material_palette_off;
-    //material_palette_off.Frame = imGray;
-    //material_palette_off.Knob = imGray;
-    //material_palette_off.KnobHover = imBlue;
-    //material_palette_off.FrameBorder = imGray;
-
-    //ImGuiToggleConfig toggle_config;
-    //toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
-    //toggle_config.Size = ImVec2(30.0f, 18.0f);
-    //toggle_config.On.Palette = &material_palette_on;
-    //toggle_config.Off.Palette = &material_palette_off;
-
     ImGuiTogglePalette material_palette_on;
     material_palette_on.Frame = EditorHelper::im_dark;
     material_palette_on.Knob = EditorHelper::im_blue;
@@ -520,6 +498,79 @@ bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& va
     }
 
     return false;
+}
+
+bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, bool& lastValue, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
+{
+    ImGuiTogglePalette material_palette_on;
+    material_palette_on.Frame = EditorHelper::im_dark;
+    material_palette_on.Knob = EditorHelper::im_blue;
+    material_palette_on.KnobHover = EditorHelper::im_blue;
+    material_palette_on.FrameBorder = EditorHelper::im_light;
+
+    ImGuiTogglePalette material_palette_off;
+    material_palette_off.Frame = EditorHelper::im_dark;
+    material_palette_off.Knob = EditorHelper::im_gray;
+    material_palette_off.KnobHover = EditorHelper::im_gray;
+    material_palette_off.FrameBorder = EditorHelper::im_light;
+
+    ImGuiToggleConfig toggle_config;
+    toggle_config.Flags |= ImGuiToggleFlags_Bordered | ImGuiToggleFlags_Animated;
+    toggle_config.Size = ImVec2(30.0f, 18.0f);
+    toggle_config.On.Palette = &material_palette_on;
+    toggle_config.Off.Palette = &material_palette_off;
+
+    ImGui::Spacing();
+
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    char result[100];
+    snprintf(result, sizeof(result), "%s%s", "##collapsingHeaderCheckbox", label);
+
+    ImGuiID id = window->GetID(result);
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+
+    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+
+    bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+
+    ImGui::PopStyleVar();
+
+    ImGui::PopStyleColor(3);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    ImGui::SameLine();
+
+    ImVec2 screenPos = ImGui::GetCursorScreenPos();
+    screenPos.y += 2;
+    ImGui::SetCursorScreenPos(screenPos);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+    if (ImGui::Toggle(label, &value, toggle_config))
+    {
+        if (lastValue != value)
+        {
+            lastValue = value;
+
+            onCheck(value);
+        }
+    }
+
+    ImGui::PopStyleVar();
+
+    ImGui::PopFont();
+    ImGui::PopStyleVar();
+
+    return is_open;
 }
 
 bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step)

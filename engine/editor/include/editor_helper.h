@@ -51,15 +51,16 @@ namespace engine
 		static bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		static void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
-		static bool renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue);
 
+		static bool renderHeaderSeparator(const char* label, bool& value, bool& lastValue, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck);
+		static bool renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue);
 		static bool renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max);
 		static bool renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max);
 		static bool renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float width = FIELD_WIDTH, const char* format = "%.1f");
 		static bool renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format);
-		
 		static bool renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format);
 		static bool renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step);
+		
 
 		inline static const ImVec4 im_white{ 0.882f, 0.882f, 0.882f, 1.0f };
 		inline static const ImVec4 im_gray{ 0.502f, 0.502f, 0.502f, 1.0f };

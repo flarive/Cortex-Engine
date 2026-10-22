@@ -6881,7 +6881,9 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
                 TablePopBackgroundChannel();
 
             if (flags & ImGuiTreeNodeFlags_NoArrowNoBullet)
-                int a = 0;
+            {
+                // hack FL !!!!!!!!!!!
+            }
             else if (flags & ImGuiTreeNodeFlags_Bullet)
                 RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)

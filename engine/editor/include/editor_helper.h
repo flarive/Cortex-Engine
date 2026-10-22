@@ -60,6 +60,7 @@ namespace engine
 		static bool renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format);
 		static bool renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format);
 		static bool renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step);
+		static void renderComboBoxWithLabel(const char* label, const std::string& key, const std::vector<std::string>& items, float width, std::function<void(ushort)> onCallback);
 		
 
 		inline static const ImVec4 im_white{ 0.882f, 0.882f, 0.882f, 1.0f };

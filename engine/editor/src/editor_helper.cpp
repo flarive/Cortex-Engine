@@ -346,9 +346,54 @@ bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& 
     return false;
 }
 
+void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std::string& key, const std::vector<std::string>& items, float width, std::function<void(ushort)> onCallback)
+{
+    ImGui::Dummy(ImVec2(0, 2));
+
+    // One selected index per combobox key
+    static std::unordered_map<std::string, int> selectedIndex;
+    int& currentIdx = selectedIndex[key];
+
+    // Fix index if out of range
+    if (items.empty())
+    {
+        currentIdx = -1;
+        return;
+    }
+    if (currentIdx < 0 || currentIdx >= (int)items.size())
+        currentIdx = 0;
+
+    const char* preview = items[currentIdx].c_str();
+
+    ImGui::SetNextItemWidth(width);   // width in pixels
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 1)); // X, Y padding
+    if (ImGui::BeginCombo(label, preview))
+    {
+        for (unsigned int i = 0; i < (int)items.size(); ++i)
+        {
+            bool isSelected = (i == currentIdx);
+
+            if (ImGui::Selectable(items[i].c_str(), isSelected))
+            {
+                currentIdx = i;
+                onCallback(i);
+            }
+
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopStyleVar();
+
+    ImGui::Dummy(ImVec2(0, 2));
+}
+
 bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
@@ -370,11 +415,15 @@ bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& valu
         return true;
     }
 
+    ImGui::Dummy(ImVec2(0, 2));
+
     return false;
 }
 
 bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max)
 {
+    ImGui::Dummy(ImVec2(0, 2));
+
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
     ImGui::SliderScalar(
@@ -395,12 +444,16 @@ bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, 
         return true;
     }
 
+    ImGui::Dummy(ImVec2(0, 2));
+
     return false;
 }
 
 bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     ImGui::SetNextItemWidth(width);
 
@@ -423,12 +476,16 @@ bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& 
         return true;
     }
 
+    ImGui::Dummy(ImVec2(0, 2));
+
     return false;
 }
 
 bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     char valueText[32];
     snprintf(valueText, sizeof(valueText), format, value);
@@ -468,12 +525,16 @@ bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, fl
         return true;
     }
 
+    ImGui::Dummy(ImVec2(0, 2));
+
     return false;
 }
 
 bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format)
 {
     static bool isDraggingSlider = false;
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
@@ -496,6 +557,8 @@ bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& va
 
         return true;
     }
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     return false;
 }
@@ -530,7 +593,7 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
     snprintf(result, sizeof(result), "%s%s", "##collapsingHeaderCheckbox", label);
 
     ImGuiID id = window->GetID(result);
-    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton | ImGuiTreeNodeFlags_NoArrowNoBullet;
 
     ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
@@ -550,6 +613,7 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
     ImGui::SameLine();
 
     ImVec2 screenPos = ImGui::GetCursorScreenPos();
+    screenPos.x -= 22;
     screenPos.y += 2;
     ImGui::SetCursorScreenPos(screenPos);
 
@@ -575,6 +639,8 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
 bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step)
 {
+    ImGui::Dummy(ImVec2(0, 2));
+
     ImGui::SetNextItemWidth(FIELD_WIDTH);
 
     ImGui::DragScalar(label,
@@ -593,6 +659,8 @@ bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ub
         return true;
     }
 
+    ImGui::Dummy(ImVec2(0, 2));
+
     return false;
 }
 
@@ -600,6 +668,8 @@ void engine::EditorHelper::renderStringVectorButtonListTable(const std::string& 
 {
     static unsigned short prev_selected_row = -1;
     static unsigned short selected_row = -1;
+
+    ImGui::Dummy(ImVec2(0, 2));
 
     if (ImGui::BeginTable(std::format("Table{}", key).c_str(), 1, ImGuiTableFlags_SizingStretchSame))
     {
@@ -668,10 +738,14 @@ void engine::EditorHelper::renderStringVectorButtonListTable(const std::string& 
 
         ImGui::EndTable();
     }
+
+    ImGui::Dummy(ImVec2(0, 2));
 }
 
 void engine::EditorHelper::renderStringVectorComboboxTable(const std::string& key, const std::vector<std::string>& items, const EditorProperty& property)
 {
+    ImGui::Dummy(ImVec2(0, 2));
+
     // One selected index per combobox key
     static std::unordered_map<std::string, int> selectedIndex;
     int& currentIdx = selectedIndex[key];
@@ -708,6 +782,8 @@ void engine::EditorHelper::renderStringVectorComboboxTable(const std::string& ke
         ImGui::EndCombo();
     }
     ImGui::PopStyleVar();
+
+    ImGui::Dummy(ImVec2(0, 2));
 }
 
 void engine::EditorHelper::addToolbarIconButton(const std::string& iconName, const EditorIcon& icon, std::function<void()> onClick)

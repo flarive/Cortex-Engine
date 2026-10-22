@@ -6879,7 +6879,10 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             RenderNavCursor(frame_bb, id, nav_render_cursor_flags);
             if (span_all_columns && !span_all_columns_label)
                 TablePopBackgroundChannel();
-            if (flags & ImGuiTreeNodeFlags_Bullet)
+
+            if (flags & ImGuiTreeNodeFlags_NoArrowNoBullet)
+                int a = 0;
+            else if (flags & ImGuiTreeNodeFlags_Bullet)
                 RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
             else if (!is_leaf)
                 RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ((flags & ImGuiTreeNodeFlags_UpsideDownArrow) ? ImGuiDir_Up : ImGuiDir_Down) : ImGuiDir_Right, 1.0f);

@@ -133,31 +133,28 @@ void engine::SettingsWindow::renderTabSettings()
     // shadows
     // ------------------------------------------------------------------------
 
-    static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
-    //if (EditorHelper::renderToggleButtonWithLabel("Enable shadows", sceneSetting_enableShadows, lastEnableShadows))
-    //{
-    //    
-    //}
-
-
     static bool isHeaderExpanded = true; // Set to true to start expanded
 
-    std::function<void(bool)> onCheck = [this](bool checked) {
+    std::function<void(bool)> onCheckHeader = [this](bool checked) {
+        isHeaderExpanded = checked;
         emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
         };
 
 
-
-    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Once);
-    if (EditorHelper::renderHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, lastEnableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheck))
+    static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
+    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Always);
+    if (EditorHelper::renderHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, lastEnableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckHeader))
     {
         ImGui::Dummy(ImVec2(0, 10));
 
         static int lastShadowCalculationMethod = static_cast<int>(DEFAULT_SHADOWS_METHOD);
-        if (EditorHelper::renderSliderIntWithLabel("Method", sceneSetting_shadowCalculationMethod, lastShadowCalculationMethod, 1, 3))
-        {
+        std::vector<std::string> items { "Default", "PCF", "PCFSoft", "PCSS" };
+        std::function<void(unsigned short)> callback = [this](unsigned short value) {
+            sceneSetting_shadowCalculationMethod = value; // starting at 0 because of enum default
             emit(UIEventType::SceneSettingChanged, "shadow_calculation_method", sceneSetting_shadowCalculationMethod);
-        }
+            };
+        EditorHelper::renderComboBoxWithLabel("Method", "PCFSoft", items, 120.0f, callback);
+        
 
         static int lastShadowMapTextureSize = static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE);
         if (EditorHelper::renderSliderIntWithLabel("Texture size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096))

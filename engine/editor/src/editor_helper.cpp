@@ -304,7 +304,7 @@ bool engine::EditorHelper::drawCustomDragFloat(const char* text, const char* nam
     return res;
 }
 
-bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue)
+bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue, float offset, float width)
 {
     ImGuiTogglePalette material_palette_on;
     material_palette_on.Frame = EditorHelper::im_dark;
@@ -326,6 +326,8 @@ bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& 
 
     ImGui::Spacing();
 
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+    ImGui::SetNextItemWidth(width);   // width in pixels
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
     
@@ -346,7 +348,7 @@ bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& 
     return false;
 }
 
-void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std::string& key, const std::vector<std::string>& items, float width, std::function<void(ushort)> onCallback)
+void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std::string& key, const std::vector<std::string>& items, std::function<void(ushort)> onCallback, float offset, float width)
 {
     ImGui::Dummy(ImVec2(0, 2));
 
@@ -365,6 +367,7 @@ void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std:
 
     const char* preview = items[currentIdx].c_str();
 
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
     ImGui::SetNextItemWidth(width);   // width in pixels
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 1)); // X, Y padding
     if (ImGui::BeginCombo(label, preview))
@@ -389,13 +392,14 @@ void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std:
     ImGui::Dummy(ImVec2(0, 2));
 }
 
-bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max)
+bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max, float offset, float width)
 {
     static bool isDraggingSlider = false;
 
     ImGui::Dummy(ImVec2(0, 2));
 
-    ImGui::SetNextItemWidth(FIELD_WIDTH);
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+    ImGui::SetNextItemWidth(width);
 
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::SliderInt(
@@ -420,11 +424,12 @@ bool engine::EditorHelper::renderSliderIntWithLabel(const char* label, int& valu
     return false;
 }
 
-bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max)
+bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float offset, float width)
 {
     ImGui::Dummy(ImVec2(0, 2));
 
-    ImGui::SetNextItemWidth(FIELD_WIDTH);
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+    ImGui::SetNextItemWidth(width);
 
     ImGui::SliderScalar(
         label,
@@ -449,12 +454,13 @@ bool engine::EditorHelper::renderSliderUnsignedByteWithLabel(const char* label, 
     return false;
 }
 
-bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
+bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, const char* format, float offset, float width)
 {
     static bool isDraggingSlider = false;
 
     ImGui::Dummy(ImVec2(0, 2));
 
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
     ImGui::SetNextItemWidth(width);
 
     // Use DragInt with a step of 256 (or your desired step)
@@ -481,7 +487,7 @@ bool engine::EditorHelper::renderSliderFloatWithLabel(const char* label, float& 
     return false;
 }
 
-bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, float width, const char* format)
+bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, float& lastValue, float min, float max, const char* format, float offset, float width)
 {
     static bool isDraggingSlider = false;
 
@@ -530,13 +536,14 @@ bool engine::EditorHelper::renderSliderFloat(const char* label, float& value, fl
     return false;
 }
 
-bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format)
+bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& value, float& lastValue, float min, float max, float step, const char* format, float offset, float width)
 {
     static bool isDraggingSlider = false;
 
     ImGui::Dummy(ImVec2(0, 2));
 
-    ImGui::SetNextItemWidth(FIELD_WIDTH);
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+    ImGui::SetNextItemWidth(width);
 
     // Use DragInt with a step of 256 (or your desired step)
     ImGui::DragFloat(
@@ -563,7 +570,7 @@ bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& va
     return false;
 }
 
-bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, bool& lastValue, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
+bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
 {
     ImGuiTogglePalette material_palette_on;
     material_palette_on.Frame = EditorHelper::im_dark;
@@ -584,6 +591,7 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
     toggle_config.Off.Palette = &material_palette_off;
 
     ImGui::Spacing();
+    ImGui::Dummy(ImVec2(0, 20));
 
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -621,12 +629,12 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
     if (ImGui::Toggle(label, &value, toggle_config))
     {
-        if (lastValue != value)
-        {
-            lastValue = value;
+        //if (lastValue != value)
+        //{
+        //    lastValue = value;
+        //}
 
-            onCheck(value);
-        }
+        onCheck(value);
     }
 
     ImGui::PopStyleVar();
@@ -637,11 +645,12 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
     return is_open;
 }
 
-bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step)
+bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step, float offset, float width)
 {
     ImGui::Dummy(ImVec2(0, 2));
 
-    ImGui::SetNextItemWidth(FIELD_WIDTH);
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+    ImGui::SetNextItemWidth(width);
 
     ImGui::DragScalar(label,
         ImGuiDataType_U8,

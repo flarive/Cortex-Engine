@@ -79,7 +79,7 @@ void engine::SettingsWindow::renderTabSettings()
     }
 
     static float lastExposure = DEFAULT_EXPOSURE;
-    if (EditorHelper::renderDragFloatWithLabel("Exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f, "%.1f"))
+    if (EditorHelper::renderDragFloatWithLabel("Exposure", sceneSetting_exposure, lastExposure, 0.0f, 5.0f, 0.1f))
     {
         emit(UIEventType::SceneSettingChanged, "exposure", sceneSetting_exposure);
     }
@@ -132,18 +132,15 @@ void engine::SettingsWindow::renderTabSettings()
     // ------------------------------------------------------------------------
     // shadows
     // ------------------------------------------------------------------------
-
-    static bool isHeaderExpanded = true; // Set to true to start expanded
+    static bool isHeaderExpanded = sceneSetting_enableShadows; // start expanded or collapsed
 
     std::function<void(bool)> onCheckHeader = [this](bool checked) {
         isHeaderExpanded = checked;
         emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
         };
 
-
-    static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
     ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Always);
-    if (EditorHelper::renderHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, lastEnableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckHeader))
+    if (EditorHelper::renderHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckHeader))
     {
         ImGui::Dummy(ImVec2(0, 10));
 
@@ -153,17 +150,17 @@ void engine::SettingsWindow::renderTabSettings()
             sceneSetting_shadowCalculationMethod = value; // starting at 0 because of enum default
             emit(UIEventType::SceneSettingChanged, "shadow_calculation_method", sceneSetting_shadowCalculationMethod);
             };
-        EditorHelper::renderComboBoxWithLabel("Method", "PCFSoft", items, 120.0f, callback);
+        EditorHelper::renderComboBoxWithLabel("Method", "PCFSoft", items, callback, 15.0f);
         
 
         static int lastShadowMapTextureSize = static_cast<int>(DEFAULT_SHADOWMAP_TEXTURE_SIZE);
-        if (EditorHelper::renderSliderIntWithLabel("Texture size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096))
+        if (EditorHelper::renderSliderIntWithLabel("Texture size", sceneSetting_shadowMapTextureSize, lastShadowMapTextureSize, 256, 4096, 15.0f))
         {
             emit(UIEventType::SceneSettingChanged, "shadow_maps_texture_size", sceneSetting_shadowMapTextureSize);
         }
 
         static float lastShadowIntensity = DEFAULT_SHADOWS_INTENSITY;
-        if (EditorHelper::renderDragFloatWithLabel("Intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f"))
+        if (EditorHelper::renderDragFloatWithLabel("Intensity", sceneSetting_shadowIntensity, lastShadowIntensity, 0.0f, 5.0f, 0.1f, "%.1f", 15.0f))
         {
             emit(UIEventType::SceneSettingChanged, "shadow_intensity", sceneSetting_shadowIntensity);
         }
@@ -172,13 +169,13 @@ void engine::SettingsWindow::renderTabSettings()
         // material.shadowMapsBias = 0.02;   // indoor
         // material.shadowMapsBias = 0.05;   // outdoor / large scenes
         static float lastShadowMapsBiasFactor = DEFAULT_SHADOW_MAPS_BIAS;
-        if (EditorHelper::renderDragFloatWithLabel("Bias", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f"))
+        if (EditorHelper::renderDragFloatWithLabel("Bias", sceneSetting_shadowMapBiasFactor, lastShadowMapsBiasFactor, 0.001f, 0.05f, 0.001f, "%.3f", 15.0f))
         {
             emit(UIEventType::SceneSettingChanged, "shadow_maps_bias_factor", sceneSetting_shadowMapBiasFactor);
         }
 
         static float lastShadowMapsBlur = DEFAULT_SHADOWS_BLUR;
-        if (EditorHelper::renderDragFloatWithLabel("Blur", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f"))
+        if (EditorHelper::renderDragFloatWithLabel("Blur", sceneSetting_shadowMapBlur, lastShadowMapsBlur, 0.0f, 50.0f, 0.1f, "%.1f", 15.0f))
         {
             emit(UIEventType::SceneSettingChanged, "shadow_maps_blur_factor", sceneSetting_shadowMapBlur);
         }

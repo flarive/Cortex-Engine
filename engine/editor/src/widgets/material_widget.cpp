@@ -134,7 +134,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasSpecularMap())
             {
                 float& intensity = material->getSpecularIntensity();
-                if (EditorHelper::renderSliderFloat("##SpecularIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##SpecularIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_specular_intensity", intensity);
                 }
             }
@@ -145,7 +145,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasNormalMap())
             {
                 float& intensity = material->getNormalIntensity();
-                if (EditorHelper::renderSliderFloat("##NormalIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##NormalIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", intensity);
                 }
             }
@@ -156,7 +156,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasRoughnessMap())
             {
                 float& intensity = material->getRougnessIntensity();
-                if (EditorHelper::renderSliderFloat("##RoughnesslIntensity", intensity, intensity, 0.0f, 1.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##RoughnesslIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_roughness_intensity", intensity);
                 }
             }
@@ -167,7 +167,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasMetallicMap())
             {
                 float& intensity = material->getMetallicIntensity();
-                if (EditorHelper::renderSliderFloat("##MetallicIntensity", intensity, intensity, 0.0f, 1.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##MetallicIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_metallic_intensity", intensity);
                 }
             }
@@ -178,7 +178,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasAoMap())
             {
                 float& intensity = material->getAmbientOcclusionIntensity();
-                if (EditorHelper::renderSliderFloat("##AmbientOcclusionIntensity", intensity, intensity, 0.0f, 1.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##AmbientOcclusionIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_ao_intensity", intensity);
                 }
             }
@@ -189,7 +189,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasHeightMap())
             {
                 float& intensity = material->getHeightIntensity();
-                if (EditorHelper::renderSliderFloat("##HeightIntensity", intensity, intensity, 0.0f, 10.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##HeightIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_height_intensity", intensity);
                 }
             }
@@ -200,7 +200,7 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
             if (material->hasEmissiveMap())
             {
                 float& intensity = material->getEmissiveStrength();
-                if (EditorHelper::renderSliderFloat("##EmissiveStrength", intensity, intensity, 0.0f, 100.0f, 80.0f, "%.1f")) {
+                if (EditorHelper::renderSliderFloat("##EmissiveStrength", intensity, intensity, 0.0f, 100.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_emissive_strength", intensity);
                 }
             }

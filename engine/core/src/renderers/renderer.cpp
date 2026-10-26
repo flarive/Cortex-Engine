@@ -667,7 +667,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
-        // test that HDR is working
+        // test that HDR is working (very costly !!!)
         testHDR(width, height);
 
         // render HDR framebuffer to screen as a big fullscreen quad

@@ -51,8 +51,8 @@ namespace engine
 		static bool drawCustomDragFloat(const char* text, const char* name, const ImVec2& position, const ImVec2& size, float rounding, float width, ImU32 backgroundColor, ImU32 foregroundColor, float* value, float step);
 		static void drawCustomLabel(const char* text, const ImVec2& position, const ImVec2& size, float rounding, ImU32 backgroundColor, ImU32 foregroundColor);
 
-		static bool renderHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor);
-		static bool renderToggleHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck);
+		static bool renderHeaderSeparator(const char* label, bool& value, ImVec4 backgroundColor);
+		static bool renderToggleHeaderSeparator(const char* label, bool& value, ImVec4 backgroundColor, std::function<void(bool)> onCheck);
 		static bool renderToggleButtonWithLabel(const char* label, bool& value, bool& lastValue, float offset = 0.0f, float width = FIELD_WIDTH);
 		static bool renderSliderIntWithLabel(const char* label, int& value, int& lastValue, int min, int max, float offset = 0.0f, float width = FIELD_WIDTH);
 		static bool renderSliderUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float offset = 0.0f, float width = FIELD_WIDTH);

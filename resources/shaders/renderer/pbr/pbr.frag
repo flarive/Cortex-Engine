@@ -888,9 +888,15 @@ void main()
     ao = mix(1.0, ao, material.ambientOcclusionMapIntensity);
 
     // Emissive: factor is always applied; texture (if present) modulates it
-    vec3 emissive = material.emissiveMapFactor;
+    vec3 emissive = vec3(0.0);
+
     if (material.has_texture_emissive_map)
-        emissive *= texture(material.texture_emissive, texCoords).rgb;
+    {
+        emissive =
+            texture(material.texture_emissive, texCoords).rgb;
+    }
+
+    emissive *= material.emissiveMapFactor;
     emissive *= material.emissiveMapStrength;
 
 

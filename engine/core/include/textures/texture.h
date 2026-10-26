@@ -37,6 +37,20 @@ namespace engine
         return (flags & flag) != 0;
     }
 
+    enum class TextureSlot : uint8_t
+    {
+        Diffuse,
+        Normal,
+        AO,
+        Roughness,
+        Metallic,
+        Height,
+        Emissive,
+        Opacity,
+        Specular,
+        ARM,
+        RM
+    };
 
     /// <summary>
     /// PNG/JPG → small file on disk

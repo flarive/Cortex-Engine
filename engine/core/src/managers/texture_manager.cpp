@@ -34,10 +34,10 @@ unsigned int engine::TextureManager::loadTexture(const std::string& filename, Te
     glGenTextures(1, &textureID);
 
     // Detect normal maps by filename
-    bool isNormalMap = TextureManager::isNormalMap(filename);
+    bool isNormalMap = TextureManager::isNormalMap(filename); // use TextureSlot instead ?
 
     // Detect heightmaps
-    bool isHeightMap = TextureManager::isHeightMap(filename);
+    bool isHeightMap = TextureManager::isHeightMap(filename); // use TextureSlot instead ?
 
 
     int width{}, height{}, nrComponents{};
@@ -66,11 +66,17 @@ unsigned int engine::TextureManager::loadTexture(const std::string& filename, Te
             else
                 internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM : GL_COMPRESSED_RGBA_BPTC_UNORM; // Color textures use BC7
         }
+        else
+        {
+            if (nrComponents == 3)
+                internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB8 : GL_RGB8;
+            else if (nrComponents == 4)
+                internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+        }
 
         // Upload texture to GPU with or without compression
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, isCompressedFile(filename) ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
-        // glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
 
         // mipmaps
         if (hasFlag(flags, TextureFlag_GenerateMipmaps))
@@ -149,7 +155,7 @@ engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const s
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& path, bool flipY)
+unsigned int engine::TextureManager::requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY)
 {
     if (path.empty()) return 0;
 
@@ -164,7 +170,7 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
 
     engine::TextureManagerInternal::asyncLoadingTextureCache[path] =
     {
-        std::async(std::launch::async, [path, flipY]() -> TexturePayload
+        std::async(std::launch::async, [path, slot, flipY]() -> TexturePayload
         {
             TexturePayload payload;
 
@@ -176,8 +182,8 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
 
                 payload.ktxData = ktxLoader::loadKTX(
                     path,
-                    isNormalMap(path),
-                    isHeightMap(path)
+                    slot == TextureSlot::Normal,
+                    slot == TextureSlot::Height
                 );
 
                 if (!payload.ktxData)
@@ -216,9 +222,13 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(const std::string& 
                     {
                         flags |= TextureFlag_InvertY;
                     }
+                    if (slot == TextureSlot::Diffuse || slot == TextureSlot::Emissive)
+                    {
+                        flags |= TextureFlag_GammaCorrect; // bad naming, albedo and emissive textures are stored in sRGB
+                    }
                     
                     // External texture file
-                    payload = loadTextureFromFile(path, flags);// | TextureFlag_InvertY); ***************
+                    payload = loadTextureFromFile(path, flags);
                 }
 
                 return payload;
@@ -399,9 +409,16 @@ engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned
     GLenum internalFormat{};
     if (isCompressed)
         internalFormat = chooseCompressedFormat(isNormalMap, isHeightMap, hasFlag(flags, TextureFlag_GammaCorrect), gpuSupportsBC7());
+    else
+    {
+        if (nrComponents == 3)
+            internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB8 : GL_RGB8;
+        else if (nrComponents == 4)
+            internalFormat = hasFlag(flags, TextureFlag_GammaCorrect) ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+    }
 
     // Upload texture to GPU with or without compression
-    glTexImage2D(GL_TEXTURE_2D, 0, isCompressed ? internalFormat : externalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, externalFormat, GL_UNSIGNED_BYTE, data);
 
     // ensure texture was compressed
     if (isCompressed)

@@ -9,21 +9,6 @@
 
 namespace engine
 {
-    enum class TextureSlot
-    {
-        Diffuse,
-        Normal,
-        AO,
-        Roughness,
-        Metallic,
-        Height,
-        Emissive,
-        Opacity,
-        Specular,
-        ARM,
-        RM
-    };
-
     class MaterialWidget final : public ImGuiElement
     {
     public:

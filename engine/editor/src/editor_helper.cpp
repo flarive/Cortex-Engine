@@ -348,13 +348,13 @@ bool engine::EditorHelper::renderToggleButtonWithLabel(const char* label, bool& 
     return false;
 }
 
-void engine::EditorHelper::renderComboBoxWithLabel(const char* label, const std::string& key, const std::vector<std::string>& items, std::function<void(ushort)> onCallback, float offset, float width)
+void engine::EditorHelper::renderComboBoxWithLabel(const char* label, int selectedIndex, const std::vector<std::string>& items, std::function<void(ushort)> onCallback, float offset, float width)
 {
     ImGui::Dummy(ImVec2(0, 2));
 
     // One selected index per combobox key
-    static std::unordered_map<std::string, int> selectedIndex;
-    int& currentIdx = selectedIndex[key];
+    //static std::unordered_map<std::string, int> selectedIndex;
+    int& currentIdx = selectedIndex;
 
     // Fix index if out of range
     if (items.empty())
@@ -570,7 +570,7 @@ bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& va
     return false;
 }
 
-bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
+bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, bool& lastValue, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
 {
     ImGuiTogglePalette material_palette_on;
     material_palette_on.Frame = EditorHelper::im_dark;
@@ -590,8 +590,8 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
     toggle_config.On.Palette = &material_palette_on;
     toggle_config.Off.Palette = &material_palette_off;
 
-    ImGui::Spacing();
-    ImGui::Dummy(ImVec2(0, 20));
+    //ImGui::Spacing();
+
 
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -609,7 +609,7 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
 
-    bool is_open = ImGui::TreeNodeBehavior(id, flags, result);
+    bool is_open = ImGui::CollapsingHeader(result, flags);
 
     ImGui::PopStyleVar();
 
@@ -629,10 +629,10 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
     if (ImGui::Toggle(label, &value, toggle_config))
     {
-        //if (lastValue != value)
-        //{
-        //    lastValue = value;
-        //}
+        if (lastValue != value)
+        {
+            lastValue = value;
+        }
 
         onCheck(value);
     }
@@ -644,6 +644,7 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
     return is_open;
 }
+
 
 bool engine::EditorHelper::renderDragUnsignedByteWithLabel(const char* label, ubyte& value, ubyte& lastValue, ubyte min, ubyte max, float step, float offset, float width)
 {

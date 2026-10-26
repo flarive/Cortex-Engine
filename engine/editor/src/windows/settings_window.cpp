@@ -111,41 +111,51 @@ void engine::SettingsWindow::renderTabSettings()
     // Visual helpers
     // ------------------------------------------------------------------------
 
-    static bool lastDrawLightsVisualHelpers = DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS;
-    if (EditorHelper::renderToggleButtonWithLabel("Lights visual helpers", sceneSetting_drawLightsVisualHelpers, lastDrawLightsVisualHelpers))
+    bool isEnableVisualHelpersHeaderExpanded = true;
+
+
+    ImGui::Dummy(ImVec2(0, 8));
+
+    ImGui::SetNextItemOpen(isEnableVisualHelpersHeaderExpanded, ImGuiCond_Once);
+    if (EditorHelper::renderHeaderSeparator("Visual helpers", sceneSetting_enableBloom, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark))
     {
-        emit(UIEventType::SceneSettingChanged, "draw_lights_visual_helpers", sceneSetting_drawLightsVisualHelpers);
+        static bool lastDrawLightsVisualHelpers = DEFAULT_ENABLE_LIGHTS_VISUAL_HELPERS;
+        if (EditorHelper::renderToggleButtonWithLabel("Lights visual helpers", sceneSetting_drawLightsVisualHelpers, lastDrawLightsVisualHelpers))
+        {
+            emit(UIEventType::SceneSettingChanged, "draw_lights_visual_helpers", sceneSetting_drawLightsVisualHelpers);
+        }
+
+        static bool lastDrawBoundingBoxesVisualHelpers = DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS;
+        if (EditorHelper::renderToggleButtonWithLabel("Bounding boxes visual helpers", sceneSetting_drawBoundingBoxesVisualHelpers, lastDrawBoundingBoxesVisualHelpers))
+        {
+            emit(UIEventType::SceneSettingChanged, "draw_bounding_boxes_visual_helpers", sceneSetting_drawBoundingBoxesVisualHelpers);
+        }
+
+        static bool lastDrawDebugNormalsVisualHelpers = DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS;
+        if (EditorHelper::renderToggleButtonWithLabel("Normals visual helpers", sceneSetting_drawDebugNormalsVisualHelpers, lastDrawDebugNormalsVisualHelpers))
+        {
+            emit(UIEventType::SceneSettingChanged, "draw_debug_normals_visual_helpers", sceneSetting_drawDebugNormalsVisualHelpers);
+        }
     }
 
-    static bool lastDrawBoundingBoxesVisualHelpers = DEFAULT_ENABLE_BOUNDINGBOX_VISUAL_HELPERS;
-    if (EditorHelper::renderToggleButtonWithLabel("Bounding boxes visual helpers", sceneSetting_drawBoundingBoxesVisualHelpers, lastDrawBoundingBoxesVisualHelpers))
-    {
-        emit(UIEventType::SceneSettingChanged, "draw_bounding_boxes_visual_helpers", sceneSetting_drawBoundingBoxesVisualHelpers);
-    }
 
-    static bool lastDrawDebugNormalsVisualHelpers = DEFAULT_ENABLE_NORMALS_VISUAL_HELPERS;
-    if (EditorHelper::renderToggleButtonWithLabel("Normals visual helpers", sceneSetting_drawDebugNormalsVisualHelpers, lastDrawDebugNormalsVisualHelpers))
-    {
-        emit(UIEventType::SceneSettingChanged, "draw_debug_normals_visual_helpers", sceneSetting_drawDebugNormalsVisualHelpers);
-    }
+    
 
     // ------------------------------------------------------------------------
     // shadows
     // ------------------------------------------------------------------------
 
-    bool isHeaderExpanded = sceneSetting_enableShadows; // Set to true to start expanded
+    bool isEnableShadowsHeaderExpanded = sceneSetting_enableShadows;
 
-    std::function<void(bool)> onCheckHeader = [this, &isHeaderExpanded](bool checked) {
-		//sceneSetting_enableShadows = checked;
-        isHeaderExpanded = checked;
+    std::function<void(bool)> onCheckEnableShadowsHeader = [this, &isEnableShadowsHeaderExpanded](bool checked) {
+        isEnableShadowsHeaderExpanded = checked;
         emit(UIEventType::SceneSettingChanged, "enable_shadows", sceneSetting_enableShadows);
         };
 
     ImGui::Dummy(ImVec2(0, 8));
 
-    static bool lastEnableShadows = DEFAULT_ENABLE_SHADOWS;
-    ImGui::SetNextItemOpen(isHeaderExpanded, ImGuiCond_Always);
-    if (EditorHelper::renderHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, lastEnableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckHeader))
+    ImGui::SetNextItemOpen(isEnableShadowsHeaderExpanded, ImGuiCond_Always);
+    if (EditorHelper::renderToggleHeaderSeparator("Enable shadows maps", sceneSetting_enableShadows, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckEnableShadowsHeader))
     {
         static int lastShadowCalculationMethod = static_cast<int>(DEFAULT_SHADOWS_METHOD);
         std::vector<std::string> items{ "Default", "PCF", "PCFSoft", "PCSS" };
@@ -214,29 +224,40 @@ void engine::SettingsWindow::renderTabSettings()
     // bloom
     // ------------------------------------------------------------------------
 
-    static bool lastEnableBloom = DEFAULT_USE_BLOOM;
-    if (EditorHelper::renderToggleButtonWithLabel("Enable bloom", sceneSetting_enableBloom, lastEnableBloom))
-    {
+    bool isEnableBloomHeaderExpanded = sceneSetting_enableBloom;
+
+    std::function<void(bool)> onCheckEnableBloomHeader = [this, &isEnableBloomHeaderExpanded](bool checked) {
+        isEnableBloomHeaderExpanded = checked;
         emit(UIEventType::SceneSettingChanged, "enable_bloom", sceneSetting_enableBloom);
+        };
+
+    ImGui::Dummy(ImVec2(0, 8));
+
+    ImGui::SetNextItemOpen(isEnableBloomHeaderExpanded, ImGuiCond_Always);
+    if (EditorHelper::renderToggleHeaderSeparator("Enable bloom", sceneSetting_enableBloom, ImGuiTreeNodeFlags_None, EditorHelper::im_grey_dark, onCheckEnableBloomHeader))
+    {
+        static float lastBloomThreshold = DEFAULT_BLOOM_THRESHOLD;
+        if (EditorHelper::renderDragFloatWithLabel("Bloom threshold", sceneSetting_bloomThreshold, lastBloomThreshold, 0.0f, 10.0f, 0.1f, "%.3f", 15.0f))
+        {
+            emit(UIEventType::SceneSettingChanged, "bloom_threshold", sceneSetting_bloomThreshold);
+        }
+
+        static float lastBloomStrength = DEFAULT_BLOOM_STRENGTH;
+        if (EditorHelper::renderDragFloatWithLabel("Bloom strength", sceneSetting_bloomStrength, lastBloomStrength, 0.0f, 10.0f, 0.1f, "%.3f", 15.0f))
+        {
+            emit(UIEventType::SceneSettingChanged, "bloom_strength", sceneSetting_bloomStrength);
+        }
+
+        static ubyte lastBloomBlurPasses = DEFAULT_BLOOM_BLUR_PASSES;
+        if (EditorHelper::renderDragUnsignedByteWithLabel("Bloom blur passes", sceneSetting_bloomBlurPasses, lastBloomBlurPasses, 0, 10, 1, 15.0f))
+        {
+            emit(UIEventType::SceneSettingChanged, "bloom_blur_passes", sceneSetting_bloomBlurPasses);
+        }
     }
 
-    static float lastBloomThreshold = DEFAULT_BLOOM_THRESHOLD;
-    if (EditorHelper::renderDragFloatWithLabel("Bloom threshold", sceneSetting_bloomThreshold, lastBloomThreshold, 0.0f, 10.0f, 0.1f, "%.3f"))
-    {
-        emit(UIEventType::SceneSettingChanged, "bloom_threshold", sceneSetting_bloomThreshold);
-    }
 
-    static float lastBloomStrength = DEFAULT_BLOOM_STRENGTH;
-    if (EditorHelper::renderDragFloatWithLabel("Bloom strength", sceneSetting_bloomStrength, lastBloomStrength, 0.0f, 10.0f, 0.1f, "%.3f"))
-    {
-        emit(UIEventType::SceneSettingChanged, "bloom_strength", sceneSetting_bloomStrength);
-    }
 
-    static ubyte lastBloomBlurPasses = DEFAULT_BLOOM_BLUR_PASSES;
-    if (EditorHelper::renderDragUnsignedByteWithLabel("Bloom blur passes", sceneSetting_bloomBlurPasses, lastBloomBlurPasses, 0, 10, 1))
-    {
-        emit(UIEventType::SceneSettingChanged, "bloom_blur_passes", sceneSetting_bloomBlurPasses);
-    }
+    
 
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();

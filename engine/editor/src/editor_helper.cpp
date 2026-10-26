@@ -570,7 +570,52 @@ bool engine::EditorHelper::renderDragFloatWithLabel(const char* label, float& va
     return false;
 }
 
-bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, bool& lastValue, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
+bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor)
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    char result[100];
+    snprintf(result, sizeof(result), "%s%s", "##collapsingHeader", label);
+
+    ImGuiID id = window->GetID(result);
+    flags |= ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+
+    ImGui::PushStyleColor(ImGuiCol_Header, backgroundColor); // closed
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.30f, 0.30f, 0.50f, 1.0f)); // hover
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.40f, 0.40f, 0.70f, 1.0f)); // open
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0);
+
+    bool is_open = ImGui::CollapsingHeader(result, flags);
+
+    ImGui::PopStyleVar();
+
+    ImGui::PopStyleColor(3);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    ImGui::SameLine();
+
+    ImVec2 screenPos = ImGui::GetCursorScreenPos();
+    screenPos.x -= 22;
+    screenPos.y += 2;
+    ImGui::SetCursorScreenPos(screenPos);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+
+    ImGui::PopStyleVar();
+
+    ImGui::PopFont();
+    ImGui::PopStyleVar();
+
+    return is_open;
+}
+
+bool engine::EditorHelper::renderToggleHeaderSeparator(const char* label, bool& value, ImGuiTreeNodeFlags flags, ImVec4 backgroundColor, std::function<void(bool)> onCheck)
 {
     ImGuiTogglePalette material_palette_on;
     material_palette_on.Frame = EditorHelper::im_dark;
@@ -629,10 +674,10 @@ bool engine::EditorHelper::renderHeaderSeparator(const char* label, bool& value,
 
     if (ImGui::Toggle(label, &value, toggle_config))
     {
-        if (lastValue != value)
-        {
-            lastValue = value;
-        }
+        //if (lastValue != value)
+        //{
+        //    lastValue = value;
+        //}
 
         onCheck(value);
     }

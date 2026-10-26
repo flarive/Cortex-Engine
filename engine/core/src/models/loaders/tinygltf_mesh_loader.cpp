@@ -651,10 +651,9 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
     // Emissive factor
     // glTF spec: emissive = emissiveTexture.rgb * emissiveFactor
     // ------------------------------------------------------------
-    glm::vec3 emissiveFactor(1.0f);
 
     // If your tg3_material exposes the emissive factor directly:
-    emissiveFactor = glm::vec3(mat.emissive_factor[0], mat.emissive_factor[1], mat.emissive_factor[2]);
+    Color emissiveColorFactor = Color{ mat.emissive_factor[0], mat.emissive_factor[1], mat.emissive_factor[2], mat.emissive_factor[3] };
 
     // Otherwise (or additionally), read it from the material extensions
     for (uint32_t i = 0; i < mat.ext.extensions_count; ++i)
@@ -666,7 +665,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
             // Array of 3 floats stored as a value object/array
             glm::vec3 f = toVec3(mat.ext.extensions[i].value);
             if (f != glm::vec3(0.0f))
-                emissiveFactor = f;
+                emissiveColorFactor = Color(f.r, f.g, f.b, 1.0);;
         }
     }
 
@@ -738,7 +737,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
     // ------------------------------------------------------------
     auto pbrMaterial = std::static_pointer_cast<PBRMaterial>(material);
 
-    pbrMaterial->setEmissiveFactor(emissiveFactor);
+    pbrMaterial->setEmissiveColorFactor(emissiveColorFactor);
     pbrMaterial->setEmissiveStrength(emissiveStrength); // final emissive = emissiveTex.rgb * factor * strength
     pbrMaterial->setMetallicIntensity(metallicFactor);
     pbrMaterial->setRougnessIntensity(roughnessFactor);

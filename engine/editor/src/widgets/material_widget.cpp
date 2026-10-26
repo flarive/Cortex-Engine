@@ -80,6 +80,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             {
                 // PBR
                 displayColor(material->getBaseColorFactor(), "Base Color Factor");
+                displayColor(material->getEmissiveColorFactor(), "Emissive Color Factor");
 
                 displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse", TextureSlot::Diffuse, material);
                 displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal", TextureSlot::Normal, material);

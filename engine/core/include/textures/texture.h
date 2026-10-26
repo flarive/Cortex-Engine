@@ -11,7 +11,8 @@ namespace engine
         TextureFlag_InvertY = 1 << 0,
         TextureFlag_GenerateMipmaps = 1 << 1,
         TextureFlag_RepeatTexture = 1 << 2,
-        TextureFlag_GammaCorrect = 1 << 3
+        TextureFlag_GammaCorrect = 1 << 3,
+        TextureFlag_sRGB = 1 << 4
     };
 
     

@@ -104,7 +104,7 @@ namespace engine
         static unsigned int requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY = false);
         static unsigned int enqueueAsyncTextureCreation(const std::string& path, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
         static void processLoadedTextures();
-        static TextureUploadResult createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, bool isCompressed, bool isNormalMap, bool isHeightMap, TextureFlags flags);
+        static TextureUploadResult createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, TextureFlags flags);
 
         static TexturePayload loadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_None);
         static unsigned int loadAndUploadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
@@ -126,8 +126,8 @@ namespace engine
         static bool isNormalMap(const std::string& filename);
         static bool isHeightMap(const std::string& filename);
 
-        static unsigned int createUncompressedTexture(const std::string& filename, TextureFlags flags);
-        static unsigned int createCompressedTexture(const std::string& filename, TextureFlags flags);
+        //static unsigned int createUncompressedTexture(const std::string& filename, TextureFlags flags);
+        //static unsigned int createCompressedTexture(const std::string& filename, TextureFlags flags);
 
         static bool isCompressedFile(const std::string& filename);
         static bool isDDSFile(const std::string& filename);

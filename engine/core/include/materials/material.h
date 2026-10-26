@@ -128,8 +128,8 @@ namespace engine
         float& getEmissiveStrength() { return m_emissiveStrength; }
         void setEmissiveStrength(float strength) { m_emissiveStrength = strength; }
 
-        glm::vec3& getEmissiveFactor() { return m_emissiveFactor; }
-        void setEmissiveFactor(glm::vec3 factor) { m_emissiveFactor = factor; }
+        Color& getEmissiveColorFactor() { return m_emissiveColorFactor; }
+        void setEmissiveColorFactor(const Color& factor) { m_emissiveColorFactor = factor; }
     
         float& getOpacityIntensity() { return m_opacityIntensity; }
         void setOpacityIntensity(float opacity) { m_opacityIntensity = opacity; }
@@ -241,7 +241,7 @@ namespace engine
         float m_ambientIntensity{ 1.0f };
         float m_normalIntensity{ 1.0f };
         float m_heightIntensity{ 1.0f };
-        glm::vec3 m_emissiveFactor{};
+        Color m_emissiveColorFactor{};
         float m_emissiveStrength{ 0.0f };
         float m_opacityIntensity{ 1.0f }; // fully opaque
 

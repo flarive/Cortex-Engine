@@ -298,6 +298,8 @@ void engine::Material::loadTextures()
         opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
         textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", m_opacityTexPath }));
     }
+
+    m_allTexturesLoaded = true;
 }
 
 void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback)

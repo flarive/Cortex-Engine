@@ -19,8 +19,8 @@ MyScene19::MyScene19(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .iblSpecularIntensity = 0.1f,
         .enableGammaCorrection = true,
         .enableBloom = true,
-        .bloomThreshold = 1.0f,
-        .bloomStrength = 0.03f,
+        .bloomThreshold = 0.1f,
+        .bloomStrength = 1.0f,
         .bloomBlurPasses= 10
     })
 {

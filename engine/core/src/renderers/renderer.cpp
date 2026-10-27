@@ -668,7 +668,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
         glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
         // test that HDR is working (very costly !!!)
-        testHDR(width, height);
+        //testHDR(width, height);
 
         // render HDR framebuffer to screen as a big fullscreen quad
         renderQuad();
@@ -677,23 +677,23 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     renderQuad();
 }
 
-void engine::Renderer::testHDR(int width, int height)
-{
-    std::vector<float> data(width * height * 4);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data.data());
-
-    // Sample the center pixel
-    int x = width / 2;
-    int y = height / 2;
-    int idx = (y * width + x) * 4;
-
-    float r = data[idx + 0];
-    float g = data[idx + 1];
-    float b = data[idx + 2];
-
-    if (r > 1.0 || g > 1.0f || b > 1.0f)
-        std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
-}
+//void engine::Renderer::testHDR(int width, int height)
+//{
+//    std::vector<float> data(width * height * 4);
+//    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data.data());
+//
+//    // Sample the center pixel
+//    int x = width / 2;
+//    int y = height / 2;
+//    int idx = (y * width + x) * 4;
+//
+//    float r = data[idx + 0];
+//    float g = data[idx + 1];
+//    float b = data[idx + 2];
+//
+//    if (r > 1.0 || g > 1.0f || b > 1.0f)
+//        std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
+//}
 
 void engine::Renderer::updateEditorPropertySettings(int width, int height)
 {

@@ -468,11 +468,6 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
                 indices.push_back(src[i]);
         }
 
-
-        
-
-
-
         // ------------------------------------------------------------
         // Material
         // ------------------------------------------------------------
@@ -509,112 +504,9 @@ std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh
     
     // Set the node transform for the mesh
     meshPtr->setNodeTransform(modelMatrix);
-    
-
-
-    //logger.info("Creating mesh {} for node {}", mesh.name.data, nodeIndex);
-    //logger.info("Total meshes = {}", m_meshes.size());
-
-    //logger.info(
-    //    "{} indices={} vertices={}",
-    //    meshPtr->getName(),
-    //    meshPtr->getIndices().size(),
-    //    meshPtr->getVertices().size()
-    //);
-
-    //logger.info(
-    //    "{} material={}",
-    //    meshPtr->getName(),
-    //    meshPtr->getMaterial()->getName()
-    //);
-
-    /*logger.info(
-        "{} node={} pos=({}, {}, {})",
-        mesh.name.data,
-        nodeIndex,
-        modelMatrix[3][0],
-        modelMatrix[3][1],
-        modelMatrix[3][2]
-    );*/
 
     return meshPtr;
 }
-
-///// <summary>
-///// GLTF2 is a PBR geometry container first
-///// </summary>
-//std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32_t matIndex, const tg3_model& raw)
-//{
-//    const tg3_material& mat = raw.materials[matIndex];
-//
-//    //Color baseColorFactor{
-//    //    mat.pbr_metallic_roughness.base_color_factor[0],
-//    //    mat.pbr_metallic_roughness.base_color_factor[1],
-//    //    mat.pbr_metallic_roughness.base_color_factor[2],
-//    //    mat.pbr_metallic_roughness.base_color_factor[3]
-//    //};
-//
-//    Color baseColorFactor{ 0.3f, 0.3f, 0.3f, 1.0f };
-//
-//	if (mat.pbr_metallic_roughness.base_color_factor[0] != 1.0f &&
-//		mat.pbr_metallic_roughness.base_color_factor[1] != 1.0f &&
-//		mat.pbr_metallic_roughness.base_color_factor[2] != 1.0f &&
-//        mat.pbr_metallic_roughness.base_color_factor[3] != 1.0f)
-//	{
-//		baseColorFactor = Color{
-//			mat.pbr_metallic_roughness.base_color_factor[0],
-//			mat.pbr_metallic_roughness.base_color_factor[1],
-//			mat.pbr_metallic_roughness.base_color_factor[2],
-//			mat.pbr_metallic_roughness.base_color_factor[3]
-//		};
-//	}
-//
-//    std::string texBaseColorFullPath = getTexture(raw, mat.pbr_metallic_roughness.base_color_texture);
-//    std::string texNormalFullPath = getTexture(raw, mat.normal_texture);
-//    std::string texMetallicFullPath = getTexture(raw, mat.pbr_metallic_roughness.metallic_roughness_texture);
-//    std::string texRoughnessFullPath = texMetallicFullPath; // GLTF packs metallic+roughness together
-//    std::string texAoFullPath = getTexture(raw, mat.occlusion_texture);
-//    std::string texEmissiveFulPath = getTexture(raw, mat.emissive_texture);
-//    std::string texHeightFullPath = ""; // GLTF rarely uses height
-//    std::string texOpacityFullPath = ""; // TODO !!!
-//
-//    bool useARM = false;
-//    bool useMR = false;
-//
-//    // GLTF ARM detection (AO + Roughness + Metallic in one texture)
-//    if (!texAoFullPath.empty() && !texMetallicFullPath.empty() && texAoFullPath == texMetallicFullPath)
-//        useARM = true;
-//
-//    // GLTF MR detection (Metallic + Roughness in one texture)
-//    if (!texMetallicFullPath.empty() && !texRoughnessFullPath.empty() && texMetallicFullPath == texRoughnessFullPath)
-//        useMR = true;
-//
-//    std::shared_ptr<Material> material{};
-//
-//    if (texBaseColorFullPath.empty())
-//    {
-//        material = std::make_shared<PBRMaterial>(baseColorFactor);
-//    }
-//    else if (useARM)
-//    {
-//        // AO + Roughness + Metallic combined textures
-//        material = std::make_shared<PBRMaterial>(CombinedTexture::ARM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, "", texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
-//    }
-//    else if (useMR)
-//    {
-//        // Metallic + Roughness combined textures
-//        material = std::make_shared<PBRMaterial>(CombinedTexture::RM, baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
-//    }
-//    else
-//    {
-//        // no combined textures
-//        material = std::make_shared<PBRMaterial>(baseColorFactor, texBaseColorFullPath, texNormalFullPath, texMetallicFullPath, texRoughnessFullPath, texAoFullPath, texHeightFullPath, texEmissiveFulPath, texOpacityFullPath);
-//    }
-//
-//    material->setName(toStdString(mat.name));
-//
-//    return material;
-//}
 
 /// <summary>
 /// GLTF2 is a PBR geometry container first
@@ -665,7 +557,7 @@ std::shared_ptr<engine::Material> engine::GLtfMeshLoader::loadPBRMaterial(uint32
             // Array of 3 floats stored as a value object/array
             glm::vec3 f = toVec3(mat.ext.extensions[i].value);
             if (f != glm::vec3(0.0f))
-                emissiveColorFactor = Color(f.r, f.g, f.b, 1.0);;
+                emissiveColorFactor = Color(f.r, f.g, f.b, 1.0);
         }
     }
 

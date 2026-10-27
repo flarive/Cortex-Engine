@@ -498,6 +498,8 @@ void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_bloomFBO);
 
+    RenderState::disableDepthTest();
+
     bloomBrightExtractionShader.use();
     bloomBrightExtractionShader.setInt("screenTexture", 0);
 	bloomBrightExtractionShader.setFloat("bloomThreshold", bloomThreshold); // or 2.0f, depending on your scene's brightness
@@ -506,6 +508,10 @@ void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
     renderQuad();
+
+    RenderState::enableDepthTest();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
@@ -513,23 +519,29 @@ void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
     bool horizontal = true;
     bool firstIteration = true;
 
-    // Classic ping-pong
     for (int i = 0; i < bloomBlurPasses; i++)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_pingPongFBO[horizontal]);
 
+        RenderState::disableDepthTest();
+
         bloomBlurShader.use();
         bloomBlurShader.setBool("horizontal", horizontal);
+        bloomBlurShader.setInt("image", 0); // init only
 
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, firstIteration ? m_bloomBrightTexture : m_pingPongColorBuffer[!horizontal]);
 
         renderQuad();
 
-        horizontal = !horizontal;
+        RenderState::enableDepthTest();
 
-        if (firstIteration)
-            firstIteration = false;
+        horizontal = !horizontal;
+        firstIteration = false;
     }
+
+    // final blurred image
+    m_finalBloomTexture = m_pingPongColorBuffer[!horizontal];
 }
 
 void engine::PbrRenderer::loadShaders()

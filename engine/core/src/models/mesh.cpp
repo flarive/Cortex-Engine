@@ -76,8 +76,8 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::
             }
 
             shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-            shader.setFloat("material.emissiveMapStrength", m_material->getEmissiveStrength());
-            shader.setVec3("material.emissiveMapFactor", m_material->getEmissiveColorFactor());
+            shader.setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
+            shader.setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
             shader.setFloat("material.opacity", m_material->getOpacityIntensity());
         }
     }

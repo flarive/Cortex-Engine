@@ -166,15 +166,6 @@ void MyScene1::init()
 void MyScene1::onInputUpdate()
 {
     Scene::onInputUpdate();
-
-    //if (is_editor_mode)
-    //    return;
-
-    //auto camera = getActiveCamera();
-    //if (!camera)
-    //    return;
-
-    //auto& input = getApp()->getInputManager();
 }
 
 void MyScene1::framebuffer_size_callback(int newWidth, int newHeight)

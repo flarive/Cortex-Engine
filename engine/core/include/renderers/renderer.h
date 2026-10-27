@@ -228,7 +228,7 @@ namespace engine
 
 
 		
-		void testHDR(int width, int height);
+		//void testHDR(int width, int height);
 
 		void initDummyCubeMap();
 

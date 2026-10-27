@@ -133,7 +133,6 @@ void engine::Sphere::geometrySetup()
     glBindVertexArray(0);
 }
 
-
 std::vector<engine::Vertex> engine::Sphere::generateVertices()
 {
     return generateSphereVertices(m_radius, m_uvScale);

@@ -91,9 +91,8 @@ namespace engine
     class TextureManager final
 	{
 	public:
+        // sync textures loading (legacy, do not use, prefer async)
         static unsigned int loadTexture(const std::string& filename, TextureFlags flags = TextureFlag_None);
-
-        
         static TextureData loadAndUploadTextureExtended(const std::string& filename, TextureFlags flags = TextureFlag_None);
 
 
@@ -101,6 +100,7 @@ namespace engine
         static unsigned int loadCubemap(const std::vector<std::string>& faces);
         static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, TextureFlags flags = TextureFlag_RepeatTexture);
 
+        // async textures loading
         static unsigned int requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY = false);
         static unsigned int enqueueAsyncTextureCreation(const std::string& path, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
         static void processLoadedTextures();
@@ -126,15 +126,9 @@ namespace engine
         static bool isNormalMap(const std::string& filename);
         static bool isHeightMap(const std::string& filename);
 
-        //static unsigned int createUncompressedTexture(const std::string& filename, TextureFlags flags);
-        //static unsigned int createCompressedTexture(const std::string& filename, TextureFlags flags);
-
         static bool isCompressedFile(const std::string& filename);
         static bool isDDSFile(const std::string& filename);
         static bool isKTXFile(const std::string& filename);
         static bool isKTX2File(const std::string& filename);
-        static bool gpuSupportsBC7();
-        static GLenum chooseCompressedFormat(bool isNormal, bool isHeight, bool gamma, bool gpuBC7);
 	};
 }
-

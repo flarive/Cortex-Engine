@@ -23,7 +23,11 @@ MyScene16::MyScene16(const string& _title, std::weak_ptr<App> _app) : Scene(_tit
         .shadowMapsBiasFactor = 0.050f,
         .iblDiffuseIntensity = 1.1f,
         .iblSpecularIntensity = 0.0f,
-        .enableGammaCorrection = true, 
+        .enableGammaCorrection = true,
+        .enableBloom = true,
+        .bloomThreshold = 0.1f,
+        .bloomStrength = 1.0f,
+        .bloomBlurPasses = 10
     })
 {
     logger.trace("Scene {} constructor called", title);

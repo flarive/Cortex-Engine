@@ -531,7 +531,7 @@
     <ClCompile Include="core\src\tools\vram_manager.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\glad\src\glad.c">
+    <ClCompile Include="..\libs\glad\opengl\src\glad.c">
       <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="core\src\textures\ktx_loader.cpp">

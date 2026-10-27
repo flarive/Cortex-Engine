@@ -501,7 +501,6 @@ void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
     RenderState::disableDepthTest();
 
     bloomBrightExtractionShader.use();
-    bloomBrightExtractionShader.setInt("screenTexture", 0);
 	bloomBrightExtractionShader.setFloat("bloomThreshold", bloomThreshold); // or 2.0f, depending on your scene's brightness
 
     glActiveTexture(GL_TEXTURE0);
@@ -527,7 +526,6 @@ void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
 
         bloomBlurShader.use();
         bloomBlurShader.setBool("horizontal", horizontal);
-        bloomBlurShader.setInt("image", 0); // init only
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, firstIteration ? m_bloomBrightTexture : m_pingPongColorBuffer[!horizontal]);
@@ -626,30 +624,14 @@ void engine::PbrRenderer::initBloomBuffers(int width, int height)
 
         glBindTexture(GL_TEXTURE_2D, m_pingPongColorBuffer[i]);
 
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA16F,
-            width,
-            height,
-            0,
-            GL_RGBA,
-            GL_FLOAT,
-            nullptr
-        );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER,
-            GL_COLOR_ATTACHMENT0,
-            GL_TEXTURE_2D,
-            m_pingPongColorBuffer[i],
-            0
-        );
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_pingPongColorBuffer[i], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         {
@@ -659,8 +641,13 @@ void engine::PbrRenderer::initBloomBuffers(int width, int height)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
-}
 
+    bloomBrightExtractionShader.use();
+    bloomBrightExtractionShader.setInt("screenTexture", 0);
+
+    bloomBlurShader.use();
+    bloomBlurShader.setInt("image", 0);
+}
 
 engine::Shader& engine::PbrRenderer::getShader()
 {

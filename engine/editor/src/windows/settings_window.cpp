@@ -249,15 +249,11 @@ void engine::SettingsWindow::renderTabSettings()
         }
 
         static ubyte lastBloomBlurPasses = DEFAULT_BLOOM_BLUR_PASSES;
-        if (EditorHelper::renderDragUnsignedByteWithLabel("Bloom blur passes", sceneSetting_bloomBlurPasses, lastBloomBlurPasses, 0, 10, 1, 15.0f))
+        if (EditorHelper::renderDragUnsignedByteWithLabel("Bloom blur passes", sceneSetting_bloomBlurPasses, lastBloomBlurPasses, 0, 100, 1, 15.0f))
         {
             emit(UIEventType::SceneSettingChanged, "bloom_blur_passes", sceneSetting_bloomBlurPasses);
         }
     }
-
-
-
-    
 
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();

@@ -9,7 +9,7 @@
 #include "../lights/directional_light.h"
 #include "../cameras/camera.h"
 
-#include "../tools/render_state.h"
+#include "../backends/opengl/render_state.h"
 
 #include "../debug/debug_plane_grid.h"
 

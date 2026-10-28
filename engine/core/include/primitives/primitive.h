@@ -14,7 +14,7 @@
 #include "../misc/noncopyable.h"
 #include "../misc/ordered_map.h"
 
-#include "../tools/render_state.h"
+#include "../backends/opengl/render_state.h"
 
 #include "../transform.h"
 

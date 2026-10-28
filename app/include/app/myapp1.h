@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/include/app/app.h"
+#include "core/include/app/opengl_app.h"
 #include "core/include/engine.h"
 
 #include "../scene/myscene0.h" // blinnphong empty scene
@@ -29,7 +30,7 @@ using namespace engine;
 
 using MyScene = MyScene16;
 
-class MyApp1 final : public App
+class MyApp1 final : public OpenGLApp
 {
 public:
     MyApp1(const string& _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false);

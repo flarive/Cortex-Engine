@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\opengl\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\opengl\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -157,7 +157,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\glad\opengl\src\glad.c" />
+    <ClCompile Include="..\libs\glad\src\opengl\glad.c" />
+    <ClCompile Include="..\libs\glad\src\vulkan\vulkan.c" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp" />
@@ -183,6 +184,8 @@
     <ClCompile Include="core\src\animators\animator.cpp" />
     <ClCompile Include="core\src\animators\transfom_animator.cpp" />
     <ClCompile Include="core\src\anim_transform.cpp" />
+    <ClCompile Include="core\src\app\opengl_app.cpp" />
+    <ClCompile Include="core\src\app\vulkan_app.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
@@ -201,7 +204,7 @@
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
     <ClCompile Include="core\src\managers\input_manager.cpp" />
     <ClCompile Include="core\src\tools\pdh_counters.cpp" />
-    <ClCompile Include="core\src\tools\render_state.cpp" />
+    <ClCompile Include="core\src\backends\opengl\render_state.cpp" />
     <ClCompile Include="editor\src\widgets\mesh_widget.cpp" />
     <ClCompile Include="editor\src\widgets\skeleton_widget.cpp" />
     <ClCompile Include="editor\src\windows\about_window.cpp" />
@@ -308,10 +311,13 @@
     <ClInclude Include="core\include\animators\transform_animator.h" />
     <ClInclude Include="core\include\anim_transform.h" />
     <ClInclude Include="core\include\app\app.h" />
+    <ClInclude Include="core\include\app\app_settings.h" />
     <ClInclude Include="core\include\app\cmdline_settings.h" />
     <ClInclude Include="core\include\app\gpu_selector.h" />
+    <ClInclude Include="core\include\app\opengl_app.h" />
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
+    <ClInclude Include="core\include\app\vulkan_app.h" />
     <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />
@@ -330,7 +336,7 @@
     <ClInclude Include="core\include\ecs\particlesystem_component.h" />
     <ClInclude Include="core\include\ecs\terrain_component.h" />
     <ClInclude Include="core\include\managers\input_manager.h" />
-    <ClInclude Include="core\include\tools\render_state.h" />
+    <ClInclude Include="core\include\backends\opengl\render_state.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
     <ClInclude Include="editor\include\widgets\skeleton_widget.h" />
     <ClInclude Include="editor\include\windows\about_window.h" />

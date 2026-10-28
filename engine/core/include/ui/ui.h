@@ -4,7 +4,7 @@
 #include "../common_defines.h"
 #include "../misc/colors.h"
 
-#include "../tools/render_state.h"
+#include "../backends/opengl/render_state.h"
 
 #include "../shader.h"
 

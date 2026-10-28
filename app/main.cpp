@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     //settings.width = 320;
     //settings.height = 240;
-    //settings.fullscreen = false;
+    //setti1stfngs.fullscreen = false;
 
     auto app = appManager.createApp<MyApp>("MyApp", settings);
     if (!app)

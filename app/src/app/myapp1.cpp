@@ -5,7 +5,7 @@ using namespace glm;
 using namespace engine;
 
 MyApp1::MyApp1(const string& _title, unsigned int _width, unsigned int _height, bool _fullscreen)
-    : App(_title, _width, _height, _fullscreen, AppSettings
+    : OpenGLApp(_title, _width, _height, _fullscreen, AppSettings
         {
              .targetFPS = 0
         })

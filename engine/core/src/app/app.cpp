@@ -40,6 +40,16 @@ bool engine::App::isRunning()
 
 void engine::App::setup()
 {
+    // Create backend
+    //if (settings.backend == BackendType::Vulkan) {
+    //    // Vulkan
+    //    m_backend = std::make_unique<VulkanBackend>(m_title, static_cast<unsigned int>(width), static_cast<unsigned int>(height), fullscreen, settings); // remove cast
+    //}
+    //else {
+    //    // OpenGL
+    //    m_backend = std::make_unique<OpenGLBackend>(m_title, static_cast<unsigned int>(width), static_cast<unsigned int>(height), fullscreen, settings); // remove cast
+    //}
+    
     initGLFW();
 
     const char* glsl_version = initOpenGL();

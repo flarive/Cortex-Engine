@@ -2,7 +2,7 @@
 
 #pragma warning(disable : 4005) // avoid warning C4005: 'APIENTRY' : redefinition de macro
 
-#include <glad/glad.h>
+#include <opengl/glad.h>
 #include <glfw/glfw3.h> // Will drag system OpenGL headers
 
 #include <glm/glm.hpp>

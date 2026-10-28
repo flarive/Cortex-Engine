@@ -256,6 +256,33 @@
     <Filter Include="sources\editor\windows">
       <UniqueIdentifier>{ae71c9e2-7533-4e2e-8029-1a593142a4be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\backends">
+      <UniqueIdentifier>{4789c084-75d6-417b-b6fc-f5fc629f9ee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\backends\opengl">
+      <UniqueIdentifier>{5fcff410-89c4-4077-ad0c-ba16ca278d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\backends\vulkan">
+      <UniqueIdentifier>{be9ad262-7e0b-4599-aa67-11e2a5e8cc42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\backends">
+      <UniqueIdentifier>{157b5d3d-fe3a-43c3-abce-8f7217a1e345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\backends\opengl">
+      <UniqueIdentifier>{1c88556b-77a4-494b-b9a6-451b5b749f1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\backends\vulkan">
+      <UniqueIdentifier>{ddec101b-54c1-458d-80a8-4dea46f6cdfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\backends">
+      <UniqueIdentifier>{0e475d22-7620-4504-ad76-4541e588e783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\backends\opengl">
+      <UniqueIdentifier>{ff7b8420-686d-4028-9cf0-e5c76afe9c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\backends\vulkan">
+      <UniqueIdentifier>{d6c63539-a215-4176-aa7e-2c1cdc09be3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -531,9 +558,6 @@
     <ClCompile Include="core\src\tools\vram_manager.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\glad\opengl\src\glad.c">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\textures\ktx_loader.cpp">
       <Filter>sources\core\textures</Filter>
     </ClCompile>
@@ -615,14 +639,26 @@
     <ClCompile Include="editor\src\windows\dialog_box.cpp">
       <Filter>sources\editor\windows</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\tools\render_state.cpp">
-      <Filter>sources\core\tools</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\tools\pdh_counters.cpp">
       <Filter>sources\core\tools</Filter>
     </ClCompile>
     <ClCompile Include="core\src\managers\input_manager.cpp">
       <Filter>sources\core\managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\glad\src\opengl\glad.c">
+      <Filter>sources\backends\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\glad\src\vulkan\vulkan.c">
+      <Filter>sources\backends\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\backends\opengl\render_state.cpp">
+      <Filter>sources\core\backends\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\app\opengl_app.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\app\vulkan_app.cpp">
+      <Filter>sources\app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1037,11 +1073,20 @@
     <ClInclude Include="core\include\app\cmdline_settings.h">
       <Filter>headers\app</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\tools\render_state.h">
-      <Filter>headers\core\tools</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\managers\input_manager.h">
       <Filter>headers\core\managers</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\opengl\render_state.h">
+      <Filter>headers\core\backends\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\app\app_settings.h">
+      <Filter>headers\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\app\opengl_app.h">
+      <Filter>headers\app</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\app\vulkan_app.h">
+      <Filter>headers\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

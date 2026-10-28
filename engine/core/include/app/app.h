@@ -3,8 +3,11 @@
 #include "../engine.h"
 #include "../managers/filesystem_manager.h"
 
+#include "app_settings.h"
+
 #include "../debug/opengl_debug.h"
 #include "../managers/scene_manager.h"
+#include "../managers/log_manager.h"
 
 #include <iostream>
 #include <functional>
@@ -12,14 +15,6 @@
 
 namespace engine
 {
-    struct AppSettings
-    {
-        unsigned int targetFPS{ 0 }; // 0 means no FPS capping
-    };
-
-    /// <summary>
-    /// https://stackoverflow.com/questions/31581200/glfw-call-to-non-static-class-function-in-static-key-callback
-    /// </summary>
     class App : private NonCopyable, public std::enable_shared_from_this<App> // to be able to create a smart pointer from this
     {
     public:
@@ -162,13 +157,12 @@ namespace engine
         SceneManager m_sceneManager{};
         InputManager m_inputManager{};
 
-    private:
+
         std::string m_title{};
         std::string m_title_suffix{};
         std::string m_title_prefix{ "Cortex |" };
 
-        
-
+    private:
         void setup();
 
         void initGLFW();

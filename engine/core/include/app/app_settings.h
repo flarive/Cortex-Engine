@@ -6,15 +6,15 @@
 
 namespace engine
 {
-    enum class BackendType
-    {
-        OpenGL = 0,
-        Vulkan = 1
-    };
+    //enum class BackendType
+    //{
+    //    OpenGL = 0,
+    //    Vulkan = 1
+    //};
 
     struct AppSettings final
     {
         unsigned int targetFPS{ 0 }; // 0 means no FPS capping
-        BackendType backend{ BackendType::OpenGL };
+        //BackendType backend{ BackendType::OpenGL };
     };
 }

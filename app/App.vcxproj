@@ -206,6 +206,7 @@
   <ItemGroup>
     <ClCompile Include="src\app\myapp0.cpp" />
     <ClCompile Include="src\app\myapp1.cpp" />
+    <ClCompile Include="src\app\myapp2.cpp" />
     <ClCompile Include="src\scene\myscene0.cpp" />
     <ClCompile Include="src\scene\myscene1.cpp" />
     <ClCompile Include="src\scene\myscene10.cpp" />
@@ -231,6 +232,7 @@
   <ItemGroup>
     <ClInclude Include="include\app\myapp0.h" />
     <ClInclude Include="include\app\myapp1.h" />
+    <ClInclude Include="include\app\myapp2.h" />
     <ClInclude Include="include\scene\myscene0.h" />
     <ClInclude Include="include\scene\myscene1.h" />
     <ClInclude Include="include\scene\myscene10.h" />

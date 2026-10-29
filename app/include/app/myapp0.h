@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/include/app/app.h"
+#include "core/include/app/opengl_app.h"
 #include "core/include/engine.h"
 
 #include "../scene/myscene1.h" // blinnphong with skybox
@@ -25,7 +25,7 @@
 using namespace std;
 using namespace engine;
 
-class MyApp0 final : public App
+class MyApp0 final : public OpenGLApp
 {
 public:
 

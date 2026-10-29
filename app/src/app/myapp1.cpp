@@ -18,7 +18,7 @@ MyApp1::MyApp1(const string& _title, unsigned int _width, unsigned int _height, 
 void MyApp1::start()
 {
     // Load scenes in the app
-    m_sceneManager.addScene<MyScene>("MyScene", shared_from_this());
+    m_sceneManager.addScene<MyApp1Scene>("MyScene", shared_from_this());
 
 
 

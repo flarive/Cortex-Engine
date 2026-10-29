@@ -1,0 +1,50 @@
+#pragma once
+
+#include "core/include/app/vulkan_app.h"
+#include "core/include/engine.h"
+
+#include "../scene/myscene0.h" // blinnphong empty scene
+#include "../scene/myscene1.h" // blinnphong with skybox
+#include "../scene/myscene2.h" // blinnphong cushion
+#include "../scene/myscene3.h" // PBR balls with HDR background
+#include "../scene/myscene4.h" // PBR cushion
+#include "../scene/myscene5.h" // PBR buddha
+#include "../scene/myscene6.h" // PBR rotating helmet
+#include "../scene/myscene7.h" // PBR multiple helmets
+#include "../scene/myscene8.h" // blinnphong monochromatic point shadow
+#include "../scene/myscene9.h" // PBR orbit camera
+#include "../scene/myscene10.h" // PBR area lights demo
+#include "../scene/myscene11.h" // blinnphong animated character
+#include "../scene/myscene12.h" // PBR wood plane with misc materials
+#include "../scene/myscene13.h" // blinnphong particles
+#include "../scene/myscene14.h" // blinnphong/pbr terrain
+#include "../scene/myscene15.h" // blinnphong/pbr parallax mapping
+#include "../scene/myscene16.h" // ktx compressed textures
+#include "../scene/myscene17.h" // material opacity and glass
+#include "../scene/myscene18.h" // Cornell box
+#include "../scene/myscene19.h" // Test emissive and bloom post fx
+
+using namespace std;
+using namespace engine;
+
+using MyApp2Scene = MyScene1;
+
+class MyApp2 final : public VulkanApp
+{
+public:
+    MyApp2(const string& _title, unsigned int _width = 800, unsigned int _height = 600, bool _fullscreen = false);
+    ~MyApp2() override;
+
+
+    void start() override;
+
+    void onInputUpdate() override;
+    
+
+    void onResize(int w, int h) override;
+    void onRefresh() override;
+   
+
+private:
+    weak_ptr<Scene> m_scene{};
+};

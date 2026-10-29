@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/include/app/app.h"
 #include "core/include/app/opengl_app.h"
 #include "core/include/engine.h"
 
@@ -28,7 +27,7 @@
 using namespace std;
 using namespace engine;
 
-using MyScene = MyScene16;
+using MyApp1Scene = MyScene19;
 
 class MyApp1 final : public OpenGLApp
 {

@@ -2,9 +2,17 @@
 
 #pragma warning(disable : 4005) // avoid warning C4005: 'APIENTRY' : redefinition de macro
 
-#include <opengl/glad.h>
-#include <glfw/glfw3.h> // Will drag system OpenGL headers
 
+// include GLFW window system lib
+// tell GLFW not to include GLAD itself
+#define GLFW_INCLUDE_NONE
+#include <glfw/glfw3.h>
+
+// include GLAD lib
+#include <opengl/glad.h>
+#include <vulkan/vulkan.h>
+
+// include GLM math lib
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 

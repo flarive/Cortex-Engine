@@ -259,6 +259,9 @@
     <ClCompile Include="src\scene\myscene19.cpp">
       <Filter>sources\scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\myapp2.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\resources\textures\awesomeface.png">
@@ -1372,6 +1375,9 @@
     </ClInclude>
     <ClInclude Include="include\scene\myscene19.h">
       <Filter>headers\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\app\myapp2.h">
+      <Filter>headers\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

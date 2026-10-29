@@ -3,7 +3,8 @@
 #include "core/include/managers/log_manager.h"
 
 #include "include/app/myapp0.h" // app scenes switcher
-#include "include/app/myapp1.h" // single scene app
+#include "include/app/myapp1.h" // single scene opengl app
+#include "include/app/myapp2.h" // single scene vulkan app
 
 #include <string>
 
@@ -11,7 +12,7 @@ using namespace engine;
 
 
 // make it easier to switch between scenes
-using MyApp = MyApp1;
+using MyApp = MyApp2;
 
 
 // Startup method
@@ -22,9 +23,9 @@ int main(int argc, char* argv[])
     AppManager appManager;
     CmdLineSettings settings = appManager.buildAppSettings(argc, argv);
 
-    //settings.width = 320;
-    //settings.height = 240;
-    //setti1stfngs.fullscreen = false;
+    settings.width = 320;
+    settings.height = 240;
+    settings.fullscreen = false;
 
     auto app = appManager.createApp<MyApp>("MyApp", settings);
     if (!app)

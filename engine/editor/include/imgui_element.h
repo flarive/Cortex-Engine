@@ -1,20 +1,15 @@
 #pragma once
 
-#include <imgui.h>
 #include <string>
 #include <vector>
 #include <any>
 
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "themes/imgui_spectrum.h"
+#include "../../core/include/common_defines.h"
 
 #include "extensions/toggle/imgui_toggle.h"
 #include "extensions/toggle/imgui_toggle_palette.h"
 
 #include "../../core/include/misc/event.h"
-
-#include <glm/glm.hpp>
 
 namespace engine
 {

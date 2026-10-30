@@ -3,8 +3,8 @@
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
-#include "../../imgui.h"
-#include "../../imgui_internal.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 
 #include "imgui_toggle.h"
 #include "imgui_toggle_palette.h"
@@ -50,8 +50,12 @@ private:
     inline ImVec2 GetPosition() const { return _boundingBox.Min; }
     inline ImVec2 GetToggleSize() const { return _boundingBox.GetSize(); }
     inline bool IsAnimated() const { return (_config.Flags & ImGuiToggleFlags_Animated) != 0 && _config.AnimationDuration > 0; }
-    inline bool HasBorderedFrame() const { return (_config.Flags & ImGuiToggleFlags_BorderedFrame) != 0 && _state.FrameBorderThickness > 0; }
-    inline bool HasShadowedFrame() const { return (_config.Flags & ImGuiToggleFlags_ShadowedKnob) != 0 && _state.FrameShadowThickness > 0; }
+    // A toggle in the theme's colors (no palette, no frame border asked) has the frame border of the style, as a checkbox:
+    // style.FrameBorderSize, in ImGuiCol_Border. Without it, its frame may vanish in a theme where FrameBg is close to WindowBg.
+    inline bool HasStyleFrameBorder() const { return (_config.Flags & ImGuiToggleFlags_BorderedFrame) == 0 && _config.On.Palette == nullptr && _config.Off.Palette == nullptr; }
+    inline float GetFrameBorderThickness() const { return HasStyleFrameBorder() ? _style->FrameBorderSize : _state.FrameBorderThickness; }
+    inline bool HasBorderedFrame() const { return ((_config.Flags & ImGuiToggleFlags_BorderedFrame) != 0 || HasStyleFrameBorder()) && GetFrameBorderThickness() > 0; }
+    inline bool HasShadowedFrame() const { return (_config.Flags & ImGuiToggleFlags_ShadowedFrame) != 0 && _state.FrameShadowThickness > 0; }
     inline bool HasBorderedKnob() const { return (_config.Flags & ImGuiToggleFlags_BorderedKnob) != 0 && _state.KnobBorderThickness > 0; }
     inline bool HasShadowedKnob() const { return (_config.Flags & ImGuiToggleFlags_ShadowedKnob) != 0 && _state.KnobShadowThickness > 0; }
     inline bool HasA11yGlyphs() const { return (_config.Flags & ImGuiToggleFlags_A11y) != 0; }

@@ -660,6 +660,9 @@
     <ClCompile Include="core\src\app\vulkan_app.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_vulkan.cpp">
+      <Filter>sources\imgui\backends</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -1087,6 +1090,9 @@
     </ClInclude>
     <ClInclude Include="core\include\app\vulkan_app.h">
       <Filter>headers\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_vulkan.h">
+      <Filter>sources\imgui\backends</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

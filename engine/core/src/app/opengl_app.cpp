@@ -61,16 +61,16 @@ void engine::OpenGLApp::initGLFW()
     }
 
     glfwWindowHint(GLFW_SAMPLES, 4); // Enable 4x MSAA
-
-#ifdef _DEBUG
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
-#else
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_FALSE);
-#endif
 }
 
 const char* engine::OpenGLApp::initBackend()
 {
+    #ifdef _DEBUG
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // enable OpenGL debug output
+    #else
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_FALSE);
+    #endif
+
     // GL 3.3 + GLSL 130
     const char* glsl_version = "#version 130";
 
@@ -84,83 +84,13 @@ const char* engine::OpenGLApp::initBackend()
     return glsl_version;
 }
 
-void engine::OpenGLApp::initWindow()
+void engine::OpenGLApp::initImGUI(const char* backend_version)
 {
-    GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+    App::initImGUI(backend_version);
 
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
-
-    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
-
-    // Create window with graphics context
-    window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), "Cortex engine", NULL, nullptr);
-    if (window == NULL)
-    {
-        logger.error("Failed to create GLFW window");
-        glfwTerminate();
-        std::exit(EXIT_FAILURE);
-    }
-
-    if (fullscreen)
-        toggleFullscreen([this]() {});
-
-    glfwMakeContextCurrent(window);
-}
-
-void engine::OpenGLApp::initGLAD()
-{
-    // glad: load all OpenGL function pointers
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        logger.error("Failed to initialize GLAD");
-        std::exit(EXIT_FAILURE);
-    }
-}
-
-void engine::OpenGLApp::initImGUI(const char* glsl_version)
-{
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-
-    ////ImGuiIO& io = ImGui::GetIO();
-    //ImFont* defaultFont = io.Fonts->AddFontDefault(); // Default
-    //ImFont* largeFont = io.Fonts->AddFontFromFileTTF("fonts/Raleway-Medium.ttf", 20.0f); // Larger font
-
-    //ImGuiIO& io = ImGui::GetIO();
-
-    //ImFont* fontSmall = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 14.0f);
-    //ImFont* fontMedium = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 20.0f);
-    //ImFont* fontLarge = io.Fonts->AddFontFromFileTTF("fonts/Roboto-Bold.ttf", 32.0f);
-
-    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags)
-    {
-        // Set rounding for ALL windows (including child windows)
-        style.WindowRounding = 6.0f; // Rounding for regular windows
-        style.ChildRounding = 6.0f;  // Rounding for child windows (docked windows)
-
-        style.ItemSpacing.y = 8.0; // vertical padding between widgets
-        style.FramePadding.x = 8.0; // better widget horizontal padding
-        style.FramePadding.y = 4.0; // better widget vertical padding
-    }
-
-    // Apply Adobe Spectrum theme
-    //https://github.com/adobe/imgui/blob/master/docs/Spectrum.md#imgui-spectrum
-    ImGui::Spectrum::StyleColorsSpectrum();
-    //ImGui::Spectrum::LoadFont(17.0f);
-    ImGui::Spectrum::LoadFonts();
-
-    // Setup Platform/Renderer backends
+    // Setup OpenGL Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui_ImplOpenGL3_Init(backend_version);
 }
 
 void engine::OpenGLApp::enableVerticalSync(bool enable)
@@ -174,12 +104,6 @@ void engine::OpenGLApp::enableMouseCapture(bool enable)
     // tell GLFW to capture our mouse
     if (!enable)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-}
-
-void engine::OpenGLApp::glfw_error_callback(int error, const char* description)
-{
-    logger.error("GLFW Error {}: {}", error, description);
-    std::exit(EXIT_FAILURE);
 }
 
 void GLAPIENTRY engine::OpenGLApp::openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

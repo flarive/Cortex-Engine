@@ -7,10 +7,8 @@
 
 #include "../../core/include/common_defines.h"
 
-#include <imgui.h>
-
-namespace engine {
-
+namespace engine
+{
     struct IconUV final {
         ImVec2 uv0; // 0.0 - 0.1
         ImVec2 uv1; // 0.0 - 0.1

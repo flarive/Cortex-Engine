@@ -6,10 +6,6 @@
 #include "../../core/include/cameras/camera.h"
 #include "icon_atlas.h"
 
-
-
-#include <imgui.h>
-
 #include <string>
 #include <vector>
 #include <variant>

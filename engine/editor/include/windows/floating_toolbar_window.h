@@ -1,7 +1,5 @@
 #pragma once
 
-#include <imgui.h>
-
 #include "../imgui_element.h"
 
 #include "../../../core/include/ecs/entity.h"

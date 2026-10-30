@@ -1142,7 +1142,8 @@ namespace ImGuizmo
             gContext.mRadiusSquareCenter = radiusAxis;
          }
 
-         drawList->AddPolyline(circlePos, halfCircleSegmentCount, colors[3 - axis], false, lineThickness);
+         //drawList->AddPolyline(circlePos, halfCircleSegmentCount, colors[3 - axis], false, lineThickness);
+         drawList->AddPolyline(circlePos, halfCircleSegmentCount, colors[3 - axis], ImDrawFlags_None, lineThickness);
       }
       drawList->AddCircle(worldToPos(gContext.mModel.v.position, gContext.mViewProjection), gContext.mRadiusSquareCenter * 1.1f, colors[0], 64, circleLineThickness);
 
@@ -1162,7 +1163,8 @@ namespace ImGuizmo
             circlePos[i] = worldToPos(pos + gContext.mModel.v.position, gContext.mViewProjection);
          }
          drawList->AddConvexPolyFilled(circlePos, halfCircleSegmentCount, 0x801080FF);
-         drawList->AddPolyline(circlePos, halfCircleSegmentCount, 0xFF1080FF, true, 2);
+         //drawList->AddPolyline(circlePos, halfCircleSegmentCount, 0xFF1080FF, true, 2);
+         drawList->AddPolyline(circlePos, halfCircleSegmentCount, 0xFF1080FF, ImDrawFlags_Closed, 2.0f);
 
          ImVec2 destinationPosOnScreen = circlePos[1];
          char tmps[512];
@@ -1308,7 +1310,8 @@ namespace ImGuizmo
                vec_t cornerWorldPos = (dirPlaneX * quadUV[j * 2] + dirPlaneY * quadUV[j * 2 + 1]) * gContext.mScreenFactor;
                screenQuadPts[j] = worldToPos(cornerWorldPos, gContext.mMVP);
             }
-            drawList->AddPolyline(screenQuadPts, 4, directionColor[i], true, 1.0f);
+            //drawList->AddPolyline(screenQuadPts, 4, directionColor[i], true, 1.0f);
+            drawList->AddPolyline(screenQuadPts, 4, directionColor[i], ImDrawFlags_Closed, 1.0f);
             drawList->AddConvexPolyFilled(screenQuadPts, 4, colors[i + 4]);
          }
       }

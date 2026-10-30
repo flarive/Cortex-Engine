@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%VULKAN_SDK%\include;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%VULKAN_SDK%\include;$(SolutionDir)libs\glad\inc;$(SolutionDir)libs\imgui;$(SolutionDir)libs\soil2\src\soil2;$(SolutionDir)libs\tinygltf;$(SolutionDir)libs\ktx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -161,6 +161,7 @@
     <ClCompile Include="..\libs\glad\src\vulkan\vulkan.c" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\libs\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\imGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_palette.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\libs\imgui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="..\libs\imgui\extensions\icon\IconsForkAwesome.h" />
     <ClInclude Include="..\libs\imgui\extensions\imGizmo\ImGuizmo.h" />
     <ClInclude Include="..\libs\imgui\extensions\imoguizmo.hpp" />

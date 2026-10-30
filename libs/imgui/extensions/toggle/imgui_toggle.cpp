@@ -2,10 +2,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif // IMGUI_DEFINE_MATH_OPERATORS
 
-// https://github.com/cmdwtf/imgui_toggle
-
 #include "imgui_toggle.h"
-#include "../../imgui.h"
+#include "imgui.h"
 
 #include "imgui_toggle_math.h"
 #include "imgui_toggle_palette.h"
@@ -33,9 +31,10 @@ namespace
     static thread_local ImGuiToggleConfig _internalConfig;
 } // namespace
 
-bool ImGui::Toggle(const char* label, bool* v)
+bool ImGui::Toggle(const char* label, bool* v, const ImVec2& size /*= ImVec2()*/)
 {
     ::SetToAliasDefaults(::_internalConfig);
+    ::_internalConfig.Size = size;
     return ::ToggleInternal(label, v, ::_internalConfig);
 }
 

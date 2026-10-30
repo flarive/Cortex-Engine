@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../engine.h"
+//#include "../common_defines.h" better ??????????????
+
 #include "../managers/filesystem_manager.h"
 
 #include "app_settings.h"
@@ -165,25 +167,20 @@ namespace engine
         void registerWindowInputCallbacks();
         void unregisterWindowInputCallbacks();
 
+        void initWindow();
+        void initGLAD();
+        virtual void initImGUI(const char* backend_version) = 0;
+
+        static void glfw_error_callback(int error, const char* description);
+
     private:
         virtual void setup() = 0;
 
         virtual void initGLFW() = 0;
         virtual const char* initBackend() = 0;
-        virtual void initWindow() = 0;
-        virtual void initGLAD() = 0;
-        virtual void initImGUI(const char* glsl_version) = 0;
-        
-        
-        //static void GLAPIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-
   
 
         virtual void enableVerticalSync(bool enable) = 0;
         virtual void enableMouseCapture(bool enable) = 0;
-
-        
-
-        //static void glfw_error_callback(int error, const char* description);
     };
 }

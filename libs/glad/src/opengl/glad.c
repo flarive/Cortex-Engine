@@ -27,7 +27,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <opengl/glad.h>
+//#include <opengl/glad.h>
+#include "../../inc/opengl/glad.h"
 
 static void* get_proc(const char *namez);
 

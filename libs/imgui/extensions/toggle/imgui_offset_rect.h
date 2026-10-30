@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../imgui.h"
+#include "imgui.h"
 
-#pragma warning(disable : 4201)
+#pragma warning(disable : 4201) // FL !
 
 // Helper: ImOffsetRect A set of offsets to apply to an ImRect.
 struct IMGUI_API ImOffsetRect
@@ -11,7 +11,7 @@ struct IMGUI_API ImOffsetRect
     {
         float Offsets[4];
 
-        struct
+        struct  
         {
             float       Top;
             float       Left;
@@ -41,3 +41,13 @@ static inline ImOffsetRect operator+(const ImOffsetRect& lhs, const ImOffsetRect
 static inline ImOffsetRect operator-(const ImOffsetRect& lhs, const ImOffsetRect& rhs) { return ImOffsetRect(lhs.Top - rhs.Top, lhs.Left - rhs.Left, lhs.Bottom - rhs.Bottom, lhs.Right - rhs.Right); }
 static inline ImOffsetRect operator*(const ImOffsetRect& lhs, const ImOffsetRect& rhs) { return ImOffsetRect(lhs.Top * rhs.Top, lhs.Left * rhs.Left, lhs.Bottom * rhs.Bottom, lhs.Right * rhs.Right); }
 IM_MSVC_RUNTIME_CHECKS_RESTORE
+
+// ImGui 1.92.8 (19274) changed the generic ImLerp to `(T)((float)a + (float)(b - a) * t)`, which needs a
+// T -> float conversion. ImOffsetRect only converts the other way (its float constructor), so the
+// template fails to instantiate and imgui_toggle_renderer.cpp's KnobInset/KnobOffset lerps stop
+// compiling. An exact-match overload wins over the template and keeps the same component-wise result.
+#if IMGUI_VERSION_NUM >= 19274
+IM_MSVC_RUNTIME_CHECKS_OFF
+static inline ImOffsetRect ImLerp(ImOffsetRect a, ImOffsetRect b, float t) { return (a + (b - a) * t); }
+IM_MSVC_RUNTIME_CHECKS_RESTORE
+#endif // IMGUI_VERSION_NUM >= 19274

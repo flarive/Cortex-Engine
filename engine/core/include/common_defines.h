@@ -5,17 +5,34 @@
 
 // include GLFW window system lib
 // tell GLFW not to include GLAD itself
-#define GLFW_INCLUDE_NONE
-#include <glfw/glfw3.h>
+//#define GLFW_INCLUDE_NONE
+//#include <glfw/glfw3.h>
+//
+//// include GLAD lib
+//#include <opengl/glad.h> // openGL
+//#include <vulkan/vulkan.h> // Vulkan
 
-// include GLAD lib
-#include <opengl/glad.h>
+
 #include <vulkan/vulkan.h>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
+#include <opengl/glad.h>
+
+
+// include imGui
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h> // openGL imGUI backend
+#include <backends/imgui_impl_vulkan.h> // vulkan imGUI backend
+#include <themes/imgui_spectrum.h>
 
 // include GLM math lib
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// include common standard library stuffs
 #include <string>
 #include <iostream>
 #include <variant>

@@ -14,8 +14,6 @@
 
 #include <variant>
 
-#include <imgui.h>
-
 #if EDITOR_MODE
 namespace engine
 {

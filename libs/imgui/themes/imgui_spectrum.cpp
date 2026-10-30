@@ -70,9 +70,6 @@ namespace ImGui {
             IM_ASSERT(fontLarge2 != nullptr);
 
             io.FontDefault = fontSmall1;
-
-            io.Fonts->Build();
-            //ImGui_ImplOpenGL3_CreateFontsTexture();
         }
 
         void StyleColorsSpectrum() {

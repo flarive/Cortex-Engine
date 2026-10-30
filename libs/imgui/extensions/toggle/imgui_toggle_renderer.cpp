@@ -10,7 +10,11 @@ namespace
     // a small helper to quickly check the mixed value flag.
     inline bool IsItemMixedValue()
     {
+#if IMGUI_VERSION_NUM >= 19135
         return (GImGui->LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
+#else
+        return (GImGui->LastItemData.InFlags & ImGuiItemFlags_MixedValue) != 0;
+#endif
     }
 } // namespace
 
@@ -75,7 +79,7 @@ bool ImGuiToggleRenderer::Render()
         widget_position
         + ImVec2(
             width + (label_size.x > 0.0f ? _style->ItemInnerSpacing.x + label_size.x : 0.0f) + label_x_offset,
-            ImMax(height, label_size.y) + _style->FramePadding.y * 2.0f
+            ImMax(height, label_size.y) //+ _style->FramePadding.y * 2.0f
         ));
 
     // handle the toggle input behavior
@@ -148,7 +152,7 @@ bool ImGuiToggleRenderer::ToggleBehavior(const ImRect& interaction_bounding_box)
 void ImGuiToggleRenderer::DrawToggle()
 {
     const float height = GetHeight();
-    //const float width = GetWidth();
+    const float width = GetWidth();
 
     ImGuiContext& g = *GImGui;
     // update imgui state
@@ -214,7 +218,7 @@ void ImGuiToggleRenderer::DrawFrame(ImU32 color_frame)
     if (HasBorderedFrame())
     {
         const ImU32 color_frame_border = ImGui::GetColorU32(_palette.FrameBorder);
-        DrawRectBorder(_boundingBox, color_frame_border, frame_rounding, _state.FrameBorderThickness);
+        DrawRectBorder(_boundingBox, color_frame_border, frame_rounding, GetFrameBorderThickness());
     }
 }
 
@@ -316,7 +320,7 @@ void ImGuiToggleRenderer::DrawCircleKnob(float radius, ImU32 color_knob)
     }
 
     // draw circle knob
-    _drawList->AddCircleFilled(knob_center, knob_radius, color_knob, 50);
+    _drawList->AddCircleFilled(knob_center, knob_radius, color_knob);
 
     // draw knob border, if enabled
     if (HasBorderedKnob())
@@ -486,7 +490,11 @@ void ImGuiToggleRenderer::DrawRectBorder(ImRect bounds, ImU32 color_border, floa
     const float half_thickness = thickness * 0.5f;
     bounds.Expand(-half_thickness);
 
+#if IMGUI_VERSION_NUM < 19276
     _drawList->AddRect(bounds.Min, bounds.Max, color_border, rounding, ImDrawFlags_None, thickness);
+#else
+    _drawList->AddRect(bounds.Min, bounds.Max, color_border, rounding, thickness);
+#endif
 }
 
 void ImGuiToggleRenderer::DrawCircleBorder(const ImVec2& center, float radius, ImU32 color_border, float thickness)
@@ -496,7 +504,7 @@ void ImGuiToggleRenderer::DrawCircleBorder(const ImVec2& center, float radius, I
     const float half_thickness = thickness * 0.5f;
     radius -= half_thickness;
 
-    _drawList->AddCircle(center, radius, color_border, 100, thickness);
+    _drawList->AddCircle(center, radius, color_border, 0, thickness);
 }
 
 
@@ -507,7 +515,11 @@ void ImGuiToggleRenderer::DrawRectShadow(ImRect bounds, ImU32 color_shadow, floa
     const float half_thickness = thickness * 0.5f;
     bounds.Expand(half_thickness);
 
+#if IMGUI_VERSION_NUM < 19276
     _drawList->AddRect(bounds.Min, bounds.Max, color_shadow, rounding, ImDrawFlags_None, thickness);
+#else
+    _drawList->AddRect(bounds.Min, bounds.Max, color_shadow, rounding, thickness);
+#endif
 }
 
 void ImGuiToggleRenderer::DrawCircleShadow(const ImVec2& center, float radius, ImU32 color_border, float thickness)
@@ -519,3 +531,4 @@ void ImGuiToggleRenderer::DrawCircleShadow(const ImVec2& center, float radius, I
 
     _drawList->AddCircle(center, radius, color_border, 0, thickness);
 }
+

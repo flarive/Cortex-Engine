@@ -113,6 +113,32 @@ void engine::Primitive::clean()
     m_EBO = 0;
 }
 
+std::vector<engine::Vertex> engine::Primitive::generateTriangleVertices(float width, float height, float uvScale)
+{
+    std::vector<engine::Vertex> vertices;
+    vertices.reserve(3);
+
+    float halfWidth = width * 0.5f;
+
+    glm::vec3 pos1(-halfWidth, -height * 0.5f, 0.0f); // bottom-left
+    glm::vec3 pos2(halfWidth, -height * 0.5f, 0.0f); // bottom-right
+    glm::vec3 pos3(0.0f, height * 0.5f, 0.0f);  // top-center
+
+    glm::vec2 uv1(0.0f, 0.0f);
+    glm::vec2 uv2(uvScale, 0.0f);
+    glm::vec2 uv3(uvScale * 0.5f, uvScale);
+
+    glm::vec3 normal(0.0f, 0.0f, 1.0f);
+    glm::vec3 tangent(1.0f, 0.0f, 0.0f);
+    glm::vec3 bitangent(0.0f, 1.0f, 0.0f);
+
+    vertices.emplace_back(pos1, normal, uv1, tangent, bitangent);
+    vertices.emplace_back(pos2, normal, uv2, tangent, bitangent);
+    vertices.emplace_back(pos3, normal, uv3, tangent, bitangent);
+
+    return vertices;
+}
+
 std::vector<engine::Vertex> engine::Primitive::generatePlaneVertices(float uvScale, bool flipNormal)
 {
     std::vector<engine::Vertex> vertices;

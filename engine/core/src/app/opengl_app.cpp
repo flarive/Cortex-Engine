@@ -84,6 +84,30 @@ const char* engine::OpenGLApp::initBackend()
     return glsl_version;
 }
 
+void engine::OpenGLApp::initWindow()
+{
+    GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
+
+    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
+
+    // Create window with graphics context
+    window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), "Cortex engine", NULL, nullptr);
+    if (window == NULL)
+    {
+        logger.error("Failed to create GLFW window");
+        glfwTerminate();
+        std::exit(EXIT_FAILURE);
+    }
+
+    if (fullscreen)
+        toggleFullscreen([this]() {});
+
+    glfwMakeContextCurrent(window);
+}
+
 void engine::OpenGLApp::initImGUI(const char* backend_version)
 {
     App::initImGUI(backend_version);

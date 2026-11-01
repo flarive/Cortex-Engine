@@ -167,7 +167,7 @@ namespace engine
         void registerWindowInputCallbacks();
         void unregisterWindowInputCallbacks();
 
-        void initWindow();
+        //void initWindow();
         void initGLAD();
         virtual void initImGUI(const char* backend_version) = 0;
 
@@ -178,6 +178,7 @@ namespace engine
 
         virtual void initGLFW() = 0;
         virtual const char* initBackend() = 0;
+        virtual void initWindow() = 0;;
   
 
         virtual void enableVerticalSync(bool enable) = 0;

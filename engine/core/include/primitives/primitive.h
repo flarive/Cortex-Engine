@@ -23,12 +23,12 @@
 
 namespace engine
 {
-    enum class PrimitiveType { undefined = 0, cube = 1, sphere = 2, plane = 3, cylinder = 4, cone = 5, billboard = 6, terrain = 7, particle = 8 };
+    enum class PrimitiveType { undefined = 0, triangle = 1, cube = 2, sphere = 3, plane = 4, cylinder = 5, cone = 6, billboard = 7, terrain = 8, particle = 9 };
 
 
     const std::unordered_map<PrimitiveType, std::string> PrimitiveTypeNames = {
         {PrimitiveType::undefined, "undefined"},
-        {PrimitiveType::cube, "cube"},
+        {PrimitiveType::triangle, "triangle"},
         {PrimitiveType::sphere, "sphere"},
         {PrimitiveType::plane, "plane"},
         {PrimitiveType::cylinder, "cylinder"},
@@ -90,7 +90,7 @@ namespace engine
         bool isTransparent() const;
 
 
-
+        static std::vector<Vertex> generateTriangleVertices(float width, float height, float uvScale);
         static std::vector<Vertex> generatePlaneVertices(float uvScale = 1.0f, bool flipNormal = false);
         static std::vector<Vertex> generateBillboardVertices(float uvScale = 1.0f);
         static std::vector<Vertex> generateCubeVertices(float uvScale = 1.0f);

@@ -309,9 +309,6 @@
     <ClCompile Include="..\libs\imgui\imgui.cpp">
       <Filter>sources\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui_demo.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\imgui\imgui_draw.cpp">
       <Filter>sources\imgui</Filter>
     </ClCompile>
@@ -662,6 +659,9 @@
     </ClCompile>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_vulkan.cpp">
       <Filter>sources\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\primitives\triangle.cpp">
+      <Filter>sources\core\primitives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1093,6 +1093,9 @@
     </ClInclude>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_vulkan.h">
       <Filter>sources\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\primitives\triangle.h">
+      <Filter>headers\core\primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

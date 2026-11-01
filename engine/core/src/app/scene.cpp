@@ -1027,6 +1027,10 @@ void engine::Scene::onInputUpdate()
         }
     }
 
+
+    if (is_editor_mode)
+        return;
+
     // built in default mouse navigation
     if (m_useMouseNavigation && !is_editor_mode)
     {

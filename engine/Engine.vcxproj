@@ -168,7 +168,6 @@
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_presets.cpp" />
     <ClCompile Include="..\libs\imgui\extensions\toggle\imgui_toggle_renderer.cpp" />
     <ClCompile Include="..\libs\imgui\imgui.cpp" />
-    <ClCompile Include="..\libs\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
@@ -204,6 +203,7 @@
     <ClCompile Include="core\src\ecs\particlesystem_component.cpp" />
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
     <ClCompile Include="core\src\managers\input_manager.cpp" />
+    <ClCompile Include="core\src\primitives\triangle.cpp" />
     <ClCompile Include="core\src\tools\pdh_counters.cpp" />
     <ClCompile Include="core\src\backends\opengl\render_state.cpp" />
     <ClCompile Include="editor\src\widgets\mesh_widget.cpp" />
@@ -339,6 +339,7 @@
     <ClInclude Include="core\include\ecs\terrain_component.h" />
     <ClInclude Include="core\include\managers\input_manager.h" />
     <ClInclude Include="core\include\backends\opengl\render_state.h" />
+    <ClInclude Include="core\include\primitives\triangle.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
     <ClInclude Include="editor\include\widgets\skeleton_widget.h" />
     <ClInclude Include="editor\include\windows\about_window.h" />

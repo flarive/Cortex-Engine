@@ -67,6 +67,7 @@
 #include "ui/button.h"
 
 #include "primitives/primitive.h"
+#include "primitives/triangle.h"
 #include "primitives/cube.h"
 #include "primitives/sphere.h"
 #include "primitives/cylinder.h"

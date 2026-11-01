@@ -42,6 +42,16 @@ void MyScene0::init()
     entityLight1->addComponent<TransformComponent>(trsLight1);
     entityLight1->addComponent<LightComponent>(light1);
     getEntityManager().addChild(entityLight1);
+
+
+    // triangle
+    auto myTriangle = make_shared<Triangle>(0.5f, 0.5f);
+    myTriangle->setup(make_shared<BlinnPhongMaterial>(Color(0.1f), "textures/uv_mapper.jpg"), UvMapping(1.0f));
+    auto trsTriangle = Transform(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f));
+    auto entityTriangle = make_shared<Entity>("MyTriangle");
+    entityTriangle->addComponent<TransformComponent>(trsTriangle);
+    entityTriangle->addComponent<PrimitiveComponent>(myTriangle);
+    getEntityManager().addChild(entityTriangle);
 }
 
 void MyScene0::onInputUpdate()
@@ -84,6 +94,9 @@ void MyScene0::onInputUpdate()
         if (input.isKeyDown(GLFW_KEY_DOWN))
             camera->processKeyboard(BACKWARD, deltaTime);
     }
+
+    if (is_editor_mode)
+        return;
 
     // handle mouse
     camera->processMouseMovement(input.getMouseDeltaX(), input.getMouseDeltaY());

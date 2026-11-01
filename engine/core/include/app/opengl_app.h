@@ -18,6 +18,7 @@ namespace engine
 
 		void initGLFW() override;
 		const char* initBackend() override;
+		void initWindow() override;
 		void initImGUI(const char* backend_version) override;
 
 		void enableVerticalSync(bool enable) override;

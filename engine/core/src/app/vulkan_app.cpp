@@ -62,6 +62,30 @@ const char* engine::VulkanApp::initBackend()
     return nullptr;
 }
 
+void engine::VulkanApp::initWindow()
+{
+    GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
+
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // Request debug context
+
+    const GLFWvidmode* mode = glfwGetVideoMode(myMonitor);
+
+    // Create window with graphics context
+    window = glfwCreateWindow(static_cast<int>(width), static_cast<int>(height), "Cortex engine", NULL, nullptr);
+    if (window == NULL)
+    {
+        logger.error("Failed to create GLFW window");
+        glfwTerminate();
+        std::exit(EXIT_FAILURE);
+    }
+
+    if (fullscreen)
+        toggleFullscreen([this]() {});
+
+    //glfwMakeContextCurrent(window);
+}
+
 void engine::VulkanApp::initImGUI(const char* backend_version)
 {
     App::initImGUI(backend_version);

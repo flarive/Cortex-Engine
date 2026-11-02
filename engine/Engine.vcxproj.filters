@@ -645,9 +645,6 @@
     <ClCompile Include="..\libs\glad\src\opengl\glad.c">
       <Filter>sources\backends\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\glad\src\vulkan\vulkan.c">
-      <Filter>sources\backends\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="core\src\backends\opengl\render_state.cpp">
       <Filter>sources\core\backends\opengl</Filter>
     </ClCompile>

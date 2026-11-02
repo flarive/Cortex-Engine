@@ -54,6 +54,9 @@ const char* engine::VulkanApp::initBackend()
     // Vulkan initialization
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
+    // Because handling resized windows takes special care that we'll look into later, disable it for now with another window hint call
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
     if (!glfwVulkanSupported())
     {
         logger.error("GLFW: Vulkan Not Supported\n");
@@ -80,8 +83,8 @@ void engine::VulkanApp::initWindow()
         std::exit(EXIT_FAILURE);
     }
 
-    if (fullscreen)
-        toggleFullscreen([this]() {});
+    //if (fullscreen)
+    //    toggleFullscreen([this]() {});
 
     //glfwMakeContextCurrent(window);
 }
@@ -100,19 +103,19 @@ void engine::VulkanApp::initImGUI(const char* backend_version)
     static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
 
-    // Data
-    static VkAllocationCallbacks* g_Allocator = nullptr;
-    static VkInstance               g_Instance = VK_NULL_HANDLE;
-    static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
-    static VkDevice                 g_Device = VK_NULL_HANDLE;
-    static uint32_t                 g_QueueFamily = (uint32_t)-1;
-    static VkQueue                  g_Queue = VK_NULL_HANDLE;
-    static VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
-    static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
+    //// Data
+    //static VkAllocationCallbacks* g_Allocator = nullptr;
+    //static VkInstance               g_Instance = VK_NULL_HANDLE;
+    //static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
+    //static VkDevice                 g_Device = VK_NULL_HANDLE;
+    //static uint32_t                 g_QueueFamily = (uint32_t)-1;
+    //static VkQueue                  g_Queue = VK_NULL_HANDLE;
+    //static VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
+    //static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
 
-    static ImGui_ImplVulkanH_Window g_MainWindowData;
-    static uint32_t                 g_MinImageCount = 2;
-    static bool                     g_SwapChainRebuild = false;
+    //static ImGui_ImplVulkanH_Window g_MainWindowData;
+    //static uint32_t                 g_MinImageCount = 2;
+    //static bool                     g_SwapChainRebuild = false;
 
     ImVector<const char*> extensions;
     uint32_t extensions_count = 0;
@@ -165,28 +168,6 @@ void engine::VulkanApp::enableMouseCapture(bool enable)
 void GLAPIENTRY engine::VulkanApp::vulkanDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
 }
-
-
-
-//#define APP_USE_UNLIMITED_FRAME_RATE
-#ifdef _DEBUG
-#define APP_USE_VULKAN_DEBUG_REPORT
-static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
-#endif
-
-// Data
-static VkAllocationCallbacks* g_Allocator = nullptr;
-static VkInstance               g_Instance = VK_NULL_HANDLE;
-static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
-static VkDevice                 g_Device = VK_NULL_HANDLE;
-static uint32_t                 g_QueueFamily = (uint32_t)-1;
-static VkQueue                  g_Queue = VK_NULL_HANDLE;
-static VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
-static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
-
-static ImGui_ImplVulkanH_Window g_MainWindowData;
-static uint32_t                 g_MinImageCount = 2;
-static bool                     g_SwapChainRebuild = false;
 
 
 
@@ -484,13 +465,27 @@ void engine::VulkanApp::framePresent(ImGui_ImplVulkanH_Window* wd)
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->SemaphoreCount; // Now we can use the next set of semaphores
 }
 
-
-
-
-
 void engine::VulkanApp::exit()
 {
+    App::exit();
 
+    // Cleanup
+    VkResult err = vkDeviceWaitIdle(g_Device);
+    check_vk_result(err);
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    cleanupVulkanWindow(&g_MainWindowData);
+    cleanupVulkan();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+
+    glfwDestroyWindow(window);
+
+    glfwTerminate();
 }
 
 engine::VulkanApp::~VulkanApp()

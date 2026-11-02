@@ -12,11 +12,11 @@
 //#include <opengl/glad.h> // openGL
 //#include <vulkan/vulkan.h> // Vulkan
 
-
+// from Vulkan SDK
 #include <vulkan/vulkan.h>
 
 #define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include <glfw/glfw3.h>
 
 #include <opengl/glad.h>
 

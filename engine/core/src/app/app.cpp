@@ -156,11 +156,20 @@ void engine::App::setApp(GLFWwindow* _window)
 void engine::App::initGLAD()
 {
     // glad: load all OpenGL function pointers
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        logger.error("Failed to initialize GLAD");
-        std::exit(EXIT_FAILURE);
-    }
+    //if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    //{
+    //    logger.error("Failed to initialize GLAD");
+    //    std::exit(EXIT_FAILURE);
+    //}
+
+    // Load global Vulkan functions
+    //int version = gladLoaderLoadVulkan(NULL, NULL, NULL);
+
+    //if (!version)
+    //{
+    //    logger.error("Failed to initialize Vulkan GLAD");
+    //    std::exit(EXIT_FAILURE);
+    //}
 }
 
 //void engine::App::initImGUI(const char* glsl_version)
@@ -334,7 +343,7 @@ void engine::App::exit()
     //ImGui_ImplGlfw_Shutdown();
     //ImGui::DestroyContext();
 
-    ////unregisterWindowInputCallbacks();
+    unregisterWindowInputCallbacks();
 
     //glfwDestroyWindow(window);
 

@@ -141,16 +141,12 @@ void GLAPIENTRY engine::OpenGLApp::openglDebugCallback(GLenum source, GLenum typ
 
 void engine::OpenGLApp::exit()
 {
-    /*logger.info("Exiting app {}", m_title);
-
-    m_sceneManager.clean();*/
+    App::exit();
 
     // imGui Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
-    //unregisterWindowInputCallbacks();
 
     glfwDestroyWindow(window);
 

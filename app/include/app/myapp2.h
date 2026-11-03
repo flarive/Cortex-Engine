@@ -27,7 +27,7 @@
 using namespace std;
 using namespace engine;
 
-using MyApp2Scene = MyScene1;
+using MyApp2Scene = MyScene0;
 
 class MyApp2 final : public VulkanApp
 {

@@ -48,16 +48,26 @@ void engine::SystemMonitor::updateVendor()
     }
 }
 
+void engine::SystemMonitor::setGPUInfo(const std::string& vendor, const std::string& renderer, const std::string& version)
+{
+    m_gpuVendor = vendor;
+    m_gpuRenderer = renderer;
+    m_gpuVersion = version;
+}
+
 std::string engine::SystemMonitor::GetGPUVendor() {
-    return reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    //return reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    return m_gpuVendor;
 }
 
 std::string engine::SystemMonitor::GetGPURenderer() {
-    return reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    //return reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    return m_gpuRenderer;
 }
 
 std::string engine::SystemMonitor::GetGPUVersion() {
-    return reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    //return reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    return m_gpuVersion;
 }
 
 

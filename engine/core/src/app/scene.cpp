@@ -16,8 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
-//#include "themes/imgui_spectrum.h"
-
 #include <functional>
 #include <memory>
 #include <iostream>

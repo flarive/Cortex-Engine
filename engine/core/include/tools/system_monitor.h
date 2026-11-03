@@ -25,6 +25,7 @@ namespace engine
     class PDHCounters;
     #endif
     
+
     class SystemMonitor final
     {
     public:
@@ -35,6 +36,8 @@ namespace engine
         void initVendor();
 #endif
         
+        void setGPUInfo(const std::string& vendor, const std::string& renderer, const std::string& version);
+
 
         // Call every ~200ms
         void update();
@@ -66,6 +69,9 @@ namespace engine
 
 
     private:
+        std::string m_gpuVendor{};
+        std::string m_gpuRenderer{};
+        std::string m_gpuVersion{};
         
         #if defined(_WIN32)
         PDHCounters* m_PDHCounters{};

@@ -81,7 +81,6 @@ std::vector<engine::Vertex> engine::Triangle::generateVertices()
     return Primitive::generateTriangleVertices(1.0f, 1.0f, m_uvScale);
 }
 
-
 void engine::Triangle::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)

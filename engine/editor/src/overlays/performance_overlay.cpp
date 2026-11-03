@@ -1,5 +1,7 @@
 #include "../../include/overlays/performance_overlay.h"
 
+#include "../../../core/include/singleton.h"
+
 #include <algorithm>
 
 
@@ -8,6 +10,13 @@ void engine::PerformanceOverlay::init()
     if (!m_initDone)
     {
         m_vramManager.init();
+
+        auto* singleton = engine::Singleton::getInstance();
+        assert(singleton != nullptr && "Singleton not initialized !");
+        AppSettings& appSettings = singleton->appSettings();
+
+        m_sysMonitor.setGPUInfo(appSettings.gpuVendor, appSettings.gpuRenderer, appSettings.gpuVersion);
+
         m_initDone = true;
     }
 }

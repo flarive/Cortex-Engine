@@ -7,7 +7,7 @@ namespace engine
 	class OpenGLApp : public App
 	{
 	public:
-		OpenGLApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
+		OpenGLApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, const AppSettings& _settings);
 		~OpenGLApp() override;
 
 		void start() override;
@@ -20,6 +20,7 @@ namespace engine
 		const char* initBackend() override;
 		void initWindow() override;
 		void initImGUI(const char* backend_version) override;
+		void getBackendVersion() override;
 
 		void enableVerticalSync(bool enable) override;
 		void enableMouseCapture(bool enable) override;

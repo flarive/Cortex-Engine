@@ -15,7 +15,7 @@ namespace engine
 
 
 	// Data
-	static VkAllocationCallbacks* g_Allocator = nullptr;
+	static VkAllocationCallbacks*	g_Allocator = nullptr;
 	static VkInstance               g_Instance = VK_NULL_HANDLE;
 	static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
 	static VkDevice                 g_Device = VK_NULL_HANDLE;
@@ -31,7 +31,7 @@ namespace engine
 	class VulkanApp : public App
 	{
 	public:
-		VulkanApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
+		VulkanApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, const AppSettings& _settings);
 		~VulkanApp() override;
 
 		void start() override;
@@ -47,6 +47,7 @@ namespace engine
 		const char* initBackend() override;
 		void initWindow() override;
 		void initImGUI(const char* backend_version = nullptr) override;
+		void getBackendVersion() override;
 
 		void enableVerticalSync(bool enable) override;
 		void enableMouseCapture(bool enable) override;
@@ -61,5 +62,7 @@ namespace engine
 		static void framePresent(ImGui_ImplVulkanH_Window* wd);
 
 		static void GLAPIENTRY vulkanDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+
+		
 	};
 }

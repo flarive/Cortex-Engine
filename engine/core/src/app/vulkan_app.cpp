@@ -1,6 +1,8 @@
 #include "../../include/app/vulkan_app.h"
 
-engine::VulkanApp::VulkanApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
+
+
+engine::VulkanApp::VulkanApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, const AppSettings& _settings)
     : App(_title, _width, _height, _fullscreen, _settings)
 {
     logger.trace("VulkanApp {} constructor called", _title);
@@ -34,6 +36,8 @@ void engine::VulkanApp::setup()
 
     initImGUI();
 
+    getBackendVersion();
+
     registerWindowInputCallbacks();
 }
 
@@ -65,6 +69,32 @@ const char* engine::VulkanApp::initBackend()
     return nullptr;
 }
 
+void engine::VulkanApp::getBackendVersion()
+{
+    VkPhysicalDeviceProperties props;
+    vkGetPhysicalDeviceProperties(g_PhysicalDevice, &props);
+
+    // store in singleton
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    AppSettings& appSettings = singleton->appSettings();
+
+    appSettings.backend = BackendType::Vulkan;
+
+    std::string vendor = "Unknown";
+
+    switch (props.vendorID)
+    {
+    case 0x10DE: vendor = "NVIDIA"; break;
+    case 0x1002: vendor = "AMD"; break;
+    case 0x8086: vendor = "Intel"; break;
+    }
+
+    appSettings.gpuVendor = vendor;
+    appSettings.gpuRenderer = props.deviceName;
+    appSettings.gpuVersion = fmt::format("{}.{}.{}", VK_VERSION_MAJOR(props.apiVersion), VK_VERSION_MINOR(props.apiVersion), VK_VERSION_PATCH(props.apiVersion));
+}
+
 void engine::VulkanApp::initWindow()
 {
     GLFWmonitor* myMonitor = glfwGetPrimaryMonitor(); // The primary monitor
@@ -93,29 +123,13 @@ void engine::VulkanApp::initImGUI(const char* backend_version)
 {
     App::initImGUI(backend_version);
 
-    // Setup Vulkan platform
-    ImGui_ImplGlfw_InitForVulkan(window, true);
-
+    
 
     //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
 #define APP_USE_VULKAN_DEBUG_REPORT
     static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
 #endif
-
-    //// Data
-    //static VkAllocationCallbacks* g_Allocator = nullptr;
-    //static VkInstance               g_Instance = VK_NULL_HANDLE;
-    //static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
-    //static VkDevice                 g_Device = VK_NULL_HANDLE;
-    //static uint32_t                 g_QueueFamily = (uint32_t)-1;
-    //static VkQueue                  g_Queue = VK_NULL_HANDLE;
-    //static VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
-    //static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
-
-    //static ImGui_ImplVulkanH_Window g_MainWindowData;
-    //static uint32_t                 g_MinImageCount = 2;
-    //static bool                     g_SwapChainRebuild = false;
 
     ImVector<const char*> extensions;
     uint32_t extensions_count = 0;
@@ -155,6 +169,7 @@ void engine::VulkanApp::initImGUI(const char* backend_version)
     init_info.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info);
+
 }
 
 void engine::VulkanApp::enableVerticalSync(bool enable)

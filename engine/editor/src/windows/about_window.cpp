@@ -1,5 +1,7 @@
 #include "../../include/windows/about_window.h"
 
+#include "../../../core/include/singleton.h"
+
 engine::AboutWindow::AboutWindow() : ImGuiElement(Category::Window, "About")
 {
     logger.trace("AboutWindow constructor called");
@@ -8,6 +10,12 @@ engine::AboutWindow::AboutWindow() : ImGuiElement(Category::Window, "About")
 void engine::AboutWindow::init()
 {
     m_vramManager.init();
+
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    AppSettings& appSettings = singleton->appSettings();
+
+    m_sysMonitor.setGPUInfo(appSettings.gpuVendor, appSettings.gpuRenderer, appSettings.gpuVersion);
 }
 
 void engine::AboutWindow::renderTabAbout()

@@ -5,6 +5,8 @@
 
 #include "../managers/filesystem_manager.h"
 
+#include "../singleton.h"
+
 #include "app_settings.h"
 
 #include "../debug/opengl_debug.h"
@@ -27,10 +29,10 @@ namespace engine
         float height{}; // windowed height
         bool fullscreen{};
 
-        AppSettings settings;
+        
 
 
-        App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings);
+        App(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, const AppSettings& _settings);
         virtual ~App();
 
 
@@ -174,12 +176,16 @@ namespace engine
         static void glfw_error_callback(int error, const char* description);
 
     private:
+        
+        AppSettings m_appSettings{};
+        
+        
         virtual void setup() = 0;
 
         virtual void initGLFW() = 0;
         virtual const char* initBackend() = 0;
         virtual void initWindow() = 0;;
-  
+        virtual void getBackendVersion() = 0;
 
         virtual void enableVerticalSync(bool enable) = 0;
         virtual void enableMouseCapture(bool enable) = 0;

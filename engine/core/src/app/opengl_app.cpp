@@ -1,6 +1,6 @@
 #include "../../include/app/opengl_app.h"
 
-engine::OpenGLApp::OpenGLApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, AppSettings _settings)
+engine::OpenGLApp::OpenGLApp(const std::string& _title, unsigned int _width, unsigned int _height, bool _fullscreen, const AppSettings& _settings)
     : App(_title, _width, _height, _fullscreen, _settings)
 {
     logger.trace("OpenGLApp {} constructor called", _title);
@@ -33,6 +33,8 @@ void engine::OpenGLApp::setup()
     initGLAD();
 
     initImGUI(glsl_version);
+
+    getBackendVersion();
 
     registerWindowInputCallbacks();
 
@@ -82,6 +84,20 @@ const char* engine::OpenGLApp::initBackend()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // 3.0+ only and macOS
 
     return glsl_version;
+}
+
+
+void engine::OpenGLApp::getBackendVersion()
+{
+    // store in singleton
+    auto* singleton = engine::Singleton::getInstance();
+    assert(singleton != nullptr && "Singleton not initialized !");
+    AppSettings& appSettings = singleton->appSettings();
+
+    appSettings.backend = BackendType::OpenGL;
+    appSettings.gpuVendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+    appSettings.gpuRenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+    appSettings.gpuVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 }
 
 void engine::OpenGLApp::initWindow()

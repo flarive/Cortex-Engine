@@ -8,7 +8,7 @@
 #include "../common_defines.h"
 #include "../constants.h"
 #include "../vertex.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"
 #include "../misc/noncopyable.h"

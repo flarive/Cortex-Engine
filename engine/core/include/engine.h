@@ -15,7 +15,9 @@
 #include "app/scene_settings.h"
 
 #include "vertex.h"
-#include "shader.h"
+#include "shaders/shader.h"
+#include "shaders/opengl_shader.h"
+#include "shaders/vulkan_shader.h"
 #include "textures/texture.h"
 
 

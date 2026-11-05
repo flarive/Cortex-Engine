@@ -8,7 +8,7 @@
 #include "../aabb.h"
 
 #include "../debug/debug_cube.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 #include "../particles/particle_system.h"
 

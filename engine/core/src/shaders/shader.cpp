@@ -1,21 +1,68 @@
-#include "../include/shader.h"
+#include "../../include/shaders/shader.h"
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include "../include/common_defines.h"
-#include "../include/managers/log_manager.h"
+#include "../../include/common_defines.h"
+#include "../../include/managers/log_manager.h"
 
-#include "../include/app/gpu_selector.h"
+#include "../../include/app/gpu_selector.h"
 
-#include "../include/managers/filesystem_manager.h"
+#include "../../include/managers/filesystem_manager.h"
 
-#include <fstream>
 #include <string>
 #include <format>
 #include <filesystem>
 #include <stdexcept>
+
+
+
+
+engine::ShaderType engine::ShaderBase::getShaderType()
+{
+    if (name == "phong") return ShaderType::Phong;
+    if (name == "blinnphong") return ShaderType::BlinnPhong;
+    if (name == "blinnphongTessellation") return ShaderType::BlinnPhongTessellation;
+    if (name == "pbr") return ShaderType::PBR;
+    if (name == "pbrTessellation") return ShaderType::PBRTessellation;
+    if (name == "simpleDepthBuffer1") return ShaderType::DepthBufferDirectionalLights;
+    if (name == "simpleDepthBuffer2") return ShaderType::DepthBufferPointLights;
+    if (name == "simpleDepthBuffer1Tess") return ShaderType::DepthBufferDirectionalLightsTessellation;
+    if (name == "simpleDepthBuffer2Tess") return ShaderType::DepthBufferPointLightsTessellation;
+
+    return ShaderType::Unknown;
+}
+
+std::string engine::ShaderBase::readTextFile(const std::string& path)
+{
+ //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
+	//if (!std::filesystem::exists(absFullPath))
+	//{
+	//	throw std::runtime_error(std::format("File does not exist: {}", path));
+	//}
+    
+    std::ifstream file(path, std::ios::binary);
+
+    if (!file)
+    {
+        throw std::runtime_error(std::format("Failed to open file: {}", path));
+    }
+
+    return std::string(
+        std::istreambuf_iterator<char>(file),
+        std::istreambuf_iterator<char>());
+}
+
+
+
+
+
+
+
+
+// old !!!!!!!!!!!!!!
+
 
 /// <summary>
 /// OpenGL simple pipeline
@@ -65,7 +112,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 
     m_initialized = true;
 
-	logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
+    logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -288,11 +335,11 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
-    
+
     m_initialized = true;
 
     logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
-    
+
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     if (tessControlPath != nullptr)
@@ -307,7 +354,7 @@ void engine::Shader::init(const char* shaderName, const char* vertexPath, const 
 bool engine::Shader::isValid() const
 {
     if (ID == 0) {
-		//logger.error("Shader program ID is 0. Shader not created.");
+        //logger.error("Shader program ID is 0. Shader not created.");
         return false;
     }
 
@@ -325,7 +372,7 @@ bool engine::Shader::isValid() const
         {
             logger.error("Shader program linking failed: {}", log.data());
         }
-		
+
         return false;
     }
 
@@ -350,7 +397,7 @@ bool engine::Shader::checkShaderUniformExists(unsigned int shaderID, const std::
 {
     GLint uniformLoc = glGetUniformLocation(shaderID, uniformName.c_str());
     if (uniformLoc == -1) {
-		logger.error("Uniform '{}' not found in shader {}", uniformName, shaderID);
+        logger.error("Uniform '{}' not found in shader {}", uniformName, shaderID);
         return false;
     }
 
@@ -575,7 +622,7 @@ engine::ShaderType engine::Shader::getShaderType()
     if (name == "simpleDepthBuffer2") return ShaderType::DepthBufferPointLights;
     if (name == "simpleDepthBuffer1Tess") return ShaderType::DepthBufferDirectionalLightsTessellation;
     if (name == "simpleDepthBuffer2Tess") return ShaderType::DepthBufferPointLightsTessellation;
-    
+
     return ShaderType::Unknown;
 }
 
@@ -661,12 +708,12 @@ void engine::Shader::getActiveUniformsList(const std::string& uniformName)
 
 std::string engine::Shader::readTextFile(const std::string& path)
 {
- //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
-	//if (!std::filesystem::exists(absFullPath))
-	//{
-	//	throw std::runtime_error(std::format("File does not exist: {}", path));
-	//}
-    
+    //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
+       //if (!std::filesystem::exists(absFullPath))
+       //{
+       //	throw std::runtime_error(std::format("File does not exist: {}", path));
+       //}
+
     std::ifstream file(path, std::ios::binary);
 
     if (!file)

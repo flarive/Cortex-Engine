@@ -2,7 +2,7 @@
 
 #include "../common_defines.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../materials/material.h"
 #include "../primitives/primitive.h"
 

@@ -153,7 +153,7 @@ void engine::VulkanApp::initImGUI(const char* backend_version)
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForVulkan(window, true);
     ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.ApiVersion = VK_API_VERSION_1_4;              // Pass in your value of VkApplicationInfo::apiVersion, otherwise will default to header version.
+    init_info.ApiVersion = m_apiVersion;
     init_info.Instance = g_Instance;
     init_info.PhysicalDevice = g_PhysicalDevice;
     init_info.Device = g_Device;
@@ -222,6 +222,11 @@ void engine::VulkanApp::setupVulkan(ImVector<const char*> instance_extensions)
 #ifdef IMGUI_IMPL_VULKAN_USE_VOLK
     volkInitialize();
 #endif
+
+    uint32_t supportedVersion = VK_API_VERSION_1_0;
+    vkEnumerateInstanceVersion(&supportedVersion);
+
+    m_apiVersion = supportedVersion;
 
     // Create Vulkan Instance
     {

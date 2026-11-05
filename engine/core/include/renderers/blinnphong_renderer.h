@@ -3,7 +3,7 @@
 #include "renderer.h"
 #include "../misc/skybox.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 namespace engine
 {

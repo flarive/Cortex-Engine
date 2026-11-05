@@ -6,7 +6,7 @@
 
 #include "../backends/opengl/render_state.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 #include <glm/glm.hpp>
 

@@ -12,7 +12,8 @@ namespace engine
 
 
 
-
+	static uint32_t					m_apiVersion = VK_API_VERSION_1_0;
+	
 
 	// Data
 	static VkAllocationCallbacks*	g_Allocator = nullptr;
@@ -41,6 +42,8 @@ namespace engine
 
 
 	private:
+		
+
 		void setup() override;
 
 		void initGLFW() override;

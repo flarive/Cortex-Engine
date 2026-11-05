@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../materials/material.h"
 #include "../primitives/primitive.h"
 
@@ -16,7 +16,7 @@ namespace engine
 
         void setup();
 
-        std::vector<engine::Vertex> generateCuboidVertices(float width, float height, float depth, float uvScale);
+        std::vector<Vertex> generateCuboidVertices(float width, float height, float depth, float uvScale);
 
 
         std::vector<Vertex> generateVertices();

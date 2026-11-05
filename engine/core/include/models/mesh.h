@@ -7,7 +7,7 @@
 #include "../vertex.h"
 #include "../materials/material.h"
 #include "../debug/debug_draw_line.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 namespace engine
 {

@@ -2,7 +2,7 @@
 
 #include "../misc/noncopyable.h"
 #include "mesh.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../transform.h"
 #include "shared_model.h"
 

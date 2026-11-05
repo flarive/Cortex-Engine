@@ -2,7 +2,7 @@
 
 #include "../app/scene_settings.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../lights/light.h"
 #include "../lights/point_light.h"
 #include "../lights/spot_light.h"

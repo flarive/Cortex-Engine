@@ -5,7 +5,7 @@
 #include "../common_defines.h"
 
 #include "../primitives/primitive.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../materials/material.h"
 #include "../uvmapping.h"
 #include "../transform.h"

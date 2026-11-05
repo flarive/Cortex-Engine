@@ -2,7 +2,7 @@
 
 #include "../misc/noncopyable.h"
 #include "../common_defines.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../primitives/primitive.h"
 
 #include "../misc/ordered_map.h"

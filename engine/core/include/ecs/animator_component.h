@@ -9,7 +9,7 @@
 #include "../aabb.h"
 
 #include "../animators/animator.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 #include <variant>
 

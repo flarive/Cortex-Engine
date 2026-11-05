@@ -2,7 +2,7 @@
 
 #include "../common_defines.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../transform.h"
 #include "../aabb.h"
 

@@ -283,6 +283,18 @@
     <Filter Include="sources\core\backends\vulkan">
       <UniqueIdentifier>{d6c63539-a215-4176-aa7e-2c1cdc09be3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\core\shaders">
+      <UniqueIdentifier>{43d99e7f-7151-4831-872d-e800caf94c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\shaders">
+      <UniqueIdentifier>{e5a2807f-3496-497c-92be-d1fdd9816c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\shaders\base">
+      <UniqueIdentifier>{c0d587cd-f5db-42b5-a5c3-b0de2f5e2c99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\shaders\base">
+      <UniqueIdentifier>{2f5046ea-ae45-4127-99b4-c4039b7ce413}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -326,9 +338,6 @@
     </ClCompile>
     <ClCompile Include="..\libs\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>sources\imgui\backends</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\shader.cpp">
-      <Filter>sources\core</Filter>
     </ClCompile>
     <ClCompile Include="core\src\primitives\primitive.cpp">
       <Filter>sources\core\primitives\base</Filter>
@@ -660,6 +669,15 @@
     <ClCompile Include="core\src\primitives\triangle.cpp">
       <Filter>sources\core\primitives</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\shaders\opengl_shader.cpp">
+      <Filter>sources\core\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\shaders\shader.cpp">
+      <Filter>sources\core\shaders\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\shaders\vulkan_shader.cpp">
+      <Filter>sources\core\shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -714,9 +732,6 @@
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\common_defines.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\shader.h">
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="core\include\vertex.h">
@@ -1093,6 +1108,15 @@
     </ClInclude>
     <ClInclude Include="core\include\primitives\triangle.h">
       <Filter>headers\core\primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\shaders\opengl_shader.h">
+      <Filter>headers\core\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\shaders\shader.h">
+      <Filter>headers\core\shaders\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\shaders\vulkan_shader.h">
+      <Filter>headers\core\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

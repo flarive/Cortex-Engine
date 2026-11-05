@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../misc/noncopyable.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 #include <vector>
 

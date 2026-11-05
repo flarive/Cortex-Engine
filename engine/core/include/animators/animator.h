@@ -6,7 +6,7 @@
 #include "../misc/ordered_map.h"
 #include "../animations/animation.h"
 #include "../animations/bone_animation.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 #include <vector>
 #include <map>

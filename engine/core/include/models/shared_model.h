@@ -6,7 +6,7 @@
 #include "../materials/pbr_material.h"
 #include "../textures/texture.h"
 #include "mesh.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../transform.h"
 #include "skeleton.h"
 #include "bone.h"

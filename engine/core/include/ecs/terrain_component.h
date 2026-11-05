@@ -10,7 +10,7 @@
 #include "../aabb.h"
 
 #include "../debug/debug_cube.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 namespace engine
 {

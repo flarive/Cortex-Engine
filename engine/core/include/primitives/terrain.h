@@ -7,7 +7,7 @@
 
 #include "../common_defines.h"
 #include "../vertex.h"
-#include "../shader.h"
+#include "../shaders/shader.h"
 #include "../primitives/primitive.h"
 #include "../uvmapping.h"
 #include "../materials/material.h"

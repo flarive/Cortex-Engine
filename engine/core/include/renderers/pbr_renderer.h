@@ -2,7 +2,7 @@
 
 #include "renderer.h"
 
-#include "../shader.h"
+#include "../shaders/shader.h"
 
 namespace engine
 {

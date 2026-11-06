@@ -124,6 +124,16 @@ void engine::OpenGLApp::initWindow()
     glfwMakeContextCurrent(window);
 }
 
+void engine::OpenGLApp::initGLAD()
+{
+    // glad: load all OpenGL function pointers
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        logger.error("Failed to initialize GLAD");
+        std::exit(EXIT_FAILURE);
+    }
+}
+
 void engine::OpenGLApp::initImGUI(const char* backend_version)
 {
     App::initImGUI(backend_version);

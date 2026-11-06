@@ -22,7 +22,7 @@ namespace engine
         Mesh(Mesh&&) = default;
 
         // render the mesh
-        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
+        void draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
 
         std::shared_ptr<Material> getMaterial() { return m_material; }
 
@@ -95,7 +95,7 @@ namespace engine
 
         // initializes all the buffer objects/arrays
         void setupMesh();
-        void handleOpacity(Shader& shader);
+        void handleOpacity(std::unique_ptr<ShaderBase>& shader);
 
         void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
     };

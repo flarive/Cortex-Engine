@@ -37,22 +37,22 @@ engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _lo
 }
 
 // draws the model, and thus all its meshes
-void engine::Model::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Model::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
 
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
     
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-    shader.use();
-    shader.setBool("isAnimated", hasBones());
+    shader->use();
+    shader->setBool("isAnimated", hasBones());
 
     
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setBool("isTessellated", false);
+        shader->setBool("isTessellated", false);
     }
 
     if (!m_shared_model)

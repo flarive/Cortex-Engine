@@ -8,6 +8,8 @@
 #include "../../include/transform.h"
 #include "../../include/managers/log_manager.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 #include <format>
 
 
@@ -26,7 +28,8 @@ engine::PointLight::PointLight(glm::vec3 _position) : Light(_position)
 void engine::PointLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader.init("light_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    m_lightDebugShader = std::make_unique<OpenGLShader>("light_debug");
+    m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -42,37 +45,37 @@ void engine::PointLight::setup()
     m_debug_sphere.setup(matDebugLight);
 }
 
-void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::PointLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
         std::string base = std::format("pointLights[{}]", m_index);
 
-        shader.use();
-        shader.setBool(std::format("{}.use", base), m_enabled);
+        shader->use();
+        shader->setBool(std::format("{}.use", base), m_enabled);
 
-        shader.setVec3(std::format("{}.position", base), m_position);
+        shader->setVec3(std::format("{}.position", base), m_position);
 
-        shader.setVec3(std::format("{}.ambient", base), ambient);
-        shader.setVec3(std::format("{}.diffuse", base), diffuse);
-        shader.setVec3(std::format("{}.specular", base), specular);
-        shader.setFloat(std::format("{}.intensity", base), intensity);
-        shader.setBool(std::format("{}.isShadowCaster", base), castShadow);
+        shader->setVec3(std::format("{}.ambient", base), ambient);
+        shader->setVec3(std::format("{}.diffuse", base), diffuse);
+        shader->setVec3(std::format("{}.specular", base), specular);
+        shader->setFloat(std::format("{}.intensity", base), intensity);
+        shader->setBool(std::format("{}.isShadowCaster", base), castShadow);
 
         if (m_useAttenuation)
         {
-            shader.setFloat(std::format("{}.constant", base), m_constantAttenuation);
-            shader.setFloat(std::format("{}.linear", base), m_linearAttenuation);
-            shader.setFloat(std::format("{}.quadratic", base), m_quadraticAttenuation);
+            shader->setFloat(std::format("{}.constant", base), m_constantAttenuation);
+            shader->setFloat(std::format("{}.linear", base), m_linearAttenuation);
+            shader->setFloat(std::format("{}.quadratic", base), m_quadraticAttenuation);
         }
         else
         {
             // no attenuation values
-            shader.setFloat(std::format("{}.constant", base), 1.0f);
-            shader.setFloat(std::format("{}.linear", base), 0.0f);
-            shader.setFloat(std::format("{}.quadratic", base), 0.0f);
+            shader->setFloat(std::format("{}.constant", base), 1.0f);
+            shader->setFloat(std::format("{}.linear", base), 0.0f);
+            shader->setFloat(std::format("{}.quadratic", base), 0.0f);
         }
     }
 
@@ -98,10 +101,10 @@ void engine::PointLight::draw(Shader& shader, const glm::mat4& projection, const
         model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE));
 
         // Pass model matrix to shader
-        m_lightDebugShader.use();
-        m_lightDebugShader.setMat4("projection", projection);
-        m_lightDebugShader.setMat4("view", view);
-        m_lightDebugShader.setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
+        m_lightDebugShader->use();
+        m_lightDebugShader->setMat4("projection", projection);
+        m_lightDebugShader->setMat4("view", view);
+        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
 
         auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
         m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);

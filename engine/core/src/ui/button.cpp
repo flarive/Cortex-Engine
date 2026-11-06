@@ -66,7 +66,7 @@ void engine::UIButton::draw()
     if (!m_isEnabled)
         return;
 
-    if (!m_rect.getRectShader().isValid() || !m_text.getTextShader().isValid()) {
+    if (!m_rect.getRectShader()->isValid() || !m_text.getTextShader()->isValid()) {
         return;
     }
 

@@ -15,27 +15,43 @@ engine::Renderer::Renderer(GLFWwindow* window, RenderMethod method)
 void engine::Renderer::loadShaders()
 {
     // color framebuffer to screen shader
-    screenShader.init("screen", "shaders/framebuffers_screen.vert", "shaders/framebuffers_screen.frag");
+    screenShader = std::make_unique<OpenGLShader>("screen");
+    screenShader->init("shaders/framebuffers_screen.vert", "shaders/framebuffers_screen.frag");
 
     // for spot lights or directional lights
-    directionalDepthMapShader.init("simpleDepthBuffer1", "shaders/shadow_mapping_depth.vert", "shaders/shadow_mapping_depth.frag");
-    directionalDepthMapTessellationShader.init("simpleDepthBuffer1Tess", "shaders/shadow_mapping_depth_tess.vert", "shaders/shadow_mapping_depth_tess.tcs", "shaders/shadow_mapping_depth_tess.tes", nullptr, "shaders/shadow_mapping_depth_tess.frag");
+    directionalDepthMapShader = std::make_unique<OpenGLShader>("simpleDepthBuffer1");
+    directionalDepthMapShader->init("shaders/shadow_mapping_depth.vert", "shaders/shadow_mapping_depth.frag");
+    
+    directionalDepthMapTessellationShader = std::make_unique<OpenGLShader>("simpleDepthBuffer1Tess");
+    directionalDepthMapTessellationShader->init("shaders/shadow_mapping_depth_tess.vert", "shaders/shadow_mapping_depth_tess.tcs", "shaders/shadow_mapping_depth_tess.tes", nullptr, "shaders/shadow_mapping_depth_tess.frag");
 
     // for point lights
-    pointDepthMapShader.init("simpleDepthBuffer2", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
-    pointDepthMapTessellationShader.init("simpleDepthBuffer2Tess", "shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
+    pointDepthMapShader = std::make_unique<OpenGLShader>("simpleDepthBuffer2");
+    pointDepthMapShader->init("shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
+    
+    pointDepthMapTessellationShader = std::make_unique<OpenGLShader>("simpleDepthBuffer2Tess");
+    pointDepthMapTessellationShader->init("shaders/point_shadow_depth.vert", "shaders/point_shadow_depth.geom", "shaders/point_shadow_depth.frag");
 
     // debug only
-    depthMapToQuadShader.init("debugDepthQuad", "shaders/debug/debug_quad_depth.vert", "shaders/debug/debug_quad_depth.frag");
-    cubeFaceDebugShader.init("debugDepthCube", "shaders/debug/cube_face_debugger.vert", "shaders/debug/cube_face_debugger.frag");
+    depthMapToQuadShader = std::make_unique<OpenGLShader>("debugDepthQuad");
+    depthMapToQuadShader->init("shaders/debug/debug_quad_depth.vert", "shaders/debug/debug_quad_depth.frag");
+    
+    cubeFaceDebugShader = std::make_unique<OpenGLShader>("debugDepthCube");
+    cubeFaceDebugShader->init("shaders/debug/cube_face_debugger.vert", "shaders/debug/cube_face_debugger.frag");
 
     // Editor mode outline shader
-    outlineColorShader.init("outline", "shaders/debug/stencil_testing.vert", "shaders/debug/stencil_testing.frag");
+    outlineColorShader = std::make_unique<OpenGLShader>("outline");
+    outlineColorShader->init("shaders/debug/stencil_testing.vert", "shaders/debug/stencil_testing.frag");
 
 	// Bloom shaders
-    bloomBrightExtractionShader.init("brightExtraction", "shaders/postfx/bloom_bright_extraction.vert", "shaders/postfx/bloom_bright_extraction.frag");
-    bloomBlurShader.init("bloomBlur", "shaders/postfx/bloom_blur.vert", "shaders/postfx/bloom_blur.frag");
-    bloomFinalShader.init("bloomFinal", "shaders/postfx/bloom_combine_final.vert", "shaders/postfx/bloom_combine_final.frag");  
+    bloomBrightExtractionShader = std::make_unique<OpenGLShader>("brightExtraction");
+    bloomBrightExtractionShader->init("shaders/postfx/bloom_bright_extraction.vert", "shaders/postfx/bloom_bright_extraction.frag");
+    
+    bloomBlurShader = std::make_unique<OpenGLShader>("bloomBlur");
+    bloomBlurShader->init("shaders/postfx/bloom_blur.vert", "shaders/postfx/bloom_blur.frag");
+    
+    bloomFinalShader = std::make_unique<OpenGLShader>("bloomFinal");
+    bloomFinalShader->init("shaders/postfx/bloom_combine_final.vert", "shaders/postfx/bloom_combine_final.frag");
 }
 
 void engine::Renderer::enableDepthTest(bool enable)
@@ -111,8 +127,8 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
 
 void engine::Renderer::computeDepthMapFramebuffer(
     GLsizei width, GLsizei height, bool enableShadows,
-    GLsizei shadowMapsTextureSize, Shader& shader, Shader& shaderTessellation,
-    std::function<void(Shader&, Shader&)> update)
+    GLsizei shadowMapsTextureSize, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation,
+    std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
 {
     if (m_lights.empty())
     {
@@ -121,18 +137,18 @@ void engine::Renderer::computeDepthMapFramebuffer(
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_dummyCubeMapTexture);
 
         // Set shader uniforms (shadows disabled)
-        if (shader.getShaderType() == ShaderType::BlinnPhong || shader.getShaderType() == ShaderType::PBR)
+        if (shader->getShaderType() == ShaderType::BlinnPhong || shader->getShaderType() == ShaderType::PBR)
         {
-            shader.use();
-            shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-            shader.setBool("enableShadows", false);
+            shader->use();
+            shader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+            shader->setBool("enableShadows", false);
         }
 
-        if (m_supportTessellation && (shaderTessellation.getShaderType() == ShaderType::BlinnPhongTessellation || shaderTessellation.getShaderType() == ShaderType::PBRTessellation))
+        if (m_supportTessellation && (shaderTessellation->getShaderType() == ShaderType::BlinnPhongTessellation || shaderTessellation->getShaderType() == ShaderType::PBRTessellation))
         {
-            shaderTessellation.use();
-            shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-            shaderTessellation.setBool("enableShadows", false);
+            shaderTessellation->use();
+            shaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+            shaderTessellation->setBool("enableShadows", false);
         }
         update(shader, shaderTessellation);
         return;
@@ -219,7 +235,7 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Spotlight and directional lights only !!!!!
 /// </summary>
-void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shader& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeSpotLightDepthMapFramebuffer(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -249,13 +265,13 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
     // render scene from light's point of view
-    directionalDepthMapShader.use();
-    directionalDepthMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    directionalDepthMapShader->use();
+    directionalDepthMapShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
     if (m_supportTessellation)
     {
-        directionalDepthMapTessellationShader.use();
-        directionalDepthMapTessellationShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        directionalDepthMapTessellationShader->use();
+        directionalDepthMapTessellationShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
     }
 
 
@@ -279,21 +295,21 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 
     // 2. render scene as normal using the previously generated depth/shadow map  
     // -------------------------------------------------------------------------
-    ShaderType type = shader.getShaderType();
-    ShaderType typeTessellation = shaderTessellation.getShaderType();
+    ShaderType type = shader->getShaderType();
+    ShaderType typeTessellation = shaderTessellation->getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.use();
-        shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        shader.setBool("enableShadows", enableShadows);
+        shader->use();
+        shader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shader->setBool("enableShadows", enableShadows);
     }
 
     if (m_supportTessellation && (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation))
     {
-        shaderTessellation.use();
-        shaderTessellation.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        shaderTessellation.setBool("enableShadows", enableShadows);
+        shaderTessellation->use();
+        shaderTessellation->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderTessellation->setBool("enableShadows", enableShadows);
     }
 
     // update user stuffs
@@ -303,13 +319,13 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP);
     glBindTexture(GL_TEXTURE_2D, textureDepthMapBuffer);
 
-    shader.use();
-    shader.setInt("texture_shadowMap", U_SHADOW_MAP);
+    shader->use();
+    shader->setInt("texture_shadowMap", U_SHADOW_MAP);
 
     if (m_supportTessellation)
     {
-        shaderTessellation.use();
-        shaderTessellation.setInt("texture_shadowMap", U_SHADOW_MAP);
+        shaderTessellation->use();
+        shaderTessellation->setInt("texture_shadowMap", U_SHADOW_MAP);
     }
 
     // render Depth map to quad for visual debugging
@@ -328,8 +344,8 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(Shader& shader, Shade
 
 
 void engine::Renderer::computePointLightDepthMapFramebuffer(
-    Shader& shader, Shader& shaderTessellation, GLsizei width, GLsizei height,
-    bool enableShadows, GLsizei shadowSize, std::function<void(Shader&, Shader&)> update,
+    std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, GLsizei width, GLsizei height,
+    bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update,
     std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
@@ -352,19 +368,19 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFramebuffer);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        pointDepthMapShader.use();
+        pointDepthMapShader->use();
         for (unsigned int i = 0; i < 6; ++i)
-            pointDepthMapShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
-        pointDepthMapShader.setFloat("far_plane", far_plane);
-        pointDepthMapShader.setVec3("lightPos", light->getPosition());
+            pointDepthMapShader->setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+        pointDepthMapShader->setFloat("far_plane", far_plane);
+        pointDepthMapShader->setVec3("lightPos", light->getPosition());
 
         if (m_supportTessellation)
         {
-            pointDepthMapTessellationShader.use();
+            pointDepthMapTessellationShader->use();
             for (unsigned int i = 0; i < 6; ++i)
-                pointDepthMapTessellationShader.setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
-            pointDepthMapTessellationShader.setFloat("far_plane", far_plane);
-            pointDepthMapTessellationShader.setVec3("lightPos", light->getPosition());
+                pointDepthMapTessellationShader->setMat4("shadowMatrices[" + std::to_string(i) + "]", shadowTransforms[i]);
+            pointDepthMapTessellationShader->setFloat("far_plane", far_plane);
+            pointDepthMapTessellationShader->setVec3("lightPos", light->getPosition());
         }
 
         update(pointDepthMapShader, pointDepthMapTessellationShader);
@@ -378,27 +394,27 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
     glm::mat4 projection = glm::perspective(glm::radians(m_camera->getZoom()), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = m_camera->getViewMatrix();
 
-    ShaderType type = shader.getShaderType();
-    ShaderType typeTessellation = shaderTessellation.getShaderType();
+    ShaderType type = shader->getShaderType();
+    ShaderType typeTessellation = shaderTessellation->getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.use();
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-        shader.setVec3("viewPos", m_camera->position);
-        shader.setBool("enableShadows", enableShadows);
-        shader.setFloat("far_plane", far_plane);
+        shader->use();
+        shader->setMat4("projection", projection);
+        shader->setMat4("view", view);
+        shader->setVec3("viewPos", m_camera->position);
+        shader->setBool("enableShadows", enableShadows);
+        shader->setFloat("far_plane", far_plane);
     }
 
     if (m_supportTessellation && (typeTessellation == ShaderType::BlinnPhongTessellation || typeTessellation == ShaderType::PBRTessellation))
     {
-        shaderTessellation.use();
-        shaderTessellation.setMat4("projection", projection);
-        shaderTessellation.setMat4("view", view);
-        shaderTessellation.setVec3("viewPos", m_camera->position);
-        shaderTessellation.setBool("enableShadows", enableShadows);
-        shaderTessellation.setFloat("far_plane", far_plane);
+        shaderTessellation->use();
+        shaderTessellation->setMat4("projection", projection);
+        shaderTessellation->setMat4("view", view);
+        shaderTessellation->setVec3("viewPos", m_camera->position);
+        shaderTessellation->setBool("enableShadows", enableShadows);
+        shaderTessellation->setFloat("far_plane", far_plane);
     }
 
     update(shader, shaderTessellation);
@@ -407,17 +423,17 @@ void engine::Renderer::computePointLightDepthMapFramebuffer(
     glActiveTexture(GL_TEXTURE0 + U_SHADOW_MAP_CUBE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, light->isShadowCaster() ? textureDepthMapBuffer : m_dummyCubeMapTexture);
 
-    if (shader.getShaderType() == ShaderType::BlinnPhong || shader.getShaderType() == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.use();
-        shader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-        shader.setBool("hasShadowMapCube", light->isShadowCaster());
+        shader->use();
+        shader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+        shader->setBool("hasShadowMapCube", light->isShadowCaster());
 
         if (m_supportTessellation)
         {
-            shaderTessellation.use();
-            shaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-            shaderTessellation.setBool("hasShadowMapCube", light->isShadowCaster());
+            shaderTessellation->use();
+            shaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+            shaderTessellation->setBool("hasShadowMapCube", light->isShadowCaster());
         }
     }
 }
@@ -600,12 +616,12 @@ void engine::Renderer::computeColorFramebuffer(const SceneSettings& settings)
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // set clear color (not really necessary actually, since we won't be able to see behind the quad anyways)
     glClear(GL_COLOR_BUFFER_BIT);
 
-    screenShader.use();
-    screenShader.setInt("screenTexture", 0);
-    screenShader.setFloat("exposure", settings.exposure);
-    screenShader.setBool("useGamma", settings.enableGammaCorrection);
-    screenShader.setBool("useToneMapping", settings.enableToneMapping);
-    screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
+    screenShader->use();
+    screenShader->setInt("screenTexture", 0);
+    screenShader->setFloat("exposure", settings.exposure);
+    screenShader->setBool("useGamma", settings.enableGammaCorrection);
+    screenShader->setBool("useToneMapping", settings.enableToneMapping);
+    screenShader->setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);	// use the color attachment texture as the texture of the quad plane
@@ -637,17 +653,17 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
 
     if (settings.enableBloom)
     {
-        bloomFinalShader.use();
+        bloomFinalShader->use();
 
-        bloomFinalShader.setInt("screenTexture", 0);
-        bloomFinalShader.setInt("bloomTexture", 1);
+        bloomFinalShader->setInt("screenTexture", 0);
+        bloomFinalShader->setInt("bloomTexture", 1);
 
-        bloomFinalShader.setBool("useBloom", settings.enableBloom);
-        bloomFinalShader.setBool("useToneMapping", settings.enableToneMapping);
-        bloomFinalShader.setBool("useGamma", settings.enableGammaCorrection);
+        bloomFinalShader->setBool("useBloom", settings.enableBloom);
+        bloomFinalShader->setBool("useToneMapping", settings.enableToneMapping);
+        bloomFinalShader->setBool("useGamma", settings.enableGammaCorrection);
 
-        bloomFinalShader.setFloat("exposure", settings.exposure);
-        bloomFinalShader.setFloat("bloomStrength", settings.bloomStrength);
+        bloomFinalShader->setFloat("exposure", settings.exposure);
+        bloomFinalShader->setFloat("bloomStrength", settings.bloomStrength);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
@@ -657,12 +673,12 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
     }
     else
     {
-        screenShader.use();
-        screenShader.setInt("screenTexture", 0);
-        screenShader.setFloat("exposure", settings.exposure);
-        screenShader.setBool("useGamma", settings.enableGammaCorrection);
-        screenShader.setBool("useToneMapping", settings.enableToneMapping);
-        screenShader.setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
+        screenShader->use();
+        screenShader->setInt("screenTexture", 0);
+        screenShader->setFloat("exposure", settings.exposure);
+        screenShader->setBool("useGamma", settings.enableGammaCorrection);
+        screenShader->setBool("useToneMapping", settings.enableToneMapping);
+        screenShader->setInt("applyPostProcessFx", static_cast<int>(settings.applyPostProcessFx));
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
@@ -960,12 +976,12 @@ void engine::Renderer::clean()
     logger.info("Cleaning up renderer base resources");
 
     // delete shaders
-    screenShader.clean();
-    directionalDepthMapShader.clean();
-    pointDepthMapShader.clean();
-    depthMapToQuadShader.clean();
-    cubeFaceDebugShader.clean();
-    outlineColorShader.clean();
+    screenShader->clean();
+    directionalDepthMapShader->clean();
+    pointDepthMapShader->clean();
+    depthMapToQuadShader->clean();
+    cubeFaceDebugShader->clean();
+    outlineColorShader->clean();
 
     // delete framebuffers
     glDeleteFramebuffers(1, &depthMapFramebuffer);

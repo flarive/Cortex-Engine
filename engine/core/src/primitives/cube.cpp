@@ -93,14 +93,14 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
     return generateCuboidVertices(m_width, m_height, m_depth, m_uvScale);
 }
 
-void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Cube::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
     
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
-    if (!m_material || !shader.isValid()) {
+    if (!m_material || !shader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -115,7 +115,7 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    shader.use();
+    shader->use();
     OpenGLDebug::checkGLError("shader.use.cube");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
@@ -132,14 +132,14 @@ void engine::Cube::draw(Shader& shader, const glm::mat4& projection, const glm::
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader.setMat4("model", transformMatrix);
+    shader->setMat4("model", transformMatrix);
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader.setBool("hasTangents", true);
-        shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", isTessellated());
+        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader->setBool("hasTangents", true);
+        shader->setBool("isAnimated", false);
+        shader->setBool("isTessellated", isTessellated());
     }
 
     // Send to GPU

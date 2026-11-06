@@ -35,7 +35,7 @@ namespace engine
         float m_height{ 1.0f };
         float m_depth{ 1.0f };
 
-		static Shader m_shader; // Shared across all instances
+		static std::unique_ptr<engine::ShaderBase> m_shader; // Shared across all instances
 
         void geometrySetup();
     };

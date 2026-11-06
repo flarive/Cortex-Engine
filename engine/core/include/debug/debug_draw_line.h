@@ -38,7 +38,7 @@ namespace engine
         std::vector<Line> m_lines{};
         GLuint m_vao{};
         GLuint m_vbo{};
-        static Shader m_shader; // Shared across all instances
+        static std::unique_ptr<ShaderBase> m_shader; // Shared across all instances
         bool m_initialized{};
     };
 }

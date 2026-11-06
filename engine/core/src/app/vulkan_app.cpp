@@ -119,11 +119,14 @@ void engine::VulkanApp::initWindow()
     //glfwMakeContextCurrent(window);
 }
 
+void engine::VulkanApp::initGLAD()
+{
+
+}
+
 void engine::VulkanApp::initImGUI(const char* backend_version)
 {
     App::initImGUI(backend_version);
-
-    
 
     //#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG

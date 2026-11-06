@@ -13,15 +13,12 @@ namespace engine
     class VulkanShader final : public ShaderBase
     {
     public:
-        unsigned int ID{};
-        std::string name{};
-
-        VulkanShader() = default;
+        VulkanShader(const std::string& name);
         ~VulkanShader() override;
 
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath) override;
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath) override;
-        void init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath) override;
+        void init(const char* vertexPath, const char* fragmentPath) override;
+        void init(const char* vertexPath, const char* fragmentPath, const char* geometryPath) override;
+        void init(const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath) override;
 
         bool isValid() const override;
 

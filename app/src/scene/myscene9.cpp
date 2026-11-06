@@ -152,7 +152,7 @@ void MyScene9::framebuffer_size_callback(int newWidth, int newHeight)
     ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
-void MyScene9::update(Shader& shader)
+void MyScene9::update(std::unique_ptr<ShaderBase>& shader)
 {
     (void)shader;   //Do nothing
 }

@@ -91,7 +91,7 @@ namespace engine
 
         virtual void setIndex(unsigned int index) { m_index = index; }
 
-        virtual void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
+        virtual void draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) = 0;
 
         virtual void clean() = 0;
 
@@ -126,7 +126,7 @@ namespace engine
 
         glm::vec3 m_target{};
 
-        Shader m_lightDebugShader{};
+        std::unique_ptr<ShaderBase> m_lightDebugShader{};
 
         const float LIGHT_CUBE_SIZE{ 0.82f };
         const bool DISPLAY_DEBUG_LIGHT{ false };

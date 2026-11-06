@@ -25,7 +25,7 @@ void engine::ModelComponent::update(float deltaTime, Transform& transform)
 	
 }
 
-void engine::ModelComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::ModelComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<ShaderBase>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
     m_model->draw(shader, projection, view, worldTransformMatrix, localTransform);
 

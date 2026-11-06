@@ -145,14 +145,14 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
     return vertices;
 }
 
-void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
+void engine::Terrain::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
 
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
-    if (!m_material || !shader.isValid()) {
+    if (!m_material || !shader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -167,7 +167,7 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
         return;
     }
 
-    shader.use();
+    shader->use();
     OpenGLDebug::checkGLError("m_tessHeightMapShader.use");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
@@ -183,27 +183,27 @@ void engine::Terrain::draw(engine::Shader& shader, const glm::mat4& projection, 
     }
     else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)
     {
-        shader.setInt("materialHeight.texture_height", m_material->getTextureHeightUnit());
-        shader.setBool("materialHeight.has_texture_height_map", true);
+        shader->setInt("materialHeight.texture_height", m_material->getTextureHeightUnit());
+        shader->setBool("materialHeight.has_texture_height_map", true);
     }
     
-    shader.setMat4("model", transformMatrix);
+    shader->setMat4("model", transformMatrix);
 
     if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
     {
-        shader.setBool("hasTangents", true);
-        shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", isTessellated());
+        shader->setBool("hasTangents", true);
+        shader->setBool("isAnimated", false);
+        shader->setBool("isTessellated", isTessellated());
     }
 
     if (type == ShaderType::BlinnPhongTessellation  || type == ShaderType::PBRTessellation || type == ShaderType::DepthBufferDirectionalLightsTessellation)
     {
-        shader.setFloat("heightFactor", m_heightFactor);
-        shader.setVec2("heightOffset", m_heightOffset);
+        shader->setFloat("heightFactor", m_heightFactor);
+        shader->setVec2("heightOffset", m_heightOffset);
 
         if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
         {
-            shader.setFloat("heightTextureSize", static_cast<float>(m_textureWidth));
+            shader->setFloat("heightTextureSize", static_cast<float>(m_textureWidth));
         }
     }
    

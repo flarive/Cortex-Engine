@@ -2,9 +2,11 @@
 
 #include "../../include/common_defines.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 #include <iostream>
 
-engine::Shader engine::DebugDraw::m_shader; // Define the static member
+std::unique_ptr<engine::ShaderBase> engine::DebugDraw::m_shader; // Define the static member
 
 engine::DebugDraw::DebugDraw() {}
 engine::DebugDraw::~DebugDraw()
@@ -17,9 +19,11 @@ void engine::DebugDraw::init()
 {
     if (m_initialized) return;
     
-    if (!m_shader.isInitialized()) {
-        m_shader.init("debug_line", "shaders/debug/debug_line.vert", "shaders/debug/debug_line.frag");
-    }
+    if (!m_shader)
+        m_shader = std::make_unique<OpenGLShader>("debug_line");
+
+    if (!m_shader->isInitialized())
+        m_shader->init("shaders/debug/debug_line.vert", "shaders/debug/debug_line.frag");
     
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
@@ -31,13 +35,8 @@ void engine::DebugDraw::init()
     m_initialized = true;
 }
 
-void engine::DebugDraw::addLine(
-    const glm::vec3& start,
-    const glm::vec3& end,
-    const glm::vec3& color,
-    bool withArrow,
-    float arrowSize
-) {
+void engine::DebugDraw::addLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color, bool withArrow, float arrowSize)
+{
     // Add the main line
     m_lines.push_back({ start, end, color });
 
@@ -75,16 +74,16 @@ void engine::DebugDraw::addLine(
 void engine::DebugDraw::render(const glm::mat4& view, const glm::mat4& projection)
 {
     if (!m_initialized || m_lines.empty()) return;
-    m_shader.use();
-    m_shader.setMat4("view", view);
-    m_shader.setMat4("projection", projection);
+    m_shader->use();
+    m_shader->setMat4("view", view);
+    m_shader->setMat4("projection", projection);
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     for (const auto& line : m_lines)
     {
         glm::vec3 vertices[2] = { line.start, line.end };
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-        m_shader.setVec3("color", line.color);
+        m_shader->setVec3("color", line.color);
         glDrawArrays(GL_LINES, 0, 2);
     }
     glBindVertexArray(0);
@@ -97,7 +96,7 @@ void engine::DebugDraw::clear()
 
 void engine::DebugDraw::clean()
 {
-    m_shader.clean();
+    m_shader->clean();
     m_initialized = false;
     m_lines.clear();
 

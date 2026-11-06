@@ -149,7 +149,7 @@ void MyScene6::framebuffer_size_callback(int newWidth, int newHeight)
     ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
-void MyScene6::update(Shader& shader)
+void MyScene6::update(std::unique_ptr<ShaderBase>& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -168,7 +168,7 @@ void MyScene6::clean()
     ourSprite.clean();
 }
 
-void MyScene6::drawScene(Shader& shader)
+void MyScene6::drawScene(std::unique_ptr<ShaderBase>& shader)
 {
     (void)shader;   //Do nothing
 

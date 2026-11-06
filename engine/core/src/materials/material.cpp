@@ -85,7 +85,7 @@ engine::Material::Material(MaterialType type, CombinedTexture mode, const Color&
     }
 }
 
-bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
+bool engine::Material::bind(std::unique_ptr<ShaderBase>& shader, int baseUnit) const
 {
     static int m_maxFragUnits{};
     
@@ -98,34 +98,34 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
     }
 
     // Use shader once for the whole material
-    shader.use();
+    shader->use();
 
     int unit = baseUnit;
     bool success = true;
 
 	// cleanup any previous bindings for this shader's material uniforms
-	if (shader.getShaderType() == ShaderType::PBR || shader.getShaderType() == ShaderType::PBRTessellation)
+	if (shader->getShaderType() == ShaderType::PBR || shader->getShaderType() == ShaderType::PBRTessellation)
     {
-        shader.setBool("material.has_texture_diffuse_map", false);
-        shader.setBool("material.has_texture_normal_map", false);
-        shader.setBool("material.has_texture_metalness_map", false);
-        shader.setBool("material.has_texture_roughness_map", false);
-        shader.setBool("material.has_texture_ao_map", false);
-        shader.setBool("materialHeight.has_texture_height_map", false);
-        shader.setBool("material.has_texture_emissive_map", false);
-        shader.setBool("material.has_texture_opacity_map", false);
+        shader->setBool("material.has_texture_diffuse_map", false);
+        shader->setBool("material.has_texture_normal_map", false);
+        shader->setBool("material.has_texture_metalness_map", false);
+        shader->setBool("material.has_texture_roughness_map", false);
+        shader->setBool("material.has_texture_ao_map", false);
+        shader->setBool("materialHeight.has_texture_height_map", false);
+        shader->setBool("material.has_texture_emissive_map", false);
+        shader->setBool("material.has_texture_opacity_map", false);
 
-        shader.setBool("material.has_texture_arm_map", false);
-        shader.setBool("material.has_texture_rm_map", false);
+        shader->setBool("material.has_texture_arm_map", false);
+        shader->setBool("material.has_texture_rm_map", false);
     }
     else
     {
-        shader.setBool("material.has_texture_diffuse_map", false);
-        shader.setBool("material.has_texture_specular_map", false);
-        shader.setBool("material.has_texture_normal_map", false);
-        shader.setBool("materialHeight.has_texture_height_map", false);
-        shader.setBool("material.has_texture_emissive_map", false);
-        shader.setBool("material.has_texture_opacity_map", false);
+        shader->setBool("material.has_texture_diffuse_map", false);
+        shader->setBool("material.has_texture_specular_map", false);
+        shader->setBool("material.has_texture_normal_map", false);
+        shader->setBool("materialHeight.has_texture_height_map", false);
+        shader->setBool("material.has_texture_emissive_map", false);
+        shader->setBool("material.has_texture_opacity_map", false);
     }
 
     for (const auto& tex : textures)
@@ -147,7 +147,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
             //glBindTexture(GL_TEXTURE_2D, 0);
 
             //shader.setInt(uniformName, unit);
-            shader.setBool(hasMapName, false);
+            shader->setBool(hasMapName, false);
             continue;
         }
 
@@ -155,7 +155,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         if (unit >= m_maxFragUnits)
         {
             std::cerr << "[Material::bind] ERROR: Texture unit " << unit << " exceeds GL_MAX_TEXTURE_IMAGE_UNITS=" << m_maxFragUnits << " for uniform '" << uniformName << "'\n";
-            shader.setBool(hasMapName, false);
+            shader->setBool(hasMapName, false);
             success = false;
             break; // or return false;
         }
@@ -169,7 +169,7 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
         {
             std::cerr << std::hex
                 << "[Material::bind] GL error 0x" << error << " binding '" << tex.type << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
-            shader.setBool(hasMapName, false);
+            shader->setBool(hasMapName, false);
             success = false;
             // Continue to bind others, or break if you prefer fail-fast.
             ++unit;
@@ -178,8 +178,8 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
 #endif
 
         // Assign the sampler to the unit and flag presence
-        shader.setInt(uniformName, unit);
-        shader.setBool(hasMapName, true);
+        shader->setInt(uniformName, unit);
+        shader->setBool(hasMapName, true);
 
         ++unit;
     }
@@ -188,12 +188,12 @@ bool engine::Material::bind(engine::Shader& shader, int baseUnit) const
     return success;
 }
 
-bool engine::Material::bind2(engine::Shader& shader) const
+bool engine::Material::bind2(std::unique_ptr<ShaderBase>& shader) const
 {
     unsigned int textureUnit = 0;
     bool success = true;
 
-    shader.use();
+    shader->use();
     for (const auto& texture : textures)
     {
         const std::string uniformName = std::format("{}", texture.type);
@@ -212,7 +212,7 @@ bool engine::Material::bind2(engine::Shader& shader) const
                 continue;
             }
 
-            shader.setInt(uniformName, textureUnit);
+            shader->setInt(uniformName, textureUnit);
             textureUnit++;
 
             break;

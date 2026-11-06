@@ -48,7 +48,7 @@ namespace engine
 
 		virtual void init(Transform& transform) = 0;
 		virtual void update(float dt, Transform& transform) = 0;
-		virtual void draw(Shader& shader, Transform& localTransform) = 0;
+		virtual void draw(std::unique_ptr<ShaderBase>& shader, Transform& localTransform) = 0;
 
 		virtual void playAnimation(std::shared_ptr<Animation> pAnimation) = 0;
 		virtual void playAnimationAtIndex(unsigned short index) = 0;

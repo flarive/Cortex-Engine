@@ -48,8 +48,8 @@ namespace engine
         void loadTextures();
         void loadTexturesAsync(bool flipY = false, std::function<void(bool)> texturesLoadedCallback = nullptr);
 
-        bool bind(Shader& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
-        bool bind2(engine::Shader& shader) const;
+        bool bind(std::unique_ptr<ShaderBase>& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
+        bool bind2(std::unique_ptr<ShaderBase>& shader) const;
         void unbind(int baseUnit = MATERIAL_BASE_UNIT) const;
 
 

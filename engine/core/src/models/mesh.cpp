@@ -17,11 +17,11 @@ engine::Mesh::Mesh(const std::string& _name, std::vector<Vertex> _vertices, std:
 }
 
 // render the mesh
-void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
+void engine::Mesh::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
-    if (!m_material || !shader.isValid()) {
+    if (!m_material || !shader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -36,7 +36,7 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::
         return;
     }
 
-    shader.use();
+    shader->use();
     OpenGLDebug::checkGLError("shader.use.mesh");
 
     if (m_material)
@@ -53,32 +53,32 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::
             
             if (type == ShaderType::PBR)
             {
-                shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-                shader.setVec3("material.ambientColor", m_material->getAmbientColor());
-                shader.setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
+                shader->setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
+                shader->setVec3("material.ambientColor", m_material->getAmbientColor());
+                shader->setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
 
-                shader.setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
-                shader.setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
-                shader.setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
+                shader->setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
+                shader->setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
+                shader->setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
 
-                shader.setFloat("material.IOR", m_material->getIOR());
-                shader.setFloat("material.transmission", m_material->getTransmission());
-                shader.setFloat("material.thickness", m_material->getThickness());
-                shader.setVec3("material.attenuationColor", m_material->getAttenuationColor());
-                shader.setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
+                shader->setFloat("material.IOR", m_material->getIOR());
+                shader->setFloat("material.transmission", m_material->getTransmission());
+                shader->setFloat("material.thickness", m_material->getThickness());
+                shader->setVec3("material.attenuationColor", m_material->getAttenuationColor());
+                shader->setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
             }
             else if (type == ShaderType::BlinnPhong)
             {
-                shader.setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
-                shader.setFloat("material.shininess", m_material->getShininessIntensity());
-                shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-                shader.setVec3("material.specular_color", m_material->getSpecularColor());
+                shader->setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
+                shader->setFloat("material.shininess", m_material->getShininessIntensity());
+                shader->setVec3("material.diffuse_color", m_material->getDiffuseColor());
+                shader->setVec3("material.specular_color", m_material->getSpecularColor());
             }
 
-            shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-            shader.setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
-            shader.setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
-            shader.setFloat("material.opacity", m_material->getOpacityIntensity());
+            shader->setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+            shader->setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
+            shader->setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
+            shader->setFloat("material.opacity", m_material->getOpacityIntensity());
         }
     }
 
@@ -88,12 +88,12 @@ void engine::Mesh::draw(Shader& shader, const glm::mat4& projection, const glm::
     if (!m_isSkinned)
         finalTransform *= m_nodeTransform;
 
-    shader.setMat4("model", finalTransform);
+    shader->setMat4("model", finalTransform);
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
-        shader.setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
+        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
+        shader->setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
     }
 
     // Send to GPU
@@ -195,7 +195,7 @@ void engine::Mesh::setupMesh()
     m_indexCount = static_cast<unsigned int>(m_indices.size());
 }
 
-void engine::Mesh::handleOpacity(Shader& shader)
+void engine::Mesh::handleOpacity(std::unique_ptr<ShaderBase>& shader)
 {
     bool transparent = m_material->isTransparent();
     bool cutout = m_material->isAlphaCutout();
@@ -213,7 +213,7 @@ void engine::Mesh::handleOpacity(Shader& shader)
         RenderState::setOpaque();
     }
 
-    if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
+    if (shader->getShaderType() == ShaderType::DepthBufferDirectionalLights || shader->getShaderType() == ShaderType::DepthBufferPointLights)
     {
         // DO NOT apply transparency logic here
         RenderState::setOpaque();

@@ -19,6 +19,7 @@ namespace engine
 		void initGLFW() override;
 		const char* initBackend() override;
 		void initWindow() override;
+		void initGLAD() override;
 		void initImGUI(const char* backend_version) override;
 		void getBackendVersion() override;
 

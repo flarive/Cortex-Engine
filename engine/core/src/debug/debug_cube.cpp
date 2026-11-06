@@ -2,9 +2,11 @@
 
 #include "../../include/singleton.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 #include <vector>
 
-engine::Shader engine::DebugCube::m_shader; // Define the static member
+std::unique_ptr<engine::ShaderBase> engine::DebugCube::m_shader; // Define the static member
 
 engine::DebugCube::DebugCube(const glm::vec3& _position)
     : m_position(_position)
@@ -23,8 +25,12 @@ engine::DebugCube::DebugCube(const float& _width, const float& _height, const fl
 
 void engine::DebugCube::setup()
 {
-    if (!m_shader.isInitialized()) {
-        m_shader.init("model_boundingbox_debug", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    if (!m_shader)
+    {
+        m_shader = std::make_unique<OpenGLShader>("model_boundingbox_debug");
+
+        if (!m_shader->isInitialized())
+            m_shader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
     }
     
     geometrySetup(); // Geometry setup
@@ -123,23 +129,23 @@ std::vector<engine::Vertex> engine::DebugCube::generateCuboidVertices(float widt
 
 void engine::DebugCube::draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    if (!m_shader.isInitialized()) {
+    if (!m_shader->isInitialized()) {
         std::cerr << "Shader not valid. Skipping draw." << std::endl;
         return;
     }
 
-    if (!m_shader.isValid()) {
+    if (!m_shader->isValid()) {
         std::cerr << "Shader program is not valid!" << std::endl;
         return;
     }
     
-    m_shader.use();
+    m_shader->use();
     OpenGLDebug::checkGLError("shader.use.debug_cube");
  
-    m_shader.setMat4("model", transformMatrix);
-    m_shader.setMat4("projection", projection);
-    m_shader.setMat4("view", view);
-    m_shader.setVec4("customColor", glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+    m_shader->setMat4("model", transformMatrix);
+    m_shader->setMat4("projection", projection);
+    m_shader->setMat4("view", view);
+    m_shader->setVec4("customColor", glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
 
     // Send to GPU
     glBindVertexArray(m_VAO);
@@ -158,5 +164,5 @@ void engine::DebugCube::clean()
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     
-    m_shader.clean();
+    m_shader->clean();
 }

@@ -29,45 +29,44 @@ void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
     m_material = material;
 }
 
-void engine::Primitive::setShaderCommonUniforms(Shader& shader, ShaderType type)
+void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<ShaderBase>& shader, ShaderType type)
 {
-   
     if (type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
-        shader.setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-        shader.setVec3("material.ambientColor", m_material->getAmbientColor());
-        shader.setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
+        shader->setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
+        shader->setVec3("material.ambientColor", m_material->getAmbientColor());
+        shader->setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
 
-        shader.setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
-        shader.setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
-        shader.setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
+        shader->setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
+        shader->setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
+        shader->setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
 
-        shader.setFloat("material.IOR", m_material->getIOR());
-        shader.setFloat("material.transmission", m_material->getTransmission());
-        shader.setFloat("material.thickness", m_material->getThickness());
-        shader.setVec3("material.attenuationColor", m_material->getAttenuationColor());
-        shader.setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
+        shader->setFloat("material.IOR", m_material->getIOR());
+        shader->setFloat("material.transmission", m_material->getTransmission());
+        shader->setFloat("material.thickness", m_material->getThickness());
+        shader->setVec3("material.attenuationColor", m_material->getAttenuationColor());
+        shader->setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
     }
     else  if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation)
     {
-        shader.setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
-        shader.setFloat("material.shininess", m_material->getShininessIntensity());
-        shader.setVec3("material.diffuse_color", m_material->getDiffuseColor());
-        shader.setVec3("material.specular_color", m_material->getSpecularColor());
+        shader->setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
+        shader->setFloat("material.shininess", m_material->getShininessIntensity());
+        shader->setVec3("material.diffuse_color", m_material->getDiffuseColor());
+        shader->setVec3("material.specular_color", m_material->getSpecularColor());
     }
 
-    shader.setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-    shader.setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
+    shader->setBool("material.useParallaxMapping", m_material->useParallaxMapping());
+    shader->setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
 
-    shader.setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-    shader.setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
-    shader.setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
+    shader->setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
+    shader->setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
+    shader->setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
 
-    shader.setBool("material.canCastShadows", canCastShadows());
-    shader.setBool("material.canReceiveShadows", canReceiveShadows());
+    shader->setBool("material.canCastShadows", canCastShadows());
+    shader->setBool("material.canReceiveShadows", canReceiveShadows());
 
 
-    shader.setFloat("material.opacity", m_material->getOpacityIntensity());
+    shader->setFloat("material.opacity", m_material->getOpacityIntensity());
 }
 
 bool engine::Primitive::isTransparent() const
@@ -78,7 +77,7 @@ bool engine::Primitive::isTransparent() const
     return false;
 }
 
-void engine::Primitive::handleOpacity(Shader& shader)
+void engine::Primitive::handleOpacity(std::unique_ptr<ShaderBase>& shader)
 {
     bool transparent = m_material->isTransparent();
     bool cutout = m_material->isAlphaCutout();
@@ -96,7 +95,7 @@ void engine::Primitive::handleOpacity(Shader& shader)
         RenderState::setOpaque();
     }
 
-    if (shader.getShaderType() == ShaderType::DepthBufferDirectionalLights || shader.getShaderType() == ShaderType::DepthBufferPointLights)
+    if (shader->getShaderType() == ShaderType::DepthBufferDirectionalLights || shader->getShaderType() == ShaderType::DepthBufferPointLights)
     {
         // DO NOT apply transparency logic here
         RenderState::setOpaque();

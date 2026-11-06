@@ -20,7 +20,7 @@ void engine::CameraComponent::update(float deltaTime, Transform& transform)
 
 }
 
-void engine::CameraComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::CameraComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<ShaderBase>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 
 }

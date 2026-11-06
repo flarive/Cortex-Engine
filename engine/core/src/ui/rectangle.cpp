@@ -2,7 +2,7 @@
 
 #include "../../include/managers/log_manager.h"
 
-engine::Shader engine::UIRectangle::m_rectShader;
+std::unique_ptr<engine::ShaderBase> engine::UIRectangle::m_rectShader;
 
 engine::UIRectangle::UIRectangle()
 {
@@ -16,14 +16,18 @@ void engine::UIRectangle::setup(GLFWwindow* window)
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
-    if (!m_rectShader.isInitialized()) {
-        m_rectShader.init("UIRectangleShader", "shaders/ui/rectangle.vert", "shaders/ui/rectangle.frag");
+    if (!m_rectShader)
+    {
+        m_rectShader = std::make_unique<OpenGLShader>("UIRectangleShader");
+
+        if (!m_rectShader->isInitialized())
+            m_rectShader->init("shaders/ui/rectangle.vert", "shaders/ui/rectangle.frag");
     }
 
     glm::mat4 projection = glm::ortho(0.0f, float(width), 0.0f, float(height));
 
-    m_rectShader.use();
-    m_rectShader.setMat4("projection", projection);
+    m_rectShader->use();
+    m_rectShader->setMat4("projection", projection);
 
     initRenderData();
 }
@@ -33,7 +37,7 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
     if (!m_isEnabled)
         return;
 
-    if (!m_rectShader.isValid()) {
+    if (!m_rectShader->isValid()) {
         return;
     }
 
@@ -44,11 +48,11 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
-    m_rectShader.use();
+    m_rectShader->use();
 
     // This keeps winding CCW without changing OpenGL state
     glm::mat4 projection = glm::ortho(0.0f, float(width), float(height), 0.0f);
-    m_rectShader.setMat4("projection", projection);
+    m_rectShader->setMat4("projection", projection);
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));
@@ -58,13 +62,13 @@ void engine::UIRectangle::draw(glm::vec2 position, glm::vec2 size, float rotate,
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
 
     model = glm::scale(model, glm::vec3(size, 1.0f));
-    m_rectShader.setMat4("model", model);
+    m_rectShader->setMat4("model", model);
 
-    m_rectShader.setVec4("fillColor", { fillColor.r, fillColor.g, fillColor.b, fillColor.a });
-    m_rectShader.setVec4("borderColor", { borderColor.r, borderColor.g, borderColor.b, borderColor.a });
-    m_rectShader.setVec2("rectSize", size); // rect size in pixels
-    m_rectShader.setFloat("radiusPx", borderRadius);    // corner radius in pixels
-    m_rectShader.setFloat("borderPx", borderThickness);    // border thickness in pixels
+    m_rectShader->setVec4("fillColor", { fillColor.r, fillColor.g, fillColor.b, fillColor.a });
+    m_rectShader->setVec4("borderColor", { borderColor.r, borderColor.g, borderColor.b, borderColor.a });
+    m_rectShader->setVec2("rectSize", size); // rect size in pixels
+    m_rectShader->setFloat("radiusPx", borderRadius);    // corner radius in pixels
+    m_rectShader->setFloat("borderPx", borderThickness);    // border thickness in pixels
 
 
     RenderState::enableBlending();
@@ -102,14 +106,7 @@ void engine::UIRectangle::initRenderData()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(
-        0,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        2 * sizeof(float),
-        (void*)0
-    );
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
     // Unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -118,7 +115,7 @@ void engine::UIRectangle::initRenderData()
 
 void engine::UIRectangle::clean()
 {
-    m_rectShader.clean();
+    m_rectShader->clean();
 }
 
 engine::UIRectangle::~UIRectangle()

@@ -30,7 +30,7 @@ public:
 
     void framebuffer_size_callback(int newWidth, int newHeight);
 
-    void update(Shader& shader) override;
+    void update(std::unique_ptr<ShaderBase>& shader) override;
 
     void updateUI() override;
 
@@ -41,7 +41,7 @@ private:
 
     //engine::AudioManager m_audioManager;
 
-    void drawScene(Shader& shader);
+    void drawScene(std::unique_ptr<ShaderBase>& shader);
 
     void incrementRoughness(float step);
     void incrementLightIntensity(float step);

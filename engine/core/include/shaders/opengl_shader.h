@@ -8,22 +8,17 @@
 #include <string>
 
 
-
-
 namespace engine
 {
     class OpenGLShader final : public ShaderBase
     {
     public:
-        unsigned int ID{};
-        std::string name{};
-
-        OpenGLShader() = default;
+        OpenGLShader(const std::string& name);
         ~OpenGLShader() override;
 
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath) override;
-        void init(const char* shaderName, const char* vertexPath, const char* fragmentPath, const char* geometryPath) override;
-        void init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath) override;
+        void init(const char* vertexPath, const char* fragmentPath) override;
+        void init(const char* vertexPath, const char* fragmentPath, const char* geometryPath) override;
+        void init(const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath) override;
 
         bool isValid() const override;
 

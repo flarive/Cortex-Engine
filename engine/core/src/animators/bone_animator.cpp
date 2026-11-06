@@ -121,13 +121,13 @@ void engine::BonesAnimator::update(float dt, Transform& transform)
 	calculateBoneTransform(&(std::static_pointer_cast<BoneAnimation>(m_currentAnimation)->getRootNode()), glm::mat4(1.0f));
 }
 
-void engine::BonesAnimator::draw(Shader& shader, Transform& localTransform)
+void engine::BonesAnimator::draw(std::unique_ptr<ShaderBase>& shader, Transform& localTransform)
 {
 	auto& transforms = getFinalBoneMatrices();
 
 	for (int i = 0; i < transforms.size(); ++i)
 	{
-		shader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 	}
 }
 

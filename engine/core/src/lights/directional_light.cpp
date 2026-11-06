@@ -3,6 +3,7 @@
 #include "../../include/singleton.h"
 #include "../../include/managers/log_manager.h"
 
+#include "../../include/shaders/opengl_shader.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>  // For glm::rotation and glm::eulerAngles
@@ -25,7 +26,8 @@ engine::DirectionalLight::DirectionalLight(glm::vec3 _position) : Light(_positio
 void engine::DirectionalLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader.init("light_cube", "shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    m_lightDebugShader = std::make_unique<OpenGLShader>("light_cube");
+    m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -41,26 +43,26 @@ void engine::DirectionalLight::setup()
     m_debug_cylinder.setup(matDebugLight);
 }
 
-void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::DirectionalLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
         std::string base = std::format("dirLights[{}]", m_index);
 
-        shader.use();
-        shader.setBool(std::format("{}.use", base), m_enabled);
+        shader->use();
+        shader->setBool(std::format("{}.use", base), m_enabled);
 
         //shader.setVec3(std::format("{}.position", base), m_position);
 
-        shader.setVec3(std::format("{}.ambient", base), ambient);
-        shader.setVec3(std::format("{}.diffuse", base), diffuse);
-        shader.setVec3(std::format("{}.specular", base), specular);
-        shader.setFloat(std::format("{}.intensity", base), intensity);
-        shader.setBool(std::format("{}.isShadowCaster", base), castShadow);
+        shader->setVec3(std::format("{}.ambient", base), ambient);
+        shader->setVec3(std::format("{}.diffuse", base), diffuse);
+        shader->setVec3(std::format("{}.specular", base), specular);
+        shader->setFloat(std::format("{}.intensity", base), intensity);
+        shader->setBool(std::format("{}.isShadowCaster", base), castShadow);
 
-        shader.setVec3(std::format("{}.direction", base), calculateLightDirection(m_position, target));
+        shader->setVec3(std::format("{}.direction", base), calculateLightDirection(m_position, target));
     }
 
     auto* singleton = engine::Singleton::getInstance();
@@ -84,10 +86,10 @@ void engine::DirectionalLight::draw(Shader& shader, const glm::mat4& projection,
         model = glm::scale(model, glm::vec3(0.05f, glm::length(target - m_position), 0.05f)); // scale lengthwise toward target
 
         // Pass model matrix to shader
-        m_lightDebugShader.use();
-        m_lightDebugShader.setMat4("projection", projection);
-        m_lightDebugShader.setMat4("view", view);
-        m_lightDebugShader.setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
+        m_lightDebugShader->use();
+        m_lightDebugShader->setMat4("projection", projection);
+        m_lightDebugShader->setMat4("view", view);
+        m_lightDebugShader->setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
 
         // You can pass glm::vec3(0) for rotation since model is already transformed
         auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));

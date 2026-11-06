@@ -3,11 +3,14 @@
 #include "../../include/managers/texture_manager.h"
 #include "../../include/primitives/primitive.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 #include "../../include/debug/opengl_debug.h"
 
 void engine::Skybox::setup(const std::vector<std::string>& faces)
 {
-    m_skyboxShader.init("skybox", "shaders/skybox.vert", "shaders/skybox.frag");
+    m_skyboxShader = std::make_unique<OpenGLShader>("skybox");
+    m_skyboxShader->init("shaders/skybox.vert", "shaders/skybox.frag");
 
 
     // skybox VAO
@@ -30,7 +33,7 @@ void engine::Skybox::setup(const std::vector<std::string>& faces)
 // draws the model, and thus all its meshes
 void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
 {
-    if (!m_skyboxShader.isValid()) {
+    if (!m_skyboxShader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -49,11 +52,11 @@ void engine::Skybox::draw(const glm::mat4& projection, const glm::mat4& view)
     RenderState::setDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
     RenderState::disableDepthMask();
 
-    m_skyboxShader.use();
+    m_skyboxShader->use();
     OpenGLDebug::checkGLError("shader.use.skybox");
-    m_skyboxShader.setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
-    m_skyboxShader.setMat4("projection", projection);
-    m_skyboxShader.setInt("texture_skybox", 0);
+    m_skyboxShader->setMat4("view", glm::mat4(glm::mat3(view))); // remove translation from the view matrix
+    m_skyboxShader->setMat4("projection", projection);
+    m_skyboxShader->setInt("texture_skybox", 0);
 
     // bind texture
     glActiveTexture(GL_TEXTURE0);
@@ -92,7 +95,7 @@ void engine::Skybox::clean()
 
         glDeleteTextures(1, &m_cubemapTexture);
 
-        m_skyboxShader.clean();
+        m_skyboxShader->clean();
 
         m_isSetup = false;
     }

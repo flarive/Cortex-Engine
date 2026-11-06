@@ -50,10 +50,6 @@ void engine::App::setApp(GLFWwindow* _window)
     glfwSetWindowUserPointer(_window, this);
 }
 
-void engine::App::initGLAD()
-{
-}
-
 void engine::App::initImGUI(const char* backend_version)
 {
     // Setup Dear ImGui context

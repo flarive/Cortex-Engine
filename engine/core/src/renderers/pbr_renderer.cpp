@@ -69,46 +69,46 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // shader configuration
     // --------------------
-    pbrShader.use();
-    pbrShader.setMat4("projection", projection);
-    pbrShader.setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
-    pbrShader.setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
-    pbrShader.setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
-    pbrShader.setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
-    pbrShader.setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
-    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-    pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+    pbrShader->use();
+    pbrShader->setMat4("projection", projection);
+    pbrShader->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+    pbrShader->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+    pbrShader->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
+    pbrShader->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
+    pbrShader->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
+    pbrShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    pbrShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    pbrShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    pbrShader->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShader->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
     // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-    pbrShader.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-    pbrShader.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    pbrShader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    pbrShader->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
 
     if (supportTessellation())
     {
-        pbrShaderTessellation.use();
-        pbrShaderTessellation.setMat4("projection", projection);
-        pbrShaderTessellation.setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
-        pbrShaderTessellation.setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
-        pbrShaderTessellation.setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
-        pbrShaderTessellation.setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
-        pbrShaderTessellation.setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
-        pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
-        pbrShaderTessellation.setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-        pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-        pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+        pbrShaderTessellation->use();
+        pbrShaderTessellation->setMat4("projection", projection);
+        pbrShaderTessellation->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
+        pbrShaderTessellation->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+        pbrShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        pbrShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        pbrShaderTessellation->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+        pbrShaderTessellation->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
         // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-        pbrShaderTessellation.setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-        pbrShaderTessellation.setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+        pbrShaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+        pbrShaderTessellation->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
     }
 
 
-    screenShader.use();
-    screenShader.setInt("screenTexture", 0); // Should be texture unit, not texture ID
+    screenShader->use();
+    screenShader->setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
@@ -182,9 +182,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
-    equirectangularToCubemapShader.use();
-    equirectangularToCubemapShader.setInt("equirectangularMap", 0);
-    equirectangularToCubemapShader.setMat4("projection", captureProjection);
+    equirectangularToCubemapShader->use();
+    equirectangularToCubemapShader->setInt("equirectangularMap", 0);
+    equirectangularToCubemapShader->setMat4("projection", captureProjection);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, hdrTexture);
 
@@ -193,7 +193,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     for (unsigned int i = 0; i < 6; ++i)
     {
-        equirectangularToCubemapShader.setMat4("view", captureViews[i]);
+        equirectangularToCubemapShader->setMat4("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderCube();
@@ -234,9 +234,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     // -----------------------------------------------------------------------------
-    irradianceShader.use();
-    irradianceShader.setInt("environmentMap", 0);
-    irradianceShader.setMat4("projection", captureProjection);
+    irradianceShader->use();
+    irradianceShader->setInt("environmentMap", 0);
+    irradianceShader->setMat4("projection", captureProjection);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
@@ -244,7 +244,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i)
     {
-        irradianceShader.setMat4("view", captureViews[i]);
+        irradianceShader->setMat4("view", captureViews[i]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderCube();
@@ -279,9 +279,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
     // pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
     // ----------------------------------------------------------------------------------------------------
-    prefilterShader.use();
-    prefilterShader.setInt("environmentMap", 0);
-    prefilterShader.setMat4("projection", captureProjection);
+    prefilterShader->use();
+    prefilterShader->setInt("environmentMap", 0);
+    prefilterShader->setMat4("projection", captureProjection);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
@@ -297,10 +297,10 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
         glViewport(0, 0, mipWidth, mipHeight);
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
-        prefilterShader.setFloat("roughness", roughness);
+        prefilterShader->setFloat("roughness", roughness);
         for (unsigned int i = 0; i < 6; ++i)
         {
-            prefilterShader.setMat4("view", captureViews[i]);
+            prefilterShader->setMat4("view", captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderCube();
@@ -338,7 +338,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
     glViewport(0, 0, vsize, vsize);
-    brdfShader.use();
+    brdfShader->use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderQuad();
 
@@ -361,9 +361,9 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
 
 
 
-    backgroundShader.use();
-    backgroundShader.setInt("environmentMap", U_BG_ENV); // Should be texture unit, not texture ID
-    backgroundShader.setMat4("projection", projection);
+    backgroundShader->use();
+    backgroundShader->setInt("environmentMap", U_BG_ENV); // Should be texture unit, not texture ID
+    backgroundShader->setMat4("projection", projection);
 
     // then before rendering, configure the viewport to the original framebuffer's screen dimensions
     int scrWidth{}, scrHeight{};
@@ -371,7 +371,7 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     glViewport(0, 0, scrWidth, scrHeight);
 }
 
-void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
+void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
     const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
 
@@ -398,10 +398,10 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
 
     // --- 1) SKYBOX FIRST (depth writes OFF, depth test ON) ---
     RenderState::disableDepthMask();
-    backgroundShader.use();
-    backgroundShader.setMat4("view", view);
-    backgroundShader.setMat4("projection", projection);
-    backgroundShader.setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
+    backgroundShader->use();
+    backgroundShader->setMat4("view", view);
+    backgroundShader->setMat4("projection", projection);
+    backgroundShader->setFloat("blurStrength", settings.HDRSkyboxBlurStrength);
 
     glActiveTexture(GL_TEXTURE0 + U_BG_ENV);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
@@ -412,29 +412,29 @@ void engine::PbrRenderer::loop(int width, int height, std::shared_ptr<Camera> ca
     RenderState::enableDepthMask(); // restore depth writes
 
     // --- 2) SETUP PBR SHADERS & IBL ---
-    pbrShader.use();
-    pbrShader.setMat4("projection", projection);
-    pbrShader.setMat4("view", view);
-    pbrShader.setVec3("viewPos", camera->position);
-    pbrShader.setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader.setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
-    pbrShader.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    pbrShader.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    pbrShader.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
-    pbrShader.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
+    pbrShader->use();
+    pbrShader->setMat4("projection", projection);
+    pbrShader->setMat4("view", view);
+    pbrShader->setVec3("viewPos", camera->position);
+    pbrShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader->setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
+    pbrShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    pbrShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    pbrShader->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
+    pbrShader->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
 
     if (supportTessellation())
     {
-        pbrShaderTessellation.use();
-        pbrShaderTessellation.setMat4("projection", projection);
-        pbrShaderTessellation.setMat4("view", view);
-        pbrShaderTessellation.setVec3("viewPos", camera->position);
-        pbrShaderTessellation.setFloat("material.shadowIntensity", settings.shadowIntensity);
-        pbrShaderTessellation.setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
-        pbrShaderTessellation.setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-        pbrShaderTessellation.setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-        pbrShaderTessellation.setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
-        pbrShaderTessellation.setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
+        pbrShaderTessellation->use();
+        pbrShaderTessellation->setMat4("projection", projection);
+        pbrShaderTessellation->setMat4("view", view);
+        pbrShaderTessellation->setVec3("viewPos", camera->position);
+        pbrShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
+        pbrShaderTessellation->setInt("material.shadowCalculationMethod", (int)settings.shadowCalculationMethod);
+        pbrShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        pbrShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        pbrShaderTessellation->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity);
+        pbrShaderTessellation->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity);
     }
 
     // Bind IBL + LTC
@@ -500,8 +500,8 @@ void engine::PbrRenderer::extractBloomBrightPass(float bloomThreshold)
 
     RenderState::disableDepthTest();
 
-    bloomBrightExtractionShader.use();
-	bloomBrightExtractionShader.setFloat("bloomThreshold", bloomThreshold); // or 2.0f, depending on your scene's brightness
+    bloomBrightExtractionShader->use();
+	bloomBrightExtractionShader->setFloat("bloomThreshold", bloomThreshold); // or 2.0f, depending on your scene's brightness
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
@@ -524,8 +524,8 @@ void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
 
         RenderState::disableDepthTest();
 
-        bloomBlurShader.use();
-        bloomBlurShader.setBool("horizontal", horizontal);
+        bloomBlurShader->use();
+        bloomBlurShader->setBool("horizontal", horizontal);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, firstIteration ? m_bloomBrightTexture : m_pingPongColorBuffer[!horizontal]);
@@ -545,16 +545,27 @@ void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
 void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
-    pbrShader.init("pbr", "shaders/renderer/pbr/pbr.vert", "shaders/renderer/pbr/pbr.frag");
-    pbrShaderTessellation.init("pbrTessellation", "shaders/renderer/pbr/pbr.vert", "shaders/renderer/shared/height.tcs", "shaders/renderer/shared/height.tes", nullptr, "shaders/renderer/pbr/pbr.frag");
+    pbrShader = std::make_unique<OpenGLShader>("pbr");
+    pbrShader->init("shaders/renderer/pbr/pbr.vert", "shaders/renderer/pbr/pbr.frag");
+    
+    pbrShaderTessellation = std::make_unique<OpenGLShader>("pbrTessellation");
+    pbrShaderTessellation->init("shaders/renderer/pbr/pbr.vert", "shaders/renderer/shared/height.tcs", "shaders/renderer/shared/height.tes", nullptr, "shaders/renderer/pbr/pbr.frag");
 
-    equirectangularToCubemapShader.init("equirectangularToCubemapShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/equirectangular_to_cubemap.frag");
-    irradianceShader.init("irradianceShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/irradiance_convolution.frag");
-    prefilterShader.init("prefilterShader", "shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/prefilter.frag");
-    brdfShader.init("brdfShader", "shaders/renderer/pbr/brdf.vert", "shaders/renderer/pbr/brdf.frag");
+    equirectangularToCubemapShader = std::make_unique<OpenGLShader>("equirectangularToCubemapShader");
+    equirectangularToCubemapShader->init("shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/equirectangular_to_cubemap.frag");
+    
+    irradianceShader = std::make_unique<OpenGLShader>("irradianceShader");
+    irradianceShader->init("shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/irradiance_convolution.frag");
+    
+    prefilterShader = std::make_unique<OpenGLShader>("prefilterShader");
+    prefilterShader->init("shaders/renderer/pbr/pbr_cubemap.vert", "shaders/renderer/pbr/prefilter.frag");
+    
+    brdfShader = std::make_unique<OpenGLShader>("brdfShader");
+    brdfShader->init("shaders/renderer/pbr/brdf.vert", "shaders/renderer/pbr/brdf.frag");
 
     // HDR skybox shader
-    backgroundShader.init("background", "shaders/renderer/pbr/pbr_background.vert", "shaders/renderer/pbr/pbr_background.frag");
+    backgroundShader = std::make_unique<OpenGLShader>("background");
+    backgroundShader->init("shaders/renderer/pbr/pbr_background.vert", "shaders/renderer/pbr/pbr_background.frag");
 
     // shared shaders
     Renderer::loadShaders();
@@ -567,12 +578,12 @@ void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigne
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    auto setCounts = [this](Shader& sh) {
-        sh.use();
-        sh.setInt("pointLightsCount", m_pointLightCount);
-        sh.setInt("dirLightsCount", m_dirLightCount);
-        sh.setInt("spotLightsCount", m_spotLightCount);
-        sh.setInt("areaLightsCount", m_areaLightCount);
+    auto setCounts = [this](std::unique_ptr<ShaderBase>& sh) {
+        sh->use();
+        sh->setInt("pointLightsCount", m_pointLightCount);
+        sh->setInt("dirLightsCount", m_dirLightCount);
+        sh->setInt("spotLightsCount", m_spotLightCount);
+        sh->setInt("areaLightsCount", m_areaLightCount);
         };
 
     setCounts(pbrShader);
@@ -642,14 +653,14 @@ void engine::PbrRenderer::initBloomBuffers(int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    bloomBrightExtractionShader.use();
-    bloomBrightExtractionShader.setInt("screenTexture", 0);
+    bloomBrightExtractionShader->use();
+    bloomBrightExtractionShader->setInt("screenTexture", 0);
 
-    bloomBlurShader.use();
-    bloomBlurShader.setInt("image", 0);
+    bloomBlurShader->use();
+    bloomBlurShader->setInt("image", 0);
 }
 
-engine::Shader& engine::PbrRenderer::getShader()
+std::unique_ptr<engine::ShaderBase>& engine::PbrRenderer::getShader()
 {
     return pbrShader;
 }
@@ -661,8 +672,8 @@ void engine::PbrRenderer::clean()
     logger.info("Cleaning up PBR renderer resources");
     
     // delete shaders
-    pbrShader.clean();
-    backgroundShader.clean();
+    pbrShader->clean();
+    backgroundShader->clean();
 
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);

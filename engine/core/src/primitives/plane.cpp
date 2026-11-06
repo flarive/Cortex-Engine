@@ -79,14 +79,14 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
     return Primitive::generatePlaneVertices(m_uvScale, m_flipNormals);
 }
 
-void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Plane::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
     
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
-    if (!m_material || !shader.isValid()) {
+    if (!m_material || !shader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -101,7 +101,7 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
         return;
     }
 
-    shader.use();
+    shader->use();
     OpenGLDebug::checkGLError("shader.use.plane");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
@@ -121,15 +121,15 @@ void engine::Plane::draw(Shader& shader, const glm::mat4& projection, const glm:
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader.setMat4("model", transformMatrix);
+    shader->setMat4("model", transformMatrix);
 
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader.setBool("hasTangents", true);
-        shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", isTessellated());
+        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader->setBool("hasTangents", true);
+        shader->setBool("isAnimated", false);
+        shader->setBool("isTessellated", isTessellated());
     }
 
 

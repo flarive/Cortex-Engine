@@ -82,11 +82,11 @@ std::vector<engine::Vertex> engine::Billboard::generateVertices()
     return generateBillboardVertices(m_uvScale);
 }
 
-void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Billboard::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
-    if (!m_material || !shader.isValid()) {
+    if (!m_material || !shader->isValid()) {
         std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
         return;
     }
@@ -101,7 +101,7 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
         return;
     }
 
-    shader.use();
+    shader->use();
     OpenGLDebug::checkGLError("shader.use.billboard");
 
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
@@ -140,14 +140,14 @@ void engine::Billboard::draw(Shader& shader, const glm::mat4& projection, const 
     billboardModel = glm::scale(billboardModel, getScale());
 
     // Pass the billboard's model matrix to the shader
-    shader.setMat4("model", billboardModel);
+    shader->setMat4("model", billboardModel);
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
-        shader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader.setBool("hasTangents", true);
-        shader.setBool("isAnimated", false);
-        shader.setBool("isTessellated", isTessellated());
+        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
+        shader->setBool("hasTangents", true);
+        shader->setBool("isAnimated", false);
+        shader->setBool("isTessellated", isTessellated());
     }
 
     // Send to GPU

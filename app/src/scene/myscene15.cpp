@@ -281,7 +281,7 @@ void MyScene15::framebuffer_size_callback(int newWidth, int newHeight)
     Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene15::update(Shader& shader)
+void MyScene15::update(std::unique_ptr<ShaderBase>& shader)
 {
     (void)shader;   //Do nothing
 }

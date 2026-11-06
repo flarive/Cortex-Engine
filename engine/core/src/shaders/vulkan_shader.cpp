@@ -14,33 +14,33 @@
 #include <filesystem>
 #include <stdexcept>
 
+
+engine::VulkanShader::VulkanShader(const std::string& name) : ShaderBase(name)
+{
+}
+
 /// <summary>
 /// OpenGL simple pipeline
 /// VS => FS
 /// </summary>
-void engine::VulkanShader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
+void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath)
 {
-    name = shaderName;
-
 }
 
 /// <summary>
 /// OpenGL pipeline without tessellation
 /// VS => (optional GS) => FS
 /// </summary>
-void engine::VulkanShader::init(const char* shaderName, const char* vertexPath, const char* geometryPath, const char* fragmentPath)
+void engine::VulkanShader::init(const char* vertexPath, const char* geometryPath, const char* fragmentPath)
 {
-    name = shaderName;
 }
 
 /// <summary>
 /// OpenGL pipeline with tessellation
 /// VS => TCS => TES => (optional GS) => FS
 /// </summary>
-void engine::VulkanShader::init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath)
+void engine::VulkanShader::init(const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath)
 {
-    name = shaderName;
-
 }
 
 bool engine::VulkanShader::isValid() const

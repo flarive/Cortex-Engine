@@ -125,7 +125,7 @@ void MyScene10::framebuffer_size_callback(int newWidth, int newHeight)
     Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene10::update(Shader& shader)
+void MyScene10::update(std::unique_ptr<ShaderBase>& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -198,7 +198,7 @@ void MyScene10::clean()
     // clean up any resources
 }
 
-void MyScene10::drawScene(Shader& shader)
+void MyScene10::drawScene(std::unique_ptr<ShaderBase>& shader)
 {
     (void)shader;   //Do nothing
 }

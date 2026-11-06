@@ -6,6 +6,8 @@
 #include "../../include/managers/log_manager.h"
 #include "../../include/debug/opengl_debug.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 const float M_PI_F = 3.1415927f;
 
 
@@ -43,9 +45,14 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 	Primitive::setMaterial(material);
 	m_uvScale = uv.getUvScale();
 
-	m_shaderSourceBasic.init("shaderSourceBasic", "shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
-	m_shaderSourceGeometry.init("shaderSourceGeometry", "shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.geom", "shaders/ParticleSourceGeometry.frag");
-	m_shaderSourceInstanced.init("shaderSourceInstanced", "shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
+	m_shaderSourceBasic = std::make_unique<OpenGLShader>("shaderSourceBasic");
+	m_shaderSourceBasic->init("shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
+	
+	m_shaderSourceGeometry = std::make_unique<OpenGLShader>("shaderSourceGeometry");
+	m_shaderSourceGeometry->init("shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.geom", "shaders/ParticleSourceGeometry.frag");
+	
+	m_shaderSourceInstanced = std::make_unique<OpenGLShader>("shaderSourceInstanced");
+	m_shaderSourceInstanced->init("shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
 	if (material && material->hasTextureMap())
 		material->loadTexturesAsync(true);
@@ -147,17 +154,17 @@ void engine::ParticleSystem::update()
 	}
 }
 
-void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::ParticleSystem::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
 	if (!m_isEnabled)
 		return;
 
-	ShaderType type = shader.getShaderType();
+	ShaderType type = shader->getShaderType();
 	if (type != ShaderType::BlinnPhong && type != ShaderType::PBR) {
 		return;
 	}
 
-	if (!m_material || !shader.isValid()) {
+	if (!m_material || !shader->isValid()) {
 		std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
 		return;
 	}
@@ -190,9 +197,9 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 			return;
 		}
 
-		m_shaderSourceBasic.setMat4("model", transformMatrix);
-		m_shaderSourceBasic.setMat4("view", view);
-		m_shaderSourceBasic.setMat4("projection", projection);
+		m_shaderSourceBasic->setMat4("model", transformMatrix);
+		m_shaderSourceBasic->setMat4("view", view);
+		m_shaderSourceBasic->setMat4("projection", projection);
 	}
 	else if (m_type == ParticleSystemType::geometry)
 	{
@@ -201,10 +208,10 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 			return;
 		}
 
-		m_shaderSourceGeometry.setMat4("model", transformMatrix);
-		m_shaderSourceGeometry.setMat4("view", view);
-		m_shaderSourceGeometry.setMat4("projection", projection);
-		m_shaderSourceGeometry.setFloat("squareSize", m_squareSize);
+		m_shaderSourceGeometry->setMat4("model", transformMatrix);
+		m_shaderSourceGeometry->setMat4("view", view);
+		m_shaderSourceGeometry->setMat4("projection", projection);
+		m_shaderSourceGeometry->setFloat("squareSize", m_squareSize);
 	}
 	else if (m_type == ParticleSystemType::instanced)
 	{
@@ -213,9 +220,9 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 			return;
 		}
 
-		m_shaderSourceInstanced.setMat4("model", transformMatrix);
-		m_shaderSourceInstanced.setMat4("view", view);
-		m_shaderSourceInstanced.setMat4("projection", projection);
+		m_shaderSourceInstanced->setMat4("model", transformMatrix);
+		m_shaderSourceInstanced->setMat4("view", view);
+		m_shaderSourceInstanced->setMat4("projection", projection);
 	}
 
 	RenderState::disableDepthMask();
@@ -268,7 +275,7 @@ void engine::ParticleSystem::draw(Shader& shader, const glm::mat4& projection, c
 	glDepthMask(GL_TRUE);
 
 	// important !!!
-	shader.use();
+	shader->use();
 }
 
 void engine::ParticleSystem::basicDataPrep()

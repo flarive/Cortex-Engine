@@ -27,7 +27,7 @@ void engine::AnimatorComponent::update(float deltaTime, Transform& transform)
 	m_animator->update(deltaTime, transform);
 }
 
-void engine::AnimatorComponent::draw(const glm::mat4& projection, const glm::mat4& view, Shader& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::AnimatorComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<ShaderBase>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	m_animator->draw(shader, localTransform);
 }

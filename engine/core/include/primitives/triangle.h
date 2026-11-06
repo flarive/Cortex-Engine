@@ -41,7 +41,7 @@ namespace engine
         void setHeight(float height) { m_height = height; }
 
 
-        void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
+        void draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
 
         std::vector<Vertex> generateVertices() override;
 

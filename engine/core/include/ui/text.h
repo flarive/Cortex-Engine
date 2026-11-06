@@ -28,12 +28,12 @@ namespace engine
 
         glm::vec3 measure(const std::string& text, float scale = 1.0f) const;
 
-        const Shader& getTextShader() { return m_textShader; }
+        const std::unique_ptr<ShaderBase>& getTextShader() { return m_textShader; }
 
         void clean() override;
 
     private:
         std::map<GLchar, Character> m_characters{};
-        static Shader m_textShader; // Shared across all instances
+        static std::unique_ptr<ShaderBase> m_textShader; // Shared across all instances
     };
 }

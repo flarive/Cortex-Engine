@@ -14,14 +14,18 @@
 #include <filesystem>
 #include <stdexcept>
 
+
+engine::OpenGLShader::OpenGLShader(const std::string& name) : ShaderBase(name)
+{
+}
+
+
 /// <summary>
 /// OpenGL simple pipeline
 /// VS => FS
 /// </summary>
-void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, const char* fragmentPath)
+void engine::OpenGLShader::init(const char* vertexPath, const char* fragmentPath)
 {
-    name = shaderName;
-
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
     std::string fragmentCode{};
@@ -33,7 +37,7 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     }
     catch (const std::exception& e)
     {
-        logger.error("Shader {}: {}", shaderName, e.what());
+        logger.error("Shader {}: {}", m_name, e.what());
         throw;
     }
 
@@ -54,15 +58,15 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
     // shader Program
-    ID = glCreateProgram();
-    glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
-    glLinkProgram(ID);
-    checkCompileErrors(ID, "PROGRAM");
+    m_ID = glCreateProgram();
+    glAttachShader(m_ID, vertex);
+    glAttachShader(m_ID, fragment);
+    glLinkProgram(m_ID);
+    checkCompileErrors(m_ID, "PROGRAM");
 
     m_initialized = true;
 
-    logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
+    logger.info("Shader program compiled and linked: {} (ID: {})", m_name, m_ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -73,10 +77,8 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
 /// OpenGL pipeline without tessellation
 /// VS => (optional GS) => FS
 /// </summary>
-void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, const char* geometryPath, const char* fragmentPath)
+void engine::OpenGLShader::init(const char* vertexPath, const char* geometryPath, const char* fragmentPath)
 {
-    name = shaderName;
-
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode{};
     std::string fragmentCode{};
@@ -112,7 +114,7 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     catch (std::ifstream::failure& e)
     {
         const char* error = e.what();
-        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
+        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", m_name, error);
         throw std::runtime_error("Shader file read failed");
     }
 
@@ -137,16 +139,16 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     glCompileShader(geometry);
     checkCompileErrors(geometry, "GEOMETRY");
     // shader Program
-    ID = glCreateProgram();
-    glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
-    glAttachShader(ID, geometry);
-    glLinkProgram(ID);
-    checkCompileErrors(ID, "PROGRAM");
+    m_ID = glCreateProgram();
+    glAttachShader(m_ID, vertex);
+    glAttachShader(m_ID, fragment);
+    glAttachShader(m_ID, geometry);
+    glLinkProgram(m_ID);
+    checkCompileErrors(m_ID, "PROGRAM");
 
     m_initialized = true;
 
-    logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
+    logger.info("Shader program compiled and linked: {} (ID: {})", m_name, m_ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -158,10 +160,8 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
 /// OpenGL pipeline with tessellation
 /// VS => TCS => TES => (optional GS) => FS
 /// </summary>
-void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath)
+void engine::OpenGLShader::init(const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath)
 {
-    name = shaderName;
-
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -221,7 +221,7 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     catch (std::ifstream::failure& e)
     {
         const char* error = e.what();
-        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", shaderName, error);
+        logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", m_name, error);
         throw std::runtime_error("Shader file read failed");
     }
 
@@ -274,21 +274,21 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
     checkCompileErrors(fragment, "FRAGMENT");
 
     // shader Program
-    ID = glCreateProgram();
-    glAttachShader(ID, vertex);
+    m_ID = glCreateProgram();
+    glAttachShader(m_ID, vertex);
     if (tessControlPath != nullptr)
-        glAttachShader(ID, tessControl);
+        glAttachShader(m_ID, tessControl);
     if (tessEvalPath != nullptr)
-        glAttachShader(ID, tessEval);
+        glAttachShader(m_ID, tessEval);
     if (geometryPath != nullptr)
-        glAttachShader(ID, geometry);
-    glAttachShader(ID, fragment);
-    glLinkProgram(ID);
-    checkCompileErrors(ID, "PROGRAM");
+        glAttachShader(m_ID, geometry);
+    glAttachShader(m_ID, fragment);
+    glLinkProgram(m_ID);
+    checkCompileErrors(m_ID, "PROGRAM");
 
     m_initialized = true;
 
-    logger.info("Shader program compiled and linked: {} (ID: {})", name, ID);
+    logger.info("Shader program compiled and linked: {} (ID: {})", m_name, m_ID);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
@@ -303,20 +303,20 @@ void engine::OpenGLShader::init(const char* shaderName, const char* vertexPath, 
 
 bool engine::OpenGLShader::isValid() const
 {
-    if (ID == 0) {
+    if (m_ID == 0) {
         //logger.error("Shader program ID is 0. Shader not created.");
         return false;
     }
 
     GLint linkStatus = 0;
-    glGetProgramiv(ID, GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(m_ID, GL_LINK_STATUS, &linkStatus);
 
     if (linkStatus == GL_FALSE) {
         GLint logLength = 0;
-        glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &logLength);
+        glGetProgramiv(m_ID, GL_INFO_LOG_LENGTH, &logLength);
 
         std::vector<char> log(logLength);
-        glGetProgramInfoLog(ID, logLength, nullptr, log.data());
+        glGetProgramInfoLog(m_ID, logLength, nullptr, log.data());
 
         if (!log.empty())
         {
@@ -334,7 +334,7 @@ bool engine::OpenGLShader::isValid() const
 void engine::OpenGLShader::use() const
 {
     if (isValid()) {
-        glUseProgram(ID);
+        glUseProgram(m_ID);
     }
     else {
         std::cerr << "Shader::use(): Shader is not valid !" << std::endl;
@@ -358,7 +358,7 @@ bool engine::OpenGLShader::checkShaderUniformExists(unsigned int shaderID, const
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setBool(const std::string& name, bool value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform1i(uniformLoc, (int)value);
@@ -366,13 +366,13 @@ void engine::OpenGLShader::setBool(const std::string& name, bool value) const
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setInt(const std::string& name, int value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform1i(uniformLoc, value);
@@ -380,13 +380,13 @@ void engine::OpenGLShader::setInt(const std::string& name, int value) const
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setFloat(const std::string& name, float value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform1f(uniformLoc, value);
@@ -394,13 +394,13 @@ void engine::OpenGLShader::setFloat(const std::string& name, float value) const
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setVec2(const std::string& name, const glm::vec2& value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform2fv(uniformLoc, 1, &value[0]);
@@ -408,12 +408,12 @@ void engine::OpenGLShader::setVec2(const std::string& name, const glm::vec2& val
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 void engine::OpenGLShader::setVec2(const std::string& name, float x, float y) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform2f(uniformLoc, x, y);
@@ -421,13 +421,13 @@ void engine::OpenGLShader::setVec2(const std::string& name, float x, float y) co
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setVec3(const std::string& name, const glm::vec3& value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform3fv(uniformLoc, 1, &value[0]);
@@ -435,12 +435,12 @@ void engine::OpenGLShader::setVec3(const std::string& name, const glm::vec3& val
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 void engine::OpenGLShader::setVec3(const std::string& name, float x, float y, float z) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform3f(uniformLoc, x, y, z);
@@ -448,13 +448,13 @@ void engine::OpenGLShader::setVec3(const std::string& name, float x, float y, fl
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setVec4(const std::string& name, const glm::vec4& value) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform4fv(uniformLoc, 1, &value[0]);
@@ -462,12 +462,12 @@ void engine::OpenGLShader::setVec4(const std::string& name, const glm::vec4& val
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 void engine::OpenGLShader::setVec4(const std::string& name, float x, float y, float z, float w)
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniform4f(uniformLoc, x, y, z, w);
@@ -475,13 +475,13 @@ void engine::OpenGLShader::setVec4(const std::string& name, float x, float y, fl
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setMat2(const std::string& name, const glm::mat2& mat) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniformMatrix2fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
@@ -489,13 +489,13 @@ void engine::OpenGLShader::setMat2(const std::string& name, const glm::mat2& mat
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setMat3(const std::string& name, const glm::mat3& mat) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniformMatrix3fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
@@ -503,13 +503,13 @@ void engine::OpenGLShader::setMat3(const std::string& name, const glm::mat3& mat
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 // ------------------------------------------------------------------------
 void engine::OpenGLShader::setMat4(const std::string& name, const glm::mat4& mat) const
 {
-    GLint uniformLoc = glGetUniformLocation(ID, name.c_str());
+    GLint uniformLoc = glGetUniformLocation(m_ID, name.c_str());
     if (uniformLoc != -1)
     {
         glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, &mat[0][0]);
@@ -517,20 +517,20 @@ void engine::OpenGLShader::setMat4(const std::string& name, const glm::mat4& mat
     }
     else
     {
-        logger.error("Uniform '{}' not found in shader {}", name, ID);
+        logger.error("Uniform '{}' not found in shader {}", name, m_ID);
     }
 }
 
 void engine::OpenGLShader::clean()
 {
-    if (ID > 0)
+    if (m_ID > 0)
     {
         if (isValid()) {
-            glDeleteProgram(ID);
+            glDeleteProgram(m_ID);
         }
-        logger.info("Shader program {} (ID: {}) deleted", name, ID);
-        ID = 0;
-        name.clear();
+        logger.info("Shader program {} (ID: {}) deleted", m_name, m_ID);
+        m_ID = 0;
+        m_name.clear();
         m_initialized = false;
     }
 }
@@ -564,7 +564,7 @@ void engine::OpenGLShader::checkCompileErrors(unsigned int shader, std::string t
 void engine::OpenGLShader::getActiveUniformsList(const std::string& uniformName)
 {
     GLint count = 0;
-    glGetProgramInterfaceiv(ID, GL_UNIFORM, GL_ACTIVE_RESOURCES, &count);
+    glGetProgramInterfaceiv(m_ID, GL_UNIFORM, GL_ACTIVE_RESOURCES, &count);
 
     // Query a few helpful properties.
     const GLenum props[] = {
@@ -584,7 +584,7 @@ void engine::OpenGLShader::getActiveUniformsList(const std::string& uniformName)
     for (GLint i = 0; i < count; ++i)
     {
         GLint values[sizeof(props) / sizeof(props[0])] = {};
-        glGetProgramResourceiv(ID, GL_UNIFORM, i,
+        glGetProgramResourceiv(m_ID, GL_UNIFORM, i,
             static_cast<GLsizei>(std::size(props)),
             props,
             static_cast<GLsizei>(std::size(values)),
@@ -599,7 +599,7 @@ void engine::OpenGLShader::getActiveUniformsList(const std::string& uniformName)
 
         // Get the name
         std::string uname(nameLen, '\0');
-        glGetProgramResourceName(ID, GL_UNIFORM, i, nameLen, nullptr, uname.data());
+        glGetProgramResourceName(m_ID, GL_UNIFORM, i, nameLen, nullptr, uname.data());
         if (!uname.empty() && uname.back() == '\0') uname.pop_back();
 
         if (uname != uniformName)

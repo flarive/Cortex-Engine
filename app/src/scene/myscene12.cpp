@@ -177,7 +177,7 @@ void MyScene12::framebuffer_size_callback(int newWidth, int newHeight)
     Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene12::update(Shader& shader)
+void MyScene12::update(std::unique_ptr<ShaderBase>& shader)
 {
     // draw scene and UI in framebuffer
     (void)shader;   //Do nothing

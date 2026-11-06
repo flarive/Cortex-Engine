@@ -18,13 +18,13 @@ namespace engine
         // Renders a defined quad textured with given sprite
         void draw(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, const Color& color = Colors::White);
 
-        const Shader& getSpriteShader() { return m_spriteShader; }
+        const std::unique_ptr<ShaderBase>& getSpriteShader() { return m_spriteShader; }
 
         void clean() override;
 
     private:
         std::string m_filepath{};
-        static Shader m_spriteShader; // Shared across all instances
+        static std::unique_ptr<ShaderBase> m_spriteShader; // Shared across all instances
         unsigned int m_texture_id{};
         // Initializes and configures the quad's buffer and vertex attributes
         void initRenderData();

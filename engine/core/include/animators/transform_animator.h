@@ -41,7 +41,7 @@ namespace engine
 
 		void init(Transform& transform) override;
 		void update(float dt, Transform& transform) override;
-		void draw(Shader& shader, Transform& localTransform) override;
+		void draw(std::unique_ptr<ShaderBase>& shader, Transform& localTransform) override;
 
 		void reSetup() override;
 

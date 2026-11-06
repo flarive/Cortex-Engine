@@ -40,7 +40,7 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     RenderState::enableWireframe();
 }
 
-void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(Shader&, Shader&)> update, std::function<void()> updateUI)
+void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
     //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
 
@@ -54,13 +54,13 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
 
     updateEditorPropertySettings(width, height);
 
-    phongShader.use();
-    phongShader.setMat4("projection", projection);
-    phongShader.setMat4("view", view);
-    phongShader.setVec3("viewPos", camera->position);
-    phongShader.setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
-    phongShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    phongShader.setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    phongShader->use();
+    phongShader->setMat4("projection", projection);
+    phongShader->setMat4("view", view);
+    phongShader->setVec3("viewPos", camera->position);
+    phongShader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
+    phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
     
 
     // update user stuffs
@@ -79,7 +79,8 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
 void engine::PhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    phongShader.init("blinnphong", "shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
+    phongShader = std::make_unique<OpenGLShader>("blinnphong");
+    phongShader->init("shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
 
     // shared shaders
     Renderer::loadShaders();
@@ -95,7 +96,7 @@ void engine::PhongRenderer::setLightsCount(unsigned short pointLightCount, unsig
     // not really needed
 }
 
-engine::Shader& engine::PhongRenderer::getShader()
+std::unique_ptr<engine::ShaderBase>& engine::PhongRenderer::getShader()
 {
     return phongShader;
 }
@@ -107,7 +108,7 @@ void engine::PhongRenderer::clean()
     logger.info("Cleaning up Phong renderer resources");
     
     // delete shaders
-    phongShader.clean();
+    phongShader->clean();
 }
 
 engine::PhongRenderer::~PhongRenderer()

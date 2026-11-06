@@ -4,7 +4,7 @@
 
 #include "../../include/managers/log_manager.h"
 
-engine::Shader engine::UIText::m_textShader; // Define the static member
+std::unique_ptr<engine::ShaderBase> engine::UIText::m_textShader; // Define the static member
 
 
 engine::UIText::UIText()
@@ -19,16 +19,17 @@ void engine::UIText::setup(GLFWwindow* window, const std::string& fontPath, int 
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
 
+    if (!m_textShader)
+    {
+        m_textShader = std::make_unique<OpenGLShader>("UITextShader");
 
-    if (!m_textShader.isInitialized()) {
-        m_textShader.init("UITextShader", "shaders/ui/text.vert", "shaders/ui/text.frag");
+        if (!m_textShader->isInitialized())
+            m_textShader->init("shaders/ui/text.vert", "shaders/ui/text.frag");
     }
 
-
-
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
-    m_textShader.use();
-    m_textShader.setMat4("projection", projection2);
+    m_textShader->use();
+    m_textShader->setMat4("projection", projection2);
 
     // FreeType
     // --------
@@ -127,7 +128,7 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     if (!m_isEnabled)
         return;
 
-    if (!m_textShader.isValid()) {
+    if (!m_textShader->isValid()) {
         return;
     }
 
@@ -140,12 +141,12 @@ void engine::UIText::draw(const std::string& text, float x, float y, float scale
     glfwGetWindowSize(m_window, &width, &height);
 
     // activate corresponding render state	
-    m_textShader.use();
+    m_textShader->use();
 
     // update for fullscreen toggle
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
-    m_textShader.setMat4("projection", projection);
-    m_textShader.setVec3("textColor", glm::vec3(color.r, color.g, color.b));
+    m_textShader->setMat4("projection", projection);
+    m_textShader->setVec3("textColor", glm::vec3(color.r, color.g, color.b));
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -230,7 +231,7 @@ void engine::UIText::clean()
     }
     m_characters.clear();
 
-    m_textShader.clean();
+    m_textShader->clean();
 }
 
 engine::UIText::~UIText()

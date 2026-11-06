@@ -5,7 +5,7 @@
 
 #include <tuple>
 
-engine::Shader engine::UISprite::m_spriteShader; // Define the static member
+std::unique_ptr<engine::ShaderBase> engine::UISprite::m_spriteShader; // Define the static member
 
 engine::UISprite::UISprite()
 {
@@ -19,13 +19,18 @@ void engine::UISprite::setup(GLFWwindow* window, const std::string& filepath)
     int width{ 0 }, height{ 0 };
     glfwGetWindowSize(m_window, &width, &height);
     
-    if (!m_spriteShader.isInitialized()) {
-        m_spriteShader.init("UISpriteShader", "shaders/ui/sprite.vert", "shaders/ui/sprite.frag");
+    if (!m_spriteShader)
+    {
+        m_spriteShader = std::make_unique<OpenGLShader>("UISpriteShader");
+
+        if (!m_spriteShader->isInitialized())
+            m_spriteShader->init("shaders/ui/sprite.vert", "shaders/ui/sprite.frag");
     }
+
     
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
-    m_spriteShader.use();
-    m_spriteShader.setMat4("projection", projection2);
+    m_spriteShader->use();
+    m_spriteShader->setMat4("projection", projection2);
 
     TextureData texData = TextureManager::loadAndUploadTextureExtended(filepath, TextureFlag_None);
     
@@ -41,7 +46,7 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
     if (!m_isEnabled)
         return;
 
-    if (!m_spriteShader.isValid()) {
+    if (!m_spriteShader->isValid()) {
         return;
     }
 
@@ -54,10 +59,10 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
     glfwGetWindowSize(m_window, &width, &height);
     
     // prepare transformations
-    m_spriteShader.use();
+    m_spriteShader->use();
 
     glm::mat4 projection2 = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f);
-    m_spriteShader.setMat4("projection", projection2);
+    m_spriteShader->setMat4("projection", projection2);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
@@ -68,10 +73,10 @@ void engine::UISprite::draw(glm::vec2 position, glm::vec2 size, float rotate, co
 
     model = glm::scale(model, glm::vec3(size, 1.0f)); // last scale
 
-    m_spriteShader.setMat4("model", model);
+    m_spriteShader->setMat4("model", model);
 
     // render textured quad
-    m_spriteShader.setVec3("spriteColor", glm::vec3(color.r, color.g, color.b));
+    m_spriteShader->setVec3("spriteColor", glm::vec3(color.r, color.g, color.b));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture_id);
@@ -123,7 +128,7 @@ void engine::UISprite::clean()
 {
     glDeleteTextures(1, &m_texture_id);
 
-    m_spriteShader.clean();
+    m_spriteShader->clean();
 }
 
 engine::UISprite::~UISprite()

@@ -48,7 +48,7 @@ void engine::TransformAnimator::update(float dt, Transform& transform)
 	}
 }
 
-void engine::TransformAnimator::draw(Shader& shader, Transform& localTransform)
+void engine::TransformAnimator::draw(std::unique_ptr<ShaderBase>& shader, Transform& localTransform)
 {
 }
 

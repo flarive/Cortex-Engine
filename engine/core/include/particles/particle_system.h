@@ -52,7 +52,7 @@ namespace engine
 		void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
 		void update();
-		void draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
+		void draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
 		void clean() override;
 
 		std::vector<engine::Vertex> generateVertices() override;
@@ -168,9 +168,9 @@ namespace engine
 
 
 		//std::shared_ptr<Material> m_material{};
-		Shader m_shaderSourceBasic{};
-		Shader m_shaderSourceGeometry{};
-		Shader m_shaderSourceInstanced{};
+		std::unique_ptr<ShaderBase> m_shaderSourceBasic{};
+		std::unique_ptr<ShaderBase> m_shaderSourceGeometry{};
+		std::unique_ptr<ShaderBase> m_shaderSourceInstanced{};
 
 		/*float m_uvScale{ 1.0f };
 

@@ -28,7 +28,7 @@ public:
     ~MyScene2() override;
 
     void init() override;
-    void update(Shader& shader) override;
+    void update(std::unique_ptr<ShaderBase>& shader) override;
     void updateUI() override;
     void clean() override;
 

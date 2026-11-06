@@ -5,6 +5,8 @@
 #include "../../include/singleton.h"
 #include "../../include/misc/colors.h"
 
+#include "../../include/shaders/opengl_shader.h"
+
 
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -35,7 +37,8 @@ engine::AreaLight::AreaLight(const std::shared_ptr<engine::Primitive>& primitive
 
 void engine::AreaLight::setup()
 {
-    shaderLightPlane.init("light_plane", "shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
+    shaderLightPlane = std::make_unique<OpenGLShader>("light_plane");
+    shaderLightPlane->init("shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
 
 
     // Check for OpenGL errors
@@ -72,9 +75,9 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 }
 
-void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::AreaLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
-    ShaderType type = shader.getShaderType();
+    ShaderType type = shader->getShaderType();
 
     // Calculate the light's points
     glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
@@ -86,8 +89,8 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
     {
         std::string base = std::format("areaLights[{}]", m_index);
 
-        shader.use();
-        shader.setBool(std::format("{}.use", base), m_enabled);
+        shader->use();
+        shader->setBool(std::format("{}.use", base), m_enabled);
 
         // Send the light's points to the shader
         std::string str_pos = std::format("{}.points", base);
@@ -95,26 +98,26 @@ void engine::AreaLight::draw(Shader& shader, const glm::mat4& projection, const 
         std::string str_int = std::format("{}.intensity", base);
         std::string str_two = std::format("{}.twoSided", base);
 
-        shader.setVec3((str_pos + "[0]").c_str(), p0);
-        shader.setVec3((str_pos + "[1]").c_str(), p1);
-        shader.setVec3((str_pos + "[2]").c_str(), p2);
-        shader.setVec3((str_pos + "[3]").c_str(), p3);
+        shader->setVec3((str_pos + "[0]").c_str(), p0);
+        shader->setVec3((str_pos + "[1]").c_str(), p1);
+        shader->setVec3((str_pos + "[2]").c_str(), p2);
+        shader->setVec3((str_pos + "[3]").c_str(), p3);
 
 
-        shader.setVec3(str_col.c_str(), color);
-        shader.setFloat(str_int.c_str(), intensity);
-        shader.setInt(str_two.c_str(), twoSided ? 1 : 0);
+        shader->setVec3(str_col.c_str(), color);
+        shader->setFloat(str_int.c_str(), intensity);
+        shader->setInt(str_two.c_str(), twoSided ? 1 : 0);
 
 
         glm::vec3 temp = Colors::SlateGray;
-        shader.setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
+        shader->setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
     }
 
-    shaderLightPlane.use();
-    shaderLightPlane.setMat4("model", transformMatrix);
-    shaderLightPlane.setMat4("view", view);
-    shaderLightPlane.setMat4("projection", projection);
-    shaderLightPlane.setVec3("lightColor", color);
+    shaderLightPlane->use();
+    shaderLightPlane->setMat4("model", transformMatrix);
+    shaderLightPlane->setMat4("view", view);
+    shaderLightPlane->setMat4("projection", projection);
+    shaderLightPlane->setVec3("lightColor", color);
 
 
     // send to GPU

@@ -169,8 +169,6 @@ namespace engine
         void registerWindowInputCallbacks();
         void unregisterWindowInputCallbacks();
 
-        //void initWindow();
-        void initGLAD();
         virtual void initImGUI(const char* backend_version) = 0;
 
         static void glfw_error_callback(int error, const char* description);
@@ -181,7 +179,7 @@ namespace engine
         
         
         virtual void setup() = 0;
-
+        virtual void initGLAD() = 0;
         virtual void initGLFW() = 0;
         virtual const char* initBackend() = 0;
         virtual void initWindow() = 0;;

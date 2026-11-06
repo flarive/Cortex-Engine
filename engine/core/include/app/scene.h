@@ -77,17 +77,17 @@ namespace engine
         void after_init_internal();
 
         void updateEntityRecursive(const std::shared_ptr<Entity>& entity, int callsThisFrame);
-        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
+        void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
         //void drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame);
 
         void collectRenderItemsRecursive(const std::shared_ptr<Entity>& entity, const glm::vec3& cameraPos, const Frustum& camFrustum);
         void sortRenderItems();
         
-        void drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
-        void drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
-        void drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
+        void drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
+        void drawOpaqueQueue(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
+        void drawTransparentQueue(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view);
 
-        bool canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const Shader& shader) const;
+        bool canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const std::unique_ptr<ShaderBase>& shader) const;
 
 
     protected:
@@ -160,7 +160,7 @@ namespace engine
         SceneSettings getSceneSettings() const { return m_sceneSettings; }
 
         // must be overridden in derived class
-        virtual void update(Shader& shader) = 0;
+        virtual void update(std::unique_ptr<ShaderBase>& shader) = 0;
 
         // must be overridden in derived class
         virtual void updateUI() = 0;
@@ -194,7 +194,7 @@ namespace engine
         void initEntities();
         void initEntityRecursive(const std::shared_ptr<engine::Entity>& entity);
 
-        void drawEntities(Shader& shader, Shader& shaderTessellation);
+        void drawEntities(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation);
         
 
 

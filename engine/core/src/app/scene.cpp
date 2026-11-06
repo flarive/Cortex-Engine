@@ -468,9 +468,9 @@ void engine::Scene::gameLoop()
     beginQuery();
 
     // Lambda to update
-    auto updateLambda = [this](Shader& shader, Shader& shaderTessellation) {
+    auto updateLambda = [this](std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation) {
         // execute scene update
-        if (shader.name != "outline")
+        if (shader->getName() != "outline")
         {
             update(shader);
             update(shaderTessellation);
@@ -646,7 +646,7 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
     }
 }
 
-void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
+void engine::Scene::drawEntities(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation)
 {
     //DebugFrame::ensureIsCalledOncePerFrame("Scene", "drawEntities");
     
@@ -655,7 +655,7 @@ void engine::Scene::drawEntities(Shader& shader, Shader& shaderTessellation)
     
     // draw flat and nested entity hierarchy
     // Precompute transforms for all entities before drawing
-    if (shader.name != "outline")
+    if (shader->getName() != "outline")
         m_entityManager.getRootEntity()->updateSelfAndChild();
 
 
@@ -733,7 +733,7 @@ void engine::Scene::updateEntityRecursive(const std::shared_ptr<Entity>& entity,
     }
 }
 
-void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shadertessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camfrustum, const int& callsthisframe)
+void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shadertessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camfrustum, const int& callsthisframe)
 {
     if (!entity || !entity->enabled)
         return;
@@ -1350,7 +1350,7 @@ void engine::Scene::sortRenderItems()
 		});
 }
 
-void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+void engine::Scene::drawOpaqueQueue(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
 {
     RenderState::enableDepthTest();
     RenderState::enableDepthMask();
@@ -1364,9 +1364,9 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
 
 
         // Use the precomputed transform
-        shader.use();
+        shader->use();
 
-        if (shader.name != "outline")
+        if (shader->getName() != "outline")
         {
             glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
             glStencilMask(0xFF);
@@ -1377,9 +1377,9 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
             glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
             glStencilMask(0x00); // disable stencil writes
 
-            shader.setMat4("view", view);
-            shader.setMat4("projection", projection);
-            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+            shader->setMat4("view", view);
+            shader->setMat4("projection", projection);
+            shader->setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
         }
 
         auto& worldTransform = entity->getWorldTransform();
@@ -1417,7 +1417,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
         }
         
         
-        if (shader.name == "outline")
+        if (shader->getName() == "outline")
         {
             // Restore state
             RenderState::enableStencilWrite();
@@ -1426,7 +1426,7 @@ void engine::Scene::drawOpaqueQueue(Shader& shader, Shader& shaderTessellation, 
     }
 }
 
-void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+void engine::Scene::drawTransparentQueue(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
 {
     RenderState::enableBlending();
     RenderState::blend();
@@ -1444,9 +1444,9 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
             continue;
 
         // Use the precomputed transform
-        shader.use();
+        shader->use();
 
-        if (shader.name != "outline")
+        if (shader->getName() != "outline")
         {
             glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
             glStencilMask(0xFF);
@@ -1457,9 +1457,9 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
             glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
             glStencilMask(0x00); // disable stencil writes
 
-            shader.setMat4("view", view);
-            shader.setMat4("projection", projection);
-            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
+            shader->setMat4("view", view);
+            shader->setMat4("projection", projection);
+            shader->setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
         }
 
         auto& transform = entity->getTransform();
@@ -1497,7 +1497,7 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
         }
     }
 
-    if (shader.name == "outline")
+    if (shader->getName() == "outline")
     {
         // Restore state
         RenderState::enableStencilWrite();
@@ -1509,7 +1509,7 @@ void engine::Scene::drawTransparentQueue(Shader& shader, Shader& shaderTessellat
     RenderState::disableBlending();
 }
 
-void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
+void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entity>& entity, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, const glm::mat4& projection, const glm::mat4& view)
 {
     if (!entity->enabled)
         return;
@@ -1530,9 +1530,9 @@ void engine::Scene::drawNonQueuedComponentsRecursive(const std::shared_ptr<Entit
         drawNonQueuedComponentsRecursive(child, shader, shaderTessellation, projection, view);
 }
 
-bool engine::Scene::canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const Shader& shader) const
+bool engine::Scene::canCastShadows(const engine::ordered_map<std::string, EditorProperty>& properties, const std::unique_ptr<ShaderBase>& shader) const
 {
-    if (shader.name != "simpleDepthBuffer1" && shader.name != "simpleDepthBuffer2")
+    if (shader->getName() != "simpleDepthBuffer1" && shader->getName() != "simpleDepthBuffer2")
         return true;
 
     if (const auto* prop = properties.tryGet("canCastShadows")) {

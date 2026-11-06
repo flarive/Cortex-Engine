@@ -129,7 +129,7 @@ void MyScene18::framebuffer_size_callback(int newWidth, int newHeight)
     Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene18::update(Shader& shader)
+void MyScene18::update(std::unique_ptr<ShaderBase>& shader)
 {
     (void)shader;   //Do nothing
 }

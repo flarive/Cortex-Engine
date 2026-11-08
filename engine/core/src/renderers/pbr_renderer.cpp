@@ -39,88 +39,35 @@ void engine::PbrRenderer::setup(int width, int height, std::shared_ptr<Camera> c
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
-    // configure global opengl state
-    // -----------------------------
-    // enable depth testing
-    enableDepthTest(true);
-    // set depth function to less than AND equal for skybox depth trick.
-    glDepthFunc(GL_LEQUAL);
-    // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-    RenderState::enableCubeMapSeamless();
-    // enable objects outlining
-    enableStencilTest(true);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    // avoid computing back faces not visible by camera
-    enableFaceCulling(settings.enableFaceCulling);
+
+
+    initRenderStates(settings);
 
     // build and compile shaders
     // -------------------------
     loadShaders();
 
-    // generate on the fly textues in memory
-    // -------------------------------------
-    LTC1Map = TextureManager::loadMTexture();
-    LTC2Map = TextureManager::loadLUTTexture();
+
+    initCommonTextures();
+
 
     glm::mat4 projection = m_camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
 
 
-
     // shader configuration
     // --------------------
-    pbrShader->use();
-    pbrShader->setMat4("projection", projection);
-    pbrShader->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
-    pbrShader->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
-    pbrShader->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
-    pbrShader->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
-    pbrShader->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
-    pbrShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
-    pbrShader->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-    pbrShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    pbrShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    pbrShader->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-    pbrShader->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
-    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-    pbrShader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-    pbrShader->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    setupShaderBindings(settings);
 
-    if (supportTessellation())
-    {
-        pbrShaderTessellation->use();
-        pbrShaderTessellation->setMat4("projection", projection);
-        pbrShaderTessellation->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
-        pbrShaderTessellation->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
-        pbrShaderTessellation->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
-        pbrShaderTessellation->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
-        pbrShaderTessellation->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
-        pbrShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
-        pbrShaderTessellation->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-        pbrShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-        pbrShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-        pbrShaderTessellation->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
-        pbrShaderTessellation->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
-        // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-        pbrShaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-        pbrShaderTessellation->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
-    }
+
+    
 
 
     screenShader->use();
     screenShader->setInt("screenTexture", 0); // Should be texture unit, not texture ID
 
-    // Depth map framebuffer configuration (for shadow map)
-    // -----------------------------------
-    initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
 
+    initFramebuffers(settings, width, height);
 
-    // color framebuffer configuration
-    // -------------------------
-    initFramebuffer(RenderMethod::PBR, width, height, settings.frameBufferAntiAliasingSamplesQuality); // HDR and AA
-
-    if (settings.enableBloom)
-        initBloomBuffers(width, height);
 
     int vsize{ 512 };
     //int scrWidth, scrHeight;
@@ -542,6 +489,24 @@ void engine::PbrRenderer::blurBloomTexture(ubyte bloomBlurPasses)
     m_finalBloomTexture = m_pingPongColorBuffer[!horizontal];
 }
 
+void engine::PbrRenderer::initRenderStates(const SceneSettings& settings)
+{
+    // configure global opengl state
+    // -----------------------------
+    // enable depth testing
+    enableDepthTest(true);
+    // set depth function to less than AND equal for skybox depth trick.
+    glDepthFunc(GL_LEQUAL);
+    // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+    RenderState::enableCubeMapSeamless();
+    // enable objects outlining
+    enableStencilTest(true);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    // avoid computing back faces not visible by camera
+    enableFaceCulling(settings.enableFaceCulling);
+}
+
 void engine::PbrRenderer::loadShaders()
 {
     // PBR shaders
@@ -570,6 +535,72 @@ void engine::PbrRenderer::loadShaders()
     // shared shaders
     Renderer::loadShaders();
 }
+
+void engine::PbrRenderer::initCommonTextures()
+{
+	// Load LTC textures
+	LTC1Map = TextureManager::loadMTexture();
+	LTC2Map = TextureManager::loadLUTTexture();
+}
+
+void engine::PbrRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
+{
+    // Depth map framebuffer configuration (for shadow map)
+    // -----------------------------------
+    initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+
+
+    // color framebuffer configuration
+    // -------------------------
+    initFramebuffer(RenderMethod::PBR, width, height, settings.frameBufferAntiAliasingSamplesQuality); // HDR and AA
+
+
+	// bloom framebuffer configuration
+    // -------------------------
+    if (settings.enableBloom)
+        initBloomBuffers(width, height);
+}
+
+void engine::PbrRenderer::setupShaderBindings(const SceneSettings& settings)
+{
+    pbrShader->use();
+    pbrShader->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+    pbrShader->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+    pbrShader->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
+    pbrShader->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
+    pbrShader->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
+    pbrShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
+    pbrShader->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    pbrShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    pbrShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    pbrShader->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+    pbrShader->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    pbrShader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    pbrShader->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+
+    if (supportTessellation())
+    {
+        pbrShaderTessellation->use();
+        pbrShaderTessellation->setInt("material.texture_irradiance", U_IRR); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("material.texture_prefilter", U_PREF); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("material.texture_brdfLUT", U_BRDF); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("LTC1", U_LTC1); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setInt("LTC2", U_LTC2); // Should be texture unit, not texture ID
+        pbrShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
+        pbrShaderTessellation->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+        pbrShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        pbrShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        pbrShaderTessellation->setFloat("material.iblDiffuseIntensity", settings.iblDiffuseIntensity); // [0.0, 2.0]
+        pbrShaderTessellation->setFloat("material.iblSpecularIntensity", settings.iblSpecularIntensity); // [0.0, 5.0]
+        // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+        pbrShaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+        pbrShaderTessellation->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    }
+}
+
+
+
 
 void engine::PbrRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {

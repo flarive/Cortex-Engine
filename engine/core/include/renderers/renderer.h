@@ -154,9 +154,10 @@ namespace engine
 
 		DebugPlaneGrid m_debugPlaneGrid{};
 
+		virtual void initRenderStates(const SceneSettings& settings) = 0;
 		virtual void loadShaders() = 0;
-		
-		
+		virtual void initFramebuffers(const SceneSettings& settings, int width, int height) = 0;
+		virtual void setupShaderBindings(const SceneSettings& settings) = 0;
 
 
 		void enableDepthTest(bool enable);

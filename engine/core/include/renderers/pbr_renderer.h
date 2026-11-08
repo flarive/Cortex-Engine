@@ -31,7 +31,15 @@ namespace engine
 		unsigned int captureFBO{};
 		unsigned int captureRBO{};
 
+		void initRenderStates(const SceneSettings& settings) override;
 		void loadShaders() override;
+
+		void initCommonTextures();
+
+		void initFramebuffers(const SceneSettings& settings, int width, int height) override;
+
+		void setupShaderBindings(const SceneSettings& settings) override;
+
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;
 

@@ -25,7 +25,10 @@ namespace engine
 		void clean() override;
 
 	private:
+		void initRenderStates(const SceneSettings& settings) override;
 		void loadShaders() override;
+		void initFramebuffers(const SceneSettings& settings, int width, int height) override;
+		void setupShaderBindings(const SceneSettings& settings) override;
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;
 	};

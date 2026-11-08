@@ -26,59 +26,23 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     m_lights = lights; // copy ?????????
     m_camera = camera; // copy ?????????
 
-    // configure global opengl state
-    // -----------------------------
-    // enable depth testing
-    enableDepthTest(true);
-    // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-    RenderState::enableCubeMapSeamless();
-    // enable objects outlining
-    enableStencilTest(true);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-
     auto* singleton = engine::Singleton::getInstance();
-	assert(singleton != nullptr && "Singleton not initialized !");
+    assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
-    // avoid computing back faces not visible by camera
-    enableFaceCulling(settings.enableFaceCulling);
+
+    initRenderStates(settings);
     
     // build and compile shaders
     // -------------------------
     loadShaders();
 
+    initCommonTextures();
 
-    LTC1Map = TextureManager::loadMTexture();
-    LTC2Map = TextureManager::loadLUTTexture();
 
-    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-    // -------------------------------------------------------------------------------------------
-    blinnPhongShader->use();
-    blinnPhongShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShader->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-    blinnPhongShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    blinnPhongShader->setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
-    blinnPhongShader->setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
-    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-    blinnPhongShader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-    blinnPhongShader->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    setupShaderBindings(settings);
 
-    if (supportTessellation())
-    {
-        blinnPhongShaderTessellation->use();
-        blinnPhongShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
-        blinnPhongShaderTessellation->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
-        blinnPhongShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-        blinnPhongShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-        blinnPhongShaderTessellation->setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
-        blinnPhongShaderTessellation->setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
-        // shadowMapCube must be linked before first update call (avoid openGL error 1282)
-        blinnPhongShaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
-        blinnPhongShaderTessellation->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
-    }
+    
     
 
     // shader configuration
@@ -86,19 +50,8 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     screenShader->use();
     screenShader->setInt("screenTexture", 0);
 
-    // Depth map framebuffer configuration (for shadow map)
-    // -----------------------------------
-    initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
 
-    initBackground();
-
-    if (settings.showDebugGrid)
-        initDebugPlaneGrid();
-
-    // color framebuffer configuration
-    // -------------------------
-    initFramebuffer(RenderMethod::BlinnPhong, width, height, settings.frameBufferAntiAliasingSamplesQuality);
-    //initColorFramebufferMSAA(width, height, settings.frameBufferAntiAliasingSamplesQuality); // SDR and AA
+    initFramebuffers(settings, width, height);
 }
 
 void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -215,6 +168,23 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     updateUI();
 }
 
+void engine::BlinnPhongRenderer::initRenderStates(const SceneSettings& settings)
+{
+    // configure global opengl state
+    // -----------------------------
+    // enable depth testing
+    enableDepthTest(true);
+    // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+    RenderState::enableCubeMapSeamless();
+    // enable objects outlining
+    enableStencilTest(true);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    // avoid computing back faces not visible by camera
+    enableFaceCulling(settings.enableFaceCulling);
+}
+
 void engine::BlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
@@ -235,6 +205,61 @@ void engine::BlinnPhongRenderer::loadShaders()
 
     // shared shaders
     Renderer::loadShaders();
+}
+
+
+void engine::BlinnPhongRenderer::initCommonTextures()
+{
+    // Load LTC textures
+    LTC1Map = TextureManager::loadMTexture();
+    LTC2Map = TextureManager::loadLUTTexture();
+}
+
+void engine::BlinnPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
+{
+    // Depth map framebuffer configuration (for shadow map)
+    // -----------------------------------
+    initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
+
+    initBackground();
+
+    if (settings.showDebugGrid)
+        initDebugPlaneGrid();
+
+    // color framebuffer configuration
+    // -------------------------
+    initFramebuffer(RenderMethod::BlinnPhong, width, height, settings.frameBufferAntiAliasingSamplesQuality);
+    //initColorFramebufferMSAA(width, height, settings.frameBufferAntiAliasingSamplesQuality); // SDR and AA
+}
+
+void engine::BlinnPhongRenderer::setupShaderBindings(const SceneSettings& settings)
+{
+    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+    // -------------------------------------------------------------------------------------------
+    blinnPhongShader->use();
+    blinnPhongShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
+    blinnPhongShader->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+    blinnPhongShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    blinnPhongShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    blinnPhongShader->setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+    blinnPhongShader->setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+    // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+    blinnPhongShader->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+    blinnPhongShader->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+
+    if (supportTessellation())
+    {
+        blinnPhongShaderTessellation->use();
+        blinnPhongShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
+        blinnPhongShaderTessellation->setInt("material.shadowCalculationMethod", settings.shadowCalculationMethod);
+        blinnPhongShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        blinnPhongShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+        blinnPhongShaderTessellation->setInt("LTC1", U_LTC1); // Tell the shader to use texture unit 20 for LTC1
+        blinnPhongShaderTessellation->setInt("LTC2", U_LTC2); // Tell the shader to use texture unit 21 for LTC2
+        // shadowMapCube must be linked before first update call (avoid openGL error 1282)
+        blinnPhongShaderTessellation->setInt("texture_shadowMapCube", U_SHADOW_MAP_CUBE);
+        blinnPhongShaderTessellation->setBool("hasShadowMapCube", m_lights[0]->isShadowCaster());
+    }
 }
 
 void engine::BlinnPhongRenderer::initBackground()

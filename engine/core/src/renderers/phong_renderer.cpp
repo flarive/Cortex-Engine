@@ -29,12 +29,17 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
-    // avoid computing back faces not visible by camera
-    enableFaceCulling(false);
+    initRenderStates(settings);
     
     // build and compile shaders
     // -------------------------
     loadShaders();
+
+
+    setupShaderBindings(settings);
+
+
+	initFramebuffers(settings, width, height);
 
     // solid/wireframe polygons
     RenderState::enableWireframe();
@@ -76,6 +81,12 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
     updateUI();
 }
 
+void engine::PhongRenderer::initRenderStates(const SceneSettings& settings)
+{
+    // avoid computing back faces not visible by camera
+    enableFaceCulling(false);
+}
+
 void engine::PhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
@@ -85,6 +96,18 @@ void engine::PhongRenderer::loadShaders()
     // shared shaders
     Renderer::loadShaders();
 }
+
+void engine::PhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
+{
+	// no framebuffer needed for Phong renderer, rendering directly to screen
+}
+
+
+void engine::PhongRenderer::setupShaderBindings(const SceneSettings& settings)
+{
+
+}
+
 
 void engine::PhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {

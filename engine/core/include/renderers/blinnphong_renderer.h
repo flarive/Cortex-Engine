@@ -31,7 +31,15 @@ namespace engine
 		void clean() override;
 
 	private:
-		void loadShaders() override;
+		void initRenderStates(const SceneSettings& settings) override;
+		void loadShaders();
+
+		void initCommonTextures();
+
+		void initFramebuffers(const SceneSettings& settings, int width, int height) override;
+
+		void setupShaderBindings(const SceneSettings& settings) override;
+
 
 		void initBackground();
 		void renderBackground(const SceneSettings& settings);

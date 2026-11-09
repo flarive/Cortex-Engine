@@ -4,9 +4,9 @@
 #include "../engine.h"
 
 #include "../renderers/renderer.h"
-#include "../renderers/phong_renderer.h"
-#include "../renderers/blinnphong_renderer.h"
-#include "../renderers/pbr_renderer.h"
+#include "../renderers/opengl/phong_renderer.h"
+#include "../renderers/opengl/blinnphong_renderer.h"
+#include "../renderers/opengl/pbr_renderer.h"
 
 #include "../misc/noncopyable.h"
 #include "../managers/filesystem_manager.h"

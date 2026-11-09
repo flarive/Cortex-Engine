@@ -1011,6 +1011,16 @@ void engine::Renderer::setShouldSupportTessellation(bool supportTessellation)
     m_supportTessellation = supportTessellation;
 }
 
+engine::FrameData engine::Renderer::buildFrameData(int width, int height)
+{
+    engine::FrameData frame{};
+    frame.projection = m_camera->getProjectionMatrix(float(width) / float(height));
+    frame.view = m_camera->getViewMatrix();
+    frame.viewPos = m_camera->position;
+
+    return frame;
+}
+
 engine::Renderer::~Renderer()
 {
     logger.trace("Renderer base destructor called");

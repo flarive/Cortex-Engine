@@ -1,30 +1,30 @@
-﻿#include "../../include/renderers/blinnphong_renderer.h"
+﻿#include "../../../include/renderers/opengl/blinnphong_renderer.h"
 
-#include "../../include/singleton.h"
+#include "../../../include/singleton.h"
 
-#include "../../include/managers/filesystem_manager.h"
-#include "../../include/debug/opengl_debug.h"
-#include "../../include/debug/debug_frame.h"
+#include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/debug/opengl_debug.h"
+#include "../../../include/debug/debug_frame.h"
 
-#include "../../include/lights/spot_light.h"
-#include "../../include/lights/point_light.h"
-#include "../../include/lights/directional_light.h"
+#include "../../../include/lights/spot_light.h"
+#include "../../../include/lights/point_light.h"
+#include "../../../include/lights/directional_light.h"
 
 
-#include "../../include/managers/texture_manager.h"
+#include "../../../include/managers/texture_manager.h"
 
-#include "../../include/misc/colors.h"
+#include "../../../include/misc/colors.h"
 
-engine::BlinnPhongRenderer::BlinnPhongRenderer(GLFWwindow* window)
+engine::OpenGLBlinnPhongRenderer::OpenGLBlinnPhongRenderer(GLFWwindow* window)
     : Renderer(window, RenderMethod::BlinnPhong)
 {
     logger.trace("BlinnPhongRenderer constructor called");
 }
 
-void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
+void engine::OpenGLBlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
-    m_lights = lights; // copy ?????????
-    m_camera = camera; // copy ?????????
+    m_lights = lights;
+    m_camera = camera;
 
     auto* singleton = engine::Singleton::getInstance();
     assert(singleton != nullptr && "Singleton not initialized !");
@@ -40,28 +40,28 @@ void engine::BlinnPhongRenderer::setup(int width, int height, std::shared_ptr<Ca
     initCommonTextures();
 
 
-    setupShaderBindings(settings);
-
     
-    
-
     // shader configuration
     // --------------------
-    screenShader->use();
-    screenShader->setInt("screenTexture", 0);
+    setupShaderBindings(settings);
+    setupScreenShaderBindings();
+    setupBackgroundShaderBindings();
+    
 
 
     initFramebuffers(settings, width, height);
 }
 
-void engine::BlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
+void engine::OpenGLBlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
 {
     m_skybox = std::make_shared<Skybox>();
     m_skybox->setup(faces);
 }
 
-void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
+    m_camera = camera;
+
     //DebugFrame::ensureIsCalledOncePerFrame("BlinnPhongRenderer", "loop");
     
     auto* singleton = engine::Singleton::getInstance();
@@ -168,7 +168,7 @@ void engine::BlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Cam
     updateUI();
 }
 
-void engine::BlinnPhongRenderer::initRenderStates(const SceneSettings& settings)
+void engine::OpenGLBlinnPhongRenderer::initRenderStates(const SceneSettings& settings)
 {
     // configure global opengl state
     // -----------------------------
@@ -185,7 +185,7 @@ void engine::BlinnPhongRenderer::initRenderStates(const SceneSettings& settings)
     enableFaceCulling(settings.enableFaceCulling);
 }
 
-void engine::BlinnPhongRenderer::loadShaders()
+void engine::OpenGLBlinnPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
     blinnPhongShader = std::make_unique<OpenGLShader>("blinnphong");
@@ -208,14 +208,14 @@ void engine::BlinnPhongRenderer::loadShaders()
 }
 
 
-void engine::BlinnPhongRenderer::initCommonTextures()
+void engine::OpenGLBlinnPhongRenderer::initCommonTextures()
 {
     // Load LTC textures
     LTC1Map = TextureManager::loadMTexture();
     LTC2Map = TextureManager::loadLUTTexture();
 }
 
-void engine::BlinnPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
+void engine::OpenGLBlinnPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
 {
     // Depth map framebuffer configuration (for shadow map)
     // -----------------------------------
@@ -232,7 +232,7 @@ void engine::BlinnPhongRenderer::initFramebuffers(const SceneSettings& settings,
     //initColorFramebufferMSAA(width, height, settings.frameBufferAntiAliasingSamplesQuality); // SDR and AA
 }
 
-void engine::BlinnPhongRenderer::setupShaderBindings(const SceneSettings& settings)
+void engine::OpenGLBlinnPhongRenderer::setupShaderBindings(const SceneSettings& settings)
 {
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     // -------------------------------------------------------------------------------------------
@@ -262,7 +262,18 @@ void engine::BlinnPhongRenderer::setupShaderBindings(const SceneSettings& settin
     }
 }
 
-void engine::BlinnPhongRenderer::initBackground()
+void engine::OpenGLBlinnPhongRenderer::setupScreenShaderBindings()
+{
+    screenShader->use();
+    screenShader->setInt("screenTexture", 0);
+}
+
+void engine::OpenGLBlinnPhongRenderer::setupBackgroundShaderBindings()
+{
+    
+}
+
+void engine::OpenGLBlinnPhongRenderer::initBackground()
 {
     float vertices[] = {
         // positions   // texture coords
@@ -285,7 +296,7 @@ void engine::BlinnPhongRenderer::initBackground()
     glEnableVertexAttribArray(1);
 }
 
-void engine::BlinnPhongRenderer::renderBackground(const SceneSettings& settings)
+void engine::OpenGLBlinnPhongRenderer::renderBackground(const SceneSettings& settings)
 {
     // make sure we clear the framebuffer's content
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color
@@ -311,7 +322,17 @@ void engine::BlinnPhongRenderer::renderBackground(const SceneSettings& settings)
     }
 }
 
-void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
+void engine::OpenGLBlinnPhongRenderer::beginFrame(const SceneSettings& settings, int width, int height)
+{
+
+}
+
+void engine::OpenGLBlinnPhongRenderer::endFrame()
+{
+
+}
+
+void engine::OpenGLBlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {
     m_pointLightCount = pointLightCount;
     m_dirLightCount = dirLightCount;
@@ -330,12 +351,12 @@ void engine::BlinnPhongRenderer::setLightsCount(unsigned short pointLightCount, 
     setCounts(blinnPhongShaderTessellation);
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::BlinnPhongRenderer::getShader()
+std::unique_ptr<engine::ShaderBase>& engine::OpenGLBlinnPhongRenderer::getShader()
 {
     return blinnPhongShader;
 }
 
-void engine::BlinnPhongRenderer::clean()
+void engine::OpenGLBlinnPhongRenderer::clean()
 {
     Renderer::clean();
 
@@ -350,7 +371,7 @@ void engine::BlinnPhongRenderer::clean()
 	m_skybox->clean();
 }
 
-engine::BlinnPhongRenderer::~BlinnPhongRenderer()
+engine::OpenGLBlinnPhongRenderer::~OpenGLBlinnPhongRenderer()
 {
     logger.trace("BlinnPhongRenderer destructor called");
 }

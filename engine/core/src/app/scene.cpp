@@ -114,15 +114,15 @@ void engine::Scene::initialize()
     // Create renderer
     if (m_sceneSettings.method == RenderMethod::PBR) {
         // PBR is default renderer (mainstream)
-        m_renderer = std::make_unique<PbrRenderer>(appShared->window);
+        m_renderer = std::make_unique<OpenGLPbrRenderer>(appShared->window);
     }
     else if (m_sceneSettings.method == RenderMethod::BlinnPhong) {
         // BlinnPhong is a legacy renderer (deprecated)
-        m_renderer = std::make_unique<BlinnPhongRenderer>(appShared->window);
+        m_renderer = std::make_unique<OpenGLBlinnPhongRenderer>(appShared->window);
     }
     else {
         // Blinn is just for very simple tests
-        m_renderer = std::make_unique<PhongRenderer>(appShared->window);
+        m_renderer = std::make_unique<OpenGLPhongRenderer>(appShared->window);
     }
 
     // create scene entities hierarchy

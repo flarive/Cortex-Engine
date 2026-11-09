@@ -305,7 +305,7 @@ void MyScene15::updateUI()
     textParallaxIntensity.draw(format("Parallax intensity : {}", m_parallaxIntensity), getApp()->width - 200.0f, getApp()->height - 180.0f, 1.0f, Colors::White);
 
 
-    auto renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
+    auto renderer = dynamic_cast<OpenGLBlinnPhongRenderer*>(getRenderer());
     if (renderer)
     {
         textCurrentRenderer.draw(format("Renderer : {}", "BlinnPhong"), getApp()->width - 200.0f, getApp()->height - 220.0f, 1.0f, Colors::Orange);

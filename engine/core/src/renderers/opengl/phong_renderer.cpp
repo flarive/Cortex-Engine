@@ -1,28 +1,28 @@
-﻿#include "../../include/renderers/phong_renderer.h"
+﻿#include "../../../include/renderers/opengl/phong_renderer.h"
 
-#include "../../include/singleton.h"
+#include "../../../include/singleton.h"
 
-#include "../../include/managers/filesystem_manager.h"
-#include "../../include/debug/opengl_debug.h"
-#include "../../include/debug/debug_frame.h"
+#include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/debug/opengl_debug.h"
+#include "../../../include/debug/debug_frame.h"
 
-#include "../../include/lights/spot_light.h"
-#include "../../include/lights/point_light.h"
-#include "../../include/lights/directional_light.h"
+#include "../../../include/lights/spot_light.h"
+#include "../../../include/lights/point_light.h"
+#include "../../../include/lights/directional_light.h"
 
-#include "../../include/misc/colors.h"
+#include "../../../include/misc/colors.h"
 
 
-engine::PhongRenderer::PhongRenderer(GLFWwindow* window)
+engine::OpenGLPhongRenderer::OpenGLPhongRenderer(GLFWwindow* window)
     : Renderer(window, RenderMethod::Phong)
 {
     logger.trace("PhongRenderer constructor called");
 }
 
-void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights)
+void engine::OpenGLPhongRenderer::setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
-    m_lights = lights; // copy ?????????
-    m_camera = camera; // copy ?????????
+    m_lights = lights;
+    m_camera = camera;
 
 
     auto* singleton = engine::Singleton::getInstance();
@@ -36,8 +36,12 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     loadShaders();
 
 
-    setupShaderBindings(settings);
 
+    // shader configuration
+    // --------------------
+    setupShaderBindings(settings);
+    setupScreenShaderBindings();
+    setupBackgroundShaderBindings();
 
 	initFramebuffers(settings, width, height);
 
@@ -45,8 +49,10 @@ void engine::PhongRenderer::setup(int width, int height, std::shared_ptr<Camera>
     RenderState::enableWireframe();
 }
 
-void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
+    m_camera = camera;
+
     //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
 
     glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
@@ -81,13 +87,13 @@ void engine::PhongRenderer::loop(int width, int height, std::shared_ptr<Camera> 
     updateUI();
 }
 
-void engine::PhongRenderer::initRenderStates(const SceneSettings& settings)
+void engine::OpenGLPhongRenderer::initRenderStates(const SceneSettings& settings)
 {
     // avoid computing back faces not visible by camera
     enableFaceCulling(false);
 }
 
-void engine::PhongRenderer::loadShaders()
+void engine::OpenGLPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
     phongShader = std::make_unique<OpenGLShader>("blinnphong");
@@ -97,19 +103,39 @@ void engine::PhongRenderer::loadShaders()
     Renderer::loadShaders();
 }
 
-void engine::PhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
+void engine::OpenGLPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
 {
 	// no framebuffer needed for Phong renderer, rendering directly to screen
 }
 
 
-void engine::PhongRenderer::setupShaderBindings(const SceneSettings& settings)
+void engine::OpenGLPhongRenderer::setupShaderBindings(const SceneSettings& settings)
+{
+
+}
+
+void engine::OpenGLPhongRenderer::setupScreenShaderBindings()
+{
+    
+}
+
+void engine::OpenGLPhongRenderer::setupBackgroundShaderBindings()
+{
+
+}
+
+void engine::OpenGLPhongRenderer::beginFrame(const SceneSettings& settings, int width, int height)
+{
+
+}
+
+void engine::OpenGLPhongRenderer::endFrame()
 {
 
 }
 
 
-void engine::PhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
+void engine::OpenGLPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {
     m_pointLightCount = pointLightCount;
     m_dirLightCount = dirLightCount;
@@ -119,12 +145,12 @@ void engine::PhongRenderer::setLightsCount(unsigned short pointLightCount, unsig
     // not really needed
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::PhongRenderer::getShader()
+std::unique_ptr<engine::ShaderBase>& engine::OpenGLPhongRenderer::getShader()
 {
     return phongShader;
 }
 
-void engine::PhongRenderer::clean()
+void engine::OpenGLPhongRenderer::clean()
 {
     Renderer::clean();
 
@@ -134,7 +160,7 @@ void engine::PhongRenderer::clean()
     phongShader->clean();
 }
 
-engine::PhongRenderer::~PhongRenderer()
+engine::OpenGLPhongRenderer::~OpenGLPhongRenderer()
 {
     logger.trace("PhongRenderer destructor called");
 }

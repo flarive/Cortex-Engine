@@ -295,6 +295,18 @@
     <Filter Include="sources\core\shaders\base">
       <UniqueIdentifier>{2f5046ea-ae45-4127-99b4-c4039b7ce413}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\core\renderers\opengl">
+      <UniqueIdentifier>{1963a362-2e93-431d-b277-966776d06d9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\renderers\vulkan">
+      <UniqueIdentifier>{237a2792-f887-4fd5-b0ff-6a7b167e923c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\renderers\opengl">
+      <UniqueIdentifier>{e25fae87-795d-4cfc-b333-ab523f334196}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\renderers\vulkan">
+      <UniqueIdentifier>{fce9c5c6-5a95-41c8-9c24-a9e7f925ba4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -374,12 +386,6 @@
     </ClCompile>
     <ClCompile Include="core\src\app\scene.cpp">
       <Filter>sources\app</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\renderers\blinnphong_renderer.cpp">
-      <Filter>sources\core\renderers</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\renderers\pbr_renderer.cpp">
-      <Filter>sources\core\renderers</Filter>
     </ClCompile>
     <ClCompile Include="core\src\renderers\renderer.cpp">
       <Filter>sources\core\renderers\base</Filter>
@@ -524,9 +530,6 @@
     </ClCompile>
     <ClCompile Include="core\src\ecs\terrain_component.cpp">
       <Filter>sources\core\ecs\component</Filter>
-    </ClCompile>
-    <ClCompile Include="core\src\renderers\phong_renderer.cpp">
-      <Filter>sources\core\renderers</Filter>
     </ClCompile>
     <ClCompile Include="core\src\animations\animation.cpp">
       <Filter>sources\core\animations\base</Filter>
@@ -678,6 +681,15 @@
     <ClCompile Include="core\src\shaders\vulkan_shader.cpp">
       <Filter>sources\core\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\renderers\opengl\blinnphong_renderer.cpp">
+      <Filter>sources\core\renderers\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\opengl\pbr_renderer.cpp">
+      <Filter>sources\core\renderers\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\opengl\phong_renderer.cpp">
+      <Filter>sources\core\renderers\opengl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -772,12 +784,6 @@
     </ClInclude>
     <ClInclude Include="core\include\managers\log_manager.h">
       <Filter>headers\core\managers</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\renderers\blinnphong_renderer.h">
-      <Filter>headers\core\renderers</Filter>
-    </ClInclude>
-    <ClInclude Include="core\include\renderers\pbr_renderer.h">
-      <Filter>headers\core\renderers</Filter>
     </ClInclude>
     <ClInclude Include="core\include\renderers\renderer.h">
       <Filter>headers\core\renderers\base</Filter>
@@ -947,9 +953,6 @@
     <ClInclude Include="core\include\ecs\terrain_component.h">
       <Filter>headers\core\ecs\component</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\renderers\phong_renderer.h">
-      <Filter>headers\core\renderers</Filter>
-    </ClInclude>
     <ClInclude Include="core\include\animations\animation.h">
       <Filter>headers\core\animations\base</Filter>
     </ClInclude>
@@ -1117,6 +1120,15 @@
     </ClInclude>
     <ClInclude Include="core\include\shaders\vulkan_shader.h">
       <Filter>headers\core\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\opengl\phong_renderer.h">
+      <Filter>headers\core\renderers\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\opengl\pbr_renderer.h">
+      <Filter>headers\core\renderers\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\opengl\blinnphong_renderer.h">
+      <Filter>headers\core\renderers\opengl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

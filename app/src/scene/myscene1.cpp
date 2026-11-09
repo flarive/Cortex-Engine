@@ -135,7 +135,7 @@ void MyScene1::init()
     // skybox
     // non‑owning observer pointer. You did not create it with new, and you do not own it
     // (If you didn’t new it, you don’t delete it)
-    BlinnPhongRenderer* renderer = dynamic_cast<BlinnPhongRenderer*>(getRenderer());
+    OpenGLBlinnPhongRenderer* renderer = dynamic_cast<OpenGLBlinnPhongRenderer*>(getRenderer());
     if (renderer)
     {
         vector<string> faces

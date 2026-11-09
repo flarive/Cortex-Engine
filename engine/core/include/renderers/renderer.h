@@ -22,6 +22,13 @@
 
 namespace engine
 {
+	struct FrameData
+	{
+		glm::mat4 projection;
+		glm::mat4 view;
+		glm::vec3 viewPos;
+	};
+
 	/// <summary>
 	/// Abstract class for renderers
 	/// In the learnopengl.com tutorials and in most OpenGL contexts by convention:
@@ -60,8 +67,8 @@ namespace engine
 		Renderer(GLFWwindow* window, RenderMethod method);
 		virtual ~Renderer();
 
-		virtual void setup(int width, int height, std::shared_ptr<Camera> camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
-		virtual void loop(int width, int height, std::shared_ptr<Camera> camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) = 0;
+		virtual void setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
+		virtual void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) = 0;
 
 		void initFramebuffer(RenderMethod method, int width, int height, ubyte msaaSamples);
 
@@ -158,6 +165,8 @@ namespace engine
 		virtual void loadShaders() = 0;
 		virtual void initFramebuffers(const SceneSettings& settings, int width, int height) = 0;
 		virtual void setupShaderBindings(const SceneSettings& settings) = 0;
+		virtual void setupScreenShaderBindings() = 0;
+		virtual void setupBackgroundShaderBindings() = 0;
 
 
 		void enableDepthTest(bool enable);
@@ -180,6 +189,12 @@ namespace engine
 		void updateEditorPropertySettings(int width, int height);
 
 		bool supportTessellation() const { return m_supportTessellation; }
+
+
+		FrameData buildFrameData(int width, int height);
+
+		virtual void beginFrame(const SceneSettings& settings, int width, int height) = 0;
+		virtual void endFrame() = 0;
 
 
 		// renderCube() renders a 1x1 3D cube in NDC.

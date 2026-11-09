@@ -30,7 +30,7 @@ engine::OpenGLPbrRenderer::OpenGLPbrRenderer(GLFWwindow* window)
 /// <param name="height"></param>
 /// <param name="camera"></param>
 /// <param name="lights"></param>
-void engine::OpenGLPbrRenderer::setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
+void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
     m_camera = camera;

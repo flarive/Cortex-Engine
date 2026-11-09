@@ -17,7 +17,7 @@ namespace engine
 		OpenGLPhongRenderer(GLFWwindow* window);
 		~OpenGLPhongRenderer() override;
 		
-		void setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
+		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
 		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) override;
 
 		std::unique_ptr<ShaderBase>& getShader() override;

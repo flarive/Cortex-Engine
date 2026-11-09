@@ -19,7 +19,7 @@ engine::OpenGLPhongRenderer::OpenGLPhongRenderer(GLFWwindow* window)
     logger.trace("PhongRenderer constructor called");
 }
 
-void engine::OpenGLPhongRenderer::setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
+void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights)
 {
     m_lights = lights;
     m_camera = camera;

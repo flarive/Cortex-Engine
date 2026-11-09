@@ -67,7 +67,7 @@ namespace engine
 		Renderer(GLFWwindow* window, RenderMethod method);
 		virtual ~Renderer();
 
-		virtual void setup(int width, int height, std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
+		virtual void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) = 0;
 		virtual void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) = 0;
 
 		void initFramebuffer(RenderMethod method, int width, int height, ubyte msaaSamples);

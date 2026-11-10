@@ -27,7 +27,7 @@
 using namespace std;
 using namespace engine;
 
-using MyApp1Scene = MyScene3;
+using MyApp1Scene = MyScene1;
 
 class MyApp1 final : public OpenGLApp
 {

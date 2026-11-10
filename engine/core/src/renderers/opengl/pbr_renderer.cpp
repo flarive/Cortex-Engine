@@ -36,9 +36,7 @@ void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_p
     m_camera = camera;
 
     auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
-
 
 
     initRenderStates(settings);
@@ -47,10 +45,7 @@ void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_p
     // -------------------------
     loadShaders();
 
-
     initCommonTextures();
-
-
 
     // shader configuration
     // --------------------
@@ -126,7 +121,7 @@ void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Came
 
 
     // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---
-    renderTonemap(width, height, settings);
+    renderFramebuffer(width, height, settings);
 
     // --- 7) UI ---
     renderUI(updateUI);
@@ -546,11 +541,6 @@ void engine::OpenGLPbrRenderer::beginFrame(const SceneSettings& settings, int wi
         RenderState::enableWireframe();
     else
         RenderState::disableWireframe();
-
-
-    //glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes);
-    //if (settings.drawAsWireframe)
-    //    RenderState::enableWireframe();
 }
 
 
@@ -641,7 +631,9 @@ void engine::OpenGLPbrRenderer::renderShadowPass(int width, int height, const en
 
 void engine::OpenGLPbrRenderer::resolveMSAA(int width, int height)
 {
+    // Resolve MSAA to screen or another texture FBO
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
@@ -655,13 +647,15 @@ void engine::OpenGLPbrRenderer::renderBloom(const engine::SceneSettings& setting
     }
 }
 
-void engine::OpenGLPbrRenderer::renderTonemap(int width, int height, const engine::SceneSettings& settings)
+void engine::OpenGLPbrRenderer::renderFramebuffer(int width, int height, const engine::SceneSettings& settings)
 {
+    // render to framebuffer
     computeHDRColorFramebuffer(width, height, settings);
 }
 
 void engine::OpenGLPbrRenderer::renderUI(std::function<void()> updateUI)
 {
+    // display UI/HUD above the scene and outside the framebuffer
     updateUI();
 }
 

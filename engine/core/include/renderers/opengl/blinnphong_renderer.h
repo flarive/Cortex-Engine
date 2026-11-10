@@ -48,6 +48,16 @@ namespace engine
 
 		// loop
 		void beginFrame(const SceneSettings& settings, int width, int height) override;
+		
+		void renderDebug(const engine::FrameData& frameData, const engine::SceneSettings& settings);
+		void renderSkybox(const engine::FrameData& frameData, const engine::SceneSettings& settings);
+		void setupBlinnPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
+		void renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void resolveMSAA(int width, int height);
+		void renderFramebuffer(const engine::SceneSettings& settings);
+		void renderUI(std::function<void()> updateUI);
+
 		void endFrame() override;
 
 

@@ -73,7 +73,7 @@ namespace engine
 		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
 		void resolveMSAA(int width, int height);
 		void renderBloom(const engine::SceneSettings& settings);
-		void renderTonemap(int width, int height, const engine::SceneSettings& settings);
+		void renderFramebuffer(int width, int height, const engine::SceneSettings& settings);
 		void renderUI(std::function<void()> updateUI);
 
 		void endFrame() override;

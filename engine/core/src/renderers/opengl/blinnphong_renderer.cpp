@@ -27,7 +27,6 @@ void engine::OpenGLBlinnPhongRenderer::setup(int width, int height, const std::s
     m_camera = camera;
 
     auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
     const SceneSettings& settings = singleton->sceneSettings();
 
 
@@ -47,9 +46,12 @@ void engine::OpenGLBlinnPhongRenderer::setup(int width, int height, const std::s
     setupScreenShaderBindings();
     setupBackgroundShaderBindings();
     
-
+    initBackground();
 
     initFramebuffers(settings, width, height);
+
+    if (settings.showDebugGrid)
+        initDebugPlaneGrid();
 }
 
 void engine::OpenGLBlinnPhongRenderer::setSkybox(const std::vector<std::string>& faces)
@@ -60,112 +62,41 @@ void engine::OpenGLBlinnPhongRenderer::setSkybox(const std::vector<std::string>&
 
 void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
-    m_camera = camera;
-
     //DebugFrame::ensureIsCalledOncePerFrame("BlinnPhongRenderer", "loop");
+
+    m_camera = camera;
     
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+    const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
 
-    glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
-    glm::mat4 view = camera->getViewMatrix();
+    beginFrame(settings, width, height);
 
-    
-    // bind to color framebuffer and draw scene as we normally would to color texture 
-    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
-    RenderState::enableDepthTest(); // enable depth testing (is disabled for rendering screen-space quad)
-    
+    FrameData frameData = buildFrameData(width, height);
 
+    // debug grid
+    renderDebug(frameData, settings);
 
-    renderBackground(settings); // Render your gradient or custom background
+    // --- 1) SKYBOX FIRST (depth writes OFF, depth test ON) ---
+    renderSkybox(frameData, settings);
 
+    // --- 2) SETUP BLINNPHONG SHADERS ---
+    setupBlinnPhongPass(frameData, settings);
 
+    // --- 3) RENDER SCENE ENTITIES HIERARCHY ---
+    renderScene(update);
 
-    // Apply wireframe *only for the scene pass* if enabled
-    glGetIntegerv(GL_POLYGON_MODE, m_prevPolyModes); // prevPolyModes[0]=front, [1]=back
+    // --- 4) RENDER SHADOW MAP PASS ---
+    renderShadowPass(width, height, settings, update);
 
-    if (settings.drawAsWireframe)
-        RenderState::enableWireframe();
+    // --- 5) RESOLVE MSAA TO HDR RESOLVE FBO ---
+    resolveMSAA(width, height);
 
+    // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---
+    renderFramebuffer(settings);
 
-    
-    if (settings.showDebugGrid)
-        renderDebugPlaneGrid(projection, view);
-    
-    
+    // --- 7) UI ---
+    renderUI(updateUI);
 
-    updateEditorPropertySettings(width, height);
-
-
-
-    
-
-
-    // draw skybox first
-    if (m_skybox)
-        m_skybox->draw(projection, view);  // this handles view matrix stripping translation inside
-
-
-
-
-    blinnPhongShader->use();
-    blinnPhongShader->setMat4("projection", projection);
-    blinnPhongShader->setMat4("view", view);
-    blinnPhongShader->setVec3("viewPos", camera->position);
-    blinnPhongShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
-    blinnPhongShader->setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
-    blinnPhongShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-    blinnPhongShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-
-    if (supportTessellation())
-    {
-        blinnPhongShaderTessellation->use();
-        blinnPhongShaderTessellation->setMat4("projection", projection);
-        blinnPhongShaderTessellation->setMat4("view", view);
-        blinnPhongShaderTessellation->setVec3("viewPos", camera->position);
-        blinnPhongShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
-        blinnPhongShaderTessellation->setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
-        blinnPhongShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
-        blinnPhongShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
-    }
-
-
-    
-    glActiveTexture(GL_TEXTURE0 + U_LTC1);
-    glBindTexture(GL_TEXTURE_2D, LTC1Map);
-    glActiveTexture(GL_TEXTURE0 + U_LTC2);
-    glBindTexture(GL_TEXTURE_2D, LTC2Map);
-
-
-    // update user stuffs
-    update(blinnPhongShader, blinnPhongShaderTessellation);
-    //update(outlineColorShader);
-
-
-    // compute light shadows using a depth map framebuffer
-    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, blinnPhongShader, blinnPhongShaderTessellation, update);
-
-
-    // Resolve MSAA to screen or another texture FBO
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-
-
-    // Restore whatever polygon mode was active before
-    if (settings.drawAsWireframe)
-        RenderState::setPolygonMode(m_prevPolyModes[0]); // both front/back are same in core usage
-
-
-    // render to framebuffer
-    computeColorFramebuffer(settings);
-
-
-    // display UI/HUD above the scene and outside the framebuffer
-    updateUI();
+    endFrame();
 }
 
 void engine::OpenGLBlinnPhongRenderer::initRenderStates(const SceneSettings& settings)
@@ -221,15 +152,9 @@ void engine::OpenGLBlinnPhongRenderer::initFramebuffers(const SceneSettings& set
     // -----------------------------------
     initDepthMapFramebuffer((GLsizei)settings.shadowMapsTextureSize);
 
-    initBackground();
-
-    if (settings.showDebugGrid)
-        initDebugPlaneGrid();
-
     // color framebuffer configuration
     // -------------------------
     initFramebuffer(RenderMethod::BlinnPhong, width, height, settings.frameBufferAntiAliasingSamplesQuality);
-    //initColorFramebufferMSAA(width, height, settings.frameBufferAntiAliasingSamplesQuality); // SDR and AA
 }
 
 void engine::OpenGLBlinnPhongRenderer::setupShaderBindings(const SceneSettings& settings)
@@ -324,7 +249,98 @@ void engine::OpenGLBlinnPhongRenderer::renderBackground(const SceneSettings& set
 
 void engine::OpenGLBlinnPhongRenderer::beginFrame(const SceneSettings& settings, int width, int height)
 {
+    // bind to color framebuffer and draw scene as we normally would to color texture 
+    glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
+    RenderState::enableDepthTest(); // enable depth testing (is disabled for rendering screen-space quad)
 
+
+
+    renderBackground(settings); // Render your gradient or custom background
+
+
+
+    updateEditorPropertySettings(width, height);
+
+    // Wireframe toggle
+    if (settings.drawAsWireframe)
+        RenderState::enableWireframe();
+    else
+        RenderState::disableWireframe();
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderDebug(const engine::FrameData& frameData, const engine::SceneSettings& settings)
+{
+    if (settings.showDebugGrid)
+        renderDebugPlaneGrid(frameData.projection, frameData.view);
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderSkybox(const engine::FrameData& frameData, const engine::SceneSettings& settings)
+{
+    if (m_skybox)
+        m_skybox->draw(frameData.projection, frameData.view);  // this handles view matrix stripping translation inside
+}
+
+void engine::OpenGLBlinnPhongRenderer::setupBlinnPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings)
+{
+    blinnPhongShader->use();
+    blinnPhongShader->setMat4("projection", frameData.projection);
+    blinnPhongShader->setMat4("view", frameData.view);
+    blinnPhongShader->setVec3("viewPos", frameData.viewPos);
+    blinnPhongShader->setFloat("material.shadowIntensity", settings.shadowIntensity);
+    blinnPhongShader->setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+    blinnPhongShader->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+    blinnPhongShader->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+
+    if (supportTessellation())
+    {
+        blinnPhongShaderTessellation->use();
+        blinnPhongShaderTessellation->setMat4("projection", frameData.projection);
+        blinnPhongShaderTessellation->setMat4("view", frameData.view);
+        blinnPhongShaderTessellation->setVec3("viewPos", frameData.viewPos);
+        blinnPhongShaderTessellation->setFloat("material.shadowIntensity", settings.shadowIntensity);
+        blinnPhongShaderTessellation->setInt("material.shadowCalculationMethod", static_cast<int>(settings.shadowCalculationMethod));
+        blinnPhongShaderTessellation->setFloat("material.shadowMapsBias", settings.shadowMapsBiasFactor);
+        blinnPhongShaderTessellation->setFloat("material.shadowMapsBlur", settings.shadowMapsBlur);
+    }
+
+    // Bind LTC
+    glActiveTexture(GL_TEXTURE0 + U_LTC1);
+    glBindTexture(GL_TEXTURE_2D, LTC1Map);
+    glActiveTexture(GL_TEXTURE0 + U_LTC2);
+    glBindTexture(GL_TEXTURE_2D, LTC2Map);
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+{
+    update(blinnPhongShader, blinnPhongShaderTessellation);
+    //update(outlineColorShader);
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+{
+    // compute light shadows using a depth map framebuffer
+    computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, blinnPhongShader, blinnPhongShaderTessellation, update);
+}
+
+void engine::OpenGLBlinnPhongRenderer::resolveMSAA(int width, int height)
+{
+    // Resolve MSAA to screen or another texture FBO
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderFramebuffer(const engine::SceneSettings& settings)
+{
+    // render to framebuffer
+    computeColorFramebuffer(settings);
+}
+
+void engine::OpenGLBlinnPhongRenderer::renderUI(std::function<void()> updateUI)
+{
+    // display UI/HUD above the scene and outside the framebuffer
+    updateUI();
 }
 
 void engine::OpenGLBlinnPhongRenderer::endFrame()

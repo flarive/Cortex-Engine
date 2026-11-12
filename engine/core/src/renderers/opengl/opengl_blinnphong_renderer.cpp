@@ -1,4 +1,4 @@
-﻿#include "../../../include/renderers/opengl/blinnphong_renderer.h"
+﻿#include "../../../include/renderers/opengl/opengl_blinnphong_renderer.h"
 
 #include "../../../include/singleton.h"
 
@@ -16,7 +16,7 @@
 #include "../../../include/misc/colors.h"
 
 engine::OpenGLBlinnPhongRenderer::OpenGLBlinnPhongRenderer(GLFWwindow* window)
-    : Renderer(window, RenderMethod::BlinnPhong)
+    : OpenGLRenderer(window, RenderMethod::BlinnPhong)
 {
     logger.trace("BlinnPhongRenderer constructor called");
 }
@@ -135,7 +135,7 @@ void engine::OpenGLBlinnPhongRenderer::loadShaders()
     backgroundShader->init("shaders/renderer/blinnphong/blinnphong_background.vert", "shaders/renderer/blinnphong/blinnphong_background.frag");
 
     // shared shaders
-    Renderer::loadShaders();
+    OpenGLRenderer::loadShaders();
 }
 
 
@@ -253,11 +253,7 @@ void engine::OpenGLBlinnPhongRenderer::beginFrame(const SceneSettings& settings,
     glBindFramebuffer(GL_FRAMEBUFFER, colorFramebuffer);
     RenderState::enableDepthTest(); // enable depth testing (is disabled for rendering screen-space quad)
 
-
-
     renderBackground(settings); // Render your gradient or custom background
-
-
 
     updateEditorPropertySettings(width, height);
 

@@ -681,14 +681,23 @@
     <ClCompile Include="core\src\shaders\vulkan_shader.cpp">
       <Filter>sources\core\shaders</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\renderers\opengl\blinnphong_renderer.cpp">
+    <ClCompile Include="core\src\renderers\opengl\opengl_blinnphong_renderer.cpp">
       <Filter>sources\core\renderers\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\renderers\opengl\pbr_renderer.cpp">
+    <ClCompile Include="core\src\renderers\opengl\opengl_pbr_renderer.cpp">
       <Filter>sources\core\renderers\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="core\src\renderers\opengl\phong_renderer.cpp">
+    <ClCompile Include="core\src\renderers\opengl\opengl_phong_renderer.cpp">
       <Filter>sources\core\renderers\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\vulkan\vulkan_pbr_renderer.cpp">
+      <Filter>sources\core\renderers\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\opengl_renderer.cpp">
+      <Filter>sources\core\renderers\base</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\vulkan_renderer.cpp">
+      <Filter>sources\core\renderers\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1121,14 +1130,23 @@
     <ClInclude Include="core\include\shaders\vulkan_shader.h">
       <Filter>headers\core\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\renderers\opengl\phong_renderer.h">
+    <ClInclude Include="core\include\renderers\vulkan\vulkan_pbr_renderer.h">
+      <Filter>headers\core\renderers\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\opengl\opengl_blinnphong_renderer.h">
       <Filter>headers\core\renderers\opengl</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\renderers\opengl\pbr_renderer.h">
+    <ClInclude Include="core\include\renderers\opengl\opengl_pbr_renderer.h">
       <Filter>headers\core\renderers\opengl</Filter>
     </ClInclude>
-    <ClInclude Include="core\include\renderers\opengl\blinnphong_renderer.h">
+    <ClInclude Include="core\include\renderers\opengl\opengl_phong_renderer.h">
       <Filter>headers\core\renderers\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\opengl_renderer.h">
+      <Filter>headers\core\renderers\base</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\vulkan_renderer.h">
+      <Filter>headers\core\renderers\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

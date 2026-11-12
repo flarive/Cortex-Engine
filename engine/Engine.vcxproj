@@ -203,6 +203,9 @@
     <ClCompile Include="core\src\ecs\terrain_component.cpp" />
     <ClCompile Include="core\src\managers\input_manager.cpp" />
     <ClCompile Include="core\src\primitives\triangle.cpp" />
+    <ClCompile Include="core\src\renderers\opengl_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\vulkan\vulkan_pbr_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\vulkan_renderer.cpp" />
     <ClCompile Include="core\src\shaders\opengl_shader.cpp" />
     <ClCompile Include="core\src\shaders\vulkan_shader.cpp" />
     <ClCompile Include="core\src\tools\pdh_counters.cpp" />
@@ -248,9 +251,9 @@
     <ClCompile Include="core\src\particles\particle_system.cpp" />
     <ClCompile Include="core\src\primitives\cone.cpp" />
     <ClCompile Include="core\src\primitives\cylinder.cpp" />
-    <ClCompile Include="core\src\renderers\opengl\blinnphong_renderer.cpp" />
-    <ClCompile Include="core\src\renderers\opengl\phong_renderer.cpp" />
-    <ClCompile Include="core\src\renderers\opengl\pbr_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\opengl\opengl_blinnphong_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\opengl\opengl_phong_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\opengl\opengl_pbr_renderer.cpp" />
     <ClCompile Include="core\src\renderers\renderer.cpp" />
     <ClCompile Include="editor\src\windows\settings_window.cpp" />
     <ClCompile Include="core\src\singleton.cpp" />
@@ -341,6 +344,9 @@
     <ClInclude Include="core\include\managers\input_manager.h" />
     <ClInclude Include="core\include\backends\opengl\render_state.h" />
     <ClInclude Include="core\include\primitives\triangle.h" />
+    <ClInclude Include="core\include\renderers\opengl_renderer.h" />
+    <ClInclude Include="core\include\renderers\vulkan\vulkan_pbr_renderer.h" />
+    <ClInclude Include="core\include\renderers\vulkan_renderer.h" />
     <ClInclude Include="core\include\shaders\opengl_shader.h" />
     <ClInclude Include="core\include\shaders\vulkan_shader.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
@@ -392,9 +398,9 @@
     <ClInclude Include="core\include\particles\particle.h" />
     <ClInclude Include="core\include\particles\particle_system.h" />
     <ClInclude Include="core\include\primitives\cylinder.h" />
-    <ClInclude Include="core\include\renderers\opengl\blinnphong_renderer.h" />
-    <ClInclude Include="core\include\renderers\opengl\phong_renderer.h" />
-    <ClInclude Include="core\include\renderers\opengl\pbr_renderer.h" />
+    <ClInclude Include="core\include\renderers\opengl\opengl_blinnphong_renderer.h" />
+    <ClInclude Include="core\include\renderers\opengl\opengl_phong_renderer.h" />
+    <ClInclude Include="core\include\renderers\opengl\opengl_pbr_renderer.h" />
     <ClInclude Include="core\include\renderers\renderer.h" />
     <ClInclude Include="core\include\singleton.h" />
     <ClInclude Include="core\include\primitives\terrain.h" />

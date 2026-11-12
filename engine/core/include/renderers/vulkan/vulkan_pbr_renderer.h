@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../renderer.h"
+#include "../vulkan_renderer.h"
 
 #include "../../shaders/shader.h"
 
@@ -8,7 +8,7 @@
 
 namespace engine
 {
-	class OpenGLPbrRenderer final : public Renderer
+	class VulkanPbrRenderer final : public VulkanRenderer
 	{
 	public:
 		// Main PBR shader
@@ -18,8 +18,8 @@ namespace engine
 		// PBR environmentMap shader (for HDR skybox)
 		std::unique_ptr<ShaderBase> backgroundShader{};
 
-		OpenGLPbrRenderer(GLFWwindow* window);
-		~OpenGLPbrRenderer() override;
+		VulkanPbrRenderer(GLFWwindow* window);
+		~VulkanPbrRenderer() override;
 
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<engine::Light>>& lights) override;
 		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) override;
@@ -36,7 +36,7 @@ namespace engine
 		glm::mat4 m_captureProjection{};
 		std::array<glm::mat4, 6> m_captureViews{};
 
-		
+
 		// init
 		void initRenderStates(const SceneSettings& settings) override;
 		void loadShaders() override;
@@ -64,8 +64,8 @@ namespace engine
 
 		// loop
 		void beginFrame(const SceneSettings& settings, int width, int height) override;
-		
-		
+
+
 		void renderDebug(const FrameData& frameData, const SceneSettings& settings);
 		void renderSkybox(const FrameData& frameData, const SceneSettings& settings);
 		void setupPBRPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
@@ -81,7 +81,7 @@ namespace engine
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;
 
-		
+
 
 		void extractBloomBrightPass(float bloomThreshold);
 		void blurBloomTexture(ubyte bloomBlurPasses);

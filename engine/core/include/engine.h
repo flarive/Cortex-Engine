@@ -25,9 +25,11 @@
 #include "materials/blinnphong_material.h"
 #include "materials/pbr_material.h"
 
-#include "renderers/opengl/blinnphong_renderer.h"
-#include "renderers/opengl/phong_renderer.h"
-#include "renderers/opengl/pbr_renderer.h"
+#include "renderers/opengl/opengl_blinnphong_renderer.h"
+#include "renderers/opengl/opengl_phong_renderer.h"
+#include "renderers/opengl/opengl_pbr_renderer.h"
+
+#include "renderers/vulkan/vulkan_pbr_renderer.h"
 
 #include "ecs/entity.h"
 #include "ecs/component.h"

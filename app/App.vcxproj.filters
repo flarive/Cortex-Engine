@@ -1308,6 +1308,9 @@
     <CopyFileToFolders Include="..\resources\models\cornellbox\GlowMapWithReflectionAlpha512.png">
       <Filter>resources\models\cornellbox</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\renderer\phong\phong.frag.spv">
+      <Filter>resources\shaders\renderer\phong</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\app\myapp0.h">
@@ -1379,5 +1382,10 @@
     <ClInclude Include="include\app\myapp2.h">
       <Filter>headers\app</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\renderer\phong\phong.vert.spv">
+      <Filter>resources\shaders\renderer\phong</Filter>
+    </None>
   </ItemGroup>
 </Project>

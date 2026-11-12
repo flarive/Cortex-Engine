@@ -1,4 +1,4 @@
-﻿#include "../../../include/renderers/opengl/phong_renderer.h"
+﻿#include "../../../include/renderers/opengl/opengl_phong_renderer.h"
 
 #include "../../../include/singleton.h"
 
@@ -14,7 +14,7 @@
 
 
 engine::OpenGLPhongRenderer::OpenGLPhongRenderer(GLFWwindow* window)
-    : Renderer(window, RenderMethod::Phong)
+    : OpenGLRenderer(window, RenderMethod::Phong)
 {
     logger.trace("PhongRenderer constructor called");
 }
@@ -35,8 +35,6 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
     // -------------------------
     loadShaders();
 
-
-
     // shader configuration
     // --------------------
     setupShaderBindings(settings);
@@ -51,40 +49,26 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
 
 void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
 {
+    //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
+    
     m_camera = camera;
 
-    //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
+    const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
 
-    glm::mat4 projection = camera->getProjectionMatrix(width * 1.0f / height * 1.0f);
-    glm::mat4 view = camera->getViewMatrix();
+    beginFrame(settings, width, height);
 
-    // solid color background
-    Color backgroundColor = Colors::Black;
-    glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
-    glClear(GL_COLOR_BUFFER_BIT);
+    FrameData frameData = buildFrameData(width, height);
 
-    updateEditorPropertySettings(width, height);
+    // --- 1) SETUP PHONG SHADER ---
+    setupPhongPass(frameData, settings);
 
-    phongShader->use();
-    phongShader->setMat4("projection", projection);
-    phongShader->setMat4("view", view);
-    phongShader->setVec3("viewPos", camera->position);
-    phongShader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
-    phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    
+    // --- 2) RENDER SCENE ENTITIES HIERARCHY ---
+    renderScene(update);
 
-    // update user stuffs
-    update(phongShader, phongShader);
+    // --- 3) UI ---
+    renderUI(updateUI);
 
-    // Resolve MSAA to screen or another texture FBO
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    ////glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-    // display UI/HUD above the scene and outside the framebuffer
-    updateUI();
+    endFrame();
 }
 
 void engine::OpenGLPhongRenderer::initRenderStates(const SceneSettings& settings)
@@ -96,7 +80,7 @@ void engine::OpenGLPhongRenderer::initRenderStates(const SceneSettings& settings
 void engine::OpenGLPhongRenderer::loadShaders()
 {
     // blinn phong illumination model and lightning shader
-    phongShader = std::make_unique<OpenGLShader>("blinnphong");
+    phongShader = std::make_unique<OpenGLShader>("phong");
     phongShader->init("shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
 
     // shared shaders
@@ -126,14 +110,39 @@ void engine::OpenGLPhongRenderer::setupBackgroundShaderBindings()
 
 void engine::OpenGLPhongRenderer::beginFrame(const SceneSettings& settings, int width, int height)
 {
+    // solid color background
+    Color backgroundColor = Colors::Black;
+    glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
+    glClear(GL_COLOR_BUFFER_BIT);
 
+    updateEditorPropertySettings(width, height);
+}
+
+void engine::OpenGLPhongRenderer::setupPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings)
+{
+    phongShader->use();
+    phongShader->setMat4("projection", frameData.projection);
+    phongShader->setMat4("view", frameData.view);
+    phongShader->setVec3("viewPos", frameData.viewPos);
+    phongShader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
+    phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
+}
+
+void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+{
+    update(phongShader, phongShader);
+}
+
+void engine::OpenGLPhongRenderer::renderUI(std::function<void()> updateUI)
+{
+    // display UI/HUD above the scene and outside the framebuffer
+    updateUI();
 }
 
 void engine::OpenGLPhongRenderer::endFrame()
 {
-
 }
-
 
 void engine::OpenGLPhongRenderer::setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount)
 {

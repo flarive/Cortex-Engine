@@ -4,6 +4,7 @@
 
 #include "../shaders/shader.h"
 #include "../shaders/opengl_shader.h"
+#include "../shaders/vulkan_shader.h"
 #include "../lights/light.h"
 #include "../lights/point_light.h"
 #include "../lights/spot_light.h"

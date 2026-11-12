@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../renderer.h"
+#include "../opengl_renderer.h"
 #include "../../misc/skybox.h"
 
 #include "../../shaders/shader.h"
 
 namespace engine
 {
-	class OpenGLPhongRenderer final : public Renderer
+	class OpenGLPhongRenderer final : public OpenGLRenderer
 	{
 	public:
 		// Main Phong shader
@@ -35,6 +35,9 @@ namespace engine
 
 		// loop
 		void beginFrame(const SceneSettings& settings, int width, int height) override;
+		void setupPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
+		void renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void renderUI(std::function<void()> updateUI);
 		void endFrame() override;
 
 		void setLightsCount(unsigned short pointLightCount, unsigned short dirLightCount, unsigned short spotLightCount, unsigned int areaLightCount) override;

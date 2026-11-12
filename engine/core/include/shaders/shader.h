@@ -78,7 +78,7 @@ namespace engine
         unsigned int m_ID{};
         std::string m_name{};
 
-        static std::string readTextFile(const std::string& path);
+        //static std::string readTextFile(const std::string& path);
     };
 
 

@@ -20,6 +20,8 @@ namespace engine
         void init(const char* vertexPath, const char* fragmentPath, const char* geometryPath) override;
         void init(const char* vertexPath, const char* tessControlPath, const char* tessEvalPath, const char* geometryPath, const char* fragmentPath) override;
 
+        
+
         bool isValid() const override;
 
 
@@ -51,6 +53,9 @@ namespace engine
 
     private:
         bool m_initialized = false;
+
+
+        static std::string readTextFile(const std::string& path);
 
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------

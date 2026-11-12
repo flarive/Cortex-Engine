@@ -9,6 +9,8 @@
 
 #include "../../include/managers/filesystem_manager.h"
 
+#include "../../include/app/vulkan_app.h"
+
 #include <string>
 #include <format>
 #include <filesystem>
@@ -20,11 +22,57 @@ engine::VulkanShader::VulkanShader(const std::string& name) : ShaderBase(name)
 }
 
 /// <summary>
-/// OpenGL simple pipeline
+/// Vulkan simple pipeline
+/// https://vulkan-tutorial.com/en/Drawing_a_triangle/Graphics_pipeline_basics/Fixed_functions
 /// VS => FS
 /// </summary>
 void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath)
 {
+    VkDevice device = VulkanApp::getDevice();
+
+    std::string vertSpvPath = std::string(vertexPath) + ".spv";
+    std::string fragSpvPath = std::string(fragmentPath) + ".spv";
+    
+    // 1. retrieve the vertex/fragment source code from filePath
+    std::vector<char> vertShaderCode{};
+    std::vector<char> fragShaderCode{};
+
+    try
+    {
+        vertShaderCode = readBinaryFile(vertSpvPath);
+        fragShaderCode = readBinaryFile(fragSpvPath);
+    }
+    catch (const std::exception& e)
+    {
+        logger.error("Shader {}: {}", m_name, e.what());
+        throw;
+    }
+
+    // Creating shader modules
+    VkShaderModule vertShaderModule = createShaderModule(device, vertShaderCode);
+    VkShaderModule fragShaderModule = createShaderModule(device, fragShaderCode);
+
+    // Shader stage creation for vertex shader
+    VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vertShaderStageInfo.module = vertShaderModule;
+    vertShaderStageInfo.pName = "main";
+
+    // Shader stage creation for fragment shader
+    VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    fragShaderStageInfo.module = fragShaderModule;
+    fragShaderStageInfo.pName = "main";
+
+    
+    VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+
+    vkDestroyShaderModule(device, fragShaderModule, nullptr);
+    vkDestroyShaderModule(device, vertShaderModule, nullptr);
+
 }
 
 /// <summary>
@@ -123,6 +171,42 @@ void engine::VulkanShader::getActiveUniformsList(const std::string& uniformName)
 {
     
     
+}
+
+std::vector<char> engine::VulkanShader::readBinaryFile(const std::string& path)
+{
+    std::ifstream file(path, std::ios::ate | std::ios::binary);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("failed to open file!");
+    }
+
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<char> buffer(fileSize);
+
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+
+    file.close();
+
+    return buffer;
+}
+
+
+VkShaderModule engine::VulkanShader::createShaderModule(const VkDevice& device, const std::vector<char>& code)
+{
+    VkShaderModuleCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    createInfo.codeSize = code.size();
+    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+
+    VkShaderModule shaderModule;
+    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create shader module!");
+    }
+
+    return shaderModule;
 }
 
 engine::VulkanShader::~VulkanShader()

@@ -1,4 +1,4 @@
-#include "../../../include/renderers/opengl/pbr_renderer.h"
+#include "../../../include/renderers/opengl/opengl_pbr_renderer.h"
 
 #include "../../../include/singleton.h"
 
@@ -16,7 +16,7 @@
 
 
 engine::OpenGLPbrRenderer::OpenGLPbrRenderer(GLFWwindow* window)
-    : Renderer(window, RenderMethod::PBR)
+    : OpenGLRenderer(window, RenderMethod::PBR)
 {
     logger.trace("PbrRenderer constructor called");
 }
@@ -114,10 +114,6 @@ void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Came
 
     // --- 6) RENDER BLOOM POST FX
     renderBloom(settings);
-
-    // Restore polygon mode
-    //if (settings.drawAsWireframe)
-    //    RenderState::setPolygonMode(m_prevPolyModes[0]);
 
 
     // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---

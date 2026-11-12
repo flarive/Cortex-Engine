@@ -40,25 +40,25 @@ engine::ShaderType engine::ShaderBase::getShaderType()
     return ShaderType::Unknown;
 }
 
-std::string engine::ShaderBase::readTextFile(const std::string& path)
-{
- //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
-	//if (!std::filesystem::exists(absFullPath))
-	//{
-	//	throw std::runtime_error(std::format("File does not exist: {}", path));
-	//}
-    
-    std::ifstream file(path, std::ios::binary);
-
-    if (!file)
-    {
-        throw std::runtime_error(std::format("Failed to open file: {}", path));
-    }
-
-    return std::string(
-        std::istreambuf_iterator<char>(file),
-        std::istreambuf_iterator<char>());
-}
+//std::string engine::ShaderBase::readTextFile(const std::string& path)
+//{
+// //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
+//	//if (!std::filesystem::exists(absFullPath))
+//	//{
+//	//	throw std::runtime_error(std::format("File does not exist: {}", path));
+//	//}
+//    
+//    std::ifstream file(path, std::ios::binary);
+//
+//    if (!file)
+//    {
+//        throw std::runtime_error(std::format("Failed to open file: {}", path));
+//    }
+//
+//    return std::string(
+//        std::istreambuf_iterator<char>(file),
+//        std::istreambuf_iterator<char>());
+//}
 
 engine::ShaderBase::~ShaderBase()
 {

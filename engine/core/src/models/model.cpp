@@ -47,11 +47,10 @@ void engine::Model::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& p
     setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
     shader->use();
-    shader->setBool("isAnimated", hasBones());
-
     
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {
+        shader->setBool("isAnimated", hasBones());
         shader->setBool("isTessellated", false);
     }
 

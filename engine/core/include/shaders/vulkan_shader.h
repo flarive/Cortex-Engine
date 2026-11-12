@@ -52,6 +52,11 @@ namespace engine
     private:
         bool m_initialized = false;
 
+        static std::vector<char> readBinaryFile(const std::string& path);
+
+
+        VkShaderModule createShaderModule(const VkDevice& device, const std::vector<char>& code);
+
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------
         void checkCompileErrors(unsigned int shader, std::string type) override;

@@ -39,7 +39,7 @@ namespace engine
 		void exit() override;
 
 
-
+		static VkDevice getDevice() { return g_Device; }
 
 	private:
 		

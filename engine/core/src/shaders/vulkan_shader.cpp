@@ -9,7 +9,7 @@
 
 #include "../../include/managers/filesystem_manager.h"
 
-#include "../../include/app/vulkan_app.h"
+#include "../../include/app/vulkan_globals.h"
 
 #include <string>
 #include <format>
@@ -28,8 +28,6 @@ engine::VulkanShader::VulkanShader(const std::string& name) : ShaderBase(name)
 /// </summary>
 void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath)
 {
-    VkDevice device = VulkanApp::getDevice();
-
     std::string vertSpvPath = std::string(vertexPath) + ".spv";
     std::string fragSpvPath = std::string(fragmentPath) + ".spv";
     
@@ -49,8 +47,8 @@ void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath
     }
 
     // Creating shader modules
-    VkShaderModule vertShaderModule = createShaderModule(device, vertShaderCode);
-    VkShaderModule fragShaderModule = createShaderModule(device, fragShaderCode);
+    VkShaderModule vertShaderModule = createShaderModule(engine::g_Device, vertShaderCode);
+    VkShaderModule fragShaderModule = createShaderModule(engine::g_Device, fragShaderCode);
 
     // Shader stage creation for vertex shader
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -70,9 +68,8 @@ void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
 
-    vkDestroyShaderModule(device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(device, vertShaderModule, nullptr);
-
+    vkDestroyShaderModule(engine::g_Device, fragShaderModule, nullptr);
+    vkDestroyShaderModule(engine::g_Device, vertShaderModule, nullptr);
 }
 
 /// <summary>

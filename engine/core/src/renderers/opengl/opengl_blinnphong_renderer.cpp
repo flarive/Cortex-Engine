@@ -138,7 +138,6 @@ void engine::OpenGLBlinnPhongRenderer::loadShaders()
     OpenGLRenderer::loadShaders();
 }
 
-
 void engine::OpenGLBlinnPhongRenderer::initCommonTextures()
 {
     // Load LTC textures

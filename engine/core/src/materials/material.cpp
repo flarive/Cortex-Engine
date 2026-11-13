@@ -167,8 +167,7 @@ bool engine::Material::bind(std::unique_ptr<ShaderBase>& shader, int baseUnit) c
         // Keep this in debug only; glGetError is expensive
         if (GLenum error = glGetError(); error != GL_NO_ERROR)
         {
-            std::cerr << std::hex
-                << "[Material::bind] GL error 0x" << error << " binding '" << tex.type << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
+            std::cerr << std::hex << "[Material::bind] GL error 0x" << error << " binding '" << tex.type << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
             shader->setBool(hasMapName, false);
             success = false;
             // Continue to bind others, or break if you prefer fail-fast.

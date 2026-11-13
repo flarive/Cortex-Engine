@@ -324,6 +324,7 @@
     <ClInclude Include="core\include\app\scene.h" />
     <ClInclude Include="core\include\app\scene_settings.h" />
     <ClInclude Include="core\include\app\vulkan_app.h" />
+    <ClInclude Include="core\include\app\vulkan_globals.h" />
     <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />

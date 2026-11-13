@@ -1148,5 +1148,8 @@
     <ClInclude Include="core\include\renderers\vulkan_renderer.h">
       <Filter>headers\core\renderers\base</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\app\vulkan_globals.h">
+      <Filter>headers\app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@
 #include "../../../include/singleton.h"
 
 #include "../../../include/managers/filesystem_manager.h"
+#include "../../../include/managers/texture_manager.h"
+
 #include "../../../include/debug/opengl_debug.h"
 #include "../../../include/debug/debug_frame.h"
 
@@ -11,6 +13,8 @@
 #include "../../../include/lights/directional_light.h"
 
 #include "../../../include/misc/colors.h"
+
+
 
 
 engine::OpenGLPhongRenderer::OpenGLPhongRenderer(GLFWwindow* window)
@@ -34,6 +38,8 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
     // build and compile shaders
     // -------------------------
     loadShaders();
+
+    initCommonTextures();
 
     // shader configuration
     // --------------------
@@ -65,6 +71,8 @@ void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Ca
     // --- 2) RENDER SCENE ENTITIES HIERARCHY ---
     renderScene(update);
 
+    resolveMSAA(width, height);
+
     // --- 3) UI ---
     renderUI(updateUI);
 
@@ -75,6 +83,8 @@ void engine::OpenGLPhongRenderer::initRenderStates(const SceneSettings& settings
 {
     // avoid computing back faces not visible by camera
     enableFaceCulling(false);
+    enableDepthTest(false);
+    enableStencilTest(false);
 }
 
 void engine::OpenGLPhongRenderer::loadShaders()
@@ -87,11 +97,16 @@ void engine::OpenGLPhongRenderer::loadShaders()
     Renderer::loadShaders();
 }
 
+void engine::OpenGLPhongRenderer::initCommonTextures()
+{
+    // hardcoded texture UV mapper just for test purpose and to keep Phong renderer very simple
+    sampleTextureID = TextureManager::loadTexture("textures/uv_mapper.jpg", TextureFlag_InvertY);
+}
+
 void engine::OpenGLPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)
 {
 	// no framebuffer needed for Phong renderer, rendering directly to screen
 }
-
 
 void engine::OpenGLPhongRenderer::setupShaderBindings(const SceneSettings& settings)
 {
@@ -113,7 +128,9 @@ void engine::OpenGLPhongRenderer::beginFrame(const SceneSettings& settings, int 
     // solid color background
     Color backgroundColor = Colors::Black;
     glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a); // background color
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    RenderState::disableWireframe();
 
     updateEditorPropertySettings(width, height);
 }
@@ -126,12 +143,29 @@ void engine::OpenGLPhongRenderer::setupPhongPass(const engine::FrameData& frameD
     phongShader->setVec3("viewPos", frameData.viewPos);
     phongShader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
     phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    
+    
+    
+    // hardcoded sample texture
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, sampleTextureID);
+    phongShader->setBool("hasDiffuseTexture", true);
+    phongShader->setInt("texture_diffuse", 0);
+    
+    
+    
     phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
 {
     update(phongShader, phongShader);
+}
+
+void engine::OpenGLPhongRenderer::resolveMSAA(int width, int height)
+{
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 void engine::OpenGLPhongRenderer::renderUI(std::function<void()> updateUI)

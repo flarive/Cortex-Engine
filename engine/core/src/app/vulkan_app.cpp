@@ -72,7 +72,7 @@ const char* engine::VulkanApp::initBackend()
 void engine::VulkanApp::getBackendVersion()
 {
     VkPhysicalDeviceProperties props;
-    vkGetPhysicalDeviceProperties(g_PhysicalDevice, &props);
+    vkGetPhysicalDeviceProperties(engine::g_PhysicalDevice, &props);
 
     // store in singleton
     auto* singleton = engine::Singleton::getInstance();

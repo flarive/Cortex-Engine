@@ -243,11 +243,6 @@ namespace engine
 	private:
 		bool m_supportTessellation{ false };
 
-
-
-		
-		//void testHDR(int width, int height);
-
 		void initDummyCubeMap();
 
 		void initSpotLightDepthMapFramebuffer(GLsizei shadowSize); // for point light

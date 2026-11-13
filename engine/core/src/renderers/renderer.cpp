@@ -645,33 +645,12 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureColorBuffer); // resolved non-MSAA float texture
 
-        // test that HDR is working (very costly !!!)
-        //testHDR(width, height);
-
         // render HDR framebuffer to screen as a big fullscreen quad
         renderQuad();
     }
 
     renderQuad();
 }
-
-//void engine::Renderer::testHDR(int width, int height)
-//{
-//    std::vector<float> data(width * height * 4);
-//    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data.data());
-//
-//    // Sample the center pixel
-//    int x = width / 2;
-//    int y = height / 2;
-//    int idx = (y * width + x) * 4;
-//
-//    float r = data[idx + 0];
-//    float g = data[idx + 1];
-//    float b = data[idx + 2];
-//
-//    if (r > 1.0 || g > 1.0f || b > 1.0f)
-//        std::cout << "HDR test pixel YESSSSSSSSSSSSS = " << r << ", " << g << ", " << b << std::endl;
-//}
 
 void engine::Renderer::updateEditorPropertySettings(int width, int height)
 {
@@ -938,34 +917,34 @@ void engine::Renderer::clean()
     logger.info("Cleaning up renderer base resources");
 
     // delete shaders
-    screenShader->clean();
-    directionalDepthMapShader->clean();
-    pointDepthMapShader->clean();
-    depthMapToQuadShader->clean();
-    cubeFaceDebugShader->clean();
-    outlineColorShader->clean();
+    if (screenShader) screenShader->clean();
+    if (directionalDepthMapShader) directionalDepthMapShader->clean();
+    if (pointDepthMapShader) pointDepthMapShader->clean();
+    if (depthMapToQuadShader) depthMapToQuadShader->clean();
+    if (cubeFaceDebugShader) cubeFaceDebugShader->clean();
+    if (outlineColorShader) outlineColorShader->clean();
 
     // delete framebuffers
-    glDeleteFramebuffers(1, &depthMapFramebuffer);
-    glDeleteFramebuffers(1, &colorFramebuffer);
+    if (depthMapFramebuffer) glDeleteFramebuffers(1, &depthMapFramebuffer);
+    if (colorFramebuffer) glDeleteFramebuffers(1, &colorFramebuffer);
 
     // delete textures
-    glDeleteTextures(1, &textureDepthMapBuffer);
-    glDeleteTextures(1, &textureColorBuffer);
+    if (textureDepthMapBuffer) glDeleteTextures(1, &textureDepthMapBuffer);
+    if (textureColorBuffer) glDeleteTextures(1, &textureColorBuffer);
 
     // delete renderbuffer
-    glDeleteRenderbuffers(1, &rbo);
+    if (rbo) glDeleteRenderbuffers(1, &rbo);
 
     // delete cube VAO/VBO
-    glDeleteVertexArrays(1, &m_cubeVAO);
-    glDeleteBuffers(1, &m_cubeVBO);
+    if (m_cubeVAO) glDeleteVertexArrays(1, &m_cubeVAO);
+    if (m_cubeVBO) glDeleteBuffers(1, &m_cubeVBO);
 
     // delete quad VAO/VBO
-    glDeleteVertexArrays(1, &m_quadVAO);
-    glDeleteBuffers(1, &m_quadVBO);
+    if (m_quadVAO) glDeleteVertexArrays(1, &m_quadVAO);
+    if (m_quadVBO) glDeleteBuffers(1, &m_quadVBO);
 
     // delete sphere VAO/VBO/IBO
-    glDeleteVertexArrays(1, &m_sphereVAO);
+    if (m_sphereVAO) glDeleteVertexArrays(1, &m_sphereVAO);
 }
 
 void engine::Renderer::setShouldSupportTessellation(bool supportTessellation)

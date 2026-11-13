@@ -17,7 +17,7 @@
 #include <stdexcept>
 
 
-engine::VulkanShader::VulkanShader(const std::string& name) : ShaderBase(name)
+engine::VulkanShader::VulkanShader(const std::string& name) : Shader(name)
 {
 }
 
@@ -47,8 +47,8 @@ void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath
     }
 
     // Creating shader modules
-    VkShaderModule vertShaderModule = createShaderModule(engine::g_Device, vertShaderCode);
-    VkShaderModule fragShaderModule = createShaderModule(engine::g_Device, fragShaderCode);
+    VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+    VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
     // Shader stage creation for vertex shader
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -190,16 +190,17 @@ std::vector<char> engine::VulkanShader::readBinaryFile(const std::string& path)
 }
 
 
-VkShaderModule engine::VulkanShader::createShaderModule(const VkDevice& device, const std::vector<char>& code)
+VkShaderModule engine::VulkanShader::createShaderModule(const std::vector<char>& code)
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+    auto result = vkCreateShaderModule(engine::g_Device, &createInfo, nullptr, &shaderModule);
+    
+    if (result != VK_SUCCESS) {
         throw std::runtime_error("failed to create shader module!");
     }
 

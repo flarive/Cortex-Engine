@@ -35,8 +35,7 @@ void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_p
     m_lights = lights;
     m_camera = camera;
 
-    auto* singleton = engine::Singleton::getInstance();
-    const SceneSettings& settings = singleton->sceneSettings();
+    const SceneSettings& settings = engine::Singleton::getInstance()->sceneSettings();
 
 
     initRenderStates(settings);
@@ -84,7 +83,7 @@ void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_p
     restoreScreenViewport();
 }
 
-void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
 {
     m_camera = camera;
 
@@ -604,7 +603,7 @@ void engine::OpenGLPbrRenderer::setupPBRPass(const engine::FrameData& frameData,
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 }
 
-void engine::OpenGLPbrRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::OpenGLPbrRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     // In your engine, `update(pbrShader, pbrShaderTessellation)` currently draws everything.
     // You want to split it into:
@@ -615,7 +614,7 @@ void engine::OpenGLPbrRenderer::renderScene(std::function<void(std::unique_ptr<S
     update(pbrShader, pbrShaderTessellation);
 }
 
-void engine::OpenGLPbrRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::OpenGLPbrRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     computeDepthMapFramebuffer(width, height,
         settings.enableShadows,
@@ -670,7 +669,7 @@ void engine::OpenGLPbrRenderer::setLightsCount(unsigned short pointLightCount, u
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    auto setCounts = [this](std::unique_ptr<ShaderBase>& sh) {
+    auto setCounts = [this](std::unique_ptr<Shader>& sh) {
         sh->use();
         sh->setInt("pointLightsCount", m_pointLightCount);
         sh->setInt("dirLightsCount", m_dirLightCount);
@@ -748,7 +747,7 @@ void engine::OpenGLPbrRenderer::initBloomBuffers(int width, int height)
     bloomBlurShader->setInt("image", 0);
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::OpenGLPbrRenderer::getShader()
+std::unique_ptr<engine::Shader>& engine::OpenGLPbrRenderer::getShader()
 {
     return pbrShader;
 }

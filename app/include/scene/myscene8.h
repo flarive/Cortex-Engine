@@ -27,7 +27,7 @@ public:
 
     void framebuffer_size_callback(int newWidth, int newHeight);
 
-    void update(std::unique_ptr<ShaderBase>& shader) override;
+    void update(std::unique_ptr<Shader>& shader) override;
 
     void updateUI() override;
 
@@ -35,7 +35,7 @@ public:
 
 
 private:
-    void drawScene(std::unique_ptr<ShaderBase>& shader);
+    void drawScene(std::unique_ptr<Shader>& shader);
 
     void drawUI();
 };

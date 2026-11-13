@@ -5,11 +5,16 @@
 #include <iostream>
 
 #include "../../include/common_defines.h"
+#include "../../include/singleton.h"
+
 #include "../../include/managers/log_manager.h"
 
 #include "../../include/app/gpu_selector.h"
 
 #include "../../include/managers/filesystem_manager.h"
+
+#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/vulkan_shader.h"
 
 #include <string>
 #include <format>
@@ -17,12 +22,23 @@
 #include <stdexcept>
 
 
-engine::ShaderBase::ShaderBase(const std::string& name)
+engine::Shader::Shader(const std::string& name)
     : m_name(name)
 {
 }
 
-engine::ShaderType engine::ShaderBase::getShaderType()
+std::unique_ptr<engine::Shader> engine::Shader::create(const std::string& name)
+{
+    const AppSettings& settings = engine::Singleton::getInstance()->appSettings();
+    if (settings.backend == BackendType::Vulkan)
+    {
+        return std::make_unique<engine::VulkanShader>(name);
+    }
+    
+    return std::make_unique<engine::OpenGLShader>(name);
+}
+
+engine::ShaderType engine::Shader::getShaderType()
 {
     if (m_name == "pbr") return ShaderType::PBR;
     if (m_name == "blinnphong") return ShaderType::BlinnPhong;
@@ -40,7 +56,7 @@ engine::ShaderType engine::ShaderBase::getShaderType()
     return ShaderType::Unknown;
 }
 
-//std::string engine::ShaderBase::readTextFile(const std::string& path)
+//std::string engine::Shader::readTextFile(const std::string& path)
 //{
 // //   auto absFullPath = engine::FileSystemManager::getFullPath(path);
 //	//if (!std::filesystem::exists(absFullPath))
@@ -60,6 +76,6 @@ engine::ShaderType engine::ShaderBase::getShaderType()
 //        std::istreambuf_iterator<char>());
 //}
 
-engine::ShaderBase::~ShaderBase()
+engine::Shader::~Shader()
 {
 }

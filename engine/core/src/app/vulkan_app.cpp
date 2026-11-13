@@ -75,10 +75,7 @@ void engine::VulkanApp::getBackendVersion()
     vkGetPhysicalDeviceProperties(engine::g_PhysicalDevice, &props);
 
     // store in singleton
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    AppSettings& appSettings = singleton->appSettings();
-
+    AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
     appSettings.backend = BackendType::Vulkan;
 
     std::string vendor = "Unknown";

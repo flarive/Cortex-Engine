@@ -11,9 +11,7 @@ void engine::AboutWindow::init()
 {
     m_vramManager.init();
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    AppSettings& appSettings = singleton->appSettings();
+    AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
 
     m_sysMonitor.setGPUInfo(appSettings.gpuVendor, appSettings.gpuRenderer, appSettings.gpuVersion);
 }

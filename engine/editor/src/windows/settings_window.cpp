@@ -4,9 +4,7 @@
 
 void engine::SettingsWindow::init()
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+    const SceneSettings& settings = engine::Singleton::getInstance()->sceneSettings();
 
     sceneSetting_renderMethod = static_cast<int>(settings.method);
     sceneSetting_drawAsWireframe = settings.drawAsWireframe;

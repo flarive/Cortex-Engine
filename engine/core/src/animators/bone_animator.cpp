@@ -121,7 +121,7 @@ void engine::BonesAnimator::update(float dt, Transform& transform)
 	calculateBoneTransform(&(std::static_pointer_cast<BoneAnimation>(m_currentAnimation)->getRootNode()), glm::mat4(1.0f));
 }
 
-void engine::BonesAnimator::draw(std::unique_ptr<ShaderBase>& shader, Transform& localTransform)
+void engine::BonesAnimator::draw(std::unique_ptr<Shader>& shader, Transform& localTransform)
 {
 	auto& transforms = getFinalBoneMatrices();
 

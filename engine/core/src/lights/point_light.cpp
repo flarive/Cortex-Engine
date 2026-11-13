@@ -8,7 +8,7 @@
 #include "../../include/transform.h"
 #include "../../include/managers/log_manager.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 #include <format>
 
@@ -28,12 +28,11 @@ engine::PointLight::PointLight(glm::vec3 _position) : Light(_position)
 void engine::PointLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader = std::make_unique<OpenGLShader>("light_debug");
+    m_lightDebugShader = Shader::create("light_debug");
     m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     std::shared_ptr<Material> matDebugLight;
 
@@ -45,7 +44,7 @@ void engine::PointLight::setup()
     m_debug_sphere.setup(matDebugLight);
 }
 
-void engine::PointLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::PointLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     ShaderType type = shader->getShaderType();
 
@@ -80,9 +79,8 @@ void engine::PointLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::ma
     }
 
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.drawLightsVisualHelpers)
     {

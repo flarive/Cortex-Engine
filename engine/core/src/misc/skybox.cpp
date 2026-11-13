@@ -3,13 +3,13 @@
 #include "../../include/managers/texture_manager.h"
 #include "../../include/primitives/primitive.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 #include "../../include/debug/opengl_debug.h"
 
 void engine::Skybox::setup(const std::vector<std::string>& faces)
 {
-    m_skyboxShader = std::make_unique<OpenGLShader>("skybox");
+    m_skyboxShader = Shader::create("skybox");
     m_skyboxShader->init("shaders/skybox.vert", "shaders/skybox.frag");
 
 

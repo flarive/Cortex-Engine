@@ -5,7 +5,7 @@
 
 #include <tuple>
 
-std::unique_ptr<engine::ShaderBase> engine::UISprite::m_spriteShader; // Define the static member
+std::unique_ptr<engine::Shader> engine::UISprite::m_spriteShader; // Define the static member
 
 engine::UISprite::UISprite()
 {

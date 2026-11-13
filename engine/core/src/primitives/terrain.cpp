@@ -145,7 +145,7 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
     return vertices;
 }
 
-void engine::Terrain::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
+void engine::Terrain::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
 {
     if (!m_isEnabled)
         return;

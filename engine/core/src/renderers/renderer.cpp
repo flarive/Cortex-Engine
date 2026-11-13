@@ -62,9 +62,7 @@ void engine::Renderer::renderDebugPlaneGrid(const glm::mat4& projection, const g
 
 void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+    const SceneSettings& settings = engine::Singleton::getInstance()->sceneSettings();
 
     // Always initialize the dummy cube map (only once)
     initDummyCubeMap();
@@ -89,8 +87,8 @@ void engine::Renderer::initDepthMapFramebuffer(GLsizei shadowSize)
 
 void engine::Renderer::computeDepthMapFramebuffer(
     GLsizei width, GLsizei height, bool enableShadows,
-    GLsizei shadowMapsTextureSize, std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation,
-    std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+    GLsizei shadowMapsTextureSize, std::unique_ptr<Shader>& shader, std::unique_ptr<Shader>& shaderTessellation,
+    std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     if (m_lights.empty())
     {
@@ -197,7 +195,7 @@ void engine::Renderer::initPointLightDepthMapFramebuffer(GLsizei shadowSize)
 /// <summary>
 /// Spotlight and directional lights only !!!!!
 /// </summary>
-void engine::Renderer::computeSpotLightDepthMapFramebuffer(std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::shared_ptr<engine::Light> light)
+void engine::Renderer::computeSpotLightDepthMapFramebuffer(std::unique_ptr<Shader>& shader, std::unique_ptr<Shader>& shaderTessellation, GLsizei width, GLsizei height, bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::shared_ptr<engine::Light> light)
 {
     // 1. render depth of scene to texture (from light's perspective)
     // --------------------------------------------------------------
@@ -306,8 +304,8 @@ void engine::Renderer::computeSpotLightDepthMapFramebuffer(std::unique_ptr<Shade
 
 
 void engine::Renderer::computePointLightDepthMapFramebuffer(
-    std::unique_ptr<ShaderBase>& shader, std::unique_ptr<ShaderBase>& shaderTessellation, GLsizei width, GLsizei height,
-    bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update,
+    std::unique_ptr<Shader>& shader, std::unique_ptr<Shader>& shaderTessellation, GLsizei width, GLsizei height,
+    bool enableShadows, GLsizei shadowSize, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update,
     std::shared_ptr<engine::Light> light)
 {
     // 0. create depth cubemap transformation matrices
@@ -654,10 +652,7 @@ void engine::Renderer::computeHDRColorFramebuffer(int width, int height, const S
 
 void engine::Renderer::updateEditorPropertySettings(int width, int height)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
-
+    const SceneSettings& settings = engine::Singleton::getInstance()->sceneSettings();
 
     // solid/wireframe polygons
     static bool lastRenderModeWireframe = settings.drawAsWireframe;

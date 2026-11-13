@@ -11,9 +11,7 @@ engine::Primitive::Primitive(const glm::vec3& _position) : m_position(_position)
 
 void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     auto materialType = material->getTypeID();
     if (sceneSettings.method == RenderMethod::Phong && materialType != MaterialType::blinnphong) {
@@ -29,7 +27,7 @@ void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
     m_material = material;
 }
 
-void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<ShaderBase>& shader, ShaderType type)
+void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<Shader>& shader, ShaderType type)
 {
     if (type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
@@ -77,7 +75,7 @@ bool engine::Primitive::isTransparent() const
     return false;
 }
 
-void engine::Primitive::handleOpacity(std::unique_ptr<ShaderBase>& shader)
+void engine::Primitive::handleOpacity(std::unique_ptr<Shader>& shader)
 {
     bool transparent = m_material->isTransparent();
     bool cutout = m_material->isAlphaCutout();

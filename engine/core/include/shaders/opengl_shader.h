@@ -10,7 +10,7 @@
 
 namespace engine
 {
-    class OpenGLShader final : public ShaderBase
+    class OpenGLShader final : public Shader
     {
     public:
         OpenGLShader(const std::string& name);

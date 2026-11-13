@@ -17,7 +17,7 @@ engine::Mesh::Mesh(const std::string& _name, std::vector<Vertex> _vertices, std:
 }
 
 // render the mesh
-void engine::Mesh::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
+void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)
 {
     ShaderType type = shader->getShaderType();
 
@@ -121,9 +121,7 @@ void engine::Mesh::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& pr
     OpenGLDebug::checkGLError("glBindVertexArray.mesh");
 
     // draw normals for debug
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.drawNormalsVisualHelpers) {
         drawDebugNormals(projection, view, transformMatrix);
@@ -195,7 +193,7 @@ void engine::Mesh::setupMesh()
     m_indexCount = static_cast<unsigned int>(m_indices.size());
 }
 
-void engine::Mesh::handleOpacity(std::unique_ptr<ShaderBase>& shader)
+void engine::Mesh::handleOpacity(std::unique_ptr<Shader>& shader)
 {
     bool transparent = m_material->isTransparent();
     bool cutout = m_material->isAlphaCutout();

@@ -15,7 +15,7 @@
 #include <stdexcept>
 
 
-engine::OpenGLShader::OpenGLShader(const std::string& name) : ShaderBase(name)
+engine::OpenGLShader::OpenGLShader(const std::string& name) : Shader(name)
 {
 }
 

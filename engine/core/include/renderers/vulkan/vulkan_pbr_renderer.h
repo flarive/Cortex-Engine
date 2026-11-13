@@ -12,19 +12,19 @@ namespace engine
 	{
 	public:
 		// Main PBR shader
-		std::unique_ptr<ShaderBase> pbrShader{};
-		std::unique_ptr<ShaderBase> pbrShaderTessellation{};
+		std::unique_ptr<Shader> pbrShader{};
+		std::unique_ptr<Shader> pbrShaderTessellation{};
 
 		// PBR environmentMap shader (for HDR skybox)
-		std::unique_ptr<ShaderBase> backgroundShader{};
+		std::unique_ptr<Shader> backgroundShader{};
 
 		VulkanPbrRenderer(GLFWwindow* window);
 		~VulkanPbrRenderer() override;
 
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<engine::Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI) override;
 
-		std::unique_ptr<ShaderBase>& getShader() override;
+		std::unique_ptr<Shader>& getShader() override;
 
 		void clean() override;
 
@@ -69,8 +69,8 @@ namespace engine
 		void renderDebug(const FrameData& frameData, const SceneSettings& settings);
 		void renderSkybox(const FrameData& frameData, const SceneSettings& settings);
 		void setupPBRPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
-		void renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
-		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
+		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
 		void resolveMSAA(int width, int height);
 		void renderBloom(const engine::SceneSettings& settings);
 		void renderFramebuffer(int width, int height, const engine::SceneSettings& settings);

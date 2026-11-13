@@ -6,7 +6,7 @@
 #include "../../include/managers/log_manager.h"
 #include "../../include/debug/opengl_debug.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 const float M_PI_F = 3.1415927f;
 
@@ -45,13 +45,13 @@ void engine::ParticleSystem::setup(const std::shared_ptr<Material>& material, co
 	Primitive::setMaterial(material);
 	m_uvScale = uv.getUvScale();
 
-	m_shaderSourceBasic = std::make_unique<OpenGLShader>("shaderSourceBasic");
+	m_shaderSourceBasic = Shader::create("shaderSourceBasic");
 	m_shaderSourceBasic->init("shaders/ParticleSourceBasic.vert", "shaders/ParticleSourceBasic.frag");
 	
-	m_shaderSourceGeometry = std::make_unique<OpenGLShader>("shaderSourceGeometry");
+	m_shaderSourceGeometry = Shader::create("shaderSourceGeometry");
 	m_shaderSourceGeometry->init("shaders/ParticleSourceGeometry.vert", "shaders/ParticleSourceGeometry.geom", "shaders/ParticleSourceGeometry.frag");
 	
-	m_shaderSourceInstanced = std::make_unique<OpenGLShader>("shaderSourceInstanced");
+	m_shaderSourceInstanced = Shader::create("shaderSourceInstanced");
 	m_shaderSourceInstanced->init("shaders/ParticleSourceInstanced.vert", "shaders/ParticleSourceBasic.frag");
 
 	if (material && material->hasTextureMap())
@@ -154,7 +154,7 @@ void engine::ParticleSystem::update()
 	}
 }
 
-void engine::ParticleSystem::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
 	if (!m_isEnabled)
 		return;

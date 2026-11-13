@@ -10,7 +10,10 @@
 
 namespace engine
 {
-    class VulkanShader final : public ShaderBase
+    /// <summary>
+    /// glslangValidator -V shader.vert -o shader.vert.spv
+    /// </summary>
+    class VulkanShader final : public Shader
     {
     public:
         VulkanShader(const std::string& name);
@@ -55,7 +58,7 @@ namespace engine
         std::vector<char> readBinaryFile(const std::string& path);
 
 
-        VkShaderModule createShaderModule(const VkDevice& device, const std::vector<char>& code);
+        VkShaderModule createShaderModule(const std::vector<char>& code);
 
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------

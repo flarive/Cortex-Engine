@@ -11,16 +11,16 @@ namespace engine
 	{
 	public:
 		// Main Phong shader
-		std::unique_ptr<ShaderBase> phongShader{};
+		std::unique_ptr<Shader> phongShader{};
 
 	
 		OpenGLPhongRenderer(GLFWwindow* window);
 		~OpenGLPhongRenderer() override;
 		
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI) override;
 
-		std::unique_ptr<ShaderBase>& getShader() override;
+		std::unique_ptr<Shader>& getShader() override;
 
 		void clean() override;
 
@@ -41,7 +41,7 @@ namespace engine
 		// loop
 		void beginFrame(const SceneSettings& settings, int width, int height) override;
 		void setupPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
-		void renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
 		void resolveMSAA(int width, int height);
 		void renderUI(std::function<void()> updateUI);
 		void endFrame() override;

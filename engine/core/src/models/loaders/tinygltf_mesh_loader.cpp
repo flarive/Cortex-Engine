@@ -196,9 +196,7 @@ void engine::GLtfMeshLoader::processNode(const tg3_model& model)
 
 std::shared_ptr<engine::Mesh> engine::GLtfMeshLoader::processMesh(const tg3_mesh& mesh, const tg3_model& model, int nodeIndex)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     // ------------------------------------------------------------
     // Node transform (global)

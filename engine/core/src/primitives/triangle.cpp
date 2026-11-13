@@ -81,7 +81,7 @@ std::vector<engine::Vertex> engine::Triangle::generateVertices()
     return Primitive::generateTriangleVertices(1.0f, 1.0f, m_uvScale);
 }
 
-void engine::Triangle::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Triangle::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
@@ -152,9 +152,8 @@ void engine::Triangle::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.triangle");
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
     {

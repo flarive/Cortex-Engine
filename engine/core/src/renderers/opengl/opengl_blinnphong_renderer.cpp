@@ -60,7 +60,7 @@ void engine::OpenGLBlinnPhongRenderer::setSkybox(const std::vector<std::string>&
     m_skybox->setup(faces);
 }
 
-void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
 {
     //DebugFrame::ensureIsCalledOncePerFrame("BlinnPhongRenderer", "loop");
 
@@ -305,13 +305,13 @@ void engine::OpenGLBlinnPhongRenderer::setupBlinnPhongPass(const engine::FrameDa
     glBindTexture(GL_TEXTURE_2D, LTC2Map);
 }
 
-void engine::OpenGLBlinnPhongRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::OpenGLBlinnPhongRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     update(blinnPhongShader, blinnPhongShaderTessellation);
     //update(outlineColorShader);
 }
 
-void engine::OpenGLBlinnPhongRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::OpenGLBlinnPhongRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     // compute light shadows using a depth map framebuffer
     computeDepthMapFramebuffer(width, height, settings.enableShadows, (GLsizei)settings.shadowMapsTextureSize, blinnPhongShader, blinnPhongShaderTessellation, update);
@@ -350,7 +350,7 @@ void engine::OpenGLBlinnPhongRenderer::setLightsCount(unsigned short pointLightC
     m_spotLightCount = spotLightCount;
     m_areaLightCount = areaLightCount;
 
-    auto setCounts = [this](std::unique_ptr<engine::ShaderBase>& sh) {
+    auto setCounts = [this](std::unique_ptr<engine::Shader>& sh) {
             sh->use();
             sh->setInt("pointLightsCount", m_pointLightCount);
             sh->setInt("dirLightsCount", m_dirLightCount);
@@ -362,7 +362,7 @@ void engine::OpenGLBlinnPhongRenderer::setLightsCount(unsigned short pointLightC
     setCounts(blinnPhongShaderTessellation);
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::OpenGLBlinnPhongRenderer::getShader()
+std::unique_ptr<engine::Shader>& engine::OpenGLBlinnPhongRenderer::getShader()
 {
     return blinnPhongShader;
 }

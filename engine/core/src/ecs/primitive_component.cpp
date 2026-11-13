@@ -34,13 +34,11 @@ void engine::PrimitiveComponent::update(float deltaTime, Transform& transform)
 
 }
 
-void engine::PrimitiveComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<ShaderBase>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
+void engine::PrimitiveComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<Shader>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
 	m_primitive->draw(shader, projection, view, worldTransformMatrix, localTransform);
 
-	auto* singleton = engine::Singleton::getInstance();
-	assert(singleton != nullptr && "Singleton not initialized !");
-	SceneSettings& sceneSettings = singleton->sceneSettings();
+	SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)
 		m_debug_boundingBox->draw(projection, view, worldTransformMatrix, localTransform);

@@ -79,7 +79,7 @@ std::vector<engine::Vertex> engine::Plane::generateVertices()
     return Primitive::generatePlaneVertices(m_uvScale, m_flipNormals);
 }
 
-void engine::Plane::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Plane::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
@@ -156,9 +156,7 @@ void engine::Plane::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& p
     OpenGLDebug::checkGLError("glBindVertexArray.plane");
 
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.drawNormalsVisualHelpers) {
         drawDebugNormals(projection, view, transformMatrix);

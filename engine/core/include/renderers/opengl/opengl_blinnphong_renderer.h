@@ -11,20 +11,20 @@ namespace engine
 	{
 	public:
 		// Main Blinn Phong shader
-		std::unique_ptr<ShaderBase> blinnPhongShader{};
-		std::unique_ptr<ShaderBase> blinnPhongShaderTessellation{};
+		std::unique_ptr<Shader> blinnPhongShader{};
+		std::unique_ptr<Shader> blinnPhongShaderTessellation{};
 
 		// Skybox shader
-		std::unique_ptr<ShaderBase> skyboxReflectionShader{};
-		std::unique_ptr<ShaderBase> backgroundShader{};
+		std::unique_ptr<Shader> skyboxReflectionShader{};
+		std::unique_ptr<Shader> backgroundShader{};
 		
 		OpenGLBlinnPhongRenderer(GLFWwindow* window);
 		~OpenGLBlinnPhongRenderer() override;
 		
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI) override;
 
-		std::unique_ptr<engine::ShaderBase>& getShader() override;
+		std::unique_ptr<engine::Shader>& getShader() override;
 
 		void setSkybox(const std::vector<std::string>& faces);
 
@@ -47,8 +47,8 @@ namespace engine
 		void renderDebug(const engine::FrameData& frameData, const engine::SceneSettings& settings);
 		void renderSkybox(const engine::FrameData& frameData, const engine::SceneSettings& settings);
 		void setupBlinnPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
-		void renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
-		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update);
+		void renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
+		void renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
 		void resolveMSAA(int width, int height);
 		void renderFramebuffer(const engine::SceneSettings& settings);
 		void renderUI(std::function<void()> updateUI);

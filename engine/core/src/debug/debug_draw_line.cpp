@@ -2,11 +2,11 @@
 
 #include "../../include/common_defines.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 #include <iostream>
 
-std::unique_ptr<engine::ShaderBase> engine::DebugDraw::m_shader; // Define the static member
+std::unique_ptr<engine::Shader> engine::DebugDraw::m_shader; // Define the static member
 
 engine::DebugDraw::DebugDraw() {}
 engine::DebugDraw::~DebugDraw()
@@ -20,7 +20,7 @@ void engine::DebugDraw::init()
     if (m_initialized) return;
     
     if (!m_shader)
-        m_shader = std::make_unique<OpenGLShader>("debug_line");
+        m_shader = Shader::create("debug_line");
 
     if (!m_shader->isInitialized())
         m_shader->init("shaders/debug/debug_line.vert", "shaders/debug/debug_line.frag");

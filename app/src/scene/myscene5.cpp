@@ -112,7 +112,7 @@ void MyScene5::framebuffer_size_callback(int newWidth, int newHeight)
     ourText.setup(getApp()->window, FONT_PATH, 28);
 }
 
-void MyScene5::update(std::unique_ptr<ShaderBase>& shader)
+void MyScene5::update(std::unique_ptr<Shader>& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -129,7 +129,7 @@ void MyScene5::clean()
     ourText.clean();
 }
 
-void MyScene5::drawScene(std::unique_ptr<ShaderBase>& shader)
+void MyScene5::drawScene(std::unique_ptr<Shader>& shader)
 {
     (void)shader;   //Do nothing
 

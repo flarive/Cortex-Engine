@@ -108,9 +108,7 @@ void engine::AssimpMeshLoader::processNode(aiNode* node, const aiScene* scene)
 
 std::shared_ptr<engine::Mesh> engine::AssimpMeshLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     // Data to fill
     std::vector<engine::Vertex> vertices{}; // Pre-allocate space

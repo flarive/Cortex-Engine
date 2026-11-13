@@ -90,10 +90,7 @@ const char* engine::OpenGLApp::initBackend()
 void engine::OpenGLApp::getBackendVersion()
 {
     // store in singleton
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    AppSettings& appSettings = singleton->appSettings();
-
+    AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
     appSettings.backend = BackendType::OpenGL;
     appSettings.gpuVendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
     appSettings.gpuRenderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));

@@ -33,7 +33,7 @@ public:
     ~MyScene1() override;
 
     void init() override;
-    void update(std::unique_ptr<ShaderBase>& shader) override;
+    void update(std::unique_ptr<Shader>& shader) override;
     void updateUI() override;
     void clean() override;
 

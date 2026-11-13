@@ -46,21 +46,21 @@ namespace engine
             };
         }
 
-        void draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) override;
+        void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform) override;
 
         void clean() override;
 
     private:
 
-        GLuint areaLightVBO{}, areaLightVAO{};
+        GLuint m_areaLightVBO{}, m_areaLightVAO{};
 
-        std::unique_ptr<ShaderBase> shaderLightPlane{};
+        std::unique_ptr<Shader> m_shaderLightPlane{};
 
         DebugDraw m_debugDrawLine{};
 
 		std::shared_ptr<engine::Primitive> m_primitive{};
 
-        VertexAL areaLightVertices[6] = {
+        VertexAL m_areaLightVertices[6] = {
             { {-8.0f, 2.4f, -1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f} }, // 0 1 5 4
             { {-8.0f, 2.4f,  1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f} },
             { {-8.0f, 0.4f,  1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f} },

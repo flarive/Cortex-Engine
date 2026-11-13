@@ -95,7 +95,7 @@ void MyScene2::framebuffer_size_callback(int newWidth, int newHeight)
     Scene::framebuffer_size_callback(newWidth, newHeight);
 }
 
-void MyScene2::update(std::unique_ptr<ShaderBase>& shader)
+void MyScene2::update(std::unique_ptr<Shader>& shader)
 {
     (void)shader;   //Do nothing
 

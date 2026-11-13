@@ -699,6 +699,9 @@
     <ClCompile Include="core\src\renderers\vulkan_renderer.cpp">
       <Filter>sources\core\renderers\base</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\app\vulkan_globals.cpp">
+      <Filter>sources\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">

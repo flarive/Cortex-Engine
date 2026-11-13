@@ -85,7 +85,7 @@ engine::Material::Material(MaterialType type, CombinedTexture mode, const Color&
     }
 }
 
-bool engine::Material::bind(std::unique_ptr<ShaderBase>& shader, int baseUnit) const
+bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
 {
     static int m_maxFragUnits{};
     
@@ -187,7 +187,7 @@ bool engine::Material::bind(std::unique_ptr<ShaderBase>& shader, int baseUnit) c
     return success;
 }
 
-bool engine::Material::bind2(std::unique_ptr<ShaderBase>& shader) const
+bool engine::Material::bind2(std::unique_ptr<Shader>& shader) const
 {
     unsigned int textureUnit = 0;
     bool success = true;

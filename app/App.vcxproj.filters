@@ -1311,6 +1311,10 @@
     <CopyFileToFolders Include="..\resources\shaders\renderer\phong\phong.frag.spv">
       <Filter>resources\shaders\renderer\phong</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\resources\shaders\renderer\phong\phong.vert.spv" />
+    <CopyFileToFolders Include="..\resources\shaders\debug\debug_light.frag.spv">
+      <Filter>resources\shaders\debug</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\app\myapp0.h">
@@ -1384,8 +1388,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\renderer\phong\phong.vert.spv">
-      <Filter>resources\shaders\renderer\phong</Filter>
+    <None Include="..\resources\shaders\debug\debug_light.vert.spv">
+      <Filter>resources\shaders\debug</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -75,7 +75,7 @@ void engine::VulkanPbrRenderer::setup(int width, int height, const std::shared_p
     restoreScreenViewport();
 }
 
-void engine::VulkanPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::VulkanPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
 {
     m_camera = camera;
 
@@ -240,7 +240,7 @@ void engine::VulkanPbrRenderer::setupPBRPass(const engine::FrameData& frameData,
     
 }
 
-void engine::VulkanPbrRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::VulkanPbrRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     // In your engine, `update(pbrShader, pbrShaderTessellation)` currently draws everything.
     // You want to split it into:
@@ -251,7 +251,7 @@ void engine::VulkanPbrRenderer::renderScene(std::function<void(std::unique_ptr<S
     update(pbrShader, pbrShaderTessellation);
 }
 
-void engine::VulkanPbrRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::VulkanPbrRenderer::renderShadowPass(int width, int height, const engine::SceneSettings& settings, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
 
 }
@@ -292,7 +292,7 @@ void engine::VulkanPbrRenderer::initBloomBuffers(int width, int height)
     
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::VulkanPbrRenderer::getShader()
+std::unique_ptr<engine::Shader>& engine::VulkanPbrRenderer::getShader()
 {
     return pbrShader;
 }

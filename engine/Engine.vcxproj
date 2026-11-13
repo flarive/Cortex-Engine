@@ -185,6 +185,7 @@
     <ClCompile Include="core\src\anim_transform.cpp" />
     <ClCompile Include="core\src\app\opengl_app.cpp" />
     <ClCompile Include="core\src\app\vulkan_app.cpp" />
+    <ClCompile Include="core\src\app\vulkan_globals.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />

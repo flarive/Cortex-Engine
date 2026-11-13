@@ -37,7 +37,7 @@ engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _lo
 }
 
 // draws the model, and thus all its meshes
-void engine::Model::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Model::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;

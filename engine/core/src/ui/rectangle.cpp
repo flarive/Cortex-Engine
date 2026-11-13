@@ -2,7 +2,7 @@
 
 #include "../../include/managers/log_manager.h"
 
-std::unique_ptr<engine::ShaderBase> engine::UIRectangle::m_rectShader;
+std::unique_ptr<engine::Shader> engine::UIRectangle::m_rectShader;
 
 engine::UIRectangle::UIRectangle()
 {

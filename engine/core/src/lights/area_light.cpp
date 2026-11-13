@@ -5,7 +5,7 @@
 #include "../../include/singleton.h"
 #include "../../include/misc/colors.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 
 
@@ -37,8 +37,8 @@ engine::AreaLight::AreaLight(const std::shared_ptr<engine::Primitive>& primitive
 
 void engine::AreaLight::setup()
 {
-    shaderLightPlane = std::make_unique<OpenGLShader>("light_plane");
-    shaderLightPlane->init("shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
+    m_shaderLightPlane = Shader::create("light_plane");
+    m_shaderLightPlane->init("shaders/test/light_plane.vert", "shaders/test/light_plane.frag");
 
 
     // Check for OpenGL errors
@@ -52,12 +52,12 @@ void engine::AreaLight::setup()
     //    m_primitive->setup();
 
     // Send to GPU
-    glGenVertexArrays(1, &areaLightVAO);
-    glBindVertexArray(areaLightVAO);
+    glGenVertexArrays(1, &m_areaLightVAO);
+    glBindVertexArray(m_areaLightVAO);
 
-    glGenBuffers(1, &areaLightVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, areaLightVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(areaLightVertices), areaLightVertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &m_areaLightVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_areaLightVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(m_areaLightVertices), m_areaLightVertices, GL_STATIC_DRAW);
 
     // position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
@@ -75,15 +75,15 @@ void engine::AreaLight::setup()
     glBindVertexArray(0);
 }
 
-void engine::AreaLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
+void engine::AreaLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
 {
     ShaderType type = shader->getShaderType();
 
     // Calculate the light's points
-    glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[0].position, 1.0f));
-    glm::vec3 p1 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[1].position, 1.0f));
-    glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[4].position, 1.0f));
-    glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(areaLightVertices[5].position, 1.0f));
+    glm::vec3 p0 = glm::vec3(transformMatrix * glm::vec4(m_areaLightVertices[0].position, 1.0f));
+    glm::vec3 p1 = glm::vec3(transformMatrix * glm::vec4(m_areaLightVertices[1].position, 1.0f));
+    glm::vec3 p2 = glm::vec3(transformMatrix * glm::vec4(m_areaLightVertices[4].position, 1.0f));
+    glm::vec3 p3 = glm::vec3(transformMatrix * glm::vec4(m_areaLightVertices[5].position, 1.0f));
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
@@ -113,22 +113,20 @@ void engine::AreaLight::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat
         shader->setVec4("material.albedoRoughness", glm::vec4(temp, roughness));
     }
 
-    shaderLightPlane->use();
-    shaderLightPlane->setMat4("model", transformMatrix);
-    shaderLightPlane->setMat4("view", view);
-    shaderLightPlane->setMat4("projection", projection);
-    shaderLightPlane->setVec3("lightColor", color);
+    m_shaderLightPlane->use();
+    m_shaderLightPlane->setMat4("model", transformMatrix);
+    m_shaderLightPlane->setMat4("view", view);
+    m_shaderLightPlane->setMat4("projection", projection);
+    m_shaderLightPlane->setVec3("lightColor", color);
 
 
     // send to GPU
-    glBindVertexArray(areaLightVAO);
+    glBindVertexArray(m_areaLightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.drawNormalsVisualHelpers) {
         drawDebugNormals(p0, p1, p2, p3, projection, view, transformMatrix);

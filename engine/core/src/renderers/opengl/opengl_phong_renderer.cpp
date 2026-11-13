@@ -28,10 +28,7 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
     m_lights = lights;
     m_camera = camera;
 
-
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    const SceneSettings& settings = singleton->sceneSettings();
+    const SceneSettings& settings = engine::Singleton::getInstance()->sceneSettings();
 
     initRenderStates(settings);
     
@@ -53,7 +50,7 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
     RenderState::enableWireframe();
 }
 
-void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update, std::function<void()> updateUI)
+void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
 {
     //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
     
@@ -157,7 +154,7 @@ void engine::OpenGLPhongRenderer::setupPhongPass(const engine::FrameData& frameD
     phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
-void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<ShaderBase>&, std::unique_ptr<ShaderBase>&)> update)
+void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     update(phongShader, phongShader);
 }
@@ -188,7 +185,7 @@ void engine::OpenGLPhongRenderer::setLightsCount(unsigned short pointLightCount,
     // not really needed
 }
 
-std::unique_ptr<engine::ShaderBase>& engine::OpenGLPhongRenderer::getShader()
+std::unique_ptr<engine::Shader>& engine::OpenGLPhongRenderer::getShader()
 {
     return phongShader;
 }

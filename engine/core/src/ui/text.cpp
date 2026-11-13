@@ -4,7 +4,7 @@
 
 #include "../../include/managers/log_manager.h"
 
-std::unique_ptr<engine::ShaderBase> engine::UIText::m_textShader; // Define the static member
+std::unique_ptr<engine::Shader> engine::UIText::m_textShader; // Define the static member
 
 
 engine::UIText::UIText()

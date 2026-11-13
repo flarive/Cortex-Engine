@@ -2,11 +2,11 @@
 
 #include "../../include/singleton.h"
 
-#include "../../include/shaders/opengl_shader.h"
+#include "../../include/shaders/shader.h"
 
 #include <vector>
 
-std::unique_ptr<engine::ShaderBase> engine::DebugCube::m_shader; // Define the static member
+std::unique_ptr<engine::Shader> engine::DebugCube::m_shader; // Define the static member
 
 engine::DebugCube::DebugCube(const glm::vec3& _position)
     : m_position(_position)
@@ -27,7 +27,7 @@ void engine::DebugCube::setup()
 {
     if (!m_shader)
     {
-        m_shader = std::make_unique<OpenGLShader>("model_boundingbox_debug");
+        m_shader = Shader::create("model_boundingbox_debug");
 
         if (!m_shader->isInitialized())
             m_shader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");

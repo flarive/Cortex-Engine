@@ -12,7 +12,7 @@ namespace engine
     private:
         unsigned int m_cubemapTexture{};
         unsigned int m_skyboxVAO{}, m_skyboxVBO{};
-        std::unique_ptr<ShaderBase> m_skyboxShader{};
+        std::unique_ptr<Shader> m_skyboxShader{};
 
 		bool m_isSetup{};
 

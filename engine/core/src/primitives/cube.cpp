@@ -93,7 +93,7 @@ std::vector<engine::Vertex> engine::Cube::generateVertices()
     return generateCuboidVertices(m_width, m_height, m_depth, m_uvScale);
 }
 
-void engine::Cube::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Cube::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;
@@ -164,9 +164,8 @@ void engine::Cube::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& pr
     glBindVertexArray(0);
     OpenGLDebug::checkGLError("glBindVertexArray.cube");
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.drawNormalsVisualHelpers) {
         drawDebugNormals(projection, view, transformMatrix);

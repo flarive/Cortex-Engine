@@ -9,9 +9,8 @@ bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int at
     m_atlasWidth = atlasWidth;
     m_atlasHeight = atlasHeight;
 
-    auto* singleton = engine::Singleton::getInstance();
-    assert(singleton != nullptr && "Singleton not initialized !");
-    SceneSettings& sceneSettings = singleton->sceneSettings();
+    
+    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
     if (sceneSettings.method == RenderMethod::PBR)
     {

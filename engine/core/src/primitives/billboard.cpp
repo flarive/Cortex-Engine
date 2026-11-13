@@ -82,7 +82,7 @@ std::vector<engine::Vertex> engine::Billboard::generateVertices()
     return generateBillboardVertices(m_uvScale);
 }
 
-void engine::Billboard::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Billboard::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     ShaderType type = shader->getShaderType();
 

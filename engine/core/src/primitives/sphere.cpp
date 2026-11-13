@@ -138,7 +138,7 @@ std::vector<engine::Vertex> engine::Sphere::generateVertices()
     return generateSphereVertices(m_radius, m_uvScale);
 }
 
-void engine::Sphere::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Sphere::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;

@@ -7,25 +7,25 @@ namespace engine
 		//#define APP_USE_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
 #define APP_USE_VULKAN_DEBUG_REPORT
-		static VkDebugReportCallbackEXT g_DebugReport = VK_NULL_HANDLE;
+	extern VkDebugReportCallbackEXT g_DebugReport;
 #endif
 
 
 
-		static uint32_t					m_apiVersion = VK_API_VERSION_1_0;
+		extern uint32_t					m_apiVersion;
 
 
 		// Data
-		static VkAllocationCallbacks*	g_Allocator = nullptr;
-		static VkInstance               g_Instance = VK_NULL_HANDLE;
-		static VkPhysicalDevice         g_PhysicalDevice = VK_NULL_HANDLE;
-		static VkDevice                 g_Device = VK_NULL_HANDLE;
-		static uint32_t                 g_QueueFamily = (uint32_t)-1;
-		static VkQueue                  g_Queue = VK_NULL_HANDLE;
-		static VkPipelineCache          g_PipelineCache = VK_NULL_HANDLE;
-		static VkDescriptorPool         g_DescriptorPool = VK_NULL_HANDLE;
+		extern VkAllocationCallbacks*	g_Allocator;
+		extern VkInstance               g_Instance;
+		extern VkPhysicalDevice         g_PhysicalDevice;
+		extern VkDevice                 g_Device;
+		extern uint32_t                 g_QueueFamily;
+		extern VkQueue                  g_Queue;
+		extern VkPipelineCache          g_PipelineCache;
+		extern VkDescriptorPool         g_DescriptorPool;
 
-		static ImGui_ImplVulkanH_Window g_MainWindowData;
-		static uint32_t                 g_MinImageCount = 2;
-		static bool                     g_SwapChainRebuild = false;
+		extern ImGui_ImplVulkanH_Window g_MainWindowData;
+		extern uint32_t                 g_MinImageCount;
+		extern bool                     g_SwapChainRebuild;
 }

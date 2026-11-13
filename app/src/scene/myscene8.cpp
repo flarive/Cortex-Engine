@@ -180,7 +180,7 @@ void MyScene8::framebuffer_size_callback(int newWidth, int newHeight)
     ourText.setup(getApp()->window, FONT_PATH, 20);
 }
 
-void MyScene8::update(std::unique_ptr<ShaderBase>& shader)
+void MyScene8::update(std::unique_ptr<Shader>& shader)
 {
     // draw scene and UI in framebuffer
     drawScene(shader);
@@ -198,7 +198,7 @@ void MyScene8::clean()
     ourText.clean();
 }
 
-void MyScene8::drawScene(std::unique_ptr<ShaderBase>& shader)
+void MyScene8::drawScene(std::unique_ptr<Shader>& shader)
 {
     (void)shader;   //Do nothing
 }

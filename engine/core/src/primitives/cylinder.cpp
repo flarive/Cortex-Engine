@@ -150,7 +150,7 @@ std::vector<engine::Vertex> engine::Cylinder::generateVertices()
     return generateCylinderVertices(36, m_height, m_radius, m_uvScale);
 }
 
-void engine::Cylinder::draw(std::unique_ptr<ShaderBase>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+void engine::Cylinder::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
     if (!m_isEnabled)
         return;

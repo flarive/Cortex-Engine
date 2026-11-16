@@ -14,7 +14,6 @@ layout(std140, binding = 0) uniform PhongCameraUBO
 layout(set = 0, binding = 0) uniform PhongCameraUBO
 #endif
 {
-    mat4 model;
     mat4 view;
     mat4 projection;
 } camera;

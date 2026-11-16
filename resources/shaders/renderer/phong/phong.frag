@@ -1,13 +1,9 @@
 layout(location = 0) out vec4 FragColor;
 
-layout(location = 0) in vec3 Normal;
-layout(location = 1) in vec3 FragPos;
+
+layout(location = 0) in vec3 FragPos;
+layout(location = 1) in vec3 Normal;
 layout(location = 2) in vec2 TexCoords;
-
-
-#ifndef OPENGL
-#error OPENGL_NOT_DEFINED
-#endif
 
 
 #ifdef OPENGL
@@ -21,8 +17,9 @@ layout(set = 0, binding = 2) uniform PhongUBO
     vec4 lightColor;
     vec4 objectColor;
 
-    uint hasDiffuseTexture;
+    int hasDiffuseTexture;
 } phong;
+
 
 #ifdef OPENGL
 uniform sampler2D texture_diffuse;
@@ -36,7 +33,7 @@ void main()
 {
     vec3 baseColor = phong.objectColor.xyz;
 
-    if (phong.hasDiffuseTexture != 0)
+    if (phong.hasDiffuseTexture > 0)
         baseColor *= texture(texture_diffuse, TexCoords).rgb;
 
     float ambientStrength = 0.1;

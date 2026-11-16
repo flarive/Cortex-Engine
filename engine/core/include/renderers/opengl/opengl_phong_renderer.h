@@ -4,31 +4,10 @@
 #include "../../misc/skybox.h"
 
 #include "../../shaders/shader.h"
+#include "../../shaders/shader_ubo.h"
 
 namespace engine
 {
-
-	struct PhongCameraUBO final
-	{
-		glm::mat4 view;
-		glm::mat4 projection;
-	};
-
-	struct PhongModelUBO final
-	{
-		glm::mat4 model;
-	};
-
-	struct alignas(16) PhongUBO final
-	{
-		glm::vec4 lightPos;
-		glm::vec4 viewPos;
-		glm::vec4 lightColor;
-		glm::vec4 objectColor;
-
-		uint32_t hasDiffuseTexture;
-	};
-
 	class OpenGLPhongRenderer final : public OpenGLRenderer
 	{
 	public:

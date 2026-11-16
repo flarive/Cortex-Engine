@@ -1154,5 +1154,8 @@
     <ClInclude Include="core\include\app\vulkan_globals.h">
       <Filter>headers\app</Filter>
     </ClInclude>
+    <ClInclude Include="core\include\shaders\shader_ubo.h">
+      <Filter>headers\core\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

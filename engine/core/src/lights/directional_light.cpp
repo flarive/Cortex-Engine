@@ -31,6 +31,9 @@ void engine::DirectionalLight::setup()
     m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
     m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
 
+    static_assert(sizeof(DebugLightCameraUBO) % 16 == 0);
+    static_assert(sizeof(DebugLightColorUBO) % 16 == 0);
+
     
     SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 

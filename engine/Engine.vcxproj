@@ -350,6 +350,7 @@
     <ClInclude Include="core\include\renderers\vulkan\vulkan_pbr_renderer.h" />
     <ClInclude Include="core\include\renderers\vulkan_renderer.h" />
     <ClInclude Include="core\include\shaders\opengl_shader.h" />
+    <ClInclude Include="core\include\shaders\shader_ubo.h" />
     <ClInclude Include="core\include\shaders\vulkan_shader.h" />
     <ClInclude Include="editor\include\widgets\mesh_widget.h" />
     <ClInclude Include="editor\include\widgets\skeleton_widget.h" />

@@ -10,6 +10,8 @@
 #include "../materials/blinnphong_material.h"
 #include "../materials/pbr_material.h"
 
+#include "../shaders/shader_ubo.h"
+
 #include <vector>
 #include <map>
 #include <unordered_map>

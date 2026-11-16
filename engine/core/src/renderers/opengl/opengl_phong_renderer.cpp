@@ -93,6 +93,10 @@ void engine::OpenGLPhongRenderer::loadShaders()
     phongShader->createUniformBuffer("PhongModelUBO", 1, sizeof(PhongModelUBO));
     phongShader->createUniformBuffer("PhongUBO", 2, sizeof(PhongUBO));
 
+    static_assert(sizeof(PhongCameraUBO) % 16 == 0);
+    static_assert(sizeof(PhongModelUBO) % 16 == 0);
+    static_assert(sizeof(PhongUBO) % 16 == 0);
+
 
     // shared shaders
     Renderer::loadShaders();

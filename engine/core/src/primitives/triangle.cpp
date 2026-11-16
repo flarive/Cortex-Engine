@@ -123,7 +123,7 @@ void engine::Triangle::draw(std::unique_ptr<Shader>& shader, const glm::mat4& pr
     //shader->setMat4("model", transformMatrix);
 
     PhongModelUBO phongModelUBO{ transformMatrix };
-    shader->updateUniformBuffer("PhongUBO", &phongModelUBO, sizeof(PhongModelUBO));
+    shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

@@ -28,17 +28,6 @@ namespace engine
         size_t size = 0;
     };
 
-    struct DebugLightCameraUBO final
-    {
-        glm::mat4 model;
-        glm::mat4 view;
-        glm::mat4 projection;
-    };
-
-    struct DebugLightColorUBO final
-    {
-        glm::vec4 customColor;
-    };
 
 
 

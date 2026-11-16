@@ -104,7 +104,7 @@ void engine::PointLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& 
         m_lightDebugShader->use();
 /*      m_lightDebugShader->setMat4("projection", projection);
         m_lightDebugShader->setMat4("view", view);
-        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor(*/));
+        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());*/
 
         DebugLightCameraUBO cameraUBO{ model, view, projection };
         m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));

@@ -40,6 +40,8 @@ namespace engine
         glm::vec4 customColor;
     };
 
+
+
     class Shader : private NonCopyable
     {
     public:

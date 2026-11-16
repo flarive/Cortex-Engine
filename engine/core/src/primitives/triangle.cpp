@@ -120,7 +120,10 @@ void engine::Triangle::draw(std::unique_ptr<Shader>& shader, const glm::mat4& pr
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader->setMat4("model", transformMatrix);
+    //shader->setMat4("model", transformMatrix);
+
+    PhongModelUBO phongModelUBO{ transformMatrix };
+    shader->updateUniformBuffer("PhongUBO", &phongModelUBO, sizeof(PhongModelUBO));
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

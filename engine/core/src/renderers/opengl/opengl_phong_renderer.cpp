@@ -89,6 +89,10 @@ void engine::OpenGLPhongRenderer::loadShaders()
     // blinn phong illumination model and lightning shader
     phongShader = std::make_unique<OpenGLShader>("phong");
     phongShader->init("shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
+    phongShader->createUniformBuffer("PhongCameraUBO", 0, sizeof(PhongCameraUBO));
+    phongShader->createUniformBuffer("PhongModelUBO", 1, sizeof(PhongModelUBO));
+    phongShader->createUniformBuffer("PhongUBO", 2, sizeof(PhongUBO));
+
 
     // shared shaders
     Renderer::loadShaders();
@@ -107,7 +111,8 @@ void engine::OpenGLPhongRenderer::initFramebuffers(const SceneSettings& settings
 
 void engine::OpenGLPhongRenderer::setupShaderBindings(const SceneSettings& settings)
 {
-
+    phongShader->use();
+    phongShader->setInt("texture_diffuse", 0);
 }
 
 void engine::OpenGLPhongRenderer::setupScreenShaderBindings()
@@ -135,23 +140,38 @@ void engine::OpenGLPhongRenderer::beginFrame(const SceneSettings& settings, int 
 void engine::OpenGLPhongRenderer::setupPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings)
 {
     phongShader->use();
-    phongShader->setMat4("projection", frameData.projection);
+    /*phongShader->setMat4("projection", frameData.projection);
     phongShader->setMat4("view", frameData.view);
     phongShader->setVec3("viewPos", frameData.viewPos);
     phongShader->setVec3("lightPos", glm::vec3(0.0f, 10.0f, 10.0f));
-    phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    phongShader->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));*/
+
+    /*phongShader->setMat4("projection", frameData.projection);
+    phongShader->setMat4("view", frameData.view);*/
+
+    PhongCameraUBO phongCameraUBO{ frameData.view, frameData.projection };
+    phongShader->updateUniformBuffer("PhongCameraUBO", &phongCameraUBO, sizeof(PhongCameraUBO));
+
+    PhongUBO phongUBO{};
+    phongUBO.lightPos = glm::vec4(0.0f, 10.0f, 10.0f, 1.0f);
+    phongUBO.viewPos = glm::vec4(frameData.viewPos, 1.0f);
+    phongUBO.lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    phongUBO.objectColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+
     
     
     
     // hardcoded sample texture
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, sampleTextureID);
-    phongShader->setBool("hasDiffuseTexture", true);
-    phongShader->setInt("texture_diffuse", 0);
+    phongUBO.hasDiffuseTexture = 1;
+    //phongShader->setBool("hasDiffuseTexture", true);
+    //phongShader->setInt("texture_diffuse", 0);
     
+    phongShader->updateUniformBuffer("PhongUBO", &phongUBO, sizeof(PhongUBO));
     
-    
-    phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    //phongShader->setVec3("objectColor", glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
@@ -161,8 +181,8 @@ void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr
 
 void engine::OpenGLPhongRenderer::resolveMSAA(int width, int height)
 {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
+    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 void engine::OpenGLPhongRenderer::renderUI(std::function<void()> updateUI)

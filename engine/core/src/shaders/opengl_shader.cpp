@@ -42,6 +42,9 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* fragmentPath
     }
 
 
+    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
+    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
+
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
 
@@ -117,6 +120,10 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* geometryPath
         logger.error("Shader {} FILE_NOT_SUCCESSFULLY_READ: {}", m_name, error);
         throw std::runtime_error("Shader file read failed");
     }
+
+    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
+    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
+    geometryCode = std::string("#version 450\n#define OPENGL\n") + geometryCode;
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
@@ -225,6 +232,12 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* tessControlP
         throw std::runtime_error("Shader file read failed");
     }
 
+    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
+    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
+    geometryCode = std::string("#version 450\n#define OPENGL\n") + geometryCode;
+    tessControlCode = std::string("#version 450\n#define OPENGL\n") + tessControlCode;
+    tessEvalCode = std::string("#version 450\n#define OPENGL\n") + tessEvalCode;
+
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     // 2. compile shaders
@@ -265,10 +278,6 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* tessControlP
     }
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    std::string fragmentSource = fragmentCode;
-    if (tessEvalPath != nullptr) {
-        fragmentSource = std::string("#define IS_TESSELLATED\n") + fragmentCode;
-    }
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");

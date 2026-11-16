@@ -51,6 +51,12 @@ namespace engine
         void getActiveUniformsList(const std::string& uniformName) override;
 
 
+        // UBOs
+		void createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize) override;
+        void updateUniformBuffer(const std::string& blockName, const void* data, size_t size) override;
+
+
+
     private:
         bool m_initialized = false;
 

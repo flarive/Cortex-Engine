@@ -30,6 +30,8 @@ void engine::PointLight::setup()
     // load light cube debug shader
     m_lightDebugShader = Shader::create("light_debug");
     m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
+    m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
 
     
     SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
@@ -100,9 +102,15 @@ void engine::PointLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& 
 
         // Pass model matrix to shader
         m_lightDebugShader->use();
-        m_lightDebugShader->setMat4("projection", projection);
+/*      m_lightDebugShader->setMat4("projection", projection);
         m_lightDebugShader->setMat4("view", view);
-        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());
+        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor(*/));
+
+        DebugLightCameraUBO cameraUBO{ model, view, projection };
+        m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
+
+        DebugLightColorUBO colorUBO{ m_debug_sphere.getMaterial()->getAmbientColor() };
+        m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
 
         auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
         m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);

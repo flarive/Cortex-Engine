@@ -207,6 +207,15 @@ VkShaderModule engine::VulkanShader::createShaderModule(const std::vector<char>&
     return shaderModule;
 }
 
+void engine::VulkanShader::createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize)
+{
+}
+
+void engine::VulkanShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t size)
+{
+
+}
+
 engine::VulkanShader::~VulkanShader()
 {
 

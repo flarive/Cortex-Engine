@@ -4,6 +4,7 @@
 #include "../common_defines.h"
 
 #include <string>
+#include <unordered_map>
 
 namespace engine
 {
@@ -20,7 +21,24 @@ namespace engine
         DepthBufferPointLightsTessellation
     };
 
-    
+    struct UniformBuffer final
+    {
+        GLuint id = 0;
+        GLuint binding = 0;
+        size_t size = 0;
+    };
+
+    struct DebugLightCameraUBO final
+    {
+        glm::mat4 model;
+        glm::mat4 view;
+        glm::mat4 projection;
+    };
+
+    struct DebugLightColorUBO final
+    {
+        glm::vec4 customColor;
+    };
 
     class Shader : private NonCopyable
     {
@@ -68,6 +86,10 @@ namespace engine
 
         static std::unique_ptr<Shader> create(const std::string& name);
 
+        // UBOs
+        virtual void createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize) = 0;
+        virtual void updateUniformBuffer(const std::string& blockName, const void* data, size_t size) = 0;
+
     private:
         bool m_initialized = false;
 
@@ -80,5 +102,7 @@ namespace engine
     protected:
         unsigned int m_ID{};
         std::string m_name{};
+
+        std::unordered_map<std::string, UniformBuffer> m_uniformBuffers;
     };
 }

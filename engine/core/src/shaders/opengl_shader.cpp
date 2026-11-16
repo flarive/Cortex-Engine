@@ -661,6 +661,40 @@ std::string engine::OpenGLShader::readTextFile(const std::string& path)
         std::istreambuf_iterator<char>());
 }
 
+void engine::OpenGLShader::createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize)
+{
+    GLuint blockIndex = glGetUniformBlockIndex(m_ID, blockName.c_str());
+
+    if (blockIndex == GL_INVALID_INDEX)
+    {
+        logger.error("Uniform block '{}' not found.", blockName);
+        return;
+    }
+
+    GLuint buffer;
+
+    glGenBuffers(1, &buffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+    glBufferData(GL_UNIFORM_BUFFER, bufferSize, nullptr, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glUniformBlockBinding(m_ID, blockIndex, binding);
+    glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
+
+    m_uniformBuffers[blockName] = { buffer, binding, bufferSize };
+}
+
+void engine::OpenGLShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t size)
+{
+    auto it = m_uniformBuffers.find(blockName);
+
+    if (it == m_uniformBuffers.end())
+        return;
+
+    glBindBuffer(GL_UNIFORM_BUFFER, it->second.id);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
 engine::OpenGLShader::~OpenGLShader()
 {
 

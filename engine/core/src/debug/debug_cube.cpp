@@ -30,7 +30,11 @@ void engine::DebugCube::setup()
         m_shader = Shader::create("model_boundingbox_debug");
 
         if (!m_shader->isInitialized())
+        {
             m_shader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+            m_shader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
+            m_shader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
+        }
     }
     
     geometrySetup(); // Geometry setup
@@ -142,10 +146,16 @@ void engine::DebugCube::draw(const glm::mat4& projection, const glm::mat4& view,
     m_shader->use();
     OpenGLDebug::checkGLError("shader.use.debug_cube");
  
-    m_shader->setMat4("model", transformMatrix);
-    m_shader->setMat4("projection", projection);
-    m_shader->setMat4("view", view);
-    m_shader->setVec4("customColor", glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+    //m_shader->setMat4("model", transformMatrix);
+    //m_shader->setMat4("projection", projection);
+    //m_shader->setMat4("view", view);
+    //m_shader->setVec4("customColor", glm::vec4(1.0f, 0.0f, 0.0f, 0.3f));
+
+    DebugLightCameraUBO cameraUBO{ transformMatrix, view, projection };
+    m_shader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
+
+    DebugLightColorUBO colorUBO{ glm::vec4(1.0f, 0.0f, 0.0f, 0.3f) };
+    m_shader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
 
     // Send to GPU
     glBindVertexArray(m_VAO);

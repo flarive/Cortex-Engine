@@ -12,6 +12,7 @@
 #include "../../include/app/vulkan_globals.h"
 
 #include <string>
+#include <memory>
 #include <format>
 #include <filesystem>
 #include <stdexcept>
@@ -209,15 +210,20 @@ VkShaderModule engine::VulkanShader::createShaderModule(const std::vector<char>&
 
 void engine::VulkanShader::createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize)
 {
+    m_uniformBuffers[blockName] = std::make_unique<VulkanUniformBuffer>(engine::g_Device, engine::g_PhysicalDevice, binding, bufferSize);
 }
 
-void engine::VulkanShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t size)
+void engine::VulkanShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t bufferSize)
 {
+    auto it = m_uniformBuffers.find(blockName);
 
+    if (it == m_uniformBuffers.end())
+        return;
+
+    it->second->update(data, bufferSize);
 }
 
 engine::VulkanShader::~VulkanShader()
 {
 
 }
-

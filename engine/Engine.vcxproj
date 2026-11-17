@@ -186,6 +186,7 @@
     <ClCompile Include="core\src\app\opengl_app.cpp" />
     <ClCompile Include="core\src\app\vulkan_app.cpp" />
     <ClCompile Include="core\src\app\vulkan_globals.cpp" />
+    <ClCompile Include="core\src\backends\opengl\opengl_uniform_buffer.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
@@ -206,6 +207,7 @@
     <ClCompile Include="core\src\primitives\triangle.cpp" />
     <ClCompile Include="core\src\renderers\opengl_renderer.cpp" />
     <ClCompile Include="core\src\renderers\vulkan\vulkan_pbr_renderer.cpp" />
+    <ClCompile Include="core\src\renderers\vulkan\vulkan_phong_renderer.cpp" />
     <ClCompile Include="core\src\renderers\vulkan_renderer.cpp" />
     <ClCompile Include="core\src\shaders\opengl_shader.cpp" />
     <ClCompile Include="core\src\shaders\vulkan_shader.cpp" />
@@ -288,6 +290,7 @@
     <ClCompile Include="core\src\uvmapping.cpp" />
     <ClCompile Include="core\src\ecs\transform_component.cpp" />
     <ClCompile Include="editor\src\overlays\performance_overlay.cpp" />
+    <ClCompile Include="core\src\backends\vulkan\vulkan_uniform_buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libs\imgui\backends\imgui_impl_glfw.h" />
@@ -326,6 +329,7 @@
     <ClInclude Include="core\include\app\scene_settings.h" />
     <ClInclude Include="core\include\app\vulkan_app.h" />
     <ClInclude Include="core\include\app\vulkan_globals.h" />
+    <ClInclude Include="core\include\backends\opengl\opengl_uniform_buffer.h" />
     <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />
@@ -348,6 +352,7 @@
     <ClInclude Include="core\include\primitives\triangle.h" />
     <ClInclude Include="core\include\renderers\opengl_renderer.h" />
     <ClInclude Include="core\include\renderers\vulkan\vulkan_pbr_renderer.h" />
+    <ClInclude Include="core\include\renderers\vulkan\vulkan_phong_renderer.h" />
     <ClInclude Include="core\include\renderers\vulkan_renderer.h" />
     <ClInclude Include="core\include\shaders\opengl_shader.h" />
     <ClInclude Include="core\include\shaders\shader_ubo.h" />
@@ -441,6 +446,7 @@
     <ClInclude Include="core\include\vertex.h" />
     <ClInclude Include="core\include\managers\entity_manager.h" />
     <ClInclude Include="editor\include\widgets\material_widget.h" />
+    <ClInclude Include="core\include\backends\vulkan\vulkan_uniform_buffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

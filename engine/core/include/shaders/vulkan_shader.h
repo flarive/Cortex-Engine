@@ -5,11 +5,20 @@
 #include "../misc/noncopyable.h"
 #include "../common_defines.h"
 
+#include "../backends/vulkan/vulkan_uniform_buffer.h"
+
 #include <string>
 
 
 namespace engine
 {
+    //struct UniformBufferInfo
+    //{
+    //    GLuint id;
+    //    GLuint binding;
+    //    size_t size;
+    //};
+
     /// <summary>
     /// glslangValidator -V shader.vert -o shader.vert.spv
     /// </summary>
@@ -51,13 +60,14 @@ namespace engine
 
         void getActiveUniformsList(const std::string& uniformName) override;
 
-        // UBOs
+        // Uniform Buffer Object (UBO)
         void createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize) override;
-        void updateUniformBuffer(const std::string& blockName, const void* data, size_t size) override;
+        void updateUniformBuffer(const std::string& blockName, const void* data, size_t bufferSize) override;
 
 
     private:
         bool m_initialized = false;
+        std::unordered_map<std::string, std::unique_ptr<VulkanUniformBuffer>> m_uniformBuffers;
 
         std::vector<char> readBinaryFile(const std::string& path);
 

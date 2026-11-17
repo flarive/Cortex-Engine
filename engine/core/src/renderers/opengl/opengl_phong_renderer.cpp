@@ -86,7 +86,7 @@ void engine::OpenGLPhongRenderer::initRenderStates(const SceneSettings& settings
 
 void engine::OpenGLPhongRenderer::loadShaders()
 {
-    // blinn phong illumination model and lightning shader
+    // Phong illumination model and lightning shader
     phongShader = std::make_unique<OpenGLShader>("phong");
     phongShader->init("shaders/renderer/phong/phong.vert", "shaders/renderer/phong/phong.frag");
     phongShader->createUniformBuffer("PhongCameraUBO", 0, sizeof(PhongCameraUBO));

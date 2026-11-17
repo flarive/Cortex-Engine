@@ -702,6 +702,15 @@
     <ClCompile Include="core\src\app\vulkan_globals.cpp">
       <Filter>sources\app</Filter>
     </ClCompile>
+    <ClCompile Include="core\src\backends\vulkan\vulkan_uniform_buffer.cpp">
+      <Filter>sources\core\backends\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\renderers\vulkan\vulkan_phong_renderer.cpp">
+      <Filter>sources\core\backends\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\backends\opengl\opengl_uniform_buffer.cpp">
+      <Filter>sources\core\backends\opengl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\include\lights\spot_light.h">
@@ -1156,6 +1165,15 @@
     </ClInclude>
     <ClInclude Include="core\include\shaders\shader_ubo.h">
       <Filter>headers\core\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\vulkan\vulkan_uniform_buffer.h">
+      <Filter>headers\core\backends\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\renderers\vulkan\vulkan_phong_renderer.h">
+      <Filter>headers\core\renderers\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\opengl\opengl_uniform_buffer.h">
+      <Filter>headers\core\backends\opengl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

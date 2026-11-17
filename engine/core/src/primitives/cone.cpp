@@ -4,6 +4,8 @@
 #include "../../include/tools/helpers.h"
 #include "../../include/managers/log_manager.h"
 
+#include "../../include/shaders/shader_ubo.h"
+
 engine::Cone::Cone(float _radius, float _height, const glm::vec3& _position) : Primitive(_position), m_radius(_radius), m_height(_height)
 {
     logger.trace("Cone constructor called");
@@ -175,7 +177,10 @@ void engine::Cone::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader->setMat4("model", transformMatrix);
+    //shader->setMat4("model", transformMatrix);
+
+    PhongModelUBO phongModelUBO{ transformMatrix };
+    shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

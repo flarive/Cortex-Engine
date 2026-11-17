@@ -41,10 +41,9 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* fragmentPath
         throw;
     }
 
-
-    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
-    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
-
+    vertexCode = injectOpenGLDefine(vertexCode);
+    fragmentCode = injectOpenGLDefine(fragmentCode);
+    
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
 
@@ -121,9 +120,9 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* geometryPath
         throw std::runtime_error("Shader file read failed");
     }
 
-    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
-    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
-    geometryCode = std::string("#version 450\n#define OPENGL\n") + geometryCode;
+    vertexCode = injectOpenGLDefine(vertexCode);
+    fragmentCode = injectOpenGLDefine(fragmentCode);
+    geometryCode = injectOpenGLDefine(geometryCode);
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
@@ -232,11 +231,11 @@ void engine::OpenGLShader::init(const char* vertexPath, const char* tessControlP
         throw std::runtime_error("Shader file read failed");
     }
 
-    vertexCode = std::string("#version 450\n#define OPENGL\n") + vertexCode;
-    fragmentCode = std::string("#version 450\n#define OPENGL\n") + fragmentCode;
-    geometryCode = std::string("#version 450\n#define OPENGL\n") + geometryCode;
-    tessControlCode = std::string("#version 450\n#define OPENGL\n") + tessControlCode;
-    tessEvalCode = std::string("#version 450\n#define OPENGL\n") + tessEvalCode;
+    vertexCode = injectOpenGLDefine(vertexCode);
+    fragmentCode = injectOpenGLDefine(fragmentCode);
+    geometryCode = injectOpenGLDefine(geometryCode);
+    tessControlCode = injectOpenGLDefine(tessControlCode);
+    tessEvalCode = injectOpenGLDefine(tessEvalCode);
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
@@ -692,7 +691,7 @@ void engine::OpenGLShader::createUniformBuffer(const std::string& blockName, GLu
     m_uniformBuffers[blockName] = { buffer, binding, bufferSize };
 }
 
-void engine::OpenGLShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t size)
+void engine::OpenGLShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t bufferSize)
 {
     auto it = m_uniformBuffers.find(blockName);
 
@@ -700,8 +699,20 @@ void engine::OpenGLShader::updateUniformBuffer(const std::string& blockName, con
         return;
 
     glBindBuffer(GL_UNIFORM_BUFFER, it->second.id);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, bufferSize, data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+std::string engine::OpenGLShader::injectOpenGLDefine(const std::string& source)
+{
+    size_t versionPos = source.find('\n');
+
+    if (versionPos == std::string::npos)
+        return source;
+
+    return source.substr(0, versionPos + 1)
+        + "#define OPENGL\n"
+        + source.substr(versionPos + 1);
 }
 
 engine::OpenGLShader::~OpenGLShader()

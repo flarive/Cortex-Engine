@@ -29,6 +29,7 @@
 #include "renderers/opengl/opengl_phong_renderer.h"
 #include "renderers/opengl/opengl_pbr_renderer.h"
 
+#include "renderers/vulkan/vulkan_phong_renderer.h"
 #include "renderers/vulkan/vulkan_pbr_renderer.h"
 
 #include "ecs/entity.h"

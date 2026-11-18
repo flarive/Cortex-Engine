@@ -28,25 +28,25 @@ engine::PointLight::PointLight(glm::vec3 _position) : Light(_position)
 void engine::PointLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader = Shader::create("light_debug");
-    m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
-    m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
-    m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
+    //m_lightDebugShader = Shader::create("light_debug");
+    //m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    //m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
+    //m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
 
-    static_assert(sizeof(DebugLightCameraUBO) % 16 == 0);
-    static_assert(sizeof(DebugLightColorUBO) % 16 == 0);
+    //static_assert(sizeof(DebugLightCameraUBO) % 16 == 0);
+    //static_assert(sizeof(DebugLightColorUBO) % 16 == 0);
 
     
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+    //SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
-    std::shared_ptr<Material> matDebugLight;
+    //std::shared_ptr<Material> matDebugLight;
 
-    if (sceneSettings.method == RenderMethod::PBR)
-        matDebugLight = std::make_shared<engine::PBRMaterial>(LIGHT_DEBUG_COLOR);
-    else
-        matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
+    //if (sceneSettings.method == RenderMethod::PBR)
+    //    matDebugLight = std::make_shared<engine::PBRMaterial>(LIGHT_DEBUG_COLOR);
+    //else
+    //    matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
 
-    m_debug_sphere.setup(matDebugLight);
+    //m_debug_sphere.setup(matDebugLight);
 }
 
 void engine::PointLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -85,44 +85,44 @@ void engine::PointLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& 
 
 
 
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
-
-    if (sceneSettings.drawLightsVisualHelpers)
-    {
-        glm::vec3 direction = glm::normalize(target - m_position);
-        glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
-
-        // Compute quaternion rotation between default axis and desired direction
-        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
-
-        // Convert to rotation matrix
-        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
-
-        // Compose final model matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
-        model *= rotationMatrix;
-        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE));
-
-        // Pass model matrix to shader
-        m_lightDebugShader->use();
-/*      m_lightDebugShader->setMat4("projection", projection);
-        m_lightDebugShader->setMat4("view", view);
-        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());*/
-
-        DebugLightCameraUBO cameraUBO{ model, view, projection };
-        m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
-
-        DebugLightColorUBO colorUBO{ m_debug_sphere.getMaterial()->getAmbientColor() };
-        m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
-
-        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
-        m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);
-    }
+//    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+//
+//    if (sceneSettings.drawLightsVisualHelpers)
+//    {
+//        glm::vec3 direction = glm::normalize(target - m_position);
+//        glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
+//
+//        // Compute quaternion rotation between default axis and desired direction
+//        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
+//
+//        // Convert to rotation matrix
+//        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
+//
+//        // Compose final model matrix
+//        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
+//        model *= rotationMatrix;
+//        model = glm::scale(model, glm::vec3(LIGHT_CUBE_SIZE));
+//
+//        // Pass model matrix to shader
+//        m_lightDebugShader->use();
+///*      m_lightDebugShader->setMat4("projection", projection);
+//        m_lightDebugShader->setMat4("view", view);
+//        m_lightDebugShader->setVec4("customColor", m_debug_sphere.getMaterial()->getAmbientColor());*/
+//
+//        DebugLightCameraUBO cameraUBO{ model, view, projection };
+//        m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
+//
+//        DebugLightColorUBO colorUBO{ m_debug_sphere.getMaterial()->getAmbientColor() };
+//        m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
+//
+//        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
+//        m_debug_sphere.draw(m_lightDebugShader, projection, view, model, localTransform);
+//    }
 }
 
 void engine::PointLight::clean()
 {
-    m_debug_sphere.clean();
+    //m_debug_sphere.clean();
 }
 
 engine::PointLight::~PointLight()

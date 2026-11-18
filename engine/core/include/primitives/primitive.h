@@ -126,6 +126,7 @@ namespace engine
 
         
     protected:
+		// OpenGL specific members
         unsigned int m_VBO{}, m_VAO{}, m_EBO{};
 
         std::shared_ptr<Material> m_material{};

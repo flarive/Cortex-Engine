@@ -31,9 +31,9 @@ namespace engine
 
     private:
 
-        uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+        //uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
-        void createBuffer();
+        //void createBuffer();
 
     private:
 

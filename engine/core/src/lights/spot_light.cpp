@@ -25,24 +25,24 @@ engine::SpotLight::SpotLight(glm::vec3 _position) : Light(_position)
 void engine::SpotLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader = Shader::create("light_debug");
-    m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
-    m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
-    m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
+    //m_lightDebugShader = Shader::create("light_debug");
+    //m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
+    //m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
+    //m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
 
-    static_assert(sizeof(DebugLightCameraUBO) % 16 == 0);
-    static_assert(sizeof(DebugLightColorUBO) % 16 == 0);
+    //static_assert(sizeof(DebugLightCameraUBO) % 16 == 0);
+    //static_assert(sizeof(DebugLightColorUBO) % 16 == 0);
 
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+    //SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
-    std::shared_ptr<Material> matDebugLight;
+    //std::shared_ptr<Material> matDebugLight;
 
-    if (sceneSettings.method == RenderMethod::PBR)
-        matDebugLight = std::make_shared<engine::PBRMaterial>(LIGHT_DEBUG_COLOR);
-    else
-        matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
-    
-    m_debug_cone.setup(matDebugLight);
+    //if (sceneSettings.method == RenderMethod::PBR)
+    //    matDebugLight = std::make_shared<engine::PBRMaterial>(LIGHT_DEBUG_COLOR);
+    //else
+    //    matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
+    //
+    //m_debug_cone.setup(matDebugLight);
 }
 
 void engine::SpotLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -86,47 +86,47 @@ void engine::SpotLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& p
 
     
 
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+    //SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
-    if (sceneSettings.drawLightsVisualHelpers)
-    {
-        glm::vec3 direction = glm::normalize(target - m_position);
-        glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
+    //if (sceneSettings.drawLightsVisualHelpers)
+    //{
+    //    glm::vec3 direction = glm::normalize(target - m_position);
+    //    glm::vec3 defaultAxis = glm::vec3(0.0f, -1.0f, 0.0f); // cone points down
 
-        // Compute quaternion rotation between default axis and desired direction
-        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
+    //    // Compute quaternion rotation between default axis and desired direction
+    //    glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
 
-        // Convert to rotation matrix
-        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
+    //    // Convert to rotation matrix
+    //    glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
 
-        // Compose final model matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
-        model *= rotationMatrix;
-        //model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
-        model = glm::scale(model, glm::vec3(0.25f));
+    //    // Compose final model matrix
+    //    glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
+    //    model *= rotationMatrix;
+    //    //model = glm::scale(model, glm::vec3(0.25f, glm::length(target - position), 0.25f)); // scale lengthwise toward target
+    //    model = glm::scale(model, glm::vec3(0.25f));
 
-        // Pass model matrix to shader
-        m_lightDebugShader->use();
-        //m_lightDebugShader->setMat4("projection", projection);
-        //m_lightDebugShader->setMat4("view", view);
-        //m_lightDebugShader->setVec4("customColor", m_debug_cone.getMaterial()->getAmbientColor());
+    //    // Pass model matrix to shader
+    //    m_lightDebugShader->use();
+    //    //m_lightDebugShader->setMat4("projection", projection);
+    //    //m_lightDebugShader->setMat4("view", view);
+    //    //m_lightDebugShader->setVec4("customColor", m_debug_cone.getMaterial()->getAmbientColor());
 
-        DebugLightCameraUBO cameraUBO{ model, view, projection };
-        m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
+    //    DebugLightCameraUBO cameraUBO{ model, view, projection };
+    //    m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
 
-        DebugLightColorUBO colorUBO{ m_debug_cone.getMaterial()->getAmbientColor() };
-        m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
+    //    DebugLightColorUBO colorUBO{ m_debug_cone.getMaterial()->getAmbientColor() };
+    //    m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
 
 
-        // You can pass glm::vec3(0) for rotation since model is already transformed
-        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
-        m_debug_cone.draw(m_lightDebugShader, projection, view, model, localTransform);
-    }
+    //    // You can pass glm::vec3(0) for rotation since model is already transformed
+    //    auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
+    //    m_debug_cone.draw(m_lightDebugShader, projection, view, model, localTransform);
+    //}
 }
 
 void engine::SpotLight::clean()
 {
-    m_debug_cone.clean();
+    //m_debug_cone.clean();
 }
 
 engine::SpotLight::~SpotLight()

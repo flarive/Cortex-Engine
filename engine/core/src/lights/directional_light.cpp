@@ -26,7 +26,7 @@ engine::DirectionalLight::DirectionalLight(glm::vec3 _position) : Light(_positio
 void engine::DirectionalLight::setup()
 {
     // load light cube debug shader
-    m_lightDebugShader = Shader::create("light_debug");
+    /*m_lightDebugShader = Shader::create("light_debug");
     m_lightDebugShader->init("shaders/debug/debug_light.vert", "shaders/debug/debug_light.frag");
     m_lightDebugShader->createUniformBuffer("CameraUBO", 0, sizeof(DebugLightCameraUBO));
     m_lightDebugShader->createUniformBuffer("ColorUBO", 1, sizeof(DebugLightColorUBO));
@@ -44,7 +44,7 @@ void engine::DirectionalLight::setup()
     else
         matDebugLight = std::make_shared<engine::BlinnPhongMaterial>(LIGHT_DEBUG_COLOR);
 
-    m_debug_cylinder.setup(matDebugLight);
+    m_debug_cylinder.setup(matDebugLight);*/
 }
 
 void engine::DirectionalLight::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const Color& ambient, const Color& diffuse, const Color& specular, float intensity, bool castShadow, const glm::vec3& target, const glm::mat4 transformMatrix, Transform& localTransform)
@@ -69,45 +69,45 @@ void engine::DirectionalLight::draw(std::unique_ptr<Shader>& shader, const glm::
         shader->setVec3(std::format("{}.direction", base), calculateLightDirection(m_position, target));
     }
 
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+    //SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
-    if (sceneSettings.drawLightsVisualHelpers)
-    {
-        glm::vec3 direction = glm::normalize(target - m_position);
-        glm::vec3 defaultAxis = glm::vec3(0.0f, 1.0f, 0.0f); // cylinder points up
+    //if (sceneSettings.drawLightsVisualHelpers)
+    //{
+    //    glm::vec3 direction = glm::normalize(target - m_position);
+    //    glm::vec3 defaultAxis = glm::vec3(0.0f, 1.0f, 0.0f); // cylinder points up
 
-        // Compute quaternion rotation between default axis and desired direction
-        glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
+    //    // Compute quaternion rotation between default axis and desired direction
+    //    glm::quat rotationQuat = glm::rotation(defaultAxis, direction);
 
-        // Convert to rotation matrix
-        glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
+    //    // Convert to rotation matrix
+    //    glm::mat4 rotationMatrix = glm::toMat4(rotationQuat);
 
-        // Compose final model matrix
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
-        model *= rotationMatrix;
-        model = glm::scale(model, glm::vec3(0.05f, glm::length(target - m_position), 0.05f)); // scale lengthwise toward target
+    //    // Compose final model matrix
+    //    glm::mat4 model = glm::translate(glm::mat4(1.0f), m_position);
+    //    model *= rotationMatrix;
+    //    model = glm::scale(model, glm::vec3(0.05f, glm::length(target - m_position), 0.05f)); // scale lengthwise toward target
 
-        // Pass model matrix to shader
-        m_lightDebugShader->use();
-        //m_lightDebugShader->setMat4("projection", projection);
-        //m_lightDebugShader->setMat4("view", view);
-        //m_lightDebugShader->setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
+    //    // Pass model matrix to shader
+    //    m_lightDebugShader->use();
+    //    //m_lightDebugShader->setMat4("projection", projection);
+    //    //m_lightDebugShader->setMat4("view", view);
+    //    //m_lightDebugShader->setVec4("customColor", m_debug_cylinder.getMaterial()->getAmbientColor());
 
-        DebugLightCameraUBO cameraUBO{ model, view, projection };
-        m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
+    //    DebugLightCameraUBO cameraUBO{ model, view, projection };
+    //    m_lightDebugShader->updateUniformBuffer("CameraUBO", &cameraUBO, sizeof(DebugLightCameraUBO));
 
-        DebugLightColorUBO colorUBO{ m_debug_cylinder.getMaterial()->getAmbientColor() };
-        m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
+    //    DebugLightColorUBO colorUBO{ m_debug_cylinder.getMaterial()->getAmbientColor() };
+    //    m_lightDebugShader->updateUniformBuffer("ColorUBO", &colorUBO, sizeof(DebugLightColorUBO));
 
-        // You can pass glm::vec3(0) for rotation since model is already transformed
-        auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
-        m_debug_cylinder.draw(m_lightDebugShader, projection, view, model, localTransform);
-    }
+    //    // You can pass glm::vec3(0) for rotation since model is already transformed
+    //    auto localTransform = Transform(m_position, glm::vec3(0.0f), glm::vec3(1.0f));
+    //    m_debug_cylinder.draw(m_lightDebugShader, projection, view, model, localTransform);
+    //}
 }
 
 void engine::DirectionalLight::clean()
 {
-    m_debug_cylinder.clean();
+    //m_debug_cylinder.clean();
 }
 
 engine::DirectionalLight::~DirectionalLight()

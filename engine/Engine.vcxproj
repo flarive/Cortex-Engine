@@ -187,6 +187,7 @@
     <ClCompile Include="core\src\app\vulkan_app.cpp" />
     <ClCompile Include="core\src\app\vulkan_globals.cpp" />
     <ClCompile Include="core\src\backends\opengl\opengl_uniform_buffer.cpp" />
+    <ClCompile Include="core\src\backends\vulkan\vulkan_helper.cpp" />
     <ClCompile Include="core\src\bounding_volume.cpp" />
     <ClCompile Include="core\src\app\app.cpp" />
     <ClCompile Include="core\src\app\scene.cpp" />
@@ -330,6 +331,7 @@
     <ClInclude Include="core\include\app\vulkan_app.h" />
     <ClInclude Include="core\include\app\vulkan_globals.h" />
     <ClInclude Include="core\include\backends\opengl\opengl_uniform_buffer.h" />
+    <ClInclude Include="core\include\backends\vulkan\vulkan_helper.h" />
     <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />

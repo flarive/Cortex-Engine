@@ -66,7 +66,7 @@ namespace engine
         // quadratic: Controls how quickly the light falls off with the square of the distance (more realistic for point lights).
         float m_quadraticAttenuation { 0.032f }; // 0.032, 0.0075, 0.000007
         
-        Sphere m_debug_sphere{};
+        //Sphere m_debug_sphere{};
 
         void setup() override;
     };

@@ -78,7 +78,7 @@ namespace engine
         float m_cutoff{ 12.5f };
         float m_outerCutoff{ 15.0f };
         
-        Cone m_debug_cone{};
+        //Cone m_debug_cone{};
 
         void setup() override;
     };

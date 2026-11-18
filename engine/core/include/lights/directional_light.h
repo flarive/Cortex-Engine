@@ -43,7 +43,7 @@ namespace engine
         void clean() override;
 
     private:
-        Cylinder m_debug_cylinder{};
+        //Cylinder m_debug_cylinder{};
         
         void setup() override;
     };

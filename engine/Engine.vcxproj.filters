@@ -307,6 +307,18 @@
     <Filter Include="sources\core\renderers\vulkan">
       <UniqueIdentifier>{fce9c5c6-5a95-41c8-9c24-a9e7f925ba4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\core\primitives\opengl">
+      <UniqueIdentifier>{a536b841-b04b-42f5-b7a5-45e19de912ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core\primitives\vulkan">
+      <UniqueIdentifier>{949409b3-1b12-4ec8-bb08-368a9822c887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\primitives\opengl">
+      <UniqueIdentifier>{18420d66-9f00-4bca-8566-bc23c9d13a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core\primitives\vulkan">
+      <UniqueIdentifier>{3d3a7e62-eb3b-48fb-839b-61733a6010a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -710,6 +722,9 @@
     </ClCompile>
     <ClCompile Include="core\src\backends\opengl\opengl_uniform_buffer.cpp">
       <Filter>sources\core\backends\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="core\src\backends\vulkan\vulkan_helper.cpp">
+      <Filter>sources\backends\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1174,6 +1189,9 @@
     </ClInclude>
     <ClInclude Include="core\include\backends\opengl\opengl_uniform_buffer.h">
       <Filter>headers\core\backends\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\vulkan\vulkan_helper.h">
+      <Filter>headers\core\backends\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

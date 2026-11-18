@@ -59,6 +59,10 @@ namespace engine
 
 		float m_width{ 1.0f };
 		float m_height{ 1.0f };
-        
+
+		// vulkan specific members (should be moved in primitive.h)
+        VkBuffer m_vertexBuffer{ VK_NULL_HANDLE };
+        VkDeviceMemory m_vertexBufferMemory{ VK_NULL_HANDLE };
+        uint32_t m_vertexCount{ 0 };
     };
 }

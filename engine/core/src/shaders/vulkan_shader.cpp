@@ -69,8 +69,8 @@ void engine::VulkanShader::init(const char* vertexPath, const char* fragmentPath
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
 
-    vkDestroyShaderModule(engine::g_Device, fragShaderModule, nullptr);
-    vkDestroyShaderModule(engine::g_Device, vertShaderModule, nullptr);
+    vkDestroyShaderModule(VulkanGlobals::getDevice(), fragShaderModule, nullptr);
+    vkDestroyShaderModule(VulkanGlobals::getDevice(), vertShaderModule, nullptr);
 }
 
 /// <summary>
@@ -199,7 +199,7 @@ VkShaderModule engine::VulkanShader::createShaderModule(const std::vector<char>&
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    auto result = vkCreateShaderModule(engine::g_Device, &createInfo, nullptr, &shaderModule);
+    auto result = vkCreateShaderModule(VulkanGlobals::getDevice(), &createInfo, nullptr, &shaderModule);
     
     if (result != VK_SUCCESS) {
         throw std::runtime_error("failed to create shader module!");
@@ -210,7 +210,7 @@ VkShaderModule engine::VulkanShader::createShaderModule(const std::vector<char>&
 
 void engine::VulkanShader::createUniformBuffer(const std::string& blockName, GLuint binding, size_t bufferSize)
 {
-    m_uniformBuffers[blockName] = std::make_unique<VulkanUniformBuffer>(engine::g_Device, engine::g_PhysicalDevice, binding, bufferSize);
+    m_uniformBuffers[blockName] = std::make_unique<VulkanUniformBuffer>(VulkanGlobals::getDevice(), VulkanGlobals::getPhysicalDevice(), binding, bufferSize);
 }
 
 void engine::VulkanShader::updateUniformBuffer(const std::string& blockName, const void* data, size_t bufferSize)

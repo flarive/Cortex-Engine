@@ -319,7 +319,7 @@ void engine::VulkanApp::setupVulkan(ImVector<const char*> instance_extensions)
         create_info.pQueueCreateInfos = queue_info;
         create_info.enabledExtensionCount = (uint32_t)device_extensions.Size;
         create_info.ppEnabledExtensionNames = device_extensions.Data;
-        err = vkCreateDevice(g_PhysicalDevice, &create_info, VulkanGlobals::g_Allocator, &VulkanGlobals::g_Device);
+        err = vkCreateDevice(VulkanGlobals::g_PhysicalDevice, &create_info, VulkanGlobals::g_Allocator, &VulkanGlobals::g_Device);
         check_vk_result(err);
         vkGetDeviceQueue(VulkanGlobals::g_Device, VulkanGlobals::g_QueueFamily, 0, &VulkanGlobals::g_Queue);
     }

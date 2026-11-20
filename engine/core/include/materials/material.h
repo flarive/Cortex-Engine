@@ -26,12 +26,11 @@ namespace engine
         static inline constexpr int MATERIAL_BASE_UNIT = 12;
 
 
-        Material(std::vector<Texture> _textures, float _shininess = 1.0f);
+        Material(std::vector<Texture> _textures);
         Material(MaterialType type, const Color& ambientColor);
-        Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f), float shininess = 1.0f);
-        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess = 1.0f);
-
-        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess);
+        Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f));
+        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
+        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
 
         virtual ~Material() = default;
 
@@ -45,38 +44,23 @@ namespace engine
         void setName(const std::string& name) { m_name = name; }
         const std::string& getName() { return m_name; }
 
-        void loadTextures();
-        void loadTexturesAsync(bool flipY = false, std::function<void(bool)> texturesLoadedCallback = nullptr);
+        virtual void loadTextures() = 0;
+        virtual void loadTexturesAsync(bool flipY = false, std::function<void(bool)> texturesLoadedCallback = nullptr) = 0;
 
         bool bind(std::unique_ptr<Shader>& shader, int baseUnit = MATERIAL_BASE_UNIT) const;
         bool bind2(std::unique_ptr<Shader>& shader) const;
         void unbind(int baseUnit = MATERIAL_BASE_UNIT) const;
 
 
-        bool hasTextureMap()
-        {
-            if (getTypeID() == MaterialType::PBR)
-            {
-                return hasDiffuseMap() || hasNormalMap() || hasMetallicMap() || hasRoughnessMap() || hasAoMap() || hasArmMap() || hasRmMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
-            }
-            else
-            {
-                return hasDiffuseMap() || hasSpecularMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
-            }
-        }
+        virtual bool hasTextureMap() = 0;
+
 
         bool hasDiffuseMap() const { return !std::empty(m_diffuseTexPath); }
-        bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
         bool hasNormalMap() const { return !std::empty(m_normalTexPath); }
-        bool hasMetallicMap() const { return !std::empty(m_metallicTexPath); }
-        bool hasRoughnessMap() const { return !std::empty(m_roughnessTexPath); }
-        bool hasAoMap() const { return !std::empty(m_aoTexPath); }
         bool hasHeightMap() const { return !std::empty(m_heightTexPath); }
         bool hasEmissiveMap() const { return !std::empty(m_emissiveTexPath); }
         bool hasOpacityMap() const { return !std::empty(m_opacityTexPath); }
 
-        bool hasArmMap() const { return !std::empty(m_armTexPath); }
-        bool hasRmMap() const { return !std::empty(m_rmTexPath); }
         
         bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
@@ -89,40 +73,29 @@ namespace engine
         std::vector<std::string> m_cubemapTextures{};
 
 
-        // BlinnPhong
+        
         const engine::Color& getAmbientColor() const { return m_ambientColor; }
         const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
         const engine::Color& getSpecularColor() const { return m_specularColor; }
 
-        // PBR
-        const engine::Color& getBaseColorFactor() const { return m_baseColorFactor; }
+        
         
 
 
 
         const std::string& getDiffuseTexPath() const { return m_diffuseTexPath; }
-        const std::string& getSpecularTexPath() const { return m_specularTexPath; }
         const std::string& getNormalTexPath() const { return m_normalTexPath; }
-        const std::string& getMetallicTexPath() const { return m_metallicTexPath; }
-        const std::string& getRoughnessTexPath() const { return m_roughnessTexPath; }
-        const std::string& getAoTexPath() const { return m_aoTexPath; }
         const std::string& getHeightTexPath() const { return m_heightTexPath; }
         const std::string& getEmissiveTexPath() const { return m_emissiveTexPath; }
         const std::string& getOpacityTexPath() const { return m_opacityTexPath; }
 
-        // combined textures (PBR only)
-        const std::string& getArmTexPath() const { return m_armTexPath; }
-        const std::string& getRmTexPath() const { return m_rmTexPath; }
 
-        
-
-        const int getTextureHeightUnit() const;
         
         // not really used for the moment
         float& getHeightIntensity() { return m_heightIntensity; }
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         
-        float& getShininessIntensity() { return m_shininess; }
+        
         const float getAmbientIntensity() const { return m_ambientIntensity; }
         
         float& getEmissiveStrength() { return m_emissiveStrength; }
@@ -141,26 +114,18 @@ namespace engine
         bool isAlphaCutout() const;
 
 
-        void setShininessIntensity(float intensity) { m_shininess = intensity; }
+        
         void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
 
 
-        float& getSpecularIntensity() { return m_specularIntensity; }
-        void setSpecularIntensity(float intensity) { m_specularIntensity = intensity; }
+
 
         // normal mapping
         float& getNormalIntensity() { return m_normalIntensity; }
         void setNormalIntensity(float intensity) { m_normalIntensity = intensity; }
 
         
-        float& getRougnessIntensity() { return m_roughnessIntensity; }
-        void setRougnessIntensity(float intensity) { m_roughnessIntensity = intensity; }
 
-        float& getMetallicIntensity() { return m_metallicIntensity; }
-        void setMetallicIntensity(float intensity) { m_metallicIntensity = intensity; }
-        
-        float& getAmbientOcclusionIntensity() { return m_ambientOcclusionIntensity; }
-        void setAmbientOcclusionIntensity(float intensity) { m_ambientOcclusionIntensity = intensity; }
         
 
 
@@ -172,7 +137,7 @@ namespace engine
         float& getParallaxIntensity() { return m_parallaxIntensity; }
 
 
-
+        bool hasTransmission() { return m_transmission > 0.0f; }
 
 
         const std::vector<std::string>& getCubeMapTexs() const { return m_cubemapTextures; }
@@ -180,64 +145,37 @@ namespace engine
         void setCubeMapTexs(const std::vector<std::string>& faces);
 
 
-        unsigned int getDiffuseMapId() { return diffuseMapId; }
-        unsigned int getSpecularMapId() { return specularMapId; }
-        unsigned int getNormalMapId() { return normalMapId; }
-        unsigned int getMetallicMapId() { return metallicMapId; }
-        unsigned int getRoughnessMapId() { return roughnessMapId; }
-        unsigned int getAOMapId() { return aoMapId; }
-        unsigned int getHeightMapId() { return heightMapId; }
-        unsigned int getEmissiveMapId() { return emissiveMapId; }
-        unsigned int getOpacityMapId() { return opacityMapId; }
+        GLuint getDiffuseMapId() { return m_diffuseMapId; }
+        GLuint getNormalMapId() { return m_normalMapId; }
+        GLuint getHeightMapId() { return m_heightMapId; }
+        GLuint getEmissiveMapId() { return m_emissiveMapId; }
+        GLuint getOpacityMapId() { return m_opacityMapId; }
         
-        unsigned int getArmMapId() { return armMapId; } // packed AO/Roughness/Metallic
-        unsigned int getRmMapId() { return rmMapId; } // packed Roughness/Metallic
+        
 
         
 
-        void setIOR(float ior) { m_IOR = ior; }
-        float& getIOR() { return m_IOR; }
 
-        void setTransmission(float transmission) { m_transmission = transmission; }
-        float& getTransmission() { return m_transmission; }
-        bool hasTransmission() { return m_transmission > 0.0f; }
-
-        void setThickness(float thickness) { m_thickness = thickness; }
-        float& getThickness() { return m_thickness; }
-
-        void setAttenuationColor(const Color& attenuationColor) { m_attenuationColor = attenuationColor; }
-        Color& getAttenuationColor() { return m_attenuationColor; }
-
-        void setAttenuationDistance(float attenuationDistance) { m_attenuationDistance = attenuationDistance; }
-        float& getAttenuationDistance() { return m_attenuationDistance; }
 
 
     protected:
         std::string m_name{};
         
-        Color m_ambientColor{ Color(0.1f) }; // blinnphong
-        Color m_diffuseColor{ Color(1.0f) }; // blinnphong
-        Color m_specularColor{ Color(0.0f) }; // blinnphong
+        // BlinnPhong and PBR shared properties
+        Color m_ambientColor{ Color(0.1f) };
+        Color m_diffuseColor{ Color(1.0f) };
+        Color m_specularColor{ Color(0.0f) };
 
-        Color m_baseColorFactor{ Color(1.0f) }; // pbr
-
+        
+        // BlinnPhong and PBR shared texture path
         std::string m_diffuseTexPath{};
-        std::string m_specularTexPath{}; // blinnphong
         std::string m_normalTexPath{};
-        
-        std::string m_aoTexPath{}; // pbr
-        std::string m_roughnessTexPath{}; // pbr
-        std::string m_metallicTexPath{}; // pbr
-
-        std::string m_rmTexPath{}; // pbr roughness and metallic textures combined
-        std::string m_armTexPath{}; // pbr ambient occlusion, roughness and metallic textures combined
-        
         std::string m_heightTexPath{}; // displacement
         std::string m_emissiveTexPath{};
         std::string m_opacityTexPath{}; // alpha texture
+        
 
-
-        // intensities
+        // BlinnPhong and PBR shared intensities
         float m_ambientIntensity{ 1.0f };
         float m_normalIntensity{ 1.0f };
         float m_heightIntensity{ 1.0f };
@@ -245,11 +183,10 @@ namespace engine
         float m_emissiveStrength{ 0.0f };
         float m_opacityIntensity{ 1.0f }; // fully opaque
 
-        // pbr only
-        float m_roughnessIntensity{ 1.0f };
-        float m_metallicIntensity{ 1.0f };
-        float m_ambientOcclusionIntensity{ 1.0f };
 
+
+        // PBR only but shared to avoid casting
+        float m_transmission{ 0.0f }; // 0 = opaque, 1 = fully transmissive
 
         bool m_alphaCutoffEnabled{ false };
 
@@ -259,39 +196,11 @@ namespace engine
         
         bool m_allTexturesLoaded{};
 
-        // BlinnPhong only
-        float m_specularIntensity{ 1.0f };
-        float m_shininess{};
 
-        // PBR only
-        // Air          1.00
-        // Water        1.33
-        // Skin         1.40
-        // Plastic      1.45 - 1.55
-        // Glass        1.50 - 1.60
-        // Quartz       1.54
-        // Diamond      2.42
-        float m_IOR{ 1.5f }; // For non-transparent dielectric materials (wood, plastic, concrete, leather, painted metal, skin, rubber, etc.)
-        float m_transmission{ 0.0f }; // 0 = opaque, 1 = fully transmissive
-        float m_thickness{ 0.0f }; // object thickness in meters
-        Color m_attenuationColor{};
-        float m_attenuationDistance{ 0.0f };
-
-        
-        
-
-    private:
-        unsigned int diffuseMapId{};
-        unsigned int specularMapId{};
-        unsigned int normalMapId{};
-        unsigned int metallicMapId{};
-        unsigned int roughnessMapId{};
-        unsigned int aoMapId{};
-        unsigned int heightMapId{};
-        unsigned int emissiveMapId{};
-        unsigned int opacityMapId{};
-
-        unsigned int armMapId{}; // packed AO/Roughness/Metallic
-        unsigned int rmMapId{}; // packed Roughness/Metallic
+        GLuint m_diffuseMapId{};
+        GLuint m_normalMapId{};
+        GLuint m_heightMapId{};
+        GLuint m_emissiveMapId{};
+        GLuint m_opacityMapId{};
     };
 }

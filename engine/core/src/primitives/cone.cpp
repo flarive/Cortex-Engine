@@ -177,10 +177,17 @@ void engine::Cone::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
     }
 
     // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    //shader->setMat4("model", transformMatrix);
-
-    PhongModelUBO phongModelUBO{ transformMatrix };
-    shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
+    if (type != ShaderType::Phong)
+    {
+        // old way not using UBOs
+        shader->setMat4("model", transformMatrix);
+    }
+    else
+    {
+        // new OpenGL/Vulkan shared way using UBOS
+        PhongModelUBO phongModelUBO{ transformMatrix };
+        shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
+    }
 
     if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
     {

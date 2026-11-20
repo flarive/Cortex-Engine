@@ -216,7 +216,7 @@ void engine::OpenGLPbrRenderer::loadShaders()
     backgroundShader->init("shaders/renderer/pbr/pbr_background.vert", "shaders/renderer/pbr/pbr_background.frag");
 
     // shared shaders
-    Renderer::loadShaders();
+    OpenGLRenderer::loadShaders();
 }
 
 void engine::OpenGLPbrRenderer::initCommonTextures()

@@ -41,6 +41,14 @@ void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
 
     if (m_material)
     {
+        std::shared_ptr<BlinnPhongMaterial> blinnPhongMaterial{};
+        std::shared_ptr<PBRMaterial> pbrMaterial{};
+
+        if (m_material->getTypeID() == MaterialType::PBR)
+            pbrMaterial = std::static_pointer_cast<PBRMaterial>(m_material);
+        else
+            blinnPhongMaterial = std::static_pointer_cast<BlinnPhongMaterial>(m_material);
+
         if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
         {
             if (!m_material->bind(shader)) {
@@ -50,91 +58,94 @@ void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
 
             handleOpacity(shader);
 
-            
             if (type == ShaderType::PBR)
             {
-                shader->setVec3("material.baseColorFactor", m_material->getBaseColorFactor());
-                shader->setVec3("material.ambientColor", m_material->getAmbientColor());
-                shader->setFloat("material.ambientIntensity", m_material->getAmbientIntensity());
+                shader->setVec3("material.baseColorFactor", pbrMaterial->getBaseColorFactor());
+                shader->setVec3("material.ambientColor", pbrMaterial->getAmbientColor());
+                shader->setFloat("material.ambientIntensity", pbrMaterial->getAmbientIntensity());
 
-                shader->setFloat("material.roughnessMapIntensity", m_material->getRougnessIntensity());
-                shader->setFloat("material.metallicMapIntensity", m_material->getMetallicIntensity());
-                shader->setFloat("material.ambientOcclusionMapIntensity", m_material->getAmbientOcclusionIntensity());
+                shader->setFloat("material.roughnessMapIntensity", pbrMaterial->getRougnessIntensity());
+                shader->setFloat("material.metallicMapIntensity", pbrMaterial->getMetallicIntensity());
+                shader->setFloat("material.ambientOcclusionMapIntensity", pbrMaterial->getAmbientOcclusionIntensity());
 
-                shader->setFloat("material.IOR", m_material->getIOR());
-                shader->setFloat("material.transmission", m_material->getTransmission());
-                shader->setFloat("material.thickness", m_material->getThickness());
-                shader->setVec3("material.attenuationColor", m_material->getAttenuationColor());
-                shader->setFloat("material.attenuationDistance", m_material->getAttenuationDistance());
+                shader->setFloat("material.IOR", pbrMaterial->getIOR());
+                shader->setFloat("material.transmission", pbrMaterial->getTransmission());
+                shader->setFloat("material.thickness", pbrMaterial->getThickness());
+                shader->setVec3("material.attenuationColor", pbrMaterial->getAttenuationColor());
+                shader->setFloat("material.attenuationDistance", pbrMaterial->getAttenuationDistance());
             }
             else if (type == ShaderType::BlinnPhong)
             {
-                shader->setFloat("material.specularMapIntensity", m_material->getSpecularIntensity());
-                shader->setFloat("material.shininess", m_material->getShininessIntensity());
-                shader->setVec3("material.diffuse_color", m_material->getDiffuseColor());
-                shader->setVec3("material.specular_color", m_material->getSpecularColor());
+                shader->setFloat("material.specularMapIntensity", blinnPhongMaterial->getSpecularIntensity());
+                shader->setFloat("material.shininess", blinnPhongMaterial->getShininessIntensity());
+                shader->setVec3("material.diffuse_color", blinnPhongMaterial->getDiffuseColor());
+                shader->setVec3("material.specular_color", blinnPhongMaterial->getSpecularColor());
             }
 
+            // PBR and BlinnPhong materials shared properties
             shader->setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
             shader->setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
             shader->setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
             shader->setFloat("material.opacity", m_material->getOpacityIntensity());
         }
+
+
+        // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
+        glm::mat4 finalTransform = transformMatrix;
+
+        if (!m_isSkinned)
+            finalTransform *= m_nodeTransform;
+
+        shader->setMat4("model", finalTransform);
+
+        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+        {
+            shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
+            shader->setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
+        }
+
+        // Send to GPU
+        glBindVertexArray(m_VAO);
+        OpenGLDebug::checkGLError("glBindVertexArray.mesh");
+
+
+        bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
+
+        // disable face culling for transparent primitives (to see back faces)
+        if (type == ShaderType::PBR)
+        {
+            if (m_material->isTransparent() || pbrMaterial->hasTransmission())
+                RenderState::disableFaceCulling();
+        }
+
+        glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
+        OpenGLDebug::checkGLError("glDrawArrays.mesh");
+
+        // re enable face culling for transparent primitives if face culling was enabled
+        if (wasFaceCullingEnabled)
+            RenderState::enableFaceCulling();
+        else
+            RenderState::disableFaceCulling();
+
+        glBindVertexArray(0);
+        OpenGLDebug::checkGLError("glBindVertexArray.mesh");
+
+        // draw normals for debug
+        SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
+
+        if (sceneSettings.drawNormalsVisualHelpers) {
+            drawDebugNormals(projection, view, transformMatrix);
+        }
+
+        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+        {
+            m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+            OpenGLDebug::checkGLError("Unbind.mesh");
+        }
+
+        // restore opacity defaults
+        RenderState::setOpaque();
     }
-
-    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    glm::mat4 finalTransform = transformMatrix;
-
-    if (!m_isSkinned)
-        finalTransform *= m_nodeTransform;
-
-    shader->setMat4("model", finalTransform);
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(finalTransform))));
-        shader->setBool("hasTangents", m_hasTangents); // depends on loaded model and model format
-    }
-
-    // Send to GPU
-    glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray.mesh");
-
-
-    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
-
-    // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent() || m_material->hasTransmission())
-        RenderState::disableFaceCulling();
-
-    glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays.mesh");
-
-    // re enable face culling for transparent primitives if face culling was enabled
-    if (wasFaceCullingEnabled)
-        RenderState::enableFaceCulling();
-    else
-        RenderState::disableFaceCulling();
-
-
-    glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray.mesh");
-
-    // draw normals for debug
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
-
-    if (sceneSettings.drawNormalsVisualHelpers) {
-        drawDebugNormals(projection, view, transformMatrix);
-    }
-
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind.mesh");
-    }
-
-    // restore opacity defaults
-    RenderState::setOpaque();
 }
 
 void engine::Mesh::setupMesh()

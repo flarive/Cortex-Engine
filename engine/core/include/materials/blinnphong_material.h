@@ -20,5 +20,38 @@ namespace engine
 		{
 			return MaterialType::blinnphong;
 		}
+
+		bool hasSpecularMap() const { return !std::empty(m_specularTexPath); }
+
+
+		const std::string& getSpecularTexPath() const { return m_specularTexPath; }
+
+		
+
+		
+		float& getSpecularIntensity() { return m_specularIntensity; }
+		void setSpecularIntensity(float intensity) { m_specularIntensity = intensity; }
+
+		float& getShininessIntensity() { return m_shininess; }
+		void setShininessIntensity(float intensity) { m_shininess = intensity; }
+
+		bool hasTextureMap() override;
+
+
+		GLuint getSpecularMapId() { return m_specularMapId; }
+
+
+		void loadTextures() override;
+		void loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback) override;
+
+
+	private:
+		std::string m_specularTexPath{};
+
+		float m_specularIntensity{ 1.0f };
+		float m_shininess{};
+
+
+		GLuint m_specularMapId{};
 	};
 }

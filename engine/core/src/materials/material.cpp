@@ -9,23 +9,15 @@
 using fsm = engine::FileSystemManager;
 
 
-engine::Material::Material(std::vector<Texture> _textures, float _shininess)
-    : textures(std::move(_textures)), m_shininess(_shininess)
+engine::Material::Material(std::vector<Texture> _textures)
+    : textures(std::move(_textures))
 {
     for (const Texture& tex : textures)
     {
         if (tex.type == "texture_diffuse")
             m_diffuseTexPath = tex.path;
-        else if (tex.type == "texture_specular")
-            m_specularTexPath = tex.path;
         else if (tex.type == "texture_normal")
             m_normalTexPath = tex.path;
-        else if (tex.type == "texture_metalness")
-            m_metallicTexPath = tex.path;
-        else if (tex.type == "texture_roughness")
-            m_roughnessTexPath = tex.path;
-        else if (tex.type == "texture_ao")
-            m_aoTexPath = tex.path;
         else if (tex.type == "texture_height")
             m_heightTexPath = tex.path;
         else if (tex.type == "texture_emissive")
@@ -38,51 +30,24 @@ engine::Material::Material(std::vector<Texture> _textures, float _shininess)
 engine::Material::Material(MaterialType type, const Color& ambientColor)
     : m_ambientColor(ambientColor)
 {
-    // bof
-    if (type == MaterialType::PBR)
-    {
-        m_baseColorFactor = ambientColor;
-        m_ambientColor = Color(0.1f);
-    }
 }
 
-engine::Material::Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_specularColor(specularColor), m_shininess(shininess)
+// BlinnPhong with just colors ctor
+engine::Material::Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor)
+    : m_ambientColor(ambientColor), m_diffuseColor(diffuseColor), m_specularColor(specularColor)
 {
 }
 
-engine::Material::Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_metallicTexPath(fsm::getFullPath(metallicTexPath)), m_roughnessTexPath(fsm::getFullPath(roughnessTexPath)), m_aoTexPath(fsm::getFullPath(aoTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath), m_shininess(shininess)
+// BlinnPhong with textures/PBR with no combined textures ctor
+engine::Material::Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
+    : m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath)
 {
-    // bof
-    if (getTypeID() == MaterialType::PBR)
-    {
-        m_baseColorFactor = ambientColor;
-        m_ambientColor = Color(0.1f);
-    }
 }
 
-engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
-    : m_ambientColor(ambientColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_specularTexPath(fsm::getFullPath(specularTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath), m_shininess(0.0f)
+// PBR with combined textures ctor
+engine::Material::Material(MaterialType type, CombinedTexture mode, const Color& baseColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
+    : m_ambientColor(baseColor), m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath)
 {
-    // bof
-    if (getTypeID() == MaterialType::PBR)
-    {
-        m_baseColorFactor = ambientColor;
-        m_ambientColor = Color(0.1f);
-    }
-    
-    if (mode == CombinedTexture::RM)
-    {
-        // packed Roughness/Metallic
-        m_rmTexPath = rmOrArmTexPath;
-        m_aoTexPath = aoTexPath;
-    }
-    else if (mode == CombinedTexture::ARM)
-    {
-        // packed AO/Roughness/Metallic
-        m_armTexPath = rmOrArmTexPath;
-    }
 }
 
 bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
@@ -243,270 +208,9 @@ void engine::Material::unbind(int baseUnit) const
     // No need to set back to GL_TEXTURE0
 }
 
-void engine::Material::loadTextures()
-{
-    textures.clear();  // Prevent duplicates
-
-    MaterialType type = getTypeID();
-
-    // Load textures asynchronously
-    if (type == MaterialType::PBR)
-    {
-        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
-
-        normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
-
-        metallicMapId = hasMetallicMap() ? engine::TextureManager::loadTexture(m_metallicTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", m_metallicTexPath }));
-
-        roughnessMapId = hasRoughnessMap() ? engine::TextureManager::loadTexture(m_roughnessTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", m_roughnessTexPath }));
-
-        aoMapId = hasAoMap() ? engine::TextureManager::loadTexture(m_aoTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
-
-        heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
-
-        emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
-
-        opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", m_opacityTexPath }));
-    }
-    else
-    {
-        // BlinnPhong, Phong...
-        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
-
-        specularMapId = hasSpecularMap() ? engine::TextureManager::loadTexture(m_specularTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", m_specularTexPath }));
-
-        normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
-
-        heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", m_heightTexPath }));
-
-        emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", m_emissiveTexPath }));
-
-        opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", m_opacityTexPath }));
-    }
-
-    m_allTexturesLoaded = true;
-}
-
-void engine::Material::loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback)
-{
-    textures.clear();
-    
-    MaterialType type = getTypeID();
-
-    // Load textures asynchronously
-    if (type == MaterialType::PBR)
-    {
-        // PBR
-        textures.reserve(8);
-        
-        // request load textures async on another thread
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Diffuse, m_diffuseTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Normal, m_normalTexPath, flipY);
-        
-        if (hasArmMap())
-        {
-            // ao + roughness + metallic
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::ARM, m_armTexPath, flipY);
-        }
-        else if (hasRmMap())
-        {
-            // roughness + metallic
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::RM, m_rmTexPath, flipY);
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::AO, m_aoTexPath, flipY);
-        }
-        else
-        {
-            // no combined textures
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::Metallic, m_metallicTexPath, flipY);
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::Roughness, m_roughnessTexPath, flipY);
-            engine::TextureManager::requestLoadTextureAsync(TextureSlot::AO, m_aoTexPath, flipY);
-        }
-        
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Height, m_heightTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Emissive, m_emissiveTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Opacity, m_opacityTexPath, flipY);
-
-        // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
-        normalMapId = hasNormalMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
-
-        if (hasArmMap())
-        {
-            // ARM combined texture(ambient occlusion, roughness and metalness)
-            armMapId = engine::TextureManager::enqueueAsyncTextureCreation(m_armTexPath);
-
-            aoMapId = 0;
-            roughnessMapId = 0;
-            metallicMapId = 0;
-        }
-        else if (hasRmMap())
-        {
-            // RM combined texture(roughness and metalness)
-            rmMapId = engine::TextureManager::enqueueAsyncTextureCreation(m_rmTexPath);
-            aoMapId = hasAoMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_aoTexPath) : 0;
-
-            roughnessMapId = 0;
-            metallicMapId = 0;
-        }
-        else
-        {
-            metallicMapId = hasMetallicMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_metallicTexPath) : 0;
-            roughnessMapId = hasRoughnessMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_roughnessTexPath) : 0;
-            aoMapId = hasAoMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_aoTexPath) : 0;
-        }
-        
-        heightMapId = hasHeightMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
-        emissiveMapId = hasEmissiveMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
-        opacityMapId = hasOpacityMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath) : 0;
-    }
-    else
-    {
-        // BlinnPhong, Blinn...
-        textures.reserve(6);
-        
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Diffuse, m_diffuseTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Specular, m_specularTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Normal, m_normalTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Height, m_heightTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Emissive, m_emissiveTexPath, flipY);
-        engine::TextureManager::requestLoadTextureAsync(TextureSlot::Opacity, m_opacityTexPath, flipY);
-
-        // Queue OpenGL execution on main thread
-        diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
-        specularMapId = hasSpecularMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_specularTexPath) : 0;
-        normalMapId = hasNormalMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
-        heightMapId = hasHeightMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
-        emissiveMapId = hasEmissiveMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
-        opacityMapId = hasOpacityMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath) : 0;
-    }
-
-
-    // process queue
-    engine::TextureManager::processLoadedTextures();
-
-    
-    // get loaded TextureID from queue
-    diffuseMapId = engine::TextureManagerInternal::textureIDCache[m_diffuseTexPath];
-    if (diffuseMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
-
-    specularMapId = engine::TextureManagerInternal::textureIDCache[m_specularTexPath];
-	if (specularMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ specularMapId, "texture_specular", m_specularTexPath }));
-
-    normalMapId = engine::TextureManagerInternal::textureIDCache[m_normalTexPath];
-    if (normalMapId > 0)
-	    textures.emplace_back(std::move(engine::Texture{ normalMapId, "texture_normal", m_normalTexPath }));
-
-    if (hasArmMap())
-    {
-        // ao + roughness + metalness
-        armMapId = engine::TextureManagerInternal::textureIDCache[m_armTexPath];
-        if (armMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ armMapId, "texture_arm", m_armTexPath }));
-    }
-    else if (hasRmMap())
-    {
-        // roughness + metalness
-        rmMapId = engine::TextureManagerInternal::textureIDCache[m_rmTexPath];
-        if (rmMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ rmMapId, "texture_rm", m_rmTexPath }));
-
-        // ao
-        aoMapId = engine::TextureManagerInternal::textureIDCache[m_aoTexPath];
-        if (aoMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
-    }
-    else
-    {
-        aoMapId = engine::TextureManagerInternal::textureIDCache[m_aoTexPath];
-        if (aoMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ aoMapId, "texture_ao", m_aoTexPath }));
-
-        roughnessMapId = engine::TextureManagerInternal::textureIDCache[m_roughnessTexPath];
-        if (roughnessMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ roughnessMapId, "texture_roughness", m_roughnessTexPath }));
-
-        metallicMapId = engine::TextureManagerInternal::textureIDCache[m_metallicTexPath];
-        if (metallicMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ metallicMapId, "texture_metalness", m_metallicTexPath }));
-    }
-
-    heightMapId = engine::TextureManagerInternal::textureIDCache[getHeightTexPath()];
-    if (heightMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ heightMapId, "texture_height", getHeightTexPath() }));
-
-    emissiveMapId = engine::TextureManagerInternal::textureIDCache[getEmissiveTexPath()];
-    if (emissiveMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
-
-    opacityMapId = engine::TextureManagerInternal::textureIDCache[getOpacityTexPath()];
-    if (opacityMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ opacityMapId, "texture_opacity", getOpacityTexPath() }));
-
-    int expectedCount = 0;
-
-    // Count expected textures based on material type
-    if (type == MaterialType::PBR)
-    {
-        if (hasDiffuseMap())  expectedCount++;
-        if (hasNormalMap())   expectedCount++;
-
-        if (hasArmMap()) {
-            expectedCount++;
-        }
-        else if (hasRmMap()) {
-            expectedCount++;
-            if (hasAoMap())       expectedCount++;
-        }
-        else {
-            if (hasMetallicMap()) expectedCount++;
-            if (hasRoughnessMap()) expectedCount++;
-            if (hasAoMap())       expectedCount++;
-        }
-        if (hasHeightMap())   expectedCount++;
-        if (hasEmissiveMap()) expectedCount++;
-        if (hasOpacityMap()) expectedCount++;
-    }
-    else
-    {
-        if (hasDiffuseMap())  expectedCount++;
-        if (hasSpecularMap()) expectedCount++;
-        if (hasNormalMap())   expectedCount++;
-        if (hasHeightMap())   expectedCount++;
-        if (hasEmissiveMap()) expectedCount++;
-        if (hasOpacityMap()) expectedCount++;
-    }
-
-    // Now compare expected vs loaded
-    m_allTexturesLoaded = (textures.size() == expectedCount);
-
-    if (texturesLoadedCallback)
-        texturesLoadedCallback(m_allTexturesLoaded);
-}
-
 void engine::Material::setCubeMapTexs(const std::vector<std::string>& faces)
 {
     m_cubemapTextures = faces;
-}
-
-const int engine::Material::getTextureHeightUnit() const
-{
-    return heightMapId;
 }
 
 bool engine::Material::isTransparent() const

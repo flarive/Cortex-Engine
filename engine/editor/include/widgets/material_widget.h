@@ -34,8 +34,11 @@ namespace engine
         void displayMaterial(const std::shared_ptr<Material>& material, size_t index);
 
         void displayColor(const Color& color, const std::string& textType);
-        void displayTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<Material>& material);
-        void displayTextureControl(TextureSlot slot, const std::shared_ptr<Material>& material);
+        void displayBlinnPhongTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<BlinnPhongMaterial>& material);
+        void displayPBRTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<PBRMaterial>& material);
+        
+        void displayBlinnPhongTextureControl(TextureSlot slot, const std::shared_ptr<BlinnPhongMaterial>& material);
+        void displayPBRTextureControl(TextureSlot slot, const std::shared_ptr<PBRMaterial>& material);
 
         engine::TagColors getImageSizeTagColor(int width, int height);
     };

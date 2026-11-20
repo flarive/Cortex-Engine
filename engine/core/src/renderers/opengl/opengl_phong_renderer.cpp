@@ -97,9 +97,7 @@ void engine::OpenGLPhongRenderer::loadShaders()
     static_assert(sizeof(PhongModelUBO) % 16 == 0);
     static_assert(sizeof(PhongUBO) % 16 == 0);
 
-
-    // shared shaders
-    Renderer::loadShaders();
+    // no shared shaders needed
 }
 
 void engine::OpenGLPhongRenderer::initCommonTextures()

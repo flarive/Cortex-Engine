@@ -79,46 +79,54 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
             if (material->getTypeID() == MaterialType::PBR)
             {
                 // PBR
-                displayColor(material->getBaseColorFactor(), "Base Color Factor");
-                displayColor(material->getEmissiveColorFactor(), "Emissive Color Factor");
-
-                displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse", TextureSlot::Diffuse, material);
-                displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal", TextureSlot::Normal, material);
-                
-                if (material->hasArmMap())
+                std::shared_ptr<PBRMaterial> pbrMaterial = std::static_pointer_cast<PBRMaterial>(material);
+                if (pbrMaterial)
                 {
-                    displayTexture(TextureManager::getTextureData(material->getArmTexPath()), "AO + Roughness + Metallic", TextureSlot::ARM, material);
+                    displayColor(pbrMaterial->getBaseColorFactor(), "Base Color Factor");
+                    displayColor(pbrMaterial->getEmissiveColorFactor(), "Emissive Color Factor");
 
-                }
-                else if (material->hasRmMap())
-                {
-                    displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion", TextureSlot::AO, material);
-                    displayTexture(TextureManager::getTextureData(material->getRmTexPath()), "Roughness + Metallic", TextureSlot::RM, material);
-                }
-                else
-                {
-                    displayTexture(TextureManager::getTextureData(material->getAoTexPath()), "Ambient Occlusion", TextureSlot::AO, material);
-                    displayTexture(TextureManager::getTextureData(material->getRoughnessTexPath()), "Roughness", TextureSlot::Roughness, material);
-                    displayTexture(TextureManager::getTextureData(material->getMetallicTexPath()), "Metallic", TextureSlot::Metallic, material);
-                }
+                    displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getDiffuseTexPath()), "Diffuse", TextureSlot::Diffuse, pbrMaterial);
+                    displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getNormalTexPath()), "Normal", TextureSlot::Normal, pbrMaterial);
 
-                displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height", TextureSlot::Height, material);
-                displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive", TextureSlot::Emissive, material);
-                displayTexture(TextureManager::getTextureData(material->getOpacityTexPath()), "Opacity", TextureSlot::Opacity, material);
+                    if (pbrMaterial->hasArmMap())
+                    {
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getArmTexPath()), "AO + Roughness + Metallic", TextureSlot::ARM, pbrMaterial);
+
+                    }
+                    else if (pbrMaterial->hasRmMap())
+                    {
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getAoTexPath()), "Ambient Occlusion", TextureSlot::AO, pbrMaterial);
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getRmTexPath()), "Roughness + Metallic", TextureSlot::RM, pbrMaterial);
+                    }
+                    else
+                    {
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getAoTexPath()), "Ambient Occlusion", TextureSlot::AO, pbrMaterial);
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getRoughnessTexPath()), "Roughness", TextureSlot::Roughness, pbrMaterial);
+                        displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getMetallicTexPath()), "Metallic", TextureSlot::Metallic, pbrMaterial);
+                    }
+
+                    displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getHeightTexPath()), "Height", TextureSlot::Height, pbrMaterial);
+                    displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getEmissiveTexPath()), "Emissive", TextureSlot::Emissive, pbrMaterial);
+                    displayPBRTexture(TextureManager::getTextureData(pbrMaterial->getOpacityTexPath()), "Opacity", TextureSlot::Opacity, pbrMaterial);
+                }
             }
             else
             {
-                // BlinnPhong or Phong
-                displayColor(material->getAmbientColor(), "Ambient color");
-                displayColor(material->getDiffuseColor(), "Diffuse color");
-                displayColor(material->getSpecularColor(), "Specular color");
+                std::shared_ptr<BlinnPhongMaterial> blinnPhongMaterial = std::static_pointer_cast<BlinnPhongMaterial>(material);
+                if (blinnPhongMaterial)
+                {
+                    // BlinnPhong or Phong
+                    displayColor(blinnPhongMaterial->getAmbientColor(), "Ambient color");
+                    displayColor(blinnPhongMaterial->getDiffuseColor(), "Diffuse color");
+                    displayColor(blinnPhongMaterial->getSpecularColor(), "Specular color");
 
-                displayTexture(TextureManager::getTextureData(material->getDiffuseTexPath()), "Diffuse", TextureSlot::Diffuse, material);
-                displayTexture(TextureManager::getTextureData(material->getSpecularTexPath()), "Specular", TextureSlot::Specular, material);
-                displayTexture(TextureManager::getTextureData(material->getNormalTexPath()), "Normal", TextureSlot::Normal, material);
-                displayTexture(TextureManager::getTextureData(material->getHeightTexPath()), "Height", TextureSlot::Height, material);
-                displayTexture(TextureManager::getTextureData(material->getEmissiveTexPath()), "Emissive", TextureSlot::Emissive, material);
-                displayTexture(TextureManager::getTextureData(material->getOpacityTexPath()), "Opacity", TextureSlot::Opacity, material);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getDiffuseTexPath()), "Diffuse", TextureSlot::Diffuse, blinnPhongMaterial);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getSpecularTexPath()), "Specular", TextureSlot::Specular, blinnPhongMaterial);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getNormalTexPath()), "Normal", TextureSlot::Normal, blinnPhongMaterial);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getHeightTexPath()), "Height", TextureSlot::Height, blinnPhongMaterial);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getEmissiveTexPath()), "Emissive", TextureSlot::Emissive, blinnPhongMaterial);
+                    displayBlinnPhongTexture(TextureManager::getTextureData(blinnPhongMaterial->getOpacityTexPath()), "Opacity", TextureSlot::Opacity, blinnPhongMaterial);
+                }
             }
 
             ImGui::EndTable();
@@ -126,7 +134,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
     }
 }
 
-void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::shared_ptr<Material>& material)
+void engine::MaterialWidget::displayBlinnPhongTextureControl(TextureSlot slot, const std::shared_ptr<BlinnPhongMaterial>& material)
 {
     switch (slot)
     {
@@ -148,39 +156,6 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
                 float& intensity = material->getNormalIntensity();
                 if (EditorHelper::renderSliderFloat("##NormalIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
                     emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", intensity);
-                }
-            }
-            break;
-        }
-        case TextureSlot::Roughness:
-        {
-            if (material->hasRoughnessMap())
-            {
-                float& intensity = material->getRougnessIntensity();
-                if (EditorHelper::renderSliderFloat("##RoughnesslIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_roughness_intensity", intensity);
-                }
-            }
-            break;
-        }
-        case TextureSlot::Metallic:
-        {
-            if (material->hasMetallicMap())
-            {
-                float& intensity = material->getMetallicIntensity();
-                if (EditorHelper::renderSliderFloat("##MetallicIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_metallic_intensity", intensity);
-                }
-            }
-            break;
-        }
-        case TextureSlot::AO:
-        {
-            if (material->hasAoMap())
-            {
-                float& intensity = material->getAmbientOcclusionIntensity();
-                if (EditorHelper::renderSliderFloat("##AmbientOcclusionIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
-                    emit(UIEventType::MaterialPropertyChanged, "material_ao_intensity", intensity);
                 }
             }
             break;
@@ -210,6 +185,82 @@ void engine::MaterialWidget::displayTextureControl(TextureSlot slot, const std::
 
         default:
             break;
+    }
+}
+
+void engine::MaterialWidget::displayPBRTextureControl(TextureSlot slot, const std::shared_ptr<PBRMaterial>& material)
+{
+    switch (slot)
+    {
+    case TextureSlot::Normal:
+    {
+        if (material->hasNormalMap())
+        {
+            float& intensity = material->getNormalIntensity();
+            if (EditorHelper::renderSliderFloat("##NormalIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_normal_intensity", intensity);
+            }
+        }
+        break;
+    }
+    case TextureSlot::Roughness:
+    {
+        if (material->hasRoughnessMap())
+        {
+            float& intensity = material->getRougnessIntensity();
+            if (EditorHelper::renderSliderFloat("##RoughnesslIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_roughness_intensity", intensity);
+            }
+        }
+        break;
+    }
+    case TextureSlot::Metallic:
+    {
+        if (material->hasMetallicMap())
+        {
+            float& intensity = material->getMetallicIntensity();
+            if (EditorHelper::renderSliderFloat("##MetallicIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_metallic_intensity", intensity);
+            }
+        }
+        break;
+    }
+    case TextureSlot::AO:
+    {
+        if (material->hasAoMap())
+        {
+            float& intensity = material->getAmbientOcclusionIntensity();
+            if (EditorHelper::renderSliderFloat("##AmbientOcclusionIntensity", intensity, intensity, 0.0f, 1.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_ao_intensity", intensity);
+            }
+        }
+        break;
+    }
+    case TextureSlot::Height:
+    {
+        if (material->hasHeightMap())
+        {
+            float& intensity = material->getHeightIntensity();
+            if (EditorHelper::renderSliderFloat("##HeightIntensity", intensity, intensity, 0.0f, 10.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_height_intensity", intensity);
+            }
+        }
+        break;
+    }
+    case TextureSlot::Emissive:
+    {
+        if (material->hasEmissiveMap())
+        {
+            float& intensity = material->getEmissiveStrength();
+            if (EditorHelper::renderSliderFloat("##EmissiveStrength", intensity, intensity, 0.0f, 100.0f, "%.1f", 0.0f, 80.0f)) {
+                emit(UIEventType::MaterialPropertyChanged, "material_emissive_strength", intensity);
+            }
+        }
+        break;
+    }
+
+    default:
+        break;
     }
 }
 
@@ -277,7 +328,7 @@ void engine::MaterialWidget::displayColor(const Color& color, const std::string&
     ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
 }
 
-void engine::MaterialWidget::displayTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<Material>& material)
+void engine::MaterialWidget::displayBlinnPhongTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<BlinnPhongMaterial>& material)
 {
 	if (!textData || textData->filePath.empty())
 	{
@@ -345,7 +396,87 @@ void engine::MaterialWidget::displayTexture(const TextureData* textData, const s
                 //std::string openGLTexID = std::format("ID {}", textData->id);
                 //EditorHelper::drawTextRightAlign(openGLTexID.c_str(), GREY_TEXT_COLOR);
 
-                displayTextureControl(slot, material);
+                displayBlinnPhongTextureControl(slot, material);
+            }
+        }
+
+        ImGui::PopStyleVar(); // CellPadding
+        ImGui::EndTable();
+    }
+
+    ImGui::PopFont();
+    ImGui::PopStyleVar(2); // ItemSpacing + FramePadding
+}
+
+void engine::MaterialWidget::displayPBRTexture(const TextureData* textData, const std::string& label, TextureSlot slot, const std::shared_ptr<PBRMaterial>& material)
+{
+    if (!textData || textData->filePath.empty())
+    {
+        return; // Skip if the texture path is empty
+    }
+
+    ImGui::TableNextRow();
+
+
+    // get thumbnail from mipmaps on GPU side
+    ImGui::TableSetColumnIndex(0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, textData->thumbnailLevel);
+    ImGui::Image((ImTextureID)textData->id, ImVec2(TARGET_THUMB_SIZE, TARGET_THUMB_SIZE));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+
+
+    ImGui::TableSetColumnIndex(1);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0)); // remove text padding
+
+    ImGui::PushFont(ImGui::Spectrum::fontSmall2);
+
+    if (ImGui::BeginTable("##table", 2, ImGuiTableFlags_None))
+    {
+        // Remove table cell padding
+        ImGui::TableSetupColumn("col1", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn("col2", ImGuiTableColumnFlags_WidthFixed, 104);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(0, 0));
+
+        // --- Row 1 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
+        {
+            ImGui::TableNextColumn();
+            {
+                ImGui::Text("%s", label.c_str());
+            }
+
+            ImGui::TableNextColumn();
+            {
+                std::string resolution = std::format("ID:{} {}x{}", textData->id, textData->width, textData->height);
+                //auto tagColors = getImageSizeTagColor(textData->width, textData->height);
+                //EditorHelper::drawTagRightAligned(resolution.c_str(), tagColors.bg, tagColors.fg, ROW_HEIGHT);
+                //ImGui::Text("%s", resolution.c_str());
+                EditorHelper::drawTextRightAlign(resolution.c_str(), GREY_TEXT_COLOR);
+            }
+        }
+
+        // --- Row 2 ---
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
+        {
+            ImGui::TableNextColumn();
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, GREY_TEXT_COLOR);
+                ImGui::Text(FileSystemManager::getFileName(textData->filePath).c_str());
+                ImGui::PopStyleColor();
+            }
+
+            ImGui::TableNextColumn();
+            {
+                //auto tagColors = getImageSizeTagColor(textData->width, textData->height);
+                //EditorHelper::drawTagRightAligned(resolution.c_str(), tagColors.bg, tagColors.fg, ROW_HEIGHT);
+                //ImGui::Text("%s", openGLTexID.c_str());
+
+                //std::string openGLTexID = std::format("ID {}", textData->id);
+                //EditorHelper::drawTextRightAlign(openGLTexID.c_str(), GREY_TEXT_COLOR);
+
+                displayPBRTextureControl(slot, material);
             }
         }
 

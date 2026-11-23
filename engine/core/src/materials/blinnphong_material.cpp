@@ -5,30 +5,26 @@
 
 using fsm = engine::FileSystemManager;
 
-engine::BlinnPhongMaterial::BlinnPhongMaterial(std::vector<Texture> _textures, float _shininess)
-	: Material(std::move(_textures)), m_shininess(_shininess)
-{
-    for (const Texture& tex : textures)
-    {
-        if (tex.type == "texture_specular")
-            m_specularTexPath = tex.path;
-    }
-}
-
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor) 
-	: Material(MaterialType::blinnphong, ambientColor)
+	: Material(MaterialType::blinnphong)
+    , m_ambientColor(ambientColor)
 {
 }
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess) 
-	: Material(MaterialType::blinnphong, ambientColor, diffuseColor, specularColor), m_shininess(shininess)
+	: Material(MaterialType::blinnphong)
+    , m_ambientColor(ambientColor)
+    , m_diffuseColor(diffuseColor)
+    , m_specularColor(specularColor)
+    , m_shininess(shininess)
 {
 }
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, 
 	const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
-	: Material(MaterialType::blinnphong, ambientColor, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
+	: Material(MaterialType::blinnphong, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
     , m_specularTexPath(fsm::getFullPath(specularTexPath))
+    , m_ambientColor(ambientColor)
     , m_shininess(shininess)
 {
 }
@@ -40,34 +36,35 @@ bool engine::BlinnPhongMaterial::hasTextureMap()
 
 void engine::BlinnPhongMaterial::loadTextures()
 {
-    textures.clear();  // Prevent duplicates
+    m_textures.clear();  // Prevent duplicates
+    m_textures.reserve(6);
    
     // Load textures synchronously
     m_diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
+    addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
 
     m_specularMapId = hasSpecularMap() ? engine::TextureManager::loadTexture(m_specularTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_specularMapId, "texture_specular", m_specularTexPath }));
+    addTexture(std::make_shared<Texture>(m_specularMapId, "texture_specular", m_specularTexPath));
 
     m_normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_normalMapId, "texture_normal", m_normalTexPath }));
+    addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
 
     m_heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_heightMapId, "texture_height", m_heightTexPath }));
+    addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", m_heightTexPath));
 
     m_emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_emissiveMapId, "texture_emissive", m_emissiveTexPath }));
+    addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", m_emissiveTexPath));
 
     m_opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_opacityMapId, "texture_opacity", m_opacityTexPath }));
+    addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", m_opacityTexPath));
 
     m_allTexturesLoaded = true;
 }
 
 void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback)
 {
-    textures.clear();
-    textures.reserve(6);
+    m_textures.clear();
+    m_textures.reserve(6);
 
     // Load textures asynchronously
     engine::TextureManager::requestLoadTextureAsync(TextureSlot::Diffuse, m_diffuseTexPath, flipY);
@@ -94,27 +91,27 @@ void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<voi
     // get loaded TextureID from queue
     m_diffuseMapId = engine::TextureManagerInternal::textureIDCache[m_diffuseTexPath];
     if (m_diffuseMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
+        addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
 
     m_specularMapId = engine::TextureManagerInternal::textureIDCache[m_specularTexPath];
     if (m_specularMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_specularMapId, "texture_specular", m_specularTexPath }));
+        addTexture(std::make_shared<Texture>(m_specularMapId, "texture_specular", m_specularTexPath));
 
     m_normalMapId = engine::TextureManagerInternal::textureIDCache[m_normalTexPath];
     if (m_normalMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_normalMapId, "texture_normal", m_normalTexPath }));
+        addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
     
     m_heightMapId = engine::TextureManagerInternal::textureIDCache[getHeightTexPath()];
     if (m_heightMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_heightMapId, "texture_height", getHeightTexPath() }));
+        addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", getHeightTexPath()));
 
     m_emissiveMapId = engine::TextureManagerInternal::textureIDCache[getEmissiveTexPath()];
     if (m_emissiveMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+        addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", getEmissiveTexPath()));
 
     m_opacityMapId = engine::TextureManagerInternal::textureIDCache[getOpacityTexPath()];
     if (m_opacityMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_opacityMapId, "texture_opacity", getOpacityTexPath() }));
+        addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", getOpacityTexPath()));
 
     int expectedCount = 0;
 
@@ -124,10 +121,10 @@ void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<voi
     if (hasNormalMap())   expectedCount++;
     if (hasHeightMap())   expectedCount++;
     if (hasEmissiveMap()) expectedCount++;
-    if (hasOpacityMap()) expectedCount++;
+    if (hasOpacityMap())  expectedCount++;
 
     // Now compare expected vs loaded
-    m_allTexturesLoaded = (textures.size() == expectedCount);
+    m_allTexturesLoaded = (m_textures.size() == expectedCount);
 
     if (texturesLoadedCallback)
         texturesLoadedCallback(m_allTexturesLoaded);

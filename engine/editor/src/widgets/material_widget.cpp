@@ -116,7 +116,7 @@ void engine::MaterialWidget::displayMaterial(const std::shared_ptr<Material>& ma
                 if (blinnPhongMaterial)
                 {
                     // BlinnPhong or Phong
-                    displayColor(blinnPhongMaterial->getAmbientColor(), "Ambient color");
+                    //displayColor(blinnPhongMaterial->getAmbientColor(), "Ambient color");
                     displayColor(blinnPhongMaterial->getDiffuseColor(), "Diffuse color");
                     displayColor(blinnPhongMaterial->getSpecularColor(), "Specular color");
 

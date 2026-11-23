@@ -61,9 +61,6 @@ void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
             if (type == ShaderType::PBR)
             {
                 shader->setVec3("material.baseColorFactor", pbrMaterial->getBaseColorFactor());
-                shader->setVec3("material.ambientColor", pbrMaterial->getAmbientColor());
-                shader->setFloat("material.ambientIntensity", pbrMaterial->getAmbientIntensity());
-
                 shader->setFloat("material.roughnessMapIntensity", pbrMaterial->getRougnessIntensity());
                 shader->setFloat("material.metallicMapIntensity", pbrMaterial->getMetallicIntensity());
                 shader->setFloat("material.ambientOcclusionMapIntensity", pbrMaterial->getAmbientOcclusionIntensity());
@@ -78,6 +75,7 @@ void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
             {
                 shader->setFloat("material.specularMapIntensity", blinnPhongMaterial->getSpecularIntensity());
                 shader->setFloat("material.shininess", blinnPhongMaterial->getShininessIntensity());
+                shader->setVec3("material.ambient_color", blinnPhongMaterial->getAmbientColor());
                 shader->setVec3("material.diffuse_color", blinnPhongMaterial->getDiffuseColor());
                 shader->setVec3("material.specular_color", blinnPhongMaterial->getSpecularColor());
             }

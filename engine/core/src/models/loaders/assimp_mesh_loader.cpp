@@ -8,6 +8,9 @@
 
 #include "../../../include/singleton.h"
 
+
+
+
 void engine::AssimpMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs)
 {
     loadModel(path, loadAnimation, flipUVs, nullptr);

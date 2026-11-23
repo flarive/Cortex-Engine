@@ -131,7 +131,7 @@ namespace engine
 
         std::shared_ptr<Material> m_material{};
 
-        Color m_ambientColor{};
+        
 
         unsigned int m_cubemapTexture{};
 

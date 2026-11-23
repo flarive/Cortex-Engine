@@ -14,7 +14,6 @@ namespace engine
 		BlinnPhongMaterial(const Color& ambientColor);
 		BlinnPhongMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess = 1.0f);
 		BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath = "", const std::string& normalTexPath = "", const std::string& heightTexPath = "", const std::string& emissiveTexPath = "", const std::string& opacityTexPath = "", float shininess = 1.0f);
-		BlinnPhongMaterial(std::vector<Texture> _textures, float _shininess);
 
 		MaterialType getTypeID() const override
 		{
@@ -27,6 +26,11 @@ namespace engine
 		const std::string& getSpecularTexPath() const { return m_specularTexPath; }
 
 		
+
+		const Color& getAmbientColor() const { return m_ambientColor; }
+		const Color& getDiffuseColor() const { return m_diffuseColor; }
+		const Color& getSpecularColor() const { return m_specularColor; }
+
 
 		
 		float& getSpecularIntensity() { return m_specularIntensity; }
@@ -46,6 +50,10 @@ namespace engine
 
 
 	private:
+		Color m_ambientColor{ Color(0.1f) };
+		Color m_diffuseColor{ Color(1.0f) };
+		Color m_specularColor{ Color(0.0f) };
+		
 		std::string m_specularTexPath{};
 
 		float m_specularIntensity{ 1.0f };

@@ -5,52 +5,33 @@
 
 using fsm = engine::FileSystemManager;
 
-engine::PBRMaterial::PBRMaterial(std::vector<Texture> _textures)
-	: Material(std::move(_textures))
-{
-    for (const Texture& tex : textures)
-    {
-        if (tex.type == "texture_metalness")
-            m_metallicTexPath = tex.path;
-        else if (tex.type == "texture_roughness")
-            m_roughnessTexPath = tex.path;
-        else if (tex.type == "texture_ao")
-            m_aoTexPath = tex.path;
-    }
-}
-
 /// <summary>
 /// PBR material with no textures, just a base color
 /// </summary>
 engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor)
-	: Material(MaterialType::PBR, baseColorFactor)
+	: Material(MaterialType::PBR), m_baseColorFactor(baseColorFactor)
 {
-    m_baseColorFactor = baseColorFactor;
-    m_ambientColor = Color(1.0f);
 }
 
 /// <summary>
 /// PBR material with no combined textures
 /// </summary>
 engine::PBRMaterial::PBRMaterial(const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& metallicTexPath, const std::string& roughnessTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
-	: Material(MaterialType::PBR, baseColorFactor, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
+	: Material(MaterialType::PBR, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
     , m_metallicTexPath(fsm::getFullPath(metallicTexPath))
     , m_roughnessTexPath(fsm::getFullPath(roughnessTexPath))
     , m_aoTexPath(fsm::getFullPath(aoTexPath))
+    , m_baseColorFactor(baseColorFactor)
 {
-    m_baseColorFactor = baseColorFactor;
-    m_ambientColor = Color(1.0f);
 }
 
 /// <summary>
 /// PBR material with MR, ARM combined textures
 /// </summary>
 engine::PBRMaterial::PBRMaterial(CombinedTexture combinedTextureType, const Color& baseColorFactor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& rmOrArmTexPath, const std::string& aoTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
-	: Material(MaterialType::PBR, combinedTextureType, baseColorFactor, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
+	: Material(MaterialType::PBR, combinedTextureType, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
+    , m_baseColorFactor(baseColorFactor)
 {
-    m_baseColorFactor = baseColorFactor;
-    m_ambientColor = Color(1.0f);
-
     if (combinedTextureType == CombinedTexture::RM)
     {
         // packed Roughness/Metallic
@@ -71,40 +52,41 @@ bool engine::PBRMaterial::hasTextureMap()
 
 void engine::PBRMaterial::loadTextures()
 {
-    textures.clear();  // Prevent duplicates
+    m_textures.clear();  // Prevent duplicates
+    m_textures.reserve(8);
 
     // Load textures synchronously
     m_diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
+    addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
 
     m_normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_normalMapId, "texture_normal", m_normalTexPath }));
+    addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
 
     m_metallicMapId = hasMetallicMap() ? engine::TextureManager::loadTexture(m_metallicTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_metallicMapId, "texture_metalness", m_metallicTexPath }));
+    addTexture(std::make_shared<Texture>(m_metallicMapId, "texture_metalness", m_metallicTexPath));
 
     m_roughnessMapId = hasRoughnessMap() ? engine::TextureManager::loadTexture(m_roughnessTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_roughnessMapId, "texture_roughness", m_roughnessTexPath }));
+    addTexture(std::make_shared<Texture>(m_roughnessMapId, "texture_roughness", m_roughnessTexPath));
 
     m_aoMapId = hasAoMap() ? engine::TextureManager::loadTexture(m_aoTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_aoMapId, "texture_ao", m_aoTexPath }));
+    addTexture(std::make_shared<Texture>(m_aoMapId, "texture_ao", m_aoTexPath));
 
     m_heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_heightMapId, "texture_height", m_heightTexPath }));
+    addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", m_heightTexPath));
 
     m_emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_emissiveMapId, "texture_emissive", m_emissiveTexPath }));
+    addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", m_emissiveTexPath));
 
     m_opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    textures.emplace_back(std::move(engine::Texture{ m_opacityMapId, "texture_opacity", m_opacityTexPath }));
+    addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", m_opacityTexPath));
     
     m_allTexturesLoaded = true;
 }
 
 void engine::PBRMaterial::loadTexturesAsync(bool flipY, std::function<void(bool)> texturesLoadedCallback)
 {
-    textures.clear();
-    textures.reserve(8);
+    m_textures.clear();
+    m_textures.reserve(8);
     
     // Load textures asynchronously
     // request load textures async on another thread
@@ -176,57 +158,57 @@ void engine::PBRMaterial::loadTexturesAsync(bool flipY, std::function<void(bool)
     // get loaded TextureID from queue
     m_diffuseMapId = engine::TextureManagerInternal::textureIDCache[m_diffuseTexPath];
     if (m_diffuseMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_diffuseMapId, "texture_diffuse", m_diffuseTexPath }));
+        addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
 
     m_normalMapId = engine::TextureManagerInternal::textureIDCache[m_normalTexPath];
     if (m_normalMapId > 0)
-	    textures.emplace_back(std::move(engine::Texture{ m_normalMapId, "texture_normal", m_normalTexPath }));
+        addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
 
     if (hasArmMap())
     {
         // ao + roughness + metalness
         m_armMapId = engine::TextureManagerInternal::textureIDCache[m_armTexPath];
         if (m_armMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_armMapId, "texture_arm", m_armTexPath }));
+            addTexture(std::make_shared<Texture>(m_armMapId, "texture_arm", m_armTexPath));
     }
     else if (hasRmMap())
     {
         // roughness + metalness
         m_rmMapId = engine::TextureManagerInternal::textureIDCache[m_rmTexPath];
         if (m_rmMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_rmMapId, "texture_rm", m_rmTexPath }));
+            addTexture(std::make_shared<Texture>(m_rmMapId, "texture_rm", m_rmTexPath));
 
         // ao
         m_aoMapId = engine::TextureManagerInternal::textureIDCache[m_aoTexPath];
         if (m_aoMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_aoMapId, "texture_ao", m_aoTexPath }));
+            addTexture(std::make_shared<Texture>(m_aoMapId, "texture_ao", m_aoTexPath));
     }
     else
     {
         m_aoMapId = engine::TextureManagerInternal::textureIDCache[m_aoTexPath];
         if (m_aoMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_aoMapId, "texture_ao", m_aoTexPath }));
+            addTexture(std::make_shared<Texture>(m_aoMapId, "texture_ao", m_aoTexPath));
 
         m_roughnessMapId = engine::TextureManagerInternal::textureIDCache[m_roughnessTexPath];
         if (m_roughnessMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_roughnessMapId, "texture_roughness", m_roughnessTexPath }));
+            addTexture(std::make_shared<Texture>(m_roughnessMapId, "texture_roughness", m_roughnessTexPath));
 
         m_metallicMapId = engine::TextureManagerInternal::textureIDCache[m_metallicTexPath];
         if (m_metallicMapId > 0)
-            textures.emplace_back(std::move(engine::Texture{ m_metallicMapId, "texture_metalness", m_metallicTexPath }));
+            addTexture(std::make_shared<Texture>(m_metallicMapId, "texture_metalness", m_metallicTexPath));
     }
 
     m_heightMapId = engine::TextureManagerInternal::textureIDCache[getHeightTexPath()];
     if (m_heightMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_heightMapId, "texture_height", getHeightTexPath() }));
+        addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", getHeightTexPath()));
 
     m_emissiveMapId = engine::TextureManagerInternal::textureIDCache[getEmissiveTexPath()];
     if (m_emissiveMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_emissiveMapId, "texture_emissive", getEmissiveTexPath() }));
+        addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", getEmissiveTexPath()));
 
     m_opacityMapId = engine::TextureManagerInternal::textureIDCache[getOpacityTexPath()];
     if (m_opacityMapId > 0)
-        textures.emplace_back(std::move(engine::Texture{ m_opacityMapId, "texture_opacity", getOpacityTexPath() }));
+        addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", getOpacityTexPath()));
 
     int expectedCount = 0;
 
@@ -252,7 +234,7 @@ void engine::PBRMaterial::loadTexturesAsync(bool flipY, std::function<void(bool)
     
 
     // Now compare expected vs loaded
-    m_allTexturesLoaded = (textures.size() == expectedCount);
+    m_allTexturesLoaded = (m_textures.size() == expectedCount);
 
     if (texturesLoadedCallback)
         texturesLoadedCallback(m_allTexturesLoaded);

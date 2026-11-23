@@ -12,6 +12,7 @@ struct Material {
     sampler2D texture_emissive;
     sampler2D texture_opacity;
 
+    vec3 ambient_color;
     vec3 diffuse_color;
     vec3 specular_color;
 
@@ -1046,7 +1047,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 geoNormal, vec3 fragPos, vec
     // Ambient, Diffuse, and Specular components
     if (!material.useParallaxMapping)
     {
-        ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.diffuse_color);
+        ambient = light.ambient * (material.has_texture_diffuse_map ? vec3(texture(material.texture_diffuse, texCoords)).rgb : material.ambient_color);
         diffuse = light.diffuse * diff * (material.has_texture_diffuse_map ? (vec3(texture(material.texture_diffuse, texCoords)).rgb) : material.diffuse_color);
         specular = light.specular * spec * material.specularMapIntensity * (material.has_texture_specular_map ? (vec3(texture(material.texture_specular, texCoords)).rgb) : material.specular_color);
     }

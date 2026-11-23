@@ -27,7 +27,7 @@ namespace engine
 			const std::string& opacityTexPath = "");
 
 
-		PBRMaterial(std::vector<Texture> _textures);
+		//PBRMaterial(std::vector<Texture> _textures);
 
 		MaterialType getTypeID() const override
 		{

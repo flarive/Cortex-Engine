@@ -107,7 +107,7 @@ void MyScene3::init()
 
     // sphere models
     auto redSciFiMetalSphere = make_shared<Sphere>();
-    auto matSphere1 = make_shared<PBRMaterial>(Color(0.1f),
+    auto matSphere1 = make_shared<PBRMaterial>(Color(1.0f),
         "models/sphere/rounded-metal-cubes/albedo.dds",
         "models/sphere/rounded-metal-cubes/normal.png",
         "models/sphere/rounded-metal-cubes/metallic.png",
@@ -128,7 +128,7 @@ void MyScene3::init()
 
 
     auto rustedIronSphere = make_shared<Sphere>();
-    auto rustedIronMat = make_shared<PBRMaterial>(Color(0.1f),
+    auto rustedIronMat = make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/rusted_iron/albedo.png",
         "textures/pbr/rusted_iron/normal.png",
         "textures/pbr/rusted_iron/metallic.png",
@@ -147,7 +147,7 @@ void MyScene3::init()
 
 
     auto goldSphere = make_shared<Sphere>();
-    goldSphere->setup(make_shared<PBRMaterial>(Color(0.1f),
+    goldSphere->setup(make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/gold/albedo.png",
         "textures/pbr/gold/normal.png",
         "textures/pbr/gold/metallic.png",
@@ -163,7 +163,7 @@ void MyScene3::init()
 
 
     auto grassSphere = make_shared<Sphere>();
-    grassSphere->setup(make_shared<PBRMaterial>(Color(0.1f),
+    grassSphere->setup(make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/grass/albedo.png",
         "textures/pbr/grass/normal.png",
         "textures/pbr/grass/metallic.png",
@@ -179,7 +179,7 @@ void MyScene3::init()
 
 
     auto plasticSphere = make_shared<Sphere>();
-    plasticSphere->setup(make_shared<PBRMaterial>(Color(0.1f),
+    plasticSphere->setup(make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/plastic/albedo.png",
         "textures/pbr/plastic/normal.png",
         "textures/pbr/plastic/metallic.png",
@@ -195,7 +195,7 @@ void MyScene3::init()
 
 
     auto wallSphere = make_shared<Sphere>();
-    auto wallMat = make_shared<PBRMaterial>(Color(0.1f),
+    auto wallMat = make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/wall/albedo.png",
         "textures/pbr/wall/normal.png",
         "textures/pbr/wall/metallic.png",
@@ -214,13 +214,12 @@ void MyScene3::init()
 
 
     auto bronzeSphere = make_shared<Sphere>();
-    auto bronzeMat = make_shared<PBRMaterial>(Color(0.1f),
+    auto bronzeMat = make_shared<PBRMaterial>(Color(1.0f),
         "textures/pbr/bronze/albedo.png",
         "textures/pbr/bronze/normal.png",
         "textures/pbr/bronze/metallic.png",
         "textures/pbr/bronze/roughness.png",
         "textures/pbr/bronze/ao.png", "", "", "");
-    bronzeMat->setAmbientIntensity(5.0f);
     bronzeSphere->setup(bronzeMat, UvMapping(1.0f));
 
     auto trsSphere7 = Transform(vec3(7.0f, -14.0f, -10.0f), vec3(1.0f));

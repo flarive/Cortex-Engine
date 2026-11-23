@@ -20,17 +20,16 @@ namespace engine
     class Material : public NonCopyable
     {
     public:
-        std::vector<Texture> textures{}; // Store all material textures
+        
 
         // Materials begin here
         static inline constexpr int MATERIAL_BASE_UNIT = 12;
 
 
-        Material(std::vector<Texture> _textures);
-        Material(MaterialType type, const Color& ambientColor);
-        Material(MaterialType type, const Color& ambientColor, const Color& diffuseColor, const Color& specularColor = Color(1.0f));
-        Material(MaterialType type, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
-        Material(MaterialType type, CombinedTexture mode, const Color& ambientColor, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
+        
+        Material(MaterialType type);
+        Material(MaterialType type, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
+        Material(MaterialType type, CombinedTexture mode, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
 
         virtual ~Material() = default;
 
@@ -40,7 +39,6 @@ namespace engine
         }
 
 
-        // parallax mapping
         void setName(const std::string& name) { m_name = name; }
         const std::string& getName() { return m_name; }
 
@@ -67,16 +65,14 @@ namespace engine
         bool areAllTexturesLoaded() const { return !hasTextures() || (hasTextures() && m_allTexturesLoaded); }
         void setAllTexturesLoaded(bool state) { m_allTexturesLoaded = state; }
 
-		bool hasTextures() const { return !textures.empty(); }
+		bool hasTextures() const { return !m_textures.empty(); }
 
         // 6 textures for the cubemap
         std::vector<std::string> m_cubemapTextures{};
 
 
         
-        const engine::Color& getAmbientColor() const { return m_ambientColor; }
-        const engine::Color& getDiffuseColor() const { return m_diffuseColor; }
-        const engine::Color& getSpecularColor() const { return m_specularColor; }
+
 
         
         
@@ -96,7 +92,7 @@ namespace engine
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         
         
-        const float getAmbientIntensity() const { return m_ambientIntensity; }
+        //const float getAmbientIntensity() const { return m_ambientIntensity; }
         
         float& getEmissiveStrength() { return m_emissiveStrength; }
         void setEmissiveStrength(float strength) { m_emissiveStrength = strength; }
@@ -115,7 +111,7 @@ namespace engine
 
 
         
-        void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
+        //void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
 
 
 
@@ -152,8 +148,10 @@ namespace engine
         GLuint getOpacityMapId() { return m_opacityMapId; }
         
         
-
-        
+        const std::vector<std::shared_ptr<Texture>>& getTextures() const { return m_textures; }
+        /*void addTexture(const Texture& texture);
+        void addTexture(Texture&& texture);*/
+        void addTexture(std::shared_ptr<Texture> texture);
 
 
 
@@ -161,10 +159,7 @@ namespace engine
     protected:
         std::string m_name{};
         
-        // BlinnPhong and PBR shared properties
-        Color m_ambientColor{ Color(0.1f) };
-        Color m_diffuseColor{ Color(1.0f) };
-        Color m_specularColor{ Color(0.0f) };
+        std::vector<std::shared_ptr<Texture>> m_textures{}; // Store all material textures
 
         
         // BlinnPhong and PBR shared texture path
@@ -176,7 +171,7 @@ namespace engine
         
 
         // BlinnPhong and PBR shared intensities
-        float m_ambientIntensity{ 1.0f };
+        //float m_ambientIntensity{ 1.0f };
         float m_normalIntensity{ 1.0f };
         float m_heightIntensity{ 1.0f };
         Color m_emissiveColorFactor{};

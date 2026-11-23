@@ -53,14 +53,10 @@ namespace engine
         RM
     };
 
-    /// <summary>
-    /// PNG/JPG → small file on disk
-    /// BC7/BC5/BC4 → small texture in VRAM
-    /// </summary>
     class Texture final : private NonCopyableButMovable
     {
     public:
-        unsigned int id{};
+        GLuint id{};
         std::string type{};
         std::string path{};
         Color color{};
@@ -68,10 +64,31 @@ namespace engine
         
 
 		Texture() = default;
-        Texture(unsigned int id, const std::string& type, const std::string& path);
+        Texture(GLuint id, const std::string& type, const std::string& path);
 		~Texture() = default;
 
         // override a little NonCopyableButMovable
         Texture(Texture&&) = default;
     };
+
+    //class VulkanTexture final : public Texture
+    //{
+    //public:
+    //    VkImage image{};
+    //    VkDeviceMemory memory{};
+    //    VkImageView imageView{};
+    //    VkSampler sampler{};
+    //};
+
+    //class OpenGLTexture final : public Texture
+    //{
+    //public:
+    //    GLuint id{};
+    //};
+
+    //class Texture
+    //{
+    //public:
+    //    virtual ~Texture() = default;
+    //};
 }

@@ -40,9 +40,6 @@ void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<Shader>& shader,
     if (type == ShaderType::PBR || type == ShaderType::PBRTessellation)
     {
         shader->setVec3("material.baseColorFactor", pbrMaterial->getBaseColorFactor());
-        shader->setVec3("material.ambientColor", pbrMaterial->getAmbientColor());
-        shader->setFloat("material.ambientIntensity", pbrMaterial->getAmbientIntensity());
-
         shader->setFloat("material.roughnessMapIntensity", pbrMaterial->getRougnessIntensity());
         shader->setFloat("material.metallicMapIntensity", pbrMaterial->getMetallicIntensity());
         shader->setFloat("material.ambientOcclusionMapIntensity", pbrMaterial->getAmbientOcclusionIntensity());
@@ -57,6 +54,7 @@ void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<Shader>& shader,
     {
         shader->setFloat("material.specularMapIntensity", blinnPhongMaterial->getSpecularIntensity());
         shader->setFloat("material.shininess", blinnPhongMaterial->getShininessIntensity());
+        shader->setVec3("material.ambient_color", blinnPhongMaterial->getAmbientColor());
         shader->setVec3("material.diffuse_color", blinnPhongMaterial->getDiffuseColor());
         shader->setVec3("material.specular_color", blinnPhongMaterial->getSpecularColor());
     }

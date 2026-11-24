@@ -16,25 +16,28 @@
 
 namespace engine {
     namespace TextureManagerInternal {
-        std::unordered_map<std::string, TextureLoadResult> asyncLoadingTextureCache;
+        std::unordered_map<std::string, TextureLoadResult> asyncLoadingTextureCache; // key must be the texture full absolute path
         std::queue<std::function<void()>> textureUploadQueue;
         std::mutex textureCacheMutex;
         std::mutex textureQueueMutex;
-        std::unordered_map<std::string, unsigned int> textureIDCache; // key must be the texture full absolute path (could be removed may be ?)
+        std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache; // key must be the texture full absolute path
         std::unordered_map<std::string, TextureData> textureDataCache; // key must be the texture full absolute path
     }
 }
 
 /// <summary>
-/// Synchronous texture loading (shouldn't be used, prefer loadTextureAsync)
+/// Synchronous texture loading (shouldn't be used anymore, prefer loadTextureAsync)
 /// </summary>
-unsigned int engine::TextureManager::loadTexture(const std::string& filename, TextureFlags flags)
+std::shared_ptr<engine::Texture> engine::TextureManager::loadTexture(const std::string& path, const TextureSlot& type, TextureFlags flags)
 {
-    unsigned int textureID{};
+    if (path.empty())
+        return nullptr;
+    
+    GLuint textureID{};
     glGenTextures(1, &textureID);
 
     int width{}, height{}, nrComponents{};
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+    unsigned char* data = SOIL_load_image(path.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
     if (hasFlag(flags, TextureFlag_InvertY))
         flipImageVertically2(data, width, height, nrComponents);
@@ -51,7 +54,7 @@ unsigned int engine::TextureManager::loadTexture(const std::string& filename, Te
         {
             logger.error("Unsupported component count: {}", nrComponents);
             glDeleteTextures(1, &textureID);
-            return 0;
+            return nullptr;
         }
 
         // internalFormat: how the GPU stores it. Sized formats are mandatory in
@@ -82,25 +85,29 @@ unsigned int engine::TextureManager::loadTexture(const std::string& filename, Te
     }
     else
     {
-        logger.error("Texture failed to load at path: {}", filename);
+        logger.error("Texture failed to load at path: {}", path);
         SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
     }
 
-    return textureID;
+    // add to texture cache
+    std::shared_ptr<Texture> texture = std::make_shared<Texture>(textureID, type, path);
+    engine::TextureManagerInternal::textureCache[path] = texture;
+
+    return texture;
 }
 
 
 /// <summary>
 /// Synchronous texture loading with extended result POUBELLE !!!!!!!!!!!!!!!!!!!!!!!!
 /// </summary>
-engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const std::string& filename, TextureFlags flags)
+engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const std::string& path, TextureFlags flags)
 {
-    unsigned int textureID{};
+    GLuint textureID{};
     glGenTextures(1, &textureID);
 
     int width{}, height{}, nrComponents{};
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+    unsigned char* data = SOIL_load_image(path.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
 
     if (hasFlag(flags, TextureFlag_InvertY))
         flipImageVertically2(data, width, height, nrComponents);
@@ -132,26 +139,26 @@ engine::TextureData engine::TextureManager::loadAndUploadTextureExtended(const s
     }
     else
     {
-        logger.error("Texture failed to load at path: {}", filename);
+        logger.error("Texture failed to load at path: {}", path);
         SOIL_free_image_data(data);
         exit(EXIT_FAILURE);
     }
 
-    return { textureID, data, filename, width, height, nrComponents, 0 };
+    return { textureID, data, path, width, height, nrComponents, 0 };
 }
 
 /// <summary>
 /// Asynchronous texture loading
 /// </summary>
-unsigned int engine::TextureManager::requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY)
+void engine::TextureManager::requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY)
 {
-    if (path.empty()) return 0;
+    if (path.empty()) return;
 
     std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureCacheMutex);
 
     // Check if the texture is already being loaded asynchronously
     if (engine::TextureManagerInternal::asyncLoadingTextureCache.find(path) != engine::TextureManagerInternal::asyncLoadingTextureCache.end()) {
-        return 0; // Already loading
+        return; // Already loading
     }
 
     logger.info("Loading async texture {}", FileSystemManager::getShortenedPath(path));
@@ -225,8 +232,6 @@ unsigned int engine::TextureManager::requestLoadTextureAsync(TextureSlot slot, c
         false,
         {}
     };
-
-    return 0;  // Temporary ID, real ID is set later
 }
 
 void engine::TextureManager::flipImageVertically2(unsigned char* data, int width, int height, int nrComponents)
@@ -264,7 +269,7 @@ void engine::TextureManager::processLoadedTextures()
 /// <summary>
 /// Enqueue Texture Creation to Run on Main Thread
 /// </summary>
-unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path, TextureFlags flags)
+void engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path, const TextureSlot& type, TextureFlags flags)
 {
     std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureCacheMutex);
 
@@ -273,10 +278,10 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
     if (it == engine::TextureManagerInternal::asyncLoadingTextureCache.end())
     {
         logger.warn("Texture future for {} not found !", FileSystemManager::getShortenedPath(path));
-        return 0;
+        return;
     }
 
-    auto& entry = it->second;
+    TextureLoadResult& entry = it->second;
 
     // 2. Retrieve future result once
     if (!entry.ready)
@@ -284,7 +289,7 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
         if (!entry.future.valid())
         {
             logger.warn("Texture future for {} is invalid !", FileSystemManager::getShortenedPath(path));
-            return 0;
+            return;
         }
 
         entry.result = entry.future.get();
@@ -299,7 +304,7 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
         if (!payload.rawData || payload.width == 0 || payload.height == 0)
         {
             logger.error("Raw texture {} failed to load !", FileSystemManager::getShortenedPath(path));
-            return 0;
+            return;
         }
     }
     else if (payload.type == TextureSourceType::KTXTexture)
@@ -307,20 +312,20 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
         if (!payload.ktxData)
         {
             logger.error("KTX texture {} failed to load !", FileSystemManager::getShortenedPath(path));
-            return 0;
+            return;
         }
     }
 
     // 4. Avoid duplicate uploads
-    if (engine::TextureManagerInternal::textureIDCache.contains(path))
-        return engine::TextureManagerInternal::textureIDCache[path];
+    if (engine::TextureManagerInternal::textureCache.contains(path))
+        return;
 
     // 5. Enqueue OpenGL upload on main thread
     {
         std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureQueueMutex);
 
         engine::TextureManagerInternal::textureUploadQueue.push(
-            [path, payload, flags]()
+            [type, path, payload, flags]()
             {
                 TextureUploadResult uploadResult{};
 
@@ -344,16 +349,22 @@ unsigned int engine::TextureManager::enqueueAsyncTextureCreation(const std::stri
                     ktxTexture_Destroy(payload.ktxData);
                 }
 
-                // Cache result
-                engine::TextureManagerInternal::textureIDCache[path] = uploadResult.textureID;
+                // replace with OpenGLTexture or VulkanTexture later
+                engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(uploadResult.textureID, type, path);
+                
                 engine::TextureManagerInternal::textureDataCache[path] = TextureData{ uploadResult.textureID, nullptr, path, payload.width, payload.height, payload.components, uploadResult.thumbnailLevel};
-
-                return uploadResult.textureID;
             }
         );
     }
+}
 
-    return 0;
+const std::shared_ptr<engine::Texture> engine::TextureManager::getTextureFromCache(const std::string& texturePath)
+{
+    auto it = engine::TextureManagerInternal::textureCache.find(texturePath);
+    if (it != engine::TextureManagerInternal::textureCache.end())
+        return it->second;
+
+    return nullptr;
 }
 
 /// <summary>
@@ -369,7 +380,7 @@ engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned
     if (!data)
         return result;
 
-    unsigned int textureID{};
+    GLuint textureID{};
     glGenTextures(1, &textureID);
     if (textureID == 0)
     {
@@ -446,9 +457,9 @@ engine::TextureUploadResult engine::TextureManager::createOpenGLTexture(unsigned
     return result;
 }
 
-unsigned int engine::TextureManager::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+GLuint engine::TextureManager::createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    unsigned int texture{};
+    GLuint texture{};
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -471,9 +482,9 @@ unsigned int engine::TextureManager::createSolidColorTexture(unsigned char r, un
     return texture;
 }
 
-unsigned int engine::TextureManager::loadCubemap(const std::vector<std::string>& faces)
+GLuint engine::TextureManager::loadCubemap(const std::vector<std::string>& faces)
 {
-    unsigned int textureID;
+    GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
@@ -501,12 +512,12 @@ unsigned int engine::TextureManager::loadCubemap(const std::vector<std::string>&
     return textureID;
 }
 
-unsigned int engine::TextureManager::loadHDRImage(const std::string& filename, bool alpha, TextureFlags flags)
+GLuint engine::TextureManager::loadHDRImage(const std::string& path, bool alpha, TextureFlags flags)
 {
-    unsigned int textureID;
+    GLuint textureID;
     int width{}, height{}, nrComponents{};
 
-    float* data = SOIL_load_HDR_image(filename.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
+    float* data = SOIL_load_HDR_image(path.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
     if (data)
     {
         GLenum internalFormat = (alpha && nrComponents == 4) ? GL_RGBA32F : GL_RGB32F;
@@ -529,7 +540,7 @@ unsigned int engine::TextureManager::loadHDRImage(const std::string& filename, b
     }
     else
     {
-        logger.error("HDR texture failed to load at path: {}", filename);
+        logger.error("HDR texture failed to load at path: {}", path);
         SOIL_free_float_image_data(data);
         exit(EXIT_FAILURE);
     }
@@ -551,79 +562,11 @@ engine::TexturePayload engine::TextureManager::loadTextureFromFile(const std::st
     return TexturePayload{ TextureSourceType::RawPixels, data, nullptr, width, height, nrComponents };
 }
 
-unsigned int engine::TextureManager::loadAndUploadTextureFromFile(const std::string& path, TextureFlags flags)
-{
-    logger.info("Loading texture {}", FileSystemManager::getShortenedPath(path));
-
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width = 0, height = 0, nrComponents = 0;
-    unsigned char* data = SOIL_load_image(path.c_str(), &width, &height, &nrComponents, SOIL_LOAD_AUTO);
-
-    if (data)
-    {
-        GLenum format{};
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-
-        if (hasFlag(flags, TextureFlag_GenerateMipmaps))
-            glGenerateMipmap(GL_TEXTURE_2D);
-
-
-        // Compute thumbnail mip level (target thumbnail size = 64x64)
-        int level = 0;
-        int w = width;
-
-        while (w > TARGET_THUMB_SIZE)
-        {
-            w >>= 1;   // divide by 2
-            level++;
-        }
-
-        ubyte thumbnailLevel = level;
-
-        // Clamp mipmap chain so levels below thumbnail are not generated
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level);
-
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasFlag(flags, TextureFlag_RepeatTexture) ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-
-        // filtering
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, hasFlag(flags, TextureFlag_GenerateMipmaps) ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-
-
-        // Cache result (bof bof)
-        engine::TextureManagerInternal::textureIDCache[path] = textureID;
-        engine::TextureManagerInternal::textureDataCache[path] = TextureData{ textureID, data, path, width, height, nrComponents, thumbnailLevel };
-
-
-        SOIL_free_image_data(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        SOIL_free_image_data(data);
-        exit(EXIT_FAILURE);
-    }
-
-    return textureID;
-}
-
-engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags)
+engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const unsigned char* data, size_t size, const char* path, TextureFlags flags)
 {
     int width = 0, height = 0, channels = 0;
 
-    logger.info("Loading memory texture {}", filename);
+    logger.info("Loading memory texture {}", path);
 
     // Load image from memory buffer using SOIL
     unsigned char* image = SOIL_load_image_from_memory(data, static_cast<int>(size), &width, &height, &channels, SOIL_LOAD_AUTO);
@@ -645,7 +588,7 @@ engine::TextureUploadResult engine::TextureManager::loadTextureFromMemory(const 
     else if (channels == 4)
         format = GL_RGBA;
 
-    unsigned int textureID = 0;
+    GLuint textureID = 0;
     glGenTextures(1, &textureID);
 
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -687,7 +630,7 @@ engine::TextureUploadResult engine::TextureManager::loadUncompressedTexture(cons
         return TextureUploadResult{};
     }
 
-    unsigned int textureID = 0;
+    GLuint textureID = 0;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -759,7 +702,7 @@ GLuint engine::TextureManager::loadLUTTexture()
     return texture;
 }
 
-void engine::TextureManager::checkTextureIsValid(unsigned int textureID)
+void engine::TextureManager::checkTextureIsValid(GLuint textureID)
 {
     // After loading the textures, check if they are valid
     GLint width2, height2, internalFormat;

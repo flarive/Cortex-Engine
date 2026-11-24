@@ -12,16 +12,20 @@ bool engine::IconAtlas::load(const std::string& filePath, int atlasWidth, int at
     
     SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
+    std::shared_ptr<Texture> atlasTexture{};
     if (sceneSettings.method == RenderMethod::PBR)
     {
         // You only need TextureFlag_InvertY in your Blinn‑Phong path because that shader samples textures in a different UV convention than your PBR renderer.
         // Your PBR pipeline already assumes OpenGL’s native texture origin(bottom‑left), while your Blinn‑Phong path assumes a top‑left origin(DirectX / image‑editor convention).
-        m_textureID = TextureManager::loadTexture(filePath.c_str(), TextureFlag_InvertY);
+        atlasTexture = TextureManager::loadTexture(filePath.c_str(), TextureSlot::Diffuse, TextureFlag_InvertY);
     }
     else
     {
-		m_textureID = TextureManager::loadTexture(filePath.c_str());
+        atlasTexture = TextureManager::loadTexture(filePath.c_str(), TextureSlot::Diffuse);
     }
+
+    if (atlasTexture)
+        m_textureID = atlasTexture->id;
 
     return (m_textureID != 0);
 }

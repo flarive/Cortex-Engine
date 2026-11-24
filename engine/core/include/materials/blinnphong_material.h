@@ -42,7 +42,7 @@ namespace engine
 		bool hasTextureMap() override;
 
 
-		GLuint getSpecularMapId() { return m_specularMapId; }
+		//GLuint getSpecularMapId() { return m_specularMapId; }
 
 
 		void loadTextures() override;
@@ -60,6 +60,6 @@ namespace engine
 		float m_shininess{};
 
 
-		GLuint m_specularMapId{};
+		bool checkAllTexturesLoaded() const override;
 	};
 }

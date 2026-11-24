@@ -810,8 +810,6 @@ int engine::GLtfMeshLoader::getTextureSource(const tg3_texture& tex)
     return -1;
 }
 
-
-
 std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_texture_info& info)
 {
     if (info.index < 0)
@@ -864,7 +862,7 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_t
                 );
 
             // Cache
-            TextureManagerInternal::textureIDCache[path] = result.textureID;
+            engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, TextureSlot::Diffuse, path); // aaaaaaaaaaaaaaaaaaaa
             TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, const_cast<unsigned char*>(data), path, result.width, result.height, result.nbComponents, result.thumbnailLevel
             };
 

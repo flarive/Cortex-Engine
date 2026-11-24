@@ -8,21 +8,37 @@
 
 using fsm = engine::FileSystemManager;
 
-engine::Material::Material(MaterialType type)
-{
-    // TO DELETE !!!!
-}
 
 // BlinnPhong with textures/PBR with no combined textures ctor
-engine::Material::Material(MaterialType type, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
+engine::Material::Material(const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
     : m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath)
 {
 }
 
 // PBR with combined textures ctor
-engine::Material::Material(MaterialType type, CombinedTexture mode, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
+engine::Material::Material(CombinedTexture mode, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath)
     : m_diffuseTexPath(fsm::getFullPath(diffuseTexPath)), m_normalTexPath(fsm::getFullPath(normalTexPath)), m_heightTexPath(fsm::getFullPath(heightTexPath)), m_emissiveTexPath(fsm::getFullPath(emissiveTexPath)), m_opacityTexPath(opacityTexPath)
 {
+}
+
+std::string_view engine::Material::getUniformSamplerName(TextureSlot type) const
+{
+    switch (type)
+    {
+    case TextureSlot::Diffuse:  return "texture_diffuse";
+    case TextureSlot::Specular: return "texture_specular";
+    case TextureSlot::Normal:   return "texture_normal";
+    case TextureSlot::Metallic: return "texture_metalness";
+    case TextureSlot::Roughness:return "texture_roughness";
+    case TextureSlot::AO:       return "texture_ao";
+    case TextureSlot::Height:   return "texture_height";
+    case TextureSlot::Emissive: return "texture_emissive";
+    case TextureSlot::Opacity:  return "texture_opacity";
+    case TextureSlot::ARM:      return "texture_arm";
+    case TextureSlot::RM:       return "texture_rm";
+    }
+
+    return "texture_diffuse";
 }
 
 bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
@@ -70,14 +86,17 @@ bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
 
     for (const auto& tex : m_textures)
     {
+        const std::string_view uniformSamplerName = getUniformSamplerName(tex->type);
+        
+        
         // Example: tex.type could be "albedo", "normal", "metallic", ...
-        std::string uniformName = std::format("material.{}", tex->type);
-        std::string hasMapName = std::format("material.has_{}_map", tex->type);
+        std::string uniformName = std::format("material.{}", uniformSamplerName);
+        std::string hasMapName = std::format("material.has_{}_map", uniformSamplerName);
 
-        if (tex->type == "texture_height")
+        if (tex->type == TextureSlot::Height)
         {
-            uniformName = std::format("materialHeight.{}", tex->type);
-            hasMapName = std::format("materialHeight.has_{}_map", tex->type);
+            uniformName = std::format("materialHeight.{}", uniformSamplerName);
+            hasMapName = std::format("materialHeight.has_{}_map", uniformSamplerName);
         }
 
         // If no texture, mark false and continue (don’t change unit).
@@ -103,7 +122,7 @@ bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
         // Keep this in debug only; glGetError is expensive
         if (GLenum error = glGetError(); error != GL_NO_ERROR)
         {
-            std::cerr << std::hex << "[Material::bind] GL error 0x" << error << " binding '" << tex.type << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
+            std::cerr << std::hex << "[Material::bind] GL error 0x" << error << " binding '" << uniformSamplerName << "' to unit " << unit << " (target=" << target << ")\n" << std::dec;
             shader->setBool(hasMapName, false);
             success = false;
             // Continue to bind others, or break if you prefer fail-fast.
@@ -131,8 +150,8 @@ bool engine::Material::bind2(std::unique_ptr<Shader>& shader) const
     shader->use();
     for (const auto& texture : m_textures)
     {
-        const std::string uniformName = std::format("{}", texture->type);
-
+        const std::string_view uniformName = getUniformSamplerName(texture->type);
+        
         if (texture->id > 0)
         {
             glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -141,13 +160,12 @@ bool engine::Material::bind2(std::unique_ptr<Shader>& shader) const
             GLenum error = glGetError();
             if (error != GL_NO_ERROR)
             {
-                std::cerr << "OpenGL error while binding texture '" << texture->type
-                    << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
+                std::cerr << "OpenGL error while binding texture '" << uniformName << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
                 success = false;
                 continue;
             }
 
-            shader->setInt(uniformName, textureUnit);
+            shader->setInt(std::string(uniformName), textureUnit);
             textureUnit++;
 
             break;
@@ -217,20 +235,35 @@ bool engine::Material::isAlphaCutout() const
     return m_alphaCutoffEnabled; // or opacityMode == MASK
 }
 
-
-//void engine::Material::addTexture(const Texture& texture)
-//{
-//    m_textures.emplace_back(std::make_shared<Texture>(texture));
-//}
-//
-//void engine::Material::addTexture(Texture&& texture)
-//{
-//    m_textures.emplace_back(
-//        std::make_shared<Texture>(std::move(texture))
-//    );
-//}
-
 void engine::Material::addTexture(std::shared_ptr<Texture> texture)
 {
+    if (!texture)
+        return;
+
     m_textures.emplace_back(std::move(texture));
+}
+
+const std::shared_ptr<engine::Texture> engine::Material::getDiffuseTexture() const
+{
+    return engine::TextureManager::getTextureFromCache(m_diffuseTexPath);
+}
+
+const std::shared_ptr<engine::Texture> engine::Material::getNormalTexture() const
+{
+    return engine::TextureManager::getTextureFromCache(m_normalTexPath);
+}
+
+const std::shared_ptr<engine::Texture> engine::Material::getHeightTexture() const
+{
+    return engine::TextureManager::getTextureFromCache(m_heightTexPath);
+}
+
+const std::shared_ptr<engine::Texture> engine::Material::getEmissiveTexture() const
+{
+    return engine::TextureManager::getTextureFromCache(m_emissiveTexPath);
+}
+
+const std::shared_ptr<engine::Texture> engine::Material::getOpacityTexture() const
+{
+    return engine::TextureManager::getTextureFromCache(m_opacityTexPath);
 }

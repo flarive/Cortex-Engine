@@ -41,5 +41,7 @@ namespace engine
 
 		//glm::mat4 computeGlobalFromSkeleton(int index);
 		//void computeBindPoseMatrices();
+
+		TextureSlot getTextureSlot(aiTextureType type) const;
 	};
 }

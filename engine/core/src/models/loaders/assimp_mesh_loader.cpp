@@ -456,8 +456,30 @@ std::shared_ptr<engine::Material> engine::AssimpMeshLoader::loadBlinnPhongMateri
     return material;
 }
 
+engine::TextureSlot engine::AssimpMeshLoader::getTextureSlot(aiTextureType type) const
+{
+    switch (type)
+    {
+        case aiTextureType_DIFFUSE:             return TextureSlot::Diffuse;
+        case aiTextureType_SPECULAR:            return TextureSlot::Specular;
+        case aiTextureType_NORMALS:             return TextureSlot::Normal;
+        case aiTextureType_METALNESS:           return TextureSlot::Metallic;
+        case aiTextureType_DIFFUSE_ROUGHNESS:   return TextureSlot::Roughness;
+        case aiTextureType_AMBIENT_OCCLUSION:   return TextureSlot::AO;
+        case aiTextureType_HEIGHT:              return TextureSlot::Height;
+        case aiTextureType_EMISSIVE:            return TextureSlot::Emissive;
+        case aiTextureType_OPACITY:             return TextureSlot::Opacity;
+        //case TextureSlot::ARM:      return "texture_arm";
+        //case TextureSlot::RM:       return "texture_rm";
+    }
+
+    return TextureSlot::Unknown;
+}
+
 std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMaterial* mat, aiTextureType type)
 {
+    const TextureSlot slot = getTextureSlot(type);
+    
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
         aiString str{};
@@ -495,7 +517,7 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
             }
 
             // Cache result
-            engine::TextureManagerInternal::textureIDCache[path] = result.textureID;
+            engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, slot, path);
             engine::TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, reinterpret_cast<unsigned char*>(aiTex->pcData), path, result.width, result.height, result.nbComponents, result.thumbnailLevel };
         }
 

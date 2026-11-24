@@ -27,9 +27,9 @@ namespace engine
 
 
         
-        Material(MaterialType type);
-        Material(MaterialType type, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
-        Material(MaterialType type, CombinedTexture mode, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
+        Material() = default;
+        Material(const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
+        Material(CombinedTexture mode, const std::string& diffuseTexPath, const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath);
 
         virtual ~Material() = default;
 
@@ -63,12 +63,9 @@ namespace engine
         bool isCubeMap() const { return m_cubemapTextures.size() > 0; }
 
         bool areAllTexturesLoaded() const { return !hasTextures() || (hasTextures() && m_allTexturesLoaded); }
-        void setAllTexturesLoaded(bool state) { m_allTexturesLoaded = state; }
+        
 
 		bool hasTextures() const { return !m_textures.empty(); }
-
-        // 6 textures for the cubemap
-        std::vector<std::string> m_cubemapTextures{};
 
 
         
@@ -92,7 +89,7 @@ namespace engine
         void setHeightIntensity(float height) { m_heightIntensity = height; }
         
         
-        //const float getAmbientIntensity() const { return m_ambientIntensity; }
+        
         
         float& getEmissiveStrength() { return m_emissiveStrength; }
         void setEmissiveStrength(float strength) { m_emissiveStrength = strength; }
@@ -109,9 +106,6 @@ namespace engine
         bool isTransparent() const;
         bool isAlphaCutout() const;
 
-
-        
-        //void setAmbientIntensity(float intensity) { m_ambientIntensity = intensity; }
 
 
 
@@ -141,16 +135,17 @@ namespace engine
         void setCubeMapTexs(const std::vector<std::string>& faces);
 
 
-        GLuint getDiffuseMapId() { return m_diffuseMapId; }
-        GLuint getNormalMapId() { return m_normalMapId; }
-        GLuint getHeightMapId() { return m_heightMapId; }
-        GLuint getEmissiveMapId() { return m_emissiveMapId; }
-        GLuint getOpacityMapId() { return m_opacityMapId; }
+        const std::shared_ptr<Texture> getDiffuseTexture() const;
+        const std::shared_ptr<Texture> getNormalTexture() const;
+        const std::shared_ptr<Texture> getHeightTexture() const;
+        const std::shared_ptr<Texture> getEmissiveTexture() const;
+        const std::shared_ptr<Texture> getOpacityTexture() const;
+        
+        
+        
         
         
         const std::vector<std::shared_ptr<Texture>>& getTextures() const { return m_textures; }
-        /*void addTexture(const Texture& texture);
-        void addTexture(Texture&& texture);*/
         void addTexture(std::shared_ptr<Texture> texture);
 
 
@@ -171,7 +166,6 @@ namespace engine
         
 
         // BlinnPhong and PBR shared intensities
-        //float m_ambientIntensity{ 1.0f };
         float m_normalIntensity{ 1.0f };
         float m_heightIntensity{ 1.0f };
         Color m_emissiveColorFactor{};
@@ -192,10 +186,13 @@ namespace engine
         bool m_allTexturesLoaded{};
 
 
-        GLuint m_diffuseMapId{};
-        GLuint m_normalMapId{};
-        GLuint m_heightMapId{};
-        GLuint m_emissiveMapId{};
-        GLuint m_opacityMapId{};
+        private:
+            // 6 textures for the cubemap
+            std::vector<std::string> m_cubemapTextures{};
+
+
+            virtual bool checkAllTexturesLoaded() const = 0;
+
+            inline std::string_view getUniformSamplerName(TextureSlot type) const;
     };
 }

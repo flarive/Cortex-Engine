@@ -11,19 +11,6 @@
 #include <mutex>
 #include <queue>
 
-// not added by GLAD ext GL_EXT_texture_compression_s3tc so we define them here to avoid compilation errors
-#ifndef GL_COMPRESSED_SRGB_S3TC_DXT1_EXT
-#define GL_COMPRESSED_SRGB_S3TC_DXT1_EXT        0x8C4C
-#endif
-
-#ifndef GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT
-#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT  0x8C4E
-#endif
-
-#ifndef GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT
-#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT  0x8C4F
-#endif
-
 namespace engine
 {
     enum class TextureSourceType {
@@ -78,7 +65,7 @@ namespace engine
         extern std::queue<std::function<void()>> textureUploadQueue;
         extern std::mutex textureCacheMutex;
         extern std::mutex textureQueueMutex;
-        extern std::unordered_map<std::string, unsigned int> textureIDCache; // key must be the texture full absolute path
+        extern std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache; // key must be the texture full absolute path
         extern std::unordered_map<std::string, TextureData> textureDataCache; // key must be the texture full absolute path
     }
 
@@ -91,33 +78,35 @@ namespace engine
     class TextureManager final
 	{
 	public:
-        // sync textures loading (legacy, do not use, prefer async)
-        static unsigned int loadTexture(const std::string& filename, TextureFlags flags = TextureFlag_None);
-        static TextureData loadAndUploadTextureExtended(const std::string& filename, TextureFlags flags = TextureFlag_None);
+        // Synchronous texture loading (shouldn't be used anymore, prefer loadTextureAsync)
+        static std::shared_ptr<Texture> loadTexture(const std::string& path, const TextureSlot& type, TextureFlags flags = TextureFlag_None);
+        static TextureData loadAndUploadTextureExtended(const std::string& path, TextureFlags flags = TextureFlag_None);
 
 
-        static unsigned int createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        static unsigned int loadCubemap(const std::vector<std::string>& faces);
-        static unsigned int loadHDRImage(const std::string& filename, bool alpha = false, TextureFlags flags = TextureFlag_RepeatTexture);
+        static GLuint createSolidColorTexture(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        static GLuint loadCubemap(const std::vector<std::string>& faces);
+        static GLuint loadHDRImage(const std::string& path, bool alpha = false, TextureFlags flags = TextureFlag_RepeatTexture);
 
         // async textures loading
-        static unsigned int requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY = false);
-        static unsigned int enqueueAsyncTextureCreation(const std::string& path, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+        static void requestLoadTextureAsync(TextureSlot slot, const std::string& path, bool flipY = false);
+        static void enqueueAsyncTextureCreation(const std::string& path, const TextureSlot& type, TextureFlags flags = TextureFlag_InvertY | TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
         static void processLoadedTextures();
         static TextureUploadResult createOpenGLTexture(unsigned char* data, int width, int height, int nrComponents, TextureFlags flags);
 
         static TexturePayload loadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_None);
-        static unsigned int loadAndUploadTextureFromFile(const std::string& path, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
 
-        static TextureUploadResult loadTextureFromMemory(const unsigned char* data, size_t size, const char* filename, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
+        static TextureUploadResult loadTextureFromMemory(const unsigned char* data, size_t size, const char* path, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
         static TextureUploadResult loadUncompressedTexture(const unsigned char* data, unsigned int width, unsigned int height, TextureFlags flags = TextureFlag_RepeatTexture | TextureFlag_GenerateMipmaps);
 
         static GLuint loadMTexture();
         static GLuint loadLUTTexture();
 
-        static void checkTextureIsValid(unsigned int textureID);
+        static void checkTextureIsValid(GLuint textureID);
         
         static const TextureData* getTextureData(const std::string& texturePath);
+
+
+        static const std::shared_ptr<Texture> getTextureFromCache(const std::string& path);
         
 
     private:

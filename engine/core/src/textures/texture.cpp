@@ -7,7 +7,7 @@
 //    //logger.trace("Texture constructor called");
 //}
 
-engine::Texture::Texture(GLuint id, const std::string& type, const std::string& path)
+engine::Texture::Texture(GLuint id, const TextureSlot& type, const std::string& path)
     : id(id), type(type), path(path)
 {
     //logger.trace("Texture constructor called");

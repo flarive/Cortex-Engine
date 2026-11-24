@@ -103,7 +103,9 @@ void engine::OpenGLPhongRenderer::loadShaders()
 void engine::OpenGLPhongRenderer::initCommonTextures()
 {
     // hardcoded texture UV mapper just for test purpose and to keep Phong renderer very simple
-    sampleTextureID = TextureManager::loadTexture("textures/uv_mapper.jpg", TextureFlag_InvertY);
+    std::shared_ptr<Texture> texSample = TextureManager::loadTexture("textures/uv_mapper.jpg", TextureSlot::Diffuse, TextureFlag_InvertY);
+    if (texSample)
+        sampleTextureID = texSample->id;
 }
 
 void engine::OpenGLPhongRenderer::initFramebuffers(const SceneSettings& settings, int width, int height)

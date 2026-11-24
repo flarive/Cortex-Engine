@@ -183,8 +183,17 @@ void engine::Terrain::draw(std::unique_ptr<Shader>& shader, const glm::mat4& pro
     }
     else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)
     {
-        shader->setInt("materialHeight.texture_height", m_material->getHeightMapId());
-        shader->setBool("materialHeight.has_texture_height_map", true);
+        std::shared_ptr<Texture> heightTexture = m_material->getHeightTexture();
+        if (heightTexture && heightTexture->id > 0)
+        {
+            shader->setInt("materialHeight.texture_height", heightTexture->id);
+            shader->setBool("materialHeight.has_texture_height_map", true);
+        }
+        else
+        {
+            shader->setInt("materialHeight.texture_height", 0);
+            shader->setBool("materialHeight.has_texture_height_map", false);
+        }
     }
     
     shader->setMat4("model", transformMatrix);

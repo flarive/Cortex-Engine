@@ -40,6 +40,7 @@ namespace engine
 
     enum class TextureSlot : uint8_t
     {
+        Unknown,
         Diffuse,
         Normal,
         AO,
@@ -53,38 +54,38 @@ namespace engine
         RM
     };
 
-    class Texture final : private NonCopyableButMovable
+    class Texture : private NonCopyableButMovable
     {
     public:
         GLuint id{};
-        std::string type{};
+        TextureSlot type{};
         std::string path{};
         Color color{};
         int thumbnailLevel{};   // chosen mipmap level for thumbnails
         
 
 		Texture() = default;
-        Texture(GLuint id, const std::string& type, const std::string& path);
+        Texture(GLuint id, const TextureSlot& type, const std::string& path);
 		~Texture() = default;
 
         // override a little NonCopyableButMovable
         Texture(Texture&&) = default;
     };
 
-    //class VulkanTexture final : public Texture
-    //{
-    //public:
-    //    VkImage image{};
-    //    VkDeviceMemory memory{};
-    //    VkImageView imageView{};
-    //    VkSampler sampler{};
-    //};
+    class VulkanTexture final : public Texture
+    {
+    public:
+        VkImage image{};
+        VkDeviceMemory memory{};
+        VkImageView imageView{};
+        VkSampler sampler{};
+    };
 
-    //class OpenGLTexture final : public Texture
-    //{
-    //public:
-    //    GLuint id{};
-    //};
+    class OpenGLTexture final : public Texture
+    {
+    
+        
+    };
 
     //class Texture
     //{

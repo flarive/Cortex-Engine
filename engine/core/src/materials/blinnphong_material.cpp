@@ -6,13 +6,13 @@
 using fsm = engine::FileSystemManager;
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor) 
-	: Material(MaterialType::blinnphong)
+	: Material()
     , m_ambientColor(ambientColor)
 {
 }
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const Color& diffuseColor, const Color& specularColor, float shininess) 
-	: Material(MaterialType::blinnphong)
+	: Material()
     , m_ambientColor(ambientColor)
     , m_diffuseColor(diffuseColor)
     , m_specularColor(specularColor)
@@ -22,7 +22,7 @@ engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const 
 
 engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const std::string& diffuseTexPath, const std::string& specularTexPath, 
 	const std::string& normalTexPath, const std::string& heightTexPath, const std::string& emissiveTexPath, const std::string& opacityTexPath, float shininess)
-	: Material(MaterialType::blinnphong, diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
+	: Material(diffuseTexPath, normalTexPath, heightTexPath, emissiveTexPath, opacityTexPath)
     , m_specularTexPath(fsm::getFullPath(specularTexPath))
     , m_ambientColor(ambientColor)
     , m_shininess(shininess)
@@ -31,7 +31,7 @@ engine::BlinnPhongMaterial::BlinnPhongMaterial(const Color& ambientColor, const 
 
 bool engine::BlinnPhongMaterial::hasTextureMap()
 {
-    return hasDiffuseMap() || hasSpecularMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
+    return hasDiffuseMap() || hasSpecularMap() || hasNormalMap() || hasHeightMap() || hasEmissiveMap() || hasOpacityMap();
 }
 
 void engine::BlinnPhongMaterial::loadTextures()
@@ -40,24 +40,13 @@ void engine::BlinnPhongMaterial::loadTextures()
     m_textures.reserve(6);
    
     // Load textures synchronously
-    m_diffuseMapId = hasDiffuseMap() ? engine::TextureManager::loadTexture(m_diffuseTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
-
-    m_specularMapId = hasSpecularMap() ? engine::TextureManager::loadTexture(m_specularTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_specularMapId, "texture_specular", m_specularTexPath));
-
-    m_normalMapId = hasNormalMap() ? engine::TextureManager::loadTexture(m_normalTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
-
-    m_heightMapId = hasHeightMap() ? engine::TextureManager::loadTexture(m_heightTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", m_heightTexPath));
-
-    m_emissiveMapId = hasEmissiveMap() ? engine::TextureManager::loadTexture(m_emissiveTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", m_emissiveTexPath));
-
-    m_opacityMapId = hasOpacityMap() ? engine::TextureManager::loadTexture(m_opacityTexPath, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture) : 0;
-    addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", m_opacityTexPath));
-
+    engine::TextureManager::loadTexture(m_diffuseTexPath, TextureSlot::Diffuse, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    engine::TextureManager::loadTexture(m_specularTexPath, TextureSlot::Specular, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    engine::TextureManager::loadTexture(m_normalTexPath, TextureSlot::Normal, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    engine::TextureManager::loadTexture(m_heightTexPath, TextureSlot::Height, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    engine::TextureManager::loadTexture(m_emissiveTexPath, TextureSlot::Emissive, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    engine::TextureManager::loadTexture(m_opacityTexPath, TextureSlot::Opacity, TextureFlag_GenerateMipmaps | TextureFlag_RepeatTexture);
+    
     m_allTexturesLoaded = true;
 }
 
@@ -75,12 +64,12 @@ void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<voi
     engine::TextureManager::requestLoadTextureAsync(TextureSlot::Opacity, m_opacityTexPath, flipY);
 
     // Queue OpenGL execution on main thread
-    m_diffuseMapId = hasDiffuseMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath) : 0;
-    m_specularMapId = hasSpecularMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_specularTexPath) : 0;
-    m_normalMapId = hasNormalMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_normalTexPath) : 0;
-    m_heightMapId = hasHeightMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath) : 0;
-    m_emissiveMapId = hasEmissiveMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath) : 0;
-    m_opacityMapId = hasOpacityMap() ? engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath) : 0;
+    if (hasDiffuseMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_diffuseTexPath, TextureSlot::Diffuse);
+    if (hasSpecularMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_specularTexPath, TextureSlot::Specular);
+    if (hasNormalMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_normalTexPath, TextureSlot::Normal);
+    if (hasHeightMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_heightTexPath, TextureSlot::Height);
+    if (hasEmissiveMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_emissiveTexPath, TextureSlot::Emissive);
+    if (hasOpacityMap()) engine::TextureManager::enqueueAsyncTextureCreation(m_opacityTexPath, TextureSlot::Opacity);
     
 
 
@@ -88,31 +77,24 @@ void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<voi
     engine::TextureManager::processLoadedTextures();
 
 
-    // get loaded TextureID from queue
-    m_diffuseMapId = engine::TextureManagerInternal::textureIDCache[m_diffuseTexPath];
-    if (m_diffuseMapId > 0)
-        addTexture(std::make_shared<Texture>(m_diffuseMapId, "texture_diffuse", m_diffuseTexPath));
+    // get loaded textures from cache
+    addTexture(engine::TextureManager::getTextureFromCache(m_diffuseTexPath));
+    addTexture(engine::TextureManager::getTextureFromCache(m_specularTexPath));
+    addTexture(engine::TextureManager::getTextureFromCache(m_normalTexPath));
+    addTexture(engine::TextureManager::getTextureFromCache(m_heightTexPath));
+    addTexture(engine::TextureManager::getTextureFromCache(m_emissiveTexPath));
+    addTexture(engine::TextureManager::getTextureFromCache(m_opacityTexPath));
 
-    m_specularMapId = engine::TextureManagerInternal::textureIDCache[m_specularTexPath];
-    if (m_specularMapId > 0)
-        addTexture(std::make_shared<Texture>(m_specularMapId, "texture_specular", m_specularTexPath));
 
-    m_normalMapId = engine::TextureManagerInternal::textureIDCache[m_normalTexPath];
-    if (m_normalMapId > 0)
-        addTexture(std::make_shared<Texture>(m_normalMapId, "texture_normal", m_normalTexPath));
-    
-    m_heightMapId = engine::TextureManagerInternal::textureIDCache[getHeightTexPath()];
-    if (m_heightMapId > 0)
-        addTexture(std::make_shared<Texture>(m_heightMapId, "texture_height", getHeightTexPath()));
+    // Now compare expected vs loaded
+    m_allTexturesLoaded = checkAllTexturesLoaded();
 
-    m_emissiveMapId = engine::TextureManagerInternal::textureIDCache[getEmissiveTexPath()];
-    if (m_emissiveMapId > 0)
-        addTexture(std::make_shared<Texture>(m_emissiveMapId, "texture_emissive", getEmissiveTexPath()));
+    if (texturesLoadedCallback)
+        texturesLoadedCallback(m_allTexturesLoaded);
+}
 
-    m_opacityMapId = engine::TextureManagerInternal::textureIDCache[getOpacityTexPath()];
-    if (m_opacityMapId > 0)
-        addTexture(std::make_shared<Texture>(m_opacityMapId, "texture_opacity", getOpacityTexPath()));
-
+bool engine::BlinnPhongMaterial::checkAllTexturesLoaded() const
+{
     int expectedCount = 0;
 
     // Count expected textures based on material type
@@ -124,8 +106,5 @@ void engine::BlinnPhongMaterial::loadTexturesAsync(bool flipY, std::function<voi
     if (hasOpacityMap())  expectedCount++;
 
     // Now compare expected vs loaded
-    m_allTexturesLoaded = (m_textures.size() == expectedCount);
-
-    if (texturesLoadedCallback)
-        texturesLoadedCallback(m_allTexturesLoaded);
+    return m_textures.size() == expectedCount;
 }

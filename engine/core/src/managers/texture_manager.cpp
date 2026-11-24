@@ -92,7 +92,7 @@ std::shared_ptr<engine::Texture> engine::TextureManager::loadTexture(const std::
 
     // add to texture cache
     std::shared_ptr<Texture> texture = std::make_shared<Texture>(textureID, type, path);
-    engine::TextureManagerInternal::textureCache[path] = texture;
+    TextureManagerInternal::textureCache[path] = texture;
 
     return texture;
 }
@@ -154,16 +154,16 @@ void engine::TextureManager::requestLoadTextureAsync(TextureSlot slot, const std
 {
     if (path.empty()) return;
 
-    std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureCacheMutex);
+    std::lock_guard<std::mutex> lock(TextureManagerInternal::textureCacheMutex);
 
     // Check if the texture is already being loaded asynchronously
-    if (engine::TextureManagerInternal::asyncLoadingTextureCache.find(path) != engine::TextureManagerInternal::asyncLoadingTextureCache.end()) {
+    if (TextureManagerInternal::asyncLoadingTextureCache.find(path) != TextureManagerInternal::asyncLoadingTextureCache.end()) {
         return; // Already loading
     }
 
     logger.info("Loading async texture {}", FileSystemManager::getShortenedPath(path));
 
-    engine::TextureManagerInternal::asyncLoadingTextureCache[path] =
+    TextureManagerInternal::asyncLoadingTextureCache[path] =
     {
         std::async(std::launch::async, [path, slot, flipY]() -> TexturePayload
         {
@@ -257,12 +257,12 @@ void engine::TextureManager::flipImageVertically2(unsigned char* data, int width
 /// </summary>
 void engine::TextureManager::processLoadedTextures()
 {
-    std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureQueueMutex);
+    std::lock_guard<std::mutex> lock(TextureManagerInternal::textureQueueMutex);
 
-    while (!engine::TextureManagerInternal::textureUploadQueue.empty())
+    while (!TextureManagerInternal::textureUploadQueue.empty())
     {
-        engine::TextureManagerInternal::textureUploadQueue.front()(); // Execute OpenGL task
-        engine::TextureManagerInternal::textureUploadQueue.pop();
+        TextureManagerInternal::textureUploadQueue.front()(); // Execute OpenGL task
+        TextureManagerInternal::textureUploadQueue.pop();
     }
 }
 
@@ -271,11 +271,11 @@ void engine::TextureManager::processLoadedTextures()
 /// </summary>
 void engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path, const TextureSlot& type, TextureFlags flags)
 {
-    std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureCacheMutex);
+    std::lock_guard<std::mutex> lock(TextureManagerInternal::textureCacheMutex);
 
     // 1. Check async load result exists
-    auto it = engine::TextureManagerInternal::asyncLoadingTextureCache.find(path);
-    if (it == engine::TextureManagerInternal::asyncLoadingTextureCache.end())
+    auto it = TextureManagerInternal::asyncLoadingTextureCache.find(path);
+    if (it == TextureManagerInternal::asyncLoadingTextureCache.end())
     {
         logger.warn("Texture future for {} not found !", FileSystemManager::getShortenedPath(path));
         return;
@@ -317,14 +317,14 @@ void engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path
     }
 
     // 4. Avoid duplicate uploads
-    if (engine::TextureManagerInternal::textureCache.contains(path))
+    if (TextureManagerInternal::textureCache.contains(path))
         return;
 
     // 5. Enqueue OpenGL upload on main thread
     {
-        std::lock_guard<std::mutex> lock(engine::TextureManagerInternal::textureQueueMutex);
+        std::lock_guard<std::mutex> lock(TextureManagerInternal::textureQueueMutex);
 
-        engine::TextureManagerInternal::textureUploadQueue.push(
+        TextureManagerInternal::textureUploadQueue.push(
             [type, path, payload, flags]()
             {
                 TextureUploadResult uploadResult{};
@@ -350,9 +350,9 @@ void engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path
                 }
 
                 // replace with OpenGLTexture or VulkanTexture later
-                engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(uploadResult.textureID, type, path);
+                TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(uploadResult.textureID, type, path);
                 
-                engine::TextureManagerInternal::textureDataCache[path] = TextureData{ uploadResult.textureID, nullptr, path, payload.width, payload.height, payload.components, uploadResult.thumbnailLevel};
+                TextureManagerInternal::textureDataCache[path] = TextureData{ uploadResult.textureID, nullptr, path, payload.width, payload.height, payload.components, uploadResult.thumbnailLevel};
             }
         );
     }
@@ -360,8 +360,8 @@ void engine::TextureManager::enqueueAsyncTextureCreation(const std::string& path
 
 const std::shared_ptr<engine::Texture> engine::TextureManager::getTextureFromCache(const std::string& texturePath)
 {
-    auto it = engine::TextureManagerInternal::textureCache.find(texturePath);
-    if (it != engine::TextureManagerInternal::textureCache.end())
+    auto it = TextureManagerInternal::textureCache.find(texturePath);
+    if (it != TextureManagerInternal::textureCache.end())
         return it->second;
 
     return nullptr;
@@ -716,8 +716,8 @@ void engine::TextureManager::checkTextureIsValid(GLuint textureID)
 // Best practice: avoid copying large texture data
 const engine::TextureData* engine::TextureManager::getTextureData(const std::string& texturePath)
 {
-    auto it = engine::TextureManagerInternal::textureDataCache.find(texturePath);
-    if (it != engine::TextureManagerInternal::textureDataCache.end())
+    auto it = TextureManagerInternal::textureDataCache.find(texturePath);
+    if (it != TextureManagerInternal::textureDataCache.end())
         return &it->second;
 
     return nullptr;

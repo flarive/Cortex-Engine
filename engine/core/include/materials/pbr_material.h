@@ -69,12 +69,7 @@ namespace engine
 		void setAmbientOcclusionIntensity(float intensity) { m_ambientOcclusionIntensity = intensity; }
 
 
-		//GLuint getMetallicMapId() { return m_metallicMapId; }
-		//GLuint getRoughnessMapId() { return m_roughnessMapId; }
-		//GLuint getAOMapId() { return m_aoMapId; }
 
-		//GLuint getArmMapId() { return m_armMapId; } // packed AO/Roughness/Metallic
-		//GLuint getRmMapId() { return m_rmMapId; } // packed Roughness/Metallic
 
 
 		void setIOR(float ior) { m_IOR = ior; }

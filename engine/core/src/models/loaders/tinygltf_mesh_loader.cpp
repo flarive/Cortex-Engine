@@ -17,7 +17,8 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial)
 {
-    m_customMaterial = customMaterial;
+    if (customMaterial)
+        m_customMaterial = customMaterial;
     
     // ------------------------------------------------------------
     // 1. Parse GLTF
@@ -862,7 +863,7 @@ std::string engine::GLtfMeshLoader::getTexture(const tg3_model& raw, const tg3_t
                 );
 
             // Cache
-            engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, TextureSlot::Diffuse, path); // aaaaaaaaaaaaaaaaaaaa
+            TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, TextureSlot::Diffuse, path); // aaaaaaaaaaaaaaaaaaaa
             TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, const_cast<unsigned char*>(data), path, result.width, result.height, result.nbComponents, result.thumbnailLevel
             };
 

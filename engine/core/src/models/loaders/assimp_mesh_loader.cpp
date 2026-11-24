@@ -517,8 +517,8 @@ std::string engine::AssimpMeshLoader::getTexture(const aiScene* scene, aiMateria
             }
 
             // Cache result
-            engine::TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, slot, path);
-            engine::TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, reinterpret_cast<unsigned char*>(aiTex->pcData), path, result.width, result.height, result.nbComponents, result.thumbnailLevel };
+            TextureManagerInternal::textureCache[path] = std::make_shared<Texture>(result.textureID, slot, path);
+            TextureManagerInternal::textureDataCache[path] = TextureData{ result.textureID, reinterpret_cast<unsigned char*>(aiTex->pcData), path, result.width, result.height, result.nbComponents, result.thumbnailLevel };
         }
 
         // just to avoid loading 2 times the same texture path

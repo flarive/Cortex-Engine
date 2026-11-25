@@ -38,7 +38,7 @@ void engine::OpenGLApp::setup()
 
     registerWindowInputCallbacks();
 
-#if DEBUG
+#ifdef DEBUG
     // check opengl context is valid
     int flags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);

@@ -79,6 +79,9 @@ void engine::Scene::before_init_internal()
 
 void engine::Scene::after_init_internal()
 {
+    // build a hash of this instance
+    m_thisInstanceHash = std::to_string(reinterpret_cast<uintptr_t>(this));
+    
     // Always run this code
     initEntities();
 
@@ -484,8 +487,12 @@ void engine::Scene::gameLoop()
         updateUI();
         };
 
+
+    // build a hash of this instance
+    //std::string thisInstanceHash = std::to_string(reinterpret_cast<uintptr_t>(this));
+     
     // Call the renderer loop
-    m_renderer->loop(static_cast<int>(width), static_cast<int>(height), camera, updateLambda, updateUILambda);
+    m_renderer->loop(static_cast<int>(width), static_cast<int>(height), camera, updateLambda, updateUILambda, m_thisInstanceHash);
 
     // get opengl stats such as polycount drawn, GPU timer...
     endQuery();
@@ -1388,7 +1395,9 @@ void engine::Scene::drawOpaqueQueue(std::unique_ptr<Shader>& shader, std::unique
                 continue;
 
             if (item.animator)
+            {
                 item.animator->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            }
 
             modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
             inFrustrumCount++;

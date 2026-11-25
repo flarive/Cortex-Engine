@@ -12,5 +12,9 @@ namespace engine
 
 	protected:
 		void loadShaders() override;
+
+		std::string_view getUniformSamplerName(TextureSlot type) const;
+		bool bind(std::unique_ptr<Shader>& shader, std::vector<std::shared_ptr<Texture>>& textures, int baseUnit, bool resetHasTextures) const;
+		void unbind(std::vector<std::shared_ptr<Texture>>& textures, int baseUnit) const;
 	};
 }

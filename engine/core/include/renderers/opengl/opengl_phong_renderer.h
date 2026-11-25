@@ -19,7 +19,7 @@ namespace engine
 		~OpenGLPhongRenderer() override;
 		
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash) override;
 
 		std::unique_ptr<Shader>& getShader() override;
 
@@ -43,7 +43,6 @@ namespace engine
 		void beginFrame(const SceneSettings& settings, int width, int height) override;
 		void setupPhongPass(const engine::FrameData& frameData, const engine::SceneSettings& settings);
 		void renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update);
-		void resolveMSAA(int width, int height);
 		void renderUI(std::function<void()> updateUI);
 		void endFrame() override;
 

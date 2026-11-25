@@ -230,6 +230,9 @@ namespace engine
 
         // weak_ptr to have App survive after scene destruction
         std::weak_ptr<App> m_app{};
+
+
+        std::string m_thisInstanceHash{};
         
         int m_queryFrameIndex{ 0 }; // toggles between 0 and 1
         GLuint m_timerQuery[2]{};       // double-buffered GPU timer queries (for GL_TIME_ELAPSED)

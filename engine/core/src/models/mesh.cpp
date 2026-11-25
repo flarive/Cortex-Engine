@@ -49,6 +49,8 @@ void engine::Mesh::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projec
         else
             blinnPhongMaterial = std::static_pointer_cast<BlinnPhongMaterial>(m_material);
 
+
+
         if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
         {
             if (!m_material->bind(shader)) {

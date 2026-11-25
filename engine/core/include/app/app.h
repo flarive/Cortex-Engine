@@ -84,7 +84,6 @@ namespace engine
             return static_cast<App*>(glfwGetWindowUserPointer(window));
         }
 
-        
         static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
         {
             if (auto* app = getAppFromWindow(window)) {

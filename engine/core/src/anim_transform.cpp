@@ -42,7 +42,9 @@ void engine::AnimTransform::setup(const Transform& current,
 
 bool engine::AnimTransform::update(float dt, Transform& outTransform, const std::string& hash)
 {
+#ifdef DEBUG
     DebugFrame::ensureIsCalledOncePerFrame("AnimTransform", "update", hash);
+#endif
 
     elapsed += dt;
 

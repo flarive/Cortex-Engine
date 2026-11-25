@@ -60,10 +60,11 @@ void engine::OpenGLBlinnPhongRenderer::setSkybox(const std::vector<std::string>&
     m_skybox->setup(faces);
 }
 
-void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
+void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash)
 {
-    //DebugFrame::ensureIsCalledOncePerFrame("BlinnPhongRenderer", "loop");
-
+#ifdef DEBUG
+    DebugFrame::ensureIsCalledOncePerFrame("OpenGLBlinnPhongRenderer", "loop", hash);
+#endif
     m_camera = camera;
     
     const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
@@ -90,10 +91,10 @@ void engine::OpenGLBlinnPhongRenderer::loop(int width, int height, std::shared_p
     // --- 5) RESOLVE MSAA TO HDR RESOLVE FBO ---
     resolveMSAA(width, height);
 
-    // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---
+    // --- 6) RENDER FRAMEBUFFER TO SCREEN (TONE MAP / POSTPROCESS) ---
     renderFramebuffer(settings);
 
-    // --- 7) UI ---
+    // --- 7) RENDER UI ---
     renderUI(updateUI);
 
     endFrame();
@@ -321,7 +322,6 @@ void engine::OpenGLBlinnPhongRenderer::resolveMSAA(int width, int height)
 {
     // Resolve MSAA to screen or another texture FBO
     glBindFramebuffer(GL_READ_FRAMEBUFFER, colorFramebuffer);
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
@@ -381,6 +381,8 @@ void engine::OpenGLBlinnPhongRenderer::clean()
 
 	m_skybox->clean();
 }
+
+
 
 engine::OpenGLBlinnPhongRenderer::~OpenGLBlinnPhongRenderer()
 {

@@ -75,7 +75,7 @@ void engine::VulkanPbrRenderer::setup(int width, int height, const std::shared_p
     restoreScreenViewport();
 }
 
-void engine::VulkanPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
+void engine::VulkanPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash)
 {
     m_camera = camera;
 

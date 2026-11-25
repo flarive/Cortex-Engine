@@ -192,7 +192,7 @@ void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::ma
 
 	if (m_type == ParticleSystemType::basic)
 	{
-		if (!m_material->bind2(m_shaderSourceBasic)) {
+		if (!m_material->bind(m_shaderSourceBasic, Material::MATERIAL_BASE_UNIT, false)) {
 			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
 			return;
 		}
@@ -201,9 +201,9 @@ void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::ma
 		m_shaderSourceBasic->setMat4("view", view);
 		m_shaderSourceBasic->setMat4("projection", projection);
 	}
-	else if (m_type == ParticleSystemType::geometry)
+	else if (m_type == ParticleSystemType::geometry, Material::MATERIAL_BASE_UNIT, false)
 	{
-		if (!m_material->bind2(m_shaderSourceGeometry)) {
+		if (!m_material->bind(m_shaderSourceGeometry)) {
 			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
 			return;
 		}
@@ -213,9 +213,9 @@ void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::ma
 		m_shaderSourceGeometry->setMat4("projection", projection);
 		m_shaderSourceGeometry->setFloat("squareSize", m_squareSize);
 	}
-	else if (m_type == ParticleSystemType::instanced)
+	else if (m_type == ParticleSystemType::instanced, Material::MATERIAL_BASE_UNIT, false)
 	{
-		if (!m_material->bind2(m_shaderSourceInstanced)) {
+		if (!m_material->bind(m_shaderSourceInstanced)) {
 			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
 			return;
 		}

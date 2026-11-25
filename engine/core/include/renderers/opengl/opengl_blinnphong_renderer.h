@@ -22,11 +22,13 @@ namespace engine
 		~OpenGLBlinnPhongRenderer() override;
 		
 		void setup(int width, int height, const std::shared_ptr<Camera>& camera, const std::vector<std::shared_ptr<Light>>& lights) override;
-		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI) override;
+		void loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash) override;
 
 		std::unique_ptr<engine::Shader>& getShader() override;
 
 		void setSkybox(const std::vector<std::string>& faces);
+
+		
 
 		void clean() override;
 

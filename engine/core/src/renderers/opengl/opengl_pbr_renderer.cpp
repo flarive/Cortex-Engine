@@ -83,8 +83,12 @@ void engine::OpenGLPbrRenderer::setup(int width, int height, const std::shared_p
     restoreScreenViewport();
 }
 
-void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
+void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash)
 {
+#ifdef DEBUG
+    DebugFrame::ensureIsCalledOncePerFrame("OpenGLPbrRenderer", "loop", hash);
+#endif
+
     m_camera = camera;
 
     const SceneSettings& settings = Singleton::getInstance()->sceneSettings();
@@ -114,11 +118,10 @@ void engine::OpenGLPbrRenderer::loop(int width, int height, std::shared_ptr<Came
     // --- 6) RENDER BLOOM POST FX
     renderBloom(settings);
 
-
-    // --- 6) TONE MAP / POSTPROCESS TO SCREEN ---
+    // --- 7) RENDER FRAMEBUFFER TO SCREEN (TONE MAP / POSTPROCESS) ---
     renderFramebuffer(width, height, settings);
 
-    // --- 7) UI ---
+    // --- 8) RENDER UI ---
     renderUI(updateUI);
     
     endFrame();

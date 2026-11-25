@@ -17,8 +17,7 @@ void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimati
 
 void engine::GLtfMeshLoader::loadModel(const std::string& path, bool loadAnimation, bool flipUVs, const std::shared_ptr<Material>& customMaterial)
 {
-    if (customMaterial)
-        m_customMaterial = customMaterial;
+    m_customMaterial = customMaterial;
     
     // ------------------------------------------------------------
     // 1. Parse GLTF

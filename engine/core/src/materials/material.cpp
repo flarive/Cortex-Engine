@@ -41,7 +41,7 @@ std::string_view engine::Material::getUniformSamplerName(TextureSlot type) const
     return "texture_diffuse";
 }
 
-bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
+bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit, bool resetHasTextures) const
 {
     static int m_maxFragUnits{};
     
@@ -59,35 +59,37 @@ bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
     int unit = baseUnit;
     bool success = true;
 
-	// cleanup any previous bindings for this shader's material uniforms
-	if (shader->getShaderType() == ShaderType::PBR || shader->getShaderType() == ShaderType::PBRTessellation)
+    if (resetHasTextures)
     {
-        shader->setBool("material.has_texture_diffuse_map", false);
-        shader->setBool("material.has_texture_normal_map", false);
-        shader->setBool("material.has_texture_metalness_map", false);
-        shader->setBool("material.has_texture_roughness_map", false);
-        shader->setBool("material.has_texture_ao_map", false);
-        shader->setBool("materialHeight.has_texture_height_map", false);
-        shader->setBool("material.has_texture_emissive_map", false);
-        shader->setBool("material.has_texture_opacity_map", false);
+        // cleanup any previous bindings for this shader's material uniforms
+        if (shader->getShaderType() == ShaderType::PBR || shader->getShaderType() == ShaderType::PBRTessellation)
+        {
+            shader->setBool("material.has_texture_diffuse_map", false);
+            shader->setBool("material.has_texture_normal_map", false);
+            shader->setBool("material.has_texture_metalness_map", false);
+            shader->setBool("material.has_texture_roughness_map", false);
+            shader->setBool("material.has_texture_ao_map", false);
+            shader->setBool("materialHeight.has_texture_height_map", false);
+            shader->setBool("material.has_texture_emissive_map", false);
+            shader->setBool("material.has_texture_opacity_map", false);
 
-        shader->setBool("material.has_texture_arm_map", false);
-        shader->setBool("material.has_texture_rm_map", false);
-    }
-    else
-    {
-        shader->setBool("material.has_texture_diffuse_map", false);
-        shader->setBool("material.has_texture_specular_map", false);
-        shader->setBool("material.has_texture_normal_map", false);
-        shader->setBool("materialHeight.has_texture_height_map", false);
-        shader->setBool("material.has_texture_emissive_map", false);
-        shader->setBool("material.has_texture_opacity_map", false);
+            shader->setBool("material.has_texture_arm_map", false);
+            shader->setBool("material.has_texture_rm_map", false);
+        }
+        else
+        {
+            shader->setBool("material.has_texture_diffuse_map", false);
+            shader->setBool("material.has_texture_specular_map", false);
+            shader->setBool("material.has_texture_normal_map", false);
+            shader->setBool("materialHeight.has_texture_height_map", false);
+            shader->setBool("material.has_texture_emissive_map", false);
+            shader->setBool("material.has_texture_opacity_map", false);
+        }
     }
 
     for (const auto& tex : m_textures)
     {
         const std::string_view uniformSamplerName = getUniformSamplerName(tex->type);
-        
         
         // Example: tex.type could be "albedo", "normal", "metallic", ...
         std::string uniformName = std::format("material.{}", uniformSamplerName);
@@ -139,46 +141,6 @@ bool engine::Material::bind(std::unique_ptr<Shader>& shader, int baseUnit) const
     }
 
     // No need to reset glActiveTexture here.
-    return success;
-}
-
-bool engine::Material::bind2(std::unique_ptr<Shader>& shader) const
-{
-    unsigned int textureUnit = 0;
-    bool success = true;
-
-    shader->use();
-    for (const auto& texture : m_textures)
-    {
-        const std::string_view uniformName = getUniformSamplerName(texture->type);
-        
-        if (texture->id > 0)
-        {
-            glActiveTexture(GL_TEXTURE0 + textureUnit);
-            glBindTexture(GL_TEXTURE_2D, texture->id);
-
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR)
-            {
-                std::cerr << "OpenGL error while binding texture '" << uniformName << "' to unit " << textureUnit << ": " << std::hex << error << std::endl;
-                success = false;
-                continue;
-            }
-
-            shader->setInt(std::string(uniformName), textureUnit);
-            textureUnit++;
-
-            break;
-        }
-        else
-        {
-            //std::cerr << "Warning: Texture ID is 0 for '" << texture.type << "'. Texture might not be loaded correctly." << std::endl;
-            //success = false;
-            success = true;
-        }
-    }
-
-    glActiveTexture(GL_TEXTURE0); // Reset active texture
     return success;
 }
 

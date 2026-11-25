@@ -125,8 +125,7 @@ void engine::BonesAnimator::draw(std::unique_ptr<Shader>& shader, Transform& loc
 {
 	auto& transforms = getFinalBoneMatrices();
 
-	for (int i = 0; i < transforms.size(); ++i)
-	{
+	for (int i = 0; i < transforms.size(); ++i) {
 		shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 	}
 }

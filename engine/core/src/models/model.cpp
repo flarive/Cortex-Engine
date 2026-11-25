@@ -48,9 +48,13 @@ void engine::Model::draw(std::unique_ptr<Shader>& shader, const glm::mat4& proje
 
     shader->use();
     
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::DepthBufferDirectionalLights || type == ShaderType::DepthBufferPointLights)
     {
         shader->setBool("isAnimated", hasBones());
+    }
+
+    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    {
         shader->setBool("isTessellated", false);
     }
 

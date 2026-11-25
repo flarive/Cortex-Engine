@@ -50,9 +50,11 @@ void engine::OpenGLPhongRenderer::setup(int width, int height, const std::shared
     RenderState::enableWireframe();
 }
 
-void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI)
+void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Camera>& camera, std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update, std::function<void()> updateUI, const std::string& hash)
 {
-    //DebugFrame::ensureIsCalledOncePerFrame("PhongRenderer", "loop");
+#ifdef DEBUG
+    DebugFrame::ensureIsCalledOncePerFrame("OpenGLPhongRenderer", "loop", hash);
+#endif
     
     m_camera = camera;
 
@@ -68,9 +70,7 @@ void engine::OpenGLPhongRenderer::loop(int width, int height, std::shared_ptr<Ca
     // --- 2) RENDER SCENE ENTITIES HIERARCHY ---
     renderScene(update);
 
-    resolveMSAA(width, height);
-
-    // --- 3) UI ---
+    // --- 3) RENDER UI ---
     renderUI(updateUI);
 
     endFrame();
@@ -181,12 +181,6 @@ void engine::OpenGLPhongRenderer::setupPhongPass(const engine::FrameData& frameD
 void engine::OpenGLPhongRenderer::renderScene(std::function<void(std::unique_ptr<Shader>&, std::unique_ptr<Shader>&)> update)
 {
     update(phongShader, phongShader);
-}
-
-void engine::OpenGLPhongRenderer::resolveMSAA(int width, int height)
-{
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Default framebuffer (screen)
-    //glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 void engine::OpenGLPhongRenderer::renderUI(std::function<void()> updateUI)

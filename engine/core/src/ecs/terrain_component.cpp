@@ -32,8 +32,6 @@ void engine::TerrainComponent::update(float deltaTime, Transform& transform)
 
 void engine::TerrainComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<Shader>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	m_terrain->draw(shader, projection, view, worldTransformMatrix, localTransform);
-
 	SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)

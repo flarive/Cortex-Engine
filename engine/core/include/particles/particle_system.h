@@ -52,7 +52,7 @@ namespace engine
 		void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) override;
 
 		void update();
-		void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
+		//void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
 		void clean() override;
 
 		std::vector<engine::Vertex> generateVertices() override;
@@ -87,24 +87,7 @@ namespace engine
 			return PrimitiveType::particle;
 		}
 
-
-
-		//bool isEnabled() const { return m_isEnabled; }
-		//void setEnabled(bool enabled) { m_isEnabled = enabled; }
-
-		//glm::vec3& getPosition() { return m_position; }
-		//glm::vec3& getRotation() { return m_rotation; }
-		//glm::vec3& getScale() { return m_scale; }
-
-		//void setPosition(const glm::vec3& position) { m_position = position; }
-		//void setRotation(const glm::vec3& rotation) { m_rotation = rotation; }
-		//void setScale(const glm::vec3& scale) { m_scale = scale; }
-
-		//void setTransform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale) {
-		//	m_position = position;
-		//	m_rotation = rotation;
-		//	m_scale = scale;
-		//}
+		void prep();
 
 		float getSquareSize() { return m_squareSize; }
 
@@ -142,6 +125,23 @@ namespace engine
 		std::vector<std::string> getModesList();
 		void setModeAtIndex(unsigned short index);
 
+
+		void incrementDrawCalls() { m_drawCallCount++;	}
+
+		ParticleSystemType getParticleSystemType() const { return m_type; }
+
+
+		unsigned int getQuadVAO() const { return m_quadVAO;	}
+		unsigned int getQuadVBO() const { return m_quadVBO; }
+
+		unsigned int getInstanceVBO() const { return m_instanceVBO; }
+		
+
+
+		std::unique_ptr<Shader>& getShaderSourceBasic() { return m_shaderSourceBasic; }
+		std::unique_ptr<Shader>& getShaderSourceGeometry() { return m_shaderSourceGeometry; }
+		std::unique_ptr<Shader>& getShaderSourceInstanced() { return m_shaderSourceInstanced; }
+
 	private:
 		unsigned int m_maxParticles{};
 		unsigned int m_numOfParticlesPerSecond{};
@@ -159,7 +159,7 @@ namespace engine
 		float m_squareSize{};
 		bool* m_flags{};
 
-		//bool m_isEnabled{ true };
+		
 
 		Particle* m_particlesArray{};
 		glm::vec3 m_squarePoints[4];
@@ -167,21 +167,10 @@ namespace engine
 		ParticleSystemType m_type = ParticleSystemType::basic;
 
 
-		//std::shared_ptr<Material> m_material{};
 		std::unique_ptr<Shader> m_shaderSourceBasic{};
 		std::unique_ptr<Shader> m_shaderSourceGeometry{};
 		std::unique_ptr<Shader> m_shaderSourceInstanced{};
 
-		/*float m_uvScale{ 1.0f };
-
-		glm::vec3 m_position{};
-		glm::vec3 m_rotation{};
-		glm::vec3 m_scale{};*/
-
-		// basic
-		//unsigned int m_VAO{};
-		//unsigned int m_VBO{};
-		//unsigned int m_EBO{};
 
 		// geometry
 		unsigned int m_quadVAO{};

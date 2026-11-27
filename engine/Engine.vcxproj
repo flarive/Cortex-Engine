@@ -330,8 +330,11 @@
     <ClInclude Include="core\include\app\scene_settings.h" />
     <ClInclude Include="core\include\app\vulkan_app.h" />
     <ClInclude Include="core\include\app\vulkan_globals.h" />
+    <ClInclude Include="core\include\backends\mesh_gpu_resource.h" />
+    <ClInclude Include="core\include\backends\opengl\opengl_mesh_gpu_resource.h" />
     <ClInclude Include="core\include\backends\opengl\opengl_uniform_buffer.h" />
     <ClInclude Include="core\include\backends\vulkan\vulkan_helper.h" />
+    <ClInclude Include="core\include\backends\vulkan\vulkan_mesh_gpu_resource.h" />
     <ClInclude Include="core\include\bounding_volume.h" />
     <ClInclude Include="core\include\bounding_volume_plane.h" />
     <ClInclude Include="core\include\cameras\camera.h" />

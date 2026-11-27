@@ -4,9 +4,24 @@
 
 #include "../../include/managers/log_manager.h"
 
+#include "../../include/backends/opengl/render_state.h" // TO REMOVE !!!!!!!!!!!!!
+
+#include "../../include/backends/opengl/opengl_mesh_gpu_resource.h"
+#include "../../include/backends/vulkan/vulkan_mesh_gpu_resource.h"
+
 engine::Primitive::Primitive(const glm::vec3& _position) : m_position(_position)
 {
     logger.trace("Primitive base constructor called");
+
+    AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
+    if (appSettings.backend == BackendType::Vulkan)
+    {
+        m_gpuResource = std::make_shared<VulkanMeshGPUResource>();
+    }
+    else
+    {
+        m_gpuResource = std::make_shared<OpenGLMeshGPUResource>();
+    }
 }
 
 void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
@@ -25,52 +40,6 @@ void engine::Primitive::setMaterial(const std::shared_ptr<Material>& material)
     }
 
     m_material = material;
-}
-
-void engine::Primitive::setShaderCommonUniforms(std::unique_ptr<Shader>& shader, ShaderType type)
-{
-    std::shared_ptr<BlinnPhongMaterial> blinnPhongMaterial{};
-    std::shared_ptr<PBRMaterial> pbrMaterial{};
-
-    if (m_material->getTypeID() == MaterialType::PBR)
-        pbrMaterial = std::static_pointer_cast<PBRMaterial>(m_material);
-    else
-        blinnPhongMaterial = std::static_pointer_cast<BlinnPhongMaterial>(m_material);
-
-    if (type == ShaderType::PBR || type == ShaderType::PBRTessellation)
-    {
-        shader->setVec3("material.baseColorFactor", pbrMaterial->getBaseColorFactor());
-        shader->setFloat("material.roughnessMapIntensity", pbrMaterial->getRougnessIntensity());
-        shader->setFloat("material.metallicMapIntensity", pbrMaterial->getMetallicIntensity());
-        shader->setFloat("material.ambientOcclusionMapIntensity", pbrMaterial->getAmbientOcclusionIntensity());
-
-        shader->setFloat("material.IOR", pbrMaterial->getIOR());
-        shader->setFloat("material.transmission", pbrMaterial->getTransmission());
-        shader->setFloat("material.thickness", pbrMaterial->getThickness());
-        shader->setVec3("material.attenuationColor", pbrMaterial->getAttenuationColor());
-        shader->setFloat("material.attenuationDistance", pbrMaterial->getAttenuationDistance());
-    }
-    else  if (type == ShaderType::BlinnPhong || type == ShaderType::BlinnPhongTessellation)
-    {
-        shader->setFloat("material.specularMapIntensity", blinnPhongMaterial->getSpecularIntensity());
-        shader->setFloat("material.shininess", blinnPhongMaterial->getShininessIntensity());
-        shader->setVec3("material.ambient_color", blinnPhongMaterial->getAmbientColor());
-        shader->setVec3("material.diffuse_color", blinnPhongMaterial->getDiffuseColor());
-        shader->setVec3("material.specular_color", blinnPhongMaterial->getSpecularColor());
-    }
-
-    shader->setBool("material.useParallaxMapping", m_material->useParallaxMapping());
-    shader->setFloat("material.parallaxMapIntensity", m_material->getParallaxIntensity());
-
-    shader->setFloat("material.normalMapIntensity", m_material->getNormalIntensity());
-    shader->setFloat("material.emissiveStrength", m_material->getEmissiveStrength());
-    shader->setVec3("material.emissiveColor", m_material->getEmissiveColorFactor());
-
-    shader->setBool("material.canCastShadows", canCastShadows());
-    shader->setBool("material.canReceiveShadows", canReceiveShadows());
-
-
-    shader->setFloat("material.opacity", m_material->getOpacityIntensity());
 }
 
 bool engine::Primitive::isTransparent() const

@@ -3,6 +3,8 @@
 #include "../misc/noncopyable.h"
 #include "../shaders/shader.h"
 
+#include "../backends/opengl/render_state.h"
+
 #include <vector>
 
 namespace engine

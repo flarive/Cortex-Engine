@@ -11,6 +11,10 @@
 #include "../lights/directional_light.h"
 #include "../cameras/camera.h"
 
+#include "../models/model.h"
+#include "../particles/particle_system.h"
+#include "../primitives/terrain.h"
+
 #include "../backends/opengl/render_state.h"
 
 #include "../debug/debug_plane_grid.h"
@@ -82,6 +86,19 @@ namespace engine
 		void setShouldSupportTessellation(bool supportTessellation);
 
 		virtual std::unique_ptr<Shader>& getShader() = 0;
+
+
+		virtual void renderModel(const std::shared_ptr<Model> model, std::unique_ptr<Shader>& shader, const glm::mat4& transformMatrix, const Transform& localTransform) = 0;
+		virtual void renderMesh(const std::shared_ptr<Mesh> mesh, std::unique_ptr<Shader>& shader, const glm::mat4& transformMatrix) = 0;
+		virtual void renderPrimitive(const std::shared_ptr<Primitive> primitive, std::unique_ptr<Shader>& shader, const glm::mat4& transformMatrix, const Transform& localTransform) = 0;
+
+		// 2 special cases to get rid of
+		virtual void renderParticleSystem(const std::shared_ptr<ParticleSystem> primitive, std::unique_ptr<Shader>& shader, const glm::mat4& transformMatrix, const Transform& localTransform, const glm::mat4& projection, const glm::mat4& view) = 0;
+		virtual void renderTerrain(const std::shared_ptr<Terrain> primitive, std::unique_ptr<Shader>& shader, const glm::mat4& transformMatrix, const Transform& localTransform) = 0;
+
+
+		virtual void uploadPrimitive(const std::shared_ptr<Primitive> primitive) = 0;
+
 
 		virtual void clean() = 0;
 
@@ -196,6 +213,11 @@ namespace engine
 
 		virtual void beginFrame(const SceneSettings& settings, int width, int height) = 0;
 		virtual void endFrame() = 0;
+
+
+		virtual bool bind(std::unique_ptr<Shader>& shader, const std::vector<std::shared_ptr<Texture>>& textures, int baseUnit = Material::MATERIAL_BASE_UNIT, bool resetHasTextures = true) const = 0;
+		virtual void unbind(const std::vector<std::shared_ptr<Texture>>& textures, int baseUnit = Material::MATERIAL_BASE_UNIT) const = 0;
+
 
 
 		// renderCube() renders a 1x1 3D cube in NDC.

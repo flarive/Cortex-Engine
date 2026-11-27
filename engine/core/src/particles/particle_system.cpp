@@ -154,128 +154,132 @@ void engine::ParticleSystem::update()
 	}
 }
 
-void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+//void engine::ParticleSystem::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
+//{
+//	//if (!m_isEnabled)
+//	//	return;
+//
+//	//ShaderType type = shader->getShaderType();
+//	//if (type != ShaderType::BlinnPhong && type != ShaderType::PBR) {
+//	//	return;
+//	//}
+//
+//	//if (!m_material || !shader->isValid()) {
+//	//	std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
+//	//	return;
+//	//}
+//
+//	//if (!m_material->areAllTexturesLoaded()) {
+//	//	std::cout << "Textures not ready. Deferring draw." << std::endl;
+//	//	return;
+//	//}
+//
+//	//if (m_VAO == 0 || m_VBO == 0) {
+//	//	std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
+//	//	return;
+//	//}
+//
+//
+//	//prep();
+//
+//	//setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
+//
+//
+//	//if (m_type == ParticleSystemType::basic)
+//	//{
+//	//	if (!m_material->bind(m_shaderSourceBasic, Material::MATERIAL_BASE_UNIT, false)) {
+//	//		std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+//	//		return;
+//	//	}
+//
+//	//	m_shaderSourceBasic->setMat4("model", transformMatrix);
+//	//	m_shaderSourceBasic->setMat4("view", view);
+//	//	m_shaderSourceBasic->setMat4("projection", projection);
+//	//}
+//	//else if (m_type == ParticleSystemType::geometry)
+//	//{
+//	//	if (!m_material->bind(m_shaderSourceGeometry, Material::MATERIAL_BASE_UNIT, false)) {
+//	//		std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+//	//		return;
+//	//	}
+//
+//	//	m_shaderSourceGeometry->setMat4("model", transformMatrix);
+//	//	m_shaderSourceGeometry->setMat4("view", view);
+//	//	m_shaderSourceGeometry->setMat4("projection", projection);
+//	//	m_shaderSourceGeometry->setFloat("squareSize", m_squareSize);
+//	//}
+//	//else if (m_type == ParticleSystemType::instanced)
+//	//{
+//	//	if (!m_material->bind(m_shaderSourceInstanced, Material::MATERIAL_BASE_UNIT, false)) {
+//	//		std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
+//	//		return;
+//	//	}
+//
+//	//	m_shaderSourceInstanced->setMat4("model", transformMatrix);
+//	//	m_shaderSourceInstanced->setMat4("view", view);
+//	//	m_shaderSourceInstanced->setMat4("projection", projection);
+//	//}
+//
+//	//RenderState::disableDepthMask();
+//	//RenderState::enableBlending();
+//	//RenderState::setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//
+//	//
+//	//if (m_type == ParticleSystemType::basic)
+//	//{
+//	//	// Send to GPU
+//	//	glBindVertexArray(m_VAO);
+//	//	OpenGLDebug::checkGLError("glBindVertexArray");
+//
+//	//	int numOfSquares = getCurrentDataSize() / 8;
+//	//	glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
+//	//	OpenGLDebug::checkGLError("glDrawElements");
+//
+//	//	m_drawCallCount++; // Increment for each draw call
+//	//}
+//	//else if (m_type == ParticleSystemType::geometry)
+//	//{
+//	//	// Send to GPU
+//	//	glBindVertexArray(m_VAO);
+//	//	OpenGLDebug::checkGLError("glBindVertexArray");
+//
+//	//	glDrawArrays(GL_POINTS, 0, getCurrentDataSize());
+//	//	OpenGLDebug::checkGLError("glDrawArrays");
+//
+//	//	m_drawCallCount++; // Increment for each draw call
+//	//}
+//	//else if (m_type == ParticleSystemType::instanced)
+//	//{
+//	//	// Send to GPU
+//	//	glBindVertexArray(m_quadVAO);
+//	//	OpenGLDebug::checkGLError("glBindVertexArray");
+//
+//	//	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCurrentDataSize());
+//	//	OpenGLDebug::checkGLError("glDrawArraysInstanced");
+//
+//	//	m_drawCallCount++; // Increment for each draw call
+//	//}
+//
+//	//glBindVertexArray(0);
+//	//OpenGLDebug::checkGLError("glBindVertexArray");
+//
+//	//m_material->unbind(); // Unbind textures to prevent OpenGL state retention
+//	//OpenGLDebug::checkGLError("Unbind");
+//
+//	//RenderState::setDepthWrite(true);
+//	//
+//	//// important !!!
+//	//shader->use();
+//}
+
+void engine::ParticleSystem::prep()
 {
-	if (!m_isEnabled)
-		return;
-
-	ShaderType type = shader->getShaderType();
-	if (type != ShaderType::BlinnPhong && type != ShaderType::PBR) {
-		return;
-	}
-
-	if (!m_material || !shader->isValid()) {
-		std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-		return;
-	}
-
-	if (!m_material->areAllTexturesLoaded()) {
-		std::cout << "Textures not ready. Deferring draw." << std::endl;
-		return;
-	}
-
-	if (m_VAO == 0 || m_VBO == 0) {
-		std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-		return;
-	}
-
-
 	if (m_type == ParticleSystemType::basic)
 		basicDataPrep();
 	else if (m_type == ParticleSystemType::geometry)
 		geometryDataPrep();
 	else if (m_type == ParticleSystemType::instanced)
 		instancedDataPrep();
-
-	setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-
-	if (m_type == ParticleSystemType::basic)
-	{
-		if (!m_material->bind(m_shaderSourceBasic, Material::MATERIAL_BASE_UNIT, false)) {
-			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-			return;
-		}
-
-		m_shaderSourceBasic->setMat4("model", transformMatrix);
-		m_shaderSourceBasic->setMat4("view", view);
-		m_shaderSourceBasic->setMat4("projection", projection);
-	}
-	else if (m_type == ParticleSystemType::geometry, Material::MATERIAL_BASE_UNIT, false)
-	{
-		if (!m_material->bind(m_shaderSourceGeometry)) {
-			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-			return;
-		}
-
-		m_shaderSourceGeometry->setMat4("model", transformMatrix);
-		m_shaderSourceGeometry->setMat4("view", view);
-		m_shaderSourceGeometry->setMat4("projection", projection);
-		m_shaderSourceGeometry->setFloat("squareSize", m_squareSize);
-	}
-	else if (m_type == ParticleSystemType::instanced, Material::MATERIAL_BASE_UNIT, false)
-	{
-		if (!m_material->bind(m_shaderSourceInstanced)) {
-			std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-			return;
-		}
-
-		m_shaderSourceInstanced->setMat4("model", transformMatrix);
-		m_shaderSourceInstanced->setMat4("view", view);
-		m_shaderSourceInstanced->setMat4("projection", projection);
-	}
-
-	RenderState::disableDepthMask();
-	RenderState::enableBlending();
-	RenderState::setBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-	
-	if (m_type == ParticleSystemType::basic)
-	{
-		// Send to GPU
-		glBindVertexArray(m_VAO);
-		OpenGLDebug::checkGLError("glBindVertexArray");
-
-		int numOfSquares = getCurrentDataSize() / 8;
-		glDrawElements(GL_TRIANGLES, numOfSquares * 6, GL_UNSIGNED_INT, 0);
-		OpenGLDebug::checkGLError("glDrawElements");
-
-		m_drawCallCount++; // Increment for each draw call
-	}
-	else if (m_type == ParticleSystemType::geometry)
-	{
-		// Send to GPU
-		glBindVertexArray(m_VAO);
-		OpenGLDebug::checkGLError("glBindVertexArray");
-
-		glDrawArrays(GL_POINTS, 0, getCurrentDataSize());
-		OpenGLDebug::checkGLError("glDrawArrays");
-
-		m_drawCallCount++; // Increment for each draw call
-	}
-	else if (m_type == ParticleSystemType::instanced)
-	{
-		// Send to GPU
-		glBindVertexArray(m_quadVAO);
-		OpenGLDebug::checkGLError("glBindVertexArray");
-
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, getCurrentDataSize());
-		OpenGLDebug::checkGLError("glDrawArraysInstanced");
-
-		m_drawCallCount++; // Increment for each draw call
-	}
-
-	glBindVertexArray(0);
-	OpenGLDebug::checkGLError("glBindVertexArray");
-
-	m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-	OpenGLDebug::checkGLError("Unbind");
-
-
-	glDepthMask(GL_TRUE);
-
-	// important !!!
-	shader->use();
 }
 
 void engine::ParticleSystem::basicDataPrep()

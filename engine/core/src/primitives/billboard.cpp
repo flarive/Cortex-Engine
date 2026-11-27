@@ -42,7 +42,13 @@ void engine::Billboard::geometrySetup()
     if (!m_isEnabled)
 		return;
 
-    std::vector<Vertex> vertices = generateVertices();
+    // === Step 1: Generate vertex data ===
+    m_vertices.clear();
+    m_indices.clear();
+
+    m_vertices = generateVertices();
+    
+    // === Send to GPU ===
 
     // configure plane VAO
     glGenVertexArrays(1, &m_VAO);
@@ -52,7 +58,7 @@ void engine::Billboard::geometrySetup()
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -80,91 +86,6 @@ void engine::Billboard::geometrySetup()
 std::vector<engine::Vertex> engine::Billboard::generateVertices()
 {
     return generateBillboardVertices(m_uvScale);
-}
-
-void engine::Billboard::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
-{
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("shader.use.billboard");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (m_material)
-    {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            if (!m_material->bind(shader)) {
-                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-                return;
-            }
-
-            setShaderCommonUniforms(shader, type);
-        }
-    }
-
-    RenderState::enableBlending();
-
-    // Get camera's right and up vectors from the view matrix
-    glm::mat4 viewInverse = glm::inverse(view);
-    glm::vec3 cameraRight = glm::normalize(glm::vec3(viewInverse[0]));
-    glm::vec3 cameraUp = glm::normalize(glm::vec3(viewInverse[1]));
-
-    // Billboard's forward axis is the negative of the camera's forward axis
-    glm::vec3 cameraForward = -glm::normalize(glm::vec3(viewInverse[2]));
-
-    // Construct the billboard's model matrix
-    glm::mat4 billboardModel = glm::mat4(1.0f);
-    billboardModel[0] = glm::vec4(cameraRight, 0.0f);
-    billboardModel[1] = glm::vec4(cameraUp, 0.0f);
-    billboardModel[2] = glm::vec4(cameraForward, 0.0f);
-    billboardModel[3] = glm::vec4(getPosition(), 1.0f);
-
-    // Apply scale
-    billboardModel = glm::scale(billboardModel, getScale());
-
-    // Pass the billboard's model matrix to the shader
-    shader->setMat4("model", billboardModel);
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader->setBool("hasTangents", true);
-        shader->setBool("isAnimated", false);
-        shader->setBool("isTessellated", isTessellated());
-    }
-
-    // Send to GPU
-    glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray.billboard");
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    OpenGLDebug::checkGLError("glDrawArrays.billboard");
-
-    glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray.billboard");
-
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind.billboard");
-    }
 }
 
 void engine::Billboard::clean()

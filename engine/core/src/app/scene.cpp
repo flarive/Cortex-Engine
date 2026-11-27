@@ -651,7 +651,8 @@ void engine::Scene::initEntityRecursive(const std::shared_ptr<engine::Entity>& e
 
 void engine::Scene::drawEntities(std::unique_ptr<Shader>& shader, std::unique_ptr<Shader>& shaderTessellation)
 {
-    //DebugFrame::ensureIsCalledOncePerFrame("Scene", "drawEntities");
+    // Should be called twice, once for main shader (BlinnPhong, PBR) and once for depth map shader
+    //DebugFrame::ensureIsCalledOncePerFrame("Scene", "drawEntities", m_thisInstanceHash);
     
     inFrustrumCount = 0;
     totalFrustrumCount = 0;
@@ -700,9 +701,6 @@ void engine::Scene::drawEntities(std::unique_ptr<Shader>& shader, std::unique_pt
     
     // draw
     drawEntityRecursive(root, cam, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
-
-    // Draw using stored world transforms
-    //drawEntityRecursive(m_entityManager.getRootEntity(), shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
 }
 
 void engine::Scene::updateEntityRecursive(const std::shared_ptr<Entity>& entity, int callsThisFrame)
@@ -751,197 +749,6 @@ void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& e
     drawOpaqueQueue(shader, shadertessellation, projection, view);
     drawTransparentQueue(shader, shadertessellation, projection, view);
 }
-
-//void engine::Scene::drawEntityRecursive(const std::shared_ptr<engine::Entity>& entity, const std::shared_ptr<engine::Camera>& camera, Shader& shader, Shader& shaderTessellation, const glm::mat4& projection, const glm::mat4& view, const Frustum& camFrustum, const int& callsThisFrame)
-//{
-//    if (!entity->enabled)
-//        return;
-//
-//    bool shouldTestFrustrumForEntity = false;
-//    bool frustrumOk = false;
-//
-//    auto* singleton = engine::Singleton::getInstance();
-//    assert(singleton != nullptr && "Singleton not initialized !");
-//    const SceneSettings& sceneSettings = singleton->sceneSettings();
-//
-//    if (sceneSettings.enableCameraFrustrumCulling)
-//    {
-//        if (auto boundingVolume = entity->getBoundingVolume(); boundingVolume != nullptr)
-//        {
-//            shouldTestFrustrumForEntity = true;
-//
-//            // https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
-//            if (shouldTestFrustrumForEntity && boundingVolume->isOnFrustum(camFrustum, entity->getWorldTransform()))
-//            {
-//                frustrumOk = true;
-//            }
-//        }
-//    }
-//
-//    if (!shouldTestFrustrumForEntity || (shouldTestFrustrumForEntity && frustrumOk))
-//    {
-//        // Use the precomputed transform
-//        shader.use();
-//
-//        if (shader.name != "outline")
-//        {
-//            glStencilFunc(GL_ALWAYS, entity->id, 0xFF);
-//            glStencilMask(0xFF);
-//        }
-//        else if (m_selectedEntity)
-//        {
-//            // Only draw outline where stencil != objectID
-//            glStencilFunc(GL_NOTEQUAL, entity->id, 0xFF);
-//            glStencilMask(0x00); // disable stencil writes
-//
-//            shader.setMat4("view", view);
-//            shader.setMat4("projection", projection);
-//            shader.setFloat("outlineWidth", entity->id == m_selectedEntity->id ? 0.08f : 0.0f);
-//        }
-//
-//        auto& transform = entity->getTransform();
-//
-//        std::shared_ptr<AnimatorComponent> animatorComponent{};
-//        std::shared_ptr<ModelComponent> modelComponent{};
-//        std::shared_ptr<PrimitiveComponent> primitiveComponent{};
-//        std::shared_ptr<LightComponent> lightComponent{};
-//        std::shared_ptr<ParticleSystemComponent> particleSystemComponent{};
-//        std::shared_ptr<TerrainComponent> terrainComponent{};
-//
-//        // 1. First pass: collect components
-//        for (const auto& [typeID, component] : entity->components)
-//        {
-//            if (typeID == ComponentType::model)
-//                modelComponent = std::static_pointer_cast<ModelComponent>(component);
-//            else if (typeID == ComponentType::primitive)
-//                primitiveComponent = std::static_pointer_cast<PrimitiveComponent>(component);
-//            else if (typeID == ComponentType::animator)
-//                animatorComponent = std::static_pointer_cast<AnimatorComponent>(component);
-//            else if (typeID == ComponentType::light)
-//                lightComponent = std::static_pointer_cast<LightComponent>(component);
-//            else if (typeID == ComponentType::particleSystem)
-//                particleSystemComponent = std::static_pointer_cast<ParticleSystemComponent>(component);
-//            else if (typeID == ComponentType::terrain)
-//                terrainComponent = std::static_pointer_cast<TerrainComponent>(component);
-//        }
-//
-//
-//        // 2. Update animator (once per frame)
-//        if (animatorComponent && callsThisFrame == 1)
-//        {
-//            animatorComponent->update(deltaTime, transform);
-//        }
-//
-//        // 3. Upload bones BEFORE drawing the model
-//        if (animatorComponent)
-//        {
-//            animatorComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-//        }
-//
-//        // 4. Draw model meshes
-//        if (modelComponent)
-//        {
-//            bool shouldDraw = true;
-//
-//            // manage shadow casting or not
-//            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-//            {
-//                auto properties = modelComponent->getPublicProperties();
-//                if (properties.contains("canCastShadows"))
-//                {
-//                    auto& canCastShadows = properties.at("canCastShadows");
-//                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-//                    {
-//                        shouldDraw = *pBool;
-//                    }
-//                }
-//            }
-//
-//            if (shouldDraw)
-//                modelComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-//
-//            inFrustrumCount++;
-//        }
-//
-//        // 5. Draw primitive meshes (if any)
-//        if (primitiveComponent)
-//        {
-//            bool shouldDraw = true;
-//
-//            // manage shadow casting or not
-//            if (shader.name == "simpleDepthBuffer1" || shader.name == "simpleDepthBuffer2")
-//            {
-//                auto properties = primitiveComponent->getPublicProperties();
-//                if (properties.contains("canCastShadows"))
-//                {
-//                    auto& canCastShadows = properties.at("canCastShadows");
-//                    if (auto pBool = std::get_if<bool>(&canCastShadows.value))
-//                    {
-//                        shouldDraw = *pBool;
-//                    }
-//                }
-//            }
-//
-//            if (shouldDraw)
-//                primitiveComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-//
-//            inFrustrumCount++;
-//        }
-//
-//        // 6. Draw lights
-//        if (lightComponent)
-//        {
-//            lightComponent->draw(projection, view, shader, entity->getWorldTransform(), transform);
-//
-//            // TODO !!!! test if tesselation is used/needed
-//            lightComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform);
-//        }
-//
-//        // 7. Draw particle systems
-//        if (particleSystemComponent)
-//        {
-//            // update should be called only one time per frame
-//            if (callsThisFrame == 1)
-//                particleSystemComponent->update(deltaTime, transform);
-//
-//            particleSystemComponent->draw(projection, view, shader, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-//            inFrustrumCount++;
-//        }
-//
-//        // 8. Draw terrains
-//        if (terrainComponent)
-//        {
-//            // update should be called only one time per frame
-//            if (callsThisFrame == 1)
-//                terrainComponent->update(deltaTime, transform);
-//
-//            terrainComponent->draw(projection, view, shaderTessellation, entity->getWorldTransform(), transform, entity->getBoundingVolume());
-//            inFrustrumCount++;
-//        }
-//
-//        if (shader.name == "outline")
-//        {
-//            // Restore state
-//            glStencilMask(0xFF);
-//            glStencilFunc(GL_ALWAYS, 0, 0xFF);
-//        }
-//
-//        // Draw children
-//        for (const auto& child : entity->children)
-//        {
-//            drawEntityRecursive(child, camera, shader, shaderTessellation, projection, view, camFrustum, callsThisFrame);
-//        }
-//    }
-//
-//    auto entityType = entity->getType(); // could be optimized/avoided
-//    if (entityType != EntityType::undefined && entityType != EntityType::light && entityType != EntityType::camera)
-//    {
-//        totalFrustrumCount++;
-//    }
-//}
-
-
-
 
 void engine::Scene::exit()
 {
@@ -1395,11 +1202,12 @@ void engine::Scene::drawOpaqueQueue(std::unique_ptr<Shader>& shader, std::unique
                 continue;
 
             if (item.animator)
-            {
                 item.animator->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
-            }
 
-            modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            auto model = modelComponent->getModel();
+            if (model && model->isEnabled())
+                m_renderer->renderModel(model, shader, worldTransform, transform);
+
             inFrustrumCount++;
         }
         else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
@@ -1408,7 +1216,10 @@ void engine::Scene::drawOpaqueQueue(std::unique_ptr<Shader>& shader, std::unique
             if (!canCastShadows(primitiveComponent->getPublicProperties(), shader))
                 continue;
 
-            primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            auto primitive = primitiveComponent->getPrimitive();
+            if (primitive && primitive->isEnabled())
+                m_renderer->renderPrimitive(primitive, shader, worldTransform, transform);
+
             inFrustrumCount++;
         }
         else if (auto* terrainComponent = dynamic_cast<TerrainComponent*>(item.component))
@@ -1417,7 +1228,10 @@ void engine::Scene::drawOpaqueQueue(std::unique_ptr<Shader>& shader, std::unique
             if (!canCastShadows(terrainComponent->getPublicProperties(), shader))
                 continue;
 
-            terrainComponent->draw(projection, view, shaderTessellation, worldTransform, transform, entity->getBoundingVolume());
+            auto terrain = terrainComponent->getTerrain();
+            if (terrain && terrain->isEnabled())
+                m_renderer->renderTerrain(terrain, shaderTessellation, worldTransform, transform);
+
             inFrustrumCount++;
         }
         
@@ -1479,7 +1293,10 @@ void engine::Scene::drawTransparentQueue(std::unique_ptr<Shader>& shader, std::u
             if (item.animator)
                 item.animator->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
 
-            modelComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            auto model = modelComponent->getModel();
+            if (model && model->isEnabled())
+                m_renderer->renderModel(model, shader, worldTransform, transform);
+
             inFrustrumCount++;
         }
         else if (auto* primitiveComponent = dynamic_cast<PrimitiveComponent*>(item.component))
@@ -1488,7 +1305,10 @@ void engine::Scene::drawTransparentQueue(std::unique_ptr<Shader>& shader, std::u
             if (!canCastShadows(primitiveComponent->getPublicProperties(), shader))
                 continue;
 
-            primitiveComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            auto primitive = primitiveComponent->getPrimitive();
+            if (primitive && primitive->isEnabled())
+                m_renderer->renderPrimitive(primitive, shader, worldTransform, transform);
+
             inFrustrumCount++;
         }
         else if (auto* particleSystemComponent = dynamic_cast<ParticleSystemComponent*>(item.component))
@@ -1497,7 +1317,10 @@ void engine::Scene::drawTransparentQueue(std::unique_ptr<Shader>& shader, std::u
             if (!canCastShadows(particleSystemComponent->getPublicProperties(), shader))
                 continue;
 
-            particleSystemComponent->draw(projection, view, shader, worldTransform, transform, entity->getBoundingVolume());
+            auto particleSystem = particleSystemComponent->getParticleSystem();
+            if (particleSystem && particleSystem->isEnabled())
+                m_renderer->renderParticleSystem(particleSystem, shader, worldTransform, transform, projection, view);
+
             inFrustrumCount++;
         }
     }

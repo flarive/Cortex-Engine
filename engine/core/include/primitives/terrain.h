@@ -58,9 +58,6 @@ namespace engine
 
         void init();
 
-        // draws the model, and thus all its meshes
-        void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
-
         
         std::vector<engine::Vertex> generateVertices() override;
 
@@ -78,6 +75,12 @@ namespace engine
         glm::vec2& getHeightOffset() { return m_heightOffset; }
         void setHeightOffset(glm::vec2 offset) { m_heightOffset = offset; }
 
+        int& getTextureWidth() { return m_textureWidth; }
+        int& getTextureHeight() { return m_textureHeight; }
+
+
+        unsigned int getVerticeCount() const { return m_verticeCount; }
+
         void reSetup() { init(); };
 
         void clean() override;
@@ -91,6 +94,8 @@ namespace engine
        
         int m_textureWidth{};
         int m_textureHeight{};
+
+        unsigned int m_verticeCount{};
 
 		float m_heightFactor{ 1.0f };
         glm::vec2 m_heightOffset{};

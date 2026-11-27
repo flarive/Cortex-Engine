@@ -42,7 +42,6 @@ namespace engine
 		bool hasTextureMap() override;
 
 
-		//GLuint getSpecularMapId() { return m_specularMapId; }
 
 
 		void loadTextures() override;

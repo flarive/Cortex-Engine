@@ -55,15 +55,19 @@ void engine::Cube::setup(const std::shared_ptr<Material>& material, const UvMapp
 
 void engine::Cube::geometrySetup()
 {
-    std::vector<Vertex> vertices = generateVertices();
+    // === Step 1: Generate vertex data ===
+    m_vertices.clear();
+    m_indices.clear();
 
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
+    m_vertices = generateVertices();
 
     // Send to GPU
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -91,97 +95,6 @@ void engine::Cube::geometrySetup()
 std::vector<engine::Vertex> engine::Cube::generateVertices()
 {
     return generateCuboidVertices(m_width, m_height, m_depth, m_uvScale);
-}
-
-void engine::Cube::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
-{
-    if (!m_isEnabled)
-        return;
-    
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("shader.use.cube");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (m_material)
-    {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            if (!m_material->bind(shader)) {
-                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-                return;
-            }
-
-            handleOpacity(shader);
-            setShaderCommonUniforms(shader, type);
-        }
-
-        // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-        shader->setMat4("model", transformMatrix);
-
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-            shader->setBool("hasTangents", true);
-            shader->setBool("isAnimated", false);
-            shader->setBool("isTessellated", isTessellated());
-        }
-
-        // Send to GPU
-        glBindVertexArray(m_VAO);
-        OpenGLDebug::checkGLError("glBindVertexArray.cube");
-
-        bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
-
-        // disable face culling for transparent primitives (to see back faces)
-        if (m_material->isTransparent() || m_material->hasTransmission())
-            RenderState::disableFaceCulling();
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        OpenGLDebug::checkGLError("glDrawArrays.cube");
-
-        // re enable face culling for transparent primitives if face culling was enabled
-        if (wasFaceCullingEnabled)
-            RenderState::enableFaceCulling();
-        else
-            RenderState::disableFaceCulling();
-
-        glBindVertexArray(0);
-        OpenGLDebug::checkGLError("glBindVertexArray.cube");
-
-
-        SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
-
-        if (sceneSettings.drawNormalsVisualHelpers) {
-            drawDebugNormals(projection, view, transformMatrix);
-        }
-
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-            OpenGLDebug::checkGLError("Unbind.cube");
-        }
-
-        // restore opacity defaults
-        RenderState::setOpaque();
-    }
 }
 
 void engine::Cube::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

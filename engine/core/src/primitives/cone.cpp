@@ -37,196 +37,78 @@ void engine::Cone::setup(const std::shared_ptr<Material>& material, const UvMapp
 
 void engine::Cone::geometrySetup()
 {
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
-
     // === Step 1: Generate vertex data ===
-    std::vector<engine::Vertex> vertices = generateVertices();
+    m_vertices.clear();
+    m_indices.clear();
+
+    m_vertices = generateVertices();
 
     // === Step 2: Generate index data ===
-    std::vector<unsigned int> indices;
-    const unsigned int sectorCount = 36;
+    constexpr unsigned int sectorCount = 36;
 
     // Side indices
     for (unsigned int i = 0; i < sectorCount; ++i)
     {
-        unsigned int baseIndex = i + 1;
-        unsigned int nextIndex = (i + 1) % sectorCount + 1;
-        indices.push_back(0);           // tip
-        indices.push_back(nextIndex);   // next base
-        indices.push_back(baseIndex);   // current base
+        const unsigned int baseIndex = i + 1;
+        const unsigned int nextIndex = (i + 1) % sectorCount + 1;
+
+        m_indices.push_back(0);          // tip
+        m_indices.push_back(nextIndex);  // next base
+        m_indices.push_back(baseIndex);  // current base
     }
 
     // Base indices
-    unsigned int baseCenterIndex = static_cast<unsigned int>(vertices.size() - (sectorCount + 1));
+    const unsigned int baseCenterIndex =
+        static_cast<unsigned int>(m_vertices.size() - (sectorCount + 1));
+
     for (unsigned int i = 0; i < sectorCount; ++i)
     {
-        indices.push_back(baseCenterIndex);             // center
-        indices.push_back(baseCenterIndex + i + 1);     // current
-        indices.push_back(baseCenterIndex + i + 2);     // next
+        m_indices.push_back(baseCenterIndex);         // center
+        m_indices.push_back(baseCenterIndex + i + 1);
+        m_indices.push_back(baseCenterIndex + i + 2);
     }
 
-    indexCount = static_cast<unsigned int>(indices.size());
+    m_indexCount = static_cast<unsigned int>(m_indices.size());
 
-    // === Step 3: Interleave vertex data into a float buffer ===
-    std::vector<float> data;
-    data.reserve(vertices.size() * 14);
+    // === Step 3: Send to GPU ===
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
 
-    for (const auto& v : vertices)
-    {
-        data.push_back(v.position.x);
-        data.push_back(v.position.y);
-        data.push_back(v.position.z);
-
-        data.push_back(v.normal.x);
-        data.push_back(v.normal.y);
-        data.push_back(v.normal.z);
-
-        data.push_back(v.texCoords.x);
-        data.push_back(v.texCoords.y);
-
-        data.push_back(v.tangent.x);
-        data.push_back(v.tangent.y);
-        data.push_back(v.tangent.z);
-
-        data.push_back(v.bitangent.x);
-        data.push_back(v.bitangent.y);
-        data.push_back(v.bitangent.z);
-    }
-
-    // === Step 4: Send to GPU ===
     glBindVertexArray(m_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), m_indices.data(), GL_STATIC_DRAW);
 
-    constexpr unsigned int stride = 14 * sizeof(float);
-
-    // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, position));
+    // Position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
 
-    // Normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, normal));
+    // Normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
 
-    // Texture coordinate attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, texCoords));
+    // Texture coordinates
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
     glEnableVertexAttribArray(2);
 
-    // Tangent attribute
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, tangent));
+    // Tangent
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
     glEnableVertexAttribArray(3);
 
-    // Bitangent attribute
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Vertex, bitangent));
+    // Bitangent
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
     glEnableVertexAttribArray(4);
 
     glBindVertexArray(0);
 }
 
-
 std::vector<engine::Vertex> engine::Cone::generateVertices()
 {
     return generateConeVertices(36, m_height, m_radius, m_uvScale);
-}
-
-void engine::Cone::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
-{
-    if (!m_isEnabled)
-        return;
-    
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("shader.use.cone");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (m_material)
-    {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            if (!m_material->bind(shader)) {
-                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-                return;
-            }
-
-            handleOpacity(shader);
-            setShaderCommonUniforms(shader, type);
-        }
-    }
-
-    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    if (type != ShaderType::Phong)
-    {
-        // old way not using UBOs
-        shader->setMat4("model", transformMatrix);
-    }
-    else
-    {
-        // new OpenGL/Vulkan shared way using UBOS
-        PhongModelUBO phongModelUBO{ transformMatrix };
-        shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
-    }
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader->setBool("hasTangents", true);
-        shader->setBool("isAnimated", false);
-        shader->setBool("isTessellated", isTessellated());
-    }
-
-    // Send to GPU
-    glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray.cone");
-
-    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
-
-    // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent() || m_material->hasTransmission())
-        RenderState::disableFaceCulling();
-
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    OpenGLDebug::checkGLError("glDrawArrays.cone");
-
-    // re enable face culling for transparent primitives if face culling was enabled
-    if (wasFaceCullingEnabled)
-        RenderState::enableFaceCulling();
-    else
-        RenderState::disableFaceCulling();
-
-    glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray.cone");
-
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind.cone");
-    }
-
-    // restore opacity defaults
-    RenderState::setOpaque();
 }
 
 void engine::Cone::clean()

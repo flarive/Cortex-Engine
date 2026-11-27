@@ -46,9 +46,13 @@ void engine::Triangle::setup(const std::shared_ptr<Material>& material,
 
 void engine::Triangle::geometrySetup()
 {
-    std::vector<Vertex> vertices = generateVertices();
+    // === Step 1: Generate vertex data ===
+    m_vertices.clear();
+    m_indices.clear();
 
-    AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
+    m_vertices = generateVertices();
+
+    /*AppSettings& appSettings = engine::Singleton::getInstance()->appSettings();
     if (appSettings.backend == BackendType::Vulkan)
     {
         m_vertexCount = static_cast<uint32_t>(vertices.size());
@@ -79,14 +83,14 @@ void engine::Triangle::geometrySetup()
             m_vertexBufferMemory);
     }
     else
-    {
+    {*/
         glGenVertexArrays(1, &m_VAO);
         glGenBuffers(1, &m_VBO);
 
         glBindVertexArray(m_VAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
         // Position
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -109,108 +113,12 @@ void engine::Triangle::geometrySetup()
         glEnableVertexAttribArray(4);
 
         glBindVertexArray(0);
-    }
+    //}
 }
 
 std::vector<engine::Vertex> engine::Triangle::generateVertices()
 {
     return Primitive::generateTriangleVertices(1.0f, 1.0f, m_uvScale);
-}
-
-void engine::Triangle::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
-{
-    if (!m_isEnabled)
-        return;
-
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("shader.use.triangle");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        if (!m_material->bind(shader)) {
-            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-            return;
-        }
-
-        handleOpacity(shader);
-        setShaderCommonUniforms(shader, type);
-    }
-
-
-    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    if (type != ShaderType::Phong)
-    {
-        // old way not using UBOs
-        shader->setMat4("model", transformMatrix);
-    }
-    else
-    {
-        // new OpenGL/Vulkan shared way using UBOS
-        PhongModelUBO phongModelUBO{ transformMatrix };
-        shader->updateUniformBuffer("PhongModelUBO", &phongModelUBO, sizeof(PhongModelUBO));
-    }
-
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader->setBool("hasTangents", true);
-        shader->setBool("isAnimated", false);
-        shader->setBool("isTessellated", isTessellated());
-    }
-
-    // Send to GPU
-    glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray.triangle");
-
-    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
-
-    // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent() || m_material->hasTransmission())
-        RenderState::disableFaceCulling();
-
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    OpenGLDebug::checkGLError("glDrawArrays.triangle");
-
-    // re enable face culling for transparent primitives if face culling was enabled
-    if (wasFaceCullingEnabled)
-        RenderState::enableFaceCulling();
-    else
-        RenderState::disableFaceCulling();
-
-    glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray.triangle");
-
-    
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
-
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind.triangle");
-    }
-
-    // restore opacity defaults
-    RenderState::setOpaque();
 }
 
 void engine::Triangle::clean()

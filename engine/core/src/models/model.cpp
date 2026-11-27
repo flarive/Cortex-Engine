@@ -39,38 +39,38 @@ engine::Model::Model(const std::shared_ptr<SharedModel>& _shared_model, bool _lo
 // draws the model, and thus all its meshes
 void engine::Model::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
 {
-    if (!m_isEnabled)
-        return;
+    //if (!m_isEnabled)
+    //    return;
 
-    ShaderType type = shader->getShaderType();
-    
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
+    //ShaderType type = shader->getShaderType();
 
-    shader->use();
-    
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::DepthBufferDirectionalLights || type == ShaderType::DepthBufferPointLights)
-    {
-        shader->setBool("isAnimated", hasBones());
-    }
+    //setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
 
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setBool("isTessellated", false);
-    }
+    //shader->use();
 
-    if (!m_shared_model)
-    {
-        for (auto& mesh : getMeshes()) {
-            mesh->draw(shader, projection, view, transformMatrix);
-        }
-    }
-    else
-    {
-        // shared model, loaded one time, drawn multiple times
-        for (auto& mesh : m_shared_model->getMeshes()) {
-            mesh->draw(shader, projection, view, transformMatrix);
-        }
-    }
+    //if (type == ShaderType::BlinnPhong || type == ShaderType::PBR || type == ShaderType::DepthBufferDirectionalLights || type == ShaderType::DepthBufferPointLights)
+    //{
+    //    shader->setBool("isAnimated", hasBones());
+    //}
+
+    //if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
+    //{
+    //    shader->setBool("isTessellated", false);
+    //}
+
+    //if (!m_shared_model)
+    //{
+    //    for (auto& mesh : getMeshes()) {
+    //        mesh->draw(shader, projection, view, transformMatrix);
+    //    }
+    //}
+    //else
+    //{
+    //    // shared model, loaded one time, drawn multiple times
+    //    for (auto& mesh : m_shared_model->getMeshes()) {
+    //        mesh->draw(shader, projection, view, transformMatrix);
+    //    }
+    //}
 }
 
 void engine::Model::clean()

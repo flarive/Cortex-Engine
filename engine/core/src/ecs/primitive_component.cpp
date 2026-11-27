@@ -36,8 +36,6 @@ void engine::PrimitiveComponent::update(float deltaTime, Transform& transform)
 
 void engine::PrimitiveComponent::draw(const glm::mat4& projection, const glm::mat4& view, std::unique_ptr<Shader>& shader, const glm::mat4& worldTransformMatrix, Transform& localTransform, AABB* boundingVolume)
 {
-	m_primitive->draw(shader, projection, view, worldTransformMatrix, localTransform);
-
 	SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
 
 	if (sceneSettings.drawBoundingBoxesVisualHelpers)

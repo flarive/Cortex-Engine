@@ -307,18 +307,6 @@
     <Filter Include="sources\core\renderers\vulkan">
       <UniqueIdentifier>{fce9c5c6-5a95-41c8-9c24-a9e7f925ba4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="headers\core\primitives\opengl">
-      <UniqueIdentifier>{a536b841-b04b-42f5-b7a5-45e19de912ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="headers\core\primitives\vulkan">
-      <UniqueIdentifier>{949409b3-1b12-4ec8-bb08-368a9822c887}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sources\core\primitives\opengl">
-      <UniqueIdentifier>{18420d66-9f00-4bca-8566-bc23c9d13a3a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sources\core\primitives\vulkan">
-      <UniqueIdentifier>{3d3a7e62-eb3b-48fb-839b-61733a6010a7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\src\lights\directional_light.cpp">
@@ -1191,6 +1179,15 @@
       <Filter>headers\core\backends\opengl</Filter>
     </ClInclude>
     <ClInclude Include="core\include\backends\vulkan\vulkan_helper.h">
+      <Filter>headers\core\backends\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\mesh_gpu_resource.h">
+      <Filter>headers\core\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\opengl\opengl_mesh_gpu_resource.h">
+      <Filter>headers\core\backends\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="core\include\backends\vulkan\vulkan_mesh_gpu_resource.h">
       <Filter>headers\core\backends\vulkan</Filter>
     </ClInclude>
   </ItemGroup>

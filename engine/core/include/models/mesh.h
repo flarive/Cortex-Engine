@@ -59,6 +59,15 @@ namespace engine
         void setIsSkinned(bool hasSkin) { m_isSkinned = hasSkin; }
         const bool isSkinned() const { return m_isSkinned; }
 
+
+        const unsigned int getVAO() const { return m_VAO; }
+        const unsigned int getVBO() const { return m_VBO; }
+        const unsigned int getEBO() const { return m_EBO; }
+
+        const unsigned int getIndexCount() const { return m_indexCount; }
+
+        void handleOpacity(std::unique_ptr<Shader>& shader);
+
         void clean();
        
     private:
@@ -95,7 +104,7 @@ namespace engine
 
         // initializes all the buffer objects/arrays
         void setupMesh();
-        void handleOpacity(std::unique_ptr<Shader>& shader);
+        
 
         void drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix);
     };

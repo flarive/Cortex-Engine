@@ -39,17 +39,22 @@ void engine::Plane::setup(const std::shared_ptr<Material>& material, const UvMap
 
 void engine::Plane::geometrySetup()
 {
-    std::vector<Vertex> vertices = generateVertices();
+    // === Step 1: Generate vertex data ===
+    m_vertices.clear();
+    m_indices.clear();
+
+    m_vertices = generateVertices();
+
+    // Send to GPU
 
     // configure plane VAO
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
 
-    // Send to GPU
     glBindVertexArray(m_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -77,99 +82,6 @@ void engine::Plane::geometrySetup()
 std::vector<engine::Vertex> engine::Plane::generateVertices()
 {
     return Primitive::generatePlaneVertices(m_uvScale, m_flipNormals);
-}
-
-void engine::Plane::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform)
-{
-    if (!m_isEnabled)
-        return;
-    
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("shader.use.plane");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (m_material)
-    {
-        if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-        {
-            if (!m_material->bind(shader)) {
-                std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-                return;
-            }
-
-            handleOpacity(shader);
-            setShaderCommonUniforms(shader, type);
-        }
-    }
-
-    // used by all shaders (blinnphong, pbr, simpleDepthBuffer1, simpleDepthBuffer2)
-    shader->setMat4("model", transformMatrix);
-
-
-    if (type == ShaderType::BlinnPhong || type == ShaderType::PBR)
-    {
-        shader->setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(transformMatrix))));
-        shader->setBool("hasTangents", true);
-        shader->setBool("isAnimated", false);
-        shader->setBool("isTessellated", isTessellated());
-    }
-
-
-    // Send to GPU
-    glBindVertexArray(m_VAO);
-    OpenGLDebug::checkGLError("glBindVertexArray.plane");
-
-    bool wasFaceCullingEnabled = RenderState::isFaceCullingEnabled();
-
-    // disable face culling for transparent primitives (to see back faces)
-    if (m_material->isTransparent() || m_material->hasTransmission())
-        RenderState::disableFaceCulling();
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    OpenGLDebug::checkGLError("glDrawArrays.plane");
-
-    // re enable face culling for transparent primitives if face culling was enabled
-    if (wasFaceCullingEnabled)
-        RenderState::enableFaceCulling();
-    else
-        RenderState::disableFaceCulling();
-
-    glBindVertexArray(0);
-    OpenGLDebug::checkGLError("glBindVertexArray.plane");
-
-
-    SceneSettings& sceneSettings = engine::Singleton::getInstance()->sceneSettings();
-
-    if (sceneSettings.drawNormalsVisualHelpers) {
-        drawDebugNormals(projection, view, transformMatrix);
-    }
-
-    if (m_material && (type == ShaderType::BlinnPhong || type == ShaderType::PBR))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("Unbind.plane");
-    }
-
-    // restore opacity defaults
-    RenderState::setOpaque();
 }
 
 void engine::Plane::drawDebugNormals(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix)

@@ -33,9 +33,6 @@ namespace engine
 
         std::vector<Vertex> generateVertices() override;
 
-        // draws the model, and thus all its meshes
-        void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
-
         PrimitiveType getTypeID() const override
         {
             return PrimitiveType::plane;

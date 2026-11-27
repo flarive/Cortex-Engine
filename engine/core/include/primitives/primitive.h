@@ -14,7 +14,8 @@
 #include "../misc/noncopyable.h"
 #include "../misc/ordered_map.h"
 
-#include "../backends/opengl/render_state.h"
+//#include "../backends/opengl/render_state.h"
+#include "../backends/mesh_gpu_resource.h"
 
 #include "../transform.h"
 
@@ -59,7 +60,7 @@ namespace engine
         virtual void setup(const std::shared_ptr<Material>& material) = 0;
         virtual void setup(const std::shared_ptr<Material>& material, const UvMapping& uv) = 0;
 
-        virtual void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) = 0;
+        
 
         // optional: de-allocate all resources once they've outlived their purpose
         virtual void clean() = 0;
@@ -124,10 +125,30 @@ namespace engine
         bool isEnabled() const { return m_isEnabled; }
         void setEnabled(bool enabled) { m_isEnabled = enabled; }
 
+        const unsigned int getVAO() const { return m_VAO; }
+        const unsigned int getVBO() const { return m_VBO; }
+        const unsigned int getEBO() const { return m_EBO; }
+
+        const unsigned int getIndexCount() const { return m_indexCount; }
+
+        void handleOpacity(std::unique_ptr<Shader>& shader);
+
         
     protected:
 		// OpenGL specific members
-        unsigned int m_VBO{}, m_VAO{}, m_EBO{};
+        unsigned int m_VBO{}, m_VAO{}, m_EBO{}; // TO REMOVE !!!!
+        unsigned int m_indexCount{};
+
+        
+
+        // CPU geometry (API-independent geometry)
+        std::vector<Vertex> m_vertices;
+        std::vector<unsigned int> m_indices;
+
+        // GPU resources
+        std::shared_ptr<MeshGPUResource> m_gpuResource{};
+
+
 
         std::shared_ptr<Material> m_material{};
 
@@ -147,8 +168,8 @@ namespace engine
 
         void setMaterial(const std::shared_ptr<Material>& material);
 
-        void setShaderCommonUniforms(std::unique_ptr<Shader>& shader, ShaderType type);
-        void handleOpacity(std::unique_ptr<Shader>& shader);
+        
+        
         
 
 

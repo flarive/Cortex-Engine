@@ -65,8 +65,13 @@ void engine::Terrain::init()
 
 void engine::Terrain::geometrySetup()
 {
-    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // === Step 1: Generate vertex data ===
+    m_vertices.clear();
+    m_indices.clear();
+
     m_vertices = generateVertices();
+
+    m_verticeCount = static_cast<unsigned int>(m_vertices.size());
 
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
@@ -143,90 +148,6 @@ std::vector<engine::Vertex> engine::Terrain::generateVertices()
     }
 
     return vertices;
-}
-
-void engine::Terrain::draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, engine::Transform& localTransform)
-{
-    if (!m_isEnabled)
-        return;
-
-    ShaderType type = shader->getShaderType();
-
-    if (!m_material || !shader->isValid()) {
-        std::cerr << "Material or shader not valid. Skipping draw." << std::endl;
-        return;
-    }
-
-    if (!m_material->areAllTexturesLoaded()) {
-        std::cout << "Textures not ready. Deferring draw." << std::endl;
-        return;
-    }
-
-    if (m_VAO == 0 || m_VBO == 0) {
-        std::cerr << "VAO/VBO not initialized. Skipping draw." << std::endl;
-        return;
-    }
-
-    shader->use();
-    OpenGLDebug::checkGLError("m_tessHeightMapShader.use");
-
-    setTransform(localTransform.getLocalPosition(), localTransform.getLocalRotation(), localTransform.getLocalScale());
-
-    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
-    {
-        if (!m_material->bind(shader)) {
-            std::cerr << "Failed to bind textures. Skipping draw." << std::endl;
-            return;
-        }
-
-        setShaderCommonUniforms(shader, type);
-    }
-    else if (type == ShaderType::DepthBufferDirectionalLightsTessellation)
-    {
-        std::shared_ptr<Texture> heightTexture = m_material->getHeightTexture();
-        if (heightTexture && heightTexture->id > 0)
-        {
-            shader->setInt("materialHeight.texture_height", heightTexture->id);
-            shader->setBool("materialHeight.has_texture_height_map", true);
-        }
-        else
-        {
-            shader->setInt("materialHeight.texture_height", 0);
-            shader->setBool("materialHeight.has_texture_height_map", false);
-        }
-    }
-    
-    shader->setMat4("model", transformMatrix);
-
-    if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
-    {
-        shader->setBool("hasTangents", true);
-        shader->setBool("isAnimated", false);
-        shader->setBool("isTessellated", isTessellated());
-    }
-
-    if (type == ShaderType::BlinnPhongTessellation  || type == ShaderType::PBRTessellation || type == ShaderType::DepthBufferDirectionalLightsTessellation)
-    {
-        shader->setFloat("heightFactor", m_heightFactor);
-        shader->setVec2("heightOffset", m_heightOffset);
-
-        if (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation)
-        {
-            shader->setFloat("heightTextureSize", static_cast<float>(m_textureWidth));
-        }
-    }
-   
-
-    // render the terrain
-    glBindVertexArray(m_VAO);
-    glDrawArrays(GL_PATCHES, 0, static_cast<GLsizei>(m_vertices.size()));
-    glBindVertexArray(0);
-
-    if (m_material && (type == ShaderType::BlinnPhongTessellation || type == ShaderType::PBRTessellation))
-    {
-        m_material->unbind(); // Unbind textures to prevent OpenGL state retention
-        OpenGLDebug::checkGLError("m_tessHeightMapShader.unbind");
-    }
 }
 
 void engine::Terrain::clean()

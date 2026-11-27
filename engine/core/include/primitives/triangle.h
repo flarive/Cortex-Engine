@@ -40,9 +40,6 @@ namespace engine
         float& getHeight() { return m_height; }
         void setHeight(float height) { m_height = height; }
 
-
-        void draw(std::unique_ptr<Shader>& shader, const glm::mat4& projection, const glm::mat4& view, const glm::mat4& transformMatrix, Transform& localTransform) override;
-
         std::vector<Vertex> generateVertices() override;
 
         PrimitiveType getTypeID() const override
